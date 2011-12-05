@@ -51,7 +51,7 @@
     <sap.ui5.version>1.1.1-SNAPSHOT</sap.ui5.version>
   
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
-    <tomcat.sandbox.url>http://vephxinfra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
+    <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
     <tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
     <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
         
