@@ -73,7 +73,7 @@
         <plugin>
           <groupId>com.sap.ui5.tools.maven</groupId>
           <artifactId>maven-tomcat-plugin</artifactId>
-          <version>1.0.0</version>
+          <version>1.0.1-SNAPSHOT</version>
         </plugin>
 	  </plugins>
     </pluginManagement>
@@ -147,7 +147,6 @@
                   <artifactId>getting-started-sample</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
-
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
@@ -162,6 +161,36 @@
                   <contextPath>demokit</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <version>[1.0.0,)</version>
+                  <contextPath>sapui5</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5-sap-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
+                  <version>[1.0.0,)</version>
+                  <contextPath>phoenix-cdn</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5-sap-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
+                  <version>[1.0.0,)</version>
+                  <contextPath>sapui5-sap-internal</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+				<deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>snippix</artifactId>
+                  <version>[1.0.0,)</version>
+                </deployable>
+
                 <!-- REMOVED DUE TO TESTING PURPOSES
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
@@ -208,32 +237,6 @@
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>streamwork-sample</artifactId>
                   <version>[1.0.0,)</version>
-                </deployable>
-				<deployable>
-                  <groupId>com.sap.ui5.test</groupId>
-                  <artifactId>snippix</artifactId>
-                  <version>[1.0.0,)</version>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn</artifactId>
-                  <version>[1.0.0,)</version>
-                  <contextPath>sapui5</contextPath>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-extended</artifactId>
-                  <version>[1.0.0,)</version>
-                  <contextPath>phoenix-cdn</contextPath>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-extended</artifactId>
-                  <version>[1.0.0,)</version>
-                  <contextPath>sapui5-sap-internal</contextPath>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
@@ -335,24 +338,27 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn</artifactId>
+                  <artifactId>sapui5</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
                   <version>[1.0.0,)</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <artifactId>sapui5-sap-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>phoenix-cdn</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <artifactId>sapui5-sap-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5-sap-internal</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
 				<deployable>
                   <groupId>com.sap.ui5.test</groupId>
