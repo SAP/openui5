@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Parent POM Settings
+  ***************************************************************************-->
+
+  <parent>
+    <groupId>com.sap.ui5</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+
+  <groupId>com.sap.ui5</groupId>
+  <artifactId>ui5-housekeeping</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Project Settings
+  ***************************************************************************-->
+
+  <name>${project.artifactId}</name>
+  <description>SAPUI5 - Housekeeping</description>
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Properties Settings
+  ***************************************************************************-->
+
+  <properties>
+  
+    <!-- Group ID of the artifacts to be deployed as patch -->
+    <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
+  
+    <!-- The version of this project is also the version of the UI5 dependencies -->
+    <sap.ui5.version>1.1.1-SNAPSHOT</sap.ui5.version>
+  
+    <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
+    <tomcat.sandbox.url>http://vephxinfra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
+    <tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
+    <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
+        
+    <!-- Sandbox Tomcat configuration for QTP tests -->
+    <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>  
+
+  </properties>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Build Settings
+  ***************************************************************************-->
+
+  <build>
+
+    <!-- central definition of used plugin versions -->
+    <pluginManagement>
+	  <plugins>
+        <plugin>
+          <groupId>com.sap.ui5.tools.maven</groupId>
+          <artifactId>maven-tomcat-plugin</artifactId>
+          <version>1.0.0</version>
+        </plugin>
+	  </plugins>
+    </pluginManagement>
+  
+    <plugins>
+    
+      <!-- enable the Tomcat plugin during clean phase! Housekeeping! ;) -->
+      <plugin>
+        <groupId>com.sap.ui5.tools.maven</groupId>
+        <artifactId>maven-tomcat-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>deploy</goal>
+            </goals>
+            <phase>clean</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <remoteTomcatManagerUrl>${tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+          <remoteTomcatUsername>${tomcat.sandbox.usr}</remoteTomcatUsername>
+          <remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
+          <skipDeploy>true</skipDeploy>
+          <skipUndeploy>true</skipUndeploy>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Profile Settings
+  ***************************************************************************-->
+
+  <profiles>
+  
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA (Walldorf)                                 -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-default</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-default</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <properties>
+        <!-- set to empty classifier to disable installation of optimized versions -->
+        <sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>getting-started-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                  <contextPath>uilib-sample</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>${sap.ui5.version}</version>
+                  <contextPath>demokit</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+                <!-- REMOVED DUE TO TESTING PURPOSES
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demo-trac-access</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>classic-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                -->
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>travel</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>pac-man</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>fried-chicken-demo</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>cometd-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>ptcdemo</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>streamwork-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+				<deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>snippix</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <version>${sap.ui5.version}</version>
+                  <contextPath>phoenix-cdn</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+        
+                <deployable>
+                  <groupId>com.sap.ui5.tools</groupId>
+                  <artifactId>performance-webm</artifactId>
+                  <version>1.0.0</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.tools</groupId>
+                  <artifactId>jsunit-testrunner</artifactId>
+                  <version>1.0.0</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>jsunit-tests</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>cactus-unit-tests</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>selenium-tests</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>supplier-tagging</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+				
+				<deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>teched2011</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>ui5infoapp</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>charting-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+				
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA (Walldorf)                                 -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-minimal</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-minimal</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>getting-started-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+				<deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>snippix</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-qtp</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-qtp</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>${sap.ui5.version}</version>
+				  <contextPath>databinding</contextPath>
+                </deployable>			  
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>${sap.ui5.version}</version>
+				  <contextPath>uilib-sample</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-qtp-legacy</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-qtp-legacy</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+				  <contextPath>databinding-${sap.ui5.version}</contextPath>
+                </deployable>			  
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+				  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-patch</id>
+
+	  <activation>
+		<property>
+		  <name>sap.ui5.releases-only</name>
+		  <value>false</value>
+		</property>
+	  </activation>
+	  
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>phoenix-cdn-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>demokit</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>demokit-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-release</id>
+
+	  <activation>
+		<property>
+		  <name>sap.ui5.releases-only</name>
+		  <value>true</value>
+		</property>
+	  </activation>
+
+      <properties>
+        <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
+	  </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <noSnapshots>true</noSnapshots>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>phoenix-cdn</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>phoenix-cdn-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>phoenix-cdn-extended</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>phoenix-cdn-extended-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <fallbackGroupId>${sap.ui5.patch.fallbackGroupId}</fallbackGroupId>
+                  <artifactId>demokit</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>demokit-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+		</plugins>
+	  </build>
+	  
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: TEST                                                  -->
+    <!-- ******************************************************************* -->
+  
+    <!--
+    <profile>
+
+      <id>housekeeping-test</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-test</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <remoteTomcatManagerUrl>http://localhost:8080/manager</remoteTomcatManagerUrl>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>phoenix-cdn-ext</artifactId>
+                  <version>${sap.ui5.version}</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>phoenix-cdn-ext</artifactId>
+                  <version>0.11.1</version>
+				  <contextPath>phoenix-cdn-extended-0.11.1</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+	-->
+    
+
+  </profiles>  
+  
+  
+</project>

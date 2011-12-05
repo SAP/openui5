@@ -1,0 +1,140 @@
+package com.sap.phx.test.tools.maven;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+/**
+		
+		<!-- kann vorerst auch manuell erfolgen -->
+		<!-- automatischer p4 sync mit src/main/doc --> 
+		compare tmp and src folders 
+			remove obsolete files
+			checkout and copy modified files
+			add new files
+			submit
+ * 
+ * @author D020684
+ *
+ */
+public class Convert {
+
+	private static void collect(Set<String> allFiles, File dir, String prefix) {
+		File[] files = dir.listFiles(); 
+    if ( files != null ) {
+    	for(File file : files) {
+  			allFiles.add(prefix + file.getName());
+    		if ( file.isDirectory() ) {
+    			collect(allFiles, file, prefix + file.getName() + "/");
+    		}
+    	}
+    }
+	}
+	
+	private static boolean compare(File a, File b) throws IOException {
+		if ( a.length() != b.length() ) 
+			return false;
+		
+		FileInputStream fisA = new FileInputStream(a);
+		FileInputStream fisB = new FileInputStream(b);
+		byte[] bufferA = new byte[0x10000];
+		byte[] bufferB = new byte[0x10000];
+		int lengthA = 0;
+		int lengthB = 0;
+		while ( true ) {
+			if ( lengthA == 0 )
+				lengthA = fisA.read(bufferA);
+			if ( lengthB == 0 )
+				lengthB = fisB.read(bufferB);
+			if ( lengthA <= 0 || lengthB <= 0 )
+				break;
+			int i;
+			for(i=0; i<lengthA && i<lengthB; i++) {
+				if ( bufferA[i] != bufferB[i] ) {
+					break;
+				}
+			}
+			lengthA -= i;
+			lengthB -= i;
+			if ( lengthA > 0 && lengthB > 0 )
+				break;
+		}
+		fisA.close();
+		fisB.close();
+		return( lengthA <= 0 && lengthB <= 0 );
+	}
+
+  private static class P4Client {
+  	
+  	private String p4cmd = "p4"; 
+  	private String port = "perforce3003.wdf.sap.corp:3003";
+  	private String user = "TBS";
+  	
+  	P4Client(){
+  		
+  	}
+  	
+  	String execute(String ... cmd) {
+  		ProcessBuilder pb = new ProcessBuilder();
+  		Runtime.getRuntime().exec(cmd);
+  	}
+  }
+  
+	private static boolean checkOut(File file) throws IOException, InterruptedException {
+		return Runtime.getRuntime().exec("p4.exe -p perforce3003.wdf.sap.corp:3003 edit " + file).waitFor() == 0;
+	}
+	
+	static void scan(File srcDir, File newDir) {
+
+		SortedSet<String> allFiles = new TreeSet<String>();
+		collect(allFiles, srcDir, "");
+		collect(allFiles, newDir, "");
+		
+		for(String name : allFiles) {
+			File existingFile = new File(srcDir, name);
+			File newFile = new File(newDir, name);
+			
+			int existingState = existingFile.exists() ? (existingFile.isDirectory() ? 2 : 1) : 0;
+			int newState = newFile.exists() ? (newFile.isDirectory() ? 2 : 1) : 0;
+			
+			if ( existingState != 1 && newState == 1 ) {
+				"p4 add -c " + change + " " + p4 add newFile
+			} else if ( existingState == 1 && newState != 1 ) {
+				p4 delete oldFile
+			} else if ( existingState == 1 && newState == 1 ) {
+				if ( !compare(existingFile, newFile) ) {
+					p4 edit old / new
+				}
+			}
+		}
+		
+	}
+	
+	public void sync() {
+	
+		p4.change(-i)
+
+Change:	new
+
+Client:	IGBN00203571A
+
+User:	d020684
+
+Status:	new
+
+Description:
+		CSN: na Reason: doc Desc: PHOENIX - update dev docu from trac	
+
+Files:
+
+	  scan();
+		
+		p4.submit();
+	}
+	
+}
+
