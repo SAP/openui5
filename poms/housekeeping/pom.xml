@@ -171,7 +171,7 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-sap-internal</artifactId>
+                  <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
                   <contextPath>phoenix-cdn</contextPath>
@@ -179,10 +179,10 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-sap-internal</artifactId>
+                  <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
-                  <contextPath>sapui5-sap-internal</contextPath>
+                  <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
 				<deployable>
@@ -346,7 +346,7 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-sap-internal</artifactId>
+                  <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
                   <contextPath>phoenix-cdn</contextPath>
@@ -354,10 +354,10 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-sap-internal</artifactId>
+                  <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[1.0.0,)</version>
-                  <contextPath>sapui5-sap-internal</contextPath>
+                  <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
 				<deployable>
