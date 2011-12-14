@@ -24,7 +24,6 @@
   * POM SECTION: Maven Settings
   ***************************************************************************-->
 
-  <groupId>com.sap.ui5</groupId>
   <artifactId>ui5-housekeeping</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
