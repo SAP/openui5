@@ -613,14 +613,14 @@
               <deployables>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-ext</artifactId>
+                  <artifactId>sapui5-internal</artifactId>
                   <version>${sap.ui5.version}</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>phoenix-cdn-ext</artifactId>
-                  <version>0.11.1</version>
-				  <contextPath>phoenix-cdn-extended-0.11.1</contextPath>
+                  <artifactId>sapui5-internal</artifactId>
+                  <version>1.1.2-SNAPSHOT</version>
+				  <contextPath>sapui5-internal-1.1.2</contextPath>
                 </deployable>
               </deployables>
             </configuration>
