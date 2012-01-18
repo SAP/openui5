@@ -466,7 +466,7 @@
     
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
+	<!-- HOUSEKEEPING: VEUI5INFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
   
     <profile>
@@ -476,6 +476,129 @@
 	  <activation>
 		<property>
 		  <name>sap.ui5.releases-only</name>
+		  <value>false</value>
+		</property>
+	  </activation>
+	  
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>sapui5-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>sapui5-internal-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>demokit-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-release</id>
+
+	  <activation>
+		<property>
+		  <name>sap.ui5.releases-only</name>
+		  <value>true</value>
+		</property>
+	  </activation>
+
+      <properties>
+        <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
+	  </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <noSnapshots>true</noSnapshots>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>sapui5-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>sapui5-internal</artifactId>
+                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>sapui5-internal-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>demokit-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+		</plugins>
+	  </build>
+	  
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-patch-old</id>
+
+	  <activation>
+		<property>
+		  <name>sap.ui5.releases-only.old</name>
 		  <value>false</value>
 		</property>
 	  </activation>
@@ -525,11 +648,11 @@
   
     <profile>
 
-      <id>housekeeping-release</id>
+      <id>housekeeping-release-old</id>
 
 	  <activation>
 		<property>
-		  <name>sap.ui5.releases-only</name>
+		  <name>sap.ui5.releases-only.old</name>
 		  <value>true</value>
 		</property>
 	  </activation>
