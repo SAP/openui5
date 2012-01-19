@@ -295,7 +295,7 @@
     
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEPHXINFRA (Walldorf)                                 -->
+	<!-- HOUSEKEEPING: VEUI5INFRA (Walldorf)                                 -->
     <!-- ******************************************************************* -->
   
     <profile>
@@ -569,7 +569,7 @@
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
-                  <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
+                  <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>sapui5-internal-${sap.ui5.version}</contextPath>
                 </deployable>
