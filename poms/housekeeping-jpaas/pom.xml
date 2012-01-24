@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+  
+  
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5</groupId>
+	<artifactId>ui5-housekeeping-jpaas</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 - Automated JPaaS Deployment</name>
+	<description>SAPUI5 - Automated JPaaS Deployment</description>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<command>help</command>
+		<password>dummy</password>
+	
+		<jpaas.space>sap</jpaas.space>
+		<jpaas.appliance>sapui5</jpaas.appliance>
+		<jpaas.component>test</jpaas.component>
+		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war</jpaas.source>
+		<jpaas.services></jpaas.services>
+		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
+		<jpaas.user>D039071</jpaas.user>
+		<jpaas.elasticity>1,1</jpaas.elasticity>
+	
+		<http.proxyHost>proxy</http.proxyHost>
+		<http.proxyPort>8080</http.proxyPort>
+		<https.proxyHost>proxy</https.proxyHost>
+		<https.proxyPort>8080</https.proxyPort>
+		<http.nonProxyHosts>localhost</http.nonProxyHosts>
+	
+	</properties>
+	
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.2.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
+		<plugins>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/deployprops</outputDirectory>
+							<resources>			  
+								<resource>
+									<directory>src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>			  
+						</configuration>			
+					</execution>
+				</executions>
+			</plugin>
+	  
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				
+					<execution>
+						<id>deployables</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.sap.ui5</groupId>
+									<artifactId>sapui5</artifactId>
+									<version>1.2.0</version>
+									<classifier>opt</classifier>
+									<type>war</type>
+									<overWrite>false</overWrite>
+									<destFileName>sapui5.war</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sap.ui5</groupId>
+									<artifactId>demokit</artifactId>
+									<version>1.2.0</version>
+									<classifier>opt</classifier>
+									<type>war</type>
+									<overWrite>false</overWrite>
+									<destFileName>demokit.war</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
+							<includes>**</includes>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>deployclient</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.sap.core.deploy</groupId>
+									<artifactId>com.sap.core.deploy.client.cmd.distro</artifactId>
+									<version>0.9.18</version>
+									<classifier>assembly</classifier>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/deployclient</outputDirectory>
+							<includes>**</includes>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+					
+				</executions>
+				
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>execute</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<arguments>			  
+								<argument>-Dhttp.proxyHost=${http.proxyHost}</argument>
+								<argument>-Dhttp.proxyPort=${http.proxyPort}</argument>
+								<argument>-Dhttps.proxyHost=${https.proxyHost}</argument>
+								<argument>-Dhttps.proxyPort=${https.proxyPort}</argument>
+								<argument>-Dhttp.nonProxyHosts=${http.nonProxyHosts}</argument>
+								<argument>-jar</argument>
+								<argument>${project.build.directory}/deployclient/lib/jpdpl/com.sap.core.deploy.client.cmd-0.9.18.jar</argument>
+								<argument>-${command}</argument>
+								<argument>${project.build.directory}/deployprops/deploy.properties</argument>
+								<argument>-password</argument>
+								<argument>${password}</argument>
+							</arguments>			  
+						</configuration>			
+					</execution>
+				</executions>
+			</plugin>
+	  
+		</plugins>
+		
+	</build>
+
+</project>
