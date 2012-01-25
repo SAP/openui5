@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+	
+	
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>maven-webapp-pom</artifactId>
+		<version>1.2.0</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5.jpaas</groupId>
+	<artifactId>sapui5-sdk</artifactId>
+	<packaging>war</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>sapui5-sdk</name>
+	<description>SAPUI5 SDK for JPaaS deployment</description>		 
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- Eclipse WTP: context name -->
+		<web.context.name>${project.artifactId}</web.context.name>
+		
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<plugins>
+
+			<!-- WAR overlay (extend "demokit") -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<overlays>
+						<overlay>
+							<groupId>com.sap.ui5</groupId>
+							<artifactId>demokit</artifactId>
+							<classifier>opt</classifier>
+							<excludes>
+								<exclude>WEB-INF/web.xml</exclude>
+							</excludes>
+						</overlay>
+						<overlay></overlay>
+					</overlays>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Dependency Settings
+	***************************************************************************-->
+
+	<dependencies>
+
+		<!-- JSUnit Tests WAR file (for overlay) and embedded Jetty deployment -->
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>demokit</artifactId>
+			<version>${project.version}</version>
+			<classifier>opt</classifier>
+			<type>war</type>
+		</dependency>
+
+	</dependencies>
+
+	
+</project>

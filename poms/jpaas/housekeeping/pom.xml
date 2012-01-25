@@ -34,15 +34,16 @@
 	<properties>
 
 		<command>help</command>
-		<password>dummy</password>
+		<user>dummy</user> <!-- SDN User -->
+		<password>dummy</password> <!-- SDN Password -->
+		
+		<sapui5.version>1.2.0</sapui5.version>
 	
 		<jpaas.space>sap</jpaas.space>
 		<jpaas.appliance>sapui5</jpaas.appliance>
 		<jpaas.component>test</jpaas.component>
-		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war</jpaas.source>
-		<jpaas.services></jpaas.services>
+		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/sapui5-sdk.war</jpaas.source>
 		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
-		<jpaas.user>D039071</jpaas.user>
 		<jpaas.elasticity>1,1</jpaas.elasticity>
 	
 		<http.proxyHost>proxy</http.proxyHost>
@@ -120,22 +121,20 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>com.sap.ui5</groupId>
+									<groupId>com.sap.ui5.jpaas</groupId>
 									<artifactId>sapui5</artifactId>
-									<version>1.2.0</version>
-									<classifier>opt</classifier>
+									<version>${sapui5.version}</version>
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>sapui5.war</destFileName>
 								</artifactItem>
 								<artifactItem>
-									<groupId>com.sap.ui5</groupId>
-									<artifactId>demokit</artifactId>
-									<version>1.2.0</version>
-									<classifier>opt</classifier>
+									<groupId>com.sap.ui5.jpaas</groupId>
+									<artifactId>sapui5-sdk</artifactId>
+									<version>${sapui5.version}</version>
 									<type>war</type>
 									<overWrite>false</overWrite>
-									<destFileName>demokit.war</destFileName>
+									<destFileName>sapui5-sdk.war</destFileName>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
@@ -195,7 +194,9 @@
 								<argument>-jar</argument>
 								<argument>${project.build.directory}/deployclient/lib/jpdpl/com.sap.core.deploy.client.cmd-0.9.18.jar</argument>
 								<argument>-${command}</argument>
-								<argument>${project.build.directory}/deployprops/deploy.properties</argument>
+								<argument>${project.build.directory}/deployprops/deploy-war.properties</argument>
+								<argument>-user</argument>
+								<argument>${user}</argument>
 								<argument>-password</argument>
 								<argument>${password}</argument>
 							</arguments>			  
