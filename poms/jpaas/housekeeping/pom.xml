@@ -39,9 +39,10 @@
 		
 		<sapui5.version>1.2.0</sapui5.version>
 	
-		<jpaas.space>sap</jpaas.space>
-		<jpaas.appliance>sapui5</jpaas.appliance>
-		<jpaas.component>test</jpaas.component>
+		<jpaas.space>sapui5</jpaas.space>
+		<jpaas.appliance>jpaas</jpaas.appliance>
+		<jpaas.component>sapui5</jpaas.component>
+		<jpaas.url>sapui5</jpaas.url>
 		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/sapui5-sdk.war</jpaas.source>
 		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
 		<jpaas.elasticity>1,1</jpaas.elasticity>
