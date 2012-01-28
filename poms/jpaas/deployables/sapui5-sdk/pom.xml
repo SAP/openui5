@@ -73,6 +73,11 @@
 						</overlay>
 						<overlay></overlay>
 					</overlays>
+					<archive>
+						<manifestEntries>
+							<Web-ContextPath>/sdk</Web-ContextPath>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			

@@ -161,17 +161,18 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Protected Area</web-resource-name>
+      <web-resource-name>SAPUI5 SDK Protected Area</web-resource-name>
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
-      <role-name>NeoBetaUser</role-name>
+	  <role-name>Everyone</role-name>
+      <!-- role-name>NeoBetaUser</role-name -->
     </auth-constraint>
   </security-constraint>
 
-  <security-role>
+  <!-- security-role>
     <description>Neo Development Kit Beta Users</description>
     <role-name>NeoBetaUser</role-name>
-  </security-role>
+  </security-role -->
 
 </web-app>

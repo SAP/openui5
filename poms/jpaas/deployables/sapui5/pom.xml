@@ -67,9 +67,6 @@
 							<groupId>com.sap.ui5</groupId>
 							<artifactId>sapui5</artifactId>
 							<classifier>opt</classifier>
-							<!--excludes>
-								<exclude>WEB-INF/web.xml</exclude>
-							</excludes-->
 						</overlay>
 						<overlay>
 							<excludes>
@@ -77,6 +74,11 @@
 							</excludes>
 						</overlay>
 					</overlays>
+					<archive>
+						<manifestEntries>
+							<Web-ContextPath>/</Web-ContextPath>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			
