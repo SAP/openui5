@@ -301,6 +301,10 @@ public class Git2P4Main {
 		// check out all files for edit
 		p4.checkOut(p4path + "/...", p4change);
 		
+		// initialize bookkeeping
+		existingFiles.clear();
+		touchedFiles.clear();
+		
 		// get file status from perforce
 		p4.fstat(p4path + "/...");
 		List<P4Client.FStat> before = p4.lastFiles;
