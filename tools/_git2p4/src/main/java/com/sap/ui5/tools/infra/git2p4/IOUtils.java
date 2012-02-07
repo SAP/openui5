@@ -113,4 +113,22 @@ public class IOUtils {
     
   }
 
+  public static void copy(File a, File b) throws IOException {
+		if ( !b.getParentFile().exists() ) {
+			b.getParentFile().mkdirs();
+		}
+		FileInputStream fis = new FileInputStream(a);
+		FileOutputStream fos = new FileOutputStream(b);
+
+		byte[] buffer = new byte[0x10000];
+		while ( true ) {
+			int n = fis.read(buffer);
+			if ( n < 0 ) break;
+			fos.write(buffer, 0, n);
+		}
+		fis.close();
+		fos.close();
+	}
+
+
 }

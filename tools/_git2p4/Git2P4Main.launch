@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/git2p4-tool/src/main/java/com/sap/ui5/tools/infra/git2p4/Git2P4Main.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.m2e.launchconfig.classpathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.sap.ui5.tools.infra.git2p4.Git2P4Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--help --log-file git2p4.log --verbose &#13;&#10;--p4-port perforce3003:3003 --p4-user d020684 --p4-dest-path &#13;&#10;--src-ui5 C:\ws\Phoenix\depot //tc1/phoenix/dev &#13;&#10;--optimize-diffs &#13;&#10;--interactive&#13;&#10;--resume-after ac0573cb31439a02fc5c6a2a1c51f892b2664067"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="git2p4-tool"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
+</launchConfiguration>

@@ -17,6 +17,7 @@ public class SplitLogs {
 	private static Pattern START = Pattern.compile("\\[git.cmd, checkout, --force, --detach, ([a-f0-9,]{40})\\]");
 	
 	public static void run(String template, SortedSet<GitClient.Commit> allCommits) throws IOException {
+		System.out.println(allCommits.size());
 		Map<String,GitClient.Commit> allCommitsById = new HashMap<String,GitClient.Commit>();
 		for(GitClient.Commit commit : allCommits) {
 			allCommitsById.put(commit.getId(), commit);
@@ -43,6 +44,7 @@ public class SplitLogs {
 				String commitId = m.group(1);
 				String filename = template.replace("#", commitId);
 				commit = allCommitsById.get(commitId);
+				System.out.println(commit);
 				outfile = new File(filename);
 				FileOutputStream fos = new FileOutputStream(outfile);
 				out = new OutputStreamWriter(fos, "UTF-8");

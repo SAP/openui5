@@ -163,29 +163,37 @@ class CommitHistoryOptimizer {
 		
 	}
 	
-	List<GitClient.Commit> run(String lastCommit) throws IOException {
-		track(lastCommit);
-		Collections.reverse(orderedCommits);
+	List<GitClient.Commit> run() throws IOException {
 		
-		// sanity checks
-		if ( !ids.isEmpty() ) {
-			throw new RuntimeException("dangling commits: " + ids);
-		}
-		GitClient.Commit last = null;
-		for(GitClient.Commit commit : orderedCommits) {
-			Date curr = commit.getCommitDate();
-			if ( last != null && curr.compareTo(last.getCommitDate()) < 0 ) {
-				throw new RuntimeException("*** wrong commit order: " + commit.getId() + " < " + last.getId());
-			}
-			last = commit;
-		}
+		if ( !commits.isEmpty() ) { 
 		
-		for(GitClient.Commit commit : orderedCommits) {
-			String b = commit.getId() + " " + commit.getCommitDate() + " ";
-			for(int i=0; i<commit.mergeIns.size(); i++) {
-				b += " " + commit.mergeIns.get(i);
+			// note: commits must be in reverse order!
+			String lastCommit = commits.keySet().iterator().next();
+			Log.println("tracking back from commit " + lastCommit);
+			track(lastCommit);
+			Collections.reverse(orderedCommits);
+			
+			// sanity checks
+			if ( !ids.isEmpty() ) {
+				throw new RuntimeException("dangling commits: " + ids);
 			}
-			Log.println(b);
+			GitClient.Commit last = null;
+			for(GitClient.Commit commit : orderedCommits) {
+				Date curr = commit.getCommitDate();
+				if ( last != null && curr.compareTo(last.getCommitDate()) < 0 ) {
+					throw new RuntimeException("*** wrong commit order: " + commit.getId() + " < " + last.getId());
+				}
+				last = commit;
+			}
+			
+			for(GitClient.Commit commit : orderedCommits) {
+				String b = commit.getId() + " " + commit.getCommitDate() + " ";
+				for(int i=0; i<commit.mergeIns.size(); i++) {
+					b += " " + commit.mergeIns.get(i);
+				}
+				Log.println(b);
+			}
+			
 		}
 		
 		return orderedCommits;

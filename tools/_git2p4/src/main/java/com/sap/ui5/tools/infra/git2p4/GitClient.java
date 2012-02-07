@@ -68,7 +68,7 @@ class GitClient {
 		lastCommits = null;
 		long t1 = System.currentTimeMillis();
 		Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
-		Log.println("  Process returned output " + Git2P4Main.summary(lines));
+		Log.println("  Process returned output " + Log.summary(lines));
 		return lastExitValue == 0;
 	}
 
@@ -181,8 +181,8 @@ class GitClient {
 		Log.println("found " + lastCommits.size() + " commits");
 	}
 
-	public boolean log(String gitfrom, String gitto) throws IOException {
-		if ( execute("log", "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents", gitfrom + ".." + gitto) ) {
+	public boolean log(String range) throws IOException {
+		if ( execute("log", "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents", range) ) {
 			evalCommitLog();
 			return true;
 		}
