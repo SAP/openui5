@@ -88,7 +88,7 @@ class P4Client {
 		lastDiffChunks = null;
 		long t1 = System.currentTimeMillis();
 		Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
-		Log.println("  Process returned output " + Git2P4Main.summary(lines));
+		Log.println("  Process returned output " + Log.summary(lines));
 		if ( lastExitValue != 0 ) 
 			throw new RuntimeException("" + lastExitValue );
 		return true;
