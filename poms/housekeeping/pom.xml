@@ -284,6 +284,11 @@
                   <artifactId>charting-sample</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>theme-editor</artifactId>
+                  <version>[1.0.0,)</version>
+                </deployable>
 				
               </deployables>
             </configuration>
