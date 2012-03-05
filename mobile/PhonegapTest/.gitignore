@@ -1,0 +1,9 @@
+# Ignore target folders in projects
+/gen
+/bin
+
+
+# Ignore Eclipse project and settings files
+.classpath
+.settings
+.project
