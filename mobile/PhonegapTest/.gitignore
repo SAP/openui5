@@ -3,7 +3,7 @@
 /bin
 
 
-# Ignore Eclipse project and settings files
-.classpath
+# Ignore Eclipse settings
 .settings
-.project
+!.project
+!.classpath
