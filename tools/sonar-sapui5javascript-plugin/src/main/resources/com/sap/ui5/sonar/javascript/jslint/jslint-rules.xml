@@ -1,0 +1,10 @@
+<rules>
+  <rule>
+    <key>GENERIC_RULE</key>
+    <name>Generic Rule</name>
+    <description>
+      <![CDATA[This is a generic rule!]]>
+    </description>
+    <priority>INFO</priority>
+  </rule>
+ </rules>
