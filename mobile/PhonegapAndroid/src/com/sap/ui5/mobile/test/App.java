@@ -1,4 +1,4 @@
-package com.sap.ui5.test;
+package com.sap.ui5.mobile.test;
 
 import android.os.Bundle;
 import com.phonegap.*;
