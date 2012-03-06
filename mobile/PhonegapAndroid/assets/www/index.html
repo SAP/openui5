@@ -2,46 +2,48 @@
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SAPUI5 in 20 Seconds</title>
+    <title>URL Launcher Page</title>
 
-    <!-- 1.) Load SAPUI5 (from a remote server), select theme and control library -->
     <script id="sap-ui-bootstrap"
         type="text/javascript"
         src="http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5/resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_platinum"
+        data-sap-ui-theme="sap_goldreflection"
         data-sap-ui-libs="sap.ui.commons"></script>
-
-
-    <!-- 2.) Create a UI5 button and place it onto the page -->
-    <script>
-        // create the button instance
-        var myButton = new sap.ui.commons.Button("btn");
-
-        // set properties, e.g. the text (there is also a shorter way of setting several properties)
-        myButton.setText("Hello World!");
-
-        // attach an action to the button's "press" event (use jQuery to fade out the button)
-        myButton.attachPress(function(){$("#btn").fadeOut()});
-
-        // place the button into the HTML element defined below
-        myButton.placeAt("uiArea");
-
-        // an alternative, more jQuery-like notation for the same is:
-        /*
-        $(document).ready(function(){
-            $("#uiArea").sapui("Button", "btn", {
-                text:"Hello World!", 
-                press:function(){$("#btn").fadeOut();}
-            });
-        });
-        */
-    </script>
-
+    
+    <style>
+    html, body {
+    	margin: 0;
+    }
+    </style>
+    
 </head>
 <body class="sapUiBody">
+    <div id="content"></div>
 
-    <!-- This is where you place the UI5 button -->
-    <div id="uiArea"></div>
+    <script>
+		  
+		if (!window.sap) { // first check if UI5 was loaded properly  
+			var msg = "Error: 'sap' is not defined... is there a network connection to http://veui5infra.dhcp.wdf.sap.corp:8080 ?";
+			document.write(msg);
+			alert(msg);
+			// abort the app
+			throw new Error(msg);
+		}
 
+		// build the UI
+		var tf = new sap.ui.commons.TextField({
+			value : "http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/resources/testsuite/testframe.html#welcome.html",
+			width : "100%"
+		}).placeAt("content");
+
+		new sap.ui.commons.Button({
+			text : "Open",
+			press : function() {
+				document.location.href = tf.getValue();
+			}
+		}).placeAt("content");
+
+
+	</script>
 </body>
 </html>
