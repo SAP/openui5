@@ -10,9 +10,17 @@
         data-sap-ui-theme="sap_goldreflection"
         data-sap-ui-libs="sap.ui.commons"></script>
     
+    <script type="text/javascript" charset="utf-8" src="phonegap-1.4.1.js"></script>
+    
+    
     <style>
     html, body {
     	margin: 0;
+    }
+    
+    .tf-big {
+    	height: 28px;
+    	font-size: 20px;
     }
     </style>
     
@@ -21,7 +29,7 @@
     <div id="content"></div>
 
     <script>
-		  
+
 		if (!window.sap) { // first check if UI5 was loaded properly  
 			var msg = "Error: 'sap' is not defined... is there a network connection to http://veui5infra.dhcp.wdf.sap.corp:8080 ?";
 			document.write(msg);
@@ -33,17 +41,32 @@
 		// build the UI
 		var tf = new sap.ui.commons.TextField({
 			value : "http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/resources/testsuite/testframe.html#welcome.html",
-			width : "100%"
-		}).placeAt("content");
+			width: "100%"
+		}).placeAt("content").addStyleClass("tf-big");
 
 		new sap.ui.commons.Button({
 			text : "Open",
+			width: "25%",
+			height: "40px",
 			press : function() {
-				document.location.href = tf.getValue();
+				navigator.app.loadUrl(tf.getValue());
 			}
 		}).placeAt("content");
 
+		
 
+		document.addEventListener("menubutton", function(){
+			alert("menu");
+		}, false);
+		
+		/* only makes sense for "back" inside the page
+		document.addEventListener("backbutton", function(){
+			if (!(document.location.href == "file:///android_asset/www/index.html")) {
+				navigator.app.loadUrl("file:///android_asset/www/index.html");
+			}
+		}, false);
+		*/
+	
 	</script>
 </body>
 </html>
