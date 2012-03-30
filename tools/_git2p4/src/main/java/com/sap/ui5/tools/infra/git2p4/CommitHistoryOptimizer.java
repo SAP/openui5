@@ -87,6 +87,13 @@ class CommitHistoryOptimizer {
 		
 		GitClient.Commit parent1 = commits.get(commit.ids[1]);
 		GitClient.Commit parent2 = commits.get(commit.ids[2]);
+		if ( parent1 != null && parent2 == null ) {
+			return 1;
+		}
+		if ( parent1 == null && parent2 != null ) {
+			return 2;
+		}
+		
 		boolean g1 = parent1.isGerrit();
 		boolean g2 = parent2.isGerrit();
 	
