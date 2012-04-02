@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
   
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.3.3-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.5.0-SNAPSHOT</sap.ui5.version>
   
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
     <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
