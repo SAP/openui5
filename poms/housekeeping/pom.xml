@@ -520,6 +520,12 @@
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>databinding-${sap.ui5.version}</contextPath>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
@@ -530,7 +536,46 @@
     
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
+	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- ******************************************************************* -->
+  
+    <profile>
+
+      <id>housekeeping-patch-qtp</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5.test</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>databinding-${sap.ui5.version}</contextPath>
+                </deployable>			  
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>uilib-sample</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+
+    <!-- ******************************************************************* -->
+	<!-- HOUSEKEEPING: VESAPUI5, old Release (Walldorf)                      -->
     <!-- ******************************************************************* -->
   
     <profile>
@@ -583,6 +628,12 @@
                   <artifactId>demokit</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>databinding</artifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
