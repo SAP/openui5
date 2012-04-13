@@ -521,7 +521,7 @@
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5</groupId>
+                  <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
@@ -630,7 +630,7 @@
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5</groupId>
+                  <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
