@@ -67,7 +67,7 @@ class CommitHistoryOptimizer {
 			enrich(predecessors1); 
 			enrich(predecessors2);
 			if ( predecessors1.size() + predecessors2.size() == oldSize ) 
-				throw new RuntimeException();
+				return null; // throw new RuntimeException("failed to find common predecessor for " + commit.ids[1] + " and " + commit.ids[2]);
 			intersect = new HashSet<String>(predecessors1.keySet());
 			intersect.retainAll(predecessors2.keySet());
 		}
@@ -143,8 +143,13 @@ class CommitHistoryOptimizer {
 				return 1;
 			}
 		}
-		
-		throw new RuntimeException("can't decide although it is a merge!!!");
+
+		if ( parent1.getCommitDate().compareTo(parent2.getCommitDate()) < 0 ) {
+			return 2;
+		} else if ( parent1.getCommitDate().compareTo(parent2.getCommitDate()) > 0 ) {
+			return 1;
+		}
+		throw new RuntimeException("can't decide although it is a merge: " + commit.ids[0] + ":" + commit.ids[1] + " vs. " + commit.ids[2]);
 	}
 	
 	private void track(String id) {
