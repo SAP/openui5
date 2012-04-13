@@ -197,7 +197,7 @@ public class Git2P4 {
 //		};
 
 		DescriptionBuilder (GitClient.Commit commit) {
-			desc.append("CSN: na Reason: git2p4 Desc: BC-WD-HTM - ").append(GerritHelper.ungerrit(commit.lines.get(0))).append(NL);
+			desc.append("CSN: na Reason: infra Desc: BC-WD-HTM - git2p4: ").append(GerritHelper.ungerrit(commit.lines.get(0))).append(NL);
 			desc.append(NL);
 			
 			int first=0;
