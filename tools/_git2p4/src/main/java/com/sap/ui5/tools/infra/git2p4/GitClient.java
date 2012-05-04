@@ -19,6 +19,7 @@ class GitClient {
 
 	private String gitcmd = "git.cmd"; 
 	File repository = new File(".");
+	String sshuser = "hudsonvoter";
 	boolean verbose = false;
 	private int lastExitValue;
 	private List<String> lastOutput;
@@ -189,6 +190,14 @@ class GitClient {
 		return false;
 	}
 
+	public boolean clone(String gitUrl) throws IOException {
+		return execute("clone", "ssh://" + sshuser + "@" + gitUrl, repository.getAbsolutePath());
+	}
+	
+	public boolean fetch() throws IOException {
+		return execute("fetch");
+	}
+	
 	public boolean checkout(String commit) throws IOException {
 		return execute("checkout", "--force", "--detach", commit);
 	}

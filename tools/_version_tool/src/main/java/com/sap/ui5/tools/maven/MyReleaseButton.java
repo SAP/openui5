@@ -14,6 +14,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.EnumSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 public class MyReleaseButton {
@@ -111,6 +115,20 @@ public class MyReleaseButton {
 	}
 
 	// ---- end of code copy ----
+
+	private static SortedMap<String,Integer> diffs = new TreeMap<String,Integer>();
+	
+	private static void countDiffs(String path, CharSequence original, String modified) {
+		String[] origLines = original.toString().split("\r\n|\r|\n");
+		String[] modLines = modified.toString().split("\r\n|\r|\n");
+		int diff=0;
+		for(int i=0; i<Math.min(origLines.length, modLines.length); i++) {
+			if ( !origLines[i].equals(modLines[i]) ) {
+				diff++;
+			}
+		}
+		diffs.put(path, diff);
+	}
 	
 	private static boolean checkOut(File file) throws IOException, InterruptedException {
 		return Runtime.getRuntime().exec("p4.exe -p perforce3003.wdf.sap.corp:3003 edit " + file).waitFor() == 0;
@@ -123,7 +141,7 @@ public class MyReleaseButton {
 	static Pattern fromS, fromT, fromQ_POM, fromQ, fromR;
 	static String toS, toT, toQ, toR;
 
-	private static void processFile(File file) throws Exception {
+	private static void processFile(File file, String path) throws Exception {
 		String encoding = UTF8;
 		
 		EnumSet<ProcessingTypes> processingTypes = EnumSet.noneOf(ProcessingTypes.class);
@@ -186,20 +204,21 @@ public class MyReleaseButton {
   				if (file.canWrite()) {
   					writeFile(file, str, encoding);
   				}
+  				countDiffs(path, orig, str);
   			}
   		}
 		}
 		
 	}
 
-	private static void scan(File dir) throws Exception {
+	private static void scan(File dir, String path) throws Exception {
 		File[] files = dir.listFiles();
 		if (files != null) {
 			for (File file : files) {
 				if (file.isDirectory())
-					scan(file);
+					scan(file, path + (path.isEmpty() ? "" : "/") + file.getName());
 				else
-					processFile(file);
+					processFile(file, path + (path.isEmpty() ? "" : "/") + file.getName());
 			}
 		}
 	}
@@ -283,7 +302,39 @@ public class MyReleaseButton {
 		System.out.println("             Repository Paths: '" + fromR.pattern() + "' --> '" + toR + "'");
 		System.out.println();
 		System.out.println("Scanning directory \"" + root + "\"");
-		scan(root);
+		scan(root, "");
+		
+		Properties prop = new Properties();
+		File lastVersionToolResultsFile = new File(root, ".version-tool.xml");
+		if ( lastVersionToolResultsFile.canRead() ) {
+			System.out.println("Comparing diff summary against results from last run");
+			int diffdiffs = 0;
+			prop.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
+			// now compare with current results
+			for(Map.Entry<String,Integer> entry : diffs.entrySet()) {
+				String oldDiffs = prop.getProperty(entry.getKey());
+				String newDiffs = entry.getValue().toString();
+				if ( !newDiffs.equals(oldDiffs) ) {
+					System.out.println("**** " + entry.getKey() + ": " + oldDiffs + "(old) vs. " + newDiffs + "(new)");
+					diffdiffs++;
+				}
+				prop.remove(entry.getKey());
+			}
+			for(Object key : prop.keySet()) {
+				String oldDiffs = prop.getProperty((String) key);
+				System.out.println("**** " + key + ": " + oldDiffs + "(old) vs. " + null + "(new)");
+				diffdiffs++;
+			}
+			System.out.println("The diff summary has changed for " + diffdiffs + " files.");
+		} else {
+			System.out.println("No diff summary found from last run");
+		}
+		prop.clear();
+		for(Map.Entry<String,Integer> entry : diffs.entrySet()) {
+			prop.setProperty(entry.getKey(), entry.getValue().toString());
+		}
+		prop.storeToXML(new FileOutputStream(lastVersionToolResultsFile), "Last Version-Tool Changes");
+		System.out.println("Diff summary saved");
 	}
 
 }

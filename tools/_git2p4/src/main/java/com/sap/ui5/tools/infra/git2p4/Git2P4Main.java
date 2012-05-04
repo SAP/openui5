@@ -17,6 +17,7 @@ public class Git2P4Main {
 	static String p4change = null;
 	static String range = null;
 	static String resumeAfter = null;
+	static boolean noFetch = false;
 	
 	static SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
 		public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -29,6 +30,13 @@ public class Git2P4Main {
 	
 	static void collect(Mapping repo, String range) throws IOException {
 		git.repository = repo.gitRepository;
+		if ( !git.repository.isDirectory() || !(new File(git.repository, ".git").isDirectory()) && repo.giturl != null ) {
+			git.repository.mkdirs();
+			git.clone(repo.giturl); 
+		}
+		if ( !noFetch ) {
+		  git.fetch();
+		}
 		git.log(range);
 		List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.lastCommits).run();
 		for(GitClient.Commit commit : commits) {
@@ -38,12 +46,14 @@ public class Git2P4Main {
 	}
 
 	static class Mapping {
+		String giturl;
 		File gitRepository;
 		String p4path;
 		String targetIncludes;
 		String targetExcludes;
 		
-		Mapping(File gitRepository, String p4path, String includes, String excludes) {
+		Mapping(String giturl, File gitRepository, String p4path, String includes, String excludes) {
+			this.giturl = giturl;
 			this.gitRepository = gitRepository;  
 			this.p4path = p4path;
 			this.targetIncludes = includes; 
@@ -56,12 +66,14 @@ public class Git2P4Main {
 	private static void createUI5Mappings(File repositoryRoot, String p4depotPrefix) {
 		mappings.clear();
 		mappings.add(new Mapping(
+				"git.wdf.sap.corp:29418/sapui5/sapui5.runtime.git",
 				new File(repositoryRoot, "sapui5.runtime"), 
 				p4depotPrefix,
 				"pom.xml,src/,test/",
 				"src/dist/_osgi/,src/dist/_osgi_tools/,src/platforms/,test/_selenium_tests_lsf/"
 		));
 		mappings.add(new Mapping(
+				"git.wdf.sap.corp:29418/sapui5/sapui5.platforms.gwt.git",
 				new File(repositoryRoot, "sapui5.platforms.gwt"),
 				p4depotPrefix + "/src/platforms/gwt",
 				null,
@@ -76,12 +88,14 @@ public class Git2P4Main {
 		));
 		*/ 
 		mappings.add(new Mapping(
+				"git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.git",
 				new File(repositoryRoot, "sapui5.osgi.runtime"),
 				p4depotPrefix + "/src/dist/_osgi",
 				null,
 				null
 		));
 		mappings.add(new Mapping(
+				"git.wdf.sap.corp:29418/sapui5/sapui5.osgi.tools.git",
 				new File(repositoryRoot, "sapui5.osgi.tools"),
 				p4depotPrefix + "/src/dist/_osgi_tools",
 				null,
@@ -107,6 +121,8 @@ public class Git2P4Main {
 		System.out.println(" -c, --p4-change        an existing (pending) Perforce change list to be used for the first transport");
 		System.out.println();
 		System.out.println("Git/Mapping options:");
+		System.out.println(" --git-user             SSH id used for clone operations");
+		System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
 		System.out.println(" --git-dir              Git repository root");
 		System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories");
 		System.out.println(" --includes             List of paths, relative to root, to be included from transport");
@@ -128,7 +144,7 @@ public class Git2P4Main {
 	}
 	public static void main(String[] args) throws IOException {
 		String template = null;
-		boolean splitLogs = false;
+		String mode = "submit";
 		
 		for(int i=0; i<args.length; i++) {
 			if ( "-h".equals(args[i]) || "--help".equals(args[i]) ) {
@@ -153,6 +169,10 @@ public class Git2P4Main {
 				p4change = args[++i];
 			} else if ( "-d".equals(args[i]) || "--p4-dest-path".equals(args[i])) {
 				p4depotPath = args[++i];
+			} else if ( "--git-user".equals(args[i]) ) {
+				git.sshuser = args[++i];
+			} else if ( "--git-no-fetch".equals(args[i]) ) {
+				noFetch = true;
 			} else if ( "--ui5-git-root".equals(args[i]) ) {
 				if ( p4depotPath == null ) {
 					throw new RuntimeException("p4depot path must be specifed before a UI5 repository root");  
@@ -163,7 +183,7 @@ public class Git2P4Main {
 					throw new RuntimeException("p4depot path must be specifed before a git repository root");  
 				}
 				mappings.clear();
-				mappings.add(new Mapping(new File(args[++i]), p4depotPath, null, null));
+				mappings.add(new Mapping(null, new File(args[++i]), p4depotPath, null, null));
 			} else if ( "--includes".equals(args[i]) ) {
 				if ( mappings.size() != 1 ) {
 					throw new RuntimeException("includes can only be specified for an (already defined) single src root");  
@@ -183,7 +203,9 @@ public class Git2P4Main {
 			} else if ( "-s".equals(args[i]) || "--submit".equals(args[i]) ) {
 				git2p4.submit = true;
 			} else if ( "--split-logs".equals(args[i]) ) {
-				splitLogs = true;
+				mode = "splitLogs";
+			} else if ( "--list".equals(args[i]) ) {
+				mode = "list";
 			} else if ( args[i].startsWith("-") ) {
 				throw new RuntimeException("unsupported option " + args[i]);
 			} else {
@@ -197,17 +219,19 @@ public class Git2P4Main {
 		
 		Log.println("args = " + Arrays.toString(args));
 		Log.println("");
-		
-		// TODO determine commits from tags 
-//		collect(SAPUI5_RUNTIME, "7417fadf4cfc81c2c1c102b06a68a8906de07c6a", "ac0573cb31439a02fc5c6a2a1c51f892b2664067");
-//		collect(SAPUI5_PLATFORMS_GWT, "d0c8c0590c3983a6f0e690edb48f5375582eae5e", "9b50de69fe86856e8b08451db6875ad51369b8bc");
-//		collect(SAPUI5_OSGI_RUNTIME, "6ece82f8525fb4bbc4a2c1dcb870dd18dfe115c9", "3caf52a6a5d2c707932002b6b20c85c843efc8a1");
-//		collect(SAPUI5_OSGI_TOOLS, "2fc421e94d76f8ba1190d6902ef63da563921a12", "aed5e498eb0257ab9585e015f09718d0f455306c");
+
+		// collect commits across repositories
 		for(Mapping repoMapping : mappings) {
 			collect(repoMapping, range);
 		}
-		
-		if ( splitLogs ) {
+		for(GitClient.Commit commit : allCommits) {
+			Log.println(commit.repository + " " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
+		}
+
+		if ( "list".equals(mode) ) {
+			return;
+		}
+		if ( "splitLogs".equals(mode) ) {
 			SplitLogs.run(template, allCommits);
 			return;
 		}
