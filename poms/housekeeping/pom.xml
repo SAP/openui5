@@ -369,6 +369,11 @@
                   <artifactId>snippix</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
+				<deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>ui5show</artifactId>
+                  <version>[1.0.0,)</version>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
