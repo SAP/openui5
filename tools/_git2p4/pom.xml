@@ -76,7 +76,13 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>com.sap.ui5.tools</groupId>
+			<artifactId>version-tool</artifactId>
+			<version>1.0.1-SNAPSHOT</version>
+		</dependency>
+
 	</dependencies>
 	
 </project>
