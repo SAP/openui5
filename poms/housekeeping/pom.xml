@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
 
   <!--**************************************************************************
   * POM SECTION: Maven Model Version Settings
   ***************************************************************************-->
 
   <modelVersion>4.0.0</modelVersion>
-  
-  
+
+
   <!--**************************************************************************
   * POM SECTION: Parent POM Settings
   ***************************************************************************-->
@@ -35,31 +35,31 @@
 
   <name>${project.artifactId}</name>
   <description>SAPUI5 - Housekeeping</description>
-  
+
 
   <!--**************************************************************************
   * POM SECTION: Properties Settings
   ***************************************************************************-->
 
   <properties>
-  
+
     <!-- Group ID of the artifacts to be deployed as patch -->
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
-  
+
     <!-- The version of this project is also the version of the UI5 dependencies -->
     <sap.ui5.version>1.5.0-SNAPSHOT</sap.ui5.version>
-  
+
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
     <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
     <tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
     <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
-        
+
     <!-- Sandbox Tomcat configuration for QTP tests -->
-    <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>  
+    <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>
 
   </properties>
-  
-  
+
+
   <!--**************************************************************************
   * POM SECTION: Build Settings
   ***************************************************************************-->
@@ -68,17 +68,17 @@
 
     <!-- central definition of used plugin versions -->
     <pluginManagement>
-	  <plugins>
+      <plugins>
         <plugin>
           <groupId>com.sap.ui5.tools.maven</groupId>
           <artifactId>maven-tomcat-plugin</artifactId>
           <version>1.0.1-SNAPSHOT</version>
         </plugin>
-	  </plugins>
+      </plugins>
     </pluginManagement>
-  
+
     <plugins>
-    
+
       <!-- enable the Tomcat plugin during clean phase! Housekeeping! ;) -->
       <plugin>
         <groupId>com.sap.ui5.tools.maven</groupId>
@@ -110,12 +110,12 @@
   ***************************************************************************-->
 
   <profiles>
-  
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5INFRA (Walldorf)                                 -->
+    <!-- HOUSEKEEPING: VEUI5INFRA (Walldorf)                                 -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-default</id>
@@ -184,7 +184,7 @@
                   <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
-				<deployable>
+                <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>snippix</artifactId>
                   <version>[1.0.0,)</version>
@@ -262,14 +262,12 @@
                   <artifactId>selenium-tests</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
-
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>supplier-tagging</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
-				
-				<deployable>
+                <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>teched2011</artifactId>
                   <version>[1.0.0,)</version>
@@ -289,7 +287,6 @@
                   <artifactId>theme-editor</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
-				
               </deployables>
             </configuration>
           </plugin>
@@ -297,12 +294,12 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5INFRA (Walldorf)                                 -->
+    <!-- HOUSEKEEPING: VEUI5INFRA (Walldorf)                                 -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-minimal</id>
@@ -364,12 +361,12 @@
                   <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
-				<deployable>
+                <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>snippix</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
-				<deployable>
+                <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>ui5show</artifactId>
                   <version>[1.0.0,)</version>
@@ -381,12 +378,12 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-qtp</id>
@@ -412,13 +409,19 @@
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>${sap.ui5.version}</version>
-				  <contextPath>databinding</contextPath>
-                </deployable>			  
+                  <contextPath>databinding</contextPath>
+                </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
                   <version>${sap.ui5.version}</version>
-				  <contextPath>uilib-sample</contextPath>
+                  <contextPath>uilib-sample</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>demokit</artifactId>
+                  <version>${sap.ui5.version}</version>
+                  <contextPath>demokit</contextPath>
                 </deployable>
               </deployables>
             </configuration>
@@ -427,12 +430,12 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-qtp-legacy</id>
@@ -458,13 +461,13 @@
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-				  <contextPath>databinding-${sap.ui5.version}</contextPath>
-                </deployable>			  
+                  <contextPath>databinding-${sap.ui5.version}</contextPath>
+                </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-				  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
+                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
@@ -473,23 +476,23 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5INFRA, patch dev for old Release (Walldorf)      -->
+    <!-- HOUSEKEEPING: VEUI5INFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-patch</id>
 
-	  <activation>
-		<property>
-		  <name>sap.ui5.releases-only</name>
-		  <value>false</value>
-		</property>
-	  </activation>
-	  
+      <activation>
+        <property>
+          <name>sap.ui5.releases-only</name>
+          <value>false</value>
+        </property>
+      </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -538,12 +541,12 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-patch-qtp</id>
@@ -563,7 +566,7 @@
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
-                </deployable>			  
+                </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
@@ -577,26 +580,26 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VESAPUI5, old Release (Walldorf)                      -->
+    <!-- HOUSEKEEPING: VESAPUI5, old Release (Walldorf)                      -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-release</id>
 
-	  <activation>
-		<property>
-		  <name>sap.ui5.releases-only</name>
-		  <value>true</value>
-		</property>
-	  </activation>
+      <activation>
+        <property>
+          <name>sap.ui5.releases-only</name>
+          <value>true</value>
+        </property>
+      </activation>
 
       <properties>
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
-	  </properties>
+      </properties>
 
       <build>
         <plugins>
@@ -643,27 +646,27 @@
               </deployables>
             </configuration>
           </plugin>
-		</plugins>
-	  </build>
-	  
+        </plugins>
+      </build>
+
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
+    <!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-patch-old</id>
 
-	  <activation>
-		<property>
-		  <name>sap.ui5.releases-only.old</name>
-		  <value>false</value>
-		</property>
-	  </activation>
-	  
+      <activation>
+        <property>
+          <name>sap.ui5.releases-only.old</name>
+          <value>false</value>
+        </property>
+      </activation>
+
       <build>
         <plugins>
           <plugin>
@@ -701,26 +704,26 @@
       </build>
 
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
+    <!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
     <!-- ******************************************************************* -->
-  
+
     <profile>
 
       <id>housekeeping-release-old</id>
 
-	  <activation>
-		<property>
-		  <name>sap.ui5.releases-only.old</name>
-		  <value>true</value>
-		</property>
-	  </activation>
+      <activation>
+        <property>
+          <name>sap.ui5.releases-only.old</name>
+          <value>true</value>
+        </property>
+      </activation>
 
       <properties>
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
-	  </properties>
+      </properties>
 
       <build>
         <plugins>
@@ -763,16 +766,16 @@
               </deployables>
             </configuration>
           </plugin>
-		</plugins>
-	  </build>
-	  
+        </plugins>
+      </build>
+
     </profile>
-    
+
 
     <!-- ******************************************************************* -->
-	<!-- HOUSEKEEPING: TEST                                                  -->
+    <!-- HOUSEKEEPING: TEST                                                  -->
     <!-- ******************************************************************* -->
-  
+
     <!--
     <profile>
 
@@ -804,7 +807,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
                   <version>1.3.1-SNAPSHOT</version>
-				  <contextPath>sapui5-internal-1.1.2</contextPath>
+                  <contextPath>sapui5-internal-1.1.2</contextPath>
                 </deployable>
               </deployables>
             </configuration>
@@ -813,10 +816,10 @@
       </build>
 
     </profile>
-	-->
-    
+    -->
 
-  </profiles>  
-  
-  
+
+  </profiles>
+
+
 </project>
