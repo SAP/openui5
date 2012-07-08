@@ -88,6 +88,7 @@ public class Git2P4Main {
         if ( version == null ) {
           version = versionEl.getTextContent();
         } else if ( !version.equals(versionEl.getTextContent()) ){
+          System.out.println("version mismatch: " + version + " vs. " + versionEl.getTextContent());
           return null;
         }
       } else {
@@ -345,10 +346,10 @@ public class Git2P4Main {
         mode = "splitLogs";
       } else if ( "--list".equals(args[i]) ) {
         mode = "list";
+      } else if ( "--transfer".equals(args[i]) ) {
+        mode = "transfer";
       } else if ( "--version".equals(args[i]) ) {
         mode = "version";
-        fromVersion = args[++i];
-        toVersion = args[++i];
       } else if ( "--milestone".equals(args[i]) ) {
         mode = "milestone";
       } else if ( "--fromVersion".equals(args[i]) ) {
@@ -373,10 +374,30 @@ public class Git2P4Main {
     }
 
     if ( "version".equals(mode) ) {
-      if ( range == null || range.isEmpty() || range.contains("..") || range.contains("/") ) {
-        throw new RuntimeException("for --version, a branch must be specified");
+      if ( branch == null || branch.isEmpty() || branch.contains("..") || branch.contains("/") ) {
+        throw new RuntimeException("for --version, a branch must be specified(e.g. master or 1.4)");
       }
-      increaseVersions(fromVersion, toVersion, range); // TODO range is not the same as a branch
+      boolean guess=true;
+      if ( fromVersion == null ) {
+        fromVersion = findVersion(branch);
+        guess = true;
+      }
+      if ( guess ) {
+        Log.println("Please confirm the automatically determined parameters:");
+        Log.println("       branch: " + branch);
+        Log.println("  fromVersion: " + fromVersion);
+        Log.println("    toVersion: " + toVersion);
+        int c;
+        System.out.println("Parameters correct (y/n):");
+        c = System.in.read();
+        while ( System.in.available() > 0 ) {
+          System.in.read();
+        }
+        if ( c != 'y' ) {
+          throw new RuntimeException("operation aborted by user");
+        }
+      }
+      increaseVersions(fromVersion, toVersion, branch);
       return;
     }
 
