@@ -414,8 +414,9 @@ public class Git2P4Main {
     for(Mapping repoMapping : mappings) {
       collect(repoMapping, range);
     }
+    int index=0;
     for(GitClient.Commit commit : allCommits) {
-      Log.println(commit.repository + " " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
+      Log.println((index++) + ": [" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
     }
 
     // autoresume
