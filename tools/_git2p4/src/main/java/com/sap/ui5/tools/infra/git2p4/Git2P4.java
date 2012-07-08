@@ -66,7 +66,7 @@ public class Git2P4 {
            */
           // if a file didn't exist before, "add" it to our change list
           if ( !existingFiles.contains(localFile) ) {
-            p4.add(localFile.getPath(), change);
+            p4.add(localFile.getPath(), change, /* force */ true);
           }
         }
       }

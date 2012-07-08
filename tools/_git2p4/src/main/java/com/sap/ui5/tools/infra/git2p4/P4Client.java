@@ -56,7 +56,9 @@ class P4Client {
       args.add(client);
     }
     for(String cmd : cmds) {
-      args.add(cmd);
+      if ( cmd != null ) {
+        args.add(cmd);
+      }
     }
     // Log.println("executing " + args);
     pb.redirectErrorStream(true);
@@ -375,10 +377,14 @@ class P4Client {
   }
 
   boolean add(String path, String change) throws IOException {
+    return add(path, change, false);
+  }
+
+  boolean add(String path, String change, boolean force) throws IOException {
     if ( change == null ) {
-      return execute("add", path);
+      return execute("add", force ? "-f" : null, path);
     } else {
-      return execute("add", "-c", change, path);
+      return execute("add", "-c", change, force ? "-f" : null, path);
     }
   }
 
