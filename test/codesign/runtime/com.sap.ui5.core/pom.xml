@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
+
+  <modelVersion>4.0.0</modelVersion>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Parent POM Settings
+  ***************************************************************************-->
+
+  <parent>
+    <groupId>com.sap.ui5</groupId>
+    <artifactId>codesign-reactor</artifactId>
+    <version>1.6.1</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+
+  <artifactId>core</artifactId>
+  <packaging>jar</packaging>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Project Settings
+  ***************************************************************************-->
+
+  <name>${project.artifactId}</name>
+  
+
+  <!--**************************************************************************
+  * POM SECTION: Build Settings
+  ***************************************************************************-->
+
+  <build>
+  
+    <plugins>
+  
+      <plugin>
+        <groupId>com.sap.ui5.tools.build</groupId>
+        <artifactId>maven-coldwater-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>com.sap.prd.codesign</groupId>
+        <artifactId>com.sap.prd.codesign.maven-jarsigner-plugin</artifactId>
+      </plugin>
+
+    </plugins>
+
+  </build>
+  
+  
+</project>

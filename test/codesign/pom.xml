@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+	
+	
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.1</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5</groupId>
+	<artifactId>codesign-reactor</artifactId>
+	<version>1.6.1</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 CodeSigning Reactor</name>
+	<description>SAPUI5 CodeSigning Reactor POM</description>
+	<url>http://vesapui5.dhcp.wdf.sap.corp:1080/</url>
+	
+
+	<!--**************************************************************************
+	* POM SECTION: Modules Settings
+	***************************************************************************-->
+
+	<modules>
+
+		<module>runtime/com.sap.ui5.resource</module>
+		<module>runtime/com.sap.ui5.utils</module>
+		<module>runtime/com.sap.ui5.core</module>
+		<module>runtime/com.sap.ui5.commons</module>
+		<module>runtime/com.sap.ui5.table</module>
+		<module>runtime/com.sap.ui5.ux3</module>
+		<module>runtime/com.sap.ui5.visualization</module>
+		<module>runtime/com.sap.ui5.richtexteditor</module>
+		<module>runtime/com.sap.ui5.themelib_sap_goldreflection</module>
+		<module>runtime/com.sap.ui5.themelib_sap_ux</module>
+
+		<module>runtime.osgi/com.sap.ui5.branding</module>
+		<module>runtime.osgi/com.sap.ui5.resource.osgi</module>
+		<module>runtime.osgi/com.sap.ui5.runtime.feature</module>
+		<module>runtime.osgi/com.sap.ui5.uilib.feature</module>
+		
+	</modules>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- By default we skip the JAR signing -->
+		<sapui5.jarsigner.skip>true</sapui5.jarsigner.skip>
+		
+	</properties>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<!-- artifactId-version is required for JAR signing -->
+		<finalName>${project.artifactId}-${project.version}</finalName>
+		
+		<pluginManagement>
+
+			<plugins>
+				<plugin>
+					<groupId>com.sap.prd.codesign</groupId>
+					<artifactId>com.sap.prd.codesign.maven-jarsigner-plugin</artifactId>
+					<version>1.0</version>
+					<configuration>
+						<certs>true</certs>
+						<verbose>true</verbose>
+						<keystore>http://nexus:8081/nexus/content/groups/build.releases/com/sap/ldi/signing/localSigningKeystore/1.0.0/localSigningKeystore-1.0.0.jks</keystore>
+						<alias>localSigning</alias>
+						<storepass>localSigningPassword</storepass>
+						<keypass>localSigningPassword</keypass>
+						<includeClassifiers>
+							<classifier>opt</classifier>
+						</includeClassifiers>
+						<skip>${sapui5.jarsigner.skip}</skip>
+					</configuration>
+					<executions>
+						<execution>
+							<id>sign</id>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>verify</id>
+							<goals>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>				
+				<plugin>
+					<groupId>com.sap.ui5.tools.build</groupId>
+					<artifactId>maven-coldwater-plugin</artifactId>
+					<version>1.6.0</version>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>optimize</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+			</plugins>
+
+		</pluginManagement>
+
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<!-- In the release build we do JAR signing! -->
+		<profile>
+			<id>release.build</id>
+			<activation>
+				<property>
+					<name>ldi.releaseBuild</name>
+				</property>
+			</activation>
+			<properties>
+				<sapui5.jarsigner.skip>false</sapui5.jarsigner.skip>
+			</properties>
+		</profile>
+		
+	</profiles>
+	
+	
+</project>
