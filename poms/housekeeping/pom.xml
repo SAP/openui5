@@ -472,7 +472,7 @@
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
-                  <version>${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>                
               </deployables>
@@ -582,10 +582,9 @@
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
-                  <version>${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
-                
               </deployables>
             </configuration>
           </plugin>
