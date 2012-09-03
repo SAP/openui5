@@ -396,10 +396,25 @@ public class Git2P4Main {
         if ( p4depotPath == null ) {
           throw new RuntimeException("p4depot path must be specifed before a UI5 repository root");
         }
+        if ( p4depotPath.contains("#") ) {
+          if ( branch == null ) {
+            throw new RuntimeException("branch must be specified before p4depot path is used");
+          }
+          p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
+          Log.println("resolved depot path: " + p4depotPath);
+        }
+        // automatically determine codeline from branch
         createUI5Mappings(new File(args[++i]), p4depotPath);
       } else if ( "--git-dir".equals(args[i]) ) {
         if ( p4depotPath == null ) {
           throw new RuntimeException("p4depot path must be specifed before a git repository root");
+        }
+        if ( p4depotPath.contains("#") ) {
+          if ( branch == null ) {
+            throw new RuntimeException("branch must be specified before p4depot path is used");
+          }
+          p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
+          Log.println("resolved depot path: " + p4depotPath);
         }
         mappings.clear();
         mappings.add(new Mapping(null, new File(args[++i]), p4depotPath, null, null));
@@ -452,12 +467,6 @@ public class Git2P4Main {
 
     Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
-
-    // automatically determine codeline from branch
-    if ( p4depotPath != null && branch != null && p4depotPath.contains("#") ) {
-      p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
-      Log.println("resolved depot path: " + p4depotPath);
-    }
 
     // clone & fetch repos
     for(Mapping repoMapping : mappings) {
