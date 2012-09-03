@@ -28,6 +28,7 @@ class P4Client {
   List<P4Client.Change> lastChanges;
   private P4Client.Diff lastDiff;
   List<P4Client.Chunk> lastDiffChunks;
+  private boolean loggedIn = false;
 
   P4Client(){
 
@@ -47,10 +48,12 @@ class P4Client {
       args.add("-u");
       args.add(user);
     }
+    /*
     if ( passwd != null ) {
       args.add("-P");
       args.add(passwd == null ? user : passwd);
     }
+     */
     if ( client != null ) {
       args.add("-c");
       args.add(client);
@@ -392,4 +395,18 @@ class P4Client {
     return execute("submit", "-c", change);
   }
 
+  boolean login() throws IOException {
+    if ( !loggedIn ) {
+      System.out.println("passwd:" + passwd);
+      loggedIn = executeWithInput(passwd, "login");
+    }
+    return loggedIn;
+  }
+
+  boolean logout() throws IOException {
+    if ( loggedIn ) {
+      loggedIn = !execute("logout");
+    }
+    return !loggedIn;
+  }
 }

@@ -361,6 +361,9 @@ public class Git2P4Main {
     String toVersion = null;
     String branch = null;
 
+    String[] argsForTrace = new String[args.length];
+    System.arraycopy(args, 0, argsForTrace, 0, args.length);
+
     for(int i=0; i<args.length; i++) {
       if ( "-h".equals(args[i]) || "--help".equals(args[i]) ) {
         usage(null);
@@ -377,7 +380,8 @@ public class Git2P4Main {
       } else if ( "-u".equals(args[i]) || "--p4-user".equals(args[i]) ) {
         p4.user = args[++i];
       } else if ( "-P".equals(args[i]) || "--p4-password".equals(args[i]) ) {
-        p4.passwd = args[i];
+        p4.passwd = args[++i];
+        argsForTrace[i] = "******";
       } else if ( "-C".equals(args[i]) || "--p4-client".equals(args[i]) ) {
         p4.client = args[++i];
       } else if ( "-c".equals(args[i]) || "--p4-change".equals(args[i]) ) {
@@ -446,7 +450,7 @@ public class Git2P4Main {
       }
     }
 
-    Log.println("args = " + Arrays.toString(args));
+    Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
 
     // clone & fetch repos
@@ -507,6 +511,8 @@ public class Git2P4Main {
     for(GitClient.Commit commit : allCommits) {
       Log.println((index++) + ": [" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
     }
+
+    p4.login();
 
     // autoresume
     if ( resumeAfter == null && autoResume ) {
