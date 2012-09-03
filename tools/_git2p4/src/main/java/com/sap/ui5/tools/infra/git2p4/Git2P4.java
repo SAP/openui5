@@ -388,10 +388,14 @@ public class Git2P4 {
 
       int c = 'y';
       if ( interactive ) {
-        System.out.println("P4 Change " + p4change + " prepared from Commit " + commit.getId() + ". Submit? (y/n):");
+        System.out.println("P4 Change " + p4change + " prepared from Commit " + commit.getId() + ". Submit? ([y]es/[n]o/[a]ll yes):");
         c = System.in.read();
         while ( System.in.available() > 0 ) {
           System.in.read();
+        }
+        if ( c == 'a' ) {
+          c = 'y';
+          interactive = false;
         }
       }
 

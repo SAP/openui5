@@ -397,7 +397,6 @@ class P4Client {
 
   boolean login() throws IOException {
     if ( !loggedIn ) {
-      System.out.println("passwd:" + passwd);
       loggedIn = executeWithInput(passwd, "login");
     }
     return loggedIn;

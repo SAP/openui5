@@ -453,6 +453,12 @@ public class Git2P4Main {
     Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
 
+    // automatically determine codeline from branch
+    if ( p4depotPath != null && branch != null && p4depotPath.contains("#") ) {
+      p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
+      Log.println("resolved depot path: " + p4depotPath);
+    }
+
     // clone & fetch repos
     for(Mapping repoMapping : mappings) {
       updateRepository(repoMapping);
@@ -540,14 +546,16 @@ public class Git2P4Main {
     }
 
     for(GitClient.Commit commit : allCommits) {
-      Log.println(commit.repository + " " + commit.getId() + " " + commit.getCommitDate());
+
       if ( resumeAfter != null ) {
         if ( resumeAfter.equals(commit.getId()) ) {
           resumeAfter = null;
         }
-        Log.println("skip");
+        Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " ... skip");
         continue;
       }
+      Log.println("[" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate() + " " + commit.getSummary());
+
       if ( template != null ) {
         String filename = template.replace("#", commit.getId());
         Log.setLogFile(new File(filename), true);
