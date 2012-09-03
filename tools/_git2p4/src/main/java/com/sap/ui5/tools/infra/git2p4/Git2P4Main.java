@@ -134,6 +134,75 @@ public class Git2P4Main {
     increaseVersions(fromVersion, toVersion, branch);
   }
 
+  static void patch(String fromVersion, String toVersion, String branch) throws IOException {
+    boolean guess = false;
+
+    if ( branch == null ) {
+      throw new RuntimeException("for patch command, a branch must be specified");
+    }
+    if ( fromVersion == null && toVersion == null ) {
+      fromVersion = findVersion(branch);
+      if ( fromVersion != null && fromVersion.endsWith("-SNAPSHOT") ) {
+        toVersion = fromVersion.substring(0, fromVersion.length() - "-SNAPSHOT".length());
+      }
+      guess = true;
+    }
+    if ( fromVersion == null || toVersion == null ) {
+      throw new RuntimeException("could not determine version info");
+    }
+    if ( guess ) {
+      Log.println("Please confirm the automatically determined parameters:");
+      Log.println("       branch: " + branch);
+      Log.println("  fromVersion: " + fromVersion);
+      Log.println("    toVersion: " + toVersion);
+      int c;
+      System.out.println("Parameters correct (y/n):");
+      c = System.in.read();
+      while ( System.in.available() > 0 ) {
+        System.in.read();
+      }
+      if ( c != 'y' ) {
+        throw new RuntimeException("operation aborted by user");
+      }
+    }
+    increaseVersions(fromVersion, toVersion, branch);
+  }
+
+  static void release(String fromVersion, String toVersion, String branch) throws IOException {
+    boolean guess = false;
+
+    if ( branch == null ) {
+      branch = "master";
+      guess = true;
+    }
+    if ( fromVersion == null && toVersion == null ) {
+      fromVersion = findVersion(branch);
+      if ( fromVersion != null && fromVersion.endsWith("-SNAPSHOT") ) {
+        toVersion = fromVersion.substring(0, fromVersion.length() - "-SNAPSHOT".length());
+      }
+      guess = true;
+    }
+    if ( fromVersion == null || toVersion == null ) {
+      throw new RuntimeException("could not determine version info");
+    }
+    if ( guess ) {
+      Log.println("Please confirm the automatically determined parameters:");
+      Log.println("       branch: " + branch);
+      Log.println("  fromVersion: " + fromVersion);
+      Log.println("    toVersion: " + toVersion);
+      int c;
+      System.out.println("Parameters correct (y/n):");
+      c = System.in.read();
+      while ( System.in.available() > 0 ) {
+        System.in.read();
+      }
+      if ( c != 'y' ) {
+        throw new RuntimeException("operation aborted by user");
+      }
+    }
+    increaseVersions(fromVersion, toVersion, branch);
+  }
+
   static void increaseVersions(String fromVersion, String toVersion, String branch) throws IOException {
     for(Mapping repo : mappings) {
       git.repository = repo.gitRepository;
@@ -241,20 +310,24 @@ public class Git2P4Main {
     System.out.println("Usage: Git2P4main cmd [options | -template <file> ] <commit-range>");
     System.out.println();
     System.out.println("Commands:");
+    System.out.println(" --list <commit-range> list commits to be transferred to Perforce");
     System.out.println(" --transfer             transfer commits from git to Perforce");
-    System.out.println(" --list                 list commits to be transferred to Perforce");
     System.out.println(" --version <from> <to> <branch> update the version infos in branch <branch> from <from> to <to>");
+    System.out.println(" --milestone            specialized variant of 'version' cmd, suitable for a milestone build");
+    System.out.println(" --patch                specialized variant of 'version' cmd, suitable for a patch build");
+    System.out.println(" --release              specialized variant of 'version' cmd, suitable for a release build");
+    System.out.println(" --split-logs           read and parse existing transfer log files and split them in separate logs, one per commit");
     System.out.println();
     System.out.println("Perforce options:");
     System.out.println(" -p, --p4-port          Perforce Host and Port (e.g. perforce1666:1666)");
     System.out.println(" -u, --p4-user          Perforce User (e.g. claus)");
     System.out.println(" -P, --p4-password      Perforce Password (e.g. *****)");
     System.out.println(" -C, --p4-client        Perforce Client Workspace (e.g. MYLAPTOP0815)");
-    System.out.println(" -d, --p4-dest-path     root path in Perforce depot (e.g. //depot/project/dev)");
+    System.out.println(" -d, --p4-dest-path     target root path in Perforce depot (e.g. //depot/project/dev)");
     System.out.println(" -c, --p4-change        an existing (pending) Perforce change list to be used for the first transport");
     System.out.println();
     System.out.println("Git/Mapping options:");
-    System.out.println(" --git-user             SSH id used for clone operations");
+    System.out.println(" --git-user             SSH id used for clone or push operations");
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
     System.out.println(" --git-dir              Git repository root");
     System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories");
@@ -265,11 +338,15 @@ public class Git2P4Main {
     System.out.println(" -opt, --optimize-diffs Remove 'scatter' in diffs (e.g. whitespace changes or RCS keyword expansion)");
     System.out.println(" -i, --interactive      ask user after each change has been prepared, but before it is submitted");
     System.out.println(" -s, --submit           ask user after each change has been prepared, but before it is submitted");
+    System.out.println(" --fromVersion          source version whose occurrences should be modified");
+    System.out.println(" --toVersion            target version that should replace the source version");
+    System.out.println(" --branch               Git branch to operate on");
     System.out.println();
     System.out.println("General options:");
-    System.out.println(" -h, --help             shows this help text");
-    System.out.println(" -v, --verbose          be more verbose");
-    System.out.println(" -l, --log-file         file path to write the log to");
+    System.out.println(" -h, --help                 shows this help text");
+    System.out.println(" -v, --verbose              be more verbose");
+    System.out.println(" -l, --log-file             file path to write the log to");
+    System.out.println(" -lt, --log-file-template   file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
     System.out.println();
 
     if ( errormsg != null ) {
@@ -352,6 +429,10 @@ public class Git2P4Main {
         mode = "version";
       } else if ( "--milestone".equals(args[i]) ) {
         mode = "milestone";
+      } else if ( "--patch".equals(args[i]) ) {
+        mode = "patch";
+      } else if ( "--release".equals(args[i]) ) {
+        mode = "release";
       } else if ( "--fromVersion".equals(args[i]) ) {
         fromVersion = args[++i];
       } else if ( "--toVersion".equals(args[i]) ) {
@@ -405,6 +486,14 @@ public class Git2P4Main {
       milestone(fromVersion, toVersion, branch);
       return;
     }
+    if ( "patch".equals(mode) ) {
+      patch(fromVersion, toVersion, branch);
+      return;
+    }
+    if ( "release".equals(mode) ) {
+      release(fromVersion, toVersion, branch);
+      return;
+    }
 
     if ( range == null || range.isEmpty() || !range.contains("..") ) {
       throw new RuntimeException("A valid commit range must be provided, e.g. 1.4..origin/master");
@@ -423,7 +512,7 @@ public class Git2P4Main {
     if ( resumeAfter == null && autoResume ) {
       // analyze the submitted changelists to find the last commitID
       String lastCommit = git2p4.findLastCommit(p4depotPath);
-      // if one is fonud check whether it exists in the current commits
+      // if one is found check whether it exists in the current commits
       if ( lastCommit != null ) {
         for(GitClient.Commit commit : allCommits) {
           if ( lastCommit.equals(commit.getId()) ) {
