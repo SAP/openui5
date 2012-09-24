@@ -160,6 +160,14 @@
 									<overWrite>false</overWrite>
 									<destFileName>demokit.war</destFileName>
 								</artifactItem>
+								<artifactItem>
+									<groupId>com.sap.ui5</groupId>
+									<artifactId>uilib-sample</artifactId>
+									<version>${sapui5.version}</version>
+									<type>war</type>
+									<overWrite>false</overWrite>
+									<destFileName>uilib-sample.war</destFileName>
+								</artifactItem>								
 							</artifactItems>
 							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
 							<includes>**</includes>
