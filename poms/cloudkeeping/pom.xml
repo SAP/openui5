@@ -56,7 +56,7 @@
 		<jpaas.appliance>sapui5test</jpaas.appliance>
 		<jpaas.component>sapui5test</jpaas.component>
 		<jpaas.url>ui5test</jpaas.url>
-		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war</jpaas.source>
+		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war,${project.build.directory}/deployables/uilib-sample.war</jpaas.source>
 		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
 		<jpaas.severity>info</jpaas.severity>
 		<jpaas.elasticity>1,1</jpaas.elasticity>
