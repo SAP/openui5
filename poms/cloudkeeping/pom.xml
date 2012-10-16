@@ -67,7 +67,7 @@
 		<jpaas.services></jpaas.services>
 	
 		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.7.2-SNAPSHOT</sapui5.version>
+		<sapui5.version>1.9.0-SNAPSHOT</sapui5.version>
 	
 		<!-- proxy configuration -->
 		<http.proxyHost>proxy</http.proxyHost>
