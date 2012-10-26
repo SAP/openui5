@@ -56,7 +56,7 @@
 		<jpaas.appliance>sapui5test</jpaas.appliance>
 		<jpaas.component>sapui5test</jpaas.component>
 		<jpaas.url>ui5test</jpaas.url>
-		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war,${project.build.directory}/deployables/uilib-sample.war</jpaas.source>
+		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war,${project.build.directory}/deployables/uilib-sample.war,${project.build.directory}/deployables/databinding.war</jpaas.source>
 		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
 		<jpaas.severity>info</jpaas.severity>
 		<jpaas.elasticity>1,1</jpaas.elasticity>
@@ -167,6 +167,14 @@
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>uilib-sample.war</destFileName>
+								</artifactItem>								
+								<artifactItem>
+									<groupId>com.sap.ui5</groupId>
+									<artifactId>databinding</artifactId>
+									<version>${sapui5.version}</version>
+									<type>war</type>
+									<overWrite>false</overWrite>
+									<destFileName>databinding.war</destFileName>
 								</artifactItem>								
 							</artifactItems>
 							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
