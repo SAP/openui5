@@ -169,7 +169,7 @@
 									<destFileName>uilib-sample.war</destFileName>
 								</artifactItem>								
 								<artifactItem>
-									<groupId>com.sap.ui5</groupId>
+									<groupId>com.sap.ui5.test</groupId>
 									<artifactId>databinding</artifactId>
 									<version>${sapui5.version}</version>
 									<type>war</type>
