@@ -49,10 +49,15 @@
     <!-- The version of this project is also the version of the UI5 dependencies -->
     <sap.ui5.version>1.9.0-SNAPSHOT</sap.ui5.version>
 
+	<!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
+	<tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
+	<tomcat.manager.url.v7>/manager/text</tomcat.manager.url.v7>
+	
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
     <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
     <tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
     <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
+	<tomcat.sandbox.manager.url>${tomcat.manager.url.v7}</tomcat.sandbox.manager.url>
 
     <!-- Sandbox Tomcat configuration for QTP tests -->
     <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>
@@ -92,7 +97,7 @@
           </execution>
         </executions>
         <configuration>
-          <remoteTomcatManagerUrl>${tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+          <remoteTomcatManagerUrl>${tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
           <remoteTomcatUsername>${tomcat.sandbox.usr}</remoteTomcatUsername>
           <remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
           <skipDeploy>true</skipDeploy>
@@ -407,7 +412,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
@@ -459,7 +464,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
@@ -569,7 +574,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}/manager</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
@@ -812,7 +817,8 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>http://localhost:8080/manager</remoteTomcatManagerUrl>
+			  <!-- TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
+              <remoteTomcatManagerUrl>http://localhost:8080/manager/text</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
