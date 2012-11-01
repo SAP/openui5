@@ -49,9 +49,9 @@
     <!-- The version of this project is also the version of the UI5 dependencies -->
     <sap.ui5.version>1.9.0-SNAPSHOT</sap.ui5.version>
 
-	<!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
-	<tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
-	<tomcat.manager.url.v7>/manager/text</tomcat.manager.url.v7>
+    <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
+    <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
+    <tomcat.manager.url.v7>/manager/text</tomcat.manager.url.v7>
 	
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
     <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
@@ -817,7 +817,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-			  <!-- TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
+			  <!- - TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
               <remoteTomcatManagerUrl>http://localhost:8080/manager/text</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
