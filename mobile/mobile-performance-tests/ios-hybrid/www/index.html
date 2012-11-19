@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+	<script type="text/javascript">
+		var t_pagestart = new Date().getTime();
+		var t_libloadstart;
+		var t_libloadend;
+		var t_appstart;
+		var t_datareqstart;
+		var t_datareqend;
+		var t_dataload;
+		var t_pageload;
+		var t_scriptend;
+	</script>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<title>Mobile EPM Demo</title>
+
+	<script>
+		t_libloadstart = new Date().getTime();	// for performance measurement
+	</script>
+	<script type="text/javascript" src="cordova-2.2.0.js"></script>
+	<script type="text/javascript" src="resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
+	<script type="text/javascript" src="resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
+	<script id="sap-ui-bootstrap"
+		data-sap-ui-preload="none"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_mvi"
+		src="resources/sap-ui-core-nojQuery.js"> // data-sap-ui-preload="sync">
+	</script>
+
+	<script>
+		$(function(){
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.start("demoapp", "The info");
+		});
+		document.addEventListener("deviceready", onDeviceReady, false);
+		t_libloadend = new Date().getTime();	// for performance measurement
+		t_appstart = new Date().getTime();	// for performance measurement
+
+		var app = new sap.m.App("DemoEPM");
+
+		// main page
+
+		var epmStartPage = new sap.m.Page("startPage", {
+			title : "List Overview",
+			footer : new sap.m.Bar({
+				contentMiddle : [ new sap.m.Label({
+					text : "Mobile EPM Demo"
+				}) ]
+			})
+		});
+
+		var Bar = new sap.m.Bar({ 
+			contentLeft: [],	
+			contentMiddle: [new sap.m.Label('BarTitle', {text: "Products"})],
+			contentRight: []
+		});
+		epmStartPage.setCustomHeader(Bar);
+
+		var handleSearch = function(evt) {
+			var searchString = evt.getParameter("query");
+			var binding = oListStandardNoImageNoHeader.getBinding("items");
+			if (searchString && (searchString.length > 0)) {
+				var filter = new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, searchString);
+				binding.filter([filter]);
+			} else {
+				binding.filter([]);
+			}
+		};
+
+		var Bar2 = new sap.m.Bar("subBar", {
+			contentLeft: [],	
+			contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "Search for...", layoutData: new sap.m.FlexItemData({growFactor: 1}), search: handleSearch})],
+			contentRight: []
+		});
+		epmStartPage.setSubHeader(Bar2);
+
+		var oListStandardNoImageNoHeader = new sap.m.List({
+			inset : false
+		});
+
+		itemTemplate = new sap.m.StandardListItem({
+			title : '{Name}',
+			tap: function(oEvent) {
+				detailPage.setBindingContext(oEvent.getSource().getBindingContext());
+				app.to("detailPage");
+				//jQuery.sap.history.addHistory("detailPage", {ctx: oEvent.getSource().getBindingContext()}, false);
+			},
+			type: "Navigation",
+			description: "{ProductID}",
+			customData: [
+							new sap.ui.core.CustomData({
+								key: "id",
+								value: "{ProductID}"
+							}),
+						]
+		});
+		oListStandardNoImageNoHeader.bindAggregation("items", {
+			path: "/ProductCollection",
+			template: itemTemplate
+		});
+
+		epmStartPage.addContent(oListStandardNoImageNoHeader);
+
+
+
+		// detail page
+
+		var listDetail1 = new sap.m.List({
+			headerText: "Product Information",
+			inset: false
+		});
+		var listDetail2 = new sap.m.List({
+			headerText: "Supplier Details",
+			inset: false
+		});
+		listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{ProductID}"     , label: "ID"     }));
+		listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{Name}" , label: "Name" }));
+		listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{Price/Amount}" , label: "Price" }));
+
+		listDetail2.bindContext("Supplier");
+		listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Name}"   , label: "Company"   }));
+		listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Street}"   , label: "Street"   }));
+		listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/City}"      , label: "City"      }));
+		listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Country}"   , label: "Country"   }));
+		listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Zip}", label: "Postal Code"}));
+
+		var detailPage = new sap.m.Page("detailPage", {
+			title : "Product Details",
+			showNavButton : true,
+			navButtonText : "Products",
+			navButtonTap : function() {
+				app.back();
+			},
+			content: [
+					listDetail1,
+					listDetail2
+				]
+		});
+
+
+
+		// data access
+
+		//var sServiceUrl = "/uilib-sample/proxy/http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/";
+		var sServiceUrl = "http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/proxy/http/ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
+        //var sServiceUrl = "http://ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
+		//var sServiceUrl = "http://www.apple.com";
+        var busyDialog = (busyDialog) ? busyDialog : new sap.m.BusyDialog('busyDialog',{text:'Loading Northwind Data', title: 'Loading'});
+
+		function onDeviceReady() {
+			jQuery.sap.log.info("#############loadData called############");
+			var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl, true, "anzeiger", "display");
+			oModel.setSizeLimit(20);
+			oModel.setCountSupported(false);
+			oModel.attachRequestFailed(function(evt) {
+                console.log(evt);
+                alert(evt.mParameters.responseText);
+				alert("Server error: " + evt.getParameter("message") + " - " + evt.getParameter("statusText"));
+				jQuery.sap.log.error("Server error: " + evt.getParameter("message") + " - " + evt.getParameter("statusText"));
+			});
+
+			jQuery.sap.log.debug(oModel);
+
+			// BusyDialog
+			oModel.attachRequestSent(function(){
+				t_datareqstart = new Date().getTime();	// for performance measurement
+
+				busyDialog.open();
+			});
+			oModel.attachRequestCompleted(function(){
+				t_datareqend = new Date().getTime();	// for performance measurement
+				t_dataload = t_datareqend - t_datareqstart;
+				BOOMR.plugins.RT.setTimer("t_dataload", t_dataload);
+
+				busyDialog.attachEvent("close", function(){
+					var t_busyclose = new Date().getTime();
+					t_pageload = t_busyclose - t_pagestart;
+					BOOMR.page_ready();	// Tell boomerang to measure time and fire a beacon
+				}, this);
+				busyDialog.close();
+			});
+			oCore = sap.ui.getCore().setModel(oModel);
+		}
+
+		app.addPage(epmStartPage).addPage(detailPage);
+		app.placeAt("content");
+
+
+		// history handling
+
+		jQuery.sap.require("jquery.sap.history");
+		jQuery.sap.history({
+			routes: [{
+				path: "detailPage",
+				handler: function(params, navType) {
+					if (navType === jQuery.sap.history.NavType.Back) app.back();
+						else {
+							detailPage.setBindingContext(params.ctx);
+							app.to("detailPage");
+						}
+					}
+			}],
+			defaultHandler: function(navType) {
+				(navType === jQuery.sap.history.NavType.Back) ?  app.back() : app.to("startPage");
+			}
+		});
+
+		var perfMeasurement = jQuery.sap.measure.end("demoapp");
+		console.log(perfMeasurement);
+		//jQuery.sap.log.info(perfMeasurement.duration);
+		//jQuery.sap.log.info(perfMeasurement.time);
+		t_scriptend = new Date().getTime();
+	</script>
+
+	<style>
+		
+		#subBar-BarPH {
+			width: 100% !important;
+		}}
+		#SFB1 {
+			width: 94%;
+		}
+
+	</style>
+	<script>
+		var t_headend = new Date().getTime();
+	</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="results"></div>
+		<div id="content"></div>
+
+		<script>
+			var t_boomerangstart = new Date().getTime();
+		</script>
+		<script src='resources/boomerang.opt.js'></script>
+
+		<script>
+			BOOMR.init({
+				beacon_url: 'http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/m/internal/performance/results.html',
+				autorun: false
+			});
+			var t_bodyend = new Date().getTime();
+			var t_boomerangload = t_bodyend - t_boomerangstart;
+
+			BOOMR.plugins.RT.setTimer("t_head", t_headend - t_pagestart).
+			setTimer("t_body", t_bodyend - t_headend).
+			setTimer("t_boomerangload", t_boomerangload);
+
+			BOOMR.subscribe('before_beacon', function(o) {
+				var html = "This page took <strong>" + o.t_done + "</strong> ms to start up (including data load). (boomerang.js)<br>";
+				html += "This page took <strong>" + (o.t_done - t_dataload) + "</strong> ms to start up (excluding data load). (boomerang.js)<br>";
+				//html += "The data took <strong>" + t_dataload + "</strong> ms to load. (boomerang.js)<br>";
+				html += "This page took <strong>" + (o.nt_load_end - o.nt_res_end) + "</strong> ms to load. (NavTiming)<br>";
+				//html += "(x) Request and response took <strong>" + (o.nt_res_end - o.nt_req_st) + "</strong> ms. (NavTiming)<br>";
+				//html += "(x) Fetch start to response end took <strong>" + (o.nt_res_end - o.nt_fet_st) + "</strong> ms. (NavTiming)<br>";
+				html += "This page took <strong>" + t_pageload + "</strong> ms to start up. (SAPUI5)<br>";
+				//html += "(x) Time until script end was <strong>" + (t_scriptend - t_pagestart) + "</strong> ms. (myself)<br>";
+				//html += "Other readings <strong>" + o.t_other + "</strong>. (boomerang.js)<br>";
+				document.getElementById('results').innerHTML = html;
+			});
+		</script>
+	</body>
+</html>
