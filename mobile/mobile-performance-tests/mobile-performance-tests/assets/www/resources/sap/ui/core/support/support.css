@@ -1,0 +1,362 @@
+/* ============================================= */
+/* CSS for support popup window                  */
+/* ============================================= */
+
+.sapUiSupportBody {
+	background-color: #F2F2F2;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	min-width: 700px;
+}
+
+.sapUiSupportHidden {
+	display: none;
+}
+
+.sapUiSupportHdr {
+	position: relative;
+	border-top: 5px solid #F0AB00;
+	background-color: #646464;
+	height: 30px;
+    margin: 0;
+}
+
+.sapUiSupportHdr > img {
+	position: absolute;
+	left: 10px;
+	height: 29px;
+}
+
+.sapUiSupportHdr > div {
+	color: #999999;
+	font-size: 18px;
+	font-weight: bold;
+	left: 105px;
+    position: absolute;
+    top: 5px;
+}
+
+.sapUiSupportPnl {
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+.sapUiSupportCntnt {
+	position: absolute;
+	top: 40px;
+	bottom: 0;
+	overflow: auto;
+	width: 100%;
+}
+
+.sapUiSupportPnlHdr {
+	margin-top: 0;
+	margin-bottom: 5px;
+	color: #444444;
+	border-bottom: 2px solid #007DC0;
+	height: 25px;
+	font-weight: bold;
+	font-size: 18px;
+	padding-left: 5px;
+	padding-right: 5px;
+	position: relative;
+}
+
+.sapUiSupportPnlHdrHdl {
+	border-color: #444444;
+    border-right: 1px solid #444444;
+    border-style: solid;
+    border-width: 3px 1px 1px;
+    cursor: pointer;
+    height: 7px;
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    width: 10px;
+}
+
+.sapUiSupportPnlHdrHdl.sapUiSupportPnlHdrHdlClosed {
+	border-width: 3px 0px 0px;
+	width: 12px;
+}
+
+.sapUiSupportPnlCntnt {
+	margin-bottom: 5px;
+}
+
+.sapUiSupportPnlCntntPad {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.sapUiSupportPlugin {
+	overflow: auto;
+	height: 200px;
+	position: relative;
+}
+
+.sapUiSupportLink,
+.sapUiSupportLink:active,
+.sapUiSupportLink:focus,
+.sapUiSupportLink:visited,
+.sapUiSupportLink:hover{
+	color: #0078BB;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.sapUiSupportLink:hover{
+	text-decoration: underline;
+}
+
+.sapUiSupportLink.sapUiSupportLinkDsbl,
+.sapUiSupportLink.sapUiSupportLinkDsbl:active,
+.sapUiSupportLink.sapUiSupportLinkDsbl:focus,
+.sapUiSupportLink.sapUiSupportLinkDsbl:visited,
+.sapUiSupportLink.sapUiSupportLinkDsbl:hover{
+	color: #999999;
+	text-decoration: underline;
+	cursor: default;
+}
+
+.sapUiSupportLabel {
+	font-weight: bold;
+}
+
+.sapUiSupportToolbar {
+	background-color: #F9F9F9;
+    height: 28px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.sapUiSupportTxtFld,
+.sapUiSupportBtn {
+	border: 1px solid #BFBFBF;
+	font-size: 14px;
+	height: 22px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapUiSupportTxtFld {
+	background-color: #FFFFFF;
+	padding: 1px;
+}
+
+.sapUiSupportTxtFld:hover,
+.sapUiSupportTxtFld:focus {
+	border-color: #007DC0;
+}
+
+.sapUiSupportBtn {
+	background-color: #E2E2E2;
+	border-color: #A3A3A3;
+	padding-bottom: 3px;
+}
+
+.sapUiSupportBtn:hover,
+.sapUiSupportBtn:focus {
+	color: #FFFFFF;
+	border-color: #00689E;
+	background-color: #007DC0;
+}
+
+.sapUiSupportToolbar > .sapUiSupportBtn,
+.sapUiSupportToolbar > .sapUiSupportTxtFld {
+	margin-top: 3px;
+	vertical-align: top;
+}
+
+.sapUiSupportToolbar > .sapUiSupportLink {
+	margin-top: 6px;
+	vertical-align: top;
+}
+
+.sapUiSupportToolbar > .sapUiSupportLabel {
+	position: relative;
+	top: 6px;
+	vertical-align: top;
+}
+
+
+/** Plugins **/
+
+
+#sapUiSupportTechInfo {
+	height: 350px;
+}
+
+#sapUiSupportTechInfo > table {
+	width: 100%;
+}
+
+#sapUiSupportTechInfo-tggleDbgSrc {
+	margin-left: 15px;
+}
+
+#sapUiSupportTechInfo-Refresh {
+	position: absolute;
+    right: 5px;
+}
+
+.sapUiSupportTechInfoBorder {
+	border: 1px solid #E2E2E2;
+}
+
+#sapUiSupportTrace,
+#sapUiSupportMessageTest {
+	overflow: hidden;
+}
+
+#sapUiSupportMessageTest > .sapUiSupportToolbar > button {
+	margin-left: 5px;
+}
+
+#sapUiSupportPerf .sapUiSupportPerfCntnt,
+#sapUiSupportTechInfo .sapUiSupportTechInfoCntnt,
+#sapUiSupportTrace .sapUiSupportTraceCntnt,
+#sapUiSupportMessageTest .sapUiSupportMessageCntnt {
+	overflow: auto;
+	position: absolute;
+	top: 33px;
+	left: 5px;
+	right: 5px;
+	bottom: 0;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryTime,
+#sapUiSupportTrace .sapUiSupportTraceEntryLevel {
+	font-weight: bold;
+	display: inline-block;
+	vertical-align: top;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryMessage {
+	display: inline-block;
+	vertical-align: top;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryLevel {
+	width: 70px;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntry {
+	border-bottom: 1px solid #BFBFBF;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryTime {
+	width: 100px;
+}
+
+#sapUiSupportTrace > .sapUiSupportToolbar > .sapUiSupportLabel {
+	margin-left: 10px;
+	font-weight: normal;
+}
+
+#sapUiSupportTrace > .sapUiSupportToolbar > select,
+#sapUiSupportTrace > .sapUiSupportToolbar > input {
+	margin-left: 5px;
+}
+
+#sapUiSupportControlTree {
+	height: 400px;	
+	overflow: hidden;
+}
+
+#sapUiSupportControlTreeArea,
+#sapUiSupportControlPropertiesArea {
+	height: 378px;
+	width: 48%;
+	border: 1px dotted black;
+	background-color: white;
+	padding: 5px;
+	overflow: auto;
+	float: left;
+}
+#sapUiSupportControlPropertiesArea {
+	float: right;
+}
+#sapUiSupportControlTreeArea ul,
+#sapUiSupportControlPropertiesArea ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#sapUiSupportControlTreeArea li,
+#sapUiSupportControlPropertiesArea li {
+	margin: 5px 0 5px 12px;
+	padding 0;
+	cursor: pointer;
+}
+#sapUiSupportControlTreeArea li span {
+	display: inline-block;
+	margin-left: 2px; 
+	padding: 5px; 
+	vertical-align: middle; 
+}
+#sapUiSupportControlTreeArea li img {
+	vertical-align: middle; 
+}
+#sapUiSupportControlTreeArea li.sapUiControlTreeLink span {
+	color: gray;
+	text-decoration: underline;
+} 
+
+#sapUiSupportControlTreeArea .sapUiSupportControlTreeSelected {
+	background-color: #007DC0;
+	color: white;
+} 
+
+#sapUiSupportControlPropertiesArea li span {
+	display: inline-block;
+	padding: 5px 0; 
+	vertical-align: top; 
+}
+.sapUiSupportControlProperties {
+	padding: 5px;
+}
+.sapUiSupportControlProperties table {
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+.sapUiSupportControlProperties tr {
+	height: 30px;
+}
+.sapUiSupportControlProperties tr:nth-child(even) {
+	background-color: #F9F9F9;
+}
+.sapUiSupportControlProperties td {
+	border: 1px solid #BFBFBF;
+}
+.sapUiSupportControlProperties td div {
+	padding: 0 5px;
+}
+.sapUiSupportControlProperties input[type="text"],
+.sapUiSupportControlProperties select {
+	width: 100%;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+#sapUiSupportPerf > .sapUiSupportToolbar > .sapUiSupportLabel {
+	font-weight: normal;
+}
+
+#sapUiSupportPerf > .sapUiSupportToolbar > button {
+	margin-right: 5px;
+}
+
+.sapUiSupportToolbar > input[type="checkbox"] {
+	margin-top: 7px;
+}
