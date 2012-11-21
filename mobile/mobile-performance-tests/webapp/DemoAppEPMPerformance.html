@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta charset="UTF-8">
+
+	<title>Mobile EPM Demo</title>
+
+	<script id='sap-ui-bootstrap'
+		src='../../../../../resources/sap-ui-core.js'
+		data-sap-ui-preload="none"
+		data-sap-ui-theme='sap_mvi'
+		data-sap-ui-libs='sap.m'>
+	</script>
+
+	<script>
+		if(!window.performance) {
+			document.write(unescape("%3Cscript src='js/boomerang.js' type='text/javascript'%3E%3C/script%3E"));
+			//BOOMR.plugins.RT.startTimer("t_done");	// Start measuring download time
+		}
+
+
+		(function() {
+			var app = new sap.m.App("DemoEPM");
+
+			// main page
+
+			var epmStartPage = new sap.m.Page("startPage", {
+				title : "List Overview",
+				footer : new sap.m.Bar({
+					contentMiddle : [ new sap.m.Label({
+						text : "Mobile EPM Demo"
+					}) ]
+				})
+			});
+
+			var Bar = new sap.m.Bar({ 
+				contentLeft: [],	
+				contentMiddle: [new sap.m.Label('BarTitle', {text: "Products"})],
+				contentRight: []
+			});
+			epmStartPage.setCustomHeader(Bar);
+
+			var handleSearch = function(evt) {
+				var searchString = evt.getParameter("query");
+				var binding = oListStandardNoImageNoHeader.getBinding("items");
+				if (searchString && (searchString.length > 0)) {
+					var filter = new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, searchString);
+					binding.filter([filter]);
+				} else {
+					binding.filter([]);
+				}
+			};
+
+			var Bar2 = new sap.m.Bar("subBar", {
+				contentLeft: [],	
+				contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "Search for...", layoutData: new sap.m.FlexItemData({growFactor: 1}), search: handleSearch})],
+				contentRight: []
+			});
+			epmStartPage.setSubHeader(Bar2);
+
+			var oListStandardNoImageNoHeader = new sap.m.List({
+				inset : false
+			});
+			itemTemplate = new sap.m.StandardListItem({
+				title : '{Name}',
+				tap: function(oEvent) {
+					detailPage.setBindingContext(oEvent.getSource().getBindingContext());
+					app.to("detailPage");
+					//jQuery.sap.history.addHistory("detailPage", {ctx: oEvent.getSource().getBindingContext()}, false);
+				},
+				type: "Navigation",
+				description: "{ProductID}",
+				customData: [
+								new sap.ui.core.CustomData({
+									key: "id",
+									value: "{ProductID}"
+								}),
+							]
+			});
+			oListStandardNoImageNoHeader.bindAggregation("items", {
+				path: "/ProductCollection",
+				template: itemTemplate
+			});
+
+			epmStartPage.addContent(oListStandardNoImageNoHeader);
+
+
+
+			// detail page
+
+			var listDetail1 = new sap.m.List({
+				headerText: "Product Information",
+				inset: false
+			});
+			var listDetail2 = new sap.m.List({
+				headerText: "Supplier Details",
+				inset: false
+			});
+			listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{ProductID}"     , label: "ID"     }));
+			listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{Name}" , label: "Name" }));
+			listDetail1.addItem(new sap.m.DisplayListItem(	{ value: "{Price/Amount}" , label: "Price" }));
+
+			listDetail2.bindContext("Supplier");
+			listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Name}"   , label: "Company"   }));
+			listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Street}"   , label: "Street"   }));
+			listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/City}"      , label: "City"      }));
+			listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Country}"   , label: "Country"   }));
+			listDetail2.addItem(new sap.m.DisplayListItem(	{ value: "{Address/Zip}", label: "Postal Code"}));
+
+			var detailPage = new sap.m.Page("detailPage", {
+				title : "Product Details",
+				showNavButton : true,
+				navButtonText : "Products",
+				navButtonTap : function() {
+					app.back();
+				},
+				content: [
+						listDetail1,
+						listDetail2
+					]
+			});
+
+
+
+			// data access
+
+			//var sServiceUrl = "/uilib-sample/proxy/http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/";
+			var sServiceUrl = "/uilib-sample/proxy/http/ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
+			var busyDialog = (busyDialog) ? busyDialog : new sap.m.BusyDialog('busyDialog',{text:'Loading Northwind Data', title: 'Loading'});
+			$(function(){
+				var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl, true, "anzeiger", "display");
+				oModel.setSizeLimit(20);
+				oModel.attachRequestFailed(function(evt) {
+					alert("Server error: " + evt.getParameter("message") + " - " + evt.getParameter("statusText"));
+				});
+
+				jQuery.sap.log.debug(oModel);
+				// BusyDialog
+				oModel.attachRequestSent(function(){busyDialog.open();});
+				oModel.attachRequestCompleted(function(){busyDialog.close();});
+				oCore = sap.ui.getCore().setModel(oModel);
+			});
+
+
+			app.addPage(epmStartPage).addPage(detailPage);
+			app.placeAt("content");
+
+
+			// history handling
+
+			jQuery.sap.require("jquery.sap.history");
+			jQuery.sap.history({
+				routes: [{
+					path: "detailPage",
+					handler: function(params, navType) {
+						if (navType === jQuery.sap.history.NavType.Back) app.back();
+							else {
+								detailPage.setBindingContext(params.ctx);
+								app.to("detailPage");
+							}
+						}
+				}],
+				defaultHandler: function(navType) {
+					(navType === jQuery.sap.history.NavType.Back) ?  app.back() : app.to("startPage");
+				}
+			});
+		})();
+	</script>
+
+	<style>
+		
+		#subBar-BarPH {
+			width: 100% !important;
+		}}
+		#SFB1 {
+			width: 94%;
+		}
+
+	</style>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="results"></div>
+		<div id="content"></div>
+
+		<script type="text/javascript">
+			if(!window.performance && BOOMR !== undefined) {
+				BOOMR.init({
+					beacon_url: 'http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/m/internal/performance/results.html'
+				});
+				BOOMR.subscribe('before_beacon', function(o) {
+					BOOMR.plugins.RT.done();	// Tell boomerang to measure time and fire a beacon
+					if(o.t_done) {
+						var html = "This page took <strong>" + o.t_done + "</strong> ms to load. (boomerang.js)<br>";
+						document.getElementById('results').innerHTML = html;
+					}
+				});
+			}
+
+			function onLoad() {
+				if(window.performance) {
+					var perf = window.performance.timing;
+					//var loadEnd = perf.loadEventEnd;
+					//var loadTime = '';
+
+					// local output
+					var html = "This page took <strong>" + (perf.loadEventEnd - perf.responseEnd) + "</strong> ms to load. (windows.performance.timing)<br>";
+					document.getElementById('results').innerHTML = html;
+
+					// server output
+					//setTimeout(sendData, 200);
+					function sendData() {
+						var data = JSON.stringify(window.performance.timing);
+						//var data = encodeURIComponent
+						jQuery.ajax({
+							url: 'http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/m/internal/performance/results.html',
+							type:"GET",
+							dataType: 'json',
+							data: data,
+						});
+					}
+				}
+			}
+
+			$(function(){
+				setTimeout(onLoad, 2000);
+			});
+		</script>
+	</body>
+</html>
