@@ -1,0 +1,72 @@
+[
+	{
+		"title" : "jQuery, QUnit, jQueryUI",
+		"homepage" : "http://jquery.org",
+		"licenseUrl" : "http://jQuery.org/license",
+		"licenseType" : "MIT License",
+		"licenseFile" : "jQuery-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "jQuery Mobile",
+		"homepage" : "http://jquerymobile.com",
+		"licenseUrl" : "http://jQuery.org/license",
+		"licenseType" : "MIT License",
+		"licenseFile" : "jQuery-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "cubiq.org - iscroll",
+		"homepage" : "http://cubiq.org/iscroll-4",
+		"licenseUrl" : "http://cubiq.org/license",
+		"licenseType" : "MIT License",
+		"licenseFile" : "iscroll-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "cubiq.org - swipeview",
+		"homepage" : "http://cubiq.org/swipeview",
+		"licenseUrl" : "http://cubiq.org/license",
+		"licenseType" : "MIT License",
+		"licenseFile" : "swipeview-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "Zynga Scroller",
+		"homepage" : "http://zynga.github.com/scroller/",
+		"licenseUrl" : "https://raw.github.com/zynga/scroller/master/MIT-LICENSE.txt",
+		"licenseType" : "MIT License",
+		"licenseFile" : "zyngascroll-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "LESS",
+		"homepage" : "http://lesscss.org/",
+		"licenseUrl" : "https://raw.github.com/cloudhead/less.js/master/LICENSE",
+		"licenseType" : "Apache License Version 2.0",
+		"licenseFile" : "LESS-Apache-LICENSE.txt"
+	},
+	{
+		"title" : "DataJS",
+		"homepage" : "http://datajs.codeplex.com/",
+		"licenseUrl" : "http://datajs.codeplex.com/license",
+		"licenseType" : "MIT License",
+		"licenseFile" : "DataJS-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "D3",
+		"homepage" : "http://d3js.org/",
+		"licenseUrl" : "https://raw.github.com/mbostock/d3/master/LICENSE",
+		"licenseType" : "BSD License",
+		"licenseFile" : "D3-BSD-LICENSE.txt"
+	},
+	{
+		"title" : "JSZip",
+		"homepage" : "http://stuartk.com/jszip/",
+		"licenseUrl" : "https://raw.github.com/Stuk/jszip/master/docs/MIT.txt",
+		"licenseType" : "MIT License",
+		"licenseFile" : "JSZip-MIT-LICENSE.txt"
+	},
+	{
+		"title" : "Google-Caja JS HTML Sanitizer",
+		"homepage" : "http://code.google.com/p/google-caja/wiki/JsHtmlSanitizer",
+		"licenseUrl" : "http://www.apache.org/licenses/LICENSE-2.0",
+		"licenseType" : "Apache License Version 2.0",
+		"licenseFile" : "Caja-Apache-LICENSE.txt"
+	}	
+]
