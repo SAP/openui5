@@ -230,16 +230,8 @@ public class MyReleaseButton {
   /**
    * @param args
    */
-  public static void main(String[] args) throws IOException {
-    if (args.length < 3) {
-      throw new RuntimeException(
-          "usage: <root-dir> <from-version> <to-version>");
-    }
-
-    File root = new File(args[0]).getCanonicalFile();
-    String oldVersion = args[1];
-    String newVersion = args[2];
-
+  public static int updateVersion(File repository, String oldVersion, String newVersion) throws IOException {
+    File root = repository.getCanonicalFile();
     if (!root.isDirectory()) {
       throw new RuntimeException(
           "root dir must be specified and must be an existing directory");
@@ -309,11 +301,12 @@ public class MyReleaseButton {
     System.out.println("Scanning directory \"" + root + "\"");
     scan(root, "");
 
+    int diffdiffs = -1; // UNKNOWN
     Properties prop = new Properties();
     File lastVersionToolResultsFile = new File(root, ".version-tool.xml");
     if ( lastVersionToolResultsFile.canRead() ) {
       System.out.println("Comparing diff summary against results from last run");
-      int diffdiffs = 0;
+      diffdiffs = 0;
       prop.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
       // now compare with current results
       for(Map.Entry<String,Integer> entry : diffs.entrySet()) {
@@ -340,6 +333,16 @@ public class MyReleaseButton {
     }
     prop.storeToXML(new FileOutputStream(lastVersionToolResultsFile), "Last Version-Tool Changes");
     System.out.println("Diff summary saved");
+
+    return diffdiffs;
   }
 
+  public static void main(String[] args) throws IOException {
+    if (args.length < 3) {
+      throw new RuntimeException(
+          "usage: <root-dir> <from-version> <to-version>");
+    }
+
+    updateVersion(new File(args[0]), args[1], args[2]);
+  }
 }

@@ -209,7 +209,7 @@ public class Git2P4Main {
 
       git.checkout("origin/" + branch);
 
-      MyReleaseButton.main(new String[] { repo.gitRepository.getPath(), fromVersion, toVersion});
+      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion);
 
       git.addAll();
 
@@ -229,8 +229,8 @@ public class Git2P4Main {
       git.log(1);
 
       int c = 'y';
-      if ( git2p4.interactive ) {
-        System.out.println("Git commit prepared for version change. Push to gerrit? (y/n):");
+      if ( git2p4.interactive || diffs != 0 ) {
+        System.out.println("Git commit prepared for version change (" + diffs + " diffs compared to last run). Push to gerrit? (y/n):");
         c = System.in.read();
         while ( System.in.available() > 0 ) {
           System.in.read();
