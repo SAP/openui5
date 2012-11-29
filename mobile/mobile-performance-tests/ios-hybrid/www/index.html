@@ -40,7 +40,7 @@
 		t_libloadend = new Date().getTime();	// for performance measurement
 		t_appstart = new Date().getTime();	// for performance measurement
 
-		var app = new sap.m.App("DemoEPM");
+		var app = new sap.m.App("EPM Performance");
 
 		// main page
 
@@ -48,7 +48,7 @@
 			title : "List Overview",
 			footer : new sap.m.Bar({
 				contentMiddle : [ new sap.m.Label({
-					text : "Mobile EPM Demo"
+					text : "EPM Performance"
 				}) ]
 			})
 		});
@@ -146,9 +146,8 @@
 		// data access
 
 		//var sServiceUrl = "/uilib-sample/proxy/http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/";
-		var sServiceUrl = "http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/proxy/http/ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
-        //var sServiceUrl = "http://ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
-		//var sServiceUrl = "http://www.apple.com";
+		var sServiceUrl = "http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/proxy/http/ldcibap.wdf.sap.corp:51500/sap/bc/sepm_odata/purchase/";
+
         var busyDialog = (busyDialog) ? busyDialog : new sap.m.BusyDialog('busyDialog',{text:'Loading Northwind Data', title: 'Loading'});
 
 		function onDeviceReady() {
@@ -158,7 +157,7 @@
 			oModel.setCountSupported(false);
 			oModel.attachRequestFailed(function(evt) {
                 console.log(evt);
-                alert(evt.mParameters.responseText);
+                //alert(evt.mParameters.responseText);
 				alert("Server error: " + evt.getParameter("message") + " - " + evt.getParameter("statusText"));
 				jQuery.sap.log.error("Server error: " + evt.getParameter("message") + " - " + evt.getParameter("statusText"));
 			});
@@ -241,7 +240,7 @@
 
 		<script>
 			BOOMR.init({
-				beacon_url: 'http://wdfn00291071a.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/m/internal/performance/results.html',
+				beacon_url: 'http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/test-resources/sap/m/internal/performanceresults.html',
 				autorun: false
 			});
 			var t_bodyend = new Date().getTime();

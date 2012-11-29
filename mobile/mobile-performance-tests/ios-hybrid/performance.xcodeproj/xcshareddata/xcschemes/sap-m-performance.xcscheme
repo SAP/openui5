@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-               BuildableName = "sap-m-performance.app"
+               BuildableName = "sap.m Performance.app"
                BlueprintName = "performance"
                ReferencedContainer = "container:performance.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "sap-m-performance.app"
+            BuildableName = "sap.m Performance.app"
             BlueprintName = "performance"
             ReferencedContainer = "container:performance.xcodeproj">
          </BuildableReference>
@@ -52,7 +52,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "sap-m-performance.app"
+            BuildableName = "sap.m Performance.app"
             BlueprintName = "performance"
             ReferencedContainer = "container:performance.xcodeproj">
          </BuildableReference>
@@ -70,7 +70,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1D6058900D05DD3D006BFB54"
-            BuildableName = "sap-m-performance.app"
+            BuildableName = "sap.m Performance.app"
             BlueprintName = "performance"
             ReferencedContainer = "container:performance.xcodeproj">
          </BuildableReference>
