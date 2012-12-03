@@ -1,0 +1,9 @@
+K 10
+svn:ignore
+V 51
+*.pbxuser
+*.mode1v3
+xcuserdata
+project.xcworkspace
+
+END
