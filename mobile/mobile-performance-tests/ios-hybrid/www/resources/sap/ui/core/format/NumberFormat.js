@@ -241,28 +241,32 @@ sap.ui.core.format.NumberFormat.prototype.format = function(oValue) {
  * @public
  */
 sap.ui.core.format.NumberFormat.prototype.parse = function(sValue) {
-	// Remove all characters but numbers and decimal separator, then use parseInt/parseFloat
 	var oOptions = this.oFormatOptions,
 		sRegExpFloat = "^\\s*([+-]?(?:[0-9\\" + oOptions.groupingSeparator + "]+|[0-9\\" + oOptions.groupingSeparator + "]*\\" + oOptions.decimalSeparator + "[0-9]+)([eE][+-][0-9]+)?)\\s*$",
 		sRegExpInt = "^\\s*([+-]?[0-9\\" + oOptions.groupingSeparator + "]+)\\s*$",
-		match, oRegExp,
+		oGroupingRegExp = new RegExp("\\" + oOptions.groupingSeparator, "g"),
+		oDecimalRegExp = new RegExp("\\" + oOptions.decimalSeparator, "g"),
+		oRegExp,
 		oResult = 0;
 	
+	// Check for valid syntax
 	if (oOptions.isInteger) {
 		oRegExp = new RegExp(sRegExpInt);
 	} else {
 		oRegExp = new RegExp(sRegExpFloat);
 	}
-	match = oRegExp.exec(sValue);
-	if (!match) {
+	if (!oRegExp.test(sValue)) {
 		return NaN;
 	}
-	sValue = match[1].replace(oOptions.groupingSeparator, "");
+	
+	// Remove grouping separator and replace locale dependant decimal separator, 
+	// before calling parseInt/parseFloat
+	sValue = sValue.replace(oGroupingRegExp, "");
 	if (oOptions.isInteger) {
 		oResult = parseInt(sValue, 10);
 	}
 	else {
-		sValue = sValue.replace(oOptions.decimalSeparator, ".");
+		sValue = sValue.replace(oDecimalRegExp, ".");
 		oResult = parseFloat(sValue);
 	}
 	return oResult;

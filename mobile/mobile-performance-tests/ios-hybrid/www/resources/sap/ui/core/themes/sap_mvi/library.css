@@ -127,6 +127,87 @@ html[data-sap-ui-os^='Android3'] .sap-android > .sapUiBody {
 .sap-winphone > .sapUiBody {
   font-family: Tahoma,Arial;
 }
+/*
+	CSS classes shared by BusyDialog and Dialg with type "Message" 
+*/
+.sap-ios {
+  /*.sapMDialogBLyShown {
+		opacity: 1;
+	}*/
+
+}
+.sap-ios .sapMDialog.sapMCommonDialog,
+.sap-ios .sapMBusyDialog.sapMCommonDialog {
+  width: 18em;
+  border-radius: 0.625em;
+  background-image: -webkit-linear-gradient(top, rgba(79, 79, 79, 0.65) 0, rgba(23, 23, 23, 0.8) 22px, rgba(0, 0, 0, 0.85) 22px);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background-clip: padding-box;
+  box-sizing: border-box;
+  text-align: center;
+  color: #ffffff;
+  padding: 0.4375em;
+  box-shadow: 0 0.0625em 0 rgba(0, 0, 0, 0.1), 0.0625em 0 0 rgba(0, 0, 0, 0.1), 0 -0.0625em 0 rgba(0, 0, 0, 0.1), -0.0625em 0 0 rgba(0, 0, 0, 0.1), 0 0.1865em 0.375em rgba(0, 0, 0, 0.5);
+  text-shadow: 0 -0.0625em #000000;
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-iteration-count: 1;
+}
+.sap-ios .sapMDialogBLyInit {
+  /*opacity: 0;*/
+
+  opacity: 1;
+  background-color: transparent;
+  background-image: -webkit-radial-gradient(center, circle, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.3) 30%, rgba(0, 0, 0, 0.5) 60%, rgba(0, 0, 0, 0.6) 100%);
+  /*-webkit-transition: opacity 300ms linear;*/
+
+}
+.sap-ios .sapMDialogTitle {
+  font-size: 1.4em;
+  line-height: 0.625em;
+  color: #f0ab00;
+  margin-top: .5em;
+  font-weight: bold;
+}
+.sap-ios .sapMCommonDialog button.sapMDialogBtn,
+.sap-ios .sapMActionSheetDialog.sapMDialogIPhone button.sapMActionSheetCancelButton {
+  width: 100%;
+  height: 44px;
+  font-size: 1em;
+  border-radius: 0.3125em;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 -0.0625em 0 #000000;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  box-shadow: inset 0 0.0625em 0 #000000, inset 0 -0.0625em 0 #262626, inset 0 -0.125em 0 #000000;
+  border: none;
+  background-color: transparent;
+  background-image: -webkit-linear-gradient(top, rgba(153, 153, 153, 0.55) 0%, rgba(48, 48, 48, 0.6) 50%, rgba(48, 48, 48, 0.6) 50%, rgba(64, 64, 64, 0.6) 100%);
+}
+.sap-ios .sapMCommonDialog button.sapMDialogBtn:active,
+.sap-ios .sapMActionSheetDialog.sapMDialogIPhone button.sapMActionSheetCancelButton:active {
+  background-image: -webkit-linear-gradient(top, rgba(153, 153, 153, 0.55) 0%, rgba(48, 48, 48, 0.1) 50%, rgba(48, 48, 48, 0.1) 50%, rgba(64, 64, 64, 0.5) 100%);
+}
+@-webkit-keyframes sapMDialogBounce {
+  0% {
+    -webkit-transform: scale3d(0.8, 0.8, 1);
+    transform: scale3d(0.8, 0.8, 1);
+  }
+  55% {
+    -webkit-transform: scale3d(1.08, 1.08, 1);
+    transform: scale3d(1.08, 1.08, 1);
+  }
+  75% {
+    -webkit-transform: scale3d(0.9, 0.9, 1);
+    transform: scale3d(0.9, 0.9, 1);
+  }
+  100% {
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
 /* TODO replace the font with the correct font size for checkbox and radioButton */
 /* @font-face { */
 /* 	font-family: 'ios-icons'; */

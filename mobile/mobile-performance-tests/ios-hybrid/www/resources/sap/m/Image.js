@@ -59,13 +59,13 @@ jQuery.sap.require("sap.ui.core.Control");
  * @class
  * A wrapper around the IMG tag. The image can be loaded from a remote or local server.
  * 
- * Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
+ * Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided. The valid desity values are 1, 1.5, 2. If the original devicePixelRatio isn't one of the three valid numbers, it's rounded up to the nearest one.
  * 
  * There are various size setting options available, and the images can be combined with actions.
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -406,15 +406,25 @@ sap.m.Image.M_EVENTS = {'tap':'tap'};
  */
 
 // Start of sap\m\Image.js
-/**
- * This function returns the pixel density ratio of the device, if it's not defined then it returns 1 by default.
- * @returns the pixel density of your device.
- * @private
- */
-sap.m.Image.prototype.getDevicePixelRatio = function(){
+sap.m.Image._currentDevicePixelRatio = (function(){
 	// if devicePixelRatio property is not available, value 1 is assumed by default.
-	return window.devicePixelRatio === undefined ? 1 : window.devicePixelRatio;
-};
+	var ratio = (window.devicePixelRatio === undefined ? 1 : window.devicePixelRatio);
+	
+	//for ratio in our library, only 1 1.5 2 are valid
+	if(ratio <= 1){
+		ratio = 1;
+	}else{
+	//round it to the nearest valid value
+		ratio *= 2;
+		ratio = Math.round(ratio);
+		ratio /= 2;
+	}
+	
+	if(ratio > 2){
+		ratio = 2;
+	}
+	return ratio;
+}());
 
 /**
  * Function is called when image is loaded successfully.
@@ -456,7 +466,7 @@ sap.m.Image.prototype.onerror = function(oEvent){
 	
 	var $domNode = this.$(), 
 		sCurrentSrc = $domNode.attr("src"),
-		d = this.getDevicePixelRatio();
+		d = sap.m.Image._currentDevicePixelRatio;
 
 	$domNode.addClass("sapMNoImg");
 	
@@ -468,17 +478,17 @@ sap.m.Image.prototype.onerror = function(oEvent){
 	if(d === 2 || d < 1){
 		//load the default image
 		this._iLoadImageDensity = 1;
-		$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 1));
+		$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 	}else if(d === 1.5){
 		if(this._bVersion2Tried){
 			//if version 2 isn't on the server, load the default image
 			this._iLoadImageDensity = 1;
-			$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 1));
+			$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 1));
 		}else{
 			//special treatment for density 1.5
 			//verify if the version for density 2 is provided or not
 			this._iLoadImageDensity = 2;
-			$domNode.attr("src", this._generateSrcByDensity(sCurrentSrc, 2));
+			$domNode.attr("src", this._generateSrcByDensity(this._isActiveState ? this.getActiveSrc() : this.getSrc(), 2));
 			this._bVersion2Tried = true;
 		}
 	}
@@ -533,6 +543,7 @@ sap.m.Image.prototype.ontouchstart = function(oEvent){
 		if((oEvent.targetTouches && oEvent.targetTouches.length === 1) || !oEvent.targetTouches){
 			this.$().attr("src", this._getDensityAwareActiveSrc());
 
+			this._isActiveState = true;
 			if(!this._touchEndProxy){
 				this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
 			}
@@ -565,6 +576,7 @@ sap.m.Image.prototype.ontouchstart = function(oEvent){
 sap.m.Image.prototype._ontouchend = function(oEvent){
 	//change the source back only when all fingers leave the image
 	if((oEvent.targetTouches && oEvent.targetTouches.length === 0) || !oEvent.targetTouches){
+		this._isActiveState = false;
 		this.$().attr("src", this._getDensityAwareSrc()).removeClass("sapMNoImg");
 		if(jQuery.sap.touchEventMode !== "ON"){
 			jQuery(window.document).unbind("vmouseup", this._touchEndProxy);
@@ -583,6 +595,7 @@ sap.m.Image.prototype.setSrc = function(sSrc){
 		return;
 	}
 	this.setProperty("src", sSrc, true);
+	
 	var oDomRef = this.getDomRef();
 	if(oDomRef){
 		this.$().attr("src", this._getDensityAwareSrc());
@@ -627,7 +640,7 @@ sap.m.Image.prototype._isWidthOrHeightSet = function(){
  * @private
  */
 sap.m.Image.prototype._getDensityAwareSrc = function(){
-	var d = this.getDevicePixelRatio(),
+	var d = sap.m.Image._currentDevicePixelRatio,
 		sSrc = this.getSrc();
 	
 	//this property is used for resizing the higher resolution image when image is loaded.
@@ -646,7 +659,7 @@ sap.m.Image.prototype._getDensityAwareSrc = function(){
  * @private
  */
 sap.m.Image.prototype._getDensityAwareActiveSrc = function(){
-	var d = this.getDevicePixelRatio(),
+	var d = sap.m.Image._currentDevicePixelRatio,
 		sActiveSrc = this.getActiveSrc();
 	
 	//this property is used for resizing the higher resolution image when image is loaded.
@@ -665,15 +678,21 @@ sap.m.Image.prototype._getDensityAwareActiveSrc = function(){
  * It returns the density aware version of the src property.
  * @private
  */
-sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
+sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){	
 	if(!sSrc){
 		return "";
+	}
+	
+	// if src is in data uri format, disable the density handling
+	if(this._isDataUri(sSrc)){
+		this._iLoadImageDensity = 1;
+		return sSrc;
 	}
 
 	var iPos = sSrc.lastIndexOf("."),
 		sName = sSrc.substring(0, iPos),
-		sExtension = sSrc.substring(iPos),
-		iAtPos = sName.lastIndexOf("@");
+		sExtension = sSrc.substring(iPos);
+//		iAtPos = sName.lastIndexOf("@");
 	
 	//if there's no extension
 	if(iPos == -1){
@@ -681,9 +700,10 @@ sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
 	}
 	
 	//remove the existing density information
-	if(iAtPos !== -1 && sName.length - iAtPos < 6){//@2 @1.5 @0.75 only these three cases, if the image itself has a @, these are the only checks we can do.
-		sName = sName.substring(0, iAtPos);
-	}
+	//this is disabled because the orignal src or activeSrc is used
+//	if(iAtPos !== -1 && sName.length - iAtPos < 6){//@2 @1.5 @0.75 only these three cases, if the image itself has a @, these are the only checks we can do.
+//		sName = sName.substring(0, iAtPos);
+//	}
 	
 	if(iDensity === 1){
 		return sName + sExtension;
@@ -691,4 +711,13 @@ sap.m.Image.prototype._generateSrcByDensity = function(sSrc, iDensity){
 
 	sName = sName + "@" + iDensity;
 	return sName + sExtension;
+};
+
+
+sap.m.Image.prototype._isDataUri = function(src){
+	if(src){
+		return src.indexOf("data:") === 0;
+	}else{
+		return false;
+	}
 };

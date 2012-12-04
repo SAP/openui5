@@ -11,7 +11,7 @@ jQuery.sap.declare("sap.ui.core.Renderer");
  * @class Base Class for Renderer.
  *
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */

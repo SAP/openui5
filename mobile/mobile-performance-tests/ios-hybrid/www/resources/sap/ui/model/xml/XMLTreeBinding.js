@@ -15,25 +15,20 @@ jQuery.sap.require("sap.ui.model.TreeBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.xml.XMLTreeBinding
+ * @extends sap.ui.model.TreeBinding
  */
-sap.ui.model.xml.XMLTreeBinding = function(oModel, sPath, oContext){
-	sap.ui.model.TreeBinding.apply(this, arguments);
-	if (!this.oContext) {
-		this.oContext = "";
+sap.ui.model.TreeBinding.extend("sap.ui.model.xml.XMLTreeBinding", /** @lends sap.ui.model.xml.XMLTreeBinding */ { 
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.TreeBinding.apply(this, arguments);
+		if (!this.oContext) {
+			this.oContext = "";
+		}
+		this.filterInfo = {};
+		this.filterInfo.aFilteredContexts = [];
+		this.filterInfo.oParentContext = {};
 	}
-	this.filterInfo = {};
-	this.filterInfo.aFilteredContexts = [];
-	this.filterInfo.oParentContext = {};
-};
-sap.ui.model.xml.XMLTreeBinding.prototype = jQuery.sap.newObject(sap.ui.model.TreeBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLTreeBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.TreeBinding",
-  publicMethods : [
-	// methods
-  ]
 
 });
 

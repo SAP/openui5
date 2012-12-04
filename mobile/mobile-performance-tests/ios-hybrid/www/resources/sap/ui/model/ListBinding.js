@@ -22,28 +22,44 @@ jQuery.sap.require("sap.ui.model.Filter");
  * @param {Object} oContext
  * @abstract
  * @public
+ * @name sap.ui.model.ListBinding
  */
-sap.ui.model.ListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
-	sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
-	this.oSorter = oSorter;
-	this.aFilters = aFilters;
-};
-sap.ui.model.ListBinding.prototype = jQuery.sap.newObject(sap.ui.model.Binding.prototype);
+sap.ui.model.Binding.extend("sap.ui.model.ListBinding", /** @lends sap.ui.model.ListBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
+		sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
+		this.oSorter = oSorter;
+		this.aFilters = aFilters;
+	},
+	
+  metadata : {
+		"abstract" : true,
 
-/*
- * Describe the sap.ui.model.ListBinding.
- * Resulting metadata can be obtained via sap.ui.model.ListBinding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.ListBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Binding",
-  publicMethods : [
-	// methods
-	"getContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues"
-  ]
-
+		publicMethods : [
+		  // methods
+		  "getContexts", "sort", "attachSort", "detachSort", "filter", "attachFilter", "detachFilter", "getDistinctValues"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.ListBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.ListBinding.extend
+ * @function
+ */
+
 
 // the 'abstract methods' to be implemented by child classes
 /**

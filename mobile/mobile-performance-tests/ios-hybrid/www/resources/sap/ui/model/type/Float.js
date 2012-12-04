@@ -18,32 +18,37 @@ jQuery.sap.require("sap.ui.core.format.NumberFormat");
  * @extends sap.ui.model.SimpleType
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.type.Float 
  */
-sap.ui.model.type.Float = function () {
-	sap.ui.model.SimpleType.apply(this, arguments);
-	this.sName = "Float";
-};
-
-// chain the prototypes
-sap.ui.model.type.Float.prototype = jQuery.sap.newObject(sap.ui.model.SimpleType.prototype);
-
-/*
- * Describe the sap.ui.model.type.Float.
- * Resulting metadata can be obtained via sap.ui.model.type.Float.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.type.Float", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.SimpleType",
-  publicMethods : [
-    // methods
-  ]
+sap.ui.model.SimpleType.extend("sap.ui.model.type.Float", /** @lends sap.ui.model.type.Float  */ {
+	
+	constructor : function () {
+		sap.ui.model.SimpleType.apply(this, arguments);
+		this.sName = "Float";
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.type.Float with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.type.Float.extend
+ * @function
+ */
 
 /**
  * @see sap.ui.model.SimpleType.prototype.formatValue

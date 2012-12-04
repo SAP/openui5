@@ -22,32 +22,47 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @param {Object} oContext the context object
  * @abstract
  * @public
+ * @name sap.ui.model.Binding
  */
-sap.ui.model.Binding = function(oModel, sPath, oContext, mParameters){
-	sap.ui.base.EventProvider.apply(this);
+sap.ui.base.EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding */ {
+	
+	constructor : function(oModel, sPath, oContext, mParameters){
+		sap.ui.base.EventProvider.apply(this);
+	
+		this.sPath = sPath;
+		this.oContext = oContext;
+		this.oModel = oModel;
+		this.mParameters = mParameters;
+	
+	},
 
-	this.sPath = sPath;
-	this.oContext = oContext;
-	this.oModel = oModel;
-	this.mParameters = mParameters;
-
-};
-sap.ui.model.Binding.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-
-/*
- * Describe the sap.ui.model.Binding.
- * Resulting metadata can be obtained via sap.ui.model.Binding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Binding", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"getPath", "getContext", "getModel", "attachChange", "detachChange"
-  ]
+	metadata : {
+		"abstract" : true,
+	  publicMethods : [
+			// methods
+			"getPath", "getContext", "getModel", "attachChange", "detachChange"
+	  ]
+	
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Binding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Binding.extend
+ * @function
+ */
 
 // Getter
 /**

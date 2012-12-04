@@ -56,7 +56,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -360,22 +360,13 @@ sap.m.SegmentedButton.prototype.init = function() {
 	}
 	//bind the resize event to window
 	jQuery(window).resize(jQuery.proxy(this._fHandleResize, this));
-}
+};
 
-/**
- *	This function is called after Rendering which triggers the width calculation of
- *	the SegmentedButton buttons. The timeout is needed, because otherwise the returned width of
- *	the parent element is wrong. (Number is bigger than the actual screen width). This is only needed
- *	after page reload. On desktop browsers no timeout is needed, therefore the speed of mobile browsers
- *	is too slow to finish calculation and rendering the page before the get width function is called.
- */
 sap.m.SegmentedButton.prototype.onAfterRendering = function() {
-	var that = this;
 	//Flag if control is inside the bar. If inside bar the buttons always use the width they need.
 	this._bInsideBar = (this.$().closest('.sapMBar').length > 0) ? true : false;
-	setTimeout(function(){
-		that._fCalcBtnWidth();
-	},0)
+	this._fCalcBtnWidth();
+
 	
 };
 /**
@@ -384,7 +375,7 @@ sap.m.SegmentedButton.prototype.onAfterRendering = function() {
  */
 sap.m.SegmentedButton.prototype.onThemeChanged = function(oEvent){
 	this._fCalcBtnWidth();
-}
+};
 /**
  * This function is called to manually set the width of each segmentedbutton button 
  * on the basis of the widest item after they have been rendered or an orientation change/theme change
@@ -398,8 +389,9 @@ sap.m.SegmentedButton.prototype._fCalcBtnWidth = function() {
 		$this = this.$(),
 		iInnerWidth = $this.children('#' + this.getButtons()[0].getId()).outerWidth(true)-$this.children('#' + this.getButtons()[0].getId()).width(),
 		//Outerwidth of control, if developer manually sets margin or padding to the control itself
-		iCntOutWidth = $this.outerWidth(true) - $this.width(),
-		iParentWidth = $this.parent().width();
+		iCntOutWidth = $this.outerWidth(true) - $this.width();
+		//if parent width is bigger than actual screen width set parent width to screen width => android 2.3
+		var iParentWidth = (window.screen.width < $this.parent().width()) ? window.screen.width : $this.parent().width();
 	if(this.getWidth() && this.getWidth().indexOf("%") === -1) {
 		iMaxWidth = parseInt(this.getWidth()) / iItm;
 		for(var i = 0; i < iItm; i++) {
@@ -423,18 +415,21 @@ sap.m.SegmentedButton.prototype._fCalcBtnWidth = function() {
 		if (!isNaN(iMaxWidth))
 			$this.children('#' + this.getButtons()[i].getId()).width(iMaxWidth).css('visibility', 'visible');			
 	}
-}
+};
 /**
  * The orientationchange event listener
 */
 sap.m.SegmentedButton.prototype._fHandleResize = function() {
-	if(!this.getWidth() || this.getWidth().indexOf("%") !== -1) {
+	//check if control is hidden (not shown) when resize event is fired. Happens when keyboard is shown on another page, for example.
+	if(this.$().is(":visible")) {
+		if(!this.getWidth() || this.getWidth().indexOf("%") !== -1) {
 			for(var i = 0; i < this.getButtons().length; i++) {			
 				this.$().children('#' + this.getButtons()[i].getId()).width('').css('visibility', 'hidden');	
 			}
 			this._fCalcBtnWidth();
+		}
 	}
-}
+};
 /**
  * Convenient method to add a button with a text as title or an uri for an icon. 
  * Only one is allowed.
@@ -501,9 +496,9 @@ sap.m.SegmentedButton.prototype.insertButton = function(oButton) {
 sap.m.SegmentedButton.prototype._ontouchstart = function(oEvent) {
 	if (oEvent.srcControl.getEnabled())
 		jQuery(oEvent.target).toggleClass('sapMSegBBtnTouched', true);
-}
+};
 
 sap.m.SegmentedButton.prototype._ontouchend = function(oEvent) {
 	if (oEvent.srcControl.getEnabled())
 		jQuery(oEvent.target).toggleClass('sapMSegBBtnTouched', false);
-}
+};

@@ -23,7 +23,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * </code>
  *
  * @author Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @param {boolean}
  *		bDefault the value that should be used as default value for the enhancement of the control.
  * @public

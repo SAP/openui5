@@ -1,0 +1,166 @@
+/* Android ICS skin */
+.android-ics .dw {
+    padding: 0;
+    color: #31b6e7;
+    background: #292829;
+    border-top: 1px solid #4a494a;
+}
+.android-ics .dwwc, .android-ics .dwwl, .android-ics .dww, .android-ics .dwb {
+    background: none;
+}
+.android-ics .dwwr
+{
+    padding: 0;
+}
+.android-ics .dwc {
+    margin: 0;
+    padding: 30px 10px 1px 10px;
+}
+.android-ics .dwhl {
+    padding: 1px 10px;
+}
+.android-ics .dwv {
+    height: 36px;
+    line-height: 36px;
+    padding: 0;
+    border-bottom: 2px solid #31b6e7;
+    font-size: 18px;
+}
+.android-ics .dwwl {
+    margin: 0 2px;
+}
+.android-ics .dww {
+    border: 0;
+}
+.android-ics .dwpm .dww {
+    border: 0;
+    background: none;
+}
+.android-ics .dww li {
+    color: #fff;
+    font-size: 18px;
+    text-shadow: none;
+}
+.android-ics .dwwo {
+    background: linear-gradient(#282828 0%,rgba(40,40,40,0) 52%, rgba(40,40,40,0) 48%, #282828 100%);
+    background: -webkit-gradient(linear,left bottom,left top,from(#282828),color-stop(0.52, rgba(40,40,40,0)),color-stop(0.48, rgba(40,40,40,0)),to(#282828));
+    background: -moz-linear-gradient(#282828 0%,rgba(40,40,40,0) 52%, rgba(40,40,40,0) 48%, #282828 100%);
+    background: -o-linear-gradient(#282828 0%,rgba(40,40,40,0) 52%, rgba(40,40,40,0) 48%, #282828 100%);
+}
+.android-ics .dwwb {
+    background: #292829;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+.android-ics .dwwb span {
+    display: none;
+}
+.android-ics .dwwb:after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+    color: #7e7e7e;
+    width: 0;
+    height: 0;
+    border-width: 8px;
+    border-style: solid;
+    content: '';
+}
+.android-ics .dwwbm{
+    top: 0;
+    bottom: auto;
+}
+.android-ics .dwwbp{
+    bottom: 0;
+    top: auto;
+}
+.android-ics .dwwbm:after {
+    border-color: transparent transparent #7e7e7e transparent;
+}
+.android-ics .dwwbp:after {
+    border-color: #7e7e7e transparent transparent transparent;
+}
+.android-ics .dwwl .dwb-a {
+    background: #292829;
+}
+.android-ics .dwwbm.dwb-a:after {
+    border-color: transparent transparent #319abd transparent;
+}
+.android-ics .dwwbp.dwb-a:after {
+    border-color: #319abd transparent transparent transparent;
+}
+.android-ics .dwwol {
+    width: 60%;
+    left: 20%;
+    height: 36px;
+    border-top: 2px solid #31b6e7;
+    border-bottom: 2px solid #31b6e7;
+    margin-top: -20px;
+    display: block;
+}
+.android-ics .dwbc {
+    border-top: 1px solid #424542;
+    padding: 0;
+}
+.android-ics .dwb {
+    height: 36px;
+    line-height: 36px;
+    padding: 0;
+    margin: 0;
+    font-weight: normal;
+    text-shadow: none;
+    box-shadow: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -webkit-box-shadow: none;
+}
+.android-ics .dwb-a {
+    background: #29799c;
+}
+.android-ics .dwb-s .dwb, .android-ics .dwb-n .dwb {
+    border-right: 1px solid #424542;
+}
+.android-ics.light .dw {
+    background: #f5f5f5;
+}
+.android-ics.light .dww li {
+    color: #000;
+}
+.android-ics.light .dwwo {
+    background: linear-gradient(#f5f5f5 0%,rgba(245,245,245,0) 52%, rgba(245,245,245,0) 48%, #f5f5f5 100%);
+    background: -webkit-gradient(linear,left bottom,left top,from(#f5f5f5),color-stop(0.52, rgba(245,245,245,0)),color-stop(0.48, rgba(245,245,245,0)),to(#f5f5f5));
+    background: -moz-linear-gradient(#f5f5f5 0%,rgba(245,245,245,0) 52%, rgba(245,245,245,0) 48%, #f5f5f5 100%);
+    background: -o-linear-gradient(#f5f5f5 0%,rgba(245,245,245,0) 52%, rgba(245,245,245,0) 48%, #f5f5f5 100%);
+}
+.android-ics.light .dwwb {
+    background: #f5f5f5;
+    color: #f5f5f5;
+}
+.android-ics.light .dwbc {
+    border-top: 1px solid #dbdbdb;
+}
+.android-ics.light .dwb {
+    color: #000;
+}
+.android-ics.light .dwb-a {
+    color: #fff;
+}
+.android-ics.light .dwb-s .dwb, .android-ics.light .dwb-n .dwb {
+    border-right: 1px solid #dbdbdb;
+}
+/* Bubble positioning */
+.android-ics .dw-bubble-bottom .dw-arr {
+    border-color: transparent transparent #292829 transparent;
+}
+.android-ics .dw-bubble-top .dw-arr {
+    border-color: #292829 transparent transparent transparent;
+}
+/* Bubble positioning */
+.android-ics.light .dw-bubble-bottom .dw-arr {
+    border-color: transparent transparent #f5f5f5 transparent;
+}
+.android-ics.light .dw-bubble-top .dw-arr {
+    border-color: #f5f5f5 transparent transparent transparent;
+}

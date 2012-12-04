@@ -36,7 +36,7 @@ jQuery.sap.require("sap.ui.base.Object");
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP AG
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @constructor
 	 * @public
 	 * @name sap.ui.core.Locale

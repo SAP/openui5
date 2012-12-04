@@ -16,11 +16,12 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
-	<title>Mobile EPM Demo</title>
+	<title>Mobile sap.m Performance Measurement App</title>
 
 	<script>
 		t_libloadstart = new Date().getTime();	// for performance measurement
 	</script>
+    <!--<script src="http://wdfn00291071a.dhcp.wdf.sap.corp:8125/target/target-script-min.js#anonymous"></script>-->
 	<script type="text/javascript" src="cordova-2.2.0.js"></script>
 	<script type="text/javascript" src="resources/sap/ui/thirdparty/jquery/jquery-1.7.1.js"></script>
 	<script type="text/javascript" src="resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
@@ -39,27 +40,27 @@
 		document.addEventListener("deviceready", onDeviceReady, false);
 		t_libloadend = new Date().getTime();	// for performance measurement
 		t_appstart = new Date().getTime();	// for performance measurement
-
-		var app = new sap.m.App("EPM Performance");
+alert("here");
+		var app = new sap.m.App("sap.m Performance");
 
 		// main page
-
+alert("here");
 		var epmStartPage = new sap.m.Page("startPage", {
 			title : "List Overview",
 			footer : new sap.m.Bar({
 				contentMiddle : [ new sap.m.Label({
-					text : "EPM Performance"
+					text : "sap.m Performance"
 				}) ]
 			})
 		});
-
+alert("here");
 		var Bar = new sap.m.Bar({ 
 			contentLeft: [],	
 			contentMiddle: [new sap.m.Label('BarTitle', {text: "Products"})],
 			contentRight: []
 		});
 		epmStartPage.setCustomHeader(Bar);
-
+alert("here");
 		var handleSearch = function(evt) {
 			var searchString = evt.getParameter("query");
 			var binding = oListStandardNoImageNoHeader.getBinding("items");
@@ -70,7 +71,7 @@
 				binding.filter([]);
 			}
 		};
-
+alert("here");
 		var Bar2 = new sap.m.Bar("subBar", {
 			contentLeft: [],	
 			contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "Search for...", layoutData: new sap.m.FlexItemData({growFactor: 1}), search: handleSearch})],

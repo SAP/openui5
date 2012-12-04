@@ -13,7 +13,7 @@ jQuery.sap.require("sap.ui.core.Popup");
  * This class is used to display a waiting animation covering the whole page and blocking user interaction.
  *
  * @class sap.ui.core.BusyIndicator
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  */

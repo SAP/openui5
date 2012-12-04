@@ -419,9 +419,10 @@ sap.ui.core.Popup.prototype.oBlindLayerPool = new sap.ui.base.ObjectPool(sap.ui.
  * @param {DOMNode|sap.ui.core.Element} [of=document] the DOM element or control to dock to
  * @param {string} [offset="0 0"] the offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right). If the docking of both "my" and "at" are both RTL-sensitive ("begin" or "end"), this offset is automatically mirrored in the RTL case as well.
  * @param {string} [collision="flip"] defines how the position of an element should be adjusted in case it overflows the window in some direction.
+ * @param {boolean} [followOf=false] defines whether the popup should follow the dock reference when the reference changes its position.
  * @public
  */
-sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, collision) {
+sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, collision, followOf) {
 	jQuery.sap.assert(this.oContent, "Popup content must have been set by now");
 	// other asserts follow after parameter shifting
 
@@ -441,9 +442,14 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 		oStatic.addContent(this.oContent, true);
 		this._bContentAddedToStatic = true;
 	}
+	
+	// the content needs to be connected with a UIArea to make sure that it works properly
+	// this could not be the case when returning e.g. a Thing Inspector as content of a view
+	jQuery.sap.assert(!this.oContent.getUIArea || this.oContent.getUIArea() !== null, "The Popup content is not connected with a UIArea and may not work properly!");
 
 	// iDuration is optional... if not given:
 	if (typeof(iDuration) == "string") {
+		followOf = collision;
 		collision = offset;
 		offset = of;
 		of = at;
@@ -523,6 +529,10 @@ sap.ui.core.Popup.prototype.open = function(iDuration, my, at, of, offset, colli
 		}
 
 		that.eOpenState = sap.ui.core.OpenState.OPEN;
+		
+		if(followOf === true){
+			sap.ui.core.Popup.DockCheck.attach(that);
+		}
 
 		// notify that opening has completed
 		if (jQuery.browser.msie && jQuery.browser.version == '9.0') {
@@ -707,6 +717,8 @@ sap.ui.core.Popup.prototype.close = function(iDuration) {
 	//if(this.eOpenState != sap.ui.core.OpenState.OPEN) return; // this is the more conservative approach: to only close when the Popup is OPEN
 
 	this.eOpenState = sap.ui.core.OpenState.CLOSING;
+	
+	sap.ui.core.Popup.DockCheck.detach(this);
 
 	// If we added the content control to the static UIArea,
 	// then we should remove it again now.
@@ -949,6 +961,7 @@ sap.ui.core.Popup.prototype._applyPosition = function(oPosition) {
 
 	// remember given position for later redraws
 	this._oLastPosition = oPosition;
+	this._oLastOfRect = jQuery(oPosition.of instanceof sap.ui.core.Element ? oPosition.of.getDomRef() : oPosition.of).rect();
 };
 
 /**
@@ -1269,6 +1282,51 @@ sap.ui.core.Popup.prototype._hideBlockLayer = function() {
 	}
 };
 
+
+//****************************************************
+//Handling of movement of the dock references
+//****************************************************
+
+sap.ui.core.Popup.DockCheck = {aRegisteredPopups: [], iCheckInterval: 200};
+
+sap.ui.core.Popup.DockCheck.check = function(){
+	var c = sap.ui.core.Popup.DockCheck;
+	jQuery.each(c.aRegisteredPopups, function(index, oPopup){
+		if(oPopup.getOpenState() === sap.ui.core.OpenState.OPEN){
+			var oCurrentOfRect = jQuery(oPopup._oLastPosition.of instanceof sap.ui.core.Element ? oPopup._oLastPosition.of.getDomRef() : oPopup._oLastPosition.of).rect();
+			if(oPopup._oLastOfRect.left != oCurrentOfRect.left
+					|| oPopup._oLastOfRect.top != oCurrentOfRect.top
+					|| oPopup._oLastOfRect.width != oCurrentOfRect.width
+					|| oPopup._oLastOfRect.height != oCurrentOfRect.height){
+				oPopup._applyPosition(this._oLastPosition);
+			}
+		}
+	});
+	
+	c.sDelayedCallId = jQuery.sap.delayedCall(c.iCheckInterval, this, c.check);
+};
+
+sap.ui.core.Popup.DockCheck.attach = function(oPopup){
+	var c = sap.ui.core.Popup.DockCheck;
+	c.aRegisteredPopups.push(oPopup);
+	if(!c.sDelayedCallId){
+		c.sDelayedCallId = jQuery.sap.delayedCall(c.iCheckInterval, this, c.check);
+	}
+};
+
+sap.ui.core.Popup.DockCheck.detach = function(oPopup){
+	var c = sap.ui.core.Popup.DockCheck;
+	jQuery.each(c.aRegisteredPopups, function(index, oRegisteredPopup){
+		if(oRegisteredPopup == oPopup){
+			c.aRegisteredPopups.splice(index,1);
+			return false; //break the loop
+		};
+	});
+	if(c.aRegisteredPopups.length == 0 && c.sDelayedCallId){
+		jQuery.sap.clearDelayedCall(c.sDelayedCallId);
+		c.sDelayedCallId = null;
+	}
+};
 
 
 //****************************************************

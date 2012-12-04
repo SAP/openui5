@@ -31,7 +31,10 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Properties
  * <ul>
  * <li>{@link #getType type} : sap.m.ListType (default: sap.m.ListType.Inactive)</li>
- * <li>{@link #getVisible visible} : boolean (default: true)</li></ul>
+ * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getUnread unread} : boolean (default: false)</li>
+ * <li>{@link #getSelected selected} : boolean (default: false)</li>
+ * <li>{@link #getCounter counter} : int</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -55,7 +58,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -73,7 +76,10 @@ sap.ui.core.Control.extend("sap.m.ListItemBase", { metadata : {
 	library : "sap.m",
 	properties : {
 		"type" : {type : "sap.m.ListType", group : "Misc", defaultValue : sap.m.ListType.Inactive},
-		"visible" : {type : "boolean", group : "Appearance", defaultValue : true}
+		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"unread" : {type : "boolean", group : "Misc", defaultValue : false},
+		"selected" : {type : "boolean", group : "", defaultValue : false},
+		"counter" : {type : "int", group : "Misc", defaultValue : null}
 	},
 	events : {
 		"tap" : {}, 
@@ -148,6 +154,81 @@ sap.m.ListItemBase.M_EVENTS = {'tap':'tap','detailTap':'detailTap'};
  * @return {sap.m.ListItemBase} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.ListItemBase#setVisible
+ * @function
+ */
+
+/**
+ * Getter for property <code>unread</code>.
+ * If the unread indicator is set on the list, this boolean defines if it will be shown on this list item. Default is false.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>unread</code>
+ * @public
+ * @name sap.m.ListItemBase#getUnread
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>unread</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bUnread  new value for property <code>unread</code>
+ * @return {sap.m.ListItemBase} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.ListItemBase#setUnread
+ * @function
+ */
+
+/**
+ * Getter for property <code>selected</code>.
+ * This property defines the select state of the list item when using single/Multi-Selection
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>selected</code>
+ * @public
+ * @name sap.m.ListItemBase#getSelected
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>selected</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bSelected  new value for property <code>selected</code>
+ * @return {sap.m.ListItemBase} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.ListItemBase#setSelected
+ * @function
+ */
+
+/**
+ * Getter for property <code>counter</code>.
+ * Property sets a counter bubble with the integer given.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {int} the value of property <code>counter</code>
+ * @public
+ * @name sap.m.ListItemBase#getCounter
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>counter</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {int} iCounter  new value for property <code>counter</code>
+ * @return {sap.m.ListItemBase} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.ListItemBase#setCounter
  * @function
  */
 
@@ -278,7 +359,7 @@ sap.m.ListItemBase.M_EVENTS = {'tap':'tap','detailTap':'detailTap'};
  *         bSelect
  *         set the select control to true/false
 
- * @type void
+ * @type sap.m.ListItemBase
  * @public
  */
 
@@ -296,13 +377,17 @@ sap.m.ListItemBase.M_EVENTS = {'tap':'tap','detailTap':'detailTap'};
 
 // Start of sap\m\ListItemBase.js
 //mode of the list e.g. singleSelection, multi...
-sap.m.ListItemBase.prototype._mode = sap.m.ListMode.None;
+//internal selected state of the listitem
+sap.m.ListItemBase.prototype.init = function(){
+	this._mode = sap.m.ListMode.None;
+};
 
 // radiobutton for single selection
 sap.m.ListItemBase.prototype._getRadioButton = function(oRadioButtonId, sGroupName) {
 	var _radioButton = this._radioButton || new sap.m.RadioButton(oRadioButtonId, {
 		groupName : sGroupName,
-		activeHandling : false
+		activeHandling : false,
+		selected: this.getSelected()
 	}).setParent(this, null, true).attachSelect(this._select);
 	return this._radioButton = _radioButton;
 };
@@ -310,7 +395,8 @@ sap.m.ListItemBase.prototype._getRadioButton = function(oRadioButtonId, sGroupNa
 // checkbox for multiselection
 sap.m.ListItemBase.prototype._getCheckBox = function(oBoxId) {
 	var _checkBox = this._checkBox || new sap.m.CheckBox(oBoxId, {
-		activeHandling : false
+		activeHandling : false,
+		selected: this.getSelected()
 	}).setParent(this, null, true).attachSelect(this._select);
 	return this._checkBox = _checkBox;
 };
@@ -331,21 +417,21 @@ sap.m.ListItemBase.prototype.exit = function() {
 };
 
 sap.m.ListItemBase.prototype.isSelected = function() {
-	var bSelect = false;
-	if (this._mode === sap.m.ListMode.SingleSelect) {
-		bSelect = this._radioButton.getSelected();
-	}
-	if (this._mode === sap.m.ListMode.MultiSelect) {
-		bSelect = this._checkBox.getSelected();
-	}
-	return bSelect;
+	return this.getSelected();
 };
 
 
 //called when IncludeItemInSelection true and we have to handle check mark and styling
 sap.m.ListItemBase.prototype.setSelected = function(select) {
-	var oList = sap.ui.getCore().byId(this._listId);
-	oList.setSelectedItem(this, select);
+	//argument true for not setting the selection control due internal handling 
+	if(this._listId && !arguments[1]){
+		var oList = sap.ui.getCore().byId(this._listId);
+		oList.setSelectedItem(this, select);
+	}
+	else{
+		this.setProperty("selected", select, true);
+	}
+	return this;
 };
 
 sap.m.ListItemBase.prototype._getNavImage = function(oImgId, oImgStyle, oSrc, oActiveSrc) {
@@ -390,11 +476,12 @@ sap.m.ListItemBase.prototype._getDelImage = function(oImgId, oImgStyle, oSrc) {
 sap.m.ListItemBase.prototype.ontap = function(oEvent) {
 	var type = this.getType();
 
-	if (this._includeItemInSelection && (this._mode === sap.m.ListMode.SingleSelect || this._mode === sap.m.ListMode.MultiSelect)) {
+	if (this._includeItemInSelection && (this._mode === sap.m.ListMode.SingleSelect || this._mode === sap.m.ListMode.MultiSelect) || this._mode === sap.m.ListMode.SingleSelectMaster) {
 		// if _includeItemInSelection all tap events will be used for the mode
 		// select/delete
 		switch (this._mode) {
 		case sap.m.ListMode.SingleSelect:
+		case sap.m.ListMode.SingleSelectMaster:
 			// check if radiobutton fired the event and therefore do not set the
 			// select
 			if (oEvent.srcControl && oEvent.srcControl.getId() !== this._radioButton.getId()) {
@@ -516,7 +603,8 @@ sap.m.ListItemBase.prototype.ontouchstart = function(oEvent) {
 	// timeout regarding active state when scrolling
 	this._timeoutIdStart = window.setTimeout(function() {
 		// several fingers could be used
-		if (!(that._includeItemInSelection && (that._mode === sap.m.ListMode.SingleSelect || that._mode === sap.m.ListMode.MultiSelect)) && ((_event.targetTouches && _event.targetTouches.length === 1) || !_event.targetTouches)) {
+		//for selections with whole list item interaction and singleselectmaster active handling is disabled  
+		if (!(that._includeItemInSelection && (that._mode === sap.m.ListMode.SingleSelect || that._mode === sap.m.ListMode.MultiSelect))  && that._mode !== sap.m.ListMode.SingleSelectMaster && ((_event.targetTouches && _event.targetTouches.length === 1) || !_event.targetTouches)) {
 			var type = that.getType();
 			switch (type) {
 			case sap.m.ListType.Inactive:
@@ -552,7 +640,7 @@ sap.m.ListItemBase.prototype.ontouchstart = function(oEvent) {
 
 // touch move to prevent active state when scrolling
 sap.m.ListItemBase.prototype._ontouchmove = function(oEvent) {
-	if (this._active || this._timeoutIdStart) {
+	if ((this._active || this._timeoutIdStart) && this._mode !== sap.m.ListMode.SingleSelectMaster) {
 		// there is movement and therefore no tap...remove active styles
 		window.clearTimeout(this._timeoutIdStart);
 		this._active = false;
@@ -569,7 +657,7 @@ sap.m.ListItemBase.prototype._ontouchmove = function(oEvent) {
 sap.m.ListItemBase.prototype._ontouchend = function(oEvent) {
 
 	// several fingers could be used
-	if ((oEvent.targetTouches && oEvent.targetTouches.length === 0) || !oEvent.targetTouches) {
+	if (((oEvent.targetTouches && oEvent.targetTouches.length === 0) || !oEvent.targetTouches) && this._mode !== sap.m.ListMode.SingleSelectMaster) {
 		var type = this.getType();
 		var that = this;
 		switch (type) {
@@ -630,6 +718,10 @@ sap.m.ListItemBase.prototype._inactiveHandlingInheritor = function() {
 //switch background style...active feedback
 sap.m.ListItemBase.prototype._activeHandling = function() {
 	this.$().toggleClass('sapMLIBActive', this._active);
+	jQuery.sap.byId(this.getId() + "-counter").toggleClass('sapMLIBActiveCounter', this._active);
+	if(this.getUnread()){
+		jQuery.sap.byId(this.getId() + "-unread").toggleClass('sapMLIBActiveUnread', this._active);
+	}
 };
 
 sap.m.ListItemBase.prototype._doActiveHandling = function(oEvent) {

@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.Element");
  * @extends sap.ui.core.Element
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -88,3 +88,15 @@ sap.ui.core.Element.extend("sap.ui.core.LayoutData", { metadata : {
 
 
 // Start of sap\ui\core\LayoutData.js
+sap.ui.core.LayoutData.prototype.invalidate = function() {
+	//No call of Element.invalidate to avoid bubbling of invalidate
+	var oParent = this.getParent();
+	if(oParent){
+		var oLayout = oParent.getParent();
+		if(oLayout){
+			var oEvent = jQuery.Event("LayoutDataChange");
+			oEvent.srcControl = oParent;
+			oLayout._handleEvent(oEvent);
+		}
+	}
+}

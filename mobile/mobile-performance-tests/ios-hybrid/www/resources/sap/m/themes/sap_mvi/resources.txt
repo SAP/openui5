@@ -1,3 +1,4 @@
+ActionSheet.css
 Bar.css
 BusyDialog.css
 BusyIndicator.css
@@ -10,15 +11,12 @@ fonts/android-icons.otf
 fonts/ios-icons.otf
 img
 img/back_icon.png
-img/back_icon@0.75.png
 img/back_icon@1.5.png
 img/back_icon@2.png
 img/check_icon.png
-img/check_icon@0.75.png
 img/check_icon@1.5.png
 img/check_icon@2.png
 img/delete_icon.png
-img/delete_icon@0.75.png
 img/delete_icon@1.5.png
 img/delete_icon@2.png
 img/ios_checkmark.png
@@ -80,3 +78,4 @@ Select.css
 Slider.css
 Switch.css
 Text.css
+TextArea.css

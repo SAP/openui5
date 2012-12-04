@@ -10,7 +10,7 @@
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.m (1.9.0-SNAPSHOT)
+ * Initialization Code and shared classes of library sap.m (1.9.1-SNAPSHOT)
  */
 jQuery.sap.declare("sap.m.library");
 jQuery.sap.require("sap.ui.core.Core");
@@ -32,22 +32,24 @@ sap.ui.getCore().initLibrary({
   dependencies : ["sap.ui.core"],
   types: [
     "sap.m.ButtonType",
-    "sap.m.FlexAlignContent",
+    "sap.m.DialogType",
     "sap.m.FlexAlignItems",
     "sap.m.FlexAlignSelf",
     "sap.m.FlexDirection",
     "sap.m.FlexJustifyContent",
     "sap.m.FlexRendertype",
-    "sap.m.FlexWrap",
     "sap.m.InputType",
     "sap.m.LabelDesign",
     "sap.m.ListMode",
     "sap.m.ListType",
     "sap.m.PageBackgroundDesign",
-    "sap.m.PlacementType"
+    "sap.m.PlacementType",
+    "sap.m.SplitAppMode"
   ],
   interfaces: [],
   controls: [
+    "sap.m.ActionListItem",
+    "sap.m.ActionSheet",
     "sap.m.App",
     "sap.m.Bar",
     "sap.m.BusyDialog",
@@ -59,6 +61,7 @@ sap.ui.getCore().initLibrary({
     "sap.m.Dialog",
     "sap.m.DisplayListItem",
     "sap.m.FlexBox",
+    "sap.m.GrowingList",
     "sap.m.HBox",
     "sap.m.Image",
     "sap.m.Input",
@@ -75,16 +78,17 @@ sap.ui.getCore().initLibrary({
     "sap.m.SegmentedButton",
     "sap.m.Select",
     "sap.m.Slider",
-    "sap.m.SplitView",
+    "sap.m.SplitApp",
     "sap.m.StandardListItem",
     "sap.m.Switch",
     "sap.m.Text",
+    "sap.m.TextArea",
     "sap.m.VBox"
   ],
   elements: [
     "sap.m.FlexItemData"
   ],
-  version: "1.9.0-SNAPSHOT"});
+  version: "1.9.1-SNAPSHOT"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
@@ -103,7 +107,7 @@ jQuery.sap.declare("sap.m.ButtonType");
 /**
  * @class Different types for a button (predefined types)
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -164,59 +168,29 @@ sap.m.ButtonType = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.m.FlexAlignContent.
-jQuery.sap.declare("sap.m.FlexAlignContent");
+// Provides enumeration sap.m.DialogType.
+jQuery.sap.declare("sap.m.DialogType");
 
 /**
- * @class Available options for the layout of elements along the cross axis for multi-line flexbox layouts.
+ * @class Enum for the type of sap.m.Dialog control.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
-sap.m.FlexAlignContent = {
+sap.m.DialogType = {
   
     /**
-     * Lines are packed toward the start of the flex box. 
+     * This is the default value for Dialog type. Stardard dialog in iOS has a header on the top and the left, right buttons are put inside the header. In android, the left, right buttons are put to the bottom of the Dialog. 
      * @public
      */
-    Start : "Start",
+    Standard : "Standard",
 
     /**
-     * Lines are packed toward the end of the flex box. 
+     * Dialog with type Message looks the same as the Stardard Dialog in Android. And it puts the left, right buttons to the bottom of the Dialog in iOS. 
      * @public
      */
-    End : "End",
-
-    /**
-     * Lines are packed toward the center of the flex box. 
-     * @public
-     */
-    Center : "Center",
-
-    /**
-     * Lines are evenly distributed in the flex box. 
-     * @public
-     */
-    SpaceBetween : "SpaceBetween",
-
-    /**
-     * Lines are evenly distributed in the flex box, with half-size spaces on either end. 
-     * @public
-     */
-    SpaceAround : "SpaceAround",
-
-    /**
-     * Lines stretch to take up the remaining space. 
-     * @public
-     */
-    Stretch : "Stretch",
-
-    /**
-     * Inherits the value from its parent. 
-     * @public
-     */
-    Inherit : "Inherit"
+    Message : "Message"
 
   };
   
@@ -237,7 +211,7 @@ jQuery.sap.declare("sap.m.FlexAlignItems");
 /**
  * @class Available options for the layout of all elements along the cross axis of the flexbox layout.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -298,7 +272,7 @@ jQuery.sap.declare("sap.m.FlexAlignSelf");
 /**
  * @class Available options for the layout of individual elements along the cross axis of the flexbox layout overriding the default alignment.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -365,7 +339,7 @@ jQuery.sap.declare("sap.m.FlexDirection");
 /**
  * @class Available directions for flex layouts.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -420,7 +394,7 @@ jQuery.sap.declare("sap.m.FlexJustifyContent");
 /**
  * @class Available options for the layout of elements along the main axis of the flexbox layout.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -481,7 +455,7 @@ jQuery.sap.declare("sap.m.FlexRendertype");
 /**
  * @class Determines the type of HTML elements used for rendering controls.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -512,55 +486,6 @@ sap.m.FlexRendertype = {
  * source files only (*.type, *.js) or they will be lost after the next generation.
  * ---------------------------------------------------------------------------------- */
 
-// Provides enumeration sap.m.FlexWrap.
-jQuery.sap.declare("sap.m.FlexWrap");
-
-/**
- * @class Available wrap options for flexbox layouts
- *
- * @version 1.9.0-SNAPSHOT
- * @static
- * @public
- */
-sap.m.FlexWrap = {
-  
-    /**
-     * Items wrap in the direction of the cross-axis when space along the main axis is insufficient. Makes the flexbox container multi-line. 
-     * @public
-     */
-    Wrap : "Wrap",
-
-    /**
-     * Items do not wrap even when space along the main axis is insufficient. Makes the flexbox container single-line. 
-     * @public
-     */
-    Nowrap : "Nowrap",
-
-    /**
-     * Items wrap in the reverse direction of the cross-axis when space along the main axis is insufficient. Makes the flexbox container multi-line. 
-     * @public
-     */
-    WrapReverse : "WrapReverse",
-
-    /**
-     * Inherits the value from its parent. 
-     * @public
-     */
-    Inherit : "Inherit"
-
-  };
-  
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
-
-/* ----------------------------------------------------------------------------------
- * Hint: This is a derived (generated) file. Changes should be done in the underlying 
- * source files only (*.type, *.js) or they will be lost after the next generation.
- * ---------------------------------------------------------------------------------- */
-
 // Provides enumeration sap.m.InputType.
 jQuery.sap.declare("sap.m.InputType");
 
@@ -568,7 +493,7 @@ jQuery.sap.declare("sap.m.InputType");
  * @class A subset of input types that fit to a simple API returning one string.
  * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -665,7 +590,7 @@ jQuery.sap.declare("sap.m.LabelDesign");
 /**
  * @class Available label display modes.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -702,7 +627,7 @@ jQuery.sap.declare("sap.m.ListMode");
 /**
  * @class Different modes for the list selection (predefined modes)
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -730,7 +655,13 @@ sap.m.ListMode = {
      * delete mode (only one list item can be deleted) 
      * @public
      */
-    Delete : "Delete"
+    Delete : "Delete",
+
+    /**
+     * Single selection master mode (only one list item can be selected), selected item is highlighted but no radiobutton is visible. 
+     * @public
+     */
+    SingleSelectMaster : "SingleSelectMaster"
 
   };
   
@@ -751,7 +682,7 @@ jQuery.sap.declare("sap.m.ListType");
 /**
  * @class List types
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -806,7 +737,7 @@ jQuery.sap.declare("sap.m.PageBackgroundDesign");
 /**
  * @class Available Page Background Design.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -843,7 +774,7 @@ jQuery.sap.declare("sap.m.PlacementType");
 /**
  * @class Types for the placement of popover control.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -872,6 +803,43 @@ sap.m.PlacementType = {
      * @public
      */
     Bottom : "Bottom"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.m.SplitAppMode.
+jQuery.sap.declare("sap.m.SplitAppMode");
+
+/**
+ * @class [Beschreibung f�r SplitAppMode eingeben]
+ *
+ * @version 1.9.1-SNAPSHOT
+ * @static
+ * @public
+ */
+sap.m.SplitAppMode = {
+  
+    /**
+     * Master will automatically be hidden in portrait mode. 
+     * @public
+     */
+    ShowHideMode : "ShowHideMode",
+
+    /**
+     * Master will always be shown but in a compressed version when in portrait mode. 
+     * @public
+     */
+    StretchCompressMode : "StretchCompressMode"
 
   };
   
@@ -911,6 +879,8 @@ if (sap.m && !sap.m.touch) {
  * @param {Touch|number} oTouch A touch object to find or a Touch.identifier that uniquely identifies the current finger in the touch session.
  * @return {object|undefined} The touch matching if any.
  * @protected
+ * @name sap.m.touch#find
+ * @function
 */
 sap.m.touch.find = function(oTouchList, oTouch) {
 	var i;
@@ -945,6 +915,8 @@ sap.m.touch.find = function(oTouchList, oTouch) {
  * @param {jQuery|Element|string} vElement A jQuery element or an element reference or an element id.
  * @return {number} The number of touches related with the given element.
  * @protected
+ * @name sap.m.touch#countContained
+ * @function
 */
 sap.m.touch.countContained = function(oTouchList, vElement) {
 	var i,

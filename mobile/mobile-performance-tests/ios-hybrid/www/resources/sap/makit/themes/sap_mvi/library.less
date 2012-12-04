@@ -1,0 +1,537 @@
+
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ *
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+/* Global CSS for 'base' theme */
+// central colors
+// Brand Colors
+@sapUiBrand: #F0AB00;     // SAP Gold #f0ab00
+@sapUiHighlight: #111177;
+@sapUiSelected: @sapUiHighlight;
+@sapUiActive: @sapUiHighlight;
+
+// Accent Colors
+@sapUiPurple: purple;
+@sapUiOrange: orange;
+@sapUiGreen: green;
+@sapUiBlue: blue;
+@sapUiRed: red;
+@sapUiYellow: yellow;
+
+// Base Colors
+@sapUiBase: black;
+@sapUiBaseBG: white;
+@sapUiBaseBorder: @sapUiBase;
+@sapUiBaseText: @sapUiBase;
+@sapUiBaseLine: @sapUiBase;
+
+// Background Colors
+// Grayscale Backgrounds
+@sapUiWhite: #FFFFFF;
+@sapUiExtraLightBG: @sapUiBaseBG;
+@sapUiLightBG: lightgray;
+@sapUiMediumBG: gray;
+@sapUiDarkBG: darkgray;
+@sapUiDeepBG: black;
+@sapUiBlackBG: #000000;
+
+// Tinted Backgrounds
+@sapUiHoverBG: grey;
+@sapUiMediumAltBG: grey;
+@sapUiDarkAltBG: darkgrey;
+
+// Button Background Colors
+@sapUiButtonStandardBG: @sapUiBaseBG;
+@sapUiButtonEmphasizedBG: yellow;
+@sapUiButtonNegativeBG: red;
+@sapUiButtonPositiveBG: green;
+
+// Semantic Background Colors
+@sapUiErrorBG: #FF9A90;
+@sapUiWarningBG: #FAF2B0;
+@sapUiReadOnlyBG: grey;
+
+// Text Colors
+@sapUiExtraLightText: lightgray;
+@sapUiLightText: lightgray;
+@sapUiMediumText: grey;
+@sapUiDarkText: darkgrey;
+@sapUiDeepText: black;
+@sapUiText: @sapUiBaseText; // black
+@sapUiTextInverted: @sapUiWhite;
+
+// Link
+@sapUiLink: #0000FF;
+@sapUiLinkInverted: @sapUiLink;
+@sapUiLinkVisited: #800080;               // the color for a vistited link 
+@sapUiLinkActive: #FF0000;                // the color for a link while being clicked 
+@sapUiLinkHover: #FF0000;                 // the color for a link while being hovered 
+
+// Semantic Text Colors
+@sapUiNegativeText: red;
+@sapUiPositiveText: #B5E7A8;
+
+// Grayscale Borders
+@sapUiExtraLightBorder: lightgrey;
+@sapUiLightBorder: grey;
+@sapUiMediumBorder: @sapUiBaseBorder;
+@sapUiDarkBorder: @sapUiBaseBorder;
+
+// Semantic Border Colors
+@sapUiErrorBorder: red;
+@sapUiWarningBorder: yellow;
+
+// Line Colors
+@sapUiLightLine: lightgrey;
+@sapUiMediumLine: grey;
+@sapUiEmphasizedLine: @sapUiHighlight;
+@sapUiDarkLine: darkgrey;
+
+// Table Colors
+@sapUiTableRowBG: @sapUiWhite;
+@sapUiTableRowAlternatingBG: @sapUiWhite;
+@sapUiTableRowSelectionBG: @sapUiHighlight;
+@sapUiTableRowSelectionReadOnlyBG: @sapUiHighlight;
+@sapUiTableRowHoverBG: @sapUiHoverBG;
+
+// MOBILE-specific, but still very global-like:
+@sapUiListBG: #f7f7f7;
+
+
+/* ---------------------------------------------------------------------------------------- */
+/* TMP during LESS convertion ---- to be deleted */
+@sapUiTextColor: green; /* may be required by SubstitutionRulesManager.css in inbox lib */
+@sapUiTextTitleColor: green;
+@sapUiTextSelectionColor: green;
+
+/* ---------------------------------------------------------------------------------------- */
+
+@sapUiTextDisabled: lighten(@sapUiText, 60%); // the color for disabled text
+@sapUiTextTitle: @sapUiText;  // the text color for titles of all kinds
+@sapUiTextSelection: @sapUiTextInverted; // the color for selected text
+@sapUiTextfieldBackground: @sapUiWhite; // better to have an own parameter insted of using sapUiWhite
+
+@sapUiLineHeight: 21px;
+
+@sapUiFontFamily: Arial,Helvetica,sans-serif;  // the default font
+@sapUiFontMonospaceFamily: Lucida Console;     // the default monospacefont
+@sapUiFontSize: medium;                        // the default font size
+@sapUiFontLargeSize: large;                    // TODO: might also be title font size
+@sapUiFontSmallSize: small;
+@sapUiFontHeader1Size: xx-large;
+@sapUiFontHeader2Size: x-large;
+@sapUiFontHeader3Size: @sapUiFontLargeSize;
+@sapUiFontHeader4Size: @sapUiFontSize;
+@sapUiFontHeader5Size: @sapUiFontSize;
+@sapUiFontHeader6Size: @sapUiFontSize;
+
+// SOME important control-specific parameters...
+
+@sapUiButtonBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+@sapUiButtonBackgroundColor: @sapUiButtonStandardBG; // to be renamed????
+@sapUiButtonDisabledBorderColor: @sapUiMediumBorder; // needed because different in GR, HCB and UX
+@sapUiButtonDisabledBackgroundColor: @sapUiExtraLightBG; // needed, different in every theme
+@sapUiButtonHoverBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+@sapUiButtonHoverBackgroundColor: @sapUiMediumBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonActiveBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+@sapUiButtonActiveBackgroundColor: @sapUiDarkBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonEmphasizedBorderColor: @sapUiButtonBorderColor;
+@sapUiButtonEmphasizedBackgroundColor: @sapUiButtonEmphasizedBG;
+@sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonEmphasizedBorderColor;
+@sapUiButtonEmphasizedDisabledBackgroundColor: @sapUiButtonEmphasizedBackgroundColor;
+@sapUiButtonEmphasizedHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonEmphasizedHoverBackgroundColor: @sapUiButtonHoverBackgroundColor;
+@sapUiButtonEmphasizedActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonEmphasizedActiveBackgroundColor: @sapUiButtonActiveBackgroundColor;
+@sapUiButtonAcceptBorderColor: @sapUiButtonBorderColor; 
+@sapUiButtonAcceptBackgroundColor: @sapUiButtonPositiveBG;
+@sapUiButtonAcceptDisabledBorderColor: @sapUiButtonAcceptBorderColor;
+@sapUiButtonAcceptDisabledBackgroundColor: @sapUiButtonAcceptBackgroundColor;
+@sapUiButtonAcceptHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonAcceptHoverBackgroundColor: @sapUiButtonHoverBackgroundColor;
+@sapUiButtonAcceptActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonAcceptActiveBackgroundColor: @sapUiButtonActiveBackgroundColor;
+@sapUiButtonRejectBorderColor: @sapUiButtonBorderColor;
+@sapUiButtonRejectBackgroundColor: @sapUiButtonNegativeBG;
+@sapUiButtonRejectDisabledBorderColor: @sapUiButtonRejectBorderColor;
+@sapUiButtonRejectDisabledBackgroundColor: @sapUiButtonRejectBackgroundColor;
+@sapUiButtonRejectHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonRejectHoverBackgroundColor: @sapUiButtonHoverBackgroundColor;
+@sapUiButtonRejectActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonRejectActiveBackgroundColor: @sapUiButtonActiveBackgroundColor;
+@sapUiButtonLiteBackgroundColor: transparent;
+@sapUiToggleButtonPressedDisabledBackgroundColor: #D8D8E8;
+@sapUiToggleButtonPressedBackgroundColor: @sapUiHighlight;
+
+// semantic colors
+@sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing
+
+// default shadow for popups 
+@sapUiShadow: 5px 5px 10px rgba(0,0,0,0.5);
+
+/* ============================================= */
+/* CSS for control sap.makit/Chart.control */
+/* ============================================= */
+
+@sapUiChartHightlight: #808080;
+
+@sapUiValueBubbleLegendBG: #000000;
+@sapUiValueBubbleLegendTextColor: #FFFFFF;
+
+@sapUiChartRangeSelectorFontSize: 14px;
+@sapUiChartRangeSelectorFontFamily: Helvetica;
+@sapUiChartRangeSelectorFontColor: #707070;
+
+@sapUiChartTableFontSize: 14px;
+@sapUiChartTableFontFamily: Helvetica;
+
+@sapUiFillPaletteColor1: #008fd3;
+@sapUiFillPaletteColor2: #99d101;
+@sapUiFillPaletteColor3: #f39b02;
+@sapUiFillPaletteColor4: #9fcfeb;
+@sapUiFillPaletteColor5: #4ba707;
+@sapUiFillPaletteColor6: #f6d133;
+@sapUiFillPaletteColor7: #cb4c2d;
+@sapUiFillPaletteColor8: #cac7ba;
+@sapUiFillPaletteColor9: #0d869c;
+@sapUiFillPaletteColor10: #cdd72e;
+@sapUiFillPaletteColor11: #247230;
+@sapUiFillPaletteColor12: #6CDEDC;
+@sapUiFillPaletteColor13: #EB7300;
+@sapUiFillPaletteColor14: #B9BBD1;
+@sapUiFillPaletteColor15: #006DD3;
+@sapUiFillPaletteColor16: #3DB97F;
+
+
+@sapUiStrokePaletteColor1: hsl( hue(@sapUiFillPaletteColor1), saturation(@sapUiFillPaletteColor1), lightness(@sapUiFillPaletteColor1)/2);
+@sapUiStrokePaletteColor2: hsl( hue(@sapUiFillPaletteColor2), saturation(@sapUiFillPaletteColor2), lightness(@sapUiFillPaletteColor2)/2);
+@sapUiStrokePaletteColor3: hsl( hue(@sapUiFillPaletteColor3), saturation(@sapUiFillPaletteColor3), lightness(@sapUiFillPaletteColor3)/2);
+@sapUiStrokePaletteColor4: hsl( hue(@sapUiFillPaletteColor4), saturation(@sapUiFillPaletteColor4), lightness(@sapUiFillPaletteColor4)/2);
+@sapUiStrokePaletteColor5: hsl( hue(@sapUiFillPaletteColor5), saturation(@sapUiFillPaletteColor5), lightness(@sapUiFillPaletteColor5)/2);
+@sapUiStrokePaletteColor6: hsl( hue(@sapUiFillPaletteColor6), saturation(@sapUiFillPaletteColor6), lightness(@sapUiFillPaletteColor6)/2);
+@sapUiStrokePaletteColor7: hsl( hue(@sapUiFillPaletteColor7), saturation(@sapUiFillPaletteColor7), lightness(@sapUiFillPaletteColor7)/2);
+@sapUiStrokePaletteColor8: hsl( hue(@sapUiFillPaletteColor8), saturation(@sapUiFillPaletteColor8), lightness(@sapUiFillPaletteColor8)/2);
+@sapUiStrokePaletteColor9: hsl( hue(@sapUiFillPaletteColor9), saturation(@sapUiFillPaletteColor9), lightness(@sapUiFillPaletteColor9)/2);
+@sapUiStrokePaletteColor10: hsl( hue(@sapUiFillPaletteColor10), saturation(@sapUiFillPaletteColor10), lightness(@sapUiFillPaletteColor10)/2);
+@sapUiStrokePaletteColor11: hsl( hue(@sapUiFillPaletteColor11), saturation(@sapUiFillPaletteColor11), lightness(@sapUiFillPaletteColor11)/2);
+@sapUiStrokePaletteColor12: hsl( hue(@sapUiFillPaletteColor12), saturation(@sapUiFillPaletteColor12), lightness(@sapUiFillPaletteColor12)/2);
+@sapUiStrokePaletteColor13: hsl( hue(@sapUiFillPaletteColor13), saturation(@sapUiFillPaletteColor13), lightness(@sapUiFillPaletteColor13)/2);
+@sapUiStrokePaletteColor14: hsl( hue(@sapUiFillPaletteColor14), saturation(@sapUiFillPaletteColor14), lightness(@sapUiFillPaletteColor14)/2);
+@sapUiStrokePaletteColor15: hsl( hue(@sapUiFillPaletteColor15), saturation(@sapUiFillPaletteColor15), lightness(@sapUiFillPaletteColor15)/2);
+@sapUiStrokePaletteColor16: hsl( hue(@sapUiFillPaletteColor16), saturation(@sapUiFillPaletteColor16), lightness(@sapUiFillPaletteColor16)/2);
+
+@sapUiInsetShadowPaletteColor1: hsl( hue(@sapUiFillPaletteColor1), saturation(@sapUiFillPaletteColor1), lightness(@sapUiFillPaletteColor1)*1.75);
+@sapUiInsetShadowPaletteColor2: hsl( hue(@sapUiFillPaletteColor2), saturation(@sapUiFillPaletteColor2), lightness(@sapUiFillPaletteColor2)*1.75);
+@sapUiInsetShadowPaletteColor3: hsl( hue(@sapUiFillPaletteColor3), saturation(@sapUiFillPaletteColor3), lightness(@sapUiFillPaletteColor3)*1.75);
+@sapUiInsetShadowPaletteColor4: hsl( hue(@sapUiFillPaletteColor4), saturation(@sapUiFillPaletteColor4), lightness(@sapUiFillPaletteColor4)*1.75);
+@sapUiInsetShadowPaletteColor5: hsl( hue(@sapUiFillPaletteColor5), saturation(@sapUiFillPaletteColor5), lightness(@sapUiFillPaletteColor5)*1.75);
+@sapUiInsetShadowPaletteColor6: hsl( hue(@sapUiFillPaletteColor6), saturation(@sapUiFillPaletteColor6), lightness(@sapUiFillPaletteColor6)*1.75);
+@sapUiInsetShadowPaletteColor7: hsl( hue(@sapUiFillPaletteColor7), saturation(@sapUiFillPaletteColor7), lightness(@sapUiFillPaletteColor7)*1.75);
+@sapUiInsetShadowPaletteColor8: hsl( hue(@sapUiFillPaletteColor8), saturation(@sapUiFillPaletteColor8), lightness(@sapUiFillPaletteColor8)*1.75);
+@sapUiInsetShadowPaletteColor9: hsl( hue(@sapUiFillPaletteColor9), saturation(@sapUiFillPaletteColor9), lightness(@sapUiFillPaletteColor9)*1.75);
+@sapUiInsetShadowPaletteColor10: hsl( hue(@sapUiFillPaletteColor10), saturation(@sapUiFillPaletteColor10), lightness(@sapUiFillPaletteColor10)*1.75);
+@sapUiInsetShadowPaletteColor11: hsl( hue(@sapUiFillPaletteColor11), saturation(@sapUiFillPaletteColor11), lightness(@sapUiFillPaletteColor11)*1.75);
+@sapUiInsetShadowPaletteColor12: hsl( hue(@sapUiFillPaletteColor12), saturation(@sapUiFillPaletteColor12), lightness(@sapUiFillPaletteColor12)*1.75);
+@sapUiInsetShadowPaletteColor13: hsl( hue(@sapUiFillPaletteColor13), saturation(@sapUiFillPaletteColor13), lightness(@sapUiFillPaletteColor13)*1.75);
+@sapUiInsetShadowPaletteColor14: hsl( hue(@sapUiFillPaletteColor14), saturation(@sapUiFillPaletteColor14), lightness(@sapUiFillPaletteColor14)*1.75);
+@sapUiInsetShadowPaletteColor15: hsl( hue(@sapUiFillPaletteColor15), saturation(@sapUiFillPaletteColor15), lightness(@sapUiFillPaletteColor15)*1.75);
+@sapUiInsetShadowPaletteColor16: hsl( hue(@sapUiFillPaletteColor16), saturation(@sapUiFillPaletteColor16), lightness(@sapUiFillPaletteColor16)*1.75);
+
+.sapMakitChart{
+	/* Current MAKit Chart implementation will force the main DOM 
+	object to use class 'chart'. So there's no point to use this 
+	class at the moment. Will consider to change in the future release.	*/
+}
+
+.chart {
+	color: @sapUiText;
+	background: @sapUiBaseBG;
+	overflow:hidden;
+}
+.chart > * span.ui-btn-inner {
+	padding: .1em 5px;
+}
+.chart > * div.ui-slider-switch {
+	height: 22px;
+}
+.chart > * div.ui-slider {
+	width: 30%;
+}
+.chart > * div.ui-select {
+	width: 30%;
+}
+.chart > * input.ui-slider-input {
+	width: 70px;
+}
+.chart > * input.ui-input-text {
+	padding: .1em;
+}
+.chart_value_bubble {
+	background: @sapUiValueBubbleLegendBG;
+	color: @sapUiValueBubbleLegendTextColor;
+}
+.chart_value_bubble_outline {
+	background: fade(@sapUiChartHightlight, 20%);
+	color: @sapUiLightBG;
+}
+.chart_range_selector_text {
+	font-size: @sapUiChartRangeSelectorFontSize;/*12px;*/
+	font-family: @sapUiChartRangeSelectorFontFamily; /*Helvetica;*/
+	color: @sapUiChartRangeSelectorFontColor; /*#707070;*/
+}
+
+.chart_table {
+	background: @sapUiBaseBG; /* #FFFFFF */
+	font-size: @sapUiChartTableFontSize;
+	font-family: @sapUiChartTableFontFamily;
+	color: @sapUiText; /* #000000 */
+}
+.chart_table_dimension_title {
+	background: @sapUiExtraLightBG - #222222; /* #DDDDDD; */
+}
+.chart_table_row_header {
+	background: @sapUiExtraLightBG - #222222; /* #DDDDDD; */
+}
+.chart_table_column_headers {
+	background: @sapUiExtraLightBG - #080808; /* #F7F7F7; */
+}
+.chart_table_contents {
+	background: @sapUiExtraLightBG - #080808; /* #F7F7F7; */
+}
+input[type=date]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
+
+.defaultFillPalette {
+	/*DO-NOT DELETE*/
+}
+
+.defaultFillPalette .color1 {
+	color: @sapUiFillPaletteColor1;
+}
+.defaultFillPalette .color2 {
+	color: @sapUiFillPaletteColor2;
+}
+.defaultFillPalette .color3 {
+	color: @sapUiFillPaletteColor3;
+}
+.defaultFillPalette .color4 {
+	color: @sapUiFillPaletteColor4;
+}
+.defaultFillPalette .color5 {
+	color: @sapUiFillPaletteColor5;
+}
+.defaultFillPalette .color6 {
+	color: @sapUiFillPaletteColor6;
+}
+.defaultFillPalette .color7 {
+	color: @sapUiFillPaletteColor7;
+}
+.defaultFillPalette .color8 {
+	color: @sapUiFillPaletteColor8;
+}
+.defaultFillPalette .color9 {
+	color: @sapUiFillPaletteColor9;
+}
+.defaultFillPalette .color10 {
+	color: @sapUiFillPaletteColor10;
+}
+.defaultFillPalette .color11 {
+	color: @sapUiFillPaletteColor11;
+}
+.defaultFillPalette .color12 {
+	color: @sapUiFillPaletteColor12;
+}
+.defaultFillPalette .color13 {
+	color: @sapUiFillPaletteColor13;
+}
+.defaultFillPalette .color14 {
+	color: @sapUiFillPaletteColor14;
+}
+.defaultFillPalette .color15 {
+	color: @sapUiFillPaletteColor15;
+}
+.defaultFillPalette .color16 {
+	color: @sapUiFillPaletteColor16;
+}
+
+.defaultStrokePalette {
+	/*DO-NOT DELETE*/
+}
+.defaultStrokePalette .color1 {
+	color: @sapUiStrokePaletteColor1;
+}
+.defaultStrokePalette .color2 {
+	color: @sapUiStrokePaletteColor2;
+}
+.defaultStrokePalette .color3 {
+	color: @sapUiStrokePaletteColor3;
+}
+.defaultStrokePalette .color4 {
+	color: @sapUiStrokePaletteColor4;
+}
+.defaultStrokePalette .color5 {
+	color: @sapUiStrokePaletteColor5;
+}
+.defaultStrokePalette .color6 {
+	color: @sapUiStrokePaletteColor6;
+}
+.defaultStrokePalette .color7 {
+	color: @sapUiStrokePaletteColor7;
+}
+.defaultStrokePalette .color8 {
+	color: @sapUiStrokePaletteColor8;
+}
+.defaultStrokePalette .color9 {
+	color: @sapUiStrokePaletteColor9;
+}
+.defaultStrokePalette .color10 {
+	color: @sapUiStrokePaletteColor10;
+}
+.defaultStrokePalette .color11 {
+	color: @sapUiStrokePaletteColor11;
+}
+.defaultStrokePalette .color12 {
+	color: @sapUiStrokePaletteColor12;
+}
+.defaultStrokePalette .color13 {
+	color: @sapUiStrokePaletteColor13;
+}
+.defaultStrokePalette .color14 {
+	color: @sapUiStrokePaletteColor14;
+}
+.defaultStrokePalette .color15 {
+	color: @sapUiStrokePaletteColor15;
+}
+.defaultStrokePalette .color16 {
+	color: @sapUiStrokePaletteColor16;
+}
+
+.defaultInsetShadowPalette {
+	/*DO-NOT DELETE*/
+}
+.defaultInsetShadowPalette .color1 {
+	color: @sapUiInsetShadowPaletteColor1;
+}
+.defaultInsetShadowPalette .color2 {
+	color: @sapUiInsetShadowPaletteColor2;
+}
+.defaultInsetShadowPalette .color3 {
+	color: @sapUiInsetShadowPaletteColor3;
+}
+.defaultInsetShadowPalette .color4 {
+	color: @sapUiInsetShadowPaletteColor4;
+}
+.defaultInsetShadowPalette .color5 {
+	color: @sapUiInsetShadowPaletteColor5;
+}
+.defaultInsetShadowPalette .color6 {
+	color: @sapUiInsetShadowPaletteColor6;
+}
+.defaultInsetShadowPalette .color7 {
+	color: @sapUiInsetShadowPaletteColor7;
+}
+.defaultInsetShadowPalette .color8 {
+	color: @sapUiInsetShadowPaletteColor8;
+}
+.defaultInsetShadowPalette .color9 {
+	color: @sapUiInsetShadowPaletteColor9;
+}
+.defaultInsetShadowPalette .color10 {
+	color: @sapUiInsetShadowPaletteColor10;
+}
+.defaultInsetShadowPalette .color11 {
+	color: @sapUiInsetShadowPaletteColor11;
+}
+.defaultInsetShadowPalette .color12 {
+	color: @sapUiInsetShadowPaletteColor12;
+}
+.defaultInsetShadowPalette .color13 {
+	color: @sapUiInsetShadowPaletteColor13;
+}
+.defaultInsetShadowPalette .color14 {
+	color: @sapUiInsetShadowPaletteColor14;
+}
+.defaultInsetShadowPalette .color15 {
+	color: @sapUiInsetShadowPaletteColor15;
+}
+.defaultInsetShadowPalette .color16 {
+	color: @sapUiInsetShadowPaletteColor16;
+}
+
+/*
+The following styles are used by features not included in SAPUI5 Chart, 
+but they can't be removed (yet) because it's still used by the MAKit Chart object itself.
+*/
+.chart_titlebar {
+	background: #008fd3; 
+}
+.chart_titlebar > .chart_title {
+	color: #FFFFFF;
+}
+.chart_titlebar > .fullscreen_icon {
+	background: url(images/fullscreen_icon.png) no-repeat;
+	cursor: pointer;
+}
+.chart_toolbar {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border-bottom: 1px solid #666666;
+	border-top: 1px solid #666666;
+	background: url(images/chartToolbar.png) #666666 repeat-x;
+	white-space: nowrap;
+}
+.chart_toolbar > .chart_button {
+	border: 3px;
+	background: #222222;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: bold;
+	color: #fff;
+}
+.chart_toolbar > .chart_button:hover {
+	background: #333333;
+	color: #ccc;
+}
+.chart_toolbar > .chart_button:active {
+	background: #666666;
+}
+.chart_toolbar > .table_button {
+	border: 0px;
+	background: url(images/table_icon.png) no-repeat;
+}
+.chart_toolbar > .rangeselector_button {
+	border: 0px;
+	background: url(images/rangeselector_icon.png) no-repeat;
+}
+.chart_toolbar > .share_button {
+	border: 0px;
+	background: url(images/e-mail_icon.png) no-repeat;
+}
+.chart_toolbar > .whatif_button {
+	border: 0px;
+	background: url(images/whatif_icon.png) no-repeat;
+}
+.chart_toolbar > .da_button {
+	border: 0px;
+	background: url(images/da_icon.png) no-repeat;
+}
+.chart_toolbar h1 {
+	overflow: hidden;
+	margin: auto;
+	font-size: 20px;
+	font-weight: bold;
+	text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #F0AB00;
+	display: inline;
+}
+/* ============================================= */
+/* CSS for control sap.makit/Chart.control */
+/* ============================================= */

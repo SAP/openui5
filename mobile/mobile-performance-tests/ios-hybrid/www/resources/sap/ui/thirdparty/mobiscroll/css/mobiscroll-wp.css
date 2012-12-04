@@ -1,0 +1,240 @@
+.wp .dw {
+    background: #1f1f1f;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+}
+.wp .dwwr {
+    padding: 10px;
+}
+.wp .dwv {
+    display: none;
+}
+.wp .dwc {
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+.wp .dwwc {
+    padding: 3px;
+    background: none;
+}
+.wp .dwwl {
+    margin: 0;
+    background: none;
+}
+.wp .dwl {
+    display: none;
+}
+.wp .dww, .wp .dwpm .dww {
+    margin: 0 3px;
+    background: none;
+    border: 0;
+    color: #fff;
+}
+.wp .dww li {
+    position: relative;
+    padding: 0;
+    font-size: 26px;
+    letter-spacing: -1px;
+    text-align: left;
+    text-shadow: none;
+    opacity: 0;
+    box-sizing: border-box;
+    filter: Alpha(Opacity=0);
+    transition: opacity .3s linear;
+    -webkit-box-sizing: border-box;
+    -webkit-transition: opacity .3s linear;
+    -moz-box-sizing: border-box;
+    -moz-transition: opacity .3s linear;
+}
+.wp .dw-i {
+    position: relative;
+    top: 4%;
+    height: 92%;
+    padding: 0 5px;
+    border: 1px solid #4c4c4c;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    filter: inherit;
+}
+.wp .wpa li, .wp .dwa li {
+    opacity: .3;
+    filter: Alpha(Opacity=30);
+}
+.wp .wpa li.dw-v, .wp .dwa li.dw-v {
+    opacity: 1;
+    filter: Alpha(Opacity=100);
+}
+.wp .dw-day, .wp .dw-mon {
+    display: block;
+    color: #a9a9a9;
+    line-height: 18px;
+    font-size: 11px;
+    letter-spacing: normal;
+    position: absolute;
+    bottom: 0;
+    filter: inherit;
+}
+.wp .dww li.dw-sel {
+    opacity: 1;
+    filter: Alpha(Opacity=100);
+}
+.wp .dww li.dw-sel .dw-i {
+    background-color: #4c4c4c;
+    transition: background-color .1s linear;
+    -webkit-transition: background-color .1s linear;
+    -moz-transition: background-color .1s linear;
+}
+.wp .dwa li.dw-sel .dw-i {
+    background-color: transparent;
+}
+.wp .dwwo {
+    display: none;
+}
+.wp .dwwol {
+    display: none;
+}
+.wp .dwbc {
+    padding: 0;
+}
+.wp .dwbw {
+    float: none;
+    width: auto;
+}
+.wp .dwb {
+    position: relative;
+    top: 0;
+    min-width: 32px;
+    display: inline-block;
+    height: 20px;
+    padding: 29px 5px 0 5px;
+    background: none;
+    box-shadow: none;
+    line-height: 20px;
+    font-size: 11px;
+    font-weight: normal;
+    text-transform: lowercase;
+    text-shadow: none;
+    transition: top .1s linear;
+    -webkit-box-shadow: none;
+    -webkit-transition: top .1s linear;
+    -moz-transition: top .1s linear;
+}
+.wp .dwb:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    margin: 0 -13px;
+    background: url(wp-icons.png) center center no-repeat;
+}
+.wp .dwb-s .dwb:after {
+    background-position: 0 0;
+}
+.wp .dwb-c .dwb:after {
+    background-position: -26px 0;
+}
+.wp .dwb-n .dwb:after {
+    background-position: -52px 0;
+}
+.wp .dwb-s .dwb-a:after {
+    background-position: 0 -26px;
+}
+.wp .dwb-c .dwb-a:after {
+    background-position: -26px -26px;
+}
+.wp .dwb-n .dwb-a:after {
+    background-position: -52px -26px;
+}
+.wp .dwb.dwb-a {
+    top: -3px;
+}
+/* +/- buttons */
+.wp .dwwl .dwb-a {
+    background: #1f1f1f;
+}
+.wp .dwwb {
+    background: #1f1f1f;
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #a9a9a9;
+    -webkit-box-shadow: none;
+    -webkit-border-radius: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.wp .dwwb span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26px;
+    height: 26px;
+    margin: -13px;
+    display: block;
+    background: url(wp-icons.png) center center no-repeat;
+    text-indent: -9999px;
+}
+.wp .dwwbp span {
+    background-position: -78px 0;
+}
+.wp .dwwbp.dwb-a span {
+    background-position: -78px -26px;
+}
+.wp .dwwbm span {
+    background-position: -104px 0;
+}
+.wp .dwwbm.dwb-a span {
+    background-position: -104px -26px;
+}
+/* Bubble positioning */
+.wp .dw-bubble-bottom .dw-arr {
+    border-color: transparent transparent #1f1f1f transparent;
+}
+.wp .dw-bubble-top .dw-arr {
+    border-color: #1f1f1f transparent transparent transparent;
+}
+/* Light version */
+.wp.light .dw {
+    background: #dedede;
+}
+.wp.light .dwv {
+    color: #000;
+}
+.wp.light .dww li {
+    color: #000;
+}
+.wp.light li .dw-i {
+    border-color: #b5b5b5;
+}
+.wp.light li.dw-sel .dw-i {
+    background: #b5b5b5;
+}
+.wp.light .dw-day, .wp.light .dw-mon {
+    color: #6b6b6b;
+}
+.wp.light .dwa li.dw-sel .dw-i {
+    background-color: transparent;
+}
+.wp.light .dwb {
+    color: #000;
+}
+.wp.light .dwb:after {
+    background-image: url(wp-icons-light.png);
+}
+.wp.light .dwwb {
+    background: #dedede;
+}
+.wp.light .dwwb span {
+    background-image: url(wp-icons-light.png);
+}
+/* Bubble positioning */
+.wp.light .dw-bubble-bottom .dw-arr {
+    border-color: transparent transparent #dedede transparent;
+}
+.wp.light .dw-bubble-top .dw-arr {
+    border-color: #dedede transparent transparent transparent;
+}

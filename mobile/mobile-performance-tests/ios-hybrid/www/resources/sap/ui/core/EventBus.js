@@ -17,7 +17,7 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @abstract
  * @extends sap.ui.base.Object
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  * @since 1.8.0

@@ -58,7 +58,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -755,6 +755,7 @@ sap.ui.core.ScrollBar.prototype.setScrollPosition = function (scrollPosition) {
 	} else {
 		this.setProperty("scrollPosition", scrollPosition);
 	}
+	return this;
 };
 
 /*
@@ -822,6 +823,7 @@ sap.ui.core.ScrollBar.prototype.setContentSize = function (sContentSize) {
 			}
 		}
 	}
+	return this;
 };
 
 //=============================================================================

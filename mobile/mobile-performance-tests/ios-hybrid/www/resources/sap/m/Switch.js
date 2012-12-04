@@ -33,7 +33,9 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
  * <li>{@link #getState state} : boolean (default: false)</li>
  * <li>{@link #getEnabled enabled} : boolean (default: true)</li>
- * <li>{@link #getName name} : string (default: "")</li></ul>
+ * <li>{@link #getName name} : string (default: "")</li>
+ * <li>{@link #getCustomTextOn customTextOn} : string</li>
+ * <li>{@link #getCustomTextOff customTextOff} : string</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -56,7 +58,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -72,7 +74,9 @@ sap.ui.core.Control.extend("sap.m.Switch", { metadata : {
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"state" : {type : "boolean", group : "Misc", defaultValue : false},
 		"enabled" : {type : "boolean", group : "Data", defaultValue : true},
-		"name" : {type : "string", group : "Misc", defaultValue : ""}
+		"name" : {type : "string", group : "Misc", defaultValue : ""},
+		"customTextOn" : {type : "string", group : "Misc", defaultValue : null},
+		"customTextOff" : {type : "string", group : "Misc", defaultValue : null}
 	},
 	events : {
 		"change" : {}
@@ -126,7 +130,7 @@ sap.m.Switch.M_EVENTS = {'change':'change'};
 
 /**
  * Getter for property <code>state</code>.
- * The state of the switch true is "on" or false is "off".
+ * The state of the switch, true for the "ON" state or false for the "OFF" state translated to the current language.
  *
  * Default value is <code>false</code>
  *
@@ -200,6 +204,64 @@ sap.m.Switch.M_EVENTS = {'change':'change'};
  */
 
 /**
+ * Getter for property <code>customTextOn</code>.
+ * Custom text for the "ON" state.
+ * 
+ * "ON" translated to the current language is the default value.
+ * 
+ * Beware that the given text will be cut off after three characters.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>customTextOn</code>
+ * @public
+ * @name sap.m.Switch#getCustomTextOn
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>customTextOn</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sCustomTextOn  new value for property <code>customTextOn</code>
+ * @return {sap.m.Switch} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Switch#setCustomTextOn
+ * @function
+ */
+
+/**
+ * Getter for property <code>customTextOff</code>.
+ * Custom text for the "OFF" state.
+ * 
+ * "OFF" translated to the current language is the default value.
+ * 
+ * Beware that the given text will be cut off after three characters.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>customTextOff</code>
+ * @public
+ * @name sap.m.Switch#getCustomTextOff
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>customTextOff</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sCustomTextOff  new value for property <code>customTextOff</code>
+ * @return {sap.m.Switch} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Switch#setCustomTextOff
+ * @function
+ */
+
+/**
  * Triggered when a switch changes the state. 
  *
  * @name sap.m.Switch#change
@@ -265,37 +327,61 @@ sap.m.Switch.M_EVENTS = {'change':'change'};
  */
 
 // Start of sap\m\Switch.js
-sap.m.Switch.prototype._aVEvents = ["_ontouchstart", "_ontouchmove", "_ontouchend", "_ontouchcancel"];
-sap.m.Switch.prototype._aEvents = ["ontouchstart", "ontouchmove", "ontouchend", "ontouchcancel"];
-
-// the milliseconds it takes the transition from one state to another
+//	the milliseconds it takes the transition from one state to another
 sap.m.Switch.prototype._iTransitionTime = 175;
 
-// a boolean property to indicate android and blackberry style.
+//	a boolean property to indicate android and blackberry style.
 sap.m.Switch.prototype._bAndroidStyle = !!(jQuery.os.android || jQuery.os.blackberry);
 
-// a boolean property to indicate if transition or not.
+sap.m.Switch.prototype._aVEvents = (function() {
+	var aVEvents =	["_ontouchstart", "_ontouchmove", "_ontouchend", "_ontouchcancel"];
+
+	if (sap.m.Switch.prototype._bAndroidStyle) {
+		aVEvents.push("_onswiperight", "_onswipeleft")
+	}
+
+	return aVEvents;
+})();
+
+sap.m.Switch.prototype._aEvents = (function() {
+	var aEvents = ["ontouchstart", "ontouchmove", "ontouchend", "ontouchcancel"];
+
+	if (sap.m.Switch.prototype._bAndroidStyle) {
+		aEvents.push("onswiperight", "onswipeleft")
+	}
+
+	return aEvents;
+})();
+
+//	a boolean property to indicate if transition or not.
 sap.m.Switch.prototype._bTransition = !!(jQuery.os.ios);
+
+sap.m.Switch.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 /* =========================================================== */
 /*                   begin: lifecycle methods                  */
 /* =========================================================== */
 
 /**
- * Initialization hook for the switch.
+ * Required adaptations before rendering.
  *
  * @private
  */
-sap.m.Switch.prototype.init = function() {
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+sap.m.Switch.prototype.onBeforeRendering = function() {
+	if (this.getCustomTextOn() === "") {
+		this._sOn = this._oRb.getText("SWITCH_ON");
+	} else if (this.getCustomTextOn().length <= 3) {
+		this._sOn = this.getCustomTextOn();
+	} else {
+		this._sOn = this.getCustomTextOn().substring(0, 3) + "...";
+	}
 
-	//	switch text translated
-	this._sOn = oRb.getText("SWITCH_ON");
-	this._sOff = oRb.getText("SWITCH_OFF");
-
-	if (this._bAndroidStyle) {
-		this._aVEvents.push("_onswiperight", "_onswipeleft");
-		this._aEvents.push("onswiperight", "onswipeleft");
+	if (this.getCustomTextOff() === "") {
+		this._sOff = this._oRb.getText("SWITCH_OFF");
+	} else if (this.getCustomTextOff().length <= 3) {
+		this._sOff = this.getCustomTextOff();
+	} else {
+		this._sOff = this.getCustomTextOff().substring(0, 3) + "...";
 	}
 };
 
@@ -303,63 +389,101 @@ sap.m.Switch.prototype.init = function() {
  * Required adaptations after rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
 sap.m.Switch.prototype.onAfterRendering = function() {
+	var fnOnAfterRendering = this["_onAfterRendering" + jQuery.os.os];
 
-	// bind only if the switch is enabled
+	//	bind only if the switch is enabled
 	if (this.getEnabled()) {
 		this._bindEvents();
 	}
 
-	// switch jQuery DOM reference
-	this._$Swt = this.$();
+	// switch control container jQuery reference
+	this._$SwtCont = this.$();
 
-	// the maximum offset in x-axis for the switch children elements
-	this._iOffsetX = (jQuery.os.ios) ? 1 : (this._bAndroidStyle) ? 7 : 0;
+	//	switch jQuery DOM reference
+	this._$Swt = this._$SwtCont.children(".sapMSwt");
 
-	// switch width
+	//	switch width
 	this._iSwtWidth = this._$Swt.width();
 
-	// switch midpoint
-	this._iSwtMp = Math.round(this._iSwtWidth / 2);
-
-	// switch button jQuery DOM reference
+	//	switch button jQuery DOM reference
 	this._$Btn = this._$Swt.children(".sapMSwtBtn");
 
-	// switch button outerWidth
-	this._iBtnOuterWidth = this._$Btn.outerWidth(true);
+	//	switch button outerWidth
+	this._fBtnOuterWidth = this._$Btn.outerWidth(true);
 
-	// switch button width
-	this._iBtnWidth = this._$Btn.width();
+	//	switch button width
+	this._fBtnWidth = this._$Btn.width();
 
-	// switch button midpoint
-	this._iBtnMp = Math.round(this._iBtnOuterWidth / 2);
-
-	// the maximum left position for the switch button
-	this._iBtnMaxLeft = (this._iSwtWidth - this._iBtnOuterWidth) + this._iOffsetX;
-
-	// the minimum left position for the switch button
-	this._iBtnMinLeft = -this._iOffsetX;
-
-	// checkbox jQuery DOM reference
+	//	checkbox jQuery DOM reference
 	this._$Checkbox = this._$Swt.children("input[type=checkbox]");
 
-	if (jQuery.os.ios) {
-
-		// switch text ON jQuery DOM reference
-		this._$TextOn = this._$Swt.children('.sapMSwtTextOn');
-
-		// the maximum text indent for the "ON" state
-		this._iTextOnIndentMax = 13;
-
-		// the minimum text indent for the "OFF" state
-		this._iTextOnIndentMin = -37;
-
-		// switch text OFF jQuery DOM reference
-		this._$TextOff = this._$Swt.children('.sapMSwtTextOff');
+	//	factory method pattern: call the specific onAfterRendering method
+	if (typeof fnOnAfterRendering === "function") {
+		fnOnAfterRendering.call(this);
 	}
+
+	//	the minimum left position for the switch button
+	this._iBtnMinLeft = -this._iOffsetX;
+
+	//	the maximum left position for the switch button
+	this._iBtnMaxLeft = (this._iSwtWidth - this._fBtnOuterWidth) + this._iOffsetX;
+
+	//	after all calculations, make visible the control
+	this._$Swt.addClass("sapMSwtVisible");
 };
+
+/**
+ * Required adaptations after rendering for iOS.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._onAfterRenderingios = function() {
+	var fSpanOnWidth;
+
+	//	the maximum offset in x-axis for the switch children elements
+	this._iOffsetX = 1;
+
+	//	DIV ON jQuery DOM reference
+	this._$TextOn = this._$Swt.children('.sapMSwtTextOn');
+
+	//	SPAN ON width
+	fSpanOnWidth = this._$TextOn.children("span").width();
+
+	//	DIV ON text indent
+	this._fTextIndentOn = (this._iSwtWidth - fSpanOnWidth - this._fBtnWidth) / 2;
+
+	//	DIV OFF jQuery DOM reference
+	this._$TextOff = this._$Swt.children('.sapMSwtTextOff');
+
+	//	DIV OFF text indent
+	this._fTextIndentOff = (this._iSwtWidth - this._$TextOff.children("span").width() + this._fBtnWidth) / 2;
+
+	//	the minimum text indent for the OFF state
+	this._fTextOnIndentMin = -(fSpanOnWidth + this._fTextIndentOn);
+
+	//	center the texts
+	this._centerTextIos();
+};
+
+/**
+ * Required adaptations after rendering for android.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._onAfterRenderingandroid = function() {
+
+	//	the maximum offset in x-axis for the switch children elements
+	this._iOffsetX = 7;
+};
+
+/**
+ * Required adaptations after rendering for blackberry.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._onAfterRenderingblackberry = sap.m.Switch.prototype._onAfterRenderingandroid;
 
 /* =========================================================== */
 /*                   end: lifecycle methods                    */
@@ -403,8 +527,8 @@ sap.m.Switch.prototype._ontouchstart = function(oEvent) {
 	//	events from the switch control.
 	oEvent.originalEvent._sapui_handledByControl = true;
 
-	//	Only process single touches. If there is already a touch
-	//	happening or two simultaneous touches, then just ignore them.
+	//	Only process single touches. If there is already a touch happening
+	//	or two simultaneous touches, then just ignore them.
 	//
 	//	Important to note that oEvent.targetTouches.length is related
 	//	to the current target DOM element, it could be the control
@@ -422,9 +546,9 @@ sap.m.Switch.prototype._ontouchstart = function(oEvent) {
 	this._$Swt.addClass("sapMSwtPressed");
 
 	this._bTempState = this.getState();
-	this._iStarTouchPageX = oTargetTouch.pageX;
-	this._iCurrentTouchPageX = this._iStarTouchPageX;
-	this._iDiffX = this._iStarTouchPageX - this._$Btn.position().left;
+	this._iStarPageX = oTargetTouch.pageX;
+	this._iCurrentPageX = this._iStarPageX;
+	this._iDiffX = this._iStarPageX - this._$Btn.position().left;
 	this._bTargetBtn = jQuery(oEvent.target).is(this._$Btn);
 	this._bDrag = false;
 
@@ -441,11 +565,10 @@ sap.m.Switch.prototype._ontouchstart = function(oEvent) {
  */
 sap.m.Switch.prototype._ontouchmove = function(oEvent) {
 	var oTouch,
-		iTextIndent,
-		iTouchPageX,
-		iDragDistance,
+		iPageX,
+		iDragDist,
 		iLeftPos,
-		iBtnCenter,
+		iBtnCen,
 		fnTouch = sap.m.touch;
 
 	//	the active touch should always be in the list of touches
@@ -461,64 +584,16 @@ sap.m.Switch.prototype._ontouchmove = function(oEvent) {
 		return;
 	}
 
-	iTouchPageX = oTouch.pageX;
-	iDragDistance = iTouchPageX - this._iCurrentTouchPageX;
-	iLeftPos = (this._bTargetBtn && this._bAndroidStyle) ? iTouchPageX - this._iDiffX : iDragDistance + this._$Btn.position().left;
-	iBtnCenter = iLeftPos + this._iBtnMp;
-
-	//	restrict the switch handle button to a maximal and minimal left position during the dragging
-	iLeftPos = (iLeftPos > this._iBtnMaxLeft) ? this._iBtnMaxLeft : (iLeftPos < this._iBtnMinLeft) ? this._iBtnMinLeft : iLeftPos;
+	iPageX = oTouch.pageX;
+	iDragDist = iPageX - this._iCurrentPageX;
+	iLeftPos = (this._bTargetBtn && this._bAndroidStyle) ? iPageX - this._iDiffX
+															: iDragDist + this._$Btn.position().left;
+	iBtnCen = iLeftPos + (this._fBtnOuterWidth / 2);
 
 	this._bDrag = true;
-	this._iCurrentTouchPageX = iTouchPageX;
+	this._iCurrentPageX = iPageX;
 
-	/* **************************************************************** */
-	/* the code below update the switch UI during the dragging process	*/
-	/* **************************************************************** */
-
-	if (this._iCurrentLeft === iLeftPos) {
-		return;
-	}
-
-	this._iCurrentLeft = iLeftPos;
-
-	this._$Btn.css("left", iLeftPos + "px");
-
-	if (iBtnCenter >= this._iSwtMp) {
-
-		if (!this._bTempState) {
-
-			if (this._bAndroidStyle) {
-				this._$Btn.attr("data-sap-ui-swt", this._sOn);
-			}
-
-			this._bTempState = true;
-		}
-
-	} else if (this._bTempState) {
-
-		if (this._bAndroidStyle) {
-			this._$Btn.attr("data-sap-ui-swt", this._sOff);
-		}
-
-		this._bTempState = false;
-	}
-
-	/* iOS require some additional UI changes */
-
-	if (jQuery.os.ios) {
-		iTextIndent = parseInt(this._$TextOn.css("text-indent"), 10) + iDragDistance;
-
-		// restrict the switch text "ON" to a maximal and minimal text indent during the dragging
-		iTextIndent = (iTextIndent > this._iTextOnIndentMax) ? this._iTextOnIndentMax : (iTextIndent < this._iTextOnIndentMin) ? this._iTextOnIndentMin : iTextIndent;
-
-		this._$TextOn.css({
-			width: iLeftPos + this._iBtnWidth + this._iOffsetX,
-			textIndent: iTextIndent
-		});
-
-		this._$TextOff.width(this._iSwtWidth - (iLeftPos + this._iOffsetX));
-	}
+	this._updateUI(iDragDist, iLeftPos, iBtnCen);
 };
 
 /**
@@ -528,32 +603,33 @@ sap.m.Switch.prototype._ontouchmove = function(oEvent) {
  * @private
  */
 sap.m.Switch.prototype._ontouchend = function(oEvent) {
-	var aProp = ["_bTempState", "_iStarTouchPageX", "_iCurrentTouchPageX", "_iDiffX", "_bTargetBtn", "_bDrag", "_iActiveTouch"],
+	var aProp = ["_bTempState", "_iStarPageX", "_iCurrentPageX", "_iDiffX", "_bTargetBtn", "_bDrag", "_iActiveTouch"],
 		iLen = aProp.length,
 		fnTouch = sap.m.touch,
+		assert = jQuery.sap.assert,
 		i;
 
-	jQuery.sap.assert(typeof this._iActiveTouch !== "undefined", 'sap.m.Switch.prototype._ontouchend(): expect to already be touching');
+	assert(typeof this._iActiveTouch !== "undefined", 'sap.m.Switch.prototype._ontouchend(): expect to already be touching');
 
-	// if the touch we're tracking isn't changing here, ignore this touch end event
+	//	if the touch we're tracking isn't changing here, ignore this touch end event
 	if (!fnTouch.find(oEvent.changedTouches, this._iActiveTouch)) {
 
-		// In most cases, our active touch will be in the touches collection,
-		// but we can't assert that because occasionally two touch end events can
-		// occur at almost the same time with both having empty touches lists.
+		//	In most cases, our active touch will be in the touches collection,
+		//	but we can't assert that because occasionally two touch end events can
+		// 	occur at almost the same time with both having empty touches lists.
 		return;
 	}
 
-	// this is touch end for the touch we're monitoring
-	jQuery.sap.assert(!fnTouch.find(oEvent.touches, this._iActiveTouch), 'sap.m.Switch.prototype._ontouchend(): touch ended also still active');
+	//	this is touch end for the touch we're monitoring
+	assert(!fnTouch.find(oEvent.touches, this._iActiveTouch), 'sap.m.Switch.prototype._ontouchend(): touch ended also still active');
 
-	// remove active state
+	//	remove active state
 	this._$Swt.removeClass("sapMSwtPressed");
 
-	// change the state
+	//	change the state
 	(this._bDrag) ? this.setState(this._bTempState, true) :	this.setState(!this._bTempState, true);
 
-	// remove unused properties
+	//	remove unused properties
 	for (i = 0; i < iLen; i++) {
 		if (this.hasOwnProperty(aProp[i])) {
 			delete this[aProp[i]];
@@ -579,6 +655,82 @@ sap.m.Switch.prototype._ontouchcancel = function(oEvent) {
 /* =========================================================== */
 /*                      begin: internal methods                */
 /* =========================================================== */
+
+/**
+ * Update the switch UI during the dragging process.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._updateUI = function(iDragDist, iLeftPos, iBtnCen) {
+	var fnUpdateUI = this["_updateUI" + jQuery.os.os],
+		fnUpdateBtnText = this["_updateBtnText" + jQuery.os.os];
+
+	//	restrict the switch handle button to a maximal and minimal left position during the dragging
+	iLeftPos = (iLeftPos > this._iBtnMaxLeft) ? this._iBtnMaxLeft
+												: (iLeftPos < this._iBtnMinLeft) ? this._iBtnMinLeft : iLeftPos;
+
+	if (this._iCurrentLeft === iLeftPos) {
+		return;
+	}
+
+	this._iCurrentLeft = iLeftPos;
+
+	this._$Btn.css("left", iLeftPos);
+
+	if (iBtnCen >= this._iSwtWidth / 2) {
+
+		if (!this._bTempState) {
+
+			if (typeof fnUpdateBtnText === "function") {
+				fnUpdateBtnText.call(this, true);
+			}
+
+			this._bTempState = true;
+		}
+
+	} else if (this._bTempState) {
+
+		if (typeof fnUpdateBtnText === "function") {
+			fnUpdateBtnText.call(this, false);
+		}
+
+		this._bTempState = false;
+	}
+
+	//	factory method pattern: call the specific _onDrag method
+	if (typeof fnUpdateUI === "function") {
+		fnUpdateUI.call(this, iDragDist, iLeftPos, iBtnCen);
+	}
+};
+
+/**
+ * Update the switch UI during the dragging process on iOS.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._updateUIios = function(iDragDist, iLeftPos, iBtnCen) {
+	var fTextIndentOn = parseFloat(this._$TextOn.css("text-indent")) + iDragDist;
+
+	//	restrict the switch text-indent
+	fTextIndentOn = (fTextIndentOn > this._fTextIndentOn) ? this._fTextIndentOn
+															: (fTextIndentOn < this._fTextOnIndentMin) ? this._fTextOnIndentMin : fTextIndentOn;	// TODO
+
+	this._$TextOn.css({
+		width: iLeftPos + this._fBtnWidth + this._iOffsetX,
+		textIndent: fTextIndentOn
+	});
+
+	this._$TextOff.width(this._iSwtWidth - (iLeftPos + this._iOffsetX));
+};
+
+/**
+ * Update the switch button text.
+ *
+ * @private
+ */
+sap.m.Switch.prototype._updateBtnTextandroid = function(b) {
+	this._$Btn.attr("data-sap-ui-swt", b ? this._sOn : this._sOff);
+};
 
 /**
  * Bind events.
@@ -612,6 +764,11 @@ sap.m.Switch.prototype._unbindEvents = function() {
 	return this;
 };
 
+sap.m.Switch.prototype._centerTextIos = function() {
+	this._$TextOn.css("text-indent", this.getState() ? this._fTextIndentOn : this._fTextOnIndentMin);
+	this._$TextOff.css("text-indent", this._fTextIndentOff);
+};
+
 /* =========================================================== */
 /*                      end: internal methods                  */
 /* =========================================================== */
@@ -642,7 +799,7 @@ sap.m.Switch.prototype.setState = function(bState, bTriggerEvent) {
 	bNewState = !(this.getState() === bState);
 
 	if (bNewState) {
-		this.setProperty("state", bState, true); // validation and suppress re-rendering
+		this.setProperty("state", bState, true); //	validation and suppress re-rendering
 	}
 
 	if (!(this._$Swt instanceof jQuery)) {
@@ -662,7 +819,8 @@ sap.m.Switch.prototype.setState = function(bState, bTriggerEvent) {
 			value: sState
 		});
 
-		(bState) ? this._$Swt.removeClass("sapMSwtOff").addClass("sapMSwtOn") :	this._$Swt.removeClass("sapMSwtOn").addClass("sapMSwtOff");
+		(bState) ? this._$Swt.removeClass("sapMSwtOff").addClass("sapMSwtOn")
+					: this._$Swt.removeClass("sapMSwtOn").addClass("sapMSwtOff");
 
 		if (bTriggerEvent) {
 			if (this._bTransition) {
@@ -679,7 +837,7 @@ sap.m.Switch.prototype.setState = function(bState, bTriggerEvent) {
 		this._$Swt.addClass("sapMSwtTrans");
 	}
 
-	// remove all inline style on the switch
+	//	remove all inline style on the switch
 	a = [this._$Btn];
 	if (jQuery.os.ios) {
 		a.push(this._$TextOn, this._$TextOff);
@@ -687,6 +845,10 @@ sap.m.Switch.prototype.setState = function(bState, bTriggerEvent) {
 
 	for (i = 0; i < a.length; i++) {
 		a[i].removeAttr("style");
+	}
+
+	if (jQuery.os.ios) {
+		this._centerTextIos();
 	}
 
 	return this;
@@ -704,10 +866,11 @@ sap.m.Switch.prototype.setEnabled = function(bValue) {
 		return this;
 	}
 
-	this.setProperty("enabled", bValue, true);	// validation and suppress re-rendering
+	this.setProperty("enabled", bValue, true);	//	validation and suppress re-rendering
 
 	if (this._$Swt instanceof jQuery) {
-		(bValue) ? this._bindEvents()._$Swt.removeClass("sapMSwtDisabled") : this._unbindEvents()._$Swt.addClass("sapMSwtDisabled");
+		(bValue) ? this._bindEvents()._$Swt.removeClass("sapMSwtDisabled")
+					: this._unbindEvents()._$Swt.addClass("sapMSwtDisabled");
 		this._$Checkbox.attr("disabled", !bValue);
 	}
 

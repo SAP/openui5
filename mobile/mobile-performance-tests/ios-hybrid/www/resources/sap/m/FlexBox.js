@@ -31,6 +31,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Properties
  * <ul>
  * <li>{@link #getVisible visible} : boolean (default: true)</li>
+ * <li>{@link #getHeight height} : sap.ui.core.CSSSize (default: '')</li>
+ * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '')</li>
  * <li>{@link #getDisplayInline displayInline} : boolean (default: false)</li>
  * <li>{@link #getDirection direction} : sap.m.FlexDirection (default: sap.m.FlexDirection.Row)</li>
  * <li>{@link #getFitContainer fitContainer} : boolean (default: false)</li>
@@ -59,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -73,6 +75,8 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
 	library : "sap.m",
 	properties : {
 		"visible" : {type : "boolean", group : "Appearance", defaultValue : true},
+		"height" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
+		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 		"displayInline" : {type : "boolean", group : "Appearance", defaultValue : false},
 		"direction" : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : sap.m.FlexDirection.Row},
 		"fitContainer" : {type : "boolean", group : "Appearance", defaultValue : false},
@@ -126,6 +130,60 @@ sap.ui.core.Control.extend("sap.m.FlexBox", { metadata : {
  * @return {sap.m.FlexBox} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.FlexBox#setVisible
+ * @function
+ */
+
+/**
+ * Getter for property <code>height</code>.
+ * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>height</code>
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#getHeight
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>height</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sHeight  new value for property <code>height</code>
+ * @return {sap.m.FlexBox} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#setHeight
+ * @function
+ */
+
+/**
+ * Getter for property <code>width</code>.
+ * The width of the FlexBox. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {sap.ui.core.CSSSize} the value of property <code>width</code>
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#getWidth
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>width</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {sap.ui.core.CSSSize} sWidth  new value for property <code>width</code>
+ * @return {sap.m.FlexBox} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.FlexBox#setWidth
  * @function
  */
 

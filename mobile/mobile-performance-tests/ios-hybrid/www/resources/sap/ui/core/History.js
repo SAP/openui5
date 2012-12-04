@@ -11,6 +11,9 @@ jQuery.sap.require("sap.ui.base.Object");
 
 /**
  * Creates an instance of the History.
+ * 
+ * Attention: The Web Storage API which is used by this class stores the data on the client.
+ * Therefore do not use this API for confidential information. 
  *
  * @class History handles the history of certain controls (e.g. sap.ui.commons.SearchField).
  *
@@ -19,7 +22,7 @@ jQuery.sap.require("sap.ui.base.Object");
  *
  * @extends sap.ui.base.Object
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @name sap.ui.core.History
  * @private

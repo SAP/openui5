@@ -87,7 +87,7 @@ jQuery.sap.require("sap.ui.base.EventProvider");
  * @param {array} aItemDomRefs Array of DOM nodes representing the items for the navigation
  * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  */
@@ -224,7 +224,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.setItemsTabindex = function() {
 	for (var i=0; i<this.aItemDomRefs.length; i++) {
 		if (this.aItemDomRefs[i]) { // separators return null here
 			var $Item = jQuery(this.aItemDomRefs[i]);
-			if ($Item.is(":focusable")) {
+			if ($Item.is(":sapFocusable")) {
 				// not focusable items (like labels) must not get a tabindex attribute
 				if(i == this.iFocusedIndex && !jQuery(this.oDomRef).data("sap.INItem")){
 					$Item.attr("tabIndex", this.iActiveTabIndex);
@@ -352,7 +352,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.focusItem = function(iIndex, oEven
 		return; // item already focused -> nothing to do
 	}
 	// if there is no item to put the focus on, we don't even try it
-	if(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")) {
+	if(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 		return;
 	}
 	this.fireEvent(sap.ui.core.delegate.ItemNavigation.Events.BeforeFocus,{index:iIndex, event:oEvent});
@@ -517,7 +517,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onmousedown = function(oEvent) {
 				} else {
 					// only focus the items if the click did not happen on a
 					// focusable element!
-					if (oItem === oSource || !jQuery(oSource).is(":focusable")) {
+					if (oItem === oSource || !jQuery(oSource).is(":sapFocusable")) {
 						this.focusItem(i, oEvent);
 						// the table mode requires not to prevent the default
 						// behavior on click since we want to allow text selection
@@ -618,7 +618,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapnext = function(oEvent) {
 
 			// if item is not visible or a dummy item go to the next one
 			}while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-				|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable"));
+				|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 		}
 		this.focusItem(iIndex, oEvent);
 		//cancel the event otherwise the browser will scroll
@@ -720,7 +720,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapprevious = function(oEvent) {
 
 			// if item is not visible or a dummy item go to the next one
 			}while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-				|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable"));
+				|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 		}
 		this.focusItem(iIndex, oEvent);
 		//cancel the event otherwise the browser will scroll
@@ -757,7 +757,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsappageup = function(oEvent) {
 		var iIndex = this.iFocusedIndex;
 		if (iIndex > -1) {
 			iIndex = iIndex - this.iPageSize;
-			while (iIndex > 0 && !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			while (iIndex > 0 && !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 				iIndex--;
 			}
 			if (iIndex < 0) {
@@ -804,7 +804,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsappagedown = function(oEvent) {
 			var iIndex = this.iFocusedIndex;
 			if (iIndex > -1) {
 				iIndex = iIndex + this.iPageSize;
-				while (iIndex < this.aItemDomRefs.length-1 && !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+				while (iIndex < this.aItemDomRefs.length-1 && !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 					iIndex++;
 				}
 				if (iIndex > this.aItemDomRefs.length-1) {
@@ -852,7 +852,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsaphome = function(oEvent) {
 			return;
 		}
 		while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-			|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 			iIndex++;
 			if (iIndex == this.aItemDomRefs.length) {
 				// no visible item -> no new focus
@@ -905,7 +905,7 @@ sap.ui.core.delegate.ItemNavigation.prototype.onsapend = function(oEvent) {
 			return;
 		}
 		while(!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css('visibility') == 'hidden'
-			|| !jQuery(this.aItemDomRefs[iIndex]).is(":focusable")){
+			|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")){
 			iIndex--;
 			if (iIndex < 0) {
 				// no visible item -> no new focus

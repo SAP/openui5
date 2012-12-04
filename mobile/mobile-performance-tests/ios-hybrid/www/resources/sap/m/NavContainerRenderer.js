@@ -29,6 +29,9 @@ sap.m.NavContainerRenderer.render = function(rm, oControl) {
 	rm.write("<div");
 	rm.writeControlData(oControl);
 	rm.addClass("sapMNav");
+	if (jQuery.os.android && jQuery.os.fVersion === 2.3) {
+		rm.addClass("sapMNavAndroid2-3");
+	}
 	rm.writeClasses();
 	rm.addStyle("width", oControl.getWidth());
 	rm.addStyle("height", oControl.getHeight());

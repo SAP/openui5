@@ -55,7 +55,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -422,7 +422,19 @@ sap.m.Bar.prototype._updatePosition = function() {
 	var $leftBar = jQuery.sap.byId( this.getId() + "-BarLeft");
 	// reset to default
 	$leftBar.css({'width': 'auto'});
+	
+	// Chrome browser has a problem in providing the correct div size when image inside does not have width explicitly set
+	var aLBChildren = $leftBar.children();
+	var iTotalWidth = 0;
+	for(var i= 0; i < aLBChildren.length ; i++){
+		iTotalWidth += jQuery(aLBChildren[i]).outerWidth(true);
+	}
 	var iLBWidth = $leftBar.outerWidth(true);
+	if (iLBWidth < iTotalWidth){
+		iLBWidth = iTotalWidth;
+		$leftBar.css({'width': iLBWidth});
+	}
+	
 	var $midBar  = jQuery.sap.byId( this.getId() + "-BarMiddle");
 	var iMBWidth = $midBar.outerWidth(true);
 	var $midBarPH = jQuery.sap.byId( this.getId() + "-BarPH");

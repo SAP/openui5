@@ -14,35 +14,40 @@ jQuery.sap.require("sap.ui.model.type.Date");
  * @class
  * This class represents datetime simple types.
  *
- * @extends sap.ui.model.SimpleType
+ * @extends sap.ui.model.type.Date
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.type.DateTime
  */
-sap.ui.model.type.DateTime = function () {
-	sap.ui.model.type.Date.apply(this, arguments);
-	this.sName = "DateTime";
-};
-
-// chain the prototypes
-sap.ui.model.type.DateTime.prototype = jQuery.sap.newObject(sap.ui.model.type.Date.prototype);
-
-/*
- * Describe the sap.ui.model.type.Date.
- * Resulting metadata can be obtained via sap.ui.model.type.Date.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.type.DateTime", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.type.Date",
-  publicMethods : [
-    // methods
-  ]
+sap.ui.model.type.Date.extend("sap.ui.model.type.DateTime", /** @lends sap.ui.model.type.DateTime */ {
+	
+	constructor : function () {
+		sap.ui.model.type.Date.apply(this, arguments);
+		this.sName = "DateTime";
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.type.DateTime with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.type.DateTime.extend
+ * @function
+ */
 
 /**
  * @see sap.ui.model.SimpleType.prototype.setFormatOptions

@@ -30,6 +30,9 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * This delegate uses CSS (-webkit-overflow-scrolling) only if supported. Otherwise the desired
 		 * scrolling library is used. Please also consider the documentation
 		 * of the library for a proper usage.
+		 * 
+		 * Controls that implement ScrollEnablement should additionally provide the getScrollDelegate method that returns
+		 * the current instance of this delegate object
 		 *
 		 * @extends sap.ui.base.Object
 		 * @name sap.ui.core.delegate.ScrollEnablement
@@ -44,7 +47,7 @@ jQuery.sap.require("sap.ui.base.Object");
 		 * @param {boolean} [oConfig.preventDefault=false] If set, the default of touchmove is prevented
 		 * @param {boolean} [oConfig.nonTouchScrolling=false] If set, the delegate will also be active on non-touch platforms
 		 *
-		 * @version 1.9.0-SNAPSHOT
+		 * @version 1.9.1-SNAPSHOT
 		 * @constructor
 		 * @protected
 		 */
@@ -68,7 +71,12 @@ jQuery.sap.require("sap.ui.base.Object");
 			}
 		},
 
-		// TODO: document
+		/**
+		 * Enable or disable horizontal scrolling.
+		 *
+		 * @param {boolean} bHorizontal set true to enable horizontal scrolling, false - to disable
+		 * @protected
+		 */
 		setHorizontal : function(bHorizontal) {
 			this._bHorizontal = !!bHorizontal;
 			if(this._scroller && this._zynga){
@@ -77,12 +85,40 @@ jQuery.sap.require("sap.ui.base.Object");
 			}
 		},
 
+		/**
+		 * Enable or disable vertical scrolling.
+		 *
+		 * @param {boolean} bVertical set true to enable vertical scrolling, false - to disable
+		 * @protected
+		 */
 		setVertical : function(bVertical) {
 			this._bVertical = !!bVertical;
 			if(this._scroller && this._zynga){
 				// Zynga options
 				this._scroller.options.scrollingY = this._bVertical;
 			}
+		},
+
+		/**
+		 * Get current setting for horizontal scrolling.
+		 *
+		 * @return {boolean} true if horizontal scrolling is enabled
+		 * @protected
+		 * @since 1.9.1
+		 */
+		getHorizontal : function() {
+			return this._bHorizontal;
+		},
+
+		/**
+		 * Get current setting for vertical scrolling.
+		 *
+		 * @return {boolean} true if vertical scrolling is enabled
+		 * @protected
+		 * @since 1.9.1
+		 */
+		getVertical : function() {
+			return this._bVertical;
 		},
 
 		scrollTo : function(x, y, time) {
@@ -173,20 +209,6 @@ jQuery.sap.require("sap.ui.base.Object");
 			var that = this,
 				bBounce = false;
 
-			/*	When a HTML select is a child from a DIV that makes use of css3 transformations
-				like translate3D, for example:
-
-				â€œ-webkit-transform: translate3d(0px, 0px, 0px);â€?
-
-				And the parent element of this DIV is positioned absolutely using overflow hidden.
-
-				The result of these combinations is that the select popup is not opened when you press it
-				because the touch-sensitive area is not where the select is rendered visually.
-				(Only the visual rendering is moved by the absolute positioning.)
-
-				This is a bug of Android 2.3 running safari mobile.*/
-			var bUseTransform = !(jQuery.os.android && jQuery.os.version.substring(0,3) === "2.3");
-
 			// Platform-specific behavior
 			if(jQuery.os.ios) {
 				bBounce = true;
@@ -196,8 +218,11 @@ jQuery.sap.require("sap.ui.base.Object");
 
 			this._scroller = new window.iScroll(this._sScrollerId, {
 				useTransition: true,
-				useTransform: bUseTransform,
+				useTransform: true,
+				hideScrollbar: true,
+				fadeScrollbar: true,
 				bounce: bBounce,
+				momentum: true,
 				hScroll: this._bHorizontal,
 				vScroll: this._bVertical,
 				onBeforeScrollStart: function() {},
@@ -208,6 +233,34 @@ jQuery.sap.require("sap.ui.base.Object");
 					}
 				}
 			});
+
+			// Traverse the parents and check if any has a ScrollDelegate with the same vertical or horizontal scroll.
+			// Controls that implement ScrollEnablement should provide the getScrollDelegate method.
+			for (var oParent = this._oControl; oParent = oParent.oParent;) {
+				var oSD = oParent.getScrollDelegate ? oParent.getScrollDelegate() : null;
+				if(oSD && (oSD.getVertical() && this.getVertical() || oSD.getHorizontal() && this.getHorizontal())){
+					this._scroller._sapui_isNested = true;
+					break;
+				}
+			}
+
+			// SAP modification: disable nested scrolling.
+			this._scroller._move = function(oEvent){
+
+				if(oEvent._sapui_handledByControl){ return; }
+
+				// Enable scrolling of outer container when the inner container is scrolled to the end
+				// so that a user can "pull out" contents that have been accidentally moved outside of
+				// the scrolling container by momentum scrolling.
+				if(this._sapui_isNested){
+					oEvent._sapui_handledByControl =
+						!(this.dirY < 0 && this.y >= 0) &&
+						!(this.dirY > 0 && this.y <= this.maxScrollY) &&
+						!(this.dirX < 0 && this.x >= 0) && 
+						!(this.dirX > 0 && this.x <= this.maxScrollX);
+				}
+				window.iScroll.prototype._move.call(this,oEvent);
+			}
 
 			// re-apply scrolling position after rendering
 			this._scroller._pos(-this._scrollX, -this._scrollY);
@@ -368,7 +421,7 @@ jQuery.sap.require("sap.ui.base.Object");
 							this._scroller = createZyngaScroller(this._sContentId, this._bHorizontal, this._bVertical);
 							break;
 						default: // iScroll library
-							jQuery.sap.require("sap.ui.thirdparty.iscroll-lite");
+							jQuery.sap.require("sap.ui.thirdparty.iscroll");
 							jQuery.extend(this, oIScrollDelegate);
 							break;
 					}

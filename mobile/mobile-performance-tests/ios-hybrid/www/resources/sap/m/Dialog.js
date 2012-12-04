@@ -31,7 +31,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>Properties
  * <ul>
  * <li>{@link #getIcon icon} : sap.ui.core.URI</li>
- * <li>{@link #getTitle title} : string</li></ul>
+ * <li>{@link #getTitle title} : string</li>
+ * <li>{@link #getType type} : sap.m.DialogType (default: sap.m.DialogType.Standard)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -60,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -78,7 +79,8 @@ sap.ui.core.Control.extend("sap.m.Dialog", { metadata : {
 	library : "sap.m",
 	properties : {
 		"icon" : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
-		"title" : {type : "string", group : "Appearance", defaultValue : null}
+		"title" : {type : "string", group : "Appearance", defaultValue : null},
+		"type" : {type : "sap.m.DialogType", group : "Appearance", defaultValue : sap.m.DialogType.Standard}
 	},
 	defaultAggregation : "content",
 	aggregations : {
@@ -163,6 +165,31 @@ sap.m.Dialog.M_EVENTS = {'beforeOpen':'beforeOpen','afterOpen':'afterOpen','befo
  * @return {sap.m.Dialog} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.Dialog#setTitle
+ * @function
+ */
+
+/**
+ * Getter for property <code>type</code>.
+ * The type of the dialog. It only affects the look and feel in iOS platform, type message is with button at the bottom inside of in the header.
+ *
+ * Default value is <code>Standard</code>
+ *
+ * @return {sap.m.DialogType} the value of property <code>type</code>
+ * @public
+ * @name sap.m.Dialog#getType
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>type</code>.
+ *
+ * Default value is <code>Standard</code> 
+ *
+ * @param {sap.m.DialogType} oType  new value for property <code>type</code>
+ * @return {sap.m.Dialog} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Dialog#setType
  * @function
  */
 	
@@ -565,7 +592,7 @@ sap.m.Dialog.prototype.init = function(){
 
 	this.oPopup = new sap.ui.core.Popup();
 	this.oPopup.setShadow(true);
-	if(jQuery.device.is.iphone){
+	if(jQuery.device.is.iphone && !this._bMessageType){
 		this.oPopup.setModal(true, "sapMDialogTransparentBlk");
 	}else{
 		this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
@@ -573,7 +600,7 @@ sap.m.Dialog.prototype.init = function(){
 
 	//avoid playing fancy animation in android 2.3
 	if(jQuery.os.ios || (jQuery.os.android && jQuery.os.fVersion > 2.4)){
-		this.oPopup.setAnimations(this._openAnimation, this._closeAnimation);
+		this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 	}
 
 	//the orientationchange event listener
@@ -584,31 +611,8 @@ sap.m.Dialog.prototype.init = function(){
 		that._adjustScrollingPane();
 		sap.ui.core.Popup.prototype._applyPosition.call(this, oPosition);
 	};
-
-
-	if(!jQuery.device.is.iphone){
-		// Animating also the block layer
-		this.oPopup._showBlockLayer = function(){
-			sap.ui.core.Popup.prototype._showBlockLayer.call(this);
-			var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
-			$blockLayer.addClass("sapMDialogBlockLayerAnimation");
-			setTimeout(function(){
-				$blockLayer.addClass("sapMDialogBlockLayer");
-			}, 0);
-
-		};
-
-		this.oPopup._hideBlockLayer = function(){
-			var $blockLayer = jQuery("#sap-ui-blocklayer-popup"), that = this;
-			$blockLayer.removeClass("sapMDialogBlockLayer");
-
-			$blockLayer.bind("webkitTransitionEnd", function(){
-				$blockLayer.unbind("webkitTransitionEnd");
-				sap.ui.core.Popup.prototype._hideBlockLayer.call(that);
-				$blockLayer.removeClass("sapMDialogBlockLayerAnimation");
-			});
-		};
-	}
+	
+	this._initBlockLayerAnimation();
 
 	this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-scroll", {
 		horizontal: false,
@@ -632,6 +636,11 @@ sap.m.Dialog.prototype.exit = function(){
 		this._header.destroy();
 		this._header = null;
 	}
+	
+	if(this._headerTitle){
+		this._headerTitle.destroy();
+		this._headerTitle = null;
+	}
 
 	if(this._iconImage){
 		this._iconImage.destroy();
@@ -652,13 +661,20 @@ sap.m.Dialog.prototype.open = function(){
 	if (oPopup.isOpen()){
 		return this;
 	}
+	
+	var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
+	if($blockLayer.length > 0){
+		var bTransparent = jQuery.device.is.iphone && !this._bMessageType;
+		$blockLayer.toggleClass("sapMDialogTransparentBlk", bTransparent);
+		$blockLayer.toggleClass("sapMDialogBlockLayerInit", !bTransparent);
+	}
 
 	this.fireBeforeOpen();
 	oPopup.attachEvent(sap.ui.core.Popup.M_EVENTS.opened, this._handleOpened, this);
 
 	// Open popup
 	oPopup.setContent(this);
-	if(jQuery.device.is.iphone) {
+	if(jQuery.device.is.iphone && !this._bMessageType) {
 		oPopup.setPosition("center top", "center bottom", document, "0 0", "fit");
 	} else {
 		oPopup.setPosition("center center", "center center", document, "0 0", "fit");
@@ -710,7 +726,7 @@ sap.m.Dialog.prototype._handleClosed = function(){
 /* =========================================================== */
 sap.m.Dialog.prototype._openAnimation = function($Ref, iRealDuration, fnOpened) {
 	$Ref.css("display", "block");
-	if(jQuery.device.is.iphone) {
+	if(jQuery.device.is.iphone && !this._bMessageType) {
 		$Ref.addClass("sapMDialogBottom").removeClass("sapMDialogHidden");
 		window.setTimeout(function(){
 			$Ref.bind("webkitTransitionEnd", function(){
@@ -719,7 +735,7 @@ sap.m.Dialog.prototype._openAnimation = function($Ref, iRealDuration, fnOpened) 
 				fnOpened();
 			});
 			$Ref.addClass("sapMDialogSliding").removeClass("sapMDialogBottom");
-		}, 60);
+		}, 0);
 	} else {
 		$Ref.bind("webkitAnimationEnd", function(){
 			$Ref.unbind("webkitAnimationEnd");
@@ -731,7 +747,7 @@ sap.m.Dialog.prototype._openAnimation = function($Ref, iRealDuration, fnOpened) 
 };
 
 sap.m.Dialog.prototype._closeAnimation = function($Ref, iRealDuration, fnClose) {
-	if(jQuery.device.is.iphone) {
+	if(jQuery.device.is.iphone && !this._bMessageType) {
 		$Ref.bind("webkitTransitionEnd", function(){
 			$Ref.unbind("webkitTransitionEnd");
 			$Ref.addClass("sapMDialogHidden").removeClass("sapMDialogBottom").removeClass("sapMDialogSliding");
@@ -739,12 +755,17 @@ sap.m.Dialog.prototype._closeAnimation = function($Ref, iRealDuration, fnClose) 
 		});
 		$Ref.addClass("sapMDialogSliding").addClass("sapMDialogBottom");
 	} else {
-		$Ref.bind("webkitAnimationEnd", function(){
-			$Ref.unbind("webkitAnimationEnd");
+		if(!jQuery.os.ios){
+			$Ref.bind("webkitAnimationEnd", function(){
+				$Ref.unbind("webkitAnimationEnd");
+				fnClose();
+				$Ref.removeClass("sapMDialogClosing");
+			});
+			//$Ref.addClass("sapMDialogTransparent sapMDialogClosing");
+			$Ref.addClass("sapMDialogClosing");
+		}else{
 			fnClose();
-			$Ref.removeClass("sapMDialogClosing");
-		});
-		$Ref.addClass("sapMDialogTransparent sapMDialogClosing");
+		}
 	}
 };
 
@@ -753,10 +774,16 @@ sap.m.Dialog.prototype._setDimensions = function() {
 	this._$window = jQuery(window);
 	var iWindowWidth = this._$window.width(),
 		iWindowHeight = this._$window.height(),
-		iMaxWidth = iWindowWidth - 32,
-		iMaxHeight = iWindowHeight - 16,
-		iMinValue, iHeaderHeight, iFooterHeight,
 		$this = this.$(),
+		iHPaddingToScreen = jQuery.device.is.tablet ? 128 : 64,
+		iVPaddingToScreen = 16,
+		iPaddingLeft = window.parseInt($this.css("padding-left"), 10),
+		iPaddingRight = window.parseInt($this.css("padding-right"), 10),
+		iPaddingTop = window.parseInt($this.css("padding-top"), 10),
+		iPaddingBottom = window.parseInt($this.css("padding-bottom"), 10),
+		iMaxWidth = iWindowWidth - iHPaddingToScreen - iPaddingLeft - iPaddingRight,
+		iMaxHeight = iWindowHeight - iVPaddingToScreen - iPaddingTop - iPaddingBottom,
+		iMinValue,
 		$content = jQuery.sap.byId(this.getId() + "-cont");
 
 	//reset
@@ -769,15 +796,17 @@ sap.m.Dialog.prototype._setDimensions = function() {
 		"top": "0px",
 		"max-height": ""
 	});
+	
+	$content.css("max-height", "");
 
 	if(jQuery.device.is.tablet){
 		$this.css({
-			"min-width": "300px",
+			"min-width": "400px",
 			"max-width": iMaxWidth + "px",
 			"max-height": iMaxHeight + "px"
 		});
 	}else{
-		if(jQuery.device.is.iphone){
+		if(jQuery.device.is.iphone && !this._bMessageType){
 			$this.css({width: "100%",  height: "100%"});
 		}else{
 			if(jQuery.device.is.portrait){
@@ -801,20 +830,26 @@ sap.m.Dialog.prototype._setDimensions = function() {
 sap.m.Dialog.prototype._adjustScrollingPane = function(){
 	var iWindowWidth = this._$window.width(),
 		iWindowHeight = this._$window.height(),
-		iMaxHeight = jQuery.device.is.iphone ? iWindowHeight : iWindowHeight - 16,
-		iHeaderHeight, iFooterHeight,
 		$this = this.$(),
-		$content = jQuery.sap.byId(this.getId() + "-cont");
+		iMaxHeight = $this.height(),
+		iHeaderHeight, iFooterHeight,
+		$content = jQuery.sap.byId(this.getId() + "-cont"),
+		iContentPaddingTop = window.parseInt($content.css("padding-top"), 10),
+		iContentPaddingBottom = window.parseInt($content.css("padding-bottom"), 10),
+		$scrollArea = jQuery.sap.byId(this.getId() + "-scroll"),
+		iMaxValue, iScrollAreaHeight;
 
-	if(jQuery.os.ios){
-		iHeaderHeight = $this.children(".sapMBar").outerHeight();
+	if(jQuery.os.ios && !this._bMessageType){
+		iHeaderHeight = $this.children(".sapMBar").outerHeight(true);
 		iFooterHeight = 0;
 	}else{
-		iHeaderHeight = $this.children("header").outerHeight();
-		iFooterHeight = $this.children("footer").outerHeight();
+		iHeaderHeight = $this.children("header").outerHeight(true);
+		iFooterHeight = $this.children("footer").outerHeight(true);
 	}
-
-	$content.css(jQuery.device.is.iphone ? "height" : "max-height", iMaxHeight - iHeaderHeight - iFooterHeight);
+	
+	iMaxValue = iMaxHeight - iHeaderHeight - iFooterHeight - iContentPaddingTop - iContentPaddingBottom;
+	
+	$content.css((jQuery.device.is.iphone && !this._bMessageType) ? "height" : "max-height", iMaxValue + "px");
 
 	this._oScroller.refresh();
 };
@@ -828,7 +863,7 @@ sap.m.Dialog.prototype._reposition = function() {
 };
 
 sap.m.Dialog.prototype._createHeader = function(){
-	if(jQuery.os.ios){
+	if(jQuery.os.ios && !this._bMessageType){
 		if(!this._header){
 			// set parent of header to detect changes on title
 			this._header = new sap.m.Bar(this.getId()+"-header").setParent(this, null, false);
@@ -837,8 +872,96 @@ sap.m.Dialog.prototype._createHeader = function(){
 };
 
 sap.m.Dialog.prototype._getHeader = function(){
+	if(!this.getTitle() && !this.getLeftButton() & !this.getRightButton()){
+		//if there's no title, no left and right buttons, header isn't shown.
+		return null;
+	}
+	
 	this._createHeader();
-	return this._header.addStyleClass("sapMHeader-CTX", true);
+	if(this._header){
+		this._header.addStyleClass("sapMHeader-CTX");
+	}
+	return this._header;
+};
+
+
+sap.m.Dialog.prototype._initBlockLayerAnimation = function(){
+	//!!!now the animation on blocklayer is removed due to
+	//problem with calling open, close, open without any interval
+	//then blocklayer can't be removed and it blocks the whole UI
+	if(!jQuery.device.is.iphone || this._bMessageType){
+		// Animating also the block layer
+		this.oPopup._showBlockLayer = function(){
+			sap.ui.core.Popup.prototype._showBlockLayer.call(this);
+			var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
+			if(jQuery.os.ios){
+				$blockLayer.addClass('sapMDialogBLyInit');
+//				setTimeout(function() {
+//					$blockLayer.addClass('sapMDialogBLyShown');
+//				}, 0);
+			}else{
+				$blockLayer.addClass("sapMDialogBlockLayerAnimation");
+				setTimeout(function(){
+					$blockLayer.addClass("sapMDialogBlockLayer");
+				}, 0);
+			}
+		};
+
+		this.oPopup._hideBlockLayer = function(){
+			var $blockLayer = jQuery("#sap-ui-blocklayer-popup"), that = this;
+			
+			if(sap.ui.core.Popup.blStack.length > 1){
+				// If there's still popups open, hide block layer without animation
+				sap.ui.core.Popup.prototype._hideBlockLayer.call(that);
+			}else{
+				$blockLayer.removeClass('sapMDialogBlockLayerInit');
+				if(jQuery.os.ios){
+//					$blockLayer.removeClass('sapMDialogBLyShown');
+//					$blockLayer.bind("webkitTransitionEnd", function(){
+//						$blockLayer.unbind("webkitTransitionEnd");
+						$blockLayer.removeClass("sapMDialogBLyInit");
+						sap.ui.core.Popup.prototype._hideBlockLayer.call(that);
+						
+//					});
+				}else{
+					$blockLayer.removeClass("sapMDialogBlockLayer");
+	
+					$blockLayer.bind("webkitTransitionEnd", function(){
+						$blockLayer.unbind("webkitTransitionEnd");
+						sap.ui.core.Popup.prototype._hideBlockLayer.call(that);
+						$blockLayer.removeClass("sapMDialogBlockLayerAnimation");
+					});
+				}
+			}
+		};
+	}else{
+		this.oPopup._hideBlockLayer = function(){
+			var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
+			$blockLayer.removeClass("sapMDialogTransparentBlk");
+			sap.ui.core.Popup.prototype._hideBlockLayer.call(this);
+		};
+	}
+};
+
+
+sap.m.Dialog.prototype._clearBlockLayerAnimation = function(){
+	if(jQuery.device.is.iphone && !this._bMessageType){
+		delete this.oPopup._showBlockLayer;
+		this.oPopup._hideBlockLayer = function(){
+			var $blockLayer = jQuery("#sap-ui-blocklayer-popup");
+			$blockLayer.removeClass("sapMDialogTransparentBlk");
+			sap.ui.core.Popup.prototype._hideBlockLayer.call(this);
+		};
+	}
+};
+
+/**
+ * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+ *
+ * @private
+ */
+sap.m.Dialog.prototype.getScrollDelegate = function() {
+	return this._oScroller;
 };
 /* =========================================================== */
 /*                      end: private functions                 */
@@ -854,11 +977,11 @@ sap.m.Dialog.prototype.setLeftButton = function(oButton){
 
 	var oOldLeftButton = this.getLeftButton();
 
-	if(oOldLeftButton === oButton.getId()){
+	if(oButton && oOldLeftButton === oButton.getId()){
 		return this;
 	}
 
-	if(jQuery.os.ios){
+	if(jQuery.os.ios && !this._bMessageType){
 		this._createHeader();
 		if(oButton){
 			if(oOldLeftButton){
@@ -867,7 +990,10 @@ sap.m.Dialog.prototype.setLeftButton = function(oButton){
 			this._header.addAggregation("contentLeft", oButton, true);
 			this._header.invalidate();
 		}else{
-			this._header.removeContentLeft(oOldLeftButton);
+			if(oOldLeftButton){
+				this._header.removeContentLeft(oOldLeftButton);
+			}
+			
 		}
 	}
 
@@ -882,11 +1008,11 @@ sap.m.Dialog.prototype.setRightButton = function(oButton){
 
 	var oOldRightButton = this.getRightButton();
 
-	if(oOldRightButton === oButton.getId()){
+	if(oButton && oOldRightButton === oButton.getId()){
 		return this;
 	}
 
-	if(jQuery.os.ios){
+	if(jQuery.os.ios && !this._bMessageType){
 		this._createHeader();
 		if(oButton){
 			if(oOldRightButton){
@@ -895,7 +1021,10 @@ sap.m.Dialog.prototype.setRightButton = function(oButton){
 			this._header.addAggregation("contentRight", oButton, true);
 			this._header.invalidate();
 		}else{
-			this._header.removeContentRight(oOldRightButton);
+			if(oOldRightButton){
+				this._header.removeContentRight(oOldRightButton);
+			}
+			
 		}
 	}
 
@@ -914,10 +1043,12 @@ sap.m.Dialog.prototype.setTitle = function(sTitle){
 				text: sTitle
 			});
 		}
-		if(jQuery.os.ios){
+		if(jQuery.os.ios && !this._bMessageType){
 			this._createHeader();
 			this._header.addContentMiddle(this._headerTitle);
 		}
+	}else{
+		this.setProperty("title", sTitle, false);
 	}
 	return this;
 };
@@ -944,6 +1075,43 @@ sap.m.Dialog.prototype.setIcon = function(sIcon){
 	}
 	this.setProperty("icon", sIcon, true);
 	return this;
+};
+
+sap.m.Dialog.prototype.setType = function(sType){
+	var sOldType = this.getType();
+	var $blockRef = jQuery("#sap-ui-blocklayer-popup");
+	
+	if(sOldType === sType){
+		return;
+	}
+	
+	this._bMessageType = (sType === sap.m.DialogType.Message);
+
+	//reset blocklayer css and popup animation for iphone when changing the type
+	if(jQuery.device.is.iphone){
+		if(this._bMessageType){
+			if($blockRef.length === 0){
+				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
+			}else{
+				$blockRef.removeClass("sapMDialogTransparentBlk").addClass("sapMDialogBlockLayerInit");
+				if(this.oPopup.isOpen()){
+					$blockRef.addClass("sapMBusyBLyInit sapMBusyBLyShown");
+				}	
+			}
+			this.oPopup.setPosition("center center", "center center", document, "0 0", "fit");
+			this._initBlockLayerAnimation();
+		}else{
+			if($blockRef.length === 0){
+				this.oPopup.setModal(true, "sapMDialogTransparentBlk");
+			}else{
+				$blockRef.removeClass("sapMBusyBLyShown sapMBusyBLyInit").addClass("sapMDialogTransparentBlk");
+			}
+			this.oPopup.setPosition("center top", "center bottom", document, "0 0", "fit");
+			this._clearBlockLayerAnimation();
+		}
+	}
+	
+	this.setProperty("type", sType, false);
 };
 /* =========================================================== */
 /*                           end: setters                      */

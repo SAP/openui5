@@ -69,7 +69,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -639,8 +639,7 @@ sap.m.Carousel.prototype.exit = function() {
 			this._aBusyIndicators[i].destroy();
 		}
 	}
-	this._cleanBindings();
-	this.destroy();
+	this._cleanUpTapBindings();
 };
 
 /**
@@ -648,7 +647,7 @@ sap.m.Carousel.prototype.exit = function() {
  * 
  * @private
  */
-sap.m.Carousel.prototype._cleanBindings = function() {
+sap.m.Carousel.prototype._cleanUpTapBindings = function() {
 	if(!!this.previousProxy) {
 		jQuery.sap.byId(this._getPrevBtnId()).unbind("tap", this.previousProxy);
 		delete this.previousProxy;
@@ -659,6 +658,22 @@ sap.m.Carousel.prototype._cleanBindings = function() {
 	}
 }
 
+/**
+ * Cleans up bindings of 'previous' and 'next' button
+ * 
+ * @private
+ */
+sap.m.Carousel.prototype._createTapBindings = function() {
+	if(!this.previousProxy) {
+		this.previousProxy = jQuery.proxy(this.previous, this);
+		jQuery.sap.byId(this._getPrevBtnId()).bind("tap", this.previousProxy);
+	}
+	if(!this.nextProxy) {
+		this.nextProxy = jQuery.proxy(this.next, this);
+		jQuery.sap.byId(this._getNextBtnId()).bind("tap", this.nextProxy);
+	}
+}
+
 
 /**
  * Cleans up bindings
@@ -666,7 +681,7 @@ sap.m.Carousel.prototype._cleanBindings = function() {
  * @private
  */
 sap.m.Carousel.prototype.onBeforeRendering = function() {
-	this._cleanBindings();
+	this._cleanUpTapBindings();
 };
 
 /**
@@ -690,7 +705,7 @@ sap.m.Carousel.prototype.onAfterRendering = function() {
 		
 		this._oSwipeView = new window.SwipeView(domRef, 
 			{	numberOfPages : pageList.length,
-				loop: this.getLoop(),
+				loop: this.getLoop()
 			});
 		//remove touch listeners because carousel will delegate
 		//corresponding events (see carousel's'ontouchstart', ontouchmove', ontouchend' functions)
@@ -749,14 +764,7 @@ sap.m.Carousel.prototype.onAfterRendering = function() {
 	
 	
 	//Add tap events to 'Previous' and 'Next' div
-	if(!this.previousProxy) {
-		this.previousProxy = jQuery.proxy(this.previous, this);
-		jQuery.sap.byId(this._getPrevBtnId()).bind("tap", this.previousProxy);
-	}
-	if(!this.nextProxy) {
-		this.nextProxy = jQuery.proxy(this.next, this);
-		jQuery.sap.byId(this._getNextBtnId()).bind("tap", this.nextProxy);
-	}
+	this._createTapBindings();
 };
 
 
@@ -821,6 +829,53 @@ sap.m.Carousel.prototype.setActivePage = function (oPage) {
 	return this;
 };
 
+/**
+ * Private method to add a control to the list of pages which is 
+ * displayed in the carousel or to to insert a control at a certain 
+ * position into the list of pages.
+ * 
+ * @param oPage page which is added to the list of pages to be 
+ *		displayed in the carousel
+ * @param iIndex position at which oPage shall be added
+ */	
+sap.m.Carousel.prototype._addPage = function(oPage, iIndex) {
+
+	//Re-render only if there are no pages currently
+	//(in this case there is no dom entry available)
+	var bDoRerender = this.getPages().length == 0; 
+	var bIsInsert = typeof(iIndex) == 'number';
+	
+	if(bIsInsert){
+		this.insertAggregation("pages", oPage, iIndex, !bDoRerender);
+	} else {
+		this.addAggregation("pages", oPage, !bDoRerender);
+	}
+	
+	//update page indicator if swipe view instance is already present
+	if(!!this._oSwipeView) {
+		this._oSwipeView.updatePageCount(this.getPages().length);
+		
+		if(!bDoRerender) {
+			if(bIsInsert){
+				//removed page may be displayed already. To make sure
+				//that this does not cause problems, We will refill all 
+				//master pages' content
+				for (var i=0; i<3; i++) {
+					var ithContId = this._getContentId() + "-MstPgCont-" + i;
+					jQuery.sap.byId(ithContId).empty();
+				}
+			}
+			//This is necessary because the number of pages has changed
+			this._rerenderPageIndicatorDots();
+		}
+		//Calling 'goToPage' triggers re-calculation of upcoming indices
+		//in swipe-view's master pages
+		//The currently active page is not changed
+		this._oSwipeView.goToPage(this._oSwipeView.page);
+	}
+	return this;
+};
+
 	
 
 /**
@@ -832,19 +887,7 @@ sap.m.Carousel.prototype.setActivePage = function (oPage) {
  * @public
  */	
 sap.m.Carousel.prototype.addPage = function(oPage) {
-
-	this.addAggregation("pages", oPage, true);
-	
-	//re-render if swipe view instance is already present
-	if(!!this._oSwipeView) {
-		this._oSwipeView.updatePageCount(this.getPages().length);
-		//This is necessary because the number of pages has changed
-		this._rerenderPageIndicatorDots();
-		//calling 'goToPage' triggers re-calculation of upcoming indices
-		//in swipe-view's master pages
-		this._oSwipeView.goToPage(this._oSwipeView.page);
-	}
-	return this;
+	return this._addPage(oPage);
 };
 
 /**
@@ -857,31 +900,50 @@ sap.m.Carousel.prototype.addPage = function(oPage) {
  * @public
  */	
 sap.m.Carousel.prototype.insertPage = function(oPage, iIndex) {
+	return this._addPage(oPage, iIndex);
+};
 
-	this.insertAggregation("pages", oPage, iIndex, true);
-	
+/**
+ * Private method to remove one or all control from the list of pages which is 
+ * displayed in the carousel. Used to model removePage, removeAllPages, destroyPages
+ * 
+ * @param bAll remove all pages
+ * @param bDestroy destroy all pages. Only taken into consideration if bAll is true
+ * @param oPage page which shall be removed from the list of pages to be 
+ *		displayed in the carousel
+ * @return sap.m.Carousel the Carousel instance for method chaining 
+ */	
+sap.m.Carousel.prototype._removePages = function(bAll, bDestroy, oPage) {
+	if(bAll) {
+		if(bDestroy) {
+			this.destroyAggregation("pages", true);
+		} else {
+			this.removeAllAggregation("pages", true);
+		}
+	} else if (!!oPage) {
+		this.removeAggregation("pages", oPage, true);
+	}
 	//re-render if swipe view instance is already present
 	if(!!this._oSwipeView) {
-		this._oSwipeView.updatePageCount(this.getPages().length);
+		
 		//This is necessary because the number of pages has changed
-		if(this.getPages().length > 0) {
-			
-			//removed page may be displayed already. To make sure
-			//that this does not cause problems, We will refill all 
-			//master pages' content
-			for (var i=0; i<3; i++) {
-				var ithContId = this._getContentId() + "-MstPgCont-" + i;
-				jQuery.sap.byId(ithContId).empty();
-			}
+		this._rerenderPageIndicatorDots();
+		this._oSwipeView.updatePageCount(this.getPages().length);
+		
+		//Removed page may be displayed already. To make sure
+		//that this does not cause problems, We will refill all 
+		//master pages' content
+		for (var i=0; i<3; i++) {
+			var ithContId = this._getContentId() + "-MstPgCont-" + i;
+			jQuery.sap.byId(ithContId).empty();
 		}
 		
-		this._rerenderPageIndicatorDots();
 		//calling 'goToPage' triggers re-calculation of upcoming indices
 		//in swipe-view's master pages
 		this._oSwipeView.goToPage(this._oSwipeView.page);
 	}
 	return this;
-};
+}
 
 /**
  * API method to remove a control from the list of pages which is 
@@ -893,31 +955,48 @@ sap.m.Carousel.prototype.insertPage = function(oPage, iIndex) {
  * @public
  */	
 sap.m.Carousel.prototype.removePage = function(oPage) {
-	 
-	
-	this.removeAggregation("pages", oPage, true);
-	//re-render if swipe view instance is already present
-	if(!!this._oSwipeView) {
-		
-		//This is necessary because the number of pages has changed
-		this._rerenderPageIndicatorDots();
-		
-		this._oSwipeView.updatePageCount(this.getPages().length);
-		if(this.getPages().length > 0) {
-			
-			//removed page may be displayed already. To make sure
-			//that this does not cause problems, We will refill all 
-			//master pages' content
-			for (var i=0; i<3; i++) {
-				var ithContId = this._getContentId() + "-MstPgCont-" + i;
-				jQuery.sap.byId(ithContId).empty();
-			}
-		}
-		//calling 'goToPage' triggers re-calculation of upcoming indices
-		//in swipe-view's master pages
-		this._oSwipeView.goToPage(this._oSwipeView.page);
-	}
-	return this;
+	return this._removePages(false, false, oPage); 
+};
+
+/**
+ * API method to remove all pages which are displayed in the carousel.
+ * These pages can be re-used afterwards though, as opposed to 
+ * 'destroyPages'.
+ * 
+ * @param oPage page which shall be removed from the list of pages to be 
+ *		displayed in the carousel
+ * @return sap.m.Carousel the Carousel instance for method chaining 
+ * @public
+ */	
+sap.m.Carousel.prototype.removeAllPages = function() {
+	return this._removePages(true, false); 
+};
+
+/**
+ * API method to remove and destroy all pages which are displayed in the carousel.
+ * These pages can not be re-used afterwards.
+ * 
+ * @param oPage page which shall be removed from the list of pages to be 
+ *		displayed in the carousel
+ * @return sap.m.Carousel the Carousel instance for method chaining 
+ * @public
+ */	
+sap.m.Carousel.prototype.destroyPages = function() {
+	return this._removePages(true, true); 
+};
+
+/**
+ * API method to remove all pages which are displayed in the carousel.
+ * These pages can be re-used afterwards though, as opposed to 
+ * 'destroyPages'.
+ * 
+ * @param oPage page which shall be removed from the list of pages to be 
+ *		displayed in the carousel
+ * @return sap.m.Carousel the Carousel instance for method chaining 
+ * @public
+ */	
+sap.m.Carousel.prototype.removePage = function(oPage) {
+	return this._removePages(false, false, oPage); 
 };
 
 
@@ -1162,6 +1241,8 @@ sap.m.Carousel.prototype._doSwipeCompleted = function (oEvent, bInitialLoad) {
 		}
 	}
 	
+	this._updatePageWidths();
+	
 	//this updates the active page member and the visual indicator
 	this._updateActivePage();
 	if(!bInitialLoad) {
@@ -1336,6 +1417,7 @@ sap.m.Carousel.prototype._handleOrientationChange = function() {
 	if(!jQuery.os.ios && !!this._oSwipeView){
 		setTimeout(jQuery.proxy(function() {
 			this._oSwipeView.__resize();
+			this._updatePageWidths();
 		}, this), 250);
 	}
 };
@@ -1344,8 +1426,9 @@ sap.m.Carousel.prototype._handleOrientationChange = function() {
 /**
  * Displays busy icon and hides content on a given masterpage or vice versa.
  * @param iMasterPage masterPage which shall be updated
- * @private bShowBusyIcon if true, the busy icon will be displayed on the
+ * @param bShowBusyIcon if true, the busy icon will be displayed on the
  * masterpage and the content will be hidden.
+ * @private
  */
 sap.m.Carousel.prototype._toggleBusyIcon = function(iMasterPage, bShowBusyIcon) {
 	if(bShowBusyIcon) {
@@ -1358,16 +1441,47 @@ sap.m.Carousel.prototype._toggleBusyIcon = function(iMasterPage, bShowBusyIcon) 
 };
 
 /**
+ * Workaround for an Android Bugfor image pages: sets the width of each image page to the 
+ * currently available width within the device.
+ * 
+ * @private 
+ */
+sap.m.Carousel.prototype._updatePageWidths = function() {
+	if(jQuery.os.android && !!jQuery.os.version && (!!jQuery.os.version.match(/2\.3\.[0-9]*/))){
+		var pageList = this.getPages();
+		var domRef = jQuery.sap.domById(this._getContentId());
+		var pageWidth = domRef.clientWidth + "px";
+		
+		//In Android 2.3, we overwerite any widths which have been assigned
+		//to the carousel pages to avoid a sizing issue
+		for(var i=0; i<pageList.length; i++) {
+			if(pageList[i] instanceof sap.m.Image) {
+				jQuery.sap.byId(pageList[i].getId()).css("max-width", pageWidth)
+			}
+		}
+	}
+};
+
+
+/**
  * Re-renders the carousel's page indicator dots
  *
  * @private
  */
 sap.m.Carousel.prototype._rerenderPageIndicatorDots = function() {
+	//The Tap bindings for 'next' and 'previous' button get lost 
+	//after re-rendering, so we clean them up
+	this._cleanUpTapBindings();
+	
 	var pageIndicator = jQuery.sap.domById(this._getNavId());
 	var rm = sap.ui.getCore().createRenderManager();
 	sap.m.CarouselRenderer.renderPageIndicatorDots(rm, this);
 	rm.flush(pageIndicator);
 	rm.destroy();
+	
+	//Re-create tap bindings for previous - and next- button
+	//after rendering
+	this._createTapBindings();
 };
 
 

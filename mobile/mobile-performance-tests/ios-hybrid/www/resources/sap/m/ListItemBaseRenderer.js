@@ -49,7 +49,7 @@ sap.m.ListItemBaseRenderer.render = function(rm, oLI) {
 
 		switch (oLI._mode) {
 		case sap.m.ListMode.SingleSelect:
-			var radioButton = oLI._getRadioButton((oLI.getId() + "-selectSingle"), "Group1");
+			var radioButton = oLI._getRadioButton((oLI.getId() + "-selectSingle"), oLI._listId + "_selectGroup");
 			if(radioButton.getSelected())
 				rm.addClass("sapMLIBSelected");
 			rm.writeClasses();
@@ -60,6 +60,22 @@ sap.m.ListItemBaseRenderer.render = function(rm, oLI) {
 			if (oLI._oldMode === sap.m.ListMode.None) {
 				rm.addClass("sapMLIBSelectAnimation");
 			}
+			rm.writeAttribute("id", oLI.getId() + "-mode");
+			rm.writeClasses();
+			rm.write(">");
+			
+			rm.renderControl(radioButton);
+			rm.write("</div>");
+			oLI._oldMode = oLI._mode;
+			break;
+		case sap.m.ListMode.SingleSelectMaster:
+			var radioButton = oLI._getRadioButton((oLI.getId() + "-selectSingleMaster"), oLI._listId + "_selectMasterGroup");
+			if(radioButton.getSelected())
+				rm.addClass("sapMLIBSelectedMaster");
+			rm.writeClasses();
+			rm.write(">");
+			rm.write("<div");
+			rm.addClass("sapMLIBSelectSM");
 			rm.writeAttribute("id", oLI.getId() + "-mode");
 			rm.writeClasses();
 			rm.write(">");
@@ -119,6 +135,18 @@ sap.m.ListItemBaseRenderer.render = function(rm, oLI) {
 			oLI._oldMode = oLI._mode;
 			break;
 		}
+		
+		if(oLI._showUnread){
+			rm.write("<div");
+			rm.writeAttribute("id", oLI.getId() + "-unread");
+			rm.addClass("sapMLIBUnread");
+			if(oLI.getUnread()){
+				rm.addClass("sapMLIBUnreadBG");
+			}
+			rm.writeClasses();
+			rm.write(">");
+			rm.write("</div>");
+		}
 
 		rm.write("<div");
 		rm.addClass("sapMLIBContent");
@@ -126,27 +154,44 @@ sap.m.ListItemBaseRenderer.render = function(rm, oLI) {
 		var type = oLI.getType();
 		var navIcon;
 		switch (type) {
-		case sap.m.ListType.Navigation:
-			navIcon = oLI._getNavImage((oLI.getId() + "-imgNav"), "sapMLIBImgNav", "disclosure_indicator.png");
-			break;
-		case sap.m.ListType.Detail:
-		case sap.m.ListType.DetailAndActive:
-			navIcon = oLI._getNavImage((oLI.getId() + "-imgDet"), "sapMLIBImgDet", "detail_disclosure.png", "detail_disclosure_pressed.png");
-			break;
-		case sap.m.ListType.Inactive:
-		case sap.m.ListType.Active:
-			// there will be a margin on the right, if no navigation icon is shown
-			rm.addClass("sapMLIBContentMargin");
-		default:
+			case sap.m.ListType.Navigation:
+				navIcon = oLI._getNavImage((oLI.getId() + "-imgNav"), "sapMLIBImgNav", "disclosure_indicator.png");
+				break;
+			case sap.m.ListType.Detail:
+			case sap.m.ListType.DetailAndActive:
+				navIcon = oLI._getNavImage((oLI.getId() + "-imgDet"), "sapMLIBImgDet", "detail_disclosure.png", "detail_disclosure_pressed.png");
+				break;
+			case sap.m.ListType.Inactive:
+			case sap.m.ListType.Active:
+				// there will be a margin on the right, if no navigation icon or counter is shown
+				if(!oLI.getCounter()){
+					rm.addClass("sapMLIBContentMargin");
+				}
+			default:
 		}
 		rm.writeClasses();
 		rm.write(">");
 		this.renderLIContent(rm, oLI);
 		rm.write("</div>");
-
-		if (navIcon)
+		
+		//if counter different than 0 bubble will be shown
+		if(oLI.getCounter()){
+			rm.write("<div");
+			rm.writeAttribute("id", oLI.getId() + "-counter");
+			rm.addClass("sapMLIBCounter");
+			if(!navIcon){
+					rm.addClass("sapMLIBContentMargin");
+				}
+			rm.writeClasses();
+			rm.write(">");
+			rm.write(oLI.getCounter());
+			rm.write("</div>");
+		}
+		
+		if (navIcon){
 			rm.renderControl(navIcon);
 		}
+	}
 	else{
 		rm.writeClasses();
 		rm.write(">");

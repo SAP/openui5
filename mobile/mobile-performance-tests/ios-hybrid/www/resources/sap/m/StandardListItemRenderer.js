@@ -34,13 +34,20 @@ sap.m.StandardListItemRenderer.renderLIContent = function(rm, oLI) {
 	// image
 	if (oLI.getIcon()) {
 		if (oLI.getIconInset()) {
-			rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMSLIImg", oLI.getIcon(), oLI.getIconDensityAware()));
+			var oList = sap.ui.getCore().byId(oLI._listId);
+			if(oList && oList.getMode() == sap.m.ListMode.None &! oList.getShowUnread()){
+				rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMSLIImgFirst", oLI.getIcon(), oLI.getIconDensityAware()));
+			}
+			else{
+				rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMSLIImg", oLI.getIcon(), oLI.getIconDensityAware()));
+			}
 		} else {
 			rm.renderControl(oLI._getImage((oLI.getId() + "-img"), "sapMSLIImgThumb", oLI.getIcon(), oLI.getIconDensityAware()));
 		}
 	}
 
 	var isDescription = oLI.getTitle() && oLI.getDescription();
+	var isInfo = oLI.getInfo();
 
 	if (isDescription) {
 		rm.write("<div");
@@ -49,19 +56,38 @@ sap.m.StandardListItemRenderer.renderLIContent = function(rm, oLI) {
 		rm.write(">");
 	}
 
+	rm.write("<div");
+	if (!isDescription){
+		rm.addClass("sapMSLIDiv");
+	} 
+	rm.addClass("sapMSLITitleDiv");
+	rm.writeClasses();
+	rm.write(">");
 	// List item text (also written when no title for keeping the space)
 	rm.write("<h1");
 	if (isDescription) {
 		rm.addClass("sapMSLITitle");
 	} else {
-		rm.addClass("sapMSLIDiv");
 		rm.addClass("sapMSLITitleOnly");
 	}
-
 	rm.writeClasses();
 	rm.write(">");
 	rm.writeEscaped(oLI.getTitle());
 	rm.write("</h1>");
+	
+	//info div
+	if(isInfo){
+		rm.write("<p");
+		rm.writeAttribute("id", oLI.getId() + "-info");
+		rm.addClass("sapMSLIInfo");
+		rm.addClass("sapMSLIInfo" + oLI.getInfoState());
+		rm.writeClasses();
+		rm.write(">");
+		rm.writeEscaped(isInfo);
+		rm.write("</p>");
+	}
+
+	rm.write("</div>");
 
 	// List item text
 	if (isDescription) {

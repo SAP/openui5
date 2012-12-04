@@ -61,7 +61,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -315,7 +315,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  */
 
 /**
- * Event is triggered when the user makes a change on the radio button. 
+ * Event is triggered when the user makes a change on the radio button (selecting or unselecting it). 
  *
  * @name sap.m.RadioButton#select
  * @event
@@ -323,6 +323,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
+ * @param {boolean} oControlEvent.getParameters.selected Checks whether the RadioButton is active or not.
  * @public
  */
  
@@ -331,7 +332,7 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
  * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
  * otherwise to this <code>sap.m.RadioButton</code>.<br/> itself. 
  *  
- * Event is triggered when the user makes a change on the radio button. 
+ * Event is triggered when the user makes a change on the radio button (selecting or unselecting it). 
  *
  * @param {object}
  *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
@@ -365,7 +366,12 @@ sap.m.RadioButton.M_EVENTS = {'select':'select'};
 
 /**
  * Fire event select to attached listeners.
-
+ * 
+ * Expects following event parameters:
+ * <ul>
+ * <li>'selected' of type <code>boolean</code> Checks whether the RadioButton is active or not.</li>
+ * </ul>
+ *
  * @param {Map} [mArguments] the arguments to pass along with the event.
  * @return {sap.m.RadioButton} <code>this</code> to allow method chaining
  * @protected
@@ -401,7 +407,7 @@ sap.m.RadioButton.prototype.ontap = function(oEvent) {
 	if (this.getEnabled()) {
 		if (!this.getSelected()) {
 			this.setSelected(true);
-			this.fireSelect({/* no parameters */});
+			this.fireSelect({selected:true});
 		}
 	}else{
 		// readOnly or disabled -> don't allow browser to switch RadioButton on
@@ -450,6 +456,9 @@ sap.m.RadioButton.prototype.setSelected = function(bSelected) {
 					// The SAPUI5 control is known by an ID without the "-RB" suffix
 					var oControl = sap.ui.getCore().getElementById(other.id.substr(0, other.id.length-3));
 					if (oControl instanceof sap.m.RadioButton && (oControl !== this)) {
+						if(oControl.getSelected()){
+							oControl.fireSelect({selected:false});
+						}
 						oControl.setSelected(false);
 					}
 				}

@@ -27,26 +27,20 @@ jQuery.sap.require("sap.ui.model.control.ControlPropertyBinding");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
+ * @name sap.ui.model.control.ControlModel
  */
-sap.ui.model.control.ControlModel = function (oControl) {
-	sap.ui.model.Model.apply(this, arguments);
-	this.oControl = oControl;
-	this.oControl.attachEvent("_change", this.checkUpdate, this);
-	this.oElements = [];
-};
+sap.ui.model.Model.extend("sap.ui.model.control.ControlModel", /** @lends sap.ui.model.control.ControlModel */ {
+	
+	constructor : function (oControl) {
+		sap.ui.model.Model.apply(this, arguments);
+		this.oControl = oControl;
+		this.oControl.attachEvent("_change", this.checkUpdate, this);
+		this.oElements = [];
+	}
 
-//chain the prototypes
-sap.ui.model.control.ControlModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.json.JSONModel.
- * Resulting metadata can be obtained via sap.ui.model.json.JSONModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.control.ControlModel", {
-  baseType : "sap.ui.model.Model"
 });
 
 /**

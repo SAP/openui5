@@ -16,22 +16,22 @@ jQuery.sap.require("sap.ui.model.ListBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.xml.XMLListBinding
+ * @extends sap.ui.model.ListBinding
  */
-sap.ui.model.xml.XMLListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
-	sap.ui.model.ListBinding.apply(this, arguments);
-	this.update();
-};
-sap.ui.model.xml.XMLListBinding.prototype = jQuery.sap.newObject(sap.ui.model.ListBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLListBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.ListBinding",
-  publicMethods : [
-	// methods
-	"getLength"
-  ]
-
+sap.ui.model.ListBinding.extend("sap.ui.model.xml.XMLListBinding", /** @lends sap.ui.model.xml.XMLListBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
+		sap.ui.model.ListBinding.apply(this, arguments);
+		this.update();
+	},
+	
+	metadata : {
+	  publicMethods : [
+			"getLength"
+	  ]
+	}
+	
 });
 
 /**

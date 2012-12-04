@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -99,7 +99,7 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 	 * The <code>viewName</code> must either correspond to an XML module that can be loaded
 	 * via the module system (viewName + suffix ".view.xml") and which defines the view or must
 	 * be a configuration object for a view.
-	 * The configuration object can have a vieName, viewContent and a controller property. The viewName
+	 * The configuration object can have a viewName, viewContent and a controller property. The viewName
 	 * behaves as described above. ViewContent can hold the view description as XML string. The controller
 	 * property can hold an controller instance. If a controller instance is given it overrides the
 	 * controller defined in the view.
@@ -189,10 +189,10 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 	sap.ui.core.mvc.XMLView.prototype.onControllerConnected = function(oController) {
 		var that=this;
 		// unset any preprocessors (e.g. from an enclosing JSON view)
-		sap.ui.core.Element.runWithPreprocessors(function() {
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 			// parse the XML tree
 			that._aParsedContent = parseView(that._xContent, that);
-		})
+		});
 	};
 
 	sap.ui.core.mvc.XMLView.prototype.getControllerName = function() {
@@ -330,10 +330,10 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 						if (attr.name === "id") {
 							value = oView._oContainingView.createId(value);
 						}
-						aResult.push(attr.name + "='" + value + "' ");
+						aResult.push(attr.name + "=\"" + jQuery.sap.encodeHTML(value) + "\" ");
 					}
 					if ( bRoot === true ) {
-						aResult.push("data-sap-ui-preserve" + "='" + oView.getId() + "' ");
+						aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
 					}
 					aResult.push(">");
 
@@ -355,8 +355,12 @@ jQuery.sap.require("sap.ui.model.resource.ResourceModel");
 
 			} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ ) {
 
-				var text = xmlNode.textContent || xmlNode.text;
+				var text = xmlNode.textContent || xmlNode.text,
+					parentName = localName(xmlNode.parentNode);
 				if (text) {
+					if (parentName != "style") {
+						text = jQuery.sap.encodeHTML(text);
+					}
 					aResult.push(text);
 				}
 

@@ -16,23 +16,41 @@ jQuery.sap.require("sap.ui.model.ListBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.json.JSONListBinding
+ * @extends sap.ui.model.ListBinding
  */
-sap.ui.model.json.JSONListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
-	sap.ui.model.ListBinding.apply(this, arguments);
-	this.update();
-};
-sap.ui.model.json.JSONListBinding.prototype = jQuery.sap.newObject(sap.ui.model.ListBinding.prototype);
+sap.ui.model.ListBinding.extend("sap.ui.model.json.JSONListBinding", /** @lends sap.ui.model.json.JSONListBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters){
+		sap.ui.model.ListBinding.apply(this, arguments);
+		this.update();
+	},
 
-sap.ui.base.Object.defineClass("sap.ui.model.json.JSONListBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.ListBinding",
-  publicMethods : [
-	// methods
-	"getLength"
-  ]
-
+	metadata : {
+	  publicMethods : [
+			"getLength"
+	  ]
+	}
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.json.JSONListBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.json.JSONListBinding.extend
+ * @function
+ */
+
 
 /**
  * Return contexts for the list or a specified subset of contexts

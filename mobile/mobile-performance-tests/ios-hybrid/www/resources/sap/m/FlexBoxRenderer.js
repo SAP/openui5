@@ -50,6 +50,7 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 	if(oControl.getParent() instanceof sap.m.FlexBox) {
 		oRm.addClass("sapMFlexItem");
 
+
 		// Set layout properties
 		var oLayoutData = oControl.getLayoutData();
 		if(oLayoutData instanceof sap.m.FlexItemData) {
@@ -72,6 +73,8 @@ sap.m.FlexBoxRenderer.render = function(oRm, oControl) {
 	oRm.addClass("sapMFlexBox");
 	oRm.addClass(hvClass);
 	oRm.writeClasses();
+	oRm.addStyle("width", oControl.getWidth());
+	oRm.addStyle("height", oControl.getHeight());
 	sap.m.FlexBoxStylingHelper.setFlexBoxStyles(oRm, oControl);
 	oRm.writeStyles();
 	oRm.write(">");

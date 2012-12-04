@@ -35,7 +35,9 @@ jQuery.sap.require("sap.m.ListItemBase");
  * <li>{@link #getIcon icon} : sap.ui.core.URI</li>
  * <li>{@link #getIconInset iconInset} : boolean (default: true)</li>
  * <li>{@link #getIconDensityAware iconDensityAware} : boolean (default: true)</li>
- * <li>{@link #getActiveIcon activeIcon} : sap.ui.core.URI</li></ul>
+ * <li>{@link #getActiveIcon activeIcon} : sap.ui.core.URI</li>
+ * <li>{@link #getInfo info} : string</li>
+ * <li>{@link #getInfoState infoState} : sap.ui.core.ValueState (default: sap.ui.core.ValueState.None)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul></ul>
@@ -60,7 +62,7 @@ jQuery.sap.require("sap.m.ListItemBase");
  * @extends sap.m.ListItemBase
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -78,7 +80,9 @@ sap.m.ListItemBase.extend("sap.m.StandardListItem", { metadata : {
 		"icon" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 		"iconInset" : {type : "boolean", group : "Appearance", defaultValue : true},
 		"iconDensityAware" : {type : "boolean", group : "Misc", defaultValue : true},
-		"activeIcon" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
+		"activeIcon" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+		"info" : {type : "string", group : "Misc", defaultValue : null},
+		"infoState" : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None}
 	}
 }});
 
@@ -249,6 +253,56 @@ sap.m.ListItemBase.extend("sap.m.StandardListItem", { metadata : {
  * @return {sap.m.StandardListItem} <code>this</code> to allow method chaining
  * @public
  * @name sap.m.StandardListItem#setActiveIcon
+ * @function
+ */
+
+/**
+ * Getter for property <code>info</code>.
+ * Info text shown on the right side of the description.
+ *
+ * Default value is empty/<code>undefined</code>
+ *
+ * @return {string} the value of property <code>info</code>
+ * @public
+ * @name sap.m.StandardListItem#getInfo
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>info</code>.
+ *
+ * Default value is empty/<code>undefined</code> 
+ *
+ * @param {string} sInfo  new value for property <code>info</code>
+ * @return {sap.m.StandardListItem} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.StandardListItem#setInfo
+ * @function
+ */
+
+/**
+ * Getter for property <code>infoState</code>.
+ * Info state defines the color of the info text. E.g. Error, Warning, Success...
+ *
+ * Default value is <code>None</code>
+ *
+ * @return {sap.ui.core.ValueState} the value of property <code>infoState</code>
+ * @public
+ * @name sap.m.StandardListItem#getInfoState
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>infoState</code>.
+ *
+ * Default value is <code>None</code> 
+ *
+ * @param {sap.ui.core.ValueState} oInfoState  new value for property <code>infoState</code>
+ * @return {sap.m.StandardListItem} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.StandardListItem#setInfoState
  * @function
  */
 

@@ -26,28 +26,41 @@ jQuery.sap.require("sap.ui.model.Binding");
  *         [mParameters=null] additional model specific parameters (optional)
  * @abstract
  * @public
+ * @name sap.ui.model.TreeBinding
  */
-sap.ui.model.TreeBinding = function(oModel, sPath, oContext, aFilters, mParameters){
-	sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
-	this.aFilters = aFilters;
-};
+sap.ui.model.Binding.extend("sap.ui.model.TreeBinding", /** @lends sap.ui.model.TreeBinding */ {
+	
+	constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		sap.ui.model.Binding.call(this, oModel, sPath, oContext, mParameters);
+		this.aFilters = aFilters;
+	},
 
-sap.ui.model.TreeBinding.prototype = jQuery.sap.newObject(sap.ui.model.Binding.prototype);
-
-/*
- * Describe the sap.ui.model.TreeBinding.
- * Resulting metadata can be obtained via sap.ui.model.TreeBinding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.TreeBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Binding",
-  publicMethods : [
-	// methods
-	"getRootContexts", "getNodeContexts", "filter"
-  ]
-
+  metadata : {
+  	"abstract" : true,
+  	publicMethods : [
+		"getRootContexts", "getNodeContexts", "filter"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.TreeBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.TreeBinding.extend
+ * @function
+ */
+
 
 // the 'abstract methods' to be implemented by child classes
 /**

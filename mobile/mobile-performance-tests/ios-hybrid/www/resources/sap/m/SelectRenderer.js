@@ -22,9 +22,11 @@ sap.m.SelectRenderer.render = function(oRm, oSlt) {
 	var	sName = oSlt.getName(),
 		sTitle = oSlt.getTitle(),
 		aItems = oSlt.getItems(),
-		sSelectedItemId = oSlt.getAssociation("selectedItem"),
 		oSelectedItem = oSlt.getSelectedItem(),
+		sSelectedItemText = (oSelectedItem instanceof sap.ui.core.Item) ? oSelectedItem.getText() : oSlt._sNoData,
+		sSelectedItemId = oSlt.getAssociation("selectedItem"),
 		aItemsLength = aItems.length,
+		sId = oSlt.getId() +"-nat",
 		i;
 
 	// suppress rendering if not visible
@@ -48,48 +50,54 @@ sap.m.SelectRenderer.render = function(oRm, oSlt) {
 	oRm.writeClasses();
 
 	oRm.write(">");
-		oRm.write('<span class="sapMSltText">');
-		oRm.writeEscaped(oSelectedItem.getText());
-		oRm.write('</span>');
+		oRm.write('<label class="sapMSltText"');
+		oRm.writeAttribute("for", sId);
+		oRm.write(">");
+			oRm.writeEscaped(sSelectedItemText);
+		oRm.write('</label>');
 
 		oRm.write('<span class="sapMSltIcon"></span>');
 
-		oRm.write("<select");
+		if (aItemsLength !== 0) {
+			oRm.write("<select");
 
-		if (sName !== "") {
-			oRm.writeAttributeEscaped("name", sName);
-		}
+			oRm.writeAttribute("id", sId);
 
-		if (sTitle !== "") {
-			oRm.writeAttributeEscaped("title", sTitle);
-		}
-
-		if (!oSlt.getEnabled()) {
-			oRm.write(" disabled");
-		}
-
-		oRm.write(">");
-
-			// rendering select items
-			for (i = 0; i < aItemsLength; i++) {
-				oRm.write("<option");
-					oRm.writeAttribute("id", aItems[i].getId());
-					oRm.writeAttributeEscaped("value", aItems[i].getKey());
-
-					if (aItems[i].getId() === sSelectedItemId) {
-						oRm.write(" selected");
-					}
-
-					if (!aItems[i].getEnabled()) {
-						oRm.write(" disabled");
-					}
-
-					oRm.write(">");
-					oRm.writeEscaped(aItems[i].getText());
-				oRm.write("</option>");
+			if (sName !== "") {
+				oRm.writeAttributeEscaped("name", sName);
 			}
 
-		oRm.write("</select>");
+			if (sTitle !== "") {
+				oRm.writeAttributeEscaped("title", sTitle);
+			}
+
+			if (!oSlt.getEnabled()) {
+				oRm.write(" disabled");
+			}
+
+			oRm.write(">");
+
+				// rendering items
+				for (i = 0; i < aItemsLength; i++) {
+					oRm.write("<option");
+						oRm.writeAttribute("id", aItems[i].getId());
+						oRm.writeAttributeEscaped("value", (aItems[i].getKey() !== "") ? aItems[i].getKey() : aItems[i].getId());
+
+						if (aItems[i].getId() === sSelectedItemId) {
+							oRm.write(" selected");
+						}
+
+						if (!aItems[i].getEnabled()) {
+							oRm.write(" disabled");
+						}
+
+						oRm.write(">");
+						oRm.writeEscaped(aItems[i].getText());
+					oRm.write("</option>");
+				}
+
+			oRm.write("</select>");
+		}
 
 	oRm.write("</div>");
 };

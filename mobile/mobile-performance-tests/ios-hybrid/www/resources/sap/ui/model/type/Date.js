@@ -18,42 +18,47 @@ jQuery.sap.require("sap.ui.core.format.DateFormat");
  * @extends sap.ui.model.SimpleType
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.type.Date
  */
-sap.ui.model.type.Date = function () {
-	sap.ui.model.SimpleType.apply(this, arguments);
-	this.sName = "Date";
-};
-
-// chain the prototypes
-sap.ui.model.type.Date.prototype = jQuery.sap.newObject(sap.ui.model.SimpleType.prototype);
-
-/*
- * Describe the sap.ui.model.type.Date.
- * Resulting metadata can be obtained via sap.ui.model.type.Date.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.type.Date", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.SimpleType",
-  publicMethods : [
-    // methods
-  ]
+sap.ui.model.SimpleType.extend("sap.ui.model.type.Date", /** @lends sap.ui.model.type.Date */ {
+	
+	constructor : function () {
+		sap.ui.model.SimpleType.apply(this, arguments);
+		this.sName = "Date";
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.type.Date with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.type.Date.extend
+ * @function
+ */
 
 /**
  * @see sap.ui.model.SimpleType.prototype.formatValue
  */
 sap.ui.model.type.Date.prototype.formatValue = function(oValue, sInternalType) {
-	if (oValue == undefined || oValue == null) {
-		return null;
-	}
 	switch(sInternalType) {
 		case "string":
+			if (oValue == null) {
+				return "";
+			}
 			if (this.oInputFormat) {
 				if (this.oFormatOptions.source.pattern == "timestamp") {
 					if(typeof(oValue) != "number"){
@@ -65,7 +70,13 @@ sap.ui.model.type.Date.prototype.formatValue = function(oValue, sInternalType) {
 					}
 					oValue= new Date(oValue);
 				}else{
+					if (oValue == "") {
+						return "";
+					}
 					oValue = this.oInputFormat.parse(oValue);
+					if (oValue == null) {
+						throw new sap.ui.model.FormatException("Cannot format date: " + oValue + " has the wrong format");
+					}
 				}
 			}
 			return this.oOutputFormat.format(oValue);
@@ -81,8 +92,11 @@ sap.ui.model.type.Date.prototype.parseValue = function(oValue, sInternalType) {
 	var oResult;
 	switch(sInternalType) {
 		case "string":
+			if (oValue === "") {
+				return null;
+			}
 			var oResult = this.oOutputFormat.parse(oValue);
-			if (isNaN(oResult.getYear())) {
+			if (!oResult) {
 				throw new sap.ui.model.ParseException(oValue + " is not a valid Date value");
 			}
 			if (this.oInputFormat) {

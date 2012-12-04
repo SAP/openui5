@@ -24,7 +24,7 @@ sap.m.CarouselRenderer = {
  */
 sap.m.CarouselRenderer.render = function(rm, oCarousel){ 
 	// Return immediately if control is invisible or if there are no pages to be rendered
-	if (!oCarousel.getVisible() || oCarousel.getPages().length == 0) {
+	if (!oCarousel.getVisible()) {
 		return;
 	}
 
@@ -36,7 +36,10 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
 	rm.addStyle("height", oCarousel.getHeight());
 	rm.writeStyles();
 	
-	rm.write(" class='sapMCrsl'>");
+	rm.addClass("sapMCrsl");
+	// add all classes (also custom classes) to carousel tag
+	rm.writeClasses();
+	rm.write(">");
 	
 	//visual indicator
 	if(oCarousel.getPageIndicatorPlacement() == sap.m.PlacementType.Top) {
@@ -52,9 +55,7 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
 	if(oCarousel.getPageIndicatorPlacement() == sap.m.PlacementType.Bottom) {
 		this._renderPageIndicator(rm, oCarousel);
 	}
-	rm.write("</div>");
-	
-		
+	rm.write("</div>");	
 };
 
 
@@ -67,9 +68,7 @@ sap.m.CarouselRenderer.render = function(rm, oCarousel){
  */
 sap.m.CarouselRenderer._renderPageIndicator = function(rm, oCarousel){
 	rm.write("<ul id='" + oCarousel._getNavId() + "' class='sapMCrslIndLst'>");
-	rm.write("<div id='" + oCarousel._getPrevBtnId() + "' class='sapMCrslIndLstBt'/>");
 	this.renderPageIndicatorDots(rm, oCarousel);
-	rm.write("<div id='" + oCarousel._getNextBtnId() + "' class='sapMCrslIndLstBt'/>");
 	rm.write("</ul>");
 };
 
@@ -81,9 +80,11 @@ sap.m.CarouselRenderer._renderPageIndicator = function(rm, oCarousel){
  * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
  */
 sap.m.CarouselRenderer.renderPageIndicatorDots = function(rm, oCarousel){
+	rm.write("<div id='" + oCarousel._getPrevBtnId() + "' class='sapMCrslIndLstBt'/>");
 	var dotCount = oCarousel.getPages().length;
 	for(var i= 0; i< dotCount; i ++) {
 		rm.write("<li id='" + oCarousel._getNavId() + "-dot" + i + "' class='sapMCrslIndLstIt'></li>");
 	}
+	rm.write("<div id='" + oCarousel._getNextBtnId() + "' class='sapMCrslIndLstBt'/>");
 };
 
