@@ -510,6 +510,11 @@
         </property>
       </activation>
 
+      <properties>
+        <!-- set to empty classifier to disable installation of optimized versions -->
+        <sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
+      </properties>
+
       <build>
         <plugins>
           <plugin>
@@ -523,6 +528,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
@@ -530,6 +536,7 @@
                   <artifactId>sapui5</artifactId>
                   <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
@@ -537,18 +544,21 @@
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5-internal-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
@@ -621,7 +631,13 @@
       </activation>
 
       <properties>
+      
+      	<!-- release versions are delivered to another server -->
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
+
+        <!-- set to empty classifier to disable installation of optimized versions -->
+        <sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
+
       </properties>
 
       <build>
@@ -638,6 +654,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
@@ -645,6 +662,7 @@
                   <artifactId>sapui5</artifactId>
                   <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
@@ -652,18 +670,21 @@
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>sapui5-internal-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>demokit-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
@@ -679,6 +700,7 @@
     <!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
 
+	<!-- 
     <profile>
 
       <id>housekeeping-patch-old</id>
@@ -728,11 +750,13 @@
 
     </profile>
 
-
+	-->
+	
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
     <!-- ******************************************************************* -->
 
+	<!--  
     <profile>
 
       <id>housekeeping-release-old</id>
@@ -794,7 +818,8 @@
 
     </profile>
 
-
+	-->
+	
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: TEST                                                  -->
     <!-- ******************************************************************* -->
