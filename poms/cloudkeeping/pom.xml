@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
 
 	<!--**************************************************************************
 	* POM SECTION: Maven Model Version Settings
 	***************************************************************************-->
 
 	<modelVersion>4.0.0</modelVersion>
-  
-  
+
+
 	<!--**************************************************************************
 	* POM SECTION: Parent POM Settings
 	***************************************************************************-->
@@ -68,6 +68,8 @@
 	
 		<!-- SAPUI5 version for NW Cloud -->
 		<sapui5.version>1.9.2-SNAPSHOT</sapui5.version>
+		<!-- deploy opt version - clear to use debug version -->
+		<sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
 	
 		<!-- proxy configuration -->
 		<http.proxyHost>proxy</http.proxyHost>
@@ -119,17 +121,17 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/target/deployprops</outputDirectory>
-							<resources>			  
+							<resources>
 								<resource>
 									<directory>src/main/resources</directory>
 									<filtering>true</filtering>
 								</resource>
-							</resources>			  
-						</configuration>			
+							</resources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-	  
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -148,6 +150,7 @@
 									<groupId>com.sap.ui5</groupId>
 									<artifactId>sapui5</artifactId>
 									<version>${sapui5.version}</version>
+									<classifier>${sap.ui5.opt.classifier}</classifier>
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>sapui5.war</destFileName>
@@ -156,6 +159,7 @@
 									<groupId>com.sap.ui5</groupId>
 									<artifactId>demokit</artifactId>
 									<version>${sapui5.version}</version>
+									<classifier>${sap.ui5.opt.classifier}</classifier>
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>demokit.war</destFileName>
@@ -164,6 +168,7 @@
 									<groupId>com.sap.ui5</groupId>
 									<artifactId>uilib-sample</artifactId>
 									<version>${sapui5.version}</version>
+									<classifier>${sap.ui5.opt.classifier}</classifier>
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>uilib-sample.war</destFileName>
@@ -172,10 +177,11 @@
 									<groupId>com.sap.ui5.test</groupId>
 									<artifactId>databinding</artifactId>
 									<version>${sapui5.version}</version>
+									<classifier>${sap.ui5.opt.classifier}</classifier>
 									<type>war</type>
 									<overWrite>false</overWrite>
 									<destFileName>databinding.war</destFileName>
-								</artifactItem>								
+								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
 							<includes>**</includes>
@@ -225,7 +231,7 @@
 						</goals>
 						<configuration>
 							<executable>java</executable>
-							<arguments>			  
+							<arguments>
 								<argument>-Dhttp.proxyHost=${http.proxyHost}</argument>
 								<argument>-Dhttp.proxyPort=${http.proxyPort}</argument>
 								<argument>-Dhttps.proxyHost=${https.proxyHost}</argument>
@@ -239,12 +245,12 @@
 								<argument>${user}</argument>
 								<argument>-password</argument>
 								<argument>${password}</argument>
-							</arguments>			  
-						</configuration>			
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-	  
+
 		</plugins>
 		
 	</build>

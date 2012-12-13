@@ -52,12 +52,12 @@
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
     <tomcat.manager.url.v7>/manager/text</tomcat.manager.url.v7>
-	
+
     <!-- Sandbox Tomcat configuration => TODO: move to settings.xml -->
     <tomcat.sandbox.url>http://veui5infra.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
     <tomcat.sandbox.usr>deployadmin</tomcat.sandbox.usr>
     <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
-	<tomcat.sandbox.manager.url>${tomcat.manager.url.v7}</tomcat.sandbox.manager.url>
+    <tomcat.sandbox.manager.url>${tomcat.manager.url.v7}</tomcat.sandbox.manager.url>
 
     <!-- Sandbox Tomcat configuration for QTP tests -->
     <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>
@@ -632,7 +632,7 @@
 
       <properties>
       
-      	<!-- release versions are delivered to another server -->
+        <!-- release versions are delivered to another server -->
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
 
         <!-- set to empty classifier to disable installation of optimized versions -->
@@ -700,7 +700,7 @@
     <!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
 
-	<!-- 
+    <!-- 
     <profile>
 
       <id>housekeeping-patch-old</id>
@@ -750,13 +750,13 @@
 
     </profile>
 
-	-->
-	
+    -->
+
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
     <!-- ******************************************************************* -->
 
-	<!--  
+    <!--  
     <profile>
 
       <id>housekeeping-release-old</id>
@@ -818,8 +818,8 @@
 
     </profile>
 
-	-->
-	
+    -->
+
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: TEST                                                  -->
     <!-- ******************************************************************* -->
@@ -842,7 +842,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-			  <!- - TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
+              <!- - TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
               <remoteTomcatManagerUrl>http://localhost:8080/manager/text</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
