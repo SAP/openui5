@@ -29,25 +29,35 @@ sap.m.SplitAppRenderer.render = function(rm, oControl){
 		if(!oControl._oldIsLandscape) {
 			rm.addClass("sapMSplitAppPortrait");
 		}
-		if(oControl.getMode() === "ShowHideMode") {
-			rm.addClass("sapMSplitAppShowHide");
-		}else {
-			rm.addClass("sapMSplitAppStretchCompress");
+		switch(oControl.getMode()) {
+			case "ShowHideMode":
+				rm.addClass("sapMSplitAppShowHide");
+				break;
+			case "StretchCompress":
+				rm.addClass("sapMSplitAppStretchCompress");
+				break;
+			case "PopoverMode":
+				rm.addClass("sapMSplitAppShowHide");
+				break;
 		}
 	}
 	rm.writeClasses();
 	rm.write(">"); // div element
 	if(jQuery.device.is.tablet) {
-		rm.write("<div class='sapMSplitAppContainer'>");
-		oControl._oMasterNav.addStyleClass("sapMSplitAppMaster", true);
-		rm.renderControl(oControl._oMasterNav);
-		
-		oControl._oDetailNav.addStyleClass("sapMSplitAppDetail", true);
-		rm.renderControl(oControl._oDetailNav);
-		rm.write("</div>");
+		if(oControl.getMode() === "PopoverMode" && !oControl._oldIsLandscape) {
+			oControl._oDetailNav.addStyleClass("sapMSplitAppDetail");
+			rm.renderControl(oControl._oDetailNav);
+		} else {
+			oControl._oMasterNav.addStyleClass("sapMSplitAppMaster");
+			rm.renderControl(oControl._oMasterNav);
+			
+			oControl._oDetailNav.addStyleClass("sapMSplitAppDetail");
+			rm.renderControl(oControl._oDetailNav);
+		}
 	}else {
-		oControl._oMasterNav.addStyleClass("sapMSplitAppMobile", true);
+		oControl._oMasterNav.addStyleClass("sapMSplitAppMobile");
 		rm.renderControl(oControl._oMasterNav);
 	}
-	rm.write("</div>");
+	
+	 rm.write("</div>");
 };

@@ -56,17 +56,9 @@ sap.m.InputRenderer.render = function(rm, oInput) {
 		rm.writeAttribute("placeholder", oInput.getPlaceholder());
 	}
 
-	// check element needs picker and known picker bug exists
-	if (oInput._hasPickerBug && oInput._pickers.indexOf(oInput.getType()) + 1) {
-		rm.writeAttribute("type", "text");
-	} else if (oInput.getType() == "Date") {
-		rm.writeAttribute("type", oInput._datePickerAvailable ? "date" : "text");
-	} else {
-		rm.writeAttribute("type", oInput.getType().toLowerCase());
-	}
-
+	rm.writeAttribute("type", oInput.getType().toLowerCase());
 	oInput.getMaxLength() > 0 && rm.writeAttribute("maxlength", oInput.getMaxLength());
-	oInput.getValue() && rm.writeAttributeEscaped("value", oInput._formatForRendering(oInput.getValue()));
+	oInput.getValue() && rm.writeAttributeEscaped("value", oInput.getValue());
 
 	rm.addClass("sapMInputInner");
 	oInput.getValueState() != "None" && rm.addClass("sapMInput" + oInput.getValueState() + "Inner");

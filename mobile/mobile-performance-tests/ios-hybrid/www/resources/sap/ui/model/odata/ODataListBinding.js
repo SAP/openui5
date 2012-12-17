@@ -516,7 +516,6 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 	
 	var oProperty;
 	if (this.oEntityType) {
-		// TODO ...complex types not supported e.g. sPath == Address/City...
 		oProperty = this.oModel.oMetadata._getPropertyMetadata(this.oEntityType, sPath);		
 	}
 	
@@ -551,25 +550,7 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 				break;
 		}
 	} else {
-		// ensure old behavior if no type could be found
-		if (isNaN(oValue1)) {
-			// date check
-			if (!isNaN(Date.parse(oValue1))) {
-				oValue1 = this.oDateTimeFormat.format(new Date(oValue1), true);
-			}else {
-				oValue1 = "'" + oValue1 + "'";
-			}
-		}
-		if (oValue2) {
-			if (isNaN(oValue2)) {
-				// date check
-				if (!isNaN(Date.parse(oValue2))) {
-					oValue2 = this.oDateTimeFormat.format(new Date(oValue2), true);
-				}else {
-					oValue2 = "'" + oValue2 + "'";
-				}
-			}
-		}
+		jQuery.sap.assert(null, "Type for filter property could not be found in metadata!");
 	}
 	
 	if (oValue1) {
