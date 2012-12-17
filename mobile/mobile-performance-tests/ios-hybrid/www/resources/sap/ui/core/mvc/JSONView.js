@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -172,11 +172,11 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSONView", { metadata : {
 		var that = this;
 
 		// use preprocessors to fix IDs, associations and event handler references
-		sap.ui.core.Element.runWithPreprocessors(function() {
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 				// parse
 				that.applySettings({ content : that._oJSONView.content});
-			}, 
-			
+			},
+
 			{
 				// preprocessors
 				id : function(sId) {

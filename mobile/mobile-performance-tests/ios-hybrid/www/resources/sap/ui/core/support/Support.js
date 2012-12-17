@@ -22,7 +22,7 @@ jQuery.sap.require("jquery.sap.encoder");
 	 * @class This class provides the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 	 *
 	 * @extends sap.ui.base.EventProvider
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @constructor
 	 * @private
 	 * @name sap.ui.core.support.Support

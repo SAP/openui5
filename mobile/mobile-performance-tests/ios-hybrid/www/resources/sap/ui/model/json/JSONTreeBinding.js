@@ -32,27 +32,39 @@ jQuery.sap.require("sap.ui.model.TreeBinding");
  *         If this parameter is not specified then all found arrays in the data structure are bound.
  *         If the tree data structure doesn't contain an array you don't have to specify this parameter. 
  * 
+ * @name sap.ui.model.json.JSONTreeBinding
+ * @extends sap.ui.model.TreeBinding
  */
-sap.ui.model.json.JSONTreeBinding = function(oModel, sPath, oContext, aFilters, mParameters){
-	sap.ui.model.TreeBinding.apply(this, arguments);
-	if (!this.oContext) {
-		this.oContext = "";
+sap.ui.model.TreeBinding.extend("sap.ui.model.json.JSONTreeBinding", /** @lends sap.ui.model.json.JSONTreeBinding */ {
+
+	constructor : function(oModel, sPath, oContext, aFilters, mParameters){
+		sap.ui.model.TreeBinding.apply(this, arguments);
+		if (!this.oContext) {
+			this.oContext = "";
+		}
+		this.filterInfo = {};
+		this.filterInfo.aFilteredContexts = [];
+		this.filterInfo.oParentContext = {};
 	}
-	this.filterInfo = {};
-	this.filterInfo.aFilteredContexts = [];
-	this.filterInfo.oParentContext = {};
-};
-sap.ui.model.json.JSONTreeBinding.prototype = jQuery.sap.newObject(sap.ui.model.TreeBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.json.JSONTreeBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.TreeBinding",
-  publicMethods : [
-	// methods
-  ]
-
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.json.JSONTreeBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.json.JSONTreeBinding.extend
+ * @function
+ */
 
 /**
  * Return root contexts for the tree
@@ -99,15 +111,17 @@ sap.ui.model.json.JSONTreeBinding.prototype.getNodeContexts = function(oContext)
 			}
 		});
 	} else {
-		jQuery.each(oNode, function(sName, oChild) {
-			if (jQuery.isArray(oChild)){
-				jQuery.each(oChild, function(sSubName, oSubChild) {
-					that._saveSubContext(oSubChild, aContexts, sContextPath, sName + "/" + sSubName);           	
-				})
-			} else if (typeof oChild == "object") {
-				that._saveSubContext(oChild, aContexts, sContextPath, sName);
-			}	
-		});
+		if (oNode) {
+			jQuery.each(oNode, function(sName, oChild) {
+				if (jQuery.isArray(oChild)){
+					jQuery.each(oChild, function(sSubName, oSubChild) {
+						that._saveSubContext(oSubChild, aContexts, sContextPath, sName + "/" + sSubName);           	
+					})
+				} else if (typeof oChild == "object") {
+					that._saveSubContext(oChild, aContexts, sContextPath, sName);
+				}	
+			});
+		}
 	}
 	return aContexts;
 };

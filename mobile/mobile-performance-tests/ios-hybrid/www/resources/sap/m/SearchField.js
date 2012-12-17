@@ -46,7 +46,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * </li>
  * <li>Events
  * <ul>
- * <li>{@link sap.m.SearchField#event:search search} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
+ * <li>{@link sap.m.SearchField#event:search search} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li>
+ * <li>{@link sap.m.SearchField#event:liveChange liveChange} : fnListenerFunction or [fnListenerFunction, oListenerObject] or [oData, fnListenerFunction, oListenerObject]</li></ul>
  * </li>
  * </ul> 
 
@@ -59,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -81,7 +82,8 @@ sap.ui.core.Control.extend("sap.m.SearchField", { metadata : {
 		"showMagnifier" : {type : "boolean", group : "Misc", defaultValue : true}
 	},
 	events : {
-		"search" : {}
+		"search" : {}, 
+		"liveChange" : {}
 	}
 }});
 
@@ -102,7 +104,7 @@ sap.ui.core.Control.extend("sap.m.SearchField", { metadata : {
  * @function
  */
 
-sap.m.SearchField.M_EVENTS = {'search':'search'};
+sap.m.SearchField.M_EVENTS = {'search':'search','liveChange':'liveChange'};
 
 
 /**
@@ -368,6 +370,75 @@ sap.m.SearchField.M_EVENTS = {'search':'search'};
  * @function
  */
 
+/**
+ * This event is fired when the value of the search field is changed by a user - e.g. at each key press. 
+ *
+ * @name sap.m.SearchField#liveChange
+ * @event
+ * @since 1.9.1
+ * @param {sap.ui.base.Event} oControlEvent
+ * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+ * @param {object} oControlEvent.getParameters
+
+ * @param {string} oControlEvent.getParameters.newValue Current search string.
+ * @public
+ */
+ 
+/**
+ * Attach event handler <code>fnFunction</code> to the 'liveChange' event of this <code>sap.m.SearchField</code>.<br/>.
+ * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener<code> if specified
+ * otherwise to this <code>sap.m.SearchField</code>.<br/> itself. 
+ *  
+ * This event is fired when the value of the search field is changed by a user - e.g. at each key press. 
+ *
+ * @param {object}
+ *            [oData] An application specific payload object, that will be passed to the event handler along with the event object when firing the event.
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.  
+ * @param {object}
+ *            [oListener=this] Context object to call the event handler with. Defaults to this <code>sap.m.SearchField</code>.<br/> itself.
+ *
+ * @return {sap.m.SearchField} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.SearchField#attachLiveChange
+ * @function
+ */
+
+
+/**
+ * Detach event handler <code>fnFunction</code> from the 'liveChange' event of this <code>sap.m.SearchField</code>.<br/>
+ *
+ * The passed function and listener object must match the ones used for event registration.
+ *
+ * @param {function}
+ *            fnFunction The function to call, when the event occurs.
+ * @param {object}
+ *            oListener Context object on which the given function had to be called.
+ * @return {sap.m.SearchField} <code>this</code> to allow method chaining
+ * @public
+ * @since 1.9.1
+ * @name sap.m.SearchField#detachLiveChange
+ * @function
+ */
+
+
+/**
+ * Fire event liveChange to attached listeners.
+ * 
+ * Expects following event parameters:
+ * <ul>
+ * <li>'newValue' of type <code>string</code> Current search string.</li>
+ * </ul>
+ *
+ * @param {Map} [mArguments] the arguments to pass along with the event.
+ * @return {sap.m.SearchField} <code>this</code> to allow method chaining
+ * @protected
+ * @since 1.9.1
+ * @name sap.m.SearchField#fireLiveChange
+ * @function
+ */
+
 // Start of sap\m\SearchField.js
 jQuery.sap.require("sap.ui.core.EnabledPropagator");
 sap.ui.core.EnabledPropagator.apply(sap.m.SearchField.prototype, [true]);
@@ -377,29 +448,37 @@ sap.m.SearchField.prototype.init = function(){
 };
 
 sap.m.SearchField.prototype.onBeforeRendering = function() {
-	jQuery(this.getDomRef())
+	jQuery(this._inputElement)
 		.unbind("search", this.onSearch)
-		.unbind("change", this.onChange);
+		.unbind("change", this.onChange)
+		.unbind("input",  this.onInput);
 };
 
 sap.m.SearchField.prototype.onAfterRendering = function() {
-	jQuery(this.getDomRef())
+	// DOM element for the embedded HTML input:
+	this._inputElement = jQuery.sap.domById(this.getId() + "-I");
+	// Bind events
+	//  search: user has pressed "Enter" button -> fire search event, do search
+	//  change: user has focused another control on the page -> do not trigger a search action
+	//  input:  key press or paste/cut -> fire liveChange event
+	jQuery(this._inputElement)
 		.bind("search", jQuery.proxy(this.onSearch, this))
-		.bind("change", jQuery.proxy(this.onChange, this));
+		.bind("change", jQuery.proxy(this.onChange, this))
+		.bind("input",  jQuery.proxy(this.onInput,  this));
 };
 
 sap.m.SearchField.prototype.ontouchstart = function(oEvent) {
-	//for control who need to know if they should handle events from the searchfield control
+	// mark this event as processed
 	oEvent.originalEvent._sapui_handledByControl = true;
 	
 	if (!this.getEnabled()) return;
 	var oSrc = oEvent.srcElement;
 
 	if(oSrc.id == this.getId()+"-reset"){
-		var oInput = jQuery.sap.domById(this.getId() + "-I"),
-			value = "";
-		oInput.value = value;
+		var value = "";
+		this._inputElement.value = value;
 		this.setProperty("value", value, true);
+		this.fireLiveChange({newValue: value});
 		this.fireSearch({query: value});
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -416,18 +495,27 @@ sap.m.SearchField.prototype.ontouchstart = function(oEvent) {
  * @private
  */
 sap.m.SearchField.prototype.onSearch = function(event){
-	var value = jQuery.sap.domById(this.getId() + "-I").value;
-	jQuery.sap.log.debug("SearchField: on search. Value:" + value);
+	var value = this._inputElement.value;
 	this.setProperty("value", value, true);
 	this.fireSearch({query: value});
 };
 
 /**
- * Process the change event
+ * Process the change event. Update value and do not fire any control events
+ * because the user has focused another control on the page without intention to do a search.
  * @private
  */
 sap.m.SearchField.prototype.onChange = function(event){
-	var value = jQuery.sap.domById(this.getId() + "-I").value;
-	jQuery.sap.log.debug("SearchField: on change. Value:" + value);
+	var value = this._inputElement.value;
 	this.setProperty("value", value, true);
+};
+
+/**
+ * Process the input event (key press or paste). Update value and fire the liveChange event.
+ * @private
+ */
+sap.m.SearchField.prototype.onInput = function(event){
+	var value = this._inputElement.value;
+	this.setProperty("value", value, true);
+	this.fireLiveChange({newValue: value});
 };

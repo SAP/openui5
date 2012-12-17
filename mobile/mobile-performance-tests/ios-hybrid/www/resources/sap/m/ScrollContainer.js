@@ -59,7 +59,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -402,7 +402,14 @@ sap.m.ScrollContainer.prototype.exit = function() {
 	}
 };
 
-
+/**
+ * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+ *
+ * @private
+ */
+sap.m.ScrollContainer.prototype.getScrollDelegate = function() {
+	return this._oScroller;
+};
 
 //*** API Methods ***
 

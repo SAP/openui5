@@ -47,6 +47,7 @@ sap.m.ListRenderer.render = function(rm, oControl) {
 	// header
 	if (oControl.getHeaderText()) {
 		rm.write("<header");
+		rm.writeAttribute("id", oControl.getId() + "-listHeader");
 		if (bInset)
 			rm.addClass("sapMListHdrInset");
 		else
@@ -58,6 +59,7 @@ sap.m.ListRenderer.render = function(rm, oControl) {
 	}
 
 	rm.write("<ul");
+	rm.writeAttribute("id", oControl.getId() + "-listUl");
 	// no header or footer no div
 	rm.addClass("sapMListUl");
 
@@ -78,13 +80,6 @@ sap.m.ListRenderer.render = function(rm, oControl) {
 		oControl._removeCurrentSelection();
 	}
 	
-	//reset selection when changing interaction mode...maybe avoid rerender and therefore this won't be needed...but a switch is anyway only for testing purposes
-	if (oControl._includeItemInSelection != oControl.getIncludeItemInSelection()) {
-		oControl._removeCurrentSelection();
-		oControl._includeItemInSelection = oControl.getIncludeItemInSelection();
-	};
-	
-	oControl._previousSingleSelect = null;
 	// set new current selection mode
 	oControl._mode = oControl.getMode();
 
@@ -96,14 +91,21 @@ sap.m.ListRenderer.render = function(rm, oControl) {
 		aItems[i]._select = oControl._select;
 		aItems[i]._delete = oControl._delete;
 		aItems[i]._listId = oControl.getId();
+		aItems[i]._showUnread = oControl.getShowUnread();
 		rm.renderControl(aItems[i]);
 	}
-
+	
 	rm.write("</ul>");
 
+	// growing list render hook
+	if (this.renderGrowingListContent) {
+		this.renderGrowingListContent(rm, oControl);
+	}
+	
 	// footer
 	if (oControl.getFooterText()) {
 		rm.write("<footer");
+		rm.writeAttribute("id", oControl.getId() + "-listFooter");
 		if (bInset)
 			rm.addClass("sapMListFtrInset");
 		else

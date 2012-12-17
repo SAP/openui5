@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -377,9 +377,10 @@ jQuery.sap.require("sap.ui.core.EnabledPropagator");
  * 
  * @private
  */
-/*
- * sap.m.Button.prototype.init = function() { };
- */
+sap.m.Button.prototype.init = function() { 
+	this.orientationProxy = jQuery.proxy(this._handleOrientationChange, this);
+	jQuery(window).bind("orientationchange", this.orientationProxy);
+};
 
 
 /**
@@ -395,6 +396,10 @@ sap.m.Button.prototype.exit = function(oEvent) {
 	if (this._imageBtn) {
 		this._imageBtn.destroy();
 	}
+	// unbind orientation change proxy
+	if (this.orientationProxy) {
+		jQuery(window).unbind("orientationchange", this.orientationProxy);
+	}
 };
 
 
@@ -406,10 +411,101 @@ sap.m.Button.prototype.exit = function(oEvent) {
 sap.m.Button.prototype.ontouchstart = function(oEvent) {
 	// for control who need to know if they should handle events from the button control
 	oEvent.originalEvent._sapui_handledByControl = true;
-	// active handling for android/blackberry
-	if (jQuery.os.android || jQuery.os.blackberry) {
-		this.$().addClass("sapMBtnActive");
+	// change the source only when the first finger is on the control, the
+	// following fingers doesn't affect
+	if ((oEvent.targetTouches && oEvent.targetTouches.length === 1)
+			|| !oEvent.targetTouches) {
+		if (!this._touchEndProxy) {
+			this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
+		}
+		// bind touch proxy
+		if (jQuery.sap.touchEventMode !== "ON") {
+			// binding to document when runs in desktop browser
+			// here also bound to the mouseup event to enable it working in
+			// desktop browsers
+			jQuery(window.document).bind("vmouseup", this._touchEndProxy);
+		} else {
+			// binding to the image itself when runs in mobile device
+			// Galaxy Note (4.0.4) can't bubble the touchend event to document
+			this.$().bind("touchcancel touchend", this._touchEndProxy);
+		}
+		// set active button state
+		this._activeButton();
+		// set target which started the event
+		this._target = oEvent.target;
 	}
+};
+
+
+/**
+ * Function is called when touchmove occurs on button .
+ * 
+ * @private
+ */	
+sap.m.Button.prototype.ontouchmove = function(oEvent) {
+	// check if target which started the event is the same
+	if ((!!this._target) && (this._target != oEvent.target)) {
+		this._ontouchend(oEvent);
+	}
+};
+
+
+/**
+ * Function is called when touchend occurs on button .
+ * 
+ * @private
+ */
+sap.m.Button.prototype._ontouchend = function(oEvent) {
+	// set inactive button state
+	this._inactiveButton();
+	// unbind touch proxy
+	if (jQuery.sap.touchEventMode !== "ON") {
+		jQuery(window.document).unbind("vmouseup", this._touchEndProxy);
+	} else {
+		this.$().unbind("touchcancel touchend", this._touchEndProxy);
+	}
+};
+
+
+/**
+ * Function is called when tap occurs on button.
+ * 
+ * @private
+ */
+sap.m.Button.prototype.ontap = function(oEvent) {
+	// fire tap event
+	if (this.getEnabled()) {
+		// check if target which started the event is the same
+		if ((!!this._target) && (this._target === oEvent.target)) {
+			this.focus();
+			this.fireTap({/* no parameters */});
+		}
+	}
+	// reset target which started the event
+	delete this._target;	
+};
+
+
+/**
+ * Function is called when the orientation of the device changes.
+ * 
+ * @private
+ */
+sap.m.Button.prototype._handleOrientationChange = function() {
+	//console.log("---------> _handleOrientationChange");
+};
+
+
+/**
+ * Function is called when button is active.
+ * 
+ * @private
+ */
+sap.m.Button.prototype._activeButton = function() {
+	// active handling for android/blackberry
+	//if (jQuery.os.android || jQuery.os.blackberry) {
+		this.$().addClass("sapMBtnActive");
+	//}
 	// handling active icon
 	if (this.getEnabled()) {
 		if (this.getIcon() && this.getActiveIcon()) {
@@ -420,25 +516,21 @@ sap.m.Button.prototype.ontouchstart = function(oEvent) {
 
 
 /**
- * Function is called when touchend occurs on button .
+ * Function is called when button is inactive.
  * 
  * @private
  */
-sap.m.Button.prototype.ontouchend = function(oEvent) {
+sap.m.Button.prototype._inactiveButton = function() {
 	// active handling for android/blackberry
-	if (jQuery.os.android|| jQuery.os.blackberry) {
+	//if (jQuery.os.android || jQuery.os.blackberry) {
 		this.$().removeClass("sapMBtnActive");
-	}
+	//}
 	// handling active icon
 	if (this.getEnabled()) {
 		if (this.getIcon() && this.getActiveIcon()) {
 			this._image.setSrc(this.getIcon());
 		}
 	}
-	// fire tap event
-	if (this.getEnabled()) {
-		this.fireTap({/* no parameters */});
-	}	
 };
 
 
@@ -449,13 +541,13 @@ sap.m.Button.prototype.ontouchend = function(oEvent) {
  */
 sap.m.Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc) {
 	var oImage = this._image;
-	if(oImage) {
+	if (!!oImage) {
 		oImage.setSrc(sSrc);
 		oImage.setActiveSrc(sActiveSrc);
 	} else {
 		oImage = new sap.m.Image(sImgId, {
 			src : sSrc,
-			activeSrc: sActiveSrc
+			activeSrc : sActiveSrc
 		}).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);
 	}
 	return this._image = oImage;
@@ -469,7 +561,7 @@ sap.m.Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc) {
  */
 sap.m.Button.prototype._getImageBtn = function(sImgId, sSrc, sHeight, sWidth) {
 	var oImage = this._imageBtn;
-	if(oImage) {
+	if (!!oImage) {
 		oImage.setSrc(sSrc);
 		oImage.setHeight(sHeight);
 		oImage.setWidth(sWidth);
@@ -477,8 +569,9 @@ sap.m.Button.prototype._getImageBtn = function(sImgId, sSrc, sHeight, sWidth) {
 		oImage = new sap.m.Image(sImgId, {
 			src : sSrc,
 			height : sHeight,
-			width : sWidth		
-		}).setParent(this, null, true);;		
+			width : sWidth
+		}).setParent(this, null, true);
+		;
 	}
 	return this._imageBtn = oImage;
 };

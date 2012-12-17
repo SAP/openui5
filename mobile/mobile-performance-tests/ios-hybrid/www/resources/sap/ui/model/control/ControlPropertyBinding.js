@@ -15,20 +15,15 @@ jQuery.sap.require("sap.ui.model.PropertyBinding");
  *
  * @param sPath
  * @param [oModel]
+ * @name sap.ui.model.control.ControlPropertyBinding
+ * @extends sap.ui.model.PropertyBinding
  */
-sap.ui.model.control.ControlPropertyBinding = function(oModel, sPath, oContext){
-	sap.ui.model.PropertyBinding.apply(this, arguments);
-	this.oValue = this._getValue();
-};
-sap.ui.model.control.ControlPropertyBinding.prototype = jQuery.sap.newObject(sap.ui.model.PropertyBinding.prototype);
-
-sap.ui.base.Object.defineClass("sap.ui.model.control.ControlPropertyBinding", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.PropertyBinding",
-  publicMethods : [
-	// methods
-  ]
+sap.ui.model.PropertyBinding.extend("sap.ui.model.control.ControlPropertyBinding", /** @lends sap.ui.model.control.ControlPropertyBinding */ {
+	
+	constructor : function(oModel, sPath, oContext){
+		sap.ui.model.PropertyBinding.apply(this, arguments);
+		this.oValue = this._getValue();
+	}
 
 });
 

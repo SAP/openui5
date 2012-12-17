@@ -28,38 +28,50 @@ jQuery.sap.require("sap.ui.model.json.JSONTreeBinding");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @param {object} oData either the URL where to load the JSON from or a JS object
  * @constructor
  * @public
+ * @name sap.ui.model.json.JSONModel
  */
-sap.ui.model.json.JSONModel = function(oData) {
-	sap.ui.model.Model.apply(this, arguments);
+sap.ui.model.Model.extend("sap.ui.model.json.JSONModel", /** @lends sap.ui.model.json.JSONModel */ {
 	
-	this.bCache = true;
-	
-	if (typeof oData == "string"){
-		this.loadData(oData);
+	constructor : function(oData) {
+		sap.ui.model.Model.apply(this, arguments);
+		
+		this.bCache = true;
+		
+		if (typeof oData == "string"){
+			this.loadData(oData);
+		}
+		else if (oData && typeof oData == "object"){
+			this.setData(oData);
+		}
+	},
+
+	metadata : {
+		publicMethods : ["loadData", "setData", "getData", "setJSON", "getJSON", "setProperty", "forceNoCache"]
 	}
-	else if (oData && typeof oData == "object"){
-		this.setData(oData);
-	}
-};
 
-// chain the prototypes
-sap.ui.model.json.JSONModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.json.JSONModel.
- * Resulting metadata can be obtained via sap.ui.model.json.JSONModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.json.JSONModel", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Model",
-  publicMethods : ["loadData", "setData", "getData", "setJSON", "getJSON", "setProperty", "forceNoCache"]
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.json.JSONModel with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.json.JSONModel.extend
+ * @function
+ */
 
 /**
  * Sets the JSON encoded data to the model.
@@ -298,14 +310,9 @@ sap.ui.model.json.JSONModel.prototype.getProperty = function(sPath, oContext) {
  * @returns the node of the specified path/context
  */
 sap.ui.model.json.JSONModel.prototype._getObject = function (sPath, oContext) {
-	var oNode = this.isLegacySyntax() ? this.oData : null,
-		// if path = null context must be respected as well: we handle this as relative here
-		bIsRelative = sPath && jQuery.sap.startsWith(sPath, "/") ? false : true;
-	if (oContext instanceof sap.ui.model.Context && bIsRelative){
+	var oNode = this.isLegacySyntax() ? this.oData : null;
+	if (oContext instanceof sap.ui.model.Context){
 		oNode = this._getObject(oContext.getPath());
-		if (!oNode) {
-			return null;
-		}
 	}
 	else if (oContext){
 		oNode = oContext;

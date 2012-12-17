@@ -153,7 +153,11 @@ sap.m.ButtonRenderer.writeTextHtml = function(rm, oButton, bExtraContentDiv, sTy
 	if (!bExtraContentDiv && sType != sap.m.ButtonType.Unstyled) {
 		rm.addClass("sapMBtnContent");
 		rm.writeClasses();
-	}	
+	}
+	if (oButton.getIcon()) {
+		rm.addClass("sapMBtnContentSpan");
+		rm.writeClasses();
+	}
 	rm.write(">");
 	if (oButton.getText()) {
 		rm.writeEscaped(oButton.getText());

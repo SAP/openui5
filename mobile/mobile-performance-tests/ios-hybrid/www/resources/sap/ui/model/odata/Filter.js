@@ -19,10 +19,14 @@ jQuery.sap.require("sap.ui.model.FilterOperator");
  * @param {Array} aValues Array of FilterOperators and their values: [{operator:"GE",value1:"val1"},{operator:"LE",value1:"val1"},{operator:"BT",value1:"val1",value2:"val2"}]
  * @param {Boolean} [bAND=true] If true the values from aValues will be ANDed; otherwise ORed
  * @public
+ * @name sap.ui.model.odata.Filter
  */
-sap.ui.model.odata.Filter = function(sPath, aValues, bAND){
-	this.sPath = sPath;
-	this.aValues = aValues;
-	this.bAND = bAND == undefined ? true : bAND;
-};
-sap.ui.model.odata.Filter.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
+sap.ui.base.Object.extend("sap.ui.model.odata.Filter", /** @lends sap.ui.model.odata.Filter */ {
+	
+	constructor : function(sPath, aValues, bAND){
+		this.sPath = sPath;
+		this.aValues = aValues;
+		this.bAND = bAND == undefined ? true : bAND;
+	}
+
+});

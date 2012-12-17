@@ -54,7 +54,7 @@ jQuery.sap.require("sap.ui.core.mvc.View");
  * @extends sap.ui.core.mvc.View
  *
  * @author  
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -149,7 +149,7 @@ sap.ui.core.mvc.View.extend("sap.ui.core.mvc.JSView", { metadata : {
 	sap.ui.core.mvc.JSView.prototype.onControllerConnected = function(oController) {
 		var that=this;
 		// unset any preprocessors (e.g. from an enclosing JSON view)
-		sap.ui.core.Element.runWithPreprocessors(function() { 
+		sap.ui.base.ManagedObject.runWithPreprocessors(function() { 
 			that.applySettings({ content : that.createContent(oController) });
 		});
 	};

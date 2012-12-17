@@ -272,6 +272,8 @@
 @sapUiRed:            #b21212;
 @sapUiYellow:         #f8e100;
 @sapUiGreen:          #008a3b;
+@sapUiOrange:		  #F37021;
+@sapUiBlue: 		  @sapUiHighlight;
 
 
 // Shadow
@@ -410,6 +412,108 @@ html[data-sap-ui-os^='Android3'] .sap-android > .sapUiBody{
 
 .sap-winphone > .sapUiBody {
 	font-family: Tahoma,Arial; 
+}
+
+/*
+	CSS classes shared by BusyDialog and Dialg with type "Message" 
+*/
+.sap-ios {
+	.sapMDialog.sapMCommonDialog, .sapMBusyDialog.sapMCommonDialog{
+		width: 18em;
+		border-radius: 0.625em;
+		background-image: -webkit-linear-gradient(
+			top,
+			fade(lighten(@sapUiBarBG, 31%), 65%) 0,
+			fade(lighten(@sapUiBarBG, 9%), 80%)  22px,
+			fade(darken(@sapUiBarBG, 5%), 85%) 22px);
+		border: 2px solid hsla(0,100%,100%,0.5);
+		background-clip: padding-box;
+		box-sizing: border-box;
+		text-align: center;
+		color: @sapUiBarText;
+		padding: 0.4375em;
+		box-shadow: 0 0.0625em 0 hsla(0,0,0,0.1), 0.0625em 0 .0 hsla(0,0,0,0.1), 
+		0 -0.0625em.0 hsla(0,0,0,0.1), -0.0625em 0 .0 hsla(0,0,0,0.1),
+		0 0.1865em 0.375em hsla(0,0,0,0.5);
+		text-shadow: 0 -0.0625em @sapUiBarBG;	
+		-webkit-animation-duration: 300ms;
+		-webkit-animation-iteration-count: 1;
+	}
+	.sapMDialogBLyInit {
+		/*opacity: 0;*/
+		opacity: 1;
+		background-color: transparent;
+		background-image:-webkit-radial-gradient(
+			center,
+			circle,
+			hsla(0,0,0,0) 0,
+			hsla(0,0,0,0.3) 30%,
+			hsla(0,0,0,0.5) 60%,
+			hsla(0,0,0,0.6) 100%,);
+		/*-webkit-transition: opacity 300ms linear;*/
+	}
+	/*.sapMDialogBLyShown {
+		opacity: 1;
+	}*/
+	.sapMDialogTitle {
+		font-size: 1.4em;
+		line-height: 0.625em;
+		color: @sapUiBarHeading;
+		margin-top: .5em;
+		font-weight: bold;
+	}
+	.sapMCommonDialog button.sapMDialogBtn, .sapMActionSheetDialog.sapMDialogIPhone button.sapMActionSheetCancelButton {
+			width:100%;
+			height: 44px;
+			font-size: 1em;
+			border-radius: 5*0.0625em;
+			text-align:center;
+			text-decoration:none;
+			text-shadow:0 0.0625em*-1em 0 darken(@sapUiBarBG, 50%);
+			color: @sapUiBarText;
+			font-weight:bold;
+			padding: 0;
+			margin: 0;
+			box-shadow:inset 0 0.0625em 0 darken(@sapUiBarBG, 30%), inset 0 -0.0625em 0 lighten(@sapUiBarBG, 15%), 
+			inset 0 0.0625em*-2em 0 darken(@sapUiBarBG, 15%);
+			border:none;
+			background-color:transparent;
+			background-image: -webkit-linear-gradient(
+				top,
+				fade(lighten(@sapUiBarBG, 60%), 55%) 0%,
+				fade(lighten(@sapUiBarBG, 19%), 60%)  50%,
+				fade(lighten(@sapUiBarBG, 19%), 60%)  50%,
+				fade(lighten(@sapUiBarBG, 25%), 60%) 100%,
+			);
+	}
+	.sapMCommonDialog button.sapMDialogBtn:active, .sapMActionSheetDialog.sapMDialogIPhone button.sapMActionSheetCancelButton:active{
+		background-image: -webkit-linear-gradient(
+			top,
+			fade(lighten(@sapUiBarBG, 60%), 55%) 0%,
+			fade(lighten(@sapUiBarBG, 19%), 10%)  50%,
+			fade(lighten(@sapUiBarBG, 19%), 10%)  50%,
+			fade(lighten(@sapUiBarBG, 25%), 50%) 100%,
+		);
+	}
+	
+	@-webkit-keyframes sapMDialogBounce {
+		0% {
+			-webkit-transform:scale3d(0.8,0.8,1);
+			transform:scale3d(0.8,0.8,1);
+		}
+		55% {
+			-webkit-transform: scale3d(1.08,1.08,1);
+			transform: scale3d(1.08,1.08,1);
+		}
+		75% {
+			-webkit-transform: scale3d(0.9,0.9,1);
+			transform: scale3d(0.9,0.9,1);
+		}
+		100% {
+			-webkit-transform: scale3d(1,1,1);
+			transform: scale3d(1,1,1);
+		}
+	}
 }
 
 /* TODO replace the font with the correct font size for checkbox and radioButton */

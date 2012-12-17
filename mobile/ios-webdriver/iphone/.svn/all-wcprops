@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/17994/trunk/iphone
+END
+RunIPhoneUnitTest.sh
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/7887/trunk/iphone/RunIPhoneUnitTest.sh
+END
+iphone.iml
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/7806/trunk/iphone/iphone.iml
+END
+Info.plist
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/9462/trunk/iphone/Info.plist
+END
+Tests-Info.plist
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/12916/trunk/iphone/Tests-Info.plist
+END
+pom.xml
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/9394/trunk/iphone/pom.xml
+END
+build.desc
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/15385/trunk/iphone/build.desc
+END

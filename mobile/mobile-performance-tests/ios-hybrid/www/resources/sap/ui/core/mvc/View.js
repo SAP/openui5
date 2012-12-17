@@ -59,7 +59,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author  
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -648,7 +648,26 @@ sap.ui.core.mvc.View.M_EVENTS = {'afterInit':'afterInit','beforeExit':'beforeExi
 	sap.ui.core.mvc.View.prototype.onBeforeRendering = function() {
 		this.fireBeforeRendering();
 	};
-
+	/**	
+	 * Ovverride clone method
+	 *
+	 * @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
+	 * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 * @protected
+	 */
+	sap.ui.core.mvc.View.prototype.clone = function(sIdSuffix, aLocalIds) {
+		var mSettings = {}, sKey, oClone;
+		//Clone properties (only those with non-default value)
+		for(sKey in this.mProperties  && !(this.isBound && this.isBound(sKey))) {
+			if ( this.mProperties.hasOwnProperty(sKey) ) {
+				mSettings[sKey] = this.mProperties[sKey];
+			}
+		}
+		oClone = sap.ui.core.Element.prototype.clone.call(this, sIdSuffix, aLocalIds, {cloneChildren:false, cloneBindings: true});
+		oClone.applySettings(mSettings);
+		return oClone;
+	}
 	/**
 	 * Creates a view of the given type, name and with the given id.
 	 *

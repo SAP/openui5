@@ -68,5 +68,12 @@
 		"licenseUrl" : "http://www.apache.org/licenses/LICENSE-2.0",
 		"licenseType" : "Apache License Version 2.0",
 		"licenseFile" : "Caja-Apache-LICENSE.txt"
-	}	
+	},
+	{
+		"title" : "MobiScroll",
+		"homepage" : "http://mobiscroll.com",
+		"licenseUrl" : "http://opensource.org/licenses/mit-license.php",
+		"licenseType" : "MIT License",
+		"licenseFile" : "MobiScroll-MIT-LICENSE.txt"
+	}
 ]

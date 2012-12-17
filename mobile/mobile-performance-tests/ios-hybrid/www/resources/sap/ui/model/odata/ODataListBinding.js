@@ -19,67 +19,82 @@ jQuery.sap.require("sap.ui.core.format.DateFormat");
  *
  * @param sPath
  * @param [oModel]
+ * 
+ * @name sap.ui.model.odata.ODataListBinding
+ * @extends sap.ui.model.ListBinding
  */
-sap.ui.model.odata.ODataListBinding = function(oModel, sPath, oContext, oSorter, aFilters, mParameters) {
-	sap.ui.model.ListBinding.apply(this, arguments);
-	this.sFilterParams = null;
-	this.sSortParams = null;
-	this.sRangeParams = null;
-	this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
-	this.aPredefinedFilters = aFilters;
-	this.iStartIndex = 0;
-	this.bPendingChange = false;
-	this.aKeys = [];
-	this.bInitialized = false;
+sap.ui.model.ListBinding.extend("sap.ui.model.odata.ODataListBinding", /** @lends sap.ui.model.odata.ODataListBinding */ {
 	
-	// load the entity type for the collection only once and not e.g. every time when filtering
-	var sCollection = this.sPath;
-	// get last part of sPath which is the collection and remove starting slash
-	sCollection = sPath.substr(sPath.lastIndexOf("/") + 1);
-	this.oEntityType = this.oModel._getEntityType(sCollection);
+	constructor : function(oModel, sPath, oContext, oSorter, aFilters, mParameters) {
+		sap.ui.model.ListBinding.apply(this, arguments);
+		this.sFilterParams = null;
+		this.sSortParams = null;
+		this.sRangeParams = null;
+		this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
+		this.aPredefinedFilters = aFilters;
+		this.iStartIndex = 0;
+		this.bPendingChange = false;
+		this.aKeys = [];
+		this.bInitialized = false;
+		
+		// load the entity type for the collection only once and not e.g. every time when filtering
+		this.oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sPath);
+		
+		this.oDateTimeFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''"
+		});
+		this.oDateTimeOffsetFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
+		});
+	//	this.oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+	//		pattern: "'time'''HH:mm:ss''"
+	//	});
 	
-	this.oDateTimeFormat = sap.ui.core.format.DateFormat.getDateInstance({
-		pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''"
-	});
-	this.oDateTimeOffsetFormat = sap.ui.core.format.DateFormat.getDateInstance({
-		pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
-	});
-//	this.oTimeFormat = sap.ui.core.format.DateFormat.getTimeInstance({
-//		pattern: "'time'''HH:mm:ss''"
-//	});
-
-	this.createSortParams(this.oSorter);
-	this.createFilterParams(this.aFilters);
-
-	// if nested list is already available, use the data and don't send additional requests
-	// TODO: what if nested list is not complete, because it was too large?
-	var oRef = this.oModel._getObject(sPath, oContext);
-	if (jQuery.isArray(oRef)) {
-		this.aKeys = oRef;
-		this.iLength = oRef.length;
-		this.bLengthFinal = true;
-	}
-	else {
-		this.iLength = 0;
-		this.bLengthFinal = false;
-		if (this.oModel.isCountSupported()) {
-			this._getLength();
+		this.createSortParams(this.oSorter);
+		this.createFilterParams(this.aFilters);
+	
+		// if nested list is already available, use the data and don't send additional requests
+		// TODO: what if nested list is not complete, because it was too large?
+		var oRef = this.oModel._getObject(sPath, oContext);
+		if (jQuery.isArray(oRef)) {
+			this.aKeys = oRef;
+			this.iLength = oRef.length;
+			this.bLengthFinal = true;
 		}
+		else {
+			this.iLength = 0;
+			this.bLengthFinal = false;
+			if (this.oModel.isCountSupported()) {
+				this._getLength();
+			}
+		}
+	
+	},
+	
+	metadata : {
+	  publicMethods : [
+			"getLength"
+	  ]
 	}
 
-};
-sap.ui.model.odata.ODataListBinding.prototype = jQuery.sap.newObject(sap.ui.model.ListBinding.prototype);
+});
 
-sap.ui.base.Object.defineClass("sap.ui.model.odata.ODataListBinding", {
-
-	  // ---- object ----
-	  baseType : "sap.ui.model.ListBinding",
-	  publicMethods : [
-		// methods
-		"getLength"
-	  ]
-
-	});
+/**
+ * Creates a new subclass of class sap.ui.model.odata.ODataListBinding with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.odata.ODataListBinding.extend
+ * @function
+ */
 
 /**
  * Return contexts for the list
@@ -371,10 +386,12 @@ sap.ui.model.odata.ODataListBinding.prototype.sort = function(oSorter) {
 	this.createSortParams(oSorter);
 	this.aKeys = [];
 
-	this.loadData(function() {
-		this._fireSort({sorter: oSorter});
-	});
-
+	if (this.bInitialized) {
+		this.loadData(function() {
+			this._fireSort({sorter: oSorter});
+		});
+	}
+	
 };
 
 /**
@@ -423,10 +440,12 @@ sap.ui.model.odata.ODataListBinding.prototype.filter = function(aFilters) {
 	this.iLength = 0;
 	this.bLengthFinal = false;
 
-	this.loadData(function() {
-		this._fireFilter({filters: aFilters});
-	});
-
+	if (this.bInitialized) {
+		this.loadData(function() {
+			this._fireFilter({filters: aFilters});
+		});
+	}
+	
 };
 
 /**
@@ -438,7 +457,7 @@ sap.ui.model.odata.ODataListBinding.prototype.createFilterParams = function(aFil
 		var oFilterGroups = {},
 			iFilterGroupLength = 0,
 			aFilterGroup,
-			sFilterParam = "$filter=(",
+			sFilterParam = "$filter=",
 			iFilterGroupCount = 0,
 			that = this;
 		//group filters by path
@@ -451,39 +470,42 @@ sap.ui.model.odata.ODataListBinding.prototype.createFilterParams = function(aFil
 			aFilterGroup.push(oFilter);
 		});
 		jQuery.each(oFilterGroups, function(sPath, aFilterGroup) {
-			sFilterParam += '(';
+			if (aFilterGroup.length > 1) {
+				sFilterParam += '(';
+			}
 			jQuery.each(aFilterGroup, function(i,oFilter) {
 				if (oFilter instanceof sap.ui.model.odata.Filter) {
-					if (aFilterGroup.length > 1) {
+					if (oFilter.aValues.length > 1) {
 						sFilterParam += '(';
 					}
 					jQuery.each(oFilter.aValues, function(i, oFilterSegment) {
 						if (i > 0) {
 							if(oFilter.bAND) {
-								sFilterParam += ")%20and%20(";
+								sFilterParam += "%20and%20";
 							} else {
-								sFilterParam += ")%20or%20(";
+								sFilterParam += "%20or%20";
 							}
 						}
 						sFilterParam = that._createFilterSegment(oFilter.sPath, oFilterSegment.operator, oFilterSegment.value1, oFilterSegment.value2, sFilterParam);
 					});
-					if (aFilterGroup.length > 1) {
+					if (oFilter.aValues.length > 1) {
 						sFilterParam += ')';
 					}
 				} else {
 					sFilterParam = that._createFilterSegment(oFilter.sPath, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, sFilterParam);
 				}
 				if (i < aFilterGroup.length-1) {
-					sFilterParam += ")%20or%20(";
+					sFilterParam += "%20or%20";
 				}
 			});
-			sFilterParam += ')';
+			if (aFilterGroup.length > 1) {
+				sFilterParam += ')';
+			}
 			if (iFilterGroupCount < iFilterGroupLength-1) {
-				sFilterParam += ")%20and%20(";
+				sFilterParam += "%20and%20";
 			}
 			iFilterGroupCount++;
 		});
-		sFilterParam += ")"; 
 		this.sFilterParams = sFilterParam;
 	}else{
 		this.sFilterParams = null;
@@ -495,7 +517,7 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 	var oProperty;
 	if (this.oEntityType) {
 		// TODO ...complex types not supported e.g. sPath == Address/City...
-		oProperty = this.oModel._getPropertyMetadata(this.oEntityType, sPath);		
+		oProperty = this.oModel.oMetadata._getPropertyMetadata(this.oEntityType, sPath);		
 	}
 	
 	if (oProperty) {
@@ -510,12 +532,12 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 				oValue2 = (oValue2) ? "time'" + oValue2 + "'" : null;
 				break;			
 			case "Edm.DateTime":
-				oValue1 = this.oDateTimeFormat.format(new Date(oValue1));
-				oValue2 = (oValue2) ? this.oDateTimeFormat.format(new Date(oValue2)) : null;
+				oValue1 = this.oDateTimeFormat.format(new Date(oValue1), true);
+				oValue2 = (oValue2) ? this.oDateTimeFormat.format(new Date(oValue2), true) : null;
 				break;
 			case "Edm.DateTimeOffset":
-				oValue1 = this.oDateTimeOffsetFormat.format(new Date(oValue1));
-				oValue2 = (oValue2) ? this.oDateTimeOffsetFormat.format(new Date(oValue2)) : null;
+				oValue1 = this.oDateTimeOffsetFormat.format(new Date(oValue1), true);
+				oValue2 = (oValue2) ? this.oDateTimeOffsetFormat.format(new Date(oValue2), true) : null;
 				break;
 			case "Edm.Guid":
 				oValue1 = "guid'" + oValue1 + "'";
@@ -533,7 +555,7 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 		if (isNaN(oValue1)) {
 			// date check
 			if (!isNaN(Date.parse(oValue1))) {
-				oValue1 = this.oDateTimeFormat.format(new Date(oValue1));
+				oValue1 = this.oDateTimeFormat.format(new Date(oValue1), true);
 			}else {
 				oValue1 = "'" + oValue1 + "'";
 			}
@@ -542,12 +564,19 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 			if (isNaN(oValue2)) {
 				// date check
 				if (!isNaN(Date.parse(oValue2))) {
-					oValue2 = this.oDateTimeFormat.format(new Date(oValue2));
+					oValue2 = this.oDateTimeFormat.format(new Date(oValue2), true);
 				}else {
 					oValue2 = "'" + oValue2 + "'";
 				}
 			}
 		}
+	}
+	
+	if (oValue1) {
+		oValue1 = jQuery.sap.encodeURL(String(oValue1));
+	}
+	if (oValue2) {
+		oValue2 = jQuery.sap.encodeURL(String(oValue2));
 	}
 	
 	// TODO embed 2nd value
@@ -561,16 +590,16 @@ sap.ui.model.odata.ODataListBinding.prototype._createFilterSegment = function(sP
 			sFilterParam += sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
 			break;
 		case "BT":
-			sFilterParam += sPath + "%20gt%20" + oValue1 + "%20and%20" + sPath + "%20lt%20" + oValue2;
+			sFilterParam += "(" + sPath + "%20gt%20" + oValue1 + "%20and%20" + sPath + "%20lt%20" + oValue2 + ")";
 			break;
 		case "Contains":
 			sFilterParam += "indexof(" + sPath + "," + oValue1 + ")%20ne%20-1";
 			break;
 		case "StartsWith":
-			sFilterParam += "startswith(" + sPath + "," + oValue1 + ")%20eq%20true";
+			sFilterParam += "startswith(" + sPath + "," + oValue1 + ")";
 			break;
 		case "EndsWith":
-			sFilterParam += "endswith(" + sPath + "," + oValue1 + ")%20eq%20true";
+			sFilterParam += "endswith(" + sPath + "," + oValue1 + ")";
 			break;
 		default:
 			sFilterParam += "true";

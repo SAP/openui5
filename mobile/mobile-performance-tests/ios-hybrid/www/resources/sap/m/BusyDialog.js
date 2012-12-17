@@ -57,11 +57,11 @@ jQuery.sap.require("sap.ui.core.Control");
  * @param {object} [mSettings] initial settings for the new control
  *
  * @class
- * Busy Dilaog is used to indicate that the system is busy with some task and the user has to wait. During this time the UI is blocked.
+ * Busy Dialog is used to indicate that the system is busy with some task and the user has to wait. During this time the UI is blocked.
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -435,10 +435,11 @@ jQuery.sap.require("sap.ui.core.Popup");
 sap.m.BusyDialog.prototype.init = function(){
 	var that = this;
 	this._$window = jQuery(window);
+	this.oLabel = new sap.m.Label(this.getId() + "-busyLabel", {}).setParent(this, null ,true).addStyleClass("sapMBusyDialogLabel");
 
 	this.oPopup = new sap.ui.core.Popup();
 	(jQuery.os.ios) ? this.oPopup.setShadow(true): this.oPopup.setShadow(false);
-	this.oPopup.setModal(true, 'sapMBusyBLy');
+	this.oPopup.setModal(true, 'sapMDialogBLyInit');
 	this.oPopup.setAnimations(this.openAnimation, this.closeAnimation);
 
 	//the orientationchange event listener
@@ -450,13 +451,16 @@ sap.m.BusyDialog.prototype.init = function(){
 	};
 	this.oPopup._showBlockLayer = function(){
 		sap.ui.core.Popup.prototype._showBlockLayer.call(this);
-		var $BlockRef = jQuery("#sap-ui-blocklayer-popup");
+		var $BlockRef = jQuery("#sap-ui-blocklayer-popup"), $BlockBarRef;
+		$BlockRef.toggleClass("sapMDialogBLyInit", true);
 		if (!jQuery.os.ios) {
-			if($BlockRef.css('top') !== '48px'){
-				$BlockRef.css('top', '48px');
+			$BlockBarRef = jQuery("#sap-ui-blocklayer-popup-bar");
+			$BlockRef.css('top', '48px');
+			if($BlockBarRef.length === 0){
 				var className = "sapUiBLy" + (this._sModalCSSClass ? " " + this._sModalCSSClass : "") + ' sapUiBLyBar';
 				var $BlockBarRef = jQuery("<div id=\"sap-ui-blocklayer-popup-bar\" tabindex=\"0\" class=\"" + className + "\" style=\"display:block; z-index:" +  $BlockRef.css('z-index') +"; visibility:visible\"></div>");
-				$BlockBarRef.appendTo(sap.ui.getCore().getStaticAreaRef());
+				//need to add $BlockBarRef before the busydialog dom node, otherwise have problem with popup.js
+				$BlockBarRef.insertBefore(that.$());
 			} else {
 				var $BlockBarRef = $BlockRef.next('div');
 				$BlockBarRef.css({"z-index" : $BlockRef.css('z-index'),
@@ -464,18 +468,21 @@ sap.m.BusyDialog.prototype.init = function(){
 								"display" : "block"});
 			}
 		}//Without timeout the animation is not visible from the second time.
-		setTimeout(function() {
-			$BlockRef.toggleClass('sapUiBLyShow', true);
-		}, 0);
+		/*setTimeout(function() {
+			$BlockRef.toggleClass('sapMDialogBLyShown', true);
+		}, 0);*/
 	};
 	this.oPopup._hideBlockLayer = function(){
 		var $BlockRef = jQuery("#sap-ui-blocklayer-popup");
-		var $BlockBarRef = $BlockRef.next('div');
-		$BlockRef.toggleClass('sapUiBLyShow', false);
-		$BlockRef.one("webkitTransitionEnd", function(){
+		var $BlockBarRef = jQuery("#sap-ui-blocklayer-popup-bar");//$BlockRef.next('div');
+		/*$BlockRef.one("webkitTransitionEnd", function(){*/
 			$BlockBarRef.css({'visibility': '', 'display': 'none'});
+			$BlockRef.toggleClass('sapMDialogBLyInit', false);
+			$BlockRef.css("top", "");
 			sap.ui.core.Popup.prototype._hideBlockLayer.call(this);
-		});	
+		/*});*/
+		/*$BlockRef.toggleClass('sapMDialogBLyShown', false);*/
+		
 	};
 };
 
@@ -485,7 +492,7 @@ sap.m.BusyDialog.prototype.openAnimation = function($Ref, iRealDuration, fnOpene
 		$Ref.one("webkitAnimationEnd", function(){
 			fnOpened();
 		});
-		$Ref.css('-webkit-animation-name', 'sapMBusyBounce');
+		$Ref.css('-webkit-animation-name', 'sapMDialogBounce');
 	} else {
 		fnOpened();
 	}
@@ -577,6 +584,11 @@ sap.m.BusyDialog.prototype.close = function(){
 		this.fireClose();
 	}
 	return this;
+};
+
+sap.m.BusyDialog.prototype.setText = function(sText){
+	this.setProperty("text", sText, true);
+	this.oLabel.setText(sText);
 };
 
 sap.m.BusyDialog.prototype._reposition = function() {

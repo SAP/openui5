@@ -245,7 +245,7 @@
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP AG.
 	 *
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @namespace
 	 * @public
 	 * @static
@@ -1570,14 +1570,23 @@
 	}
 
 	/**
-	 * jQuery.support.flexBoxLayout is true if the current browser supports the CSS3 Flexible Box Layout directly or via vendor prefixes
+	 * jQuery.support.flexBoxLayout is true if the current browser supports the OLD CSS3 Flexible Box Layout directly or via vendor prefixes
 	 */
 	if (jQuery.support.flexBoxLayout === undefined) {
 		jQuery.support.flexBoxLayout =
 			((document.documentElement.style.MozBoxFlex !== undefined) ||
-				(document.documentElement.style.WebkitBoxFlex !== undefined) ||
-				(document.documentElement.style.MsBoxFlex !== undefined) ||
-				(document.documentElement.style.BoxFlex !== undefined));
+				(document.documentElement.style.webkitBoxFlex !== undefined) ||
+				(document.documentElement.style.boxFlex !== undefined));
+	}
+
+	/**
+	 * jQuery.support.newFlexBoxLayout is true if the current browser supports the NEW CSS3 Flexible Box Layout directly or via vendor prefixes
+	 */
+	if (jQuery.support.newFlexBoxLayout === undefined) {
+		jQuery.support.newFlexBoxLayout =
+			((document.documentElement.style.MozFlex !== undefined) ||
+				(document.documentElement.style.webkitFlex !== undefined) ||
+				(document.documentElement.style.flex !== undefined));
 	}
 
 	// *********** fixes for (pending) jQuery bugs **********
@@ -2102,7 +2111,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		sTagName = this.prop("tagName");
 		sType = this.prop("type");
 
-		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password"))
+		if( this.length === 1 && ((sTagName == "INPUT" && (sType == "text" || sType == "password" || sType == "search"))
 				|| sTagName == "TEXTAREA" )) {
 
 			var oDomRef = this.get(0);
@@ -2566,7 +2575,7 @@ jQuery.sap.declare("jquery.sap.dom", false);
 
 
 	/*!
-	 * The following functions are taken from jQuery UI 1.8.17
+	 * The following functions are taken from jQuery UI 1.8.17 but modified
 	 *
 	 * Copyright 2011, AUTHORS.txt (http://jqueryui.com/about)
 	 * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -2625,6 +2634,8 @@ jQuery.sap.declare("jquery.sap.dom", false);
 		 * http://jquery.org/license
 		 *
 		 * http://docs.jquery.com/UI
+		 *
+		 * But since visible is modified, focusable is different too the jQuery UI version too.
 		 */
 		jQuery.extend( jQuery.expr[ ":" ], {
 			/**
@@ -2634,6 +2645,22 @@ jQuery.sap.declare("jquery.sap.dom", false);
 			 * as it is semantically the same thing and intended to do exactly the same.
 			 */
 			focusable: function( element ) {
+				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
+			}
+		});
+	}
+
+	if (!jQuery.expr[":"].sapFocusable) {
+		/*!
+		 * Do not use jQuery UI focusable because this might be overwritten if jQuery UI is loaded
+		 */
+		jQuery.extend( jQuery.expr[ ":" ], {
+			/**
+			 * This defines the jQuery ":sapFocusable" selector; If already present, nothing is
+			 * done here, so we will not overwrite any previous implementation.
+			 * If jQuery UI is loaded later on, this implementation here will NOT be overwritten by.
+			 */
+			sapFocusable: function( element ) {
 				return focusable( element, !isNaN( jQuery.attr( element, "tabindex" ) ) );
 			}
 		});
@@ -3293,8 +3320,7 @@ jQuery.sap.KeyCodes = {
 
 	jQuery.sap._touchToMouseEvent = true;
 
-	if ("ontouchend" in document) {
-
+	if (jQuery.browser.webkit && /Mobile/.test(navigator.userAgent) && "ontouchend" in document) {
 		var bHandleEvent = false;
 		var oTarget = null;
 		var bIsMoved = false;
@@ -4325,8 +4351,11 @@ jQuery.sap.declare("jquery.sap.mobile");
 		if (resultUA) {
 			var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform detection mechanisms
 					ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
+					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
 					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
-					blackberry: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+"
+					blackberry: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+",
+					blackberry10: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.1077 Mobile Safari/537.10+"
 			}[resultUA];
 
 			if (ua) {
@@ -4370,12 +4399,23 @@ jQuery.sap.declare("jquery.sap.mobile");
 				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
 				return;
 			}
+			
+		} else if (userAgent.indexOf("(BB10;") > 0) { 
+			// BlackBery 10 has a different structure...
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result){
+				return {os: "blackberry", version:result[1]};
+			} else {
+				return {os: "blackberry", version:10};
+			}
+			
 		} else {
 			// Windows phone has a different structure, so we need to check with another regExp.
 			platform = /Windows Phone (?:OS )?([\d.]*)/;
 			result = userAgent.match(platform);
 			if (result){
-				return({os: "winphone", version:result[1]});
+				return {os: "winphone", version:result[1]};
 			} else {
 				return;
 			}
@@ -4450,7 +4490,13 @@ jQuery.sap.declare("jquery.sap.mobile");
 
 	function isLandscape(){
 //		return (window.orientation === undefined) || window.orientation === 90 || window.orientation === -90; // landscape is assumed to be default and returned on desktop browsers
-		return $window.width() > $window.height();
+		if(jQuery.sap.touchEventMode === "ON"){
+			//if in real mobile device
+			return window.screen.width > window.screen.height;
+		}else{
+			//if in desktop browser
+			return $window.width() > $window.height();
+		}
 	}
 
 	var landscape = isLandscape();
@@ -4506,14 +4552,20 @@ jQuery.sap.declare("jquery.sap.mobile");
 		$.device.is.landscape = landscape;
 		$.device.is.portrait = !landscape;
 	});
-
+	
 	var tablet = (function(){
-		if(jQuery.os.ios){
-			return jQuery.device.is.ipad;
+		if($.os.ios){
+			return $.device.is.ipad;
 		}else{
 			//this is how android distinguishes between tablet and phone
 			//http://android-developers.blogspot.de/2011/07/new-tools-for-managing-screen-sizes.html
-			return (Math.min($window.width(), $window.height()) >= 600);
+			if(jQuery.sap.touchEventMode === "ON"){
+				//in real mobile device
+				return (Math.min(window.screen.width / window.devicePixelRatio, window.screen.height / window.devicePixelRatio) >= 600);
+			}else{
+				//in desktop browser
+				return (Math.min($window.width(), $window.height()) >= 600);
+			}
 		}
 	}());
 
@@ -4525,7 +4577,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 		 * @type {boolean}
 		 * @public
 		 */
-		tablet: tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		tablet: tablet && ($.sap.touchEventMode !== "OFF"),
 		/**
 		 * Whether the running device is a phone. If the desktop browser runs with URL parameter sap-ui-xx-fakeOS or sap-ui-xx-test-mobile, this property will also be set according to the window size.
 		 * This property will be false when runs in desktop browser without touch support. 
@@ -4533,13 +4585,13 @@ jQuery.sap.declare("jquery.sap.mobile");
 		 * @type {boolean}
 		 * @public
 		 */
-		phone: !tablet && (jQuery.sap.touchEventMode !== "OFF"),
+		phone: !tablet && ($.sap.touchEventMode !== "OFF"),
 		/**
 		 * Whether the running device is a desktop browser without touch support.
 		 * @type {boolean}
 		 * @public
 		 */
-		desktop: (jQuery.sap.touchEventMode === "OFF")
+		desktop: ($.sap.touchEventMode === "OFF")
 	}, $.device.is);
 
 	var _bInitMobileTriggered = false;
@@ -4665,7 +4717,11 @@ jQuery.sap.declare("jquery.sap.mobile");
 				}
 
 				if (options.preventScroll) {
-					$(window).bind("touchmove", function(e){e.preventDefault();}); // this one prevents the rubber-band effect - and disables native scrolling
+					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent){
+						if (!oEvent.isDefaultPrevented()) {
+							oEvent.preventDefault();	// this one prevents the rubber-band effect - and disables native scrolling
+						}
+					});
 				}
 
 				if (options.useFullScreenHeight) {
@@ -4996,7 +5052,7 @@ jQuery.sap.declare("jquery.sap.sjax", false);
 	 * currently in the list.
 	 *
 	 * @author SAP AG
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
@@ -5288,7 +5344,7 @@ jQuery.sap.declare("jquery.sap.resources");
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP AG
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
@@ -5658,7 +5714,7 @@ jQuery.sap.declare("jquery.sap.script", false);
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP AG
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -5923,7 +5979,7 @@ if ( !jQuery.sap.isDeclared('sap.ui.Global') ) {
  * sap.ui.lazyRequire("sap.ui.core/Control");
  * sap.ui.lazyRequire("sap.ui.commons/Button");
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -5944,7 +6000,7 @@ jQuery.sap.declare("sap.ui.Global");
  * The <code>sap</code> namespace is automatically registered with the
  * OpenAjax hub if it exists.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @namespace
  * @public
  * @name sap
@@ -5957,7 +6013,7 @@ if ( typeof window.sap !== "object" && typeof window.sap !== "function"  ) {
  * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
  * point for UI related JavaScript functionality provided by SAP.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @namespace
  * @name sap.ui
  * @public
@@ -5970,8 +6026,8 @@ sap.ui = jQuery.extend(sap.ui, {
 		 * The version of the SAP UI Library
 		 * @type string
 		 */
-		version: "1.9.0-SNAPSHOT",
-		buildinfo : { lastchange : "${ldi.scm.revision}", buildtime : "20121019-0201" }
+		version: "1.9.1-SNAPSHOT",
+		buildinfo : { lastchange : "${ldi.scm.revision}", buildtime : "20121204-0202" }
 	});
 
 /**
@@ -6211,7 +6267,7 @@ jQuery.sap.declare("sap.ui.base.Interface");
  *        only the defined functions will be visible, no internals of the class can be accessed.
  *
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @param {sap.ui.base.Object}
  *            oObject the instance that needs an interface created
  * @param {string[]}
@@ -6272,7 +6328,7 @@ jQuery.sap.declare("sap.ui.base.Metadata");
  *
  * @class Metadata for a class.
  * @author Frank Weigel
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @since 0.8.6
  * @public
  */
@@ -6579,7 +6635,7 @@ sap.ui.base.Metadata.createClass = function (fnBaseClass, sClassName, oClassInfo
  * @class Base class for all SAPUI5 Objects
  * @abstract
  * @author Malte Wedel
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @public
  * @name sap.ui.base.Object
  */
@@ -6747,7 +6803,7 @@ jQuery.sap.declare("sap.ui.base.Event");
  * @extends sap.ui.base.Object
  * @implements sap.ui.base.Poolable
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @public
  */
 // TODO Previous documentation stated that sId is numerical, but this seems not to be true
@@ -6912,7 +6968,7 @@ jQuery.sap.declare("sap.ui.base.ObjectPool");
  *
  * @extends sap.ui.base.Object
  * @author Malte Wedel
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  */
@@ -7015,7 +7071,7 @@ sap.ui.base.ObjectPool.prototype.returnObject = function(oObject) {
  * @abstract
  * @extends sap.ui.base.Object
  * @author Malte Wedel, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  * @name sap.ui.base.EventProvider
@@ -7270,6 +7326,294 @@ sap.ui.base.EventProvider.prototype.toString = function() {
 //	this.mEventRegistry = null;
 //};
 }; // end of sap.ui.base.EventProvider
+
+if ( !jQuery.sap.isDeclared('sap.ui.base.DataType') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.base.DataType
+jQuery.sap.declare("sap.ui.base.DataType");
+
+/**
+ * @class Describes the metadata of a data type and provides methods for validation.
+ * @author Frank Weigel
+ * @since 0.9.0
+ */
+sap.ui.base.DataType = function() {
+	// Avoid construction of a DataType.
+	// DataType is only a function to support the "instanceof" operator.
+	throw new Error();
+};
+
+/**
+ * The qualified name of the data type.
+ * Note that this name usually equals the design time name of the type.
+ * Only for primitive types it differs, namely it omits the package 'sap.ui.core'.
+ * @return {string} name of the data type
+ * @public
+ */
+sap.ui.base.DataType.prototype.getName = function() {
+	return undefined;
+};
+
+/**
+ * The base type of this type or undefined if this is a primitive type.
+ * @return {sap.ui.base.DataType} base type or undefined
+ * @public
+ */
+sap.ui.base.DataType.prototype.getBaseType = function() {
+	return undefined;
+};
+
+/**
+ * The component type of this type or undefined if this is not an array.
+ * @return {sap.ui.base.DataType} component type or undefined
+ * @public
+ */
+sap.ui.base.DataType.prototype.getComponentType = function() {
+	return undefined;
+};
+
+/**
+ * The default value for this type. Each type must define a default value.
+ * @return {any} default value of the data type. The type of the returned value
+ *    must match the JavaScript type of the data type (a string for string types etc.)
+ * @public
+ */
+sap.ui.base.DataType.prototype.getDefaultValue = function() {
+	return undefined;
+};
+
+/**
+ * Whether this type is an array type.
+ * @return {boolean} whether this type is an array type
+ * @public
+ */
+sap.ui.base.DataType.prototype.isArrayType = function() {
+	return undefined;
+};
+
+/**
+ * Parses the given string value and converts it into the specific data type.
+ * @param {string} sValue string representation for a value of this type
+ * @return the value in the correct internal format
+ * @public
+ */
+sap.ui.base.DataType.prototype.parseValue = function(sValue) {
+	// currently this function considers to handle primitive values
+	// - in future may be other values might be also relevant.
+	var sType = this.getName();
+	if (sType == "string") {
+		return sValue;
+	} else if (sType == "boolean") {
+		return sValue == "true";
+	} else if (sType == "int") {
+		return parseInt(sValue, 10);
+	} else if (sType == "float") {
+		return parseFloat(sValue);
+	} else {
+		// support for other types like e.g.
+		// sap.ui.core.CSSSize (just apply)
+		return sValue;
+	}
+};
+
+/**
+ * A validation check. To be implemented by concrete types.
+ * @param {any} vValue the value to be checked
+ * @return {boolean} whether the given value is valid for this data type (without conversion)
+ * @public
+ */
+sap.ui.base.DataType.prototype.isValid = undefined;
+
+(function() {
+
+	function createType(name, s, base) {
+
+		jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
+		jQuery.sap.assert(!base || base instanceof sap.ui.base.DataType, "DataType.<createType>: base type must be empty or a DataType");
+		s = s || {};
+		base = base || sap.ui.base.DataType.prototype;
+
+		// create a new type object with the base type as prototype
+		var type = jQuery.sap.newObject(base);
+
+		// getter for the name
+		type.getName = function() { return name; };
+
+		// if a default value is specified, create a getter for it
+		if ( s.hasOwnProperty("defaultValue") ) {
+			var vDefault = s.defaultValue;
+			type.getDefaultValue = function() { return vDefault; };
+		}
+
+		// if a validator is specified either chain it with the base type validator
+		// or set it if no base validator exists
+		if ( s.hasOwnProperty("isValid") ) {
+			var fnIsValid = s.isValid;
+			type.isValid = base.isValid ? function(vValue) {
+				if ( !base.isValid(vValue) ) {
+					return false;
+				}
+				return fnIsValid(vValue);
+			} : fnIsValid;
+		};
+
+		// not an array type
+		type.isArrayType = function() { return false; };
+		
+		return type;
+	}
+
+	function createArrayType(componentType) {
+		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: compoinentType must be a DataType");
+
+		// create a new type object with the base type as prototype
+		var type = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
+
+		// getter for the name
+		type.getName = function() { return componentType.getName() + "[]"; };
+
+		// getter for component type
+		type.getComponentType = function() { return componentType; };
+
+		// array validator
+		type.isValid = function(aValues) {
+			if (aValues === null) {
+				return true;
+			}
+			if (jQuery.isArray(aValues)) {
+				for (var i = 0; i < aValues.length; i++) {
+					if (!componentType.isValid(aValues[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+		};
+
+		// array parser
+		type.parseValue = function(sValue) {
+			var aValues = sValue.split(",");
+			for (var i = 0; i < aValues.length; i++) {
+				aValues[i] = componentType.parseValue(aValues[i]);
+			}
+			return aValues;
+		};
+
+		// is an array type
+		type.isArrayType = function() { return true; };
+
+		return type;
+	}
+
+	var PREDEFINED_TYPES = {
+
+		"any" :
+				createType("any", {
+					defaultValue : null,
+					isValid : function(vValue) {
+						return true;
+					}
+				}),
+
+		"boolean" :
+			createType("boolean", {
+				defaultValue : false,
+				isValid : function(vValue) {
+					return typeof vValue === "boolean";
+				}
+			}),
+
+		"int" :
+			createType("int", {
+				defaultValue : 0,
+				isValid : function(vValue) {
+					return typeof vValue === "number" && Math.floor(vValue) == vValue;
+				}
+			}),
+
+		"float" :
+			createType("float", {
+				defaultValue : 0.0,
+				isValid : function(vValue) {
+					return typeof vValue === "number";
+				}
+			}),
+
+		"string" :
+			createType("string", {
+				defaultValue : "",
+				isValid : function(vValue) {
+					return typeof vValue === "string" || vValue instanceof String;
+				}
+			}),
+		"object" :
+			createType("object", {
+				defaultValue : null,
+				isValid : function(vValue) {
+					return typeof vValue === "object" || typeof vValue === "function";
+				}
+			})
+	};
+
+	/**
+	 * Returns the type object for the type with the given name.
+	 * @return the type object or undefined when no such type object exists.
+	 * @public
+	 */
+	sap.ui.base.DataType.getType = function(sTypeName) {
+		if (sTypeName.indexOf("[]") > 0) {
+			var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
+				oComponentType = this.getType(sComponentTypeName);
+			return oComponentType && createArrayType(oComponentType);
+		} else {
+			return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
+		}
+	};
+
+	/**
+	 * Creates a new type as a subtype of a given type.
+	 * @param {string} sName the unique name of the new type
+	 * @param {object} [mSettings settings] for the new type
+	 * @param {any} [mSettings.defaultValue] the default value for the new type
+	 * @param {function} [mSettings.isValid] a validator function for values of the new type
+	 * @param {sap.ui.base.DataType} [base] the base type for the new type
+	 * @public
+	 */
+	sap.ui.base.DataType.createType = createType;
+
+	// ---- minimal support for interface types ----
+	
+	var mInterfaces = {};
+	
+	/**
+	 * Registers the given array of type names as known interface types.
+	 * Only purpose is to enable the {@link #isInterfaceType} check.
+	 * @param {string[]} aTypes interface types to be reigstered  
+	 * @private
+	 */
+	sap.ui.base.DataType.registerInterfaceTypes = function(aTypes) {
+		for(var i=0; i<aTypes.length; i++) {
+			jQuery.sap.setObject(aTypes[i], mInterfaces[aTypes[i]] = new String(aTypes[i]));
+		}
+	};
+	
+	/**
+	 * @param {string} sType name of type to check
+	 * @return {boolean} whether the given type is known to be an interface type
+	 * @private 
+	 */
+	sap.ui.base.DataType.isInterfaceType = function(sType) {
+		return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];
+	};
+
+}());
+}; // end of sap.ui.base.DataType
 
 if ( !jQuery.sap.isDeclared('sap.ui.core.Configuration') ) {
 /*!
@@ -8015,7 +8359,6 @@ if ( !jQuery.sap.isDeclared('sap.ui.core.Element') ) {
 // Provides the base class for all controls and UI elements.
 jQuery.sap.declare("sap.ui.core.Element");
 
-
 if ( !jQuery.sap.isDeclared('jquery.sap.strings') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
@@ -8199,294 +8542,44 @@ jQuery.sap.declare("jquery.sap.strings", false);
 }());
 }; // end of jquery.sap.strings
 
-
-if ( !jQuery.sap.isDeclared('sap.ui.base.DataType') ) {
+if ( !jQuery.sap.isDeclared('sap.ui.base.ManagedObject') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
  * (c) Copyright 2009-2012 SAP AG. All rights reserved
  */
 
-// Provides class sap.ui.base.DataType
-jQuery.sap.declare("sap.ui.base.DataType");
+// Provides the base class for all controls and UI elements.
+jQuery.sap.declare("sap.ui.base.ManagedObject");
 
-/**
- * @class Describes the metadata of a data type and provides methods for validation.
- * @author Frank Weigel
- * @since 0.9.0
- */
-sap.ui.base.DataType = function() {
-	// Avoid construction of a DataType.
-	// DataType is only a function to support the "instanceof" operator.
-	throw new Error();
-};
 
-/**
- * The qualified name of the data type.
- * Note that this name usually equals the design time name of the type.
- * Only for primitive types it differs, namely it omits the package 'sap.ui.core'.
- * @return {string} name of the data type
- * @public
- */
-sap.ui.base.DataType.prototype.getName = function() {
-	return undefined;
-};
 
-/**
- * The base type of this type or undefined if this is a primitive type.
- * @return {sap.ui.base.DataType} base type or undefined
- * @public
- */
-sap.ui.base.DataType.prototype.getBaseType = function() {
-	return undefined;
-};
 
-/**
- * The component type of this type or undefined if this is not an array.
- * @return {sap.ui.base.DataType} component type or undefined
- * @public
- */
-sap.ui.base.DataType.prototype.getComponentType = function() {
-	return undefined;
-};
 
-/**
- * The default value for this type. Each type must define a default value.
- * @return {any} default value of the data type. The type of the returned value
- *    must match the JavaScript type of the data type (a string for string types etc.)
- * @public
- */
-sap.ui.base.DataType.prototype.getDefaultValue = function() {
-	return undefined;
-};
-
-/**
- * Whether this type is an array type.
- * @return {boolean} whether this type is an array type
- * @public
- */
-sap.ui.base.DataType.prototype.isArrayType = function() {
-	return undefined;
-};
-
-/**
- * Parses the given string value and converts it into the specific data type.
- * @param {string} sValue string representation for a value of this type
- * @return the value in the correct internal format
- * @public
- */
-sap.ui.base.DataType.prototype.parseValue = function(sValue) {
-	// currently this function considers to handle primitive values
-	// - in future may be other values might be also relevant.
-	var sType = this.getName();
-	if (sType == "string") {
-		return sValue;
-	} else if (sType == "boolean") {
-		return sValue == "true";
-	} else if (sType == "int") {
-		return parseInt(sValue, 10);
-	} else if (sType == "float") {
-		return parseFloat(sValue);
-	} else {
-		// support for other types like e.g.
-		// sap.ui.core.CSSSize (just apply)
-		return sValue;
-	}
-};
-
-/**
- * A validation check. To be implemented by concrete types.
- * @param {any} vValue the value to be checked
- * @return {boolean} whether the given value is valid for this data type (without conversion)
- * @public
- */
-sap.ui.base.DataType.prototype.isValid = undefined;
-
-(function() {
-
-	function createType(name, s, base) {
-
-		jQuery.sap.assert(typeof name === "string" && !!name, "DataType.<createType>: type name must be a string");
-		jQuery.sap.assert(!base || base instanceof sap.ui.base.DataType, "DataType.<createType>: base type must be empty or a DataType");
-		s = s || {};
-		base = base || sap.ui.base.DataType.prototype;
-
-		// create a new type object with the base type as prototype
-		var type = jQuery.sap.newObject(base);
-
-		// getter for the name
-		type.getName = function() { return name; };
-
-		// if a default value is specified, create a getter for it
-		if ( s.hasOwnProperty("defaultValue") ) {
-			var vDefault = s.defaultValue;
-			type.getDefaultValue = function() { return vDefault; };
-		}
-
-		// if a validator is specified either chain it with the base type validator
-		// or set it if no base validator exists
-		if ( s.hasOwnProperty("isValid") ) {
-			var fnIsValid = s.isValid;
-			type.isValid = base.isValid ? function(vValue) {
-				if ( !base.isValid(vValue) ) {
-					return false;
-				}
-				return fnIsValid(vValue);
-			} : fnIsValid;
-		};
-
-		// not an array type
-		type.isArrayType = function() { return false; };
-		
-		return type;
-	}
-
-	function createArrayType(componentType) {
-		jQuery.sap.assert(componentType instanceof sap.ui.base.DataType, "DataType.<createArrayType>: compoinentType must be a DataType");
-
-		// create a new type object with the base type as prototype
-		var type = jQuery.sap.newObject(sap.ui.base.DataType.prototype);
-
-		// getter for the name
-		type.getName = function() { return componentType.getName() + "[]"; };
-
-		// getter for component type
-		type.getComponentType = function() { return componentType; };
-
-		// array validator
-		type.isValid = function(aValues) {
-			if (aValues === null) {
-				return true;
-			}
-			if (jQuery.isArray(aValues)) {
-				for (var i = 0; i < aValues.length; i++) {
-					if (!componentType.isValid(aValues[i])) {
-						return false;
-					}
-				}
-				return true;
-			}
-			return false;
-		};
-
-		// array parser
-		type.parseValue = function(sValue) {
-			var aValues = sValue.split(",");
-			for (var i = 0; i < aValues.length; i++) {
-				aValues[i] = componentType.parseValue(aValues[i]);
-			}
-			return aValues;
-		};
-
-		// is an array type
-		type.isArrayType = function() { return true; };
-
-		return type;
-	}
-
-	var PREDEFINED_TYPES = {
-
-		"any" :
-				createType("any", {
-					defaultValue : null,
-					isValid : function(vValue) {
-						return true;
-					}
-				}),
-
-		"boolean" :
-			createType("boolean", {
-				defaultValue : false,
-				isValid : function(vValue) {
-					return typeof vValue === "boolean";
-				}
-			}),
-
-		"int" :
-			createType("int", {
-				defaultValue : 0,
-				isValid : function(vValue) {
-					return typeof vValue === "number" && Math.floor(vValue) == vValue;
-				}
-			}),
-
-		"float" :
-			createType("float", {
-				defaultValue : 0.0,
-				isValid : function(vValue) {
-					return typeof vValue === "number";
-				}
-			}),
-
-		"string" :
-			createType("string", {
-				defaultValue : "",
-				isValid : function(vValue) {
-					return typeof vValue === "string" || vValue instanceof String;
-				}
-			}),
-		"object" :
-			createType("object", {
-				defaultValue : null,
-				isValid : function(vValue) {
-					return typeof vValue === "object" || typeof vValue === "function";
-				}
-			})
-	};
-
-	/**
-	 * Returns the type object for the type with the given name.
-	 * @return the type object or undefined when no such type object exists.
-	 * @public
-	 */
-	sap.ui.base.DataType.getType = function(sTypeName) {
-		if (sTypeName.indexOf("[]") > 0) {
-			var sComponentTypeName = sTypeName.substr(0, sTypeName.length - 2),
-				oComponentType = this.getType(sComponentTypeName);
-			return oComponentType && createArrayType(oComponentType);
-		} else {
-			return PREDEFINED_TYPES[sTypeName] || jQuery.sap.getObject(sTypeName);
-		}
-	};
-
-	/**
-	 * Creates a new type as a subtype of a given type.
-	 * @param {string} sName the unique name of the new type
-	 * @param {object} [mSettings settings] for the new type
-	 * @param {any} [mSettings.defaultValue] the default value for the new type
-	 * @param {function} [mSettings.isValid] a validator function for values of the new type
-	 * @param {sap.ui.base.DataType} [base] the base type for the new type
-	 * @public
-	 */
-	sap.ui.base.DataType.createType = createType;
-
-}());
-}; // end of sap.ui.base.DataType
-
-if ( !jQuery.sap.isDeclared('sap.ui.core.ElementMetadata') ) {
+if ( !jQuery.sap.isDeclared('sap.ui.base.ManagedObjectMetadata') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
  * 
  * (c) Copyright 2009-2012 SAP AG. All rights reserved
  */
 
-// Provides class sap.ui.core.ElementMetadata
-jQuery.sap.declare("sap.ui.core.ElementMetadata");
+// Provides class sap.ui.base.ManagedObjectMetadata
+jQuery.sap.declare("sap.ui.base.ManagedObjectMetadata");
 
 
 
 /**
- * Creates a new metadata object for a UIElement subclass.
+ * Creates a new metadata object for a Element subclass.
  *
  * @param {string} sClassName fully qualified name of the class that is described by this metadata object
  * @param {object} oStaticInfo static info to construct the metadata from
  *
  * @class
  * @author Frank Weigel
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @since 0.8.6
  */
-sap.ui.core.ElementMetadata = function(sClassName, oClassInfo) {
+sap.ui.base.ManagedObjectMetadata = function(sClassName, oClassInfo) {
 
 	// call super constructor
 	sap.ui.base.Metadata.apply(this, arguments);
@@ -8494,18 +8587,14 @@ sap.ui.core.ElementMetadata = function(sClassName, oClassInfo) {
 };
 
 //chain the prototypes
-sap.ui.core.ElementMetadata.prototype = jQuery.sap.newObject(sap.ui.base.Metadata.prototype);
+sap.ui.base.ManagedObjectMetadata.prototype = jQuery.sap.newObject(sap.ui.base.Metadata.prototype);
 
 /**
  * @private
  */
-sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
+sap.ui.base.ManagedObjectMetadata.prototype.applySettings = function(oClassInfo) {
 
 	var oStaticInfo = oClassInfo.metadata;
-
-	// remove renderer stuff before calling super.
-	var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
-	delete oClassInfo.renderer;
 
 	sap.ui.base.Metadata.prototype.applySettings.call(this, oClassInfo);
 
@@ -8537,12 +8626,12 @@ sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
 	}
 
   var rLibName = /([a-z][^.]*(?:\.[a-z][^.]*)*)\./;
-  
+
 	function defaultLibName(sName) {
 	  var m = rLibName.exec(sName);
 	  return (m && m[1]) || "";
 	}
-	
+
 	// init basic metadata from static infos and fallback to defaults
 	this._sLibraryName = oStaticInfo.library || defaultLibName(this.getName());
 	this._mProperties = normalize(oStaticInfo.properties, "type", { type : "string", group : "Misc" });
@@ -8550,7 +8639,6 @@ sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
 	this._sDefaultAggregation = oStaticInfo.defaultAggregation || null;
 	this._mAssociations = normalize(oStaticInfo.associations, "type", { type : "sap.ui.core.Control", multiple : false});
 	this._mEvents = normalize(oStaticInfo.events, /* no default setting */ null, { allowPreventDefault : false });
-	this._sRendererName = this.getName() + "Renderer";
 
 	this._bEnriched = false;
 
@@ -8558,42 +8646,19 @@ sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
 		this.generateAccessors();
 	}
 
-	if ( typeof vRenderer !== "undefined" ) {
-
-		if ( typeof vRenderer === "string" ) {
-			this._sRendererName = vRenderer || undefined;
-			return;
-		}
-		if ( typeof vRenderer === "function" ) {
-			vRenderer = { render : vRenderer };
-		}
-
-		var oParent = this.getParent();
-		var oBaseRenderer;
-		if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
-			oBaseRenderer = oParent.getRenderer();
-		}
-		if ( !oBaseRenderer ) {
-			jQuery.sap.require("sap.ui.core.Renderer");
-			oBaseRenderer = sap.ui.core.Renderer;
-		}
-		var oRenderer = jQuery.sap.newObject(oBaseRenderer);
-		jQuery.extend(oRenderer, vRenderer);
-		jQuery.sap.setObject(this.getRendererName(), oRenderer);
-	}
 };
 
 /**
  * @private
  */
-sap.ui.core.ElementMetadata.prototype.afterApplySettings = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.afterApplySettings = function() {
 
 	sap.ui.base.Metadata.prototype.afterApplySettings.call(this);
 
 	// if there is a parent class, produce the flattened "all" views for the element specific metadata
 	// PERFOPT: this could be done lazily
 	var oParent = this.getParent();
-	if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
+	if ( oParent && oParent instanceof sap.ui.base.ManagedObjectMetadata ) {
 		this._mAllEvents = jQuery.extend({},oParent._mAllEvents, this._mEvents);
 		this._mAllProperties = jQuery.extend({},oParent._mAllProperties, this._mProperties);
 		this._mAllAggregations = jQuery.extend({},oParent._mAllAggregations, this._mAggregations);
@@ -8611,25 +8676,17 @@ sap.ui.core.ElementMetadata.prototype.afterApplySettings = function() {
 
 };
 
-sap.ui.core.ElementMetadata.Kind = {
+sap.ui.base.ManagedObjectMetadata.Kind = {
   PROPERTY :0, SINGLE_AGGREGATION : 1, MULTIPLE_AGGREGATION : 2, SINGLE_ASSOCIATION : 3, MULTIPLE_ASSOCIATION : 4, EVENT : 5
 };
 
-/**
- * By default, the element name is equal to the class name
- * @return {string} the qualified name of the UIElement class
- * @public
- */
-sap.ui.core.ElementMetadata.prototype.getElementName = function() {
-	return this._sClassName;
-};
 
 /**
  * Returns the name of the library that contains the described UIElement.
  * @return {string} the name of the library
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getLibraryName = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getLibraryName = function() {
 	return this._sLibraryName;
 };
 
@@ -8638,7 +8695,7 @@ sap.ui.core.ElementMetadata.prototype.getLibraryName = function() {
  * @return {boolean} whether the class/control is abstract
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.isAbstract = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.isAbstract = function() {
 	return this._bAbstract;
 };
 
@@ -8652,7 +8709,7 @@ sap.ui.core.ElementMetadata.prototype.isAbstract = function() {
  * @public
  * @see sap.ui.core.EnabledPropagator
  */
-sap.ui.core.ElementMetadata.prototype.addProperty = function(sName, oInfo) {
+sap.ui.base.ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
 	oInfo.name = sName;
 	this._mProperties[sName] = oInfo;
 	if(!this._mAllProperties[sName]) {// ensure extended AllProperties meta-data is also enriched
@@ -8671,7 +8728,7 @@ sap.ui.core.ElementMetadata.prototype.addProperty = function(sName, oInfo) {
  * @return {boolean} true, if the property exists
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.hasProperty = function(sName) {
+sap.ui.base.ManagedObjectMetadata.prototype.hasProperty = function(sName) {
 	return !!this._mAllProperties[sName];
 };
 
@@ -8685,7 +8742,7 @@ sap.ui.core.ElementMetadata.prototype.hasProperty = function(sName) {
  * @return {map} Map of property infos keyed by property names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getProperties = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getProperties = function() {
 	return this._mProperties;
 };
 
@@ -8698,7 +8755,7 @@ sap.ui.core.ElementMetadata.prototype.getProperties = function() {
  * @return {map} Map of property infos keyed by property names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAllProperties = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAllProperties = function() {
 	return this._mAllProperties;
 };
 
@@ -8714,7 +8771,7 @@ sap.ui.core.ElementMetadata.prototype.getAllProperties = function() {
  * @return {map} Map of aggregation infos keyed by aggregation names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAggregations = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAggregations = function() {
 	return this._mAggregations;
 };
 
@@ -8724,7 +8781,7 @@ sap.ui.core.ElementMetadata.prototype.getAggregations = function() {
  * @return {boolean} true, if the aggregation exists
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.hasAggregation = function(sName) {
+sap.ui.base.ManagedObjectMetadata.prototype.hasAggregation = function(sName) {
 	return !!this._mAllAggregations[sName];
 };
 
@@ -8739,7 +8796,7 @@ sap.ui.core.ElementMetadata.prototype.hasAggregation = function(sName) {
  * @return {map} Map of aggregation infos keyed by aggregation names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAllAggregations = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAllAggregations = function() {
 	return this._mAllAggregations;
 };
 
@@ -8751,7 +8808,7 @@ sap.ui.core.ElementMetadata.prototype.getAllAggregations = function() {
  *
  * @return {string} Name of the default aggregation for this class
  */
-sap.ui.core.ElementMetadata.prototype.getDefaultAggregationName = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getDefaultAggregationName = function() {
 	return this._sDefaultAggregation;
 };
 
@@ -8762,7 +8819,7 @@ sap.ui.core.ElementMetadata.prototype.getDefaultAggregationName = function() {
  *
  * @return {string} Name of the default aggregation for this class
  */
-sap.ui.core.ElementMetadata.prototype.getDefaultAggregation = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
 	return this._sDefaultAggregation && this.getAllAggregations()[this._sDefaultAggregation];
 };
 
@@ -8778,7 +8835,7 @@ sap.ui.core.ElementMetadata.prototype.getDefaultAggregation = function() {
  * @return {map} Map of association infos keyed by association names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAssociations = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAssociations = function() {
 	return this._mAssociations;
 };
 
@@ -8788,7 +8845,7 @@ sap.ui.core.ElementMetadata.prototype.getAssociations = function() {
  * @return {boolean} true, if the association exists
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.hasAssociation = function(sName) {
+sap.ui.base.ManagedObjectMetadata.prototype.hasAssociation = function(sName) {
 	return !!this._mAllAssociations[sName];
 };
 
@@ -8803,7 +8860,7 @@ sap.ui.core.ElementMetadata.prototype.hasAssociation = function(sName) {
  * @return {map} Map of association infos keyed by association names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAllAssociations = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAllAssociations = function() {
 	return this._mAllAssociations;
 };
 
@@ -8817,7 +8874,7 @@ sap.ui.core.ElementMetadata.prototype.getAllAssociations = function() {
  * @return {map} Map of event infos keyed by event names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getEvents = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getEvents = function() {
 	return this._mEvents;
 };
 
@@ -8827,7 +8884,7 @@ sap.ui.core.ElementMetadata.prototype.getEvents = function() {
  * @return {boolean} true, if the event exists
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.hasEvent = function(sName) {
+sap.ui.base.ManagedObjectMetadata.prototype.hasEvent = function(sName) {
 	return !!this._mAllEvents[sName];
 };
 
@@ -8840,7 +8897,7 @@ sap.ui.core.ElementMetadata.prototype.hasEvent = function(sName) {
  * @return {map} Map of event infos keyed by event names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getAllEvents = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getAllEvents = function() {
 	return this._mAllEvents;
 };
 
@@ -8851,7 +8908,7 @@ sap.ui.core.ElementMetadata.prototype.getAllEvents = function() {
  * @return {map} Map of default values keyed by property names
  * @public
  */
-sap.ui.core.ElementMetadata.prototype.getPropertyDefaults = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
 
 	var mDefaults = this._mDefaults,
 		oType;
@@ -8859,7 +8916,7 @@ sap.ui.core.ElementMetadata.prototype.getPropertyDefaults = function() {
 		return mDefaults;
 	}
 
-	if ( this.getParent() instanceof sap.ui.core.ElementMetadata ) {
+	if ( this.getParent() instanceof sap.ui.base.ManagedObjectMetadata ) {
 		mDefaults = jQuery.sap.newObject(this.getParent().getPropertyDefaults());
 	} else {
 		mDefaults = {};
@@ -8883,37 +8940,8 @@ sap.ui.core.ElementMetadata.prototype.getPropertyDefaults = function() {
 	return (this._mDefaults = mDefaults);
 };
 
-/**
- * Determines the class name of the renderer for the described control class.
- */
-sap.ui.core.ElementMetadata.prototype.getRendererName = function() {
-	return this._sRendererName;
-};
 
-/**
- * Retrieves the renderer for the described control class
- */
-sap.ui.core.ElementMetadata.prototype.getRenderer = function() {
-
-	// determine name via function for those legacy controls that override getRendererName()
-	var sRendererName = this.getRendererName();
-
-	if ( !sRendererName ) {
-		return;
-	}
-
-	// check if renderer class exists already
-	var fnRendererClass = jQuery.sap.getObject(sRendererName);
-	if(fnRendererClass) {
-		return fnRendererClass;
-	}
-
-	// if not, try to load a module with the same name
-	jQuery.sap.require(sRendererName);
-	return jQuery.sap.getObject(sRendererName);
-};
-
-sap.ui.core.ElementMetadata.prototype.createPropertyBag = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.createPropertyBag = function() {
 	if ( !this._fnPropertyBagFactory ) {
 		this._fnPropertyBagFactory = jQuery.sap.factory(this.getPropertyDefaults());
 	}
@@ -8928,13 +8956,13 @@ sap.ui.core.ElementMetadata.prototype.createPropertyBag = function() {
  *
  * @private
  */
-sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
+sap.ui.base.ManagedObjectMetadata.prototype._enrichChildInfos = function() {
 
 	if ( this._bEnriched ) {
 		return;
 	}
 
-	if ( this.getParent() instanceof sap.ui.core.ElementMetadata ) {
+	if ( this.getParent() instanceof sap.ui.base.ManagedObjectMetadata ) {
 		this.getParent()._enrichChildInfos();
 	}
 
@@ -8950,7 +8978,7 @@ sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
 		oInfo._sName = sName;
 		oInfo._sUID = sName;
 		oInfo._oParent = this;
-		oInfo._iKind = sap.ui.core.ElementMetadata.Kind.PROPERTY;
+		oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.PROPERTY;
 		oInfo._sMutator = method("set", sName);
 		oInfo._sGetter = method("get", sName);
 	}
@@ -8965,11 +8993,11 @@ sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
 		oInfo._sDestructor = method("destroy", sName);
 		oInfo._sGetter = method("get", sName);
 		if ( oInfo.multiple ) {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.MULTIPLE_AGGREGATION;
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.MULTIPLE_AGGREGATION;
 			oInfo._sMutator = method("add", oInfo.singularName);
 			oInfo._sRemoveMutator = method("remove", oInfo.singularName);
 		} else {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.SINGLE_AGGREGATION;
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.SINGLE_AGGREGATION;
 			oInfo._sMutator = method("set", sName);
 		}
 	}
@@ -8983,10 +9011,10 @@ sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
 		oInfo._oParent = this;
 		oInfo._sGetter = method("get", sName);
 		if ( oInfo.multiple ) {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.MULTIPLE_ASSOCIATION;
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.MULTIPLE_ASSOCIATION;
 			oInfo._sMutator = method("add", oInfo.singularName);
 		} else {
-			oInfo._iKind = sap.ui.core.ElementMetadata.Kind.SINGLE_ASSOCIATION;
+			oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.SINGLE_ASSOCIATION;
 			oInfo._sMutator = method("set", sName);
 		}
 	}
@@ -8998,7 +9026,7 @@ sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
 		oInfo._sName = sName;
 		oInfo._sUID = "event:" + sName;
 		oInfo._oParent = this;
-		oInfo._iKind = sap.ui.core.ElementMetadata.Kind.EVENT;
+		oInfo._iKind = sap.ui.base.ManagedObjectMetadata.Kind.EVENT;
 		oInfo._sMutator = method("attach", sName);
 	}
 
@@ -9012,7 +9040,7 @@ sap.ui.core.ElementMetadata.prototype._enrichChildInfos = function() {
  * @see sap.ui.core.Element.prototype.applySettings
  * @private
  */
-sap.ui.core.ElementMetadata.prototype.getJSONKeys = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.getJSONKeys = function() {
 
 	if ( this._mJSONKeys ) {
 		return this._mJSONKeys;
@@ -9040,7 +9068,7 @@ sap.ui.core.ElementMetadata.prototype.getJSONKeys = function() {
 	return (this._mJSONKeys = mJSONKeys);
 };
 
-sap.ui.core.ElementMetadata.prototype.generateAccessors = function() {
+sap.ui.base.ManagedObjectMetadata.prototype.generateAccessors = function() {
 
 	var meta=this;
 	var proto = this.getClass().prototype;
@@ -9130,7 +9158,7 @@ sap.ui.core.ElementMetadata.prototype.generateAccessors = function() {
 	 * @public
 	 * @function
 	 */
-	sap.ui.core.ElementMetadata.uid = uid;
+	sap.ui.base.ManagedObjectMetadata.uid = uid;
 
 	/**
 	 * Calculates a new id for an instance of this class.
@@ -9142,7 +9170,7 @@ sap.ui.core.ElementMetadata.prototype.generateAccessors = function() {
 	 * @return {string} A (hopefully unique) control id
 	 * @public
 	 */
-	sap.ui.core.ElementMetadata.prototype.uid = function() {
+	sap.ui.base.ManagedObjectMetadata.prototype.uid = function() {
 
 		var sId = this._sUIDToken;
 		if ( typeof sId !== "string" ) {
@@ -9160,8 +9188,7 @@ sap.ui.core.ElementMetadata.prototype.generateAccessors = function() {
 	};
 
 }());
-
-}; // end of sap.ui.core.ElementMetadata
+}; // end of sap.ui.base.ManagedObjectMetadata
 
 if ( !jQuery.sap.isDeclared('sap.ui.model.Model') ) {
 /*!
@@ -9245,30 +9272,44 @@ jQuery.sap.declare("sap.ui.model.Context");
  * @param {Object} oContext the context object
  * @abstract
  * @public
+ * @name sap.ui.model.Context
  */
-sap.ui.model.Context = function(oModel, sPath){
-	sap.ui.base.Object.apply(this);
+sap.ui.base.Object.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context */ {
+	
+	constructor : function(oModel, sPath){
 
-	this.oModel = oModel;
-	this.sPath = sPath;
-
-};
-sap.ui.model.Context.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
-
-/*
- * Describe the sap.ui.model.Binding.
- * Resulting metadata can be obtained via sap.ui.model.Binding.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Context", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"getModel", "getPath", "getProperty", "getObject"
-  ]
+		sap.ui.base.Object.apply(this);
+	
+		this.oModel = oModel;
+		this.sPath = sPath;
+	
+	},
+	
+	metadata : {
+		"abstract" : true,
+	  publicMethods : [
+			"getModel", "getPath", "getProperty", "getObject"
+		]
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Context with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.C.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Context.extend
+ * @function
+ */
 
 // Getter
 /**
@@ -9341,43 +9382,67 @@ sap.ui.model.Context.prototype.toString = function() {
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.Model
  */
-sap.ui.model.Model = function () {
-	sap.ui.base.EventProvider.apply(this, arguments);
+sap.ui.base.EventProvider.extend("sap.ui.model.Model", /** @lends sap.ui.model.Model */ {
+	
+	constructor : function () {
+		sap.ui.base.EventProvider.apply(this, arguments);
+	
+		this.oData = {};
+		this.aBindings = [];
+		this.mContexts = {};
+		this.iSizeLimit = 100;
+		this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
+		this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
+		this.bLegacySyntax = false;
+	},
 
-	this.oData = {};
-	this.aBindings = [];
-	this.mContexts = {};
-	this.iSizeLimit = 100;
-	this.sDefaultBindingMode = sap.ui.model.BindingMode.TwoWay;
-	this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
-	this.bLegacySyntax = false;
-};
+	metadata : {
 
-// chain the prototypes
-sap.ui.model.Model.prototype = jQuery.sap.newObject(sap.ui.base.EventProvider.prototype);
-
-/*
- * Describe the sap.ui.model.Model.
- * Resulting metadata can be obtained via sap.ui.model.Model.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Model", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-	// methods
-	"bindProperty", "bindList", "bindTree", "createBindingContext", "destroyBindingContext", "getProperty",
-	"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
-	"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
-	"detachRequestSent", "setSizeLimit"
-  ]
+		"abstract" : true,
+		publicMethods : [
+			// methods
+			"bindProperty", "bindList", "bindTree", "createBindingContext", "destroyBindingContext", "getProperty",
+			"getDefaultBindingMode", "setDefaultBindingMode", "isBindingModeSupported", "attachParseError", "detachParseError",
+			"attachRequestCompleted", "detachRequestCompleted", "attachRequestFailed", "detachRequestFailed", "attachRequestSent",
+			"detachRequestSent", "setSizeLimit"
+	  ]
+	
+	  /* the following would save code, but requires the new ManagedObject (1.9.1) 
+	  , events : {
+	  	"parseError" : {},
+	  	"requestFailed" : {},
+	  	"requestSent" : {},
+	  	"requestCompleted" ; {} 
+	  }
+	  */
+	
+	}
 
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Model with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Model.extend
+ * @function
+ */
+
 
 /**
  * Map of event names, that are provided by the model.
@@ -9789,6 +9854,9 @@ sap.ui.model.Model.prototype.fireRequestCompleted = function(mArguments) {
 sap.ui.model.Model.prototype.getContext = function(sPath) {
 	var oContext = this.mContexts[sPath];
 	if (!oContext) {
+		 if (!jQuery.sap.startsWith(sPath, "/")) {
+			 sPath = "/" + sPath;
+		 }
 		oContext = new sap.ui.model.Context(this, sPath);
 		this.mContexts[sPath] = oContext;
 	}
@@ -9923,15 +9991,6 @@ sap.ui.model.Model.prototype.getInterface = function() {
 
 }; // end of sap.ui.model.Model
 
-if ( !jQuery.sap.isDeclared('sap.ui.model.SimpleType') ) {
-/*!
- * SAP UI development toolkit for HTML5 (SAPUI5)
- * 
- * (c) Copyright 2009-2012 SAP AG. All rights reserved
- */
-
-// Provides the base implementation for all model implementations
-jQuery.sap.declare("sap.ui.model.SimpleType");
 if ( !jQuery.sap.isDeclared('sap.ui.model.Type') ) {
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
@@ -9953,33 +10012,45 @@ jQuery.sap.declare("sap.ui.model.Type");
  * @extends sap.ui.base.Object
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.Type
  */
-sap.ui.model.Type = function () {
-	sap.ui.base.Object.apply(this, arguments);
-	this.sName = "Type";
-};
+sap.ui.base.Object.extend("sap.ui.model.Type", /** @lends sap.ui.model.Type */ {
+	
+	constructor : function () {
+		sap.ui.base.Object.apply(this, arguments);
+		this.sName = "Type";
+	},
 
-// chain the prototypes
-sap.ui.model.Type.prototype = jQuery.sap.newObject(sap.ui.base.Object.prototype);
-
-/*
- * Describe the sap.ui.model.Type.
- * Resulting metadata can be obtained via sap.ui.model.Type.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.Type", {
-
-  // ---- object ----
-  baseType : "sap.ui.base.Object",
-  publicMethods : [
-    // methods
-    "getName"
-  ]
-
+	metadata : {
+		"abstract" : true,
+		publicMethods : [
+	    // methods
+	    "getName"
+	  ]
+	}
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.Type with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.Type.extend
+ * @function
+ */
 
 
 /**
@@ -9992,6 +10063,2462 @@ sap.ui.model.Type.prototype.getName = function() {
 	return this.sName;
 };
 }; // end of sap.ui.model.Type
+
+
+/**
+ * Constructs and initializes a managed object with the given <code>sId</code> and settings.
+ *
+ * If the optional <code>mSettings</code> are given, they must be a simple object  
+ * that defines values for properties, aggregations, associations or events keyed by their name.
+ *
+ * <b>Valid Names:</b>
+ *
+ * The property (key) names supported in the object literal are exactly the (case sensitive)
+ * names documented in the JSDoc for the properties, aggregations, associations and events
+ * of the managed object and its base classes. Note that for  0..n aggregations and associations this
+ * usually is the plural name, whereas it is the singular name in case of 0..1 relations.
+ *
+ * If a key name is ambiguous for a specific managed object class (e.g. a property has the same
+ * name as an event), then this method prefers property, aggregation, association and
+ * event in that order. To resolve such ambiguities, the keys can be prefixed with
+ * <code>aggregation:</code>, <code>association:</code> or <code>event:</code>.
+ * In that case the keys must be quoted due to the ':'.
+ *
+ * Each subclass should document the set of supported names in its constructor documentation.
+ *
+ * <b>Valid Values:</b>
+ *
+ * <ul>
+ * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)
+ * <li>for 0..1 aggregations, the value has to be an instance of the aggregated type
+ * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type
+ * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
+ * <li>0..n associations are not supported yet
+ * <li>for events either a function (event handler) is accepted or an array of length 2
+ *     where the first element is a function and the 2nd element is an object to invoke the method on.
+ * </ul>
+ *
+ * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
+ *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
+ * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
+ *
+ * @class Base Class for managed objects.
+ * @extends sap.ui.base.EventProvider
+ * @author SAP
+ * @version 1.9.1-SNAPSHOT
+ * @public
+ * @name sap.ui.base.ManagedObject
+ */
+sap.ui.base.EventProvider.extend("sap.ui.base.ManagedObject", {
+
+	metadata : {
+	  "abstract" : true,
+	  publicMethods : [ "getId", "getMetadata", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation" ],
+	  library : "sap.ui.core",
+	  properties : {
+	  },
+	  aggregations : {
+	  },
+	  associations : {},
+	  events : {}
+	},
+
+	constructor : function(sId, mSettings) {
+
+		sap.ui.base.EventProvider.apply(this); // no use to pass our arguments
+		if (typeof(sId) != "string" && arguments.length>0) {
+			// shift arguments in case sId was missing, but mSettings was given
+			mSettings = sId;
+			if (mSettings && mSettings.id) {
+				sId = mSettings["id"];
+			} else {
+				sId = null;
+			}
+		}
+
+		if (!sId) {
+			sId = this.getMetadata().uid() || jQuery.sap.uid();
+		} else {
+			var preprocessor = sap.ui.base.ManagedObject._fnIdPreprocessor;
+			sId = (preprocessor ? preprocessor.call(this, sId) : sId);
+			var oType = sap.ui.base.DataType.getType("sap.ui.core.ID");
+			if (!oType.isValid(sId)) {
+				throw new Error("\"" + sId + "\" is not a valid ID.");
+			}
+		}
+		this.sId = sId;
+
+		// managed object interface
+		// create an empty property bag that uses a map of defaultValues as its prototype
+		this.mProperties = this.getMetadata().createPropertyBag();
+		this.mAggregations = {};
+		this.mAssociations = {};
+		this.mMethods = {};
+
+		// private properties
+		this.oParent = null;
+		this.bPrerendered = this.getDomRef() != null;
+		this.aDelegates = [];
+		this.aBeforeDelegates = [];
+		this.iSuppressInvalidate = 0;
+		this.oPropagatedProperties = {oModels:{}, oBindingContext:null};
+
+		// data binding
+		this.oModels = {};
+		this.mBindingInfos = {};
+		this.sBindingPath = null;
+		this.mBindingParametes = null;
+
+		// TODO: generic concept for init hooks?
+		if ( this._initCompositeSupport ) {
+			this._initCompositeSupport(mSettings);
+		}
+
+		// Call init method here instead of specific Controls constructor.
+		if (this.init) {
+			this.init();
+		}
+
+		// apply the settings
+		this.applySettings(mSettings);
+
+		// registers the element in the Core
+		this.register();
+
+	}
+
+}, /* Metadata constructor */ sap.ui.base.ManagedObjectMetadata);
+
+
+
+/**
+ * Creates a new ManagedObject from the given data.
+ *
+ * If vData is an element already, that element is returned.
+ * If vData is an object (literal), then a new element is created with vData as settings.
+ * The type of the element is either determined by a "Type" entry in the vData or
+ * by a type information in the oKeyInfo object
+ * @param {sap.ui.base.ManagedObject|object} vData the data to create the element from
+ * @param {object} oKeyInfo
+ * @public
+ * @static
+ */
+sap.ui.base.ManagedObject.create = function(vData, oKeyInfo) {
+	if ( !vData || vData instanceof sap.ui.base.ManagedObject || typeof vData !== "object" || vData instanceof String) {
+		return vData;
+	}
+
+	function getClass(vType) {
+		if ( typeof vType === "function" ) {
+			return vType;
+		} 
+		if (typeof vType === "string" ) {
+			return jQuery.sap.getObject(vType);
+		}
+	}
+
+	var fnClass = getClass(vData.Type) || getClass(oKeyInfo && oKeyInfo.type);
+	if ( typeof fnClass === "function" ) {
+		return new fnClass(vData);
+	}
+
+	// we don't know how to create the ManagedObject from vData, so fail
+	// extension points could be integrated here
+	var message = "Don't know how to create a ManagedObject from " + vData + " (" + (typeof vData) + ")";
+	jQuery.sap.log.fatal(message);
+	throw new Error(message);
+};
+
+/**
+ * A global preprocessor for the ID of a ManagedObject (used internally).
+ * If set, this function will be called before the ID is applied to any ManagedObject.
+ * If the original ID was empty, the hook will not be called (to be discussed).
+ *
+ * The expected signature is <code>function(sId)</code>, and <code>this</code> will
+ * be the current ManagedObject.
+ *
+ * @return new ID of the ManagedObject
+ * @type function
+ * @private
+ */
+sap.ui.base.ManagedObject._fnIdPreprocessor = null;
+
+/**
+ * A global preprocessor for the settings of a ManagedObject (used internally).
+ * If set, this function will be called before the settings are applied to any ManagedObject.
+ * If the original settings are empty, the hook will not be called (to be discussed).
+ *
+ * The expected signature is <code>function(mSettings)</code>, and <code>this</code> will
+ * be the current ManagedObject.
+ *
+ * @type function
+ * @private
+ */
+sap.ui.base.ManagedObject._fnSettingsPreprocessor = null;
+
+sap.ui.base.ManagedObject.runWithPreprocessors = function(fn, oPreprocessors) {
+	jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+	jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
+
+	var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
+	oPreprocessors = oPreprocessors || {};
+
+	this._fnIdPreprocessor = oPreprocessors.id; 
+	this._fnSettingsPreprocessor = oPreprocessors.settings;
+
+	try {
+		var result = fn.call();
+		this._fnIdPreprocessor = oOldPreprocessors.id; 
+		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+		return result;
+	} catch (e) {
+		this._fnIdPreprocessor = oOldPreprocessors.id; 
+		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
+		throw e;
+	}
+
+};
+
+/**
+ * Sets all the properties, aggregations, associations and event handlers as given in
+ * the object literal <code>mSettings</code>. If a property, aggregation, etc.
+ * is not listed in <code>mSettings</code>, then its value is not changed by this method.
+ *
+ * For properties and 0..1 aggregations/associations, any given setting overwrites
+ * the current value. For 0..n aggregations, the given values are appended; event
+ * listeners are registered in addition to existing ones.
+ *
+ * For the possible keys and values in <code>mSettings</code> see the general
+ * documentation in {@link sap.ui.base.ManagedObject} or the specific documentation
+ * of the constructor of the concrete UI element class.
+ *
+ * @param {object} mSettings the settings to apply to this element
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.applySettings = function(mSettings) {
+
+	// PERFOPT: don't retrieve (expensive) JSONKeys if no settings are given
+	if ( !mSettings || jQuery.isEmptyObject(mSettings) ) {
+		return this;
+	}
+
+	var oMetadata = this.getMetadata(),
+		mValidKeys = oMetadata.getJSONKeys(),
+		makeControl = sap.ui.base.ManagedObject.create,
+		preprocessor = sap.ui.base.ManagedObject._fnSettingsPreprocessor,
+		sKey, oValue, oKeyInfo;
+
+	// call the preprocessor if it has been defined
+	preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
+
+	// process all settings
+	// process settings
+	for(sKey in mSettings) {
+		// get info object for the key
+		if ( oKeyInfo = mValidKeys[sKey] ) {
+			oValue = mSettings[sKey];
+			switch(oKeyInfo._iKind) {
+			case 0: // PROPERTY
+				if (this.isBinding(oValue, oKeyInfo)) {
+					var oBindingInfo = this.extractBindingInfo(oValue);
+					this.bindProperty(sKey, oBindingInfo);
+				} else {
+					this[oKeyInfo._sMutator](oValue);
+				}
+				break;
+			case 1: // SINGLE_AGGREGATION
+				if ( oKeyInfo.altTypes && this.isBinding(oValue, oKeyInfo) ) {
+					var oBindingInfo = this.extractBindingInfo(oValue);
+					this.bindProperty(sKey, oBindingInfo);
+				} else {
+					this[oKeyInfo._sMutator](makeControl(oValue, oKeyInfo));
+				}
+				break;
+			case 2: // MULTIPLE_AGGREGATION
+				if (this.isBinding(oValue, oKeyInfo)) {
+					var oBindingInfo = this.extractBindingInfo(oValue);
+					this.bindAggregation(sKey, oBindingInfo);
+				} else {
+					if ( oValue && !jQuery.isArray(oValue) ) {
+						oValue = [oValue];
+					}
+					if ( oValue ) {
+						for(var i=0,l=oValue.length; i<l; i++) {
+							this[oKeyInfo._sMutator](makeControl(oValue[i], oKeyInfo));
+						}
+					}
+				}
+				break;
+			case 3: // SINGLE_ASSOCIATION
+				this[oKeyInfo._sMutator](oValue);
+				break;
+			case 4: // MULTIPLE_ASSOCIATION
+				if ( oValue && !jQuery.isArray(oValue) ) {
+					oValue = [oValue];
+				}
+				if ( oValue ) {
+					for(var i=0,l=oValue.length; i<l; i++) {
+						this[oKeyInfo._sMutator](oValue[i]);
+					}
+				}
+				break;
+			case 5: // EVENT
+				if ( typeof oValue == "function" ) {
+					this[oKeyInfo._sMutator](oValue);
+				}
+				else {
+					this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
+				}
+					//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	return this;
+};
+
+/**
+ * Returns a simple string representation of this element.
+ *
+ * Mainly useful for tracing purposes.
+ * @public
+ * @return {string} a string descripition of this element
+ */
+sap.ui.base.ManagedObject.prototype.toString = function() {
+	if ( this.getMetadata ) {
+		return "ManagedObject " + this.getMetadata().getName() + "#" + this.sId;
+	}
+	else {
+		return "ManagedObject {unknown class}#" + this.sId;
+	}
+};
+
+/**
+ * Returns the element's Id.
+ *
+ * @return {string} the element's Id.
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getId = function() {
+	return this.sId;
+};
+
+
+/**
+ * Sets a new value for the given property <code>sPropertyName</code> and marks
+ * this UI element for redraw. If the given <code>oValue</code> equals the
+ * current value, nothing happens.
+ *
+ * @param {string}  sPropertyName name of the property to set
+ * @param {any}     oValue value to set the property to
+ * @param {boolean} [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * TODO better name bSuppressInvalidate positive, e.g. "bStayValid"
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
+
+	// check for a value change
+	var oOldValue = this.mProperties[sPropertyName];
+
+	// value validation
+	oValue = this.validateProperty(sPropertyName, oValue);
+
+	if (jQuery.sap.equal(oOldValue, oValue)) {
+		return this;
+	} // no change
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	// change the property (and invalidate if the rendering should be updated)
+	this.mProperties[sPropertyName] = oValue;
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// check whether property is bound and update model in case of two way binding
+	this.updateModelProperty(sPropertyName, oValue, oOldValue);
+
+	// prototype for generic property change events
+	// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
+	sap.ui.base.EventProvider.prototype.fireEvent.apply(this, ["_change", {
+		"id": this.getId(),
+		"name": sPropertyName,
+		"oldValue": oOldValue,
+		"newValue": oValue
+	}]);
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns the value for the property with the given <code>sPropertyName</code>
+ *
+ * @param {string} sPropertyName the name of the property
+ * @type any
+ * @return the value of the property
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getProperty = function(sPropertyName) {
+	var oValue = this.mProperties[sPropertyName],
+		oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sPropertyName],
+		oType;
+
+	if (!oProperty) {
+		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
+	}
+
+	oType = sap.ui.base.DataType.getType(oProperty.type);
+
+	// If property has an array type, clone the array to avoid modification of original data
+	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		oValue = oValue.slice(0);
+	}
+	
+	// If proprerty is of type String instead of string, convert with valueOf()
+	if (oValue instanceof String) {
+		oValue = oValue.valueOf();
+	}
+	
+	return oValue;
+};
+
+/**
+ * Checks whether the given value is of the proper type for the given property name. In case null or undefined is
+ * passed, the default value for this property is returned.
+ *
+ * @param {string} sPropertyName the name of the property
+ * @param {any} oValue the value
+ * @return {any} the passed value or the property's default value if null or undefined was passed
+ * @throws Error if no property with the given name is found or the given value does not fit to the property type
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
+	var oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sPropertyName],
+		oType;
+
+	if (!oProperty) {
+		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
+	}
+
+	oType = sap.ui.base.DataType.getType(oProperty.type);
+
+	// If property has an array type, clone the array to avoid modification of original data
+	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
+		oValue = oValue.slice(0);
+	}
+	
+	// In case null is passed as the value return the default value, either from the property or from the type
+	if (oValue === null || oValue === undefined) {
+		if (oProperty.defaultValue !== null) {
+			return oProperty.defaultValue;
+		} else {
+			return oType.getDefaultValue();
+		}
+	}
+
+	// Implicit casting for string only, other types are causing errors
+	if (oType instanceof sap.ui.base.DataType) {
+		if (oType.getName() == "string") {
+			if (!(typeof oValue == "string" || oValue instanceof String)) {
+				oValue = "" + oValue;
+			}
+		} else if (oType.getName() == "string[]") {
+			for (var i = 0; i < oValue.length; i++) {
+				if (!typeof oValue[i] == "string") {
+					oValue[i] = "" + oValue[i];
+				}
+			}
+		} else if (!oType.isValid(oValue)) {
+			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
+					oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
+		}
+	} else if (!(oValue in oType)){ // Enumeration
+		throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
+	}
+
+	return oValue;
+};
+
+/**
+ * Returns the origin info on the property value of the given property name
+ *
+ * @param {string} sPropertyName the name of the property
+ * @return {object} a map of properties describing the origin of this property value or null
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getOriginInfo = function(sPropertyName) {
+	var oValue = this.mProperties[sPropertyName];
+	if (!(oValue instanceof String && oValue.originInfo)) {
+		return null;
+	}
+	return oValue.originInfo;
+};
+
+
+// ######################################################################################################
+// Associations
+// ######################################################################################################
+
+/**
+ * Sets an association for the managed object
+ *
+ * @param {string}
+ *            sAssociationName name of the association
+ * @param {string | sap.ui.base.ManagedObject}
+ *            sId the ID of the managed object that is set as an association, or the managed object itself or null
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the managed objects invalidate method is not called
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
+	if (sId instanceof sap.ui.base.ManagedObject) {
+		sId = sId.getId();
+	} else if (sId != null && typeof sId !== "string") {
+		jQuery.sap.assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.base.ManagedObject or null");
+		return this;
+	}
+
+	if (this.mAssociations[sAssociationName] === sId) {
+		return this;
+	} // no change
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	this.mAssociations[sAssociationName] = sId;
+
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns an association of the managed object with a given sAssociationName
+ *
+ * @param {string} sAssociationName the name of the association
+ * @param {object}
+ *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
+ * @return {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
+	var result = this.mAssociations[sAssociationName];
+
+	if (!result) {
+		result = this.mAssociations[sAssociationName] = oDefaultForCreation || null;
+	} else {
+		if (typeof result.length === 'number' && !(result.propertyIsEnumerable('length')) ) {
+			// Return a copy of the array instead of the array itself as reference!!
+			return result.slice();
+		}
+		// simple type or ManagedObject
+		return result;
+	}
+
+	return result;
+};
+
+/**
+ * Adds some entity with the ID <code>sId</code> to the association identified by <code>sAssociationName</code>.
+ *
+ * @param {string}
+ *            sAssociationName the string identifying the association the element should be added to.
+ * @param {string | sap.ui.base.ManagedObject}
+ *            sId the ID of the element to add; if empty, nothing is added; if a <code>sap.ui.base.ManagedObject</code> is given, its ID is added
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element as well as the newly associated element is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
+	if (sId instanceof sap.ui.base.ManagedObject) {
+		sId = sId.getId();
+	} else if (typeof sId !== "string") {
+	  // TODO what about empty string?
+    jQuery.sap.assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.base.ManagedObject");
+		return this;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	var aIds = this.mAssociations[sAssociationName];
+	if (!aIds) {
+		aIds = this.mAssociations[sAssociationName] = [sId];
+	} else {
+		aIds.push(sId);
+	}
+
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Removes a ManagedObject from the association named <code>sAssociationName</code>.
+ *
+ * @param {string}
+ *            sAssociationName the string identifying the association the ManagedObject should be removed from.
+ * @param {int | string | sap.ui.base.ManagedObject}
+ *            vObject the position or ID of the ManagedObject to remove or the ManagedObject itself; if <code>vObject</code> is invalid input,
+ *            a negative value or a value greater or equal than the current size of the association, nothing is removed
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @return the ID of the removed ManagedObject or null
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
+	var aIds = this.mAssociations[sAssociationName];
+	var sId = null;
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (typeof(vObject) == "object" && vObject.getId) { // element itself is given
+		vObject = vObject.getId();
+	}
+
+	if (typeof(vObject) == "string") { // ID of the element is given or has just been retrieved
+		for (var i = 0; i < aIds.length; i++) {
+			if (aIds[i] == vObject) {
+				vObject = i;
+				break;
+			}
+		}
+	}
+
+	if (typeof(vObject) == "number") { // "element" is the index now
+		if (vObject < 0 || vObject >= aIds.length) {
+			jQuery.sap.log.warning("ManagedObject.removeAssociation called with invalid index: " + sAssociationName + ", " + vObject);
+		} else {
+			sId = aIds[vObject];
+			aIds.splice(vObject, 1);
+			if (!this.isInvalidateSuppressed()) {
+				this.invalidate();
+			}
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return sId;
+};
+
+/**
+ * Removes all the controls in the 0..n-association named <code>sAssociationName</code> (and returns them in an array).<br/>
+ *
+ * @param {string}
+ *            sAssociationName the name of the association
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @type Array
+ * @return an array with the IDs of the removed elements (might be empty)
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
+	var aIds = this.mAssociations[sAssociationName];
+	if (!aIds)	{
+		return [];
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAssociations[sAssociationName];
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return aIds;
+};
+
+// ######################################################################################################
+// End of Associations
+// ######################################################################################################
+
+
+// ######################################################################################################
+// Aggregations
+// ######################################################################################################
+
+/**
+ * Checks whether the given value is of the proper type for the given aggregation name. 
+ *
+ * @param {string} sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject|any} oObject the aggregated element or a primitive value
+ * @param {boolean} bMultiple whether the aggregation must have cardinality 0..n
+ * @return {sap.ui.base.ManagedObject|any} the passed object
+ * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
+	var oMetadata = this.getMetadata(),
+		oAggregation = oMetadata.getAllAggregations()[sAggregationName],
+		aAltTypes,
+		oType,
+		i,
+		msg;
+
+	// undeclared aggregation 
+	if (!oAggregation) {
+		if(sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]){
+			oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
+		}else{
+			msg = "Aggregation \"" + sAggregationName + "\" does not exist in " + this;
+			
+			if ( /^sap\.(ui\.core|ui\.commons|ui\.table|ui\.ux3|m|makit|viz|uiext\.inbox)$/.test(oMetadata.getLibraryName() || "") ) {
+				throw new Error(msg);
+			} else {
+				// TODO throw for any lib as soon as "hidden" aggregations are a public feature.
+				// Otherwise, composite controls currently would have no legal way to react 
+				jQuery.sap.assert(false, msg);
+				return oObject;
+			}
+		}
+	}
+
+	if (oAggregation.multiple !== bMultiple ) {
+		throw new Error("Aggregation '" + sAggregationName + "' of " + this + " used with wrong cardinality (declared as " + (oAggregation.multiple ? "0..n" : "0..1") + ")");
+	}
+	
+	//Null is a valid value for 0..1 aggregations
+	if(!oAggregation.multiple && !oObject){
+		return oObject;
+	}
+	
+	oType = jQuery.sap.getObject(oAggregation.type);
+	// class types
+	if ( typeof oType === "function" && oObject instanceof oType ) {
+		return oObject;
+	}
+	// interfaces 
+	if ( oObject && oObject.getMetadata && oObject.getMetadata().isInstanceOf(oAggregation.type) ) {
+		return oObject;
+	}
+	// alternative types
+	aAltTypes = oAggregation.altTypes;
+	if ( aAltTypes && aAltTypes.length ) {
+		// for primitive types, null or undefined is valid as well 
+		if ( oObject == null ) {
+			return oObject;
+		}
+		for (i=0; i<aAltTypes.length; i++) {
+			oType = sap.ui.base.DataType.getType(aAltTypes[i]);
+			if (oType instanceof sap.ui.base.DataType) {
+				if (oType.isValid(oObject)) {
+					return oObject;
+				}
+			} else if (oObject in oType) { // Enumeration
+				return oObject;
+			}
+		}
+	}
+
+	// TODO make this stronger again (e.g. for FormattedText)
+	msg = "\"" + oObject + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this;
+	if ( sap.ui.base.DataType.isInterfaceType(oAggregation.type) ) {
+		jQuery.sap.assert(false, msg);
+		return oObject;
+	} else {
+	  throw new Error(msg);
+	}
+};
+
+/**
+ * Sets an aggregation for the managed object
+ *
+ * @param {string}
+ *            sAggregationName name of the aggregation
+ * @param {object}
+ *            oObject the managed object that is set as an aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+	var oOldChild = this.mAggregations[sAggregationName];
+	if (oOldChild === oObject) {
+		return this;
+	} // no change
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ false); 
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (oOldChild instanceof sap.ui.base.ManagedObject) { // remove old child
+		oOldChild.setParent(null);
+	}
+	this.mAggregations[sAggregationName] = oObject;
+	if (oObject instanceof sap.ui.base.ManagedObject) { // adopt new child
+		oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+	} else {
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns an aggregation of the managed object with a given sAggregationName
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject | Array}
+ *			  oDefaultForCreation the object that is used in case the current aggregation is empty
+ * @type sap.ui.base.ManagedObject|Array
+ * @return the aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		aChildren = this.mAggregations[sAggregationName] = oDefaultForCreation || null;
+	}
+	if (aChildren) {
+		if (typeof aChildren.length === 'number' && !(aChildren.propertyIsEnumerable('length')) ) {
+			// Return a copy of the array instead of the array itself as reference!!
+			return aChildren.slice();
+		}
+		// simple type or ManagedObject
+		return aChildren;
+	} else {
+		return null;
+	}
+};
+
+/**
+ * Checks for the provided managed object <code>oObject</code> in the aggregation
+ * named <code>sAggregationName</code> and returns its index if found, or -1
+ * otherwise. Returns -2 if the given named aggregation is not a multiple one
+ * (and does not contain the given child).
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the ManagedObject whose index is looked for.
+ * @return {int} the index of the provided managed object in the aggregation.
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.indexOfAggregation = function(sAggregationName, oObject) {
+	var aChildren = this.mAggregations[sAggregationName];
+	if (aChildren) {
+		if (aChildren.length == undefined) {
+			return -2;
+		} // not a multiple aggregation
+
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i] == oObject) {
+				return i;
+			}
+		}
+	}
+	return -1;
+};
+
+/**
+ * Inserts managed object <code>oObject</code> to the aggregation named <code>sAggregationName</code> at
+ * position <code>iIndex</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation the managed object <code>oObject</code>
+ *            should be inserted into.
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the element to add; if empty, nothing is inserted.
+ * @param {int}
+ *            iIndex the <code>0</code>-based index the managed object should be inserted at; for a negative
+ *            value <code>iIndex</code>, <code>oObject</code> is inserted at position 0; for a value
+ *            greater than the current size of the aggregation, <code>oObject</code> is inserted at
+ *            the last position
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+	if (!oObject) {
+		return this;
+	}
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+
+	var aChildren = this.mAggregations[sAggregationName] || (this.mAggregations[sAggregationName] = []);
+	// force index into valid range 
+	var i = iIndex < 0 ? 0 : (iIndex > aChildren.length ? aChildren.length : iIndex);
+	if (i !== iIndex) {
+		jQuery.sap.log.warning("ManagedObject.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
+	}
+	aChildren.splice(i, 0, oObject);
+	oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+
+	return this;
+};
+
+/**
+ * Adds some entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation the element <code>oObject</code> should be added to.
+ * @param {sap.ui.base.ManagedObject}
+ *            oObject the element to add; if empty, nothing is added
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+	if (!oObject) {
+		return this;
+	}
+	oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ true);
+
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		aChildren = this.mAggregations[sAggregationName] = [oObject];
+	} else {
+		aChildren.push(oObject);
+	}
+	oObject.setParent(this, sAggregationName, bSuppressInvalidate);
+	return this;
+};
+
+/**
+ * Removes an element from the aggregation named <code>sAggregationName</code>.
+ *
+ * @param {string}
+ *            sAggregationName the string identifying the aggregation the ManagedObject should be removed from
+ * @param {int | string | sap.ui.base.ManagedObject}
+ *            vObject the position or ID of the ManagedObject to remove or the ManagedObject itself; if <code>vObject</code> is invalid,
+ *            a negative value or a value greater or equal than the current size of the aggregation, nothing is removed
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @type sap.ui.base.ManagedObject
+ * @return the removed element or null
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
+	var aChildren = this.mAggregations[sAggregationName];
+	var oChildControl = null;
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (typeof(vObject) == "string") { // ID of the element is given
+		vObject = sap.ui.getCore().byId(vObject);
+	}
+
+	if (typeof(vObject) == "object") { // the element itself is given or has just been retrieved
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i] == vObject) {
+				vObject = i;
+				break;
+			}
+		}
+	}
+
+	if (typeof(vObject) == "number") { // "vObject" is the index now
+		if (vObject < 0 || vObject >= aChildren.length) {
+			jQuery.sap.log.warning("ManagedObject.removeAggregation called with invalid index: " + sAggregationName + ", " + vObject);
+
+		} else {
+			oChildControl = aChildren[vObject];
+			aChildren.splice(vObject, 1);
+			oChildControl.setParent(null);
+			if (!this.isInvalidateSuppressed()) {
+				this.invalidate();
+			}
+		}
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return oChildControl;
+};
+
+/**
+ * Removes all the controls in the 0..n-aggregation named <code>sAggregationName</code> (and returns them in an array).<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @type Array
+ * @return an array of the removed elements (might be empty)
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren)	{
+		return [];
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAggregations[sAggregationName];
+	for (var i = 0; i < aChildren.length; i++) {
+		aChildren[i].setParent(null);
+	}
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return aChildren;
+};
+
+/**
+ * Destroys (all) the managed object(s) in the aggregation named <code>sAggregationName</code> and afterwards empties the
+ * aggregation.
+ *
+ * @param {string}
+ *            sAggregationName the name of the aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
+	var aChildren = this.mAggregations[sAggregationName];
+	if (!aChildren) {
+		return this;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	delete this.mAggregations[sAggregationName];
+	if (aChildren instanceof sap.ui.base.ManagedObject) {
+		aChildren.destroy(bSuppressInvalidate);
+	} else if (aChildren && jQuery.isArray(aChildren)) {
+		for (var i = 0; i < aChildren.length; i++) {
+			if (aChildren[i]) {
+				aChildren[i].destroy(bSuppressInvalidate);
+			}
+		}
+	}
+	if (!this.isInvalidateSuppressed()) {
+		this.invalidate();
+	}
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+// ######################################################################################################
+// End of Aggregations
+// ######################################################################################################
+
+
+/// cyclic dependency
+
+
+/**
+ * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
+ * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.invalidate = function() {
+	if (this.oParent) {
+		this.oParent.invalidate(this);
+	}
+};
+
+
+/**
+ * Returns whether rerendering is currently suppressed on this ManagedObject
+ * @return boolean
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.isInvalidateSuppressed = function() {
+	var bInvalidateSuppressed = this.iSuppressInvalidate > 0;
+	if (this.oParent && this.oParent instanceof sap.ui.base.ManagedObject) {
+		bInvalidateSuppressed = bInvalidateSuppressed || this.oParent.isInvalidateSuppressed();
+	}
+	return bInvalidateSuppressed;
+};
+
+
+/**
+ * Removes the given child from this element's named aggregation.
+ * @see sap.ui.core.UIArea#_removeChild
+ * @see sap.ui.base.ManagedObject#setParent
+ *
+ * @param {sap.ui.base.ManagedObject}
+ *            oChild the child element to be removed
+ * @param {string}
+ *            sAggregationName the name of this element's aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
+	if (!sAggregationName) {
+		// an aggregation name has to be specified!
+		jQuery.sap.log.error("Cannot remove aggregated child without aggregation name.", null, this);
+	} else {
+		// set suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate++;
+		}
+
+		var iIndex = this.indexOfAggregation(sAggregationName, oChild);
+		var oAggregationInfo = this.getMetadata().getJSONKeys()[sAggregationName];
+		// Note: we assume that this is the given child's parent, i.e. -1 not expected!
+		if (iIndex == -2) { // 0..1
+			if(oAggregationInfo && this[oAggregationInfo._sMutator]) { // TODO properly deal with hidden aggregations
+				this[oAggregationInfo._sMutator](null);
+			}
+			else {
+				this.setAggregation(sAggregationName, null, bSuppressInvalidate);
+			}
+		} else if(iIndex > -1 ) { // 0..n
+			if(oAggregationInfo && this[oAggregationInfo._sRemoveMutator]) { // TODO properly deal with hidden aggregations
+				this[oAggregationInfo._sRemoveMutator](iIndex);
+			}
+			else {
+				this.removeAggregation(sAggregationName, iIndex, bSuppressInvalidate);
+			}
+		} else {
+			// already removed!?
+			// this is the unexpected -1
+			// TODO: What would be better? Explicit removeCompositeChild callback on subclass?
+		}
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+
+		// reset suppress invalidate flag
+		if (bSuppressInvalidate) {
+			this.iSuppressInvalidate--;
+		}
+	}
+};
+
+/**
+ * Defines this element's new parent. If no new parent is given, the parent is
+ * just reset and we assume that the old parent has removed this child from its
+ * aggregation. But if a new parent is given, this child is first removed from
+ * its old parent.
+ *
+ * @param {sap.ui.base.ManagedObject}
+ *            oParent the element that becomes this element's parent
+ * @param {string}
+ *            sAggregationName the name of the parent element's aggregation
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw. The old parent, however, is marked for redraw.
+ * @return {sap.ui.base.ManagedObject}
+ *            Returns <code>this</code> to allow method chaining
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
+	var that = this;
+	
+	if ( !oParent ) {
+		this.oParent = null;
+		this.sParentAggregationName = null;
+		// Note: no need (and no way how) to invalidate
+		return;
+	}
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	var oOldParent = this.getParent();
+	if (oOldParent) { // remove this element from its old parent
+		// Note: bSuppressInvalidate  by intention is not propagated to the old parent.
+		// It is not sure whether the (direct or indirect) caller of setParent
+		// has enough knowledge about the old parent to automatically propagate this.
+		// If needed, callers can first remove the element from the oldParent (specifying a 
+		// suitable value for bSuppressInvalidate there) and only then call setParent.
+		oOldParent._removeChild(this, this.sParentAggregationName);  
+	}
+	// adopt new parent
+	this.oParent = oParent;
+	this.sParentAggregationName = sAggregationName;
+	
+	//get propeties to propagate
+	this.oPropagatedProperties.oBindingContext = oParent.oBindingContext || oParent.oPropagatedProperties.oBindingContext;
+	this.oPropagatedProperties.oModels = jQuery.extend({}, oParent.oPropagatedProperties.oModels, oParent.oModels);
+	
+	// update bindings
+	if (this.hasModel()) {
+		this.updateBindingContext(false, true);
+		this.updateBindings(true,null,false,true);
+		this.propagateProperties();
+	}
+
+	// Only invalidate if the managed object already is in the HTML and has been initialized (i.e. has a parent)
+	/*if((!this.bPrerendered || this.bPrerendered && oOldParent)) {
+		if (!this.isInvalidateSuppressed()) {
+			this.invalidate();
+		}
+	}*/
+	
+	// only the parent knows where to render us, so we have to invalidate it
+	if ( oParent && !this.isInvalidateSuppressed() ) {
+		oParent.invalidate(this);
+	}
+	
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	return this;
+};
+
+/**
+ * Returns the parent managed object or <code>null</code> if this element hasn't been added to a parent yet.
+ *
+ * @return {sap.ui.base.ManagedObject} The parent managed object or <code>null</code>
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getParent = function() {
+	/* Be aware that internally this.oParent is used to reduce method calls. 
+	 * Check for side effects when overriding this method */
+	return this.oParent;
+};
+
+
+/**
+ * Cleans up the resources associated with this element and all its children.
+ *
+ * After an element has been destroyed, it can no longer be used in the UI!
+ *
+ * Applications should call this method if they don't need the element any longer.
+ *
+ * @param {boolean}
+ *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
+	var that = this;
+
+	// jQuery.sap.log.debug("destroying " + this);
+
+	// set suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate++;
+	}
+
+	if (this.exit) {
+		this.exit();
+	}
+
+	// TODO: generic concept for exit hooks?
+	if ( this._exitCompositeSupport ) {
+		this._exitCompositeSupport();
+	}
+
+	// ensure that also our children are destroyed!!
+	for(var oAggr in this.mAggregations){
+		this.destroyAggregation(oAggr, bSuppressInvalidate);
+	}
+	this.deregister();
+
+	// remove this child from parent aggregation
+	if (this.oParent && this.sParentAggregationName) {
+		this.oParent._removeChild(this, this.sParentAggregationName, bSuppressInvalidate);
+	}
+
+	// Data Binding
+	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		if (oBindingInfo.factory) {
+			that.unbindAggregation(sName);
+		} else {
+			that.unbindProperty(sName);
+		}
+	});
+
+	// reset suppress invalidate flag
+	if (bSuppressInvalidate) {
+		this.iSuppressInvalidate--;
+	}
+
+	// finally make the element unusable
+	this.setParent = function(){
+		throw Error("The object with ID "+that.getId()+" was destroyed and cannot be used anymore.");
+	};
+
+	// make visible that it's been destroyed.
+	this.bIsDestroyed = true;
+
+};
+
+
+// DataBinding
+/**
+ * Determines whether a given object contains binding information instead of a
+ * value or aggregated controls. The method is used in applySettings for processing
+ * the JSON notation of properties/aggregations in the constructor.
+ *
+ * @param {object} oValue the value
+ * @param {object} oKeyInfo the metadata of the property
+ *
+ * @returns {boolean} whether the value contains binding information
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.isBinding = function(oValue, oKeyInfo) {
+	if (oValue && typeof oValue == "object" && oValue.path && oKeyInfo.type != "object") {
+		return true;
+	}
+	if (typeof oValue == "string" && jQuery.sap.startsWith(oValue, "{") && jQuery.sap.endsWith(oValue, "}")) {
+		return true;
+	}
+	return false;
+};
+
+/**
+ * Extracts the binding info from the given value. There are two possible notations
+ * for binding information in the JSON notation of the managed object constructor:
+ * - property: "{path}"
+ *   This is used for property binding and can only contain the path.
+ * - property:{path:"path", template:oTemplate}
+ *   This is used for aggregation binding, where a template is required or can
+ *   be used for property binding when additional data is required (e.g. formatter).
+ *
+ * @param {object} oValue
+ *
+ * @returns {object} the binding info object, containing at least a path property
+ *                   and, dependant of the binding type, additional properties
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.extractBindingInfo = function(oValue) {
+	var oBindingInfo;
+	// property:{path:"path", template:oTemplate}
+	if (oValue && typeof oValue == "object") {
+		oBindingInfo = oValue;
+	}
+	// property:"{path}"
+	if (typeof oValue == "string") {
+		oBindingInfo = {};
+		oBindingInfo.path = oValue.substr(1, oValue.length - 2);
+	}
+	return oBindingInfo;
+};
+
+/**
+ * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
+ * sorter, filter etc. for the property or aggregation.
+ *
+ * @param {string} sName the name of the property or aggregation
+ *
+ * @returns {object} the binding info object, containing at least a path property
+ *                   and, dependant of the binding type, additional properties
+ *
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getBindingInfo = function(sName) {
+	return this.mBindingInfos[sName];
+};
+
+/**
+ * Bind the element to the referenced entity in the model, which is used as the binding context
+ * to resolve bound properties or aggregations of the element itself and all of its children
+ * relatively to the given path.
+ * If a relative binding path is used, this will be applied whenever the parent context changes.
+ * @param {string} sPath the binding path
+ * @param {object} [mParameters] map of additional parameters for this binding
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindElement = function(sPath, mParameters) {
+	this.sBindingPath = sPath;
+	this.mBindingParameters = mParameters;
+	this.updateBindingContext();
+	return this;
+};
+
+/**
+ * Deprecated, please use bindElement instead.
+ * @deprecated
+ * @param {string} sPath the binding path
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindContext = function(sPath) {
+	this.bindElement(sPath);
+	return this;
+};
+
+/**
+ * Removes the defined binding context of this element, all bindings will now resolve
+ * relative to the parent context again.
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindContext = function() {
+	this.sBindingPath = null;
+	this.oBindingContext = null;
+	this.updateBindingContext();
+	return this;
+};
+
+
+/**
+ * Bind a property to the model.
+ * The Setter for the given property will be called with the value retrieved
+ * from the data model.
+ * This is a generic method which can be used to bind any property to the
+ * model. A managed object may flag properties in the metamodel with
+ * bindable="bindable" to get typed bind methods for a property.
+ *
+ * @param {string} sName the name of the property
+ * @param {object} oBindingInfo the binding information
+ * @param {string} oBindingInfo.path the binding path
+ * @param {string} [oBindingInfo.model] the model identifier
+ * @param {function} [oBindingInfo.formatter] the formatter function or sap.ui.model.Type
+ * @param {sap.ui.model.Type} [oBindingInfo.type] the sap.ui.model.Type for this binding
+ * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
+ * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindProperty = function(sName, oBindingInfo) {
+	var sPath,
+		oFormat,
+		sMode,
+		sModelName,
+		fnFormatter,
+		oType,
+		iSeparatorPos,
+		oMetadata = this.getMetadata(),
+		oProperty = oMetadata.getAllProperties()[sName],
+		oKeyInfo = oMetadata.getJSONKeys()[sName];
+
+	// check whether property or alternative type on aggregation exists
+	if (!oProperty && !oKeyInfo.altTypes) {
+		throw new Error("Property \"" + sName + "\" does not exist in " + this);
+	}
+
+	// old API compatbility (sName, sPath, oFormat, sMode)
+	if (typeof oBindingInfo == "string") {
+		sPath = arguments[1];
+		oFormat = arguments[2];
+		sMode = arguments[3];
+		// if a model separator is found in the path, extract model name and path
+		if (iSeparatorPos > 0) {
+			sModelName = sPath.substr(0, iSeparatorPos);
+			sPath = sPath.substr(iSeparatorPos + 1);
+		}
+		// find out whether formatter or type has been provided
+		if (typeof oFormat == "function") {
+			fnFormatter = oFormat;
+		}
+		else if (oFormat instanceof sap.ui.model.Type) {
+			oType = oFormat;
+		}
+		oBindingInfo = {path: sPath, formatter: fnFormatter, type: oType, model: sModelName, mode: sMode};
+	}
+
+	// if a model separator is found in the path, extract model name and path
+	iSeparatorPos = oBindingInfo.path.indexOf(">");
+	if (iSeparatorPos > 0) {
+		oBindingInfo.model = oBindingInfo.path.substr(0, iSeparatorPos);
+		oBindingInfo.path = oBindingInfo.path.substr(iSeparatorPos + 1);
+	}
+	// if property is already bound, unbind it first
+	if (this.isBound(sName)){
+		this.unbindProperty(sName);
+	}
+	
+    // because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility 
+	// for formatter function which is now called by the property binding
+	oBindingInfo.formatter = jQuery.proxy(oBindingInfo.formatter, this);
+
+	// store binding info to create the binding, as soon as the model is available, or when the model is changed
+	this.mBindingInfos[sName] = oBindingInfo;
+
+	// if the model is already available, create the binding
+	if (this.getModel(oBindingInfo.model)) {
+		this._bindProperty(sName, oBindingInfo);
+	}
+	return this;
+};
+
+sap.ui.base.ManagedObject.prototype._bindProperty = function(sName, oBindingInfo) {
+	var oModel = this.getModel(oBindingInfo.model),
+	oContext,
+	oBinding,
+	oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
+	that = this,
+	fModelChangeHandler = function() {
+		try {
+			var oValue = oBinding.getExternalValue();
+			oBindingInfo.skipModelUpdate = true;
+			that[oPropertyInfo._sMutator](oValue);
+			oBindingInfo.skipModelUpdate = false;
+		}catch (oException) {
+			if (oException instanceof sap.ui.model.FormatException) {
+				sap.ui.getCore().fireFormatError({element : that, property : sName, type : oBinding.getType(), newValue : oBinding.getValue(), oldValue : that.getProperty(sName), exception: oException});
+			}else {
+				throw oException;
+			}
+		}
+	};
+
+	// Only use context for bindings on the primary model
+	oContext = oBindingInfo.model ? null : this.getBindingContext();
+
+	// Create binding object
+	oBinding = oModel.bindProperty(oBindingInfo.path, oContext, oBindingInfo.parameters);
+	oBinding.setType(oBindingInfo.type, oPropertyInfo.type);
+	oBinding.setFormatter(oBindingInfo.formatter);  
+
+	// Set additional information on the binding info
+	oBindingInfo.skipModelUpdate = false;
+	oBindingInfo.binding = oBinding;
+	oBindingInfo.modelChangeHandler = fModelChangeHandler;
+
+	if (!oBindingInfo.mode || !oModel.isBindingModeSupported(oBindingInfo.mode)) {
+		oBindingInfo.mode = oModel.getDefaultBindingMode();
+	}
+
+	// Attach to the change event of the binding and initialize value
+	if (oBindingInfo.mode != sap.ui.model.BindingMode.OneTime) {
+		oBinding.attachChange(fModelChangeHandler);
+	}
+	fModelChangeHandler();
+};
+
+/**
+ * Unbind the property from the model
+ *
+ * @param {String} sName the name of the property
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindProperty = function(sName){
+	var oBindingInfo = this.mBindingInfos[sName];
+	if(oBindingInfo) {
+		if (oBindingInfo.binding) {
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+		}
+		delete this.mBindingInfos[sName];
+	}
+	return this;
+};
+
+/**
+ * Update the property in the model if two way data binding mode is enabled
+ *
+ * @param sName the name of the property to update
+ * @param oValue the new value to set for the property in the model
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){
+	if (this.isBound(sName)){
+		var oBindingInfo = this.mBindingInfos[sName],
+			oBinding = oBindingInfo.binding;
+		if (oBindingInfo.mode == sap.ui.model.BindingMode.TwoWay
+				&& oBinding
+				&& !oBindingInfo.skipModelUpdate) {
+			try {
+				oBinding.setExternalValue(oValue);
+				sap.ui.getCore().fireValidationSuccess({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue});
+			}
+			catch (oException) {
+				if (oException instanceof sap.ui.model.ParseException) {
+					sap.ui.getCore().fireParseError({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue, exception: oException});
+				}else if (oException instanceof sap.ui.model.ValidateException) {
+					sap.ui.getCore().fireValidationError({element : this, property : sName, type : oBinding.getType(), newValue : oValue, oldValue : oOldValue, exception: oException});
+				}
+				else {
+					throw oException;
+				}
+			}
+		}
+	}
+};
+
+/**
+ * Bind an aggregation to the model.
+ * The bound aggregation will use the given template, clone it for each element
+ * which exists in the bound list and set the appropriate binding context.
+ * This is a generic method which can be used to bind any aggregation to the
+ * model. A managed object may flag aggregations in the metamodel with
+ * bindable="bindable" to get typed bind methods for an aggregation.
+ *
+ * @param {string} sName the aggregation to bind
+ * @param {object} oBindingInfo the binding info
+ * @param {string} oBindingInfo.path the binding path
+ * @param {sap.ui.base.ManagedObject} oBindingInfo.template the template
+ * @param {function} oBindingInfo.factory the factory function
+ * @param {sap.ui.model.Sorter} [oBindingInfo.oSorter] the initial sort order (optional)
+ * @param {array} [oBindingInfo.filters] the predefined filters (sap.ui.model.Filter) for this aggregation (optional)
+ * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.bindAggregation = function(sName, oBindingInfo) {
+	var sPath,
+		oTemplate,
+		oSorter,
+		aFilters,
+		oMetadata = this.getMetadata(),
+		oAggregation = oMetadata.getAllAggregations()[sName];
+
+	// check whether aggregation exists
+	if (!oAggregation) {
+		throw new Error("Aggregation \"" + sName + "\" does not exist in " + this);
+	}
+	
+	// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
+	if (typeof oBindingInfo == "string") {
+		sPath = arguments[1];
+		oTemplate = arguments[2];
+		oSorter = arguments[3];
+		aFilters = arguments[4];
+		oBindingInfo = {path: sPath, sorter: oSorter, filters: aFilters};
+		// allow either to pass the template or the factory function as 3rd parameter
+		if (oTemplate instanceof sap.ui.base.ManagedObject) {
+			oBindingInfo.template = oTemplate;
+		} else if (typeof oTemplate === "function") {
+			oBindingInfo.factory = oTemplate;
+		}
+	}
+	
+	// if aggregation is already bound, unbind it first
+	if (this.isBound(sName)){
+		this.unbindAggregation(sName);
+	}
+	
+	// check whether a template has been provided, which is required for proper processing of the binding
+	if (!(oBindingInfo.template || oBindingInfo.factory)) {
+		throw new Error("Missing template or factory function for aggregation " + sName + " of managed object id " + this.getId() + " !");
+	}
+	
+	// if we have a template we will create a factory function
+	if (oBindingInfo.template) {
+		oBindingInfo.factory = function(sId) {
+			return oBindingInfo.template.clone(sId);
+		} 
+	}
+	
+	// store binding info to create the binding, as soon as the model is available, or when the model is changed
+	this.mBindingInfos[sName] = oBindingInfo;
+
+	// if the model is already available create the binding
+	if (this.getModel()) {
+		this._bindAggregation(sName, oBindingInfo);
+	}
+	return this;
+};
+
+sap.ui.base.ManagedObject.prototype._bindAggregation = function(sName, oBindingInfo) {
+	var that = this,
+		oBinding,
+		fModelChangeHandler = function(oEvent){
+			var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
+			if (that[sUpdater]) {
+				that[sUpdater]();
+			} else {
+				that.updateAggregation(sName);
+			}
+		};
+		if (this.isTreeBinding(sName)) {
+			oBinding = this.getModel().bindTree(oBindingInfo.path, this.getBindingContext(), oBindingInfo.filters, oBindingInfo.parameters);		
+		} else {
+			oBinding = this.getModel().bindList(oBindingInfo.path, this.getBindingContext(), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
+		}
+
+	oBindingInfo.binding = oBinding;
+	oBindingInfo.modelChangeHandler = fModelChangeHandler;
+
+	oBinding.attachChange(fModelChangeHandler);
+	fModelChangeHandler();
+};
+
+/**
+ * Unbind the aggregation from the model
+ *
+ * @param {String} sName the name of the aggregation
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.unbindAggregation = function(sName){
+	var oBindingInfo = this.mBindingInfos[sName];
+	if(oBindingInfo) {
+		if (oBindingInfo.binding) {
+			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+		}
+		delete this.mBindingInfos[sName];
+	}
+	return this;
+};
+
+/**
+ *  This method is used internally and should only be overridden by a tree managed object which utilizes the tree binding.
+ *  In this case and if the aggregation is a tree node the overridden method should then return true.
+ *  If true is returned the tree binding will be used instead of the list binding.
+ *
+ *  @param {string} sName the aggregation to bind (e.g. nodes for a tree managed object)
+ *  @return {boolean} whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
+ *
+ *  @protected
+ */
+sap.ui.base.ManagedObject.prototype.isTreeBinding = function(sName) {
+	return false;
+};
+
+/**
+ * Create bindings in case the model was not available at the time
+ * bindProperty or bindAggregation was called
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName, bRecreate, bSkipChildren) {
+	var that = this,
+		bHasModel, bIsSameModelName, bIsSameModelInstance;
+		
+	// create property and aggregation bindings if they don't exist yet
+	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		bHasModel = !!that.getModel(oBindingInfo.model),
+		bIsSameModelName = oBindingInfo.model == sModelName,
+		bIsSameModelInstance = oBindingInfo.binding && oBindingInfo.binding.getModel() == that.getModel(sModelName);
+		
+		if (bUpdateAll || (bIsSameModelName && (!oBindingInfo.binding || bIsSameModelInstance))) {
+			if ( bRecreate && oBindingInfo.binding ) {
+				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				delete oBindingInfo.binding;
+			}
+			if (!oBindingInfo.binding) {
+				if (bHasModel) {
+					if (oBindingInfo.factory) {
+						that._bindAggregation(sName, oBindingInfo);
+					} else {
+						that._bindProperty(sName, oBindingInfo);
+					}
+				} 
+			}
+		}
+	});
+	if (!bSkipChildren) {
+		// also update bindings in all child elements
+		jQuery.each(this.mAggregations, function(sName, oAggregation) {
+			if (oAggregation instanceof sap.ui.base.ManagedObject) {
+				oAggregation.updateBindings(bUpdateAll, sModelName, bRecreate);
+			} else if (oAggregation instanceof Array) {
+				for (var i = 0; i < oAggregation.length; i++) {
+					oAggregation[i].updateBindings(bUpdateAll, sModelName, bRecreate);
+				}
+			}
+		});
+	}
+};
+
+/**
+ * Generic method which is called, whenever an aggregation binding is changed.
+ * This method deletes all elements in this aggregation and recreates them
+ * according to the data model.
+ * In case a managed object needs special handling for a aggregation binding, it can create
+ * a typed update-method (e.g. "updateRows") which will be used instead of the
+ * default behaviour.
+ *
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateAggregation = function(sName) {
+	var oBindingInfo = this.mBindingInfos[sName],
+		oBinding = oBindingInfo.binding,
+		fnFactory = oBindingInfo.factory,
+		oAggregationInfo = this.getMetadata().getJSONKeys()[sName],  // TODO fix handling of hidden aggregations
+		oClone,
+		that = this;
+	this[oAggregationInfo._sDestructor]();
+	if (this.isTreeBinding(sName)) {
+		var iNodeIndex = 0,
+			update = function(aContexts, fnFactory, oBinding, oParent){
+			jQuery.each(aContexts, function(iIndex, oContext) {
+				var sId = that.getId() + "-" + iNodeIndex++;
+				oClone = fnFactory(sId, oContext);
+				oClone.setBindingContext(oContext);
+				oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
+				update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
+			});
+		};
+		update(oBinding.getRootContexts(), fnFactory, oBinding, this);
+	} 
+	else {
+		jQuery.each(oBinding.getContexts(), function(iIndex, oContext) {
+			var sId = that.getId() + "-" + iIndex;
+			oClone = fnFactory(sId, oContext);
+			oClone.setBindingContext(oContext);
+			that[oAggregationInfo._sMutator](oClone);
+		});
+	}
+};
+
+/**
+ * Find out whether a property or aggregation is bound
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {boolean} whether a binding exists for the given name
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.isBound = function(sName){
+	return (sName in this.mBindingInfos);
+};
+
+/**
+ * Get the binding object for a specific aggregation/property
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {Binding} the binding for the given name
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getBinding = function(sName){
+	return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
+};
+
+/**
+ * Get the binding path for a specific aggregation/property
+ *
+ * @param {String} sName the name of the property or aggregation
+ * @return {String} the binding path for the given name
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.getBindingPath = function(sName){
+	return this.mBindingInfos[sName] && this.mBindingInfos[sName].path;
+};
+
+/**
+ * Set the binding context for this element.
+ *
+ * @param {Object} oContext the new binding context for this element
+ *
+ * @return {sap.ui.base.ManagedObject} reference to the instance itself
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.setBindingContext = function(oContext){
+	this.oBindingContext = oContext;
+	this.updateBindingContext(true, true);
+	this.propagateProperties();
+	return this;
+};
+
+/**
+ * Update the binding context in this element and all children
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren){
+
+	var oModel = this.getModel(),
+		oParentContext,
+		that = this;
+
+	if (this.sBindingPath && !bSkipLocal) {
+		if (this.oParent && oModel == this.oParent.getModel()) {
+			oParentContext= this.oParent.getBindingContext(); 
+		}
+		if (oModel) {
+			oModel.createBindingContext(this.sBindingPath, oParentContext, this.mBindingParameters, function(oContext) {
+				that.setBindingContext(oContext);
+				that.updateBindingContext(true, bSkipChildren);
+			});
+		} else {
+			this.oBindingContext = undefined;
+		}
+		return;
+	}
+
+	var oContext = this.getBindingContext();
+
+	// update context in existing bindings, but only for the primary model
+	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		var oBinding = oBindingInfo.binding;
+		if (oBinding && oBinding.getModel() == oModel) {
+			oBinding.setContext(oContext);
+		}
+	});
+	if (!bSkipChildren) {
+		// also update context in all child elements
+		jQuery.each(this.mAggregations, function(sName, oAggregation) {
+			if (oAggregation instanceof sap.ui.base.ManagedObject) {
+				oAggregation.oPropagatedProperties.oBindingContext = oContext;
+				oAggregation.updateBindingContext();
+			} else if (oAggregation instanceof Array) {
+				for (var i = 0; i < oAggregation.length; i++) {
+					oAggregation[i].oPropagatedProperties.oBindingContext = oContext;
+					oAggregation[i].updateBindingContext();
+				}
+			}
+		});
+	}
+};
+
+
+/**
+ * Get the binding context of this element
+ * If the element does not have a binding context set on itself and has no own Model set, it will ask
+ * the parent element for its binding context
+ *
+ * @return {Object} the binding context of this element
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getBindingContext = function(){
+	var oModel = this.oModels[undefined];
+	
+	if (this.oBindingContext) {
+		return this.oBindingContext;
+	} else if (oModel && this.oParent && this.oParent.getModel() && oModel != this.oParent.getModel()) {
+		return undefined;
+	} else {
+		return this.oPropagatedProperties.oBindingContext;
+	}
+};
+
+/**
+ * Set the model for databinding
+ * @param {sap.ui.model.Model} oModel
+ * @param {string} [sName]
+ * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.setModel = function(oModel, sName) {
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		// propagate Models to children
+		this.propagateProperties(sName);
+		// if the model changes, all bindings have to be recreated (at least those to the previous model)
+		this.updateBindings(false, sName, true, true);
+	} else if ( oModel !== this.oModels[sName] ) { 
+		//TODO: handle null!
+		this.oModels[sName] = oModel;
+		// propagate Models to children
+		this.propagateProperties(sName);
+		// update binding context, for primary model only
+		if (!sName){this.updateBindingContext(false, true);}
+		// if the model changes, all bindings have to be recreated (at least those to the previous model)
+		this.updateBindings(false, sName, true, true);
+	} else {
+		// nothing to do
+	} 
+	return this;
+};
+
+/**
+ * Propagate Properties (models and bindingContext) to child elements
+ * @param {string} sName if provided we update only the bindings of that model   
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype.propagateProperties = function(sName) {
+	var oProperties = this._getPropertiesToPropagate();
+	jQuery.each(this.mAggregations, function(sAggregationName, oAggregation) {
+		if (oAggregation instanceof sap.ui.base.ManagedObject) {
+			oAggregation.oPropagatedProperties = oProperties;
+			oAggregation.updateBindings(!sName,sName,true,true);
+			oAggregation.updateBindingContext(false, true);
+			oAggregation.propagateProperties();
+		} else if (oAggregation instanceof Array) {
+			for (var i = 0; i < oAggregation.length; i++) {
+				if (oAggregation[i] instanceof sap.ui.base.ManagedObject) {
+					oAggregation[i].oPropagatedProperties = oProperties;
+					oAggregation[i].updateBindings(!sName,sName,true,true);
+					oAggregation[i].updateBindingContext(false, true);
+					oAggregation[i].propagateProperties();
+				}
+			}
+		}
+	});
+}
+
+/**
+ * Get properties for propagation
+ * @return {object} oProperties
+ * @private
+ */
+sap.ui.base.ManagedObject.prototype._getPropertiesToPropagate = function() {
+	var oProperties,
+		bHasOwnModels = !jQuery.isEmptyObject(this.oModels);
+
+	if (this.oBindingContext || bHasOwnModels) {
+		//create new properties object
+		oProperties = {};
+		if (bHasOwnModels) {
+			oProperties.oModels = {};
+			jQuery.extend(oProperties.oModels,this.oPropagatedProperties.oModels);
+			jQuery.each(this.oModels, function(sName, oModel) {
+				oProperties.oModels[sName] = oModel;
+			});
+		}
+		else {
+			oProperties.oModels = this.oPropagatedProperties.oModels;
+		}
+		if (this.oBindingContext) {
+			oProperties.oBindingContext = this.oBindingContext;
+		} else {
+			oProperties.oBindingContext = this.oPropagatedProperties.oBindingContext;
+		}
+	} else {
+		//propagate the existing container
+		oProperties = this.oPropagatedProperties;
+	}
+	return oProperties;
+};
+
+/**
+ * Get the model for databinding
+ * If the element does not have a model set on itself, it will ask
+ * the parent element for the model to use
+ * @param {string} [sName]
+ * @return {sap.ui.model.Model} oModel
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.getModel = function(sName) {
+	return this.oModels[sName] || this.oPropagatedProperties.oModels[sName];
+};
+
+/**
+ * Check if a Model is set to the ManagedObject or to one of its Parents (including UIArea and Core)
+ * @return {boolean} true or false
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.hasModel = function() {
+	return !(jQuery.isEmptyObject(this.oModels) && jQuery.isEmptyObject(this.oPropagatedProperties.oModels));
+};
+
+/**
+ * Clones a tree of elements starting with the element on which clone is called first (root element).
+ * 
+ * The ids within the newly created clone tree are derived from the original ids by appending
+ * the given <code>sIdSuffix</code> (if no suffix is given, one will be created; it will be 
+ * unique across multiple clone calls).
+ *  
+ * The <code>oOptions</code> configuration object can have the following properties:
+ * <ul>
+ * <li>The boolean value <code>cloneChildren</code> specifies wether associations/aggregations will be cloned</li>
+ * <li>The boolean value <code>cloneBindings</code> specifies if bindings will be cloned</li>
+ * </ul>
+ * 
+ * For each cloned element the following settings are cloned based on the metadata of the element and the defined options:
+ * <ul>
+ * <li>all properties that are not bound. If cloneBinding is false even these properties will be cloned; 
+ * the values are used by reference, they are not cloned</li>
+ * <li>all aggregated controls that are not bound. If cloneBinding is false even the ones that are bound will be cloned;
+ * they are all cloned recursively using the same <code>sIdSuffix</code></li>
+ * <li>all associated controls; when an association points to a control inside the cloned element tree,
+ *     then the cloned association will be modified to that it points to the clone of the target element.
+ *     When the association points to a managed object outside of the cloned element tree, then its 
+ *     target won't be changed.</li>  
+ * <li>all models set via setModel(); used by reference </li>
+ * <li>all property and aggregation bindings (if cloneBindings is true); the pure binding infos (path, model name) are 
+ *     cloned, but all other information like template control or factory function, 
+ *     data type or formatter function are copied by reference. The bindings themselves 
+ *     are created anew as they are specific for the combination (element, property, model).
+ *     As a result, any later changes to a binding of the original element are not reflected 
+ *     in the clone, but changes to e.g the type or template etc. are.</li> 
+ * </ul>
+ *
+ * Each clone is created by first collecting the above mentioned settings and then creating 
+ * a new instance with the normal constructor function. As a result, any side effects of 
+ * mutator methods (setProperty etc.) or init hooks are repeated during clone creation. 
+ * There is no need to override <code>clone()</code> just to reproduce these internal settings!
+ * 
+ * Custom controls however can override <code>clone()</code> to implement additional clone steps. 
+ * They usually will first call <code>clone()</code> on the super class and then modify the   
+ * returned clone accordingly.  
+ * 
+ * Applications <b>must never provide</b> the second parameter <code>aLocaleIds</code>. 
+ * It is determined automatically for the root element (and its non-existance also serves as 
+ * an indicator for the root element). Specifying it will break the implementation of <code>clone()</code>. 
+ * 
+ * @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
+ * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+ * @param {Object} [oOptions] configuration object 
+ * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+ * @protected
+ */
+sap.ui.base.ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
+	var that = this,
+		bCloneChildren = true, 
+		bCloneBindings = true;
+	
+	if (oOptions) {
+		bCloneChildren = !!oOptions.cloneChildren;
+		bCloneBindings = !!oOptions.cloneBindings;
+	}
+	// if no id suffix has been provided use a generated UID
+	if (!sIdSuffix) {
+		sIdSuffix = sap.ui.base.ManagedObjectMetadata.uid("clone") || jQuery.sap.uid();
+	}
+	// if no local ID array has been passed, collect IDs of all contained elements to
+	// be able to properly adapt associations, which are within the cloned element hierarchy
+	if (!aLocalIds && bCloneChildren) {
+		aLocalIds = jQuery.map(this.findAggregatedObjects(true), function(oObject) {return oObject.getId();});
+	}
+
+	var oMetadata = this.getMetadata(),
+		oClass = oMetadata._oClass,
+		sId = this.getId() + "-" + sIdSuffix,
+		mSettings = {},
+		mProps = this.mProperties,
+		sKey,
+		oClone;
+	
+	// Clone properties (only those with non-default value)
+	for(sKey in mProps) {
+		//do not clone properties if property is bound and bindings are cloned; Property is set on update
+		if ( mProps.hasOwnProperty(sKey) && !(this.isBound(sKey) && bCloneBindings)){
+			mSettings[sKey] = mProps[sKey];
+		}
+	}
+	
+	if(bCloneChildren) {
+		// Clone aggregations
+		jQuery.each(this.mAggregations, function(sName, oAggregation) {
+			//do not clone aggregation if aggregation is bound and bindings are cloned; aggregation is filled on update
+			if (oMetadata.hasAggregation(sName) && !(that.isBound(sName) && bCloneBindings)) {
+				if (oAggregation instanceof sap.ui.base.ManagedObject) {
+					mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
+				} else if (jQuery.isArray(oAggregation)) {
+					mSettings[sName] = [];
+					for (var i = 0; i < oAggregation.length; i++) {
+						mSettings[sName].push(oAggregation[i].clone(sIdSuffix, aLocalIds));
+					}
+				} else {
+					// must be an alt type
+					mSettings[sName] = oAggregation;
+				}
+			}
+		});
+
+		// Clone associations
+		jQuery.each(this.mAssociations, function(sName, oAssociation) {
+			// Check every associated ID against the ID array, to make sure associations within
+			// the template are properly converted to associations within the clone
+			if (jQuery.isArray(oAssociation)) {
+				oAssociation = oAssociation.slice(0);
+				for (var i = 0; i < oAssociation.length; i++) {
+					if (jQuery.inArray(oAssociation[i], aLocalIds) >= 0) {
+						oAssociation[i] += "-" + sIdSuffix;
+					}
+				}
+			} else if (jQuery.inArray(oAssociation, aLocalIds) >= 0) {
+				oAssociation += "-" + sIdSuffix;
+			}
+			mSettings[sName] = oAssociation;
+		});
+	}
+	// Create clone instance
+	oClone = new oClass(sId, mSettings);
+	
+	// Clone models		
+	jQuery.each(this.oModels, function(sName, oModel) {		
+	    oClone.setModel(oModel, sName);		
+	});
+	
+	// Clone events
+	jQuery.each(this.mEventRegistry, function(sName, aListeners) {
+		oClone.mEventRegistry[sName] = aListeners.slice();
+	});
+	
+	// Clone bindings
+	if (bCloneBindings) {
+		jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+			var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
+			delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
+			if (oBindingInfo.factory) {
+				oClone.bindAggregation(sName, oCloneBindingInfo);
+			} else {
+				oClone.bindProperty(sName, oCloneBindingInfo);
+			}
+		});
+	}
+	return oClone;
+};
+
+/**
+ * Maps the given aggregation with name <code>sOldAggrName</code>
+ * on aggregation <code>sNewAggrName</code> (When calling an accessor function
+ * of the old aggregation the call is forwarded to the corresponding accessor
+ * function of the new aggregation).
+ *
+ * This function should help to perform a smooth transition for users of a managed object
+ * when an aggregation must be renamed.
+ *
+ * Both aggregations must have a mutiple cardinality (0..n) and must have the same
+ * aggregated type!
+ *
+ * @param {object} oPrototype prototype of the ManagedObject class for which a mapping should be defined
+ * @param {string} sOldAggrName Name of the old deprecated aggregation
+ * @param {string} sNewAggrName Name of the new aggregation
+ * @deprecated
+ */
+sap.ui.base.ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
+	var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
+	var oOldAggrInfo = mKeys[sOldAggrName];
+	var oNewAggrInfo = mKeys[sNewAggrName];
+
+	//Check whether aggregations exist and are multiple.
+	if(!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
+		return;
+	}
+
+	var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
+
+	function method(sPrefix, sName) {
+		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
+	}
+
+	function fAggrDelegator(sFuncName){
+		return function() {
+			return this[sFuncName].apply(this, arguments);
+		};
+	}
+
+	for(var sPrefix in mFunc){
+		var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo._sName);
+		var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo._sName);
+		oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
+	}
+};
+
+/**
+ * Searches and returns an array of child elements and controls which are
+ * referenced within an aggregation or aggregations of child elements/controls.
+ * This can be either done recursive or not.
+ * <br>
+ * <b>Take care: this operation might be expensive.</b>
+ * @param {boolean}
+ *          bRecursive true, if all nested children should be returned.
+ * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
+ * @public
+ */
+sap.ui.base.ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
+
+	var aAggregatedObjects = [];
+	function fFindObjects(oObject) {
+		for (var n in oObject.mAggregations) {
+			var a = oObject.mAggregations[n];
+			if (jQuery.isArray(a)) {
+				for (var i = 0; i < a.length; i++) {
+					aAggregatedObjects.push(a[i]);
+					if (bRecursive) {
+						fFindObjects(a[i]);
+					}
+				}
+			} else if (a instanceof sap.ui.base.ManagedObject) {
+				aAggregatedObjects.push(a);
+				if (bRecursive) {
+					fFindObjects(a);
+				}
+			}
+		}
+	}
+	fFindObjects(this);
+	return aAggregatedObjects;
+
+};
+
+}; // end of sap.ui.base.ManagedObject
+
+if ( !jQuery.sap.isDeclared('sap.ui.core.ElementMetadata') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+
+// Provides class sap.ui.core.ElementMetadata
+jQuery.sap.declare("sap.ui.core.ElementMetadata");
+
+
+/**
+ * Creates a new metadata object for a UIElement subclass.
+ *
+ * @param {string} sClassName fully qualified name of the class that is described by this metadata object
+ * @param {object} oStaticInfo static info to construct the metadata from
+ *
+ * @class
+ * @author SAP
+ * @version 1.9.1-SNAPSHOT
+ * @since 0.8.6
+ */
+sap.ui.core.ElementMetadata = function(sClassName, oClassInfo) {
+
+	// call super constructor
+	sap.ui.base.ManagedObjectMetadata.apply(this, arguments);
+};
+
+//chain the prototypes
+sap.ui.core.ElementMetadata.prototype = jQuery.sap.newObject(sap.ui.base.ManagedObjectMetadata.prototype);
+
+/**
+ * Calculates a new id based on a prefix.
+ *
+ * @return {string} A (hopefully unique) control id
+ * @public
+ * @function
+ */
+sap.ui.core.ElementMetadata.uid = sap.ui.base.ManagedObjectMetadata.uid;
+
+/**
+ * By default, the element name is equal to the class name
+ * @return {string} the qualified name of the UIElement class
+ * @public
+ */
+sap.ui.core.ElementMetadata.prototype.getElementName = function() {
+	return this._sClassName;
+};
+
+/**
+ * Determines the class name of the renderer for the described control class.
+ */
+sap.ui.core.ElementMetadata.prototype.getRendererName = function() {
+	return this._sRendererName;
+};
+
+/**
+ * Retrieves the renderer for the described control class
+ */
+sap.ui.core.ElementMetadata.prototype.getRenderer = function() {
+
+	// determine name via function for those legacy controls that override getRendererName()
+	var sRendererName = this.getRendererName();
+
+	if ( !sRendererName ) {
+		return;
+	}
+
+	// check if renderer class exists already
+	var fnRendererClass = jQuery.sap.getObject(sRendererName);
+	if(fnRendererClass) {
+		return fnRendererClass;
+	}
+
+	// if not, try to load a module with the same name
+	jQuery.sap.require(sRendererName);
+	return jQuery.sap.getObject(sRendererName);
+};
+
+sap.ui.core.ElementMetadata.prototype.applySettings = function(oClassInfo) {
+
+	var oStaticInfo = oClassInfo.metadata;
+
+	// remove renderer stuff before calling super.
+	var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
+	delete oClassInfo.renderer;
+
+	sap.ui.base.ManagedObjectMetadata.prototype.applySettings.call(this, oClassInfo);
+
+	this._sRendererName = this.getName() + "Renderer";
+
+	if ( typeof vRenderer !== "undefined" ) {
+
+		if ( typeof vRenderer === "string" ) {
+			this._sRendererName = vRenderer || undefined;
+			return;
+		}
+		if ( typeof vRenderer === "function" ) {
+			vRenderer = { render : vRenderer };
+		}
+
+		var oParent = this.getParent();
+		var oBaseRenderer;
+		if ( oParent && oParent instanceof sap.ui.core.ElementMetadata ) {
+			oBaseRenderer = oParent.getRenderer();
+		}
+		if ( !oBaseRenderer ) {
+			jQuery.sap.require("sap.ui.core.Renderer");
+			oBaseRenderer = sap.ui.core.Renderer;
+		}
+		var oRenderer = jQuery.sap.newObject(oBaseRenderer);
+		jQuery.extend(oRenderer, vRenderer);
+		jQuery.sap.setObject(this.getRendererName(), oRenderer);
+	}
+};
+}; // end of sap.ui.core.ElementMetadata
+
+if ( !jQuery.sap.isDeclared('sap.ui.model.SimpleType') ) {
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+
+// Provides the base implementation for all model implementations
+jQuery.sap.declare("sap.ui.model.SimpleType");
 
 if ( !jQuery.sap.isDeclared('sap.ui.model.ParseException') ) {
 /*!
@@ -10119,35 +12646,47 @@ sap.ui.model.FormatException.prototype = jQuery.sap.newObject(sap.ui.base.Except
  * @extends sap.ui.model.Type
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor
  * @public
+ * @name sap.ui.model.SimpleType
  */
-sap.ui.model.SimpleType = function(oFormatOptions, oConstraints) {
-	sap.ui.model.Type.apply(this, arguments);
-	this.setFormatOptions(oFormatOptions || {});
-	this.setConstraints(oConstraints || {});
-	this.sName = "SimpleType";
-};
+sap.ui.model.Type.extend("sap.ui.model.SimpleType", /** @lends sap.ui.model.SimpleType */ {
 
-// chain the prototypes
-sap.ui.model.SimpleType.prototype = jQuery.sap.newObject(sap.ui.model.Type.prototype);
+	constructor : function(oFormatOptions, oConstraints) {
+		sap.ui.model.Type.apply(this, arguments);
+		this.setFormatOptions(oFormatOptions || {});
+		this.setConstraints(oConstraints || {});
+		this.sName = "SimpleType";
+	},
 
-/*
- * Describe the sap.ui.model.SimpleType.
- * Resulting metadata can be obtained via sap.ui.model.SimpleType.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.SimpleType", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Type",
-  publicMethods : [
-    // methods
-    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
-  ]
-
+  metadata : {
+  	"abstract" : true,
+  	publicMethods : [
+	    "setConstraints", "setFormatOptions", "formatValue", "parseValue", "validateValue"
+	  ]
+  }
+	
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.SimpleType with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.SimpleType.extend
+ * @function
+ */
+
 
 /**
  * Format the given value in model representation to an output value in the given
@@ -10247,16 +12786,16 @@ sap.ui.model.SimpleType.prototype.setFormatOptions = function(oFormatOptions) {
  *
  * @class Base Class for Elements.
  * @extends sap.ui.base.EventProvider
- * @author Martin Schaus, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @author SAP
+ * @version 1.9.1-SNAPSHOT
  * @public
  * @name sap.ui.core.Element
  */
-sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
+sap.ui.base.ManagedObject.extend("sap.ui.core.Element", {
 
 	metadata : {
 	  "abstract" : true,
-	  publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation", "prop" ],
+	  publicMethods : [ "getId", "getMetadata", "getTooltip_AsString", "getTooltip_Text", "getModel", "setModel", "hasModel", "bindProperty", "unbindProperty", "bindAggregation", "unbindAggregation", "prop", "getLayoutData", "setLayoutData" ],
 	  library : "sap.ui.core",
 	  properties : {
 		// TODO can't yet declare id as a property: would show up in ControlTree and applySettings would allow to modify id
@@ -10264,7 +12803,8 @@ sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
 	  },
 	  aggregations : {
 		tooltip : {name : "tooltip", type : "sap.ui.core.TooltipBase", altTypes : ["string"], multiple : false},
-		customData : {name : "customData", type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"}
+		customData : {name : "customData", type : "sap.ui.core.CustomData", multiple : true, singularName : "customData"},
+		layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"}
 	  },
 	  associations : {},
 	  events : {}
@@ -10272,64 +12812,7 @@ sap.ui.base.EventProvider.extend("sap.ui.core.Element", {
 
 	constructor : function(sId, mSettings) {
 
-		sap.ui.base.EventProvider.apply(this); // no use to pass our arguments
-		if (typeof(sId) != "string" && arguments.length>0) {
-			// shift arguments in case sId was missing, but mSettings was given
-			mSettings = sId;
-			if (mSettings && mSettings.id) {
-				sId = mSettings["id"];
-			} else {
-				sId = null;
-			}
-		}
-
-		if (!sId) {
-			sId = this.getMetadata().uid() || jQuery.sap.uid();
-		} else {
-			var preprocessor = sap.ui.core.Element._fnIdPreprocessor;
-			sId = (preprocessor ? preprocessor.call(this, sId) : sId);
-			var oType = sap.ui.base.DataType.getType("sap.ui.core.ID");
-			if (!oType.isValid(sId)) {
-				throw new Error("\"" + sId + "\" is not a valid ID.");
-			}
-		}
-		this.sId = sId;
-
-		// control interface
-		// create an empty property bag that uses a map of defaultValues as its prototype
-		this.mProperties = this.getMetadata().createPropertyBag();
-		this.mAggregations = {};
-		this.mAssociations = {};
-		this.mMethods = {};
-
-		// private properties
-		this.oParent = null;
-		this.bPrerendered = this.getDomRef() != null;
-		this.aDelegates = [];
-		this.aBeforeDelegates = [];
-		this.iSuppressInvalidate = 0;
-
-		// data binding
-		this.oModels = {};
-		this.mBindingInfos = {};
-		this.sBindingPath = null;
-		this.mBindingParametes = null;
-
-		// TODO: generic concept for init hooks?
-		if ( this._initCompositeSupport ) {
-			this._initCompositeSupport(mSettings);
-		}
-
-		// Call init method here instead of specific Controls constructor.
-		if (this.init) {
-			this.init();
-		}
-
-		// apply the settings
-		this.applySettings(mSettings);
-
-		// registers the element in the Core
-		this.register();
+		sap.ui.base.ManagedObject.apply(this, arguments);
 
 	},
 
@@ -10498,24 +12981,28 @@ sap.ui.core.Element.defineClass = function(sClassName, oStaticInfo, fnMetaImpl) 
  */
 sap.ui.core.Element.prototype._handleEvent = function (oEvent) {
 	var sHandlerName = "on" + oEvent.type;
-	this._callEventHandles(this.aBeforeDelegates, sHandlerName, oEvent);
+	this._callEventHandles(this.aBeforeDelegates, sHandlerName, oEvent, true);
 	this._callEventHandles([this], sHandlerName, oEvent);
-	this._callEventHandles(this.aDelegates, sHandlerName, oEvent);
+	this._callEventHandles(this.aDelegates, sHandlerName, oEvent, true);
 };
 
 /**
  * Calls event handler of the given event handles with the given browser event.
  * @private
  */
-sap.ui.core.Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent) {
+sap.ui.core.Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent, bDelegateHolder) {
 	if (aHandles.length > 0) {
 		for (var i = 0; i < aHandles.length; i++) {
 			if (oEvent.isImmediateHandlerPropagationStopped()) {
 				break;
 			}
-			var oHandle = aHandles[i];
+			var oHandle = bDelegateHolder ? aHandles[i].oDelegate : aHandles[i];
+			var oThis = (bDelegateHolder && aHandles[i].vThis) ? aHandles[i].vThis : oHandle;
+			if (oThis === true) { // special case, means the control should be the context
+				oThis = this;
+			}
 			if (oHandle[sHandlerName]) {
-				oHandle[sHandlerName](oEvent);
+				oHandle[sHandlerName].call(oThis, oEvent);
 			}
 		}
 	}
@@ -10613,157 +13100,6 @@ sap.ui.core.Element.create = function(vData, oKeyInfo) {
 	throw new Error(message);
 };
 
-/**
- * A global preprocessor for the ID of an Element (used internally).
- * If set, this function will be called before the ID is applied to any Element.
- * If the original ID was empty, the hook will not be called (to be discussed).
- *
- * The expected signature is <code>function(sId)</code>, and <code>this</code> will
- * be the current Element.
- *
- * @return new ID of the Element
- * @type function
- * @private
- */
-sap.ui.core.Element._fnIdPreprocessor = null;
-
-/**
- * A global preprocessor for the settings of an Element (used internally).
- * If set, this function will be called before the settings are applied to any Element.
- * If the original settings are empty, the hook will not be called (to be discussed).
- *
- * The expected signature is <code>function(mSettings)</code>, and <code>this</code> will
- * be the current Element.
- *
- * @type function
- * @private
- */
-sap.ui.core.Element._fnSettingsPreprocessor = null;
-
-sap.ui.core.Element.runWithPreprocessors = function(fn, oPreprocessors) {
-	jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-	jQuery.sap.assert(!oPreprocessors || typeof oPreprocessors === "object", "oPreprocessors must be an object");
-	
-	var oOldPreprocessors = { id : this._fnIdPreprocessor, settings : this._fnSettingsPreprocessor };
-	oPreprocessors = oPreprocessors || {};
-
-	this._fnIdPreprocessor = oPreprocessors.id; 
-	this._fnSettingsPreprocessor = oPreprocessors.settings;
-	
-	try {
-		var result = fn.call();
-		this._fnIdPreprocessor = oOldPreprocessors.id; 
-		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-		return result;
-	} catch (e) {
-		this._fnIdPreprocessor = oOldPreprocessors.id; 
-		this._fnSettingsPreprocessor = oOldPreprocessors.settings;
-		throw e;
-	}
-	
-};
-
-/**
- * Sets all the properties, aggregations, associations and event handlers as given in
- * the object literal <code>mSettings</code>. If a property, aggregation, etc.
- * is not listed in <code>mSettings</code>, then its value is not changed by this method.
- *
- * For properties and 0..1 aggregations/associations, any given setting overwrites
- * the current value. For 0..n aggregations, the given values are appended; event
- * listeners are registered in addition to existing ones.
- *
- * For the possible keys and values in <code>mSettings</code> see the general
- * documentation in {@link sap.ui.core.Element} or the specific documentation
- * of the constructor of the concrete UI element class.
- *
- * @param {object} mSettings the settings to apply to this element
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @public
- */
-sap.ui.core.Element.prototype.applySettings = function(mSettings) {
-
-	// PERFOPT: don't retrieve (expensive) JSONKeys if no settings are given
-	if ( !mSettings || jQuery.isEmptyObject(mSettings) ) {
-		return this;
-	}
-
-	var oMetadata = this.getMetadata(),
-		mValidKeys = oMetadata.getJSONKeys(),
-		makeControl = sap.ui.core.Element.create,
-		preprocessor = sap.ui.core.Element._fnSettingsPreprocessor,
-		sKey, oValue, oKeyInfo;
-
-	// call the preprocessor if it has been defined
-	preprocessor && preprocessor.call(this, mSettings); // TODO: decide whether to call for empty settings as well?
-
-	// process all settings
-	// process settings
-	for(sKey in mSettings) {
-		// get info object for the key
-		if ( oKeyInfo = mValidKeys[sKey] ) {
-			oValue = mSettings[sKey];
-			switch(oKeyInfo._iKind) {
-			case 0: // PROPERTY
-				if (this.isBinding(oValue, oKeyInfo)) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindProperty(sKey, oBindingInfo);
-				} else {
-					this[oKeyInfo._sMutator](oValue);
-				}
-				break;
-			case 1: // SINGLE_AGGREGATION
-				if ( oKeyInfo.altTypes && this.isBinding(oValue, oKeyInfo) ) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindProperty(sKey, oBindingInfo);
-				} else {
-					this[oKeyInfo._sMutator](makeControl(oValue, oKeyInfo));
-				}
-				break;
-			case 2: // MULTIPLE_AGGREGATION
-				if (this.isBinding(oValue, oKeyInfo)) {
-					var oBindingInfo = this.extractBindingInfo(oValue);
-					this.bindAggregation(sKey, oBindingInfo);
-				} else {
-					if ( oValue && !jQuery.isArray(oValue) ) {
-						oValue = [oValue];
-					}
-					if ( oValue ) {
-						for(var i=0,l=oValue.length; i<l; i++) {
-							this[oKeyInfo._sMutator](makeControl(oValue[i], oKeyInfo));
-						}
-					}
-				}
-				break;
-			case 3: // SINGLE_ASSOCIATION
-				this[oKeyInfo._sMutator](oValue);
-				break;
-			case 4: // MULTIPLE_ASSOCIATION
-				if ( oValue && !jQuery.isArray(oValue) ) {
-					oValue = [oValue];
-				}
-				if ( oValue ) {
-					for(var i=0,l=oValue.length; i<l; i++) {
-						this[oKeyInfo._sMutator](oValue[i]);
-					}
-				}
-				break;
-			case 5: // EVENT
-				if ( typeof oValue == "function" ) {
-					this[oKeyInfo._sMutator](oValue);
-				}
-				else {
-					this[oKeyInfo._sMutator](oValue[0], oValue[1], oValue[2]);
-				}
-					//this[oKeyInfo._sMutator].apply(this, oValue); // could be replacement for line before
-				break;
-			default:
-				break;
-			}
-		}
-	}
-
-	return this;
-};
 
 /**
  * Returns a simple string representation of this element.
@@ -10781,15 +13117,6 @@ sap.ui.core.Element.prototype.toString = function() {
 	}
 };
 
-/**
- * Returns the element's Id.
- *
- * @return {string} the element's Id.
- * @public
- */
-sap.ui.core.Element.prototype.getId = function() {
-	return this.sId;
-};
 
 /**
  * Returns the best suitable DOM node that represents this Element.
@@ -10854,784 +13181,6 @@ sap.ui.core.Element.prototype.prop = function(sPropertyName, oValue) {
 		}
 	}
 };
-
-/**
- * Sets a new value for the given property <code>sPropertyName</code> and marks
- * this UI element for redraw. If the given <code>oValue</code> equals the
- * current value, nothing happens.
- *
- * @param {string}  sPropertyName name of the property to set
- * @param {any}     oValue value to set the property to
- * @param {boolean} [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * TODO better name bSuppressInvalidate positive, e.g. "bStayValid"
- * @protected
- */
-sap.ui.core.Element.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
-
-	// check for a value change
-	var oOldValue = this.mProperties[sPropertyName];
-
-	// value validation
-	oValue = this.validateProperty(sPropertyName, oValue);
-
-	if (jQuery.sap.equal(oOldValue, oValue)) {
-		return this;
-	} // no change
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	// change the property (and invalidate if the rendering should be updated)
-	this.mProperties[sPropertyName] = oValue;
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// check whether property is bound and update model in case of two way binding
-	this.updateModelProperty(sPropertyName, oValue, oOldValue);
-
-	// prototype for generic property change events
-	// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
-	sap.ui.base.EventProvider.prototype.fireEvent.apply(this, ["_change", {
-		"id": this.getId(),
-		"name": sPropertyName,
-		"oldValue": oOldValue,
-		"newValue": oValue
-	}]);
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns the value for the property with the given <code>sPropertyName</code>
- *
- * @param {string} sPropertyName the name of the property
- * @type any
- * @return the value of the property
- * @protected
- */
-sap.ui.core.Element.prototype.getProperty = function(sPropertyName) {
-	var oValue = this.mProperties[sPropertyName],
-		oMetadata = this.getMetadata(),
-		oProperty = oMetadata.getAllProperties()[sPropertyName],
-		oType;
-
-	if (!oProperty) {
-		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
-	}
-
-	oType = sap.ui.base.DataType.getType(oProperty.type);
-
-	// If property has an array type, clone the array to avoid modification of original data
-	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
-		oValue = oValue.slice(0);
-	}
-	
-	// If proprerty is of type String instead of string, convert with valueOf()
-	if (oValue instanceof String) {
-		oValue = oValue.valueOf();
-	}
-	
-	return oValue;
-};
-
-/**
- * Checks whether the given value is of the proper type for the given property name. In case null or undefined is
- * passed, the default value for this property is returned.
- *
- * @param {string} sPropertyName the name of the property
- * @param {any} oValue the value
- * @return {any} the passed value or the property's default value if null or undefined was passed
- * @throws Error if no property with the given name is found or the given value does not fit to the property type
- * @protected
- */
-sap.ui.core.Element.prototype.validateProperty = function(sPropertyName, oValue) {
-	var oMetadata = this.getMetadata(),
-		oProperty = oMetadata.getAllProperties()[sPropertyName],
-		oType;
-
-	if (!oProperty) {
-		throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
-	}
-
-	oType = sap.ui.base.DataType.getType(oProperty.type);
-
-	// If property has an array type, clone the array to avoid modification of original data
-	if (oType instanceof sap.ui.base.DataType && oType.isArrayType() && jQuery.isArray(oValue)) {
-		oValue = oValue.slice(0);
-	}
-	
-	// In case null is passed as the value return the default value, either from the property or from the type
-	if (oValue === null || oValue === undefined) {
-		if (oProperty.defaultValue !== null) {
-			return oProperty.defaultValue;
-		} else {
-			return oType.getDefaultValue();
-		}
-	}
-
-	// Implicit casting for string only, other types are causing errors
-	if (oType instanceof sap.ui.base.DataType) {
-		if (oType.getName() == "string") {
-			if (!(typeof oValue == "string" || oValue instanceof String)) {
-				oValue = "" + oValue;
-			}
-		} else if (oType.getName() == "string[]") {
-			for (var i = 0; i < oValue.length; i++) {
-				if (!typeof oValue[i] == "string") {
-					oValue[i] = "" + oValue[i];
-				}
-			}
-		} else if (!oType.isValid(oValue)) {
-			throw new Error("\"" + oValue + "\" is of type " + typeof oValue + ", expected " +
-					oType.getName() + " for property \"" + sPropertyName + "\" of " + this);
-		}
-	} else if (!(oValue in oType)){ // Enumeration
-		throw new Error("\"" + oValue + "\" is not a valid entry of the enumeration for property \"" + sPropertyName + "\" of " + this);
-	}
-
-	return oValue;
-};
-
-/**
- * Checks whether the given value is of the proper type for the given aggregation name. 
- *
- * @param {string} sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element|any} oElement the aggregated element or a primitive value
- * @param {boolean} bMultiple whether the aggregation must have cardinality 0..n
- * @return {sap.ui.core.Element|any} the passed object
- * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
- * @protected
- */
-sap.ui.core.Element.prototype.validateAggregation = function(sAggregationName, oElement, bMultiple) {
-	var oMetadata = this.getMetadata(),
-		oAggregation = oMetadata.getAllAggregations()[sAggregationName],
-		aAltTypes,
-		oType,
-		i;
-
-	// undeclared aggregation 
-	if (!oAggregation) {
-		if(sAggregationName && oMetadata._mHiddenAggregations && oMetadata._mHiddenAggregations[sAggregationName]){
-			oAggregation = oMetadata._mHiddenAggregations[sAggregationName];
-		}else{
-			throw new Error("Aggregation \"" + sAggregationName + "\" does not exist in " + this);
-		}
-	}
-
-	// TODO should this be part of the validation (raise an error) or not?
-	jQuery.sap.assert(oAggregation.multiple === bMultiple, "Aggregation '" + sAggregationName + "' of " + this + " used with wrong cardinality (declared as " + (oAggregation.multiple ? "0..n" : "0..1") + ")");
-	
-	//Null is a valid value for 0..1 aggregations
-	if(!oAggregation.multiple && !oElement){
-		return oElement;
-	}
-	
-	oType = jQuery.sap.getObject(oAggregation.type);
-	// class types
-	if ( typeof oType === "function" && oElement instanceof oType ) {
-		return oElement;
-	}
-	// interfaces 
-	if ( oElement && oElement.getMetadata && oElement.getMetadata().isInstanceOf(oAggregation.type) ) {
-		return oElement;
-	}
-	// alternative types
-	aAltTypes = oAggregation.altTypes;
-	if ( aAltTypes && aAltTypes.length ) {
-		// for primitive types, null or undefined is valid as well 
-		if ( oElement == null ) {
-			return oElement;
-		}
-		for (i=0; i<aAltTypes.length; i++) {
-			oType = sap.ui.base.DataType.getType(aAltTypes[i]);
-			if (oType instanceof sap.ui.base.DataType) {
-				if (oType.isValid(oElement)) {
-					return oElement;
-				}
-			} else if (oElement in oType) { // Enumeration
-				return oElement;
-			}
-		}
-	}
-	throw new Error("\"" + oElement + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this);
-}
-
-/**
- * Returns the origin info on the property value of the given property name
- *
- * @param {string} sPropertyName the name of the property
- * @return {object} a map of properties describing the origin of this property value or null
- * @public
- */
-sap.ui.core.Element.prototype.getOriginInfo = function(sPropertyName) {
-	var oValue = this.mProperties[sPropertyName];
-	if (!(oValue instanceof String && oValue.originInfo)) {
-		return null;
-	}
-	return oValue.originInfo;
-};
-
-
-// ######################################################################################################
-// Associations
-// ######################################################################################################
-
-/**
- * Sets an association for the control
- *
- * @param {string}
- *            sAssociationName name of the association
- * @param {string | sap.ui.core.Element}
- *            sId the ID of the control that is set as an association, or the control itself or null
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
-	if (sId instanceof sap.ui.core.Element) {
-		sId = sId.getId();
-	} else if (sId != null && typeof sId !== "string") {
-		jQuery.sap.assert(false, "setAssociation(): sId must be a string, an instance of sap.ui.core.Element or null");
-		return this;
-	}
-
-	if (this.mAssociations[sAssociationName] === sId) {
-		return this;
-	} // no change
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	this.mAssociations[sAssociationName] = sId;
-
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns an association of the control with a given sAssociationName
- *
- * @param {string} sAssociationName the name of the association
- * @param {object}
- *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
- * @return {string | string[]} the ID of the associated control or an array of such IDs; may be null if the association has not been populated
- * @protected
- */
-sap.ui.core.Element.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
-	var result = this.mAssociations[sAssociationName];
-
-	if (!result) {
-		result = this.mAssociations[sAssociationName] = oDefaultForCreation || null;
-	} else {
-		if (typeof result.length === 'number' && !(result.propertyIsEnumerable('length')) ) {
-			// Return a copy of the array instead of the array itself as reference!!
-			return result.slice();
-		}
-		// simple type or Element
-		return result;
-	}
-
-	return result;
-};
-
-/**
- * Adds some entity with the ID <code>sId</code> to the association identified by <code>sAssociationName</code>.
- *
- * @param {string}
- *            sAssociationName the string identifying the association the element should be added to.
- * @param {string | sap.ui.core.Element}
- *            sId the ID of the element to add; if empty, nothing is added; if a <code>sap.ui.core.Element</code> is given, its ID is added
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the newly associated element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
-	if (sId instanceof sap.ui.core.Element) {
-		sId = sId.getId();
-	} else if (typeof sId !== "string") {
-	  // TODO what about empty string?
-    jQuery.sap.assert(false, "addAssociation(): sId must be a string or an instance of sap.ui.core.Element");
-		return this;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	var aIds = this.mAssociations[sAssociationName];
-	if (!aIds) {
-		aIds = this.mAssociations[sAssociationName] = [sId];
-	} else {
-		aIds.push(sId);
-	}
-
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Removes an Element from the association named <code>sAssociationName</code>.
- *
- * @param {string}
- *            sAssociationName the string identifying the association the Element should be removed from.
- * @param {int | string | sap.ui.core.Element}
- *            vElement the position or ID of the Element to remove or the Element itself; if <code>vElement</code> is invalid input,
- *            a negative value or a value greater or equal than the current size of the association, nothing is removed
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return the ID of the removed Element or null
- * @protected
- */
-sap.ui.core.Element.prototype.removeAssociation = function(sAssociationName, vElement, bSuppressInvalidate) {
-	var aIds = this.mAssociations[sAssociationName];
-	var sId = null;
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (typeof(vElement) == "object" && vElement.getId) { // element itself is given
-		vElement = vElement.getId();
-	}
-
-	if (typeof(vElement) == "string") { // ID of the element is given or has just been retrieved
-		for (var i = 0; i < aIds.length; i++) {
-			if (aIds[i] == vElement) {
-				vElement = i;
-				break;
-			}
-		}
-	}
-
-	if (typeof(vElement) == "number") { // "element" is the index now
-		if (vElement < 0 || vElement >= aIds.length) {
-			jQuery.sap.log.warning("Element.removeAssociation called with invalid index: " + sAssociationName + ", " + vElement);
-		} else {
-			sId = aIds[vElement];
-			aIds.splice(vElement, 1);
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return sId;
-};
-
-/**
- * Removes all the controls in the 0..n-association named <code>sAssociationName</code> (and returns them in an array).<br/>
- *
- * @param {string}
- *            sAssociationName the name of the association
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type Array
- * @return an array with the IDs of the removed elements (might be empty)
- * @protected
- */
-sap.ui.core.Element.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
-	var aIds = this.mAssociations[sAssociationName];
-	if (!aIds)	{
-		return [];
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAssociations[sAssociationName];
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return aIds;
-};
-
-// ######################################################################################################
-// End of Associations
-// ######################################################################################################
-
-
-// ######################################################################################################
-// Aggregations
-// ######################################################################################################
-/**
- * Sets an aggregation for the control
- *
- * @param {string}
- *            sAggregationName name of the aggregation
- * @param {object}
- *            oElement the control that is set as an aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.setAggregation = function(sAggregationName, oElement, bSuppressInvalidate) {
-	var oOldChild = this.mAggregations[sAggregationName];
-	if (oOldChild === oElement) {
-		return this;
-	} // no change
-	// starting with 1.6: oelement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ false); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (oOldChild instanceof sap.ui.core.Element) { // remove old child
-		oOldChild.setParent(null);
-	}
-	this.mAggregations[sAggregationName] = oElement;
-	if (oElement instanceof sap.ui.core.Element) { // adopt new child
-		oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-	} else {
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns an aggregation of the control with a given sAggregationName
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element | Array}
- *			  oDefaultForCreation the object that is used in case the current aggregation is empty
- * @type sap.ui.core.Element|Array
- * @return the aggregation array in case of 0..n-aggregations or the control or null in case of 0..1-aggregations
- * @protected
- */
-sap.ui.core.Element.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		aChildren = this.mAggregations[sAggregationName] = oDefaultForCreation || null;
-	}
-	if (aChildren) {
-		if (typeof aChildren.length === 'number' && !(aChildren.propertyIsEnumerable('length')) ) {
-			// Return a copy of the array instead of the array itself as reference!!
-			return aChildren.slice();
-		}
-		// simple type or Element
-		return aChildren;
-	} else {
-		return null;
-	}
-};
-
-/**
- * Checks for the provided control <code>oElement</code> in the aggregation
- * named <code>sAggregationName</code> and returns its index if found, or -1
- * otherwise. Returns -2 if the given named aggregation is not a multiple one
- * (and does not contain the given child).
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {sap.ui.core.Element}
- *            oElement the Control whose index is looked for.
- * @return {int} the index of the provided control in the aggregation.
- * @protected
- */
-sap.ui.core.Element.prototype.indexOfAggregation = function(sAggregationName, oElement) {
-	var aChildren = this.mAggregations[sAggregationName];
-	if (aChildren) {
-		if (aChildren.length == undefined) {
-			return -2;
-		} // not a multiple aggregation
-
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i] == oElement) {
-				return i;
-			}
-		}
-	}
-	return -1;
-};
-
-/**
- * Inserts control <code>oElement</code> to the aggregation named <code>sAggregationName</code> at
- * position <code>iIndex</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the control <code>oElement</code>
- *            should be inserted into.
- * @param {sap.ui.core.Element}
- *            oElement the element to add; if empty, nothing is inserted.
- * @param {int}
- *            iIndex the <code>0</code>-based index the control should be inserted at; for a negative
- *            value <code>iIndex</code>, <code>oElement</code> is inserted at position 0; for a value
- *            greater than the current size of the aggregation, <code>oElement</code> is inserted at
- *            the last position
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.insertAggregation = function(sAggregationName, oElement, iIndex, bSuppressInvalidate) {
-	if (!oElement) {
-		return this;
-	}
-	// starting with 1.6: oElement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ true); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	var aChildren = this.mAggregations[sAggregationName] || (this.mAggregations[sAggregationName] = []);
-	// force index into valid range 
-	var i = iIndex < 0 ? 0 : (iIndex > aChildren.length ? aChildren.length : iIndex);
-	if (i !== iIndex) {
-		jQuery.sap.log.warning("Element.insertAggregation: index '" + iIndex + "' out of range [0," + aChildren.length + "], forced to " + i);
-	}
-	aChildren.splice(i, 0, oElement);
-	oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-
-	return this;
-};
-
-/**
- * Adds some entity <code>oElement</code> to the aggregation identified by <code>sAggregationName</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the element <code>oElement</code> should be added to.
- * @param {sap.ui.core.Element}
- *            oElement the element to add; if empty, nothing is added
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element as well as the added child is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.addAggregation = function(sAggregationName, oElement, bSuppressInvalidate) {
-	if (!oElement) {
-		return this;
-	}
-	// starting with 1.6: oElement = this.validateAggregation(sAggregationName, oElement, /* multiple */ true)
-	jQuery.sap.assert.apply(jQuery.sap, (function(that) { 
-		try { 
-			that.validateAggregation(sAggregationName, oElement, /* multiple */ true); 
-			return [true]; 
-		} catch (e) { 
-			return [false, e.message]; 
-		}
-	}(this)));
-
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		aChildren = this.mAggregations[sAggregationName] = [oElement];
-	} else {
-		aChildren.push(oElement);
-	}
-	oElement.setParent(this, sAggregationName, bSuppressInvalidate);
-
-	return this;
-};
-
-/**
- * Removes an element from the aggregation named <code>sAggregationName</code>.
- *
- * @param {string}
- *            sAggregationName the string identifying the aggregation the Element should be removed from
- * @param {int | string | sap.ui.core.Element}
- *            vElement the position or ID of the Element to remove or the Element itself; if <code>vElement</code> is invalid,
- *            a negative value or a value greater or equal than the current size of the aggregation, nothing is removed
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type sap.ui.core.Element
- * @return the removed element or null
- * @protected
- */
-sap.ui.core.Element.prototype.removeAggregation = function(sAggregationName, vElement, bSuppressInvalidate) {
-	var aChildren = this.mAggregations[sAggregationName];
-	var oChildControl = null;
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (typeof(vElement) == "string") { // ID of the element is given
-		vElement = sap.ui.getCore().byId(vElement);
-	}
-
-	if (typeof(vElement) == "object") { // the element itself is given or has just been retrieved
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i] == vElement) {
-				vElement = i;
-				break;
-			}
-		}
-	}
-
-	if (typeof(vElement) == "number") { // "vElement" is the index now
-		if (vElement < 0 || vElement >= aChildren.length) {
-			jQuery.sap.log.warning("Element.removeAggregation called with invalid index: " + sAggregationName + ", " + vElement);
-
-		} else {
-			oChildControl = aChildren[vElement];
-			aChildren.splice(vElement, 1);
-			oChildControl.setParent(null);
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
-		}
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return oChildControl;
-};
-
-/**
- * Removes all the controls in the 0..n-aggregation named <code>sAggregationName</code> (and returns them in an array).<br/>
- * Additionally unregisters them from the hosting UIArea.
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @type Array
- * @return an array of the removed elements (might be empty)
- * @protected
- */
-sap.ui.core.Element.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren)	{
-		return [];
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAggregations[sAggregationName];
-	for (var i = 0; i < aChildren.length; i++) {
-		aChildren[i].setParent(null);
-	}
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return aChildren;
-};
-
-/**
- * Destroys (all) the control(s) in the aggregation named <code>sAggregationName</code> and afterwards empties the
- * aggregation.
- *
- * @param {string}
- *            sAggregationName the name of the aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
- * @protected
- */
-sap.ui.core.Element.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
-	var aChildren = this.mAggregations[sAggregationName];
-	if (!aChildren) {
-		return this;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	delete this.mAggregations[sAggregationName];
-	if (aChildren instanceof sap.ui.core.Element) {
-		aChildren.destroy(bSuppressInvalidate);
-	} else if (aChildren && jQuery.isArray(aChildren)) {
-		for (var i = 0; i < aChildren.length; i++) {
-			if (aChildren[i]) {
-				aChildren[i].destroy(bSuppressInvalidate);
-			}
-		}
-	}
-	if (!this.isInvalidateSuppressed()) {
-		this.invalidate();
-	}
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-// ######################################################################################################
-// End of Aggregations
-// ######################################################################################################
 
 
 /**
@@ -11715,17 +13264,6 @@ sap.ui.core.Element.prototype.destroyAggregation = function(sAggregationName, bS
 /// cyclic dependency
 //jQuery.sap.require("sap.ui.core.TooltipBase"); /// cyclic dependency
 
-/**
- * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
- * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
- * @protected
- */
-sap.ui.core.Element.prototype.invalidate = function() {
-	var oParent = this.getParent();
-	if (oParent) {
-		oParent.invalidate(this);
-	}
-};
 
 /**
  * This triggers immediate rerendering of its parent and thus of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
@@ -11733,160 +13271,11 @@ sap.ui.core.Element.prototype.invalidate = function() {
  * @protected
  */
 sap.ui.core.Element.prototype.rerender = function() {
-	var oParent = this.getParent();
-	if (oParent) {
-		oParent.rerender();
+	if (this.oParent) {
+		this.oParent.rerender();
 	}
 };
 
-/**
- * Returns whether rerendering is currently suppressed on this Element
- * @return boolean
- * @protected
- */
-sap.ui.core.Element.prototype.isInvalidateSuppressed = function() {
-	var oParent = this.getParent(),
-		bInvalidateSuppressed = this.iSuppressInvalidate > 0;
-	if (oParent && oParent instanceof sap.ui.core.Element) {
-		bInvalidateSuppressed = bInvalidateSuppressed || oParent.isInvalidateSuppressed();
-	}
-	return bInvalidateSuppressed;
-};
-
-
-/**
- * Removes the given child from this element's named aggregation.
- * @see sap.ui.core.UIArea#_removeChild
- * @see sap.ui.core.Element#setParent
- *
- * @param {sap.ui.core.Element}
- *            oChild the child element to be removed
- * @param {string}
- *            sAggregationName the name of this element's aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw
- * @protected
- */
-sap.ui.core.Element.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
-	if (!sAggregationName) {
-		// an aggregation name has to be specified!
-		jQuery.sap.log.error("Cannot remove aggregated child without aggregation name.", null, this);
-	} else {
-		// set suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate++;
-		}
-
-		var iIndex = this.indexOfAggregation(sAggregationName, oChild);
-		var oAggregationInfo = this.getMetadata().getJSONKeys()[sAggregationName];
-		// Note: we assume that this is the given child's parent, i.e. -1 not expected!
-		if (iIndex == -2) { // 0..1
-			if(oAggregationInfo && this[oAggregationInfo._sMutator]) { // TODO properly deal with hidden aggregations
-				this[oAggregationInfo._sMutator](null);
-			}
-			else {
-				this.setAggregation(sAggregationName, null, bSuppressInvalidate);
-			}
-		} else if(iIndex > -1 ) { // 0..n
-			if(oAggregationInfo && this[oAggregationInfo._sRemoveMutator]) { // TODO properly deal with hidden aggregations
-				this[oAggregationInfo._sRemoveMutator](iIndex);
-			}
-			else {
-				this.removeAggregation(sAggregationName, iIndex, bSuppressInvalidate);
-			}
-		} else {
-			// already removed!?
-			// this is the unexpected -1
-			// TODO: What would be better? Explicit removeCompositeChild callback on subclass?
-		}
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-
-		// reset suppress invalidate flag
-		if (bSuppressInvalidate) {
-			this.iSuppressInvalidate--;
-		}
-	}
-};
-
-/**
- * Defines this element's new parent. If no new parent is given, the parent is
- * just reset and we assume that the old parent has removed this child from its
- * aggregation. But if a new parent is given, this child is first removed from
- * its old parent.
- *
- * @param {sap.ui.core.Element}
- *            oParent the element that becomes this element's parent
- * @param {string}
- *            sAggregationName the name of the parent element's aggregation
- * @param {boolean}
- *            [bSuppressInvalidate] if true, the UI element is not marked for redraw. The old parent, however, is marked for redraw.
- * @return {sap.ui.core.Element}
- *            Returns <code>this</code> to allow method chaining
- * @private
- */
-sap.ui.core.Element.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
-	if ( !oParent ) {
-		this.oParent = null;
-		this.sParentAggregationName = null;
-		// Note: no need (and no way how) to invalidate
-		return;
-	}
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	var oOldParent = this.getParent();
-	if (oOldParent) { // remove this element from its old parent
-		// Note: bSuppressInvalidate  by intention is not propagated to the old parent.
-		// It is not sure whether the (direct or indirect) caller of setParent
-		// has enough knowledge about the old parent to automatically propagate this.
-		// If needed, callers can first remove the element from the oldParent (specifying a 
-		// suitable value for bSuppressInvalidate there) and only then call setParent.
-		oOldParent._removeChild(this, this.sParentAggregationName);  
-	}
-	// adopt new parent
-	this.oParent = oParent;
-	this.sParentAggregationName = sAggregationName;
-
-	// update bindings
-	if (this.hasModel()) {
-		this.updateBindingContext();
-		this.updateBindings(true);
-	}
-
-	// Only invalidate if the control already is in the HTML and has been initialized (i.e. has a parent)
-	/*if((!this.bPrerendered || this.bPrerendered && oOldParent)) {
-		if (!this.isInvalidateSuppressed()) {
-			this.invalidate();
-		}
-	}*/
-	
-	// only the parent knows where to render us, so we have to invalidate it
-	if ( oParent && !this.isInvalidateSuppressed() ) {
-		oParent.invalidate(this);
-	}
-	
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
-
-	return this;
-};
-
-/**
- * Returns the parent control or <code>null</code> if this element hasn't been added to a parent yet.
- *
- * @return {sap.ui.core.Element} The parent control or <code>null</code>
- * @public
- */
-sap.ui.core.Element.prototype.getParent = function() {
-	return this.oParent;
-};
 
 /**
  * Returns the UI area of this element, if any.
@@ -11895,8 +13284,7 @@ sap.ui.core.Element.prototype.getParent = function() {
  * @private
  */
 sap.ui.core.Element.prototype.getUIArea = function() {
-	var oParent = this.getParent();
-	return oParent ? oParent.getUIArea() : null;
+	return this.oParent ? this.oParent.getUIArea() : null;
 };
 
 /**
@@ -11911,57 +13299,13 @@ sap.ui.core.Element.prototype.getUIArea = function() {
  * @public
  */
 sap.ui.core.Element.prototype.destroy = function(bSuppressInvalidate) {
-	var that = this;
 
-	// jQuery.sap.log.debug("destroying " + this);
-
-	// set suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate++;
-	}
-
-	if (this.exit) {
-		this.exit();
-	}
-
-	// TODO: generic concept for exit hooks?
-	if ( this._exitCompositeSupport ) {
-		this._exitCompositeSupport();
-	}
-
-	// ensure that also our children are destroyed!!
-	for(var oAggr in this.mAggregations){
-		this.destroyAggregation(oAggr, bSuppressInvalidate);
-	}
-	this.deregister();
-
-	// remove this child from parent aggregation
-	if (this.getParent() && this.sParentAggregationName) {
-		this.getParent()._removeChild(this, this.sParentAggregationName, bSuppressInvalidate);
-	}
-
-	// Data Binding
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		if (oBindingInfo.factory) {
-			that.unbindAggregation(sName);
-		} else {
-			that.unbindProperty(sName);
-		}
-	});
-
-	// reset suppress invalidate flag
-	if (bSuppressInvalidate) {
-		this.iSuppressInvalidate--;
-	}
+	sap.ui.base.ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
 	// remove this control from DOM, e.g. if there is no parent (e.g. Dialog or already removed control) or this.sParentAggregationName is not properly set
 	this.$().remove();
-	
-	// finally make the element unusable
-	this.setParent = function(){
-		throw Error("The control with ID "+that.getId()+" was destroyed and cannot be used anymore.");
-	};
 };
+
 
 /**
  * Fires the given event and notifies all listeners. Listeners must not change
@@ -11980,19 +13324,39 @@ sap.ui.core.Element.prototype.fireEvent = function(sEventId, mParameters) {
 	return sap.ui.base.EventProvider.prototype.fireEvent.apply(this, arguments);
 };
 
+
 /**
  * Adds a delegate that listens to the events of this element.
+ * 
+ * Note that the default behavior (delegate attachments are not cloned when a control is cloned) is usually the desired behavior in control development 
+ * where each control instance typically creates a delegate and adds it to itself. (As opposed to application development where the application may add 
+ * one delegate to a template and then expects aggregation binding to add the same delegate to all cloned elements.)
  *
- * To avoid double registrations, all registrations of the given delegate are first
- * removed and then the delegate is added.
- * @param {sap.ui.base.EventProvider} oDelegate the delegate object
- * @param {boolean} [bCallBefore] if true, the delegator event listeners are called before the event listeners of the element
+ * To avoid double registrations, all registrations of the given delegate are first removed and then the delegate is added.
+ * 
+ * @param {object} oDelegate the delegate object
+ * @param {boolean} [bCallBefore] if true, the delegator event listeners are called before the event listeners of the element; default is "false". In order to also set bClone, this parameter must be given.
+ * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+ * @param {boolean} [bClone] if true, this delegate will also be attached to any clones of this element; default is "false"
  * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
  * @private
  */
-sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore) {
+sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore, oThis, bClone) {
 	this.removeDelegate(oDelegate);
-	(bCallBefore ? this.aBeforeDelegates : this.aDelegates).push(oDelegate);
+	
+	// shift parameters
+	if (typeof bCallBefore === "object") {
+		bClone = oThis;
+		oThis = bCallBefore;
+		bCallBefore = false;
+	}
+	
+	if (typeof oThis === "boolean") {
+		bClone = oThis;
+		oThis = undefined;
+	}
+
+	(bCallBefore ? this.aBeforeDelegates : this.aDelegates).push({oDelegate:oDelegate, bClone: !!bClone, vThis: ((oThis === this) ? true : oThis)}); // special case: if this element is the given context, set a flag, so this also works after cloning (it should be the cloned element then, not the given one)
 	return this;
 };
 
@@ -12000,22 +13364,59 @@ sap.ui.core.Element.prototype.addDelegate = function (oDelegate, bCallBefore) {
  * Removes the given delegate from this element.
  *
  * This method will remove all registrations of the given delegate, not only one.
- * @param {sap.ui.base.EventProvider} oDelegate the delegate object
+ * If the delegate was marked to be cloned and this element has been cloned, the delegate will not be removed from any clones.
+ * 
+ * @param {object} oDelegate the delegate object
  * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
  * @private
  */
 sap.ui.core.Element.prototype.removeDelegate = function (oDelegate) {
 	for (var i=0;i<this.aDelegates.length;i++) {
-		if (this.aDelegates[i]==oDelegate) {
+		if (this.aDelegates[i].oDelegate==oDelegate) {
 			this.aDelegates.splice(i,1);
 		}
 	}
 	for (var i=0;i<this.aBeforeDelegates.length;i++) {
-		if (this.aBeforeDelegates[i]==oDelegate) {
+		if (this.aBeforeDelegates[i].oDelegate==oDelegate) {
 			this.aBeforeDelegates.splice(i,1);
 		}
 	}
 	return this;
+};
+
+
+/**
+ * Adds a delegate that listens to the events that are fired on this element (as opposed to events which are fired BY this element).
+ * 
+ * When this element is cloned, the same delegate will be added to all clones. This behavior is well-suited for applications which want to add delegates
+ * that also work with templates in aggregation bindings. 
+ * For control development the internal "addDelegate" method which does not clone delegates by default may be more suitable, as typically each control instance takes care of its own delegates.
+ *
+ * To avoid double registrations, all registrations of the given delegate are first
+ * removed and then the delegate is added.
+ * 
+ * @param {object} oDelegate the delegate object
+ * @param {object} [oThis] if given, this object will be the "this" context in the listener methods; default is the delegate object itself
+ * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+ * @since 1.9.0
+ * @public
+ */
+sap.ui.core.Element.prototype.addEventDelegate = function (oDelegate, oThis) {
+	return this.addDelegate(oDelegate, false, oThis, true);
+};
+
+/**
+ * Removes the given delegate from this element.
+ *
+ * This method will remove all registrations of the given delegate, not only one.
+ * 
+ * @param {object} oDelegate the delegate object
+ * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
+ * @since 1.9.0
+ * @public
+ */
+sap.ui.core.Element.prototype.removeEventDelegate = function (oDelegate) {
+	return this.removeDelegate(oDelegate);
 };
 
 /**
@@ -12114,6 +13515,8 @@ sap.ui.core.Element.prototype.getTooltip = function() {
 	return this.getAggregation("tooltip");
 };
 
+sap.ui.core.Element.runWithPreprocessors = sap.ui.base.ManagedObject.runWithPreprocessors;
+
 /**
  * Returns the tooltip for this element but only if it is a simple string.
  * Otherwise an undefined value is returned.
@@ -12181,7 +13584,7 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 	/**
 	 * Contains the data modification logic
 	 */
-	var setData = function(element, key, value) {
+	var setData = function(element, key, value, writeToDom) {
 
 		// DELETE
 		if (value === null) { // delete this property
@@ -12203,8 +13606,9 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 			var dataObject = getDataObject(element, key);
 			if (dataObject) {
 				dataObject.setValue(value);
+				dataObject.setWriteToDom(writeToDom);
 			} else {
-				var dataObject = new sap.ui.core.CustomData({key:key,value:value});
+				var dataObject = new sap.ui.core.CustomData({key:key,value:value, writeToDom:writeToDom});
 				element.addAggregation("customData", dataObject, true);
 			}
 		}
@@ -12215,7 +13619,10 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 	 *
 	 * Usage:
 	 *    data("myKey", myData)
-	 * attaches myData (which can be any JS data type, e.g. a number, a string, an object, or a function) to this element, under the given key "myKey"
+	 * attaches myData (which can be any JS data type, e.g. a number, a string, an object, or a function) to this element, under the given key "myKey". If the key already exists,the value will be updated.
+	 *
+	 *    data("myKey", myData, writeToDom)
+	 * attaches myData to this element, under the given key "myKey" and (if writeToDom is true) writes key and value to the HTML. If the key already exists,the value will be updated. While oValue can be any JS data type to be attached, it must be a string to be also written to DOM. The key must also be a valid HTML attribute name (it must conform to sap.ui.core.ID and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
 	 *
 	 *    data("myKey")
 	 * retrieves whatever data has been attached to this Element (using the key "myKey") before
@@ -12270,891 +13677,100 @@ sap.ui.core.Element.prototype.getTooltip_Text = function() {
 			setData(this, arguments[0], arguments[1]);
 			return this;
 
+		} else if (argLength == 3) {            // set or remove one data element
+			setData(this, arguments[0], arguments[1], arguments[2]);
+			return this;
+
 		} else {
 			// error, illegal arguments
-			throw new Error("data() may only be called with 0-2 arguments (on UI Element with ID '" + this.getId() + "')");
+			throw new Error("data() may only be called with 0-3 arguments (on UI Element with ID '" + this.getId() + "')");
 		}
 	};
 
 })();
 
-
-// DataBinding
-/**
- * Determines whether a given object contains binding information instead of a
- * value or aggregated controls. The method is used in applySettings for processing
- * the JSON notation of properties/aggregations in the constructor.
- *
- * @param {object} oValue the value
- * @param {object} oKeyInfo the metadata of the property
- *
- * @returns {boolean} whether the value contains binding information
- *
- * @private
- */
-sap.ui.core.Element.prototype.isBinding = function(oValue, oKeyInfo) {
-	if (oValue && typeof oValue == "object" && oValue.path && oKeyInfo.type != "object") {
-		return true;
-	}
-	if (typeof oValue == "string" && jQuery.sap.startsWith(oValue, "{") && jQuery.sap.endsWith(oValue, "}")) {
-		return true;
-	}
-	return false;
-};
-
-/**
- * Extracts the binding info from the given value. There are two possible notations
- * for binding information in the JSON notation of the control constructor:
- * - property: "{path}"
- *   This is used for property binding and can only contain the path.
- * - property:{path:"path", template:oTemplate}
- *   This is used for aggregation binding, where a template is required or can
- *   be used for property binding when additional data is required (e.g. formatter).
- *
- * @param {object} oValue
- *
- * @returns {object} the binding info object, containing at least a path property
- *                   and, dependant of the binding type, additional properties
- *
- * @private
- */
-sap.ui.core.Element.prototype.extractBindingInfo = function(oValue) {
-	var oBindingInfo;
-	// property:{path:"path", template:oTemplate}
-	if (oValue && typeof oValue == "object") {
-		oBindingInfo = oValue;
-	}
-	// property:"{path}"
-	if (typeof oValue == "string") {
-		oBindingInfo = {};
-		oBindingInfo.path = oValue.substr(1, oValue.length - 2);
-	}
-	return oBindingInfo;
-};
-
-/**
- * Returns the binding infos for the given property or aggregation. The binding info contains information about path, binding object, format options,
- * sorter, filter etc. for the property or aggregation.
- *
- * @param {string} sName the name of the property or aggregation
- *
- * @returns {object} the binding info object, containing at least a path property
- *                   and, dependant of the binding type, additional properties
- *
- * @protected
- */
-sap.ui.core.Element.prototype.getBindingInfo = function(sName) {
-	return this.mBindingInfos[sName];
-};
-
-/**
- * Bind the element to the referenced entity in the model, which is used as the binding context
- * to resolve bound properties or aggregations of the element itself and all of its children
- * relatively to the given path.
- * If a relative binding path is used, this will be applied whenever the parent context changes.
- * @param {string} sPath the binding path
- * @param {object} [mParameters] map of additional parameters for this binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindElement = function(sPath, mParameters) {
-	this.sBindingPath = sPath;
-	this.mBindingParameters = mParameters;
-	this.updateBindingContext();
-	return this;
-};
-
-/**
- * Deprecated, please use bindElement instead.
- * @deprecated
- * @param {string} sPath the binding path
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindContext = function(sPath) {
-	this.bindElement(sPath);
-	return this;
-};
-
-/**
- * Removes the defined binding context of this element, all bindings will now resolve
- * relative to the parent context again.
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindContext = function() {
-	this.sBindingPath = null;
-	this.oBindingContext = null;
-	this.updateBindingContext();
-	return this;
-};
-
-
-/**
- * Bind a property to the model.
- * The Setter for the given property will be called with the value retrieved
- * from the data model.
- * This is a generic method which can be used to bind any property to the
- * model. A control may flag properties in the metamodel with
- * bindable="bindable" to get typed bind methods for a property.
- *
- * @param {string} sName the name of the property
- * @param {object} oBindingInfo the binding information
- * @param {string} oBindingInfo.path the binding path
- * @param {string} [oBindingInfo.model] the model identifier
- * @param {function} [oBindingInfo.formatter] the formatter function or sap.ui.model.Type
- * @param {sap.ui.model.Type} [oBindingInfo.type] the sap.ui.model.Type for this binding
- * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
- * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindProperty = function(sName, oBindingInfo) {
-	var sPath,
-		oFormat,
-		sMode,
-		sModelName,
-		iSeparatorPos,
-		fnFormatter,
-		oType,
-		iSeparatorPos;
-		
-	// old API compatbility (sName, sPath, oFormat, sMode)
-	if (typeof oBindingInfo == "string") {
-		sPath = arguments[1];
-		oFormat = arguments[2];
-		sMode = arguments[3];
-		// if a model separator is found in the path, extract model name and path
-		if (iSeparatorPos > 0) {
-			sModelName = sPath.substr(0, iSeparatorPos);
-			sPath = sPath.substr(iSeparatorPos + 1);
-		}
-		// find out whether formatter or type has been provided
-		if (typeof oFormat == "function") {
-			fnFormatter = oFormat;
-		}
-		else if (oFormat instanceof sap.ui.model.SimpleType) {
-			oType = oFormat;
-		}
-		oBindingInfo = {path: sPath, formatter: fnFormatter, type: oType, model: sModelName, mode: sMode};
-	}
-
-	// if a model separator is found in the path, extract model name and path
-	iSeparatorPos = oBindingInfo.path.indexOf(">");
-	if (iSeparatorPos > 0) {
-		oBindingInfo.model = oBindingInfo.path.substr(0, iSeparatorPos);
-		oBindingInfo.path = oBindingInfo.path.substr(iSeparatorPos + 1);
-	}
-	// if property is already bound, unbind it first
-	if (this.isBound(sName)){
-		this.unbindProperty(sName);
-	}
-	// store binding info to create the binding, as soon as the model is available, or when the model is changed
-	this.mBindingInfos[sName] = oBindingInfo;
-
-	// if the model is already available, create the binding
-	if (this.getModel(oBindingInfo.model)) {
-		this._bindProperty(sName, oBindingInfo);
-	}
-	return this;
-};
-
-sap.ui.core.Element.prototype._bindProperty = function(sName, oBindingInfo) {
-	var oModel = this.getModel(oBindingInfo.model),
-		oContext,
-		oBinding,
-		oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
-		fnFormatter = oBindingInfo.formatter,
-		oType = oBindingInfo.type,
-		sInternalType = oPropertyInfo.type,
-		that = this,
-		fModelChangeHandler = function() {
-			var oValue = oBinding.getValue();
-			if (fnFormatter) {
-				oValue = fnFormatter.apply(that, [oValue]);
-			}
-			if (oType) {
-				try {
-					oValue = oType.formatValue(oValue, sInternalType);
-					oBindingInfo.skipModelUpdate = true;
-					that[oPropertyInfo._sMutator](oValue);
-					oBindingInfo.skipModelUpdate = false;
-				}catch (oException) {
-					if (oException instanceof sap.ui.model.FormatException) {
-						sap.ui.getCore().fireFormatError({element : that, property : sName, type : oType, newValue : oValue, oldValue : that.getProperty(sName), exception: oException});
-					}else {
-						throw oException;
-					}
-				}
-			}else {
-				oBindingInfo.skipModelUpdate = true;
-				that[oPropertyInfo._sMutator](oValue);
-				oBindingInfo.skipModelUpdate = false;
-			}
-		};
-
-	// Only use context for bindings on the primary model
-	oContext = oBindingInfo.model ? null : this.getBindingContext();
-
-	// Create binding object
-	oBinding = oModel.bindProperty(oBindingInfo.path, oContext, oBindingInfo.parameters);
-
-	// Set additional information on the binding info
-	oBindingInfo.skipModelUpdate = false;
-	oBindingInfo.binding = oBinding;
-	oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
-	if (!oBindingInfo.mode || !oModel.isBindingModeSupported(oBindingInfo.mode)) {
-		oBindingInfo.mode = oModel.getDefaultBindingMode();
-	}
-
-	// Attach to the change event of the binding and initialize value
-	if (oBindingInfo.mode != sap.ui.model.BindingMode.OneTime) {
-		oBinding.attachChange(fModelChangeHandler);
-	}
-	fModelChangeHandler();
-};
-
-/**
- * Unbind the property from the model
- *
- * @param {String} sName the name of the property
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindProperty = function(sName){
-	var oBindingInfo = this.mBindingInfos[sName];
-	if(oBindingInfo) {
-		if (oBindingInfo.binding) {
-			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-		}
-		delete this.mBindingInfos[sName];
-	}
-	return this;
-};
-
-/**
- * Update the property in the model if two way data binding mode is enabled
- *
- * @param sName the name of the property to update
- * @param oValue the new value to set for the property in the model
- * @private
- */
-sap.ui.core.Element.prototype.updateModelProperty = function(sName, oValue, oOldValue){
-	if (this.isBound(sName)){
-		var oBindingInfo = this.mBindingInfos[sName],
-			oBinding = oBindingInfo.binding,
-			oPropertyInfo = this.getMetadata().getJSONKeys()[sName], // TODO fix handling of hidden entitites?
-			oType = oBindingInfo.type,
-			sInternalType = oPropertyInfo.type;
-		if (oBindingInfo.mode == sap.ui.model.BindingMode.TwoWay
-				&& oBinding
-				&& !oBindingInfo.skipModelUpdate
-				&& !oBindingInfo.formatter) {
-			if (oType) {
-				try {
-					oValue = oType.parseValue(oValue, sInternalType);
-					oType.validateValue(oValue);
-					oBindingInfo.binding.setValue(oValue);
-					sap.ui.getCore().fireValidationSuccess({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue});
-				}
-				catch (oException) {
-					if (oException instanceof sap.ui.model.ParseException) {
-						sap.ui.getCore().fireParseError({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue, exception: oException});
-					}else if (oException instanceof sap.ui.model.ValidateException) {
-						sap.ui.getCore().fireValidationError({element : this, property : sName, type : oType, newValue : oValue, oldValue : oOldValue, exception: oException});
-					}
-					else {
-						throw oException;
-					}
-				}
-			}else {
-				oBindingInfo.binding.setValue(oValue);
-			}
-		}
-	}
-};
-
-/**
- * Bind an aggregation to the model.
- * The bound aggregation will use the given template, clone it for each element
- * which exists in the bound list and set the appropriate binding context.
- * This is a generic method which can be used to bind any aggregation to the
- * model. A control may flag aggregations in the metamodel with
- * bindable="bindable" to get typed bind methods for an aggregation.
- *
- * @param {string} sName the aggregation to bind
- * @param {object} oBindingInfo the binding info
- * @param {string} oBindingInfo.path the binding path
- * @param {sap.ui.core.Element} oBindingInfo.template the template
- * @param {function} oBindingInfo.factory the factory function
- * @param {sap.ui.model.Sorter} [oBindingInfo.oSorter] the initial sort order (optional)
- * @param {array} [oBindingInfo.filters] the predefined filters (sap.ui.model.Filter) for this aggregation (optional)
- * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.bindAggregation = function(sName, oBindingInfo) {
-	var sPath,
-		oTemplate,
-		oSorter,
-		aFilters;
-	
-	// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-	if (typeof oBindingInfo == "string") {
-		sPath = arguments[1];
-		oTemplate = arguments[2];
-		oSorter = arguments[3];
-		aFilters = arguments[4];
-		oBindingInfo = {path: sPath, sorter: oSorter, filters: aFilters};
-		// allow either to pass the template or the factory function as 3rd parameter
-		if (oTemplate instanceof sap.ui.core.Element) {
-			oBindingInfo.template = oTemplate;
-		} else if (typeof oTemplate === "function") {
-			oBindingInfo.factory = oTemplate;
-		}
-	}
-	
-	// if aggregation is already bound, unbind it first
-	if (this.isBound(sName)){
-		this.unbindAggregation(sName);
-	}
-	
-	// check whether a template has been provided, which is required for proper processing of the binding
-	if (!(oBindingInfo.template || oBindingInfo.factory)) {
-		throw new Error("Missing template or factory function for aggregation " + sName + " of control id " + this.getId() + " !");
-	}
-	
-	// if we have a template we will create a factory function
-	if (oBindingInfo.template) {
-		oBindingInfo.factory = function(sId) {
-			return oBindingInfo.template.clone(sId);
-		} 
-	}
-	
-	// store binding info to create the binding, as soon as the model is available, or when the model is changed
-	this.mBindingInfos[sName] = oBindingInfo;
-
-	// if the model is already available create the binding
-	if (this.getModel()) {
-		this._bindAggregation(sName, oBindingInfo);
-	}
-	return this;
-};
-
-sap.ui.core.Element.prototype._bindAggregation = function(sName, oBindingInfo) {
-	var that = this,
-		oBinding,
-		fModelChangeHandler = function(oEvent){
-			var sUpdater = "update" + sName.substr(0,1).toUpperCase() + sName.substr(1);
-			if (that[sUpdater]) {
-				that[sUpdater]();
-			} else {
-				that.updateAggregation(sName);
-			}
-		};
-		if (this.isTreeBinding(sName)) {
-			oBinding = this.getModel().bindTree(oBindingInfo.path, this.getBindingContext(), oBindingInfo.filters, oBindingInfo.parameters);		
-		} else {
-			oBinding = this.getModel().bindList(oBindingInfo.path, this.getBindingContext(), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
-		}
-		
-	oBindingInfo.binding = oBinding;
-	oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
-	oBinding.attachChange(fModelChangeHandler);
-	fModelChangeHandler();
-};
-
-/**
- * Unbind the aggregation from the model
- *
- * @param {String} sName the name of the aggregation
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.unbindAggregation = function(sName){
-	var oBindingInfo = this.mBindingInfos[sName];
-	if(oBindingInfo) {
-		if (oBindingInfo.binding) {
-			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-		}
-		delete this.mBindingInfos[sName];
-	}
-	return this;
-};
-
-/**
- *  This method is used internally and should only be overridden by a tree control which utilizes the tree binding.
- *  In this case and if the aggregation is a tree node the overridden method should then return true.
- *  If true is returned the tree binding will be used instead of the list binding.
- *
- *  @param {string} sName the aggregation to bind (e.g. nodes for a tree control)
- *  @return {boolean} whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
- *
- *  @protected
- */
-sap.ui.core.Element.prototype.isTreeBinding = function(sName) {
-	return false;
-};
-
-/**
- * Create bindings in case the model was not available at the time
- * bindProperty or bindAggregation was called
- *
- * @private
- */
-sap.ui.core.Element.prototype.updateBindings = function(bUpdateAll, sModelName, bRecreate) {
-	var that = this;
-
-	// create property and aggregation bindings if they don't exist yet
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		if (that.getModel(oBindingInfo.model) && (bUpdateAll || (oBindingInfo.model == sModelName && (!oBindingInfo.binding || oBindingInfo.binding.getModel() !== that.getModel(sModelName))))) {
-			if ( bRecreate && oBindingInfo.binding ) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
-				delete oBindingInfo.binding;
-			}
-			if (!oBindingInfo.binding) {
-				if (oBindingInfo.factory) {
-					that._bindAggregation(sName, oBindingInfo);
-				} else {
-					that._bindProperty(sName, oBindingInfo);
-				}
-			}
-		}
-	});
-	// also update bindings in all child elements
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oAggregation instanceof sap.ui.core.Element) {
-			oAggregation.updateBindings(bUpdateAll, sModelName, bRecreate);
-		} else if (oAggregation instanceof Array) {
-			for (var i = 0; i < oAggregation.length; i++) {
-				oAggregation[i].updateBindings(bUpdateAll, sModelName, bRecreate);
-			}
-		}
-	});
-
-};
-
-/**
- * Generic method which is called, whenever an aggregation binding is changed.
- * This method deletes all elements in this aggregation and recreates them
- * according to the data model.
- * In case a control needs special handling for a aggregation binding, it can create
- * a typed update-method (e.g. "updateRows") which will be used instead of the
- * default behaviour.
- *
- * @private
- */
-sap.ui.core.Element.prototype.updateAggregation = function(sName) {
-	var oBindingInfo = this.mBindingInfos[sName],
-		oBinding = oBindingInfo.binding,
-		fnFactory = oBindingInfo.factory,
-		oAggregationInfo = this.getMetadata().getJSONKeys()[sName],  // TODO fix handling of hidden aggregations
-		oClone,
-		that = this;
-	this[oAggregationInfo._sDestructor]();
-	if (this.isTreeBinding(sName)) {
-		var iNodeIndex = 0,
-			update = function(aContexts, fnFactory, oBinding, oParent){
-			jQuery.each(aContexts, function(iIndex, oContext) {
-				var sId = that.getId() + "-" + iNodeIndex++;
-				oClone = fnFactory(sId, oContext);
-				oClone.setBindingContext(oContext);
-				oParent[oAggregationInfo._sMutator](oClone); // also sets the Parent
-				update(oBinding.getNodeContexts(oContext), fnFactory, oBinding, oClone);
-			});
-		};
-		update(oBinding.getRootContexts(), fnFactory, oBinding, this);
-	} 
-	else {
-		jQuery.each(oBinding.getContexts(), function(iIndex, oContext) {
-			var sId = that.getId() + "-" + iIndex;
-			oClone = fnFactory(sId, oContext);
-			oClone.setBindingContext(oContext);
-			that[oAggregationInfo._sMutator](oClone);
-		});
-	}
-};
-
-/**
- * Find out whether a property or aggregation is bound
- *
- * @param {String} sName the name of the property or aggregation
- * @return {boolean} whether a binding exists for the given name
- * @public
- */
-sap.ui.core.Element.prototype.isBound = function(sName){
-	return (sName in this.mBindingInfos);
-};
-
-/**
- * Get the binding object for a specific aggregation/property
- *
- * @param {String} sName the name of the property or aggregation
- * @return {Binding} the binding for the given name
- * @public
- */
-sap.ui.core.Element.prototype.getBinding = function(sName){
-	return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
-};
-
-/**
- * Get the binding path for a specific aggregation/property
- *
- * @param {String} sName the name of the property or aggregation
- * @return {String} the binding path for the given name
- * @protected
- */
-sap.ui.core.Element.prototype.getBindingPath = function(sName){
-	return this.mBindingInfos[sName] && this.mBindingInfos[sName].path;
-};
-
-/**
- * Set the binding context for this element.
- *
- * @param {Object} oContext the new binding context for this element
- *
- * @return {sap.ui.core.Element} reference to the instance itself
- * @public
- */
-sap.ui.core.Element.prototype.setBindingContext = function(oContext){
-	this.oBindingContext = oContext;
-	this.updateBindingContext();
-	return this;
-};
-
-/**
- * Update the binding context in this element and all children
- * @private
- */
-sap.ui.core.Element.prototype.updateBindingContext = function(bSkipLocal){
-
-	var oModel = this.getModel(),
-		oParent = this.getParent(),
-		oParentContext,
-		that = this;
-
-	if (this.sBindingPath && !bSkipLocal) {
-		if (oParent && oModel == oParent.getModel()) {
-			oParentContext= oParent.getBindingContext(); 
-		}
-		if (oModel) {
-			oModel.createBindingContext(this.sBindingPath, oParentContext, this.mBindingParameters, function(oContext) {
-				that.oBindingContext = oContext;
-				that.updateBindingContext(true);
-			});
-		} else {
-			this.oBindingContext = undefined;
-		}
-		return;
-	}
-
-	var oContext = this.getBindingContext();
-
-	// update context in existing bindings, but only for the primary model
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		var oBinding = oBindingInfo.binding;
-		if (oBinding && oBinding.getModel() == oModel) {
-			oBinding.setContext(oContext);
-		}
-	});
-
-	// also update context in all child elements
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oAggregation instanceof sap.ui.core.Element) {
-			oAggregation.updateBindingContext();
-		} else if (oAggregation instanceof Array) {
-			for (var i = 0; i < oAggregation.length; i++) {
-				oAggregation[i].updateBindingContext();
-			}
-		}
-	});
-
-};
-
-
-/**
- * Get the binding context of this element
- * If the element does not have a binding context set on itself and has no own Model set, it will ask
- * the parent element for its binding context
- *
- * @return {Object} the binding context of this element
- * @public
- */
-sap.ui.core.Element.prototype.getBindingContext = function(){
-	var oModel = this.getModel();
-	
-	if (this.oBindingContext) {
-		return this.oBindingContext;
-	} else if (oModel && this.getParent() && oModel != this.getParent().getModel()) {
-		return undefined;
-	} else { 
-		return this.getParent() && this.getParent().getBindingContext();
-	}
-};
-
-/**
- * Set the model for databinding
- * @param {sap.ui.model.Model} oModel
- * @param {string} [sName]
- * @return {sap.ui.core.Element} <code>this</code> to allow method chaining
- * @public
- */
-sap.ui.core.Element.prototype.setModel = function(oModel, sName) {
-	if ( oModel !== this.oModels[sName] ) {
-		this.oModels[sName] = oModel;
-		// update binding context, for primary model only
-		if (!sName){this.updateBindingContext();}
-		// if the model changes, all bindings have to be recreated (at least those to the previous model)
-		this.updateBindings(false, sName, true);
-	}
-	return this;
-};
-
-/**
- * Get the model for databinding
- * If the element does not have a model set on itself, it will ask
- * the parent element for the model to use
- * @param {string} [sName]
- * @return {sap.ui.model.Model} oModel
- * @public
- */
-sap.ui.core.Element.prototype.getModel = function(sName) {
-	return this.oModels[sName] || (this.getParent() && this.getParent().getModel(sName));
-};
-
-/**
- * Check if a Model is set to the Element or to one of its Parents (including UIArea and Core)
- * @return {boolean} true or false
- * @public
- */
-sap.ui.core.Element.prototype.hasModel = function() {
-	if (!jQuery.isEmptyObject(this.oModels) || (this.getParent() && this.getParent().hasModel())) {
-		return true;
-	} else {
-		return false;
-	}
-};
-
-/**
- * Clones a tree of elements starting with the element on which clone is called first (root element).
- * 
- * The ids within the newly created clone tree are derived from the original ids by appending
- * the given <code>sIdSuffix</code> (if no suffix is given, one will be created; it will be 
- * unique across multiple clone calls).
- *  
- * For each cloned element the following settings are cloned based on the metadata of the element:
- * <ul>
- * <li>all properties; the values are used by reference, they are not cloned
- * <li>all aggregated controls; they are all cloned recursively using the same <code>sIdSuffix</code>
- * <li>all associated controls; when an association points to a control inside the cloned element tree,
- *     then the cloned association will be modified to that it points to the clone of the target element.
- *     When the association points to a control outside of the cloned element tree, then its 
- *     target won't be changed.</li>  
- * <li>all models set via setModel(); used by reference </li>
- * <li>all property and aggregation bindings; the pure binding infos (path, model name) are 
- *     cloned, but all other information like template control or factory function, 
- *     data type or formatter function are copied by reference. The bindings themselves 
- *     are created anew as they are specific for the combination (element, property, model).
- *     As a result, any later changes to a binding of the original element are not reflected 
- *     in the clone, but changes to e.g the type or template etc. are.</li> 
- * </ul>
- *
- * Each clone is created by first collecting the above mentioned settings and then creating 
- * a new instance with the normal constructor function. As a result, any side effects of 
- * mutator methods (setProperty etc.) or init hooks are repeated during clone creation. 
- * There is no need to override <code>clone()</code> just to reproduce these internal settings!
- * 
- * Custom controls however can override <code>clone()</code> to implement additional clone steps. 
- * They usually will first call <code>clone()</code> on the super class and then modify the   
- * returned clone accordingly.  
- * 
- * Applications <b>must never provide</b> the second parameter <code>aLocaleIds</code>. 
- * It is determined automatically for the root element (and its non-existance also serves as 
- * an indicator for the root element). Specifying it will break the implementation of <code>clone()</code>. 
- * 
- * @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
- * @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
- * @return {sap.ui.core.Element} reference to the newly created clone
- * @protected
- */
+/** Clone delegates
+* @param {String} [sIdSuffix] a suffix to be appended to the cloned element id
+* @param {Array} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
+* @return {sap.ui.base.ManagedObject} reference to the newly created clone
+* @protected
+*/
 sap.ui.core.Element.prototype.clone = function(sIdSuffix, aLocalIds){
-	// if no id suffix has been provided use a generated UID
-	if (!sIdSuffix) {
-		sIdSuffix = sap.ui.core.ElementMetadata.uid("clone") || jQuery.sap.uid();
-	}
-	// if no local ID array has been passed, collect IDs of all contained elements to
-	// be able to properly adapt associations, which are within the cloned element hierarchy
-	if (!aLocalIds) {
-		aLocalIds = jQuery.map(this.findElements(true), function(oElement) {return oElement.getId();});
-	}
 
-	var oMetadata = this.getMetadata(),
-		oClass = oMetadata._oClass,
-		sId = this.getId() + "-" + sIdSuffix,
-		mSettings = {},
-		mProps = this.mProperties,
-		sKey,
-		oClone;
-
-	// Clone properties (only those with non-default value)
-	for(sKey in mProps) {
-		if ( mProps.hasOwnProperty(sKey) ) {
-			mSettings[sKey] = mProps[sKey];
+	var oClone = sap.ui.base.ManagedObject.prototype.clone.apply(this, arguments);
+	// Clone delegates
+	for ( var i = 0; i < this.aDelegates.length; i++) {
+		if (this.aDelegates[i].bClone) {
+			oClone.aDelegates.push(this.aDelegates[i]);
 		}
 	}
-	
-	// Clone aggregations
-	jQuery.each(this.mAggregations, function(sName, oAggregation) {
-		if (oMetadata.hasAggregation(sName)) {
-			if (oAggregation instanceof sap.ui.core.Element) {
-				mSettings[sName] = oAggregation.clone(sIdSuffix, aLocalIds);
-			} else if (jQuery.isArray(oAggregation)) {
-				mSettings[sName] = [];
-				for (var i = 0; i < oAggregation.length; i++) {
-					mSettings[sName].push(oAggregation[i].clone(sIdSuffix, aLocalIds));
-				}
-			} else {
-				// must be an alt type
-				mSettings[sName] = oAggregation;
-			}
+	for ( var i = 0; i < this.aBeforeDelegates.length; i++) {
+		if (this.aBeforeDelegates[i].bClone) {
+			oClone.aBeforeDelegates.push(this.aBeforeDelegates[i]);
 		}
-	});
-
-	// Clone associations
-	jQuery.each(this.mAssociations, function(sName, oAssociation) {
-		// Check every associated ID against the ID array, to make sure associations within
-		// the template are properly converted to associations within the clone
-		if (jQuery.isArray(oAssociation)) {
-			oAssociation = oAssociation.slice(0);
-			for (var i = 0; i < oAssociation.length; i++) {
-				if (jQuery.inArray(oAssociation[i], aLocalIds) >= 0) {
-					oAssociation[i] += "-" + sIdSuffix;
-				}
-			}
-		} else if (jQuery.inArray(oAssociation, aLocalIds) >= 0) {
-			oAssociation += "-" + sIdSuffix;
-		}
-		mSettings[sName] = oAssociation;
-	});
-
-	// Create clone instance
-	oClone = new oClass(sId, mSettings);
-
-	// Clone events
-	jQuery.each(this.mEventRegistry, function(sName, aListeners) {
-		oClone.mEventRegistry[sName] = aListeners.slice();
-	});
-
-	// Clone models
-	jQuery.each(this.oModels, function(sName, oModel) {
-		oClone.setModel(oModel, sName);
-	});
-
-	// Clone bindings
-	jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-		var oCloneBindingInfo = jQuery.extend({}, oBindingInfo);
-		delete oCloneBindingInfo.binding; // remove the runtime binding info (otherwise the property will not be connected again!)
-		if (oBindingInfo.factory) {
-			oClone.bindAggregation(sName, oCloneBindingInfo);
-		} else {
-			oClone.bindProperty(sName, oCloneBindingInfo);
-		}
-	});
+	}
 
 	return oClone;
 };
 
 /**
- * Maps the given aggregation with name <code>sOldAggrName</code>
- * on aggregation <code>sNewAggrName</code> (When calling an accessor function
- * of the old aggregation the call is forwarded to the corresponding accessor
- * function of the new aggregation).
- *
- * This function should help to perform a smooth transition for users of a control
- * when an aggregation must be renamed.
- *
- * Both aggregations must have a mutiple cardinality (0..n) and must have the same
- * aggregated type!
- *
- * @param {object}
- *			oPrototype Control/Element prototype for which a mapping should be defined
- * @param {string}
- *			sOldAggrName Name of the old deprecated aggregation
- * @param {string}
- *			sNewAggrName Name of the new aggregation
- * @deprecated
- */
-sap.ui.core.Element._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
-	var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
-	var oOldAggrInfo = mKeys[sOldAggrName];
-	var oNewAggrInfo = mKeys[sNewAggrName];
-
-	//Check whether aggregations exist and are multiple.
-	if(!oOldAggrInfo || !oNewAggrInfo || oOldAggrInfo._iKind != 2 || oNewAggrInfo._iKind != 2) {
-		return;
-	}
-
-	var mFunc = {"insert" : true, "add" : true, "remove" : true, "removeAll" : false, "indexOf" : true, "destroy" : false, "get" : false};
-
-	function method(sPrefix, sName) {
-		return sPrefix + sName.substring(0,1).toUpperCase() + sName.substring(1);
-	}
-
-	function fAggrDelegator(sFuncName){
-		return function() {
-			return this[sFuncName].apply(this, arguments);
-		};
-	}
-
-	for(var sPrefix in mFunc){
-		var sOldFuncName = method(sPrefix, mFunc[sPrefix] ? oOldAggrInfo.singularName : oOldAggrInfo._sName);
-		var sNewFuncName = method(sPrefix, mFunc[sPrefix] ? oNewAggrInfo.singularName : oNewAggrInfo._sName);
-		oPrototype[sOldFuncName] = fAggrDelegator(sNewFuncName);
-	}
+* Searches and returns an array of child elements and controls which are
+* referenced within an aggregation or aggregations of child elements/controls.
+* This can be either done recursive or not.
+* <br>
+* <b>Take care: this operation might be expensive.</b>
+* @param {boolean}
+*          bRecursive true, if all nested children should be returned.
+* @return {sap.ui.core.Element[]} array of child elements and controls
+* @public
+*/
+sap.ui.core.Element.prototype.findElements = function(bRecursive) {
+	var aControls = sap.ui.base.ManagedObject.prototype.findAggregatedObjects.call(this, bRecursive);
+	return aControls;
 };
 
 /**
- * Searches and returns an array of child elements and controls which are
- * referenced within an aggregation or aggregations of child elements/controls.
- * This can be either done recursive or not.
- * <br>
- * <b>Take care: this operation might be expensive.</b>
- * @param {boolean}
- *          bRecursive true, if all nested children should be returned.
- * @return {sap.ui.core.Element[]} array of child elements and controls
+ * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints 
+ * for this control when it is used inside a layout.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.setLayoutData
  * @public
  */
-sap.ui.core.Element.prototype.findElements = function(bRecursive) {
-
-	var aControls = [];
-	function fFindElements(oControl) {
-		for (var n in oControl.mAggregations) {
-			var a = oControl.mAggregations[n];
-			if (jQuery.isArray(a)) {
-				for (var i = 0; i < a.length; i++) {
-					aControls.push(a[i]);
-					if (bRecursive) {
-						fFindElements(a[i]);
-					}
-				}
-			} else if (a instanceof sap.ui.core.Element) {
-				aControls.push(a);
-				if (bRecursive) {
-					fFindElements(a);
-				}
-			}
-		}
+sap.ui.core.Element.prototype.setLayoutData = function(oLayoutData) {
+	this.setAggregation("layoutData", oLayoutData, true); // No invalidate because layout data changes does not affect the control / element itself
+	var oLayout = this.getParent();
+	if(oLayout){
+		var oEvent = jQuery.Event("LayoutDataChange");
+		oEvent.srcControl = this;
+		oLayout._handleEvent(oEvent);
 	}
-	fFindElements(this);
-	return aControls;
-
+	return this;
 };
+
+/**
+ * Returns the {@link sap.ui.core.LayoutData} defining the layout constraints 
+ * for this control when it is used inside a layout.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.getLayoutData
+ * @public
+ */
+
+/**
+ * Allows the parent of a control to enhance the aria information while rendering
+ *
+ * This function is called in RenderManager writeAccessibilityState for the parent
+ * of the control if the function is implemented by the parent.
+ *
+ * @function
+ * @name sap.ui.core.Element.prototype.enhanceAccessibilityState
+ * @param {element} oElement the control/element for taht aria properties are rendered
+ * @param {array} mAriaProps array of aria properties
+ * @return {array} array of aria properties
+ * @protected
+ * @abstract
+ */
 
 }; // end of sap.ui.core.Element
 
@@ -13176,19 +13792,17 @@ sap.ui.core.Element.prototype.findElements = function(bRecursive) {
  * @extends sap.ui.core.Element
  * @abstract
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @name sap.ui.core.Control
  */
 sap.ui.core.Element.extend("sap.ui.core.Control", /* @lends sap.ui.core.Control */ {
 
 	metadata : {
 		"abstract" : true,
-		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent", "getLayoutData", "setLayoutData"],
+		publicMethods: ["placeAt", "attachBrowserEvent", "detachBrowserEvent"],
 		library: "sap.ui.core",
 		properties : {},
-		aggregations : {
-			layoutData : {name : "layoutData", type : "sap.ui.core.LayoutData", multiple : false, singularName : "layoutData"}
-		},
+		aggregations : {},
 		associations : {},
 		events : {}
 	},
@@ -13776,22 +14390,28 @@ sap.ui.core.Control.prototype.onselectstart = function (oBrowserEvent) {
  */
 
 /**
- * Function is called before the rendering of the control is started.<br/>
- * Override this hook as you please.
+ * Function is called before the rendering of the control is started.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onBeforeRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onBeforeRendering = function() {};
 
 /**
- * Function is called when the rendering of the control is completed. <br/>
- * Override this hook as you please.
+ * Function is called when the rendering of the control is completed.
+ *
+ * Applications must not call this hook method directly, it is called by the framework.
+ *
+ * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
  *
  * @function
  * @name sap.ui.core.Control.prototype.onAfterRendering
- * @public
+ * @protected
  */
 //sap.ui.core.Control.prototype.onAfterRendering = function() {};
 
@@ -13804,23 +14424,6 @@ sap.ui.core.Control.prototype.getIdForLabel = function () {
 	return this.getId();
 };
 
-/**
- * Returns the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.getLayoutData
- * @public
- */
-
-/**
- * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints 
- * for this control when it is used inside a layout.
- *
- * @function
- * @name sap.ui.core.Control.prototype.setLayoutData
- * @public
- */
 
 }; // end of sap.ui.core.Control
 
@@ -14703,7 +15306,9 @@ jQuery.sap.declare("jquery.sap.encoder", false);
 			jQuery.sap.require("sap.ui.thirdparty.caja-html-sanitizer");
 			jQuery.sap.assert(window.html && window.html.sanitize, "Sanitizer should have been loaded");
 		}
-		return window.html.sanitize(sHTML, mOptions.uriRewriter, mOptions.tokenPolicy);
+		
+		var oTagPolicy = mOptions.tagPolicy || window.html.makeTagPolicy(mOptions.uriRewriter, mOptions.tokenPolicy);
+		return window.html.sanitizeWithPolicy(sHTML, oTagPolicy);
 	}
 	
 	/**
@@ -14737,7 +15342,7 @@ jQuery.sap.declare("jquery.sap.encoder", false);
  *
  * @extends sap.ui.base.Object
  * @author Jens Pflueger
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  */
@@ -14859,10 +15464,12 @@ sap.ui.core.RenderManager.prototype.renderControl = function(oControl) {
 	jQuery.sap.measure.resume(oControl.getId()+"---renderControl");
 
 	// notify the control that it will be rendered soon (e.g. detached from DOM)
+	this._bLocked = true;
 	var oEvent = jQuery.Event("BeforeRendering");
 	// store the element on the event (aligned with jQuery syntax)
 	oEvent.srcControl = oControl;
 	oControl._handleEvent(oEvent);
+	this._bLocked = false;
 
 	// unbind any generically bound browser event handlers
 	var aBindings = oControl.aBindParameters;
@@ -14947,6 +15554,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 		for (var i = 0, size = aRenderedControls.length; i < size; i++) {
 			var oControl = aRenderedControls[i];
 			if (oControl.bOutput) {
+				oRM._bLocked = true;
 				var oEvent = jQuery.Event("AfterRendering");
 				// store the element on the event (aligned with jQuery syntax)
 				oEvent.srcControl = oControl;
@@ -14955,6 +15563,7 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 				oControl._handleEvent(oEvent);
 				// end performance measurement
 				jQuery.sap.measure.end(oControl.getId()+"---AfterRendering");
+				oRM._bLocked = false;
 			}
 		}
 
@@ -15121,11 +15730,18 @@ sap.ui.core.RenderManager.prototype.getHTML = function(oControl) {
 			jQuery.sap.log.info("Render must not be called from control renderers. Call ignored.", null, this);
 			return;
 		}
+		if(this._bLocked){
+			jQuery.sap.log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
+			return;
+		}
 
 		if(jQuery.browser.safari){
-			// for Safari CSS bug append CSS class at the end
-			if (!sap.ui.core.RenderManager.initialized) {
-				jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath("sap.ui.core.", "/") + "SafariCheck.css");
+			var aVersion = jQuery.browser.version.split(".");
+			if (parseInt(aVersion[0], 10) < 534 || (parseInt(aVersion[0], 10) == 534 && parseInt(aVersion[1],10) < 5)) {
+				// for Safari CSS bug append CSS class at the end
+				if (!sap.ui.core.RenderManager.initialized) {
+					jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath("sap.ui.core.", "/") + "SafariCheck.css");
+				}
 			}
 			sap.ui.core.RenderManager.initialized = true;
 		}
@@ -15315,6 +15931,8 @@ sap.ui.core.RenderManager.initHTML5Support = function() {
 	 */
 	sap.ui.core.RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId) {
 		jQuery.sap.assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
+
+		sap.ui.getCore().getEventBus().publish("sap.ui","__preserveContent", { domNode : oRootNode});
 
 		var $preserve = getPreserveArea();
 
@@ -15591,6 +16209,23 @@ sap.ui.core.RenderManager.prototype.writeElementData = function(oElement) {
 	if(sId) {
 		this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
 	}
+	var aData = oElement.getCustomData();
+	var l = aData.length;
+	for (var i = 0; i < l; i++) {
+		var oData = aData[i];
+		if (oData.getWriteToDom()) { // application wants this to be written to the DOM, but there are some conditions for this to work
+			var key = oData.getKey();
+			if (typeof oData.getValue() === "string") {
+				if ((sap.ui.core.ID.isValid(key)) && (key.indexOf(":") == -1) && (key.indexOf("sap-ui") !== 0)) {
+					this.writeAttributeEscaped("data-" + key, oData.getValue());
+				} else { // error case
+					jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the key is not valid (must be a valid sap.ui.core.ID without any colon and may not start with 'sap-ui').");
+				}
+			} else { // error case: non-string value
+				jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the value is not a string.");
+			}
+		}
+	}
 	return this;
 };
 
@@ -15626,9 +16261,9 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
 /**
  * Writes the accessibility state (see WAI-ARIA specification) of the provided element into the HTML
  * based on the element's properties and associations.
- * 
+ *
  * The ARIA properties are only written when the accessibility feature is activated in the UI5 configuration.
- * 
+ *
  * The following properties/values to ARIA attribute mappings are done (if the element does have such properties):
  * <code>editable===false</code> => <code>aria-readonly="true"</code>
  * <code>enabled===false</code> => <code>aria-disabled="true"</code>
@@ -15636,19 +16271,19 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
  * <code>required===true</code> => <code>aria-required="true"</code>
  * <code>selected===true</code> => <code>aria-selected="true"</code>
  * <code>checked===true</code> => <code>aria-checked="true"</code>
- * 
+ *
  * Additionally the association <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code> are used to write
  * the id lists of the ARIA attributes <code>aria-describedby</code> and <code>aria-labelledby</code>.
- * 
+ *
  * Note: This function is only a heuristic of a control property to ARIA attribute mapping. Control developers
  * have to check whether it fullfills their requirements. In case of problems (for example the RadioButton has a
  * <code>selected</code> property but must provide an <code>aria-checked</code> attribute) the auto-generated
  * result of this function can be influenced via the parameter <code>mProps</code> as described below.
- * 
+ *
  * The parameter <code>mProps</code> can be used to either provide additional attributes which should be added and/or
  * to avoid the automatic generation of single ARIA attributes. The 'aria-' prefix will be prepended automatically to the keys
  * (Exception: Attribute 'role' does not get the prefix 'aria-').
- * 
+ *
  * Examples:
  * <code>{hidden : true}</code> results in <code>aria-hidden="true"</code> independent of the precense or absence of
  * the visibility property.
@@ -15666,25 +16301,25 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	if(!sap.ui.getCore().getConfiguration().getAccessibility()){
 		return this;
 	}
-	
+
 	if(arguments.length == 1 && !(oElement instanceof sap.ui.core.Element)) {
 		mProps = oElement;
 		oElement = null;
 	}
-	
+
 	var mAriaProps = {};
-	
+
 	if(oElement != null) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata._enrichChildInfos();
-		
+
 		function addACCForProp(sElemProp, sACCProp, oVal){
 			var oProp = oMetadata.getAllProperties()[sElemProp];
 			if(oProp && oElement[oProp._sGetter]() === oVal){
 				mAriaProps[sACCProp] = "true";
 			}
 		}
-		
+
 		function addACCForAssoc(sElemAssoc, sACCProp){
 			var oAssoc = oMetadata.getAllAssociations()[sElemAssoc];
 			if(oAssoc && oAssoc.multiple){
@@ -15694,7 +16329,7 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 				}
 			}
 		}
-		
+
 		addACCForProp("editable", "readonly", false);
 		addACCForProp("enabled", "disabled", false);
 		addACCForProp("visible", "hidden", false);
@@ -15704,12 +16339,17 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 		addACCForAssoc("ariaDescribedBy", "describedby");
 		addACCForAssoc("ariaLabelledBy", "labelledby");
 	}
-	
+
 	if(mProps){
 		//The auto-generated values above can be overridden or reset (via null)
 		jQuery.extend(mAriaProps, mProps);
 	}
-	
+
+	// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
+	if (oElement instanceof sap.ui.core.Element && oElement.getParent() && oElement.getParent().enhanceAccessibilityState) {
+		oElement.getParent().enhanceAccessibilityState(oElement, mAriaProps);
+	}
+
 	for(var p in mAriaProps) {
 		if(mAriaProps[p] != null && mAriaProps[p] !== ""){ //allow 0 and false but no null, undefined or empty string
 			this.writeAttribute(p === "role" ? p : "aria-"+p, mAriaProps[p]);
@@ -15763,7 +16403,7 @@ jQuery.sap.declare("jquery.sap.ui", false);
 //	/**
 //	 * Root Namespace for the jQuery UI-Layer plugin provided by SAP AG.
 //	 *
-//	 * @version 1.9.0-SNAPSHOT
+//	 * @version 1.9.1-SNAPSHOT
 //	 * @namespace
 //	 * @public
 //	 */
@@ -15915,7 +16555,7 @@ jQuery.sap.declare("jquery.sap.ui", false);
  *
  * @extends sap.ui.base.EventProvider
  * @author Daniel Brinkmann, Martin Schaus
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @param {sap.ui.Core}
  *            oCore internal API of the <core>Core</code> that manages this UIArea
  * @param {object}
@@ -15935,6 +16575,7 @@ sap.ui.core.UIArea = function(oCore, oRootNode) {
 	this.aContentToRemove = [];
 	this.oModels = {};
 	this.iSuppressInvalidate = 0;
+	this.oPropagatedProperties = {oModels:{}, oBindingContext:null};
 
 	this.mAggregations = {}; //Use the aggregation functionality of sap.ui.core.Element
 
@@ -15984,6 +16625,9 @@ sap.ui.core.UIArea.prototype.removeAggregation = sap.ui.core.Element.prototype.r
 sap.ui.core.UIArea.prototype.removeAllAggregation = sap.ui.core.Element.prototype.removeAllAggregation;
 sap.ui.core.UIArea.prototype.indexOfAggregation = sap.ui.core.Element.prototype.indexOfAggregation;
 sap.ui.core.UIArea.prototype.destroyAggregation = sap.ui.core.Element.prototype.destroyAggregation;
+// Use the propagation functionality of sap.ui.core.Element
+sap.ui.core.UIArea.prototype.propagateProperties = sap.ui.core.Element.prototype.propagateProperties;
+sap.ui.core.UIArea.prototype._getPropertiesToPropagate = sap.ui.core.Element.prototype._getPropertiesToPropagate;
 
 /**
  * Returns whether rerendering is currently suppressed on this UIArea
@@ -16287,8 +16931,17 @@ sap.ui.core.UIArea.prototype.isLocked = function () {
  * @public
  */
 sap.ui.core.UIArea.prototype.setModel = function(oModel, sName) {
-	this.oModels[sName] = oModel;
-	this.updateBindings(sName);
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		this.propagateProperties(); 
+		this.updateBindings(sName);
+	} else if ( oModel !== this.oModels[sName] ) { 
+		this.oModels[sName] = oModel;
+		this.propagateProperties(); 
+		this.updateBindings(sName);
+	} else {
+		// nothing to do
+	} 
 };
 
 /**
@@ -16298,7 +16951,11 @@ sap.ui.core.UIArea.prototype.setModel = function(oModel, sName) {
  * @public
  */
 sap.ui.core.UIArea.prototype.getModel = function(sName) {
-	return this.oModels[sName] || this.oCore.getModel(sName);
+	if (this.oModels[sName]) {
+		return this.oModels[sName];
+	} else {
+		return this.oPropagatedProperties.oModels[sName];
+	}
 };
 
 /**
@@ -16307,7 +16964,7 @@ sap.ui.core.UIArea.prototype.getModel = function(sName) {
  * @public
  */
 sap.ui.core.UIArea.prototype.hasModel = function() {
-	if (!jQuery.isEmptyObject(this.oModels) || this.oCore.hasModel()) {
+	if (!jQuery.isEmptyObject(this.oModels) || !jQuery.isEmptyObject(this.oPropagatedProperties.oModels)) {
 		return true;
 	} else {
 		return false;
@@ -16756,7 +17413,7 @@ sap.ui.core.UIArea.prototype._ondetach = function() {
  * @extends sap.ui.base.EventProvider
  * @final
  * @author Martin Schaus, Daniel Brinkmann
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @constructor
  * @public
  */
@@ -16984,6 +17641,17 @@ sap.ui.core.Core = function() {
 				// currently we only support iOS, Android, BlackBerry 6.0+ , everything else will be ignored, if more platforms should be supported, logic can be placed here
 				return;
 			} 
+			
+		} else if (userAgent.indexOf("(BB10;") > 0) { 
+			// BlackBery 10 has a different structure...
+			platform = /\sVersion\/([\d.]+)\s/;
+			result = userAgent.match(platform);
+			if (result){
+				return {"version": 'bb'+result[1] , "css": "sap-bb"};
+			} else {
+				return {"version": 'bb10' , "css": "sap-bb"};
+			}
+			
 		} else {
 			// Windows phone has a different structure, so we need to check with another regExp.
 			platform = /Windows Phone (?:OS )?([\d.]*)/;
@@ -17569,6 +18237,9 @@ sap.ui.core.Core.prototype.initLibrary = function(vLibInfo) {
 		}
 	}
 
+	// register interface types
+	sap.ui.base.DataType.registerInterfaceTypes(oLibInfo.interfaces);
+	
 	// create lazy imports for all controls and elements
 	var aElements = oLibInfo.controls.concat(oLibInfo.elements);
 	for(var i=0; i<aElements.length; i++) {
@@ -17682,6 +18353,7 @@ sap.ui.core.Core.prototype.setRoot = function(oDomRef, oControl) {
  * @deprecated Use <code>setRoot()</code> instead!
  */
 sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
+	var that = this;
 	jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
 
 	if (!oDomRef) {
@@ -17706,15 +18378,19 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
 	var sId = oDomRef.id;
 	if (!this.mUIAreas[sId]) {
 		this.mUIAreas[sId] = new sap.ui.core.UIArea(this, oDomRef);
+		// propagate Models to newly created UIArea
+		jQuery.each(this.oModels, function (sName, oModel){
+			that.mUIAreas[sId].oPropagatedProperties.oModels[sName] = oModel;
+		});
+		this.mUIAreas[sId].propagateProperties();
 	} else {
 		// this should solve the issue of 'recreation' of a UIArea
 		// e.g. via setRoot with a new domRef
 		this.mUIAreas[sId].setRootNode(oDomRef);
 	}
 	return this.mUIAreas[sId];
-
 };
-
+ 
 /**
  * Returns a UIArea if the given ID/Element belongs to one
  *
@@ -17722,7 +18398,7 @@ sap.ui.core.Core.prototype.createUIArea = function(oDomRef) {
  * @param {String,DomRef} o a DOM Reference or ID String of the UIArea
  * @return a UIArea with a given id or dom ref.
  * @type sap.ui.core.UIArea
- */
+ */ 
 sap.ui.core.Core.prototype.getUIArea = function(o) {
 	jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
 
@@ -18193,16 +18869,27 @@ sap.ui.core.Core.prototype.stopPlugins = function() {
  * @public
  */
 sap.ui.core.Core.prototype.setModel = function(oModel, sName) {
-	jQuery.sap.assert(typeof oModel === "object", "oModel must be an object");
+	jQuery.sap.assert(typeof oModel === "object" || !oModel, "oModel must be an object or undefined");
 	jQuery.sap.assert(sName === undefined || typeof sName === "string", "sName must be a string or omitted");
-
-	this.oModels[sName] = oModel;
-
-	// notify all UI areas to update their bindings
-	jQuery.each(this.mUIAreas, function (i, oUIArea){
-		oUIArea.updateBindings(sName);
-	});
-
+	if (!oModel && this.oModels[sName]) {
+		delete this.oModels[sName];
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			delete oUIArea.oPropagatedProperties.oModels[undefined];
+			oUIArea.propagateProperties();
+			oUIArea.updateBindings(sName);
+		});
+	} else if (oModel !== this.oModels[sName] ) { 
+		this.oModels[sName] = oModel;
+		// propagate Models to all UI areas 
+		jQuery.each(this.mUIAreas, function (i, oUIArea){
+			oUIArea.oPropagatedProperties.oModels[sName] = oModel;
+			oUIArea.propagateProperties();
+			oUIArea.updateBindings(sName);
+		});
+	} else {
+		// nothing to do
+	}  
 };
 
 /**

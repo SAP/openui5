@@ -29,37 +29,32 @@ jQuery.sap.require("jquery.sap.xml");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @param {object} oData either the URL where to load the XML from or a XML
  * @constructor
  * @public
+ * @name sap.ui.model.xml.XMLModel
  */
-sap.ui.model.xml.XMLModel = function (oData) {
-	sap.ui.model.Model.apply(this, arguments);
-	this.oNameSpaces = null;
-	this.bCache = true;
+sap.ui.model.Model.extend("sap.ui.model.xml.XMLModel", /** @lends sap.ui.model.xml.XMLModel */ {
 	
-	if (typeof oData == "string") {
-		this.loadData(oData);
+	constructor : function (oData) {
+		sap.ui.model.Model.apply(this, arguments);
+		this.oNameSpaces = null;
+		this.bCache = true;
+		
+		if (typeof oData == "string") {
+			this.loadData(oData);
+		}
+		else if (oData && oData.documentElement) {
+			this.setData(oData);
+		}
+	},
+	
+	metadata : {
+		publicMethods : ["loadData", "setData", "getData", "setXML", "getXML", "setNameSpace", "forceNoCache", "setProperty"]
 	}
-	else if (oData && oData.documentElement) {
-		this.setData(oData);
-	}
-};
 
-// chain the prototypes
-sap.ui.model.xml.XMLModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.xml.XMLModel.
- * Resulting metadata can be obtained via sap.ui.model.xml.XMLModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.xml.XMLModel", {
-
-  // ---- object ----
-  baseType : "sap.ui.model.Model",
-  publicMethods : ["loadData", "setData", "getData", "setXML", "getXML", "setNameSpace", "forceNoCache", "setProperty"]
 });
 
 /**
@@ -296,22 +291,15 @@ sap.ui.model.xml.XMLModel.prototype.getProperty = function(sPath, oContext) {
  * @returns the node of the specified path/context
  */
 sap.ui.model.xml.XMLModel.prototype._getObject = function (sPath, oContext) {
-	var oRootNode = this.oData.documentElement,
-		// if path = null context must be respected as well: we handle this as relative here
-		bIsRelative = sPath && jQuery.sap.startsWith(sPath, "/") ? false : true;
+	var oRootNode = this.oData.documentElement;
 	if (!oRootNode) {
 		return null;
 	}
 	var oNode = this.isLegacySyntax() ? [oRootNode] : [];
-	if (oContext && bIsRelative){
-		if (oContext instanceof sap.ui.model.Context){
-			oNode = this._getObject(oContext.getPath());
-			if (!oNode || oNode.length == 0 || !oNode[0]) {
-				return null;
-			}
-		} else {
-			oNode = [oContext];
-		}
+	if (oContext instanceof sap.ui.model.Context){
+		oNode = this._getObject(oContext.getPath());
+	} else if (oContext) {
+		oNode = [oContext];
 	}
 	if (!sPath) {
 		return oNode;

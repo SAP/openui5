@@ -26,16 +26,25 @@ sap.m.SearchFieldRenderer.render = function(oRenderManager, oSF){
 	}
 
 	var rm = oRenderManager;
+	var bShowMagnifier = oSF.getShowMagnifier();
 
 	// container
 	rm.write("<div");
 	rm.writeControlData(oSF);
 	rm.addClass("sapMSF");
+	if (bShowMagnifier) { rm.addClass("sapMSFM"); }
+	if(jQuery.os.android && !(jQuery.browser.chrome)){
+		if(jQuery.os.fVersion < 3){
+			rm.addClass("sapMSFA2"); // specific Android 2.+ rendering
+		} else if (jQuery.os.fVersion <= 4){
+			rm.addClass("sapMSFA4"); // specific Android 4.0* rendering
+		}
+	}
 	rm.writeClasses();
 	rm.write(">");
 
 	// 1. magnifier icon
-	if (oSF.getShowMagnifier()) { rm.write('<div class="sapMSFMG"></div>'); }
+	if (bShowMagnifier) { rm.write('<div class="sapMSFMG"></div>'); }
 	
 	// 2. Input type="search"
 	rm.write('<input type="search"');
@@ -43,15 +52,8 @@ sap.m.SearchFieldRenderer.render = function(oRenderManager, oSF){
 
 	rm.addClass("sapMSFI");
 
-	if(jQuery.browser.chrome){
-		rm.addClass("sapMSFICr"); // specific Chrome rendering
-	}
-
-	if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
-		if ((/OS [6-9](.*) like Mac OS X/i.test(navigator.userAgent))) {
-			// iOS version is 6+.
-			rm.addClass("sapMSFIIos6"); // specific Ios6 rendering
-		}
+	if (jQuery.os.ios && jQuery.os.fVersion > 5) {
+			rm.addClass("sapMSFIIos6"); // specific Ios6+ rendering
 	}
 
 	if (!oSF.getEnabled()){
@@ -60,9 +62,8 @@ sap.m.SearchFieldRenderer.render = function(oRenderManager, oSF){
 	}
 	rm.writeClasses();
 
-
 	if (!oSF.getEnabled()) { rm.writeAttribute("disabled","disabled"); }
-	if (oSF.getShowMagnifier()) { rm.writeAttribute("results", 0); }
+	if (bShowMagnifier) { rm.writeAttribute("results", 0); }
 	if (oSF.getPlaceholder()) { rm.writeAttributeEscaped("placeholder", oSF.getPlaceholder()); }
 	if (oSF.getMaxLength()) { rm.writeAttribute("maxLength", oSF.getMaxLength()); }
 	if (oSF.getValue()) { rm.writeAttributeEscaped("value", oSF.getValue()); }

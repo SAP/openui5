@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.core.Core");
 	 *        feature - DO NOT USE IN PRODUCTIVE SCENARIOS!!
 	 *
 	 * @author Peter Muessig
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @private
 	 */
 	sap.ui.core.plugin.LessSupport = function() {

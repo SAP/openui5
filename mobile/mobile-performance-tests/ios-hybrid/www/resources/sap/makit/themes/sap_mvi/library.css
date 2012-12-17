@@ -1,0 +1,324 @@
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ *
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+/* Global CSS for 'base' theme */
+/* ---------------------------------------------------------------------------------------- */
+/* TMP during LESS convertion ---- to be deleted */
+/* may be required by SubstitutionRulesManager.css in inbox lib */
+/* ---------------------------------------------------------------------------------------- */
+/* ============================================= */
+/* CSS for control sap.makit/Chart.control */
+/* ============================================= */
+.sapMakitChart {
+  /* Current MAKit Chart implementation will force the main DOM 
+	object to use class 'chart'. So there's no point to use this 
+	class at the moment. Will consider to change in the future release.	*/
+
+}
+.chart {
+  color: #000000;
+  background: #ffffff;
+  overflow: hidden;
+}
+.chart > * span.ui-btn-inner {
+  padding: .1em 5px;
+}
+.chart > * div.ui-slider-switch {
+  height: 22px;
+}
+.chart > * div.ui-slider {
+  width: 30%;
+}
+.chart > * div.ui-select {
+  width: 30%;
+}
+.chart > * input.ui-slider-input {
+  width: 70px;
+}
+.chart > * input.ui-input-text {
+  padding: .1em;
+}
+.chart_value_bubble {
+  background: #000000;
+  color: #ffffff;
+}
+.chart_value_bubble_outline {
+  background: rgba(128, 128, 128, 0.2);
+  color: #d3d3d3;
+}
+.chart_range_selector_text {
+  font-size: 14px;
+  /*12px;*/
+
+  font-family: Helvetica;
+  /*Helvetica;*/
+
+  color: #707070;
+  /*#707070;*/
+
+}
+.chart_table {
+  background: #ffffff;
+  /* #FFFFFF */
+
+  font-size: 14px;
+  font-family: Helvetica;
+  color: #000000;
+  /* #000000 */
+
+}
+.chart_table_dimension_title {
+  background: #dddddd;
+  /* #DDDDDD; */
+
+}
+.chart_table_row_header {
+  background: #dddddd;
+  /* #DDDDDD; */
+
+}
+.chart_table_column_headers {
+  background: #f7f7f7;
+  /* #F7F7F7; */
+
+}
+.chart_table_contents {
+  background: #f7f7f7;
+  /* #F7F7F7; */
+
+}
+input[type=date]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.defaultFillPalette {
+  /*DO-NOT DELETE*/
+
+}
+.defaultFillPalette .color1 {
+  color: #008fd3;
+}
+.defaultFillPalette .color2 {
+  color: #99d101;
+}
+.defaultFillPalette .color3 {
+  color: #f39b02;
+}
+.defaultFillPalette .color4 {
+  color: #9fcfeb;
+}
+.defaultFillPalette .color5 {
+  color: #4ba707;
+}
+.defaultFillPalette .color6 {
+  color: #f6d133;
+}
+.defaultFillPalette .color7 {
+  color: #cb4c2d;
+}
+.defaultFillPalette .color8 {
+  color: #cac7ba;
+}
+.defaultFillPalette .color9 {
+  color: #0d869c;
+}
+.defaultFillPalette .color10 {
+  color: #cdd72e;
+}
+.defaultFillPalette .color11 {
+  color: #247230;
+}
+.defaultFillPalette .color12 {
+  color: #6cdedc;
+}
+.defaultFillPalette .color13 {
+  color: #eb7300;
+}
+.defaultFillPalette .color14 {
+  color: #b9bbd1;
+}
+.defaultFillPalette .color15 {
+  color: #006dd3;
+}
+.defaultFillPalette .color16 {
+  color: #3db97f;
+}
+.defaultStrokePalette {
+  /*DO-NOT DELETE*/
+
+}
+.defaultStrokePalette .color1 {
+  color: #004769;
+}
+.defaultStrokePalette .color2 {
+  color: #4c6801;
+}
+.defaultStrokePalette .color3 {
+  color: #794d01;
+}
+.defaultStrokePalette .color4 {
+  color: #2173a3;
+}
+.defaultStrokePalette .color5 {
+  color: #255303;
+}
+.defaultStrokePalette .color6 {
+  color: #8e7506;
+}
+.defaultStrokePalette .color7 {
+  color: #662616;
+}
+.defaultStrokePalette .color8 {
+  color: #6d6954;
+}
+.defaultStrokePalette .color9 {
+  color: #06434e;
+}
+.defaultStrokePalette .color10 {
+  color: #676d15;
+}
+.defaultStrokePalette .color11 {
+  color: #123818;
+}
+.defaultStrokePalette .color12 {
+  color: #1f8785;
+}
+.defaultStrokePalette .color13 {
+  color: #753900;
+}
+.defaultStrokePalette .color14 {
+  color: #4e5177;
+}
+.defaultStrokePalette .color15 {
+  color: #003669;
+}
+.defaultStrokePalette .color16 {
+  color: #1f5c3f;
+}
+.defaultInsetShadowPalette {
+  /*DO-NOT DELETE*/
+
+}
+.defaultInsetShadowPalette .color1 {
+  color: #6fd1ff;
+}
+.defaultInsetShadowPalette .color2 {
+  color: #d8fe70;
+}
+.defaultInsetShadowPalette .color3 {
+  color: #fee1ae;
+}
+.defaultInsetShadowPalette .color4 {
+  color: #ffffff;
+}
+.defaultInsetShadowPalette .color5 {
+  color: #88f739;
+}
+.defaultInsetShadowPalette .color6 {
+  color: #ffffff;
+}
+.defaultInsetShadowPalette .color7 {
+  color: #f2cdc3;
+}
+.defaultInsetShadowPalette .color8 {
+  color: #ffffff;
+}
+.defaultInsetShadowPalette .color9 {
+  color: #38d3ef;
+}
+.defaultInsetShadowPalette .color10 {
+  color: #f4f6d1;
+}
+.defaultInsetShadowPalette .color11 {
+  color: #40c354;
+}
+.defaultInsetShadowPalette .color12 {
+  color: #ffffff;
+}
+.defaultInsetShadowPalette .color13 {
+  color: #ffcc9c;
+}
+.defaultInsetShadowPalette .color14 {
+  color: #ffffff;
+}
+.defaultInsetShadowPalette .color15 {
+  color: #6fb9ff;
+}
+.defaultInsetShadowPalette .color16 {
+  color: #c2ebd8;
+}
+/*
+The following styles are used by features not included in SAPUI5 Chart, 
+but they can't be removed (yet) because it's still used by the MAKit Chart object itself.
+*/
+.chart_titlebar {
+  background: #008fd3;
+}
+.chart_titlebar > .chart_title {
+  color: #FFFFFF;
+}
+.chart_titlebar > .fullscreen_icon {
+  background: url(images/fullscreen_icon.png) no-repeat;
+  cursor: pointer;
+}
+.chart_toolbar {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  border-bottom: 1px solid #666666;
+  border-top: 1px solid #666666;
+  background: url(images/chartToolbar.png) #666666 repeat-x;
+  white-space: nowrap;
+}
+.chart_toolbar > .chart_button {
+  border: 3px;
+  background: #222222;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+.chart_toolbar > .chart_button:hover {
+  background: #333333;
+  color: #ccc;
+}
+.chart_toolbar > .chart_button:active {
+  background: #666666;
+}
+.chart_toolbar > .table_button {
+  border: 0px;
+  background: url(images/table_icon.png) no-repeat;
+}
+.chart_toolbar > .rangeselector_button {
+  border: 0px;
+  background: url(images/rangeselector_icon.png) no-repeat;
+}
+.chart_toolbar > .share_button {
+  border: 0px;
+  background: url(images/e-mail_icon.png) no-repeat;
+}
+.chart_toolbar > .whatif_button {
+  border: 0px;
+  background: url(images/whatif_icon.png) no-repeat;
+}
+.chart_toolbar > .da_button {
+  border: 0px;
+  background: url(images/da_icon.png) no-repeat;
+}
+.chart_toolbar h1 {
+  overflow: hidden;
+  margin: auto;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #F0AB00;
+  display: inline;
+}
+/* ============================================= */
+/* CSS for control sap.makit/Chart.control */
+/* ============================================= */

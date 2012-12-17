@@ -43,7 +43,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getContent content} : sap.ui.core.Control[]</li>
  * <li>{@link #getCustomHeader customHeader} : sap.m.Bar</li>
  * <li>{@link #getFooter footer} : sap.m.Bar</li>
- * <li>{@link #getSubHeader subHeader} : sap.m.Bar</li></ul>
+ * <li>{@link #getSubHeader subHeader} : sap.m.Bar</li>
+ * <li>{@link #getHeaderContent headerContent} : sap.ui.core.Control[]</li></ul>
  * </li>
  * <li>Associations
  * <ul></ul>
@@ -63,7 +64,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -93,7 +94,8 @@ sap.ui.core.Control.extend("sap.m.Page", { metadata : {
     	"content" : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}, 
     	"customHeader" : {type : "sap.m.Bar", multiple : false}, 
     	"footer" : {type : "sap.m.Bar", multiple : false}, 
-    	"subHeader" : {type : "sap.m.Bar", multiple : false}
+    	"subHeader" : {type : "sap.m.Bar", multiple : false}, 
+    	"headerContent" : {type : "sap.ui.core.Control", multiple : true, singularName : "headerContent"}
 	},
 	events : {
 		"navButtonTap" : {}
@@ -471,6 +473,90 @@ sap.m.Page.M_EVENTS = {'navButtonTap':'navButtonTap'};
  * @name sap.m.Page#destroySubHeader
  * @function
  */
+	
+/**
+ * Getter for aggregation <code>headerContent</code>.<br/>
+ * Controls to added to the right side of the page header. Usually an application would use Button controls and limit the number to one when the application needs to run on smartphones. There is no automatic overflow handling when the space is insufficient.
+ * When a customHeader is used, this aggregation will be ignored.
+ * 
+ * @return {sap.ui.core.Control[]}
+ * @public
+ * @name sap.m.Page#getHeaderContent
+ * @function
+ */
+
+/**
+ * Inserts a headerContent into the aggregation named <code>headerContent</code>.
+ *
+ * @param {sap.ui.core.Control}
+ *          oHeaderContent the headerContent to insert; if empty, nothing is inserted
+ * @param {int}
+ *             iIndex the <code>0</code>-based index the headerContent should be inserted at; for 
+ *             a negative value of <code>iIndex</code>, the headerContent is inserted at position 0; for a value 
+ *             greater than the current size of the aggregation, the headerContent is inserted at 
+ *             the last position        
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#insertHeaderContent
+ * @function
+ */
+
+
+/**
+ * Adds some headerContent <code>oHeaderContent</code> 
+ * to the aggregation named <code>headerContent</code>.
+ *
+ * @param {sap.ui.core.Control}
+ *            oHeaderContent the headerContent to add; if empty, nothing is inserted
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#addHeaderContent
+ * @function
+ */
+
+
+/**
+ * Removes an headerContent from the aggregation named <code>headerContent</code>.
+ *
+ * @param {int | string | sap.ui.core.Control} vHeaderContent the headerContent to remove or its index or id
+ * @return {sap.ui.core.Control} the removed headerContent or null
+ * @public
+ * @name sap.m.Page#removeHeaderContent
+ * @function
+ */
+
+
+/**
+ * Removes all the controls in the aggregation named <code>headerContent</code>.<br/>
+ * Additionally unregisters them from the hosting UIArea.
+ * @return {sap.ui.core.Control[]} an array of the removed elements (might be empty)
+ * @public
+ * @name sap.m.Page#removeAllHeaderContent
+ * @function
+ */
+
+
+/**
+ * Checks for the provided <code>sap.ui.core.Control</code> in the aggregation named <code>headerContent</code> 
+ * and returns its index if found or -1 otherwise.
+ *
+ * @param {sap.ui.core.Control}
+ *            oHeaderContent the headerContent whose index is looked for.
+ * @return {int} the index of the provided control in the aggregation if found, or -1 otherwise
+ * @public
+ * @name sap.m.Page#indexOfHeaderContent
+ * @function
+ */
+
+
+/**
+ * Destroys all the headerContent in the aggregation 
+ * named <code>headerContent</code>.
+ * @return {sap.m.Page} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.Page#destroyHeaderContent
+ * @function
+ */
 
 /**
  * this event is fired when Nav Button is tapped 
@@ -586,7 +672,7 @@ sap.m.Page.prototype.onBeforeRendering = function() {
  * @private
  */
 sap.m.Page.prototype.exit = function() {
-	if(this.oScroller){
+	if(this._oScroller){
 		this._oScroller.destroy();
 		this._oScroller = null;
 	}
@@ -618,7 +704,7 @@ sap.m.Page.prototype.setBackgroundDesign = function(sBgDesign) {
 		jQuery.sap.byId( this.getId() + "-cont").removeClass('sapMPageBg'+ sBgDesignOld).addClass('sapMPageBg' + this.getBackgroundDesign());
 	}
 	return this;
-}
+};
 
 sap.m.Page.prototype.setTitle = function(sTitle) {
 	this._headerTitle = this._headerTitle || new sap.m.Label(this.getId() +"-title", {text: sTitle});
@@ -682,7 +768,7 @@ sap.m.Page.prototype.setIcon = function (sIconSrc) {
 				this._updateHeaderContent(this._appIcon, 'left', -1);
 			}
 		} else {
-			this._appIcon = this._appIcon || new sap.m.Image(this.getId()+"-icon", {src: sIconSrc});
+			this._appIcon = this._appIcon || new sap.m.Image(this.getId()+"-icon", {src: sIconSrc}).addStyleClass("sapMPageAppIcon");
 			this._appIcon.setSrc(sIconSrc);
 			if (this._navBtn){
 				this._updateHeaderContent(this._navBtn, 'left', -1);
@@ -792,6 +878,14 @@ sap.m.Page.prototype._getAnyHeader = function() {
 	}
 };
 
+/**
+ * Returns the sap.ui.core.ScrollEnablement delegate which is used with this control.
+ *
+ * @private
+ */
+sap.m.Page.prototype.getScrollDelegate = function() {
+	return this._oScroller;
+};
 
 //*** API Methods ***
 
@@ -803,4 +897,35 @@ sap.m.Page.prototype.scrollTo = function(y, time) {
 		this._oScroller._scrollY = y; // remember to apply later
 	}
 	return this;
+};
+
+
+//*** Methods forwarding the "headerContent" pseudo-aggregation calls ***
+
+sap.m.Page.prototype.getHeaderContent = function() {
+	return this._getInternalHeader().getContentRight();
+};
+
+sap.m.Page.prototype.indexOfHeaderContent = function(oControl) {
+	return this._getInternalHeader().indexOfContentRight(oControl);
+};
+
+sap.m.Page.prototype.insertHeaderContent = function(oControl, iIndex) {
+	return this._getInternalHeader().insertContentRight(oControl, iIndex);
+};
+
+sap.m.Page.prototype.addHeaderContent = function(oControl) {
+	return this._getInternalHeader().addContentRight(oControl);
+};
+
+sap.m.Page.prototype.removeHeaderContent = function(oControl) {
+	return this._getInternalHeader().removeContentRight(oControl);
+};
+
+sap.m.Page.prototype.removeAllHeaderContent = function() {
+	return this._getInternalHeader().removeAllContentRight();
+};
+
+sap.m.Page.prototype.destroyHeaderContent = function() {
+	return this._getInternalHeader().destroyContentRight();
 };

@@ -25,44 +25,56 @@ jQuery.sap.require("sap.ui.model.resource.ResourcePropertyBinding");
  * @extends sap.ui.model.Model
  *
  * @author SAP AG
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @param {object}
  *            oData.url defines the url of the resource bundle, [oData.locale]
  *            defines an optional locale
  * @constructor
  * @public
+ * @name sap.ui.model.resource.ResourceModel
  */
-sap.ui.model.resource.ResourceModel = function(oData) {
-	sap.ui.model.Model.apply(this, arguments);
+sap.ui.model.Model.extend("sap.ui.model.resource.ResourceModel", /** @lends sap.ui.model.resource.ResourceModel */ {
 
-	this.sDefaultBindingMode = sap.ui.model.BindingMode.OneTime;
-	this.mSupportedBindingModes = {
-		"OneWay" : false,
-		"TwoWay" : false,
-		"OneTime" : true
-	};
-	// load resource bundle
-	if (oData && (oData.bundleUrl || oData.bundleName)) {
-		this.ResourceBundle = this.loadResourceBundle(oData);
-	} else {
-		throw new Error("Neither url nor library name are given. One of these is mandatory.");
+	constructor : function(oData) {
+		sap.ui.model.Model.apply(this, arguments);
+	
+		this.sDefaultBindingMode = sap.ui.model.BindingMode.OneTime;
+		this.mSupportedBindingModes = {
+			"OneWay" : false,
+			"TwoWay" : false,
+			"OneTime" : true
+		};
+		// load resource bundle
+		if (oData && (oData.bundleUrl || oData.bundleName)) {
+			this.ResourceBundle = this.loadResourceBundle(oData);
+		} else {
+			throw new Error("Neither url nor library name are given. One of these is mandatory.");
+		}
+	},
+
+	metadata : {
+		publicMethods : [ "getResourceBundle" ]
 	}
-};
 
-// chain the prototypes
-sap.ui.model.resource.ResourceModel.prototype = jQuery.sap.newObject(sap.ui.model.Model.prototype);
-
-/*
- * Describe the sap.ui.model.resource.ResourceModel. Resulting metadata can be
- * obtained via sap.ui.model.resource.ResourceModel.getMetadata();
- */
-sap.ui.base.Object.defineClass("sap.ui.model.resource.ResourceModel", {
-
-	// ---- object ----
-	baseType : "sap.ui.model.Model",
-	publicMethods : [ "getResourceBundle" ]
 });
+
+/**
+ * Creates a new subclass of class sap.ui.model.resource.ResourceModel with name <code>sClassName</code> 
+ * and enriches it with the information contained in <code>oClassInfo</code>.
+ * 
+ * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+ * see {@link sap.ui.base.Object.extend Object.extend}.
+ *   
+ * @param {string} sClassName name of the class to be created
+ * @param {object} [oClassInfo] object literal with informations about the class  
+ * @param {function} [FNMetaImpl] alternative constructor for a metadata object
+ * @return {function} the created class / constructor function
+ * @public
+ * @static
+ * @name sap.ui.model.resource.ResourceModel.extend
+ * @function
+ */
 
 /**
  * Returns the resource bundle

@@ -24,7 +24,10 @@ sap.m.PopoverRenderer.render = function(rm, oControl){
 		i = 0,
 		contents = oControl.getContent(),
 		oFooter = oControl.getFooter(),
-		oHeaderControl;
+		oHeaderControl,
+		sContentWidth = oControl.getContentWidth(),
+		sContentHeight = oControl.getContentHeight(),
+		bScrollable = oControl.getEnableScrolling() && !oControl._forceDisableScrolling;
 		
 	if(oControl.getShowHeader()){
 		oHeaderControl = oControl._getAnyHeader();
@@ -35,15 +38,21 @@ sap.m.PopoverRenderer.render = function(rm, oControl){
 	rm.writeControlData(oControl);
 	rm.addClass("sapMPopover");
 	if(oHeaderControl){
-		rm.addClass("sapMPopoverWithBar")
+		rm.addClass("sapMPopoverWithBar");
 	}else{
 		rm.addClass("sapMPopoverWithoutBar");
 	}
 	if(oControl._hasNavContent()){
 		rm.addClass("sapMPopoverNav");
 	}
+	
+	if(oControl._hasPageContent()){
+		rm.addClass("sapMPopoverPage");
+	}
 	if(oFooter){
 		rm.addClass("sapMPopoverWithFooter");
+	}else{
+		rm.addClass("sapMPopoverWithoutFooter");
 	}
 	
 	if(oControl.getPlacement() === sap.m.PlacementType.Top){
@@ -64,26 +73,36 @@ sap.m.PopoverRenderer.render = function(rm, oControl){
 
 	//header
 	if(oHeaderControl){
-		rm.renderControl(oControl._getAnyHeader());
+		rm.renderControl(oControl._getAnyHeader().addStyleClass("sapMPopoverHeader"));
 	}//header
 	
 	// content container
 	rm.write("<div");
 	rm.writeAttribute("id",sId + "-cont");
+	if(sContentWidth){
+		rm.addStyle("width",sContentWidth);
+	}
+	if(sContentHeight){
+		rm.addStyle("height",sContentHeight);
+	}
+	rm.writeStyles();
 	rm.addClass("sapMPopoverCont");
 	rm.writeClasses();
-//	rm.writeAttribute("tabindex","-1");
 	rm.write(">");
+	
+	//scroll area
+	rm.write("<div id='" + oControl.getId() + "-scroll" +"' class='sapMPopoverScroll " + (bScrollable ? '' : "sapMPopoverScrollDisabled")  +"'>");
 	for(i = 0 ; i < contents.length ; i++){
 		rm.renderControl(contents[i]);
 	}
+	rm.write("</div>");//scrollArea
 	
 	rm.write("</div>");//content container
 	
 	//footer
 	if (oFooter) {
 		oFooter._context = 'footer';
-		rm.renderControl(oFooter);
+		rm.renderControl(oFooter.addStyleClass("sapMPopoverFooter"));
 	}//footer
 	
 	if(jQuery.os.ios){

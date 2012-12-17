@@ -36,7 +36,8 @@ jQuery.sap.require("sap.ui.core.Control");
  * <li>{@link #getFooterText footerText} : string</li>
  * <li>{@link #getMode mode} : sap.m.ListMode (default: sap.m.ListMode.None)</li>
  * <li>{@link #getWidth width} : sap.ui.core.CSSSize (default: '100%')</li>
- * <li>{@link #getIncludeItemInSelection includeItemInSelection} : boolean (default: false)</li></ul>
+ * <li>{@link #getIncludeItemInSelection includeItemInSelection} : boolean (default: false)</li>
+ * <li>{@link #getShowUnread showUnread} : boolean (default: false)</li></ul>
  * </li>
  * <li>Aggregations
  * <ul>
@@ -57,11 +58,11 @@ jQuery.sap.require("sap.ui.core.Control");
  * @param {object} [mSettings] initial settings for the new control
  *
  * @class
- * sap.m.List Control
+ * sap.m.List Control is the container for all list items. Selection, deletion, unread states and inset style are also maintained here.
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -84,7 +85,8 @@ sap.ui.core.Control.extend("sap.m.List", { metadata : {
 		"footerText" : {type : "string", group : "Misc", defaultValue : null},
 		"mode" : {type : "sap.m.ListMode", group : "Appearance", defaultValue : sap.m.ListMode.None},
 		"width" : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-		"includeItemInSelection" : {type : "boolean", group : "Misc", defaultValue : false}
+		"includeItemInSelection" : {type : "boolean", group : "Misc", defaultValue : false},
+		"showUnread" : {type : "boolean", group : "Misc", defaultValue : false}
 	},
 	defaultAggregation : "items",
 	aggregations : {
@@ -290,6 +292,31 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * @name sap.m.List#setIncludeItemInSelection
  * @function
  */
+
+/**
+ * Getter for property <code>showUnread</code>.
+ * Activates the unread feature for all list items.
+ *
+ * Default value is <code>false</code>
+ *
+ * @return {boolean} the value of property <code>showUnread</code>
+ * @public
+ * @name sap.m.List#getShowUnread
+ * @function
+ */
+
+
+/**
+ * Setter for property <code>showUnread</code>.
+ *
+ * Default value is <code>false</code> 
+ *
+ * @param {boolean} bShowUnread  new value for property <code>showUnread</code>
+ * @return {sap.m.List} <code>this</code> to allow method chaining
+ * @public
+ * @name sap.m.List#setShowUnread
+ * @function
+ */
 	
 /**
  * Getter for aggregation <code>items</code>.<br/>
@@ -406,7 +433,7 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
- * @param {sap.ui.core.Control} oControlEvent.getParameters.listItem the listitem which fired the delete
+ * @param {sap.m.ListItemBase} oControlEvent.getParameters.listItem the listitem which fired the select
  * @public
  */
  
@@ -452,7 +479,7 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * 
  * Expects following event parameters:
  * <ul>
- * <li>'listItem' of type <code>sap.ui.core.Control</code> the listitem which fired the delete</li>
+ * <li>'listItem' of type <code>sap.m.ListItemBase</code> the listitem which fired the select</li>
  * </ul>
  *
  * @param {Map} [mArguments] the arguments to pass along with the event.
@@ -471,7 +498,7 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * @param {sap.ui.base.EventProvider} oControlEvent.getSource
  * @param {object} oControlEvent.getParameters
 
- * @param {sap.ui.core.Control} oControlEvent.getParameters.listItem the listitem which fired the delete
+ * @param {sap.m.ListItemBase} oControlEvent.getParameters.listItem the listitem which fired the delete
  * @public
  */
  
@@ -517,7 +544,7 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * 
  * Expects following event parameters:
  * <ul>
- * <li>'listItem' of type <code>sap.ui.core.Control</code> the listitem which fired the delete</li>
+ * <li>'listItem' of type <code>sap.m.ListItemBase</code> the listitem which fired the delete</li>
  * </ul>
  *
  * @param {Map} [mArguments] the arguments to pass along with the event.
@@ -533,7 +560,7 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
  * @name sap.m.List.prototype.getSelectedItem
  * @function
 
- * @type sap.ui.core.Control
+ * @type sap.m.ListItemBase
  * @public
  */
 
@@ -601,43 +628,77 @@ sap.m.List.M_EVENTS = {'select':'select','delete':'delete'};
 * // * This file defines behavior for the control,
 */
 sap.m.List.prototype.init = function(){
-   // do something for initialization...
-   this._mode = this.getMode();
-   this._includeItemInSelection = this.getIncludeItemInSelection();
+	// do something for initialization...
+	this._mode = this.getMode();
+	this._includeItemInSelection = this.getIncludeItemInSelection();
 };
 
 
+sap.m.List.prototype.setIncludeItemInSelection = function(include) {
+	this.setProperty("includeItemInSelection", include, true);
+	var aItems = this.getItems();
+	for ( var i = 0; i < aItems.length; i++) {
+				aItems[i]._includeItemInSelection = include;
+			}	
+	return this;
+};
+
+sap.m.List.prototype.setInset = function(inset) {
+	if(inset === this.getInset()){
+		return;
+	}
+	this.setProperty("inset", inset, true);
+	if(this.getDomRef())
+	{
+		if(inset){
+			this.addStyleClass('sapMListInsetBG');
+			var oUL = jQuery.sap.byId( this.getId() + "-listUl").addClass('sapMListInset');
+			if (this.getHeaderText()){
+				jQuery.sap.byId( this.getId() + "-listHeader").removeClass('sapMListHdr').addClass('sapMListHdrInset');
+				oUL.addClass('sapMListInsetHdr');
+			}
+			if (this.getFooterText()) {
+				oUL.addClass('sapMListInsetFtr');
+				jQuery.sap.byId( this.getId() + "-listFooter").removeClass('sapMListFtr').addClass('sapMListFtrInset');
+			}
+		}
+		else
+		{
+			this.removeStyleClass('sapMListInsetBG');
+			var oUL = jQuery.sap.byId( this.getId() + "-listUl").removeClass('sapMListInset');
+			if (this.getHeaderText()){
+				jQuery.sap.byId( this.getId() + "-listHeader").removeClass('sapMListHdrInset').addClass('sapMListHdr');
+				oUL.removeClass('sapMListInsetHdr');
+			}
+			if (this.getFooterText()) {
+				oUL.removeClass('sapMListInsetFtr');
+				jQuery.sap.byId( this.getId() + "-listFooter").removeClass('sapMListFtrInset').addClass('sapMListFtr');
+			}
+		}
+	}
+	return this;
+};
+
+sap.m.List.prototype.setWidth = function(width) {
+	if(this.getDomRef()){
+		this.$().width(width);
+	}
+	return this;
+};
 /**
  * // * Returns selected item. When no item is selected, "null" is returned. // *
  * When multi-selection is enabled and multiple items are selected, only the
  * first selected item is returned.
  */
 sap.m.List.prototype.getSelectedItem = function() {
-	var oResult;
-
-	switch (this.getMode()) {
-	case sap.m.ListMode.SingleSelect:
+	var oResult;	
 		var aItems = this.getItems();
 		for ( var i = 0; i < aItems.length; i++) {
-			if (aItems[i]._radioButton.getSelected()) {
+			if (aItems[i].getSelected()) {
 				oResult = aItems[i];
 				break;
 			}
 		}
-		break;
-	case sap.m.ListMode.MultiSelect:
-		var aItems = this.getItems();
-		for ( var i = 0; i < aItems.length; i++) {
-			if (aItems[i]._checkBox.getSelected()) {
-				oResult = aItems[i];
-				break;
-			}
-		}
-		break;
-	case sap.m.ListMode.None:
-		oResult = null;
-		break;
-	}
 	return oResult;
 };
 
@@ -647,20 +708,31 @@ sap.m.List.prototype.getSelectedItem = function() {
  * previous selection.
  */
 sap.m.List.prototype.setSelectedItem = function(oListItem, select) {
-	var oList = sap.ui.getCore().byId(oListItem._listId);
-	switch (this.getMode()) {
+	switch (oListItem._mode) {
 	case sap.m.ListMode.SingleSelect:
 		oListItem._radioButton.setSelected(select);
+		oListItem.setSelected(select, true);
 		oListItem.$().toggleClass('sapMLIBSelected', select);
-		if(oList._previousSingleSelect && oList._previousSingleSelect !== oListItem){
-			oList._previousSingleSelect.$().toggleClass('sapMLIBSelected', false);
-		}
-		oList._previousSingleSelect = oListItem;
 		break;
 	case sap.m.ListMode.MultiSelect:
 		oListItem._checkBox.setSelected(select);
+		oListItem.setSelected(select, true);
 		oListItem.$().toggleClass('sapMLIBSelected', select);
 		break;
+	case sap.m.ListMode.SingleSelectMaster:
+		oListItem._active = select;
+		oListItem._radioButton.setSelected(select);
+		oListItem.setSelected(select, true);
+		oListItem._activeHandling();
+		if(select){
+			oListItem._activeHandlingNav();
+			oListItem._activeHandlingInheritor();
+		}
+		else{
+			oListItem._inactiveHandlingNav();
+			oListItem._inactiveHandlingInheritor();
+		}
+	break;
 	case sap.m.ListMode.None:
 	}
 	return this;
@@ -673,27 +745,12 @@ sap.m.List.prototype.setSelectedItem = function(oListItem, select) {
  */
 sap.m.List.prototype.getSelectedItems = function() {
 	var aResult = [];
-
-	switch (this.getMode()) {
-	case sap.m.ListMode.SingleSelect:
 		var aItems = this.getItems();
 		for ( var i = 0; i < aItems.length; i++) {
-			if (aItems[i]._radioButton.getSelected()) {
+			if (aItems[i].getSelected()) {
 				aResult.push(aItems[i]);
 			}
 		}
-		break;
-	case sap.m.ListMode.MultiSelect:
-		var aItems = this.getItems();
-		for ( var i = 0; i < aItems.length; i++) {
-			if (aItems[i]._checkBox.getSelected()) {
-				aResult.push(aItems[i]);
-			}
-		}
-		break;
-	case sap.m.ListMode.None:
-		break;
-	}
 	return aResult;
 };
 
@@ -703,24 +760,36 @@ sap.m.List.prototype.getSelectedItems = function() {
  * the previous selection. .
  */
 sap.m.List.prototype.setSelectedItemById = function(id, select) {
-	var oList = sap.ui.getCore().byId(oListItem._listId);
 	switch (this.getMode()) {
 	case sap.m.ListMode.SingleSelect:
 		var oListItem = sap.ui.getCore().byId(id);
 		if (oListItem) {
 			oListItem._radioButton.setSelected(select);
+			oListItem.setSelected(select, true);
 			oListItem.$().toggleClass('sapMLIBSelected', select);
-			if(oList._previousSingleSelect && oList._previousSingleSelect !== oListItem){
-				oList._previousSingleSelect.$().toggleClass('sapMLIBSelected', false);
-			}
-			oList._previousSingleSelect = oListItem;
 		}
 		break;
 	case sap.m.ListMode.MultiSelect:
 		var oListItem = sap.ui.getCore().byId(id);
 		if (oListItem) {
 			oListItem._checkBox.setSelected(select);
+			oListItem.setSelected(select, true);
 			oListItem.$().toggleClass('sapMLIBSelected', select);
+		}
+		break;
+	case sap.m.ListMode.SingleSelectMaster:
+		var oListItem = sap.ui.getCore().byId(id);
+			oListItem._active = select;
+			oListItem._radioButton.setSelected(select);
+			oListItem.setSelected(select, true);
+			oListItem._activeHandling();
+		if(select){
+			oListItem._activeHandlingNav();
+			oListItem._activeHandlingInheritor();
+		}
+		else{
+			oListItem._inactiveHandlingNav();
+			oListItem._inactiveHandlingInheritor();
 		}
 		break;
 	case sap.m.ListMode.None:
@@ -745,15 +814,25 @@ sap.m.List.prototype._select = function(oEvent) {
 	var oListItem = sap.ui.getCore().byId(this.oParent.getId());
 	var oList = sap.ui.getCore().byId(oListItem._listId);
 	
-	oListItem.$().toggleClass('sapMLIBSelected');
-	if(oList.getMode() === sap.m.ListMode.SingleSelect){
-		//_previousSingleSelect is the previous selected item and is needed to remove the previous list item active style
-		if(oList._previousSingleSelect && oList._previousSingleSelect !== oListItem){
-			oList._previousSingleSelect.$().toggleClass('sapMLIBSelected', false);
-		}
-		oList._previousSingleSelect = oListItem;
-	}
 	//if includeItemInSelection true and select control pressed, we don't have to fire the select event
+	var select = oEvent.getParameter("selected");
+	oListItem.setSelected(select, true);
+	
+	if(oList.getMode() === sap.m.ListMode.SingleSelectMaster){
+		oListItem._active = select;
+		oListItem._activeHandling();
+		if(select){
+			oListItem._activeHandlingNav();
+			oListItem._activeHandlingInheritor();
+		}
+		else{
+			oListItem._inactiveHandlingNav();
+			oListItem._inactiveHandlingInheritor();
+		}
+	}
+	else{
+		oListItem.$().toggleClass('sapMLIBSelected', select);
+	}
 	if (!oList.getIncludeItemInSelection()) {
 		oList.fireSelect({listItem:oListItem});
 	}
@@ -779,19 +858,38 @@ sap.m.List.prototype._delete = function(oEvent) {
  * // * removes all selections of the current mode if selection mode is changed
 */
 sap.m.List.prototype._removeCurrentSelection = function() {
-	switch (this._mode) {
+	switch (this.getMode()) {
 		case sap.m.ListMode.SingleSelect:
 			var aItems = this.getItems();
 			for ( var i = 0; i < aItems.length; i++) {
-				aItems[i]._radioButton.setSelected(false);
+				if(aItems[i]._radioButton){
+					aItems[i]._radioButton.setSelected(false);
+				}
+				aItems[i].setSelected(false, true);
 				aItems[i].$().toggleClass('sapMLIBSelected', false);
 			}	
 			break;
 		case sap.m.ListMode.MultiSelect:
 			var aItems = this.getItems();
 			for ( var i = 0; i < aItems.length; i++) {
-				aItems[i]._checkBox.setSelected(false);
+				if(aItems[i]._checkBox){
+					aItems[i]._checkBox.setSelected(false);
+				}
+				aItems[i].setSelected(false, true);
 				aItems[i].$().toggleClass('sapMLIBSelected', false);
+			}
+			break;
+		case sap.m.ListMode.SingleSelectMaster:
+			var aItems = this.getItems();
+			for ( var i = 0; i < aItems.length; i++) {
+				if(aItems[i]._radioButton){
+					aItems[i]._radioButton.setSelected(false);
+				}
+				aItems[i].setSelected(false, true);
+				aItems[i]._active = false;
+				aItems[i]._activeHandling();
+				aItems[i]._inactiveHandlingNav();
+				aItems[i]._inactiveHandlingInheritor();
 			}
 			break;
 		case sap.m.ListMode.None:

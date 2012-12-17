@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.core.Control");
  * @extends sap.ui.core.Control
  *
  * @author SAP AG 
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  *
  * @constructor   
  * @public
@@ -432,25 +432,71 @@ sap.m.Select.M_EVENTS = {'change':'change'};
  */
 
 // Start of sap\m\Select.js
+sap.m.Select.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+sap.m.Select.prototype._sNoData = sap.m.Select.prototype._oRb.getText("SELECT_NO_DATA");
+
+sap.m.Select.prototype._bUseMobiscroll = (jQuery.os.android && jQuery.os.fVersion === 2.3);
+
+sap.m.Select.prototype._sLang = sap.ui.getCore().getConfiguration().getLanguage().split("-")[0];
+
 /* =========================================================== */
 /*                   begin: lifecycle methods                  */
 /* =========================================================== */
 
 /**
+ * Initialization hook for the Select.
+ *
+ * @private
+ */
+sap.m.Select.prototype.init = function() {
+	if (this._bUseMobiscroll) {
+		jQuery.sap.require("sap.m.SelectCustom");
+		sap.m.Select.prototype.init = null;
+	}
+};
+
+/**
  * Required adaptations before rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
-sap.m.Select.prototype.onBeforeRendering = function(oEvent) {
-	if (this.getAssociation("selectedItem") === null) {
+sap.m.Select.prototype.onBeforeRendering = function() {
+	var aItems = this.getItems(),
+		sSelectedItemId = this.getAssociation("selectedItem");
 
-		//  suppress re-rendering
-		this.setAssociation("selectedItem", this.getItems()[0].getId(), true);
+	if (aItems.length) {
+
+		//	if there is no selected item
+		if (sSelectedItemId === null) {
+
+			//	select the first item and suppress re-rendering
+			this.setAssociation("selectedItem", aItems[0].getId(), true);
+		} else {
+			if (!this._isSelectedItemAggregate(aItems, sSelectedItemId)) {
+				jQuery.sap.log.warning("sap.m.Select.prototype.onBeforeRendering(): the selected item is not a valid item aggregation on " + this);
+			}
+		}
+	} else {
+		jQuery.sap.log.warning("sap.m.Select.prototype.onBeforeRendering(): the select does not contain any item on " + this);
 	}
 
+	this._unbindChange();
+
+	//	Mobiscroll
+	if (this._bUseMobiscroll) {
+		this._onBeforeRenderingMobiscroll();
+	}
+};
+
+/**
+ * Required adaptations before rendering when using Mobiscroll.
+ *
+ * @private
+ */
+sap.m.Select.prototype._onBeforeRenderingMobiscroll = function() {
 	if (this._$SltNative instanceof jQuery) {
-		this._$SltNative.unbind("change.select", this._handleChange);
+		this._$SltNative.scroller('destroy');
 	}
 };
 
@@ -458,35 +504,99 @@ sap.m.Select.prototype.onBeforeRendering = function(oEvent) {
  * Required adaptations after rendering.
  *
  * @private
- * @param {jQuery.EventObject} oEvent The event object
  */
 sap.m.Select.prototype.onAfterRendering = function() {
 
-	// jQuery DOM reference to the select control root
+	//	jQuery DOM reference to the select control root
 	this._$SltCont = this.$();
 
-	// jQuery DOM reference to the native select using inside the control
+	//	jQuery DOM reference to the native select using inside the control
 	this._$SltNative = this._$SltCont.children("select");
 
-	// jQuery DOM collection with all select options
+	//	jQuery DOM collection with all select options
 	this._$SltOptions = this._$SltNative.children("option");
 
-	// jQuery DOM reference with the selected option
+	//	jQuery DOM reference with the selected option
 	this._$SeletedItem = this._$SltOptions.filter(":selected");
 
-	// jQuery DOM reference to the span using to show the text from the current selected item
-	this._$SltText = this._$SltCont.children("span.sapMSltText");
+	//	jQuery DOM reference to the span using to show the text from the current selected item
+	this._$SltText = this._$SltCont.children(".sapMSltText");
 
-	// register a listener to the select change event
-	this._$SltNative.bind("change.select", jQuery.proxy(this._handleChange, this));
+	if (this._$SltNative.length) {	//	do stuff if the select exist
 
-	this._$SltNative.css("font", this._$SltText.css("font"));
+		//	register a listener to the select change event
+		this._$SltNative.bind("change.sapMSelect", jQuery.proxy(this._handleChange, this));
 
-	if (this.getWidth() === "auto") {
-		this._$SltCont.width(this._$SltNative.width() + parseFloat(this._$SltText.css("padding-right"), 10) + parseFloat(this._$SltText.css("padding-left"), 10));
+		this._$SltNative.css("font", this._$SltText.css("font"));
+
+		if (this.getWidth() === "auto") {
+			this._$SltCont.width(this._$SltNative.width() + parseFloat(this._$SltText.css("padding-right")) + parseFloat(this._$SltText.css("padding-left")));
+		}
 	}
 
 	this._$SltNative.width("100%");
+
+	this._$SltCont.addClass("sapMSltVisible");
+
+	//	Mobiscroll
+	if (this._bUseMobiscroll) {
+		this._onAfterRenderingMobiscroll();
+	}
+};
+
+/**
+ * Required adaptations after rendering when using Mobiscroll.
+ *
+ * @private
+ */
+sap.m.Select.prototype._onAfterRenderingMobiscroll = function() {
+	if (this._$SltNative.length) {	//	do stuff if the select exist
+		this._$SltNative.scroller({
+
+			/**
+			 *	Options for controlling the modal dialog button labels and header text.
+			 */
+
+			//	Text for Cancel button
+			cancelText: this._oRb.getText("SELECT_CANCEL"),
+
+			//	Text for Set button
+			setText: this._oRb.getText("SELECT_ACCEPT"),
+
+			//	Specifies a custom string which appears in the popup header.
+			headerText: false,
+
+			//	Language of the scroller.
+			lang: this._sLang,
+
+			//	Specifies the speed in milliseconds to change values in clickpick mode with tap & hold
+			delay: 300,
+
+			//	Disables (true) or enables (false) the scroller.
+			disabled: !this.getEnabled(),
+
+			//	Controls the positioning of the scroller. Possible options:
+			//	"modal", "inline", "bubble", "top", "bottom".
+			display: 'bottom',
+
+			//	Option to choose between modes.
+			//	Possible modes: 'scroller' - standard behaviour, 'clickpick' - '+' and '-' buttons
+			mode: 'scroller',
+
+			//	Preset configurations for select
+			preset: 'select',
+
+			//	Show/hide labels above wheels
+			showLabel: false,
+
+			//	Sets the scroller's visual appearance.
+			//	Supplied themes: 'android', 'android-ics', 'android-ics light', 'sense-ui', 'ios', 'jqm'.
+			theme: 'android-ics light',
+
+			//	Css class(es) to style the input which is shown instead of the original select element.
+			inputClass: 'sapMSltInput'
+		});
+	}
 };
 
 /* =========================================================== */
@@ -497,6 +607,7 @@ sap.m.Select.prototype.onAfterRendering = function() {
 /* =========================================================== */
 /*                      begin: event handlers                  */
 /* =========================================================== */
+
 /**
  * Handle the touch start event happening on the select.
  *
@@ -507,27 +618,35 @@ sap.m.Select.prototype.ontouchstart = function(oEvent) {
 
 	//	for control who need to know if they should handle events from the select control
 	oEvent.originalEvent._sapui_handledByControl = true;
-	
-	// add active state
+
+	//	add active state
 	this._$SltCont.addClass("sapMSltPressed");
+
+	if (this._bUseMobiscroll) {
+		this._ontouchstartmobiscroll();
+	}
+};
+
+sap.m.Select.prototype._ontouchstartmobiscroll = function() {
+	if (this._$SltNative.length) {
+		this._$SltNative.scroller('show');
+	}
 };
 
 /**
  * Handle the touch end event on the select.
  *
- * @param {jQuery.EventObject} oEvent The event object
  * @private
  */
 sap.m.Select.prototype.ontouchend = function() {
 
-	// remove active state
+	//	remove active state
 	this._$SltCont.removeClass("sapMSltPressed");
 };
 
 /**
  * Handle the change event on the select.
  *
- * @param {jQuery.EventObject} oEvent The event object
  * @private
  */
 sap.m.Select.prototype._handleChange = function() {
@@ -535,16 +654,20 @@ sap.m.Select.prototype._handleChange = function() {
 		sItemId	= $NewSeletedItem.attr("id"),
 		oItem = sap.ui.getCore().byId(sItemId);
 
-	// remove the old attribute selected
+	if (this.getSelectedItem().getId() === sItemId) {
+		return;
+	}
+
+	//	remove the old attribute selected
 	this._$SeletedItem.removeAttr("selected");	//  for screen readers
 
-	// add the new attribute selected
-	$NewSeletedItem.attr("selected", "selected");	//  for screen readers
+	//	add the new attribute selected
+	$NewSeletedItem.attr("selected", "selected");	//	for screen readers
 
-	// update the selected item
+	//	update the selected item
 	this._$SeletedItem = $NewSeletedItem;
 
-	// update the association
+	//	update the association
 	this.setAssociation("selectedItem", sItemId, true);
 
 	this._$SltText.text(oItem.getText());
@@ -558,11 +681,65 @@ sap.m.Select.prototype._handleChange = function() {
 
 
 /* =========================================================== */
+/*                      begin: internal methods                */
+/* =========================================================== */
+
+sap.m.Select.prototype._isSelectedItemAggregate = function(aItems, sSelectedItemId) {
+	var i;
+
+	for (i = 0; i < aItems.length; i++) {
+		if (sSelectedItemId === aItems[i].getId()) {
+			return true;
+		}
+	}
+
+	return false;
+};
+
+sap.m.Select.prototype._unbindChange = function() {
+	if (this._$SltNative instanceof jQuery && this._$SltNative.length) {
+		this._$SltNative.unbind("change.sapMSelect", this._handleChange);
+	}
+};
+
+/* =========================================================== */
+/*                      end: internal methods                  */
+/* =========================================================== */
+
+
+/* =========================================================== */
 /*                   begin: API method                         */
 /* =========================================================== */
 
 sap.m.Select.prototype.getSelectedItem = function() {
-	return sap.ui.getCore().byId(this.getAssociation("selectedItem"));
+	var sSelectedItemId = this.getAssociation("selectedItem");
+
+	return (sSelectedItemId === null) ? null : sap.ui.getCore().byId(sSelectedItemId);
+};
+
+sap.m.Select.prototype.removeAllItems = function() {
+	this.setAssociation("selectedItem", null, false);
+
+	return this.removeAllAggregation("items", false);
+};
+
+sap.m.Select.prototype.removeItem = function(vItem) {
+	if (typeof vItem === "string") {
+		vItem = sap.ui.getCore().byId(vItem);
+	}
+
+	if (!(vItem instanceof sap.ui.core.Item)) {
+		jQuery.sap.log.error('sap.m.Select.prototype.removeItem(): vItem must be a sap.ui.core.Item object or a valid item id on ' + this);
+		return;
+	}
+
+	// if the item is selected
+	if (vItem.getId() === this.getAssociation("selectedItem")) {
+		this.setAssociation("selectedItem", null, false);
+	}
+
+	// remove the item from the select
+	return this.removeAggregation("items", vItem, false);
 };
 
 /* =========================================================== */

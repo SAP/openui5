@@ -12,134 +12,65 @@ jQuery.sap.declare("sap.m.InputRenderer");
  */
 sap.m.InputRenderer = {};
 
-/**
- * Renders the HTML for the given control, using the provided
- * {@link sap.ui.core.RenderManager}.
- * 
- * @param {sap.ui.core.RenderManager}
- *            oRenderManager the RenderManager that can be used for writing to
- *            the Render-Output-Buffer
- * @param {sap.ui.core.Control}
- *            oControl an object representation of the control that should be
- *            rendered
- */
 sap.m.InputRenderer.render = function(rm, oInput) {
-	// return immediately if control is invisible
-	var _placeholder = "";
-	
-	if (!oInput.getVisible()) {
+
+	if(!oInput.getVisible()) {
 		return;
 	}
 
-	var sType = oInput.getType();
-
-	if(jQuery.os.ios) {
-		rm.write("<input ");
-	} else {
-		rm.write("<div ");
-	}
-
+	rm.write("<div ");
 	rm.writeControlData(oInput);
+	oInput.getWidth() && rm.addStyle("width", oInput.getWidth()) && rm.writeStyles();
+	!oInput.getEnabled() && rm.addClass("sapMInputDisabled");
+	oInput.getValueState() != "None" && rm.addClass("sapMInput" + oInput.getValueState());
+	rm.addClass("sapMInput");
+	rm.writeClasses();
+	rm.write(">");
 
-	if (oInput.getWidth()) {
-		rm.writeAttribute("style", "width:" + oInput.getWidth() + ";");
-	}
-
-	if (!jQuery.os.ios) {
-		rm.addClass("sapMInput");
-
-		if (!oInput.getEnabled()) {
-			rm.addClass("sapMInputDisabled");
-		}
-
-		if (oInput.getValueState() == "Error") {
-			rm.addClass("sapMInputError");
-		} else if (oInput.getValueState() == "Warning") {
-			rm.addClass("sapMInputWarning");
-		}
-
+	// enable self-made placeholder
+	if (oInput._showLabelAsPlaceholder) {
+		rm.write("<label ");
+		rm.writeAttribute("id", oInput.getId() + "-placeholder");
+		rm.writeAttribute("for", oInput.getId() + "-inner");
+		rm.addClass("sapMInputPlaceholder");
 		rm.writeClasses();
 		rm.write(">");
-		rm.write("<input id="+oInput.getId()+'-inner');
-		if (oInput.getWidth()) {
-			rm.writeAttribute("style", "width:" + oInput.getWidth() + ";");
-		} else {
-			rm.writeAttribute("style", "width: 100%;");
-		}
+		rm.writeEscaped(oInput.getPlaceholder());
+		rm.write("</label>");
 	}
+
+	rm.write("<input id=" + oInput.getId() + "-inner");
+	rm.writeStyles();
+
 	if (!oInput.getEnabled()) {
-		rm.writeAttribute ("disabled","disabled");
-		if(sType == "Password"){
+		rm.writeAttribute ("disabled", "disabled");
+		if (oInput.getType() == "Password") {
 			// required for JAWS reader on password fields on desktop:
-			rm.writeAttribute ("readonly","readonly");
+			rm.writeAttribute("readonly", "readonly");
 		}
 		rm.addClass("sapMInputDisabled");
 	}
 
-
-	if (oInput.getPlaceholder()) {
-		_placeholder = oInput.getPlaceholder(); 
+	// let the browser handle placeholder
+	if (!oInput._showLabelAsPlaceholder && oInput.getPlaceholder()) {
+		rm.writeAttribute("placeholder", oInput.getPlaceholder());
 	}
 
-	if (sType) {
-		if (sType == "Date") {
-			if (oInput.getPlaceholder()) {
-			//TODO Warning in log: No placeholder for date!
-			}
-			if (oInput._datePickerAvailable){
-				oInput._datepicker = true;
-				rm.writeAttribute("type", "date");
-			} else {
-				oInput._datepicker = false;
-				rm.writeAttribute("type", "text");
-				if (oInput.getDateFormat()){
-					_placeholder = oInput.getDateFormat(); 
-				} else {
-					_placeholder = "YYYY-MM-dd";
-				}
-				//TODO translate yyyymmdd
-			}
-		} else {
-			rm.writeAttribute("type", sType.toLowerCase());
-		}
-	}
-
-	if (_placeholder) {
-		rm.writeAttributeEscaped("placeholder", _placeholder);
-	}
-
-	if (oInput.getMaxLength()) {
-		rm.writeAttribute("maxLength", oInput.getMaxLength());
-	}
-
-	if (oInput.getValue()) {
-		rm.writeAttributeEscaped("value", oInput._formatForRendering(oInput.getValue()));
-	}
-
-	if(!jQuery.os.ios) {
-		rm.addClass("sapMInputInner");
-		if (oInput.getValueState() == "Error") {
-			rm.addClass("sapMInputErrorInner");
-		} else if (oInput.getValueState() == "Warning") {
-			rm.addClass("sapMInputWarningInner");
-		}
+	// check element needs picker and known picker bug exists
+	if (oInput._hasPickerBug && oInput._pickers.indexOf(oInput.getType()) + 1) {
+		rm.writeAttribute("type", "text");
+	} else if (oInput.getType() == "Date") {
+		rm.writeAttribute("type", oInput._datePickerAvailable ? "date" : "text");
 	} else {
-		rm.addClass("sapMInput");
-		if (oInput.getValueState() == "Error") {
-			rm.addClass("sapMInputError");
-		} else if (oInput.getValueState() == "Warning") {
-			rm.addClass("sapMInputWarning");
-		}
-	} 
-	if (!oInput.getEnabled()) {
-		rm.addClass("sapMInputDisabled");
+		rm.writeAttribute("type", oInput.getType().toLowerCase());
 	}
 
+	oInput.getMaxLength() > 0 && rm.writeAttribute("maxlength", oInput.getMaxLength());
+	oInput.getValue() && rm.writeAttributeEscaped("value", oInput._formatForRendering(oInput.getValue()));
+
+	rm.addClass("sapMInputInner");
+	oInput.getValueState() != "None" && rm.addClass("sapMInput" + oInput.getValueState() + "Inner");
+	!oInput.getEnabled() && rm.addClass("sapMInputDisabled");
 	rm.writeClasses();
-	rm.write("></input>");
-
-	if(!jQuery.os.ios) {
-		rm.write("</div>");
-	}
+	rm.write("></div>");
 };
-

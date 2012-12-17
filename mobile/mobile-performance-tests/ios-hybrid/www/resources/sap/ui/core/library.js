@@ -10,7 +10,7 @@
  * ----------------------------------------------------------------------------------- */
 
 /**
- * Initialization Code and shared classes of library sap.ui.core (1.9.0-SNAPSHOT)
+ * Initialization Code and shared classes of library sap.ui.core (1.9.1-SNAPSHOT)
  */
 jQuery.sap.declare("sap.ui.core.library");
 jQuery.sap.require("sap.ui.core.Core");
@@ -80,7 +80,7 @@ sap.ui.getCore().initLibrary({
     "sap.ui.core.search.OpenSearchProvider",
     "sap.ui.core.search.SearchProvider"
   ],
-  version: "1.9.0-SNAPSHOT"});
+  version: "1.9.1-SNAPSHOT"});
 
 /*!
  * SAP UI development toolkit for HTML5 (SAPUI5)
@@ -101,7 +101,7 @@ jQuery.sap.declare("sap.ui.core.AccessibleRole");
  * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
  * 
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -511,7 +511,7 @@ jQuery.sap.declare("sap.ui.core.BarColor");
 /**
  * @class Configuration options for the colors of a progress bar
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -559,14 +559,15 @@ jQuery.sap.declare('sap.ui.core.CSSSize');
 jQuery.sap.require('sap.ui.base.DataType');
 
 /**
- * @class A string type that represents CSS size values.
+ * @class A string type that represents CSS size values. Allowed values are CSS sizes like "1px" or "2em" or "50%", but also the special values "auto" and "inherit". 
+ * Note that CSS does not allow all of these values for every CSS property representing a size. E.g. "auto" is not an allowed value for a padding size.
  *
  * @static
  * @public
  */
 sap.ui.core.CSSSize = sap.ui.base.DataType.createType('sap.ui.core.CSSSize', {
     isValid : function(vValue) {
-      return /^(auto|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
+      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
     }
 
   },
@@ -623,7 +624,7 @@ jQuery.sap.declare("sap.ui.core.Design");
 /**
  * @class Font design for texts
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -695,7 +696,7 @@ jQuery.sap.declare("sap.ui.core.HorizontalAlign");
 /**
  * @class Configuration options for horizontal alignments of controls
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -780,7 +781,7 @@ jQuery.sap.declare("sap.ui.core.ImeMode");
 /**
  * @class State of the Input Method Editor (IME) for the control. Depending on its value, it allows users to enter and edit for example Chinese characters.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -829,7 +830,7 @@ jQuery.sap.declare("sap.ui.core.MessageType");
 /**
  * @class Defines the different message types of a message
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -884,7 +885,7 @@ jQuery.sap.declare("sap.ui.core.OpenState");
 /**
  * @class Defines the different possible states of an element that can be open or closed and does not only toggle between these states, but also spends some time in between (e.g. because of an animation).
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -933,7 +934,7 @@ jQuery.sap.declare("sap.ui.core.ScrollBarAction");
 /**
  * @class Actions are: Click on track, button, drag of thumb, or mouse wheel click
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -982,7 +983,7 @@ jQuery.sap.declare("sap.ui.core.Scrolling");
 /**
  * @class Defines the possible values for horizontal and vertical scrolling behavior.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1031,7 +1032,7 @@ jQuery.sap.declare("sap.ui.core.TextAlign");
 /**
  * @class Configuration options for text alignments.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1086,7 +1087,7 @@ jQuery.sap.declare("sap.ui.core.TextDirection");
 /**
  * @class Configuration options for the direction of texts.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1159,7 +1160,7 @@ jQuery.sap.declare("sap.ui.core.ValueState");
 /**
  * @class Marker for the correctness of the current value.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1210,7 +1211,7 @@ jQuery.sap.declare("sap.ui.core.VerticalAlign");
  * Configuration options for vertical alignments, for example of a layout cell content within the borders.
  * 
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1259,7 +1260,7 @@ jQuery.sap.declare("sap.ui.core.Wrapping");
 /**
  * @class Configuration options for text wrapping.
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */
@@ -1308,7 +1309,7 @@ jQuery.sap.declare("sap.ui.core.mvc.ViewType");
 /**
  * @class Specifies possible view types
  *
- * @version 1.9.0-SNAPSHOT
+ * @version 1.9.1-SNAPSHOT
  * @static
  * @public
  */

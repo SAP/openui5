@@ -23,7 +23,7 @@ sap.m.BusyDialogRenderer.render = function(oRm, oControl){
 	// write the HTML into the render manager
 	oRm.write("<div");
 	oRm.writeControlData(oControl);
-	oRm.addClass("sapMBusyDialog");
+	oRm.addClass("sapMBusyDialog sapMCommonDialog");
 	if(jQuery.device.is.iphone){
 		oRm.addClass("sapMDialogHidden");
 	}
@@ -34,19 +34,15 @@ sap.m.BusyDialogRenderer.render = function(oRm, oControl){
 													customIconRotationSpeed: oControl.getCustomIconRotationSpeed(), customIconDensityAware: oControl.getCustomIconDensityAware()}).addStyleClass('sapMBsyInd');
 	
 	if(oControl.getTitle()) {
-		oRm.write("<h1 class=\"sapMBusyDialogTitle\">" + oControl.getTitle() + "</h1>");
+		oRm.write("<h1 class=\"sapMDialogTitle\">" + oControl.getTitle() + "</h1>");
 	}
 	
-	if(oControl.getText()) {
-		if(!oControl._oLabel)
-			oControl._oLabel = new sap.m.Label(oControl.getId() + "-busyLabel", {text: oControl.getText()}).addStyleClass("sapMBusyDialogLabel");
-	}
 	if(jQuery.os.ios) {
-		oRm.renderControl(oControl._oLabel);
+		oRm.renderControl(oControl.oLabel);
 		oRm.renderControl(oControl._busyIndicator);
 	} else {
 		oRm.renderControl(oControl._busyIndicator);
-		oRm.renderControl(oControl._oLabel);
+		oRm.renderControl(oControl.oLabel);
 	}
 	
 	if(oControl.getShowCancelButton()){
@@ -61,7 +57,7 @@ sap.m.BusyDialogRenderer.render = function(oRm, oControl){
 				tap : function() {
 					oControl.close();
 				}
-			}).addStyleClass("sapMBusyDialogCnlBtn");
+			}).addStyleClass("sapMDialogBtn");
 		}
 		oRm.renderControl(oControl._oButton);
 		oRm.write("</div>");

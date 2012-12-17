@@ -32,7 +32,9 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * Provides methods to store data on the client using Web Storage API support by the browser. The data
 	 * received by this API must be already serialized, in string format. Similarly, the API returns the retrieved
 	 * data in serialized string format, so it is the responsibility of the caller to de-serialize it, if applicable.
-	 *
+	 * 
+	 * Attention: The Web Storage API stores the data on the client. Therefore do not use this API for confidential information. 
+	 * 
 	 * One can get access to the 'default' storage by using {@link jQuery.sap.storage} directly
 	 * or alternatively via factory functionality available as <code>jQuery.sap.storage(jQuery.sap.storage.Type.session)</code>
 	 * returning an object implementing this interface.
@@ -47,7 +49,7 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * when a global erasing of data is required.
 	 *
 	 * @author SAP AG
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.11.0
 	 * @public
 	 * @name jQuery.sap.storage.Storage
@@ -213,7 +215,7 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 *     oStorage the type specifying the storage to use or an object implementing the browser's Storage API.
 	 * @returns {jQuery.sap.storage.Storage}
 	 * 
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.11.0
 	 * @namespace
 	 * @public
@@ -244,7 +246,7 @@ jQuery.sap.declare("jquery.sap.storage", false);
 	 * @class
 	 * @static
 	 * @public
-	 * @version 1.9.0-SNAPSHOT
+	 * @version 1.9.1-SNAPSHOT
 	 * @since 0.11.0
 	 */
 	jQuery.sap.storage.Type = {

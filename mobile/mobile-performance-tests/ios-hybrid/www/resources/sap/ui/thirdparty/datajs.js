@@ -4696,6 +4696,32 @@
                 result = result + name + ": " + request.headers[name] + "\r\n";
             }
         }
+        // ##### BEGIN: MODIFIED BY SAP
+        
+        // code added to add the content-length for each batch part...may be removed for later gateway versions
+        if (request.body) {
+        	
+        	function utf8Len(ch) {
+        		if (ch <= 0x7F) return 1;
+        		if (ch <= 0x7FF) return 2;
+        		if (ch <= 0xFFFF) return 3;
+        		if (ch <= 0x1FFFFF) return 4;
+        		if (ch <= 0x3FFFFFF) return 5;
+        		if (ch <= 0x7FFFFFFF) return 6;
+        		throw new Error("Illegal argument: " + ch);
+        	}
+
+        	function utf8ByteCount(str) {
+        		var count = 0;
+        		for (var i = 0; i < str.length; i++) {
+        			var ch = str.charCodeAt(i);
+        			count += utf8Len(ch);
+        		}
+        		return count;
+        	}
+            result += "Content-Length: " + utf8ByteCount(request.body) + "\r\n";
+        } 
+        // ##### END: MODIFIED BY SAP
 
         result += "\r\n";
 

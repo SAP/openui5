@@ -47,7 +47,7 @@ sap.ui.core.mvc.XMLViewRenderer.render = function(rm, oControl) {
 		for (var i = 0; i < oControl._aParsedContent.length; i++) {
 			var fragment = oControl._aParsedContent[i];
 			if(fragment && typeof(fragment) === "string") {
-				rm.write(fragment); // TODO: escaping
+				rm.write(fragment);
 			} else {
 				rm.renderControl(fragment);
 			}
