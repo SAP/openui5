@@ -157,6 +157,11 @@ static NSString* const kElementIdKey = @"ELEMENT";
            withArgs:[NSArray arrayWithObject:[self idDictionary]]];
 }
 
+- (void)tap:(NSDictionary*)ignored {
+    [self executeAtom:webdriver::atoms::CLICK
+             withArgs:[NSArray arrayWithObject:[self idDictionary]]];
+}
+
 // This returns the pixel position of the element on the page in page
 // coordinates.
 - (CGPoint)location {

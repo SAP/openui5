@@ -24,13 +24,15 @@
 // |RootViewController| manages the two views and controllers. It is mostly
 // standard apple template code.
 @interface RootViewController : UIViewController {
-  // The button which switches views
-  UIButton *infoButton;
-  MainViewController *mainViewController;
-  FlipsideViewController *flipsideViewController;
-  UINavigationBar *flipsideNavigationBar;
-  UISwitch *swAuto;
-  UILabel *lblAutoSession;
+    // The button which switches views
+    UIButton *infoButton;
+    MainViewController *mainViewController;
+    FlipsideViewController *flipsideViewController;
+    UINavigationBar *flipsideNavigationBar;
+    UISwitch *swAuto;
+    UILabel *lblAutoSession;
+    UILabel *lblVersion;
+    UILabel *lblVersionNumber;
 }
 
 @property (nonatomic, retain) IBOutlet UIButton *infoButton;
@@ -39,6 +41,8 @@
 @property (nonatomic, retain) FlipsideViewController *flipsideViewController;
 @property (nonatomic, retain) UISwitch *swAuto;
 @property (nonatomic, retain) UILabel *lblAutoSession;
+@property (nonatomic, retain) UILabel *lblVersion;
+@property (nonatomic, retain) UILabel *lblVersionNumber;
 
 - (IBAction)toggleView;
 - (IBAction)toggleAutoCreateSession;

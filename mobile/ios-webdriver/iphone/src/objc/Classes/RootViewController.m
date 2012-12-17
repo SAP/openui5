@@ -32,6 +32,8 @@
 @synthesize flipsideViewController;
 @synthesize swAuto;
 @synthesize lblAutoSession;
+@synthesize lblVersion;
+@synthesize lblVersionNumber;
 
 // This is all boilerplate apple template code.
 
@@ -39,169 +41,188 @@ static RootViewController *singleton_;
 BOOL isAutoCreateSession_ = YES;
 
 - (BOOL)isIPad {
-  BOOL IPAD = NO;
+    BOOL IPAD = NO;
 #ifdef UI_USER_INTERFACE_IDIOM
-  IPAD = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+    IPAD = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 #endif
-  return IPAD;
+    return IPAD;
 }
 
 - (void)viewDidLoad {
-
-  [super viewDidLoad];
-  MainViewController *viewController;
+    
+    [super viewDidLoad];
+    MainViewController *viewController;
 	
-  if (self.isIPad) {
-    viewController = [[MainViewController alloc]
-                                          initWithNibName:@"MainView-iPad"
-                                          bundle:nil];
-  } else {
-    viewController = [[MainViewController alloc]
-                                          initWithNibName:@"MainView"
-                                          bundle:nil];
-  }
-
-  self.mainViewController = viewController;
-  [viewController release];
-  
-  singleton_ = self;
-
-  [self.view insertSubview:mainViewController.view belowSubview:infoButton];
+    if (self.isIPad) {
+        viewController = [[MainViewController alloc]
+                          initWithNibName:@"MainView-iPad"
+                          bundle:nil];
+    } else {
+        viewController = [[MainViewController alloc]
+                          initWithNibName:@"MainView"
+                          bundle:nil];
+    }
+    
+    self.mainViewController = viewController;
+    [viewController release];
+    
+    singleton_ = self;
+    
+    [self.view insertSubview:mainViewController.view belowSubview:infoButton];
 }
 
 + (RootViewController *)sharedInstance {
-  return singleton_;
+    return singleton_;
 }
 
 - (BOOL)isAutoCreateSession {
-  return isAutoCreateSession_;
+    return isAutoCreateSession_;
 }
 
 - (void)loadFlipsideViewController {
-  FlipsideViewController *viewController;
-  
-  if (self.isIPad) {
-    viewController = [[FlipsideViewController alloc]
-                                              initWithNibName:@"FlipsideView-iPad"
-                                              bundle:nil];
-  } else {
-    viewController = [[FlipsideViewController alloc]
-                                              initWithNibName:@"FlipsideView"
-                                              bundle:nil];
-  }
-
+    FlipsideViewController *viewController;
     
-  
-  self.flipsideViewController = viewController;
-  [viewController release];
-  
-  // Set up the navigation bar
-  UINavigationBar *aNavigationBar = 
+    if (self.isIPad) {
+        viewController = [[FlipsideViewController alloc]
+                          initWithNibName:@"FlipsideView-iPad"
+                          bundle:nil];
+    } else {
+        viewController = [[FlipsideViewController alloc]
+                          initWithNibName:@"FlipsideView"
+                          bundle:nil];
+    }
+    
+    
+    
+    self.flipsideViewController = viewController;
+    [viewController release];
+    
+    // Set up the navigation bar
+    UINavigationBar *aNavigationBar =
     [[UINavigationBar alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 44.0)];
-  aNavigationBar.barStyle = UIBarStyleBlackOpaque;
-  self.flipsideNavigationBar = aNavigationBar;
-  [aNavigationBar release];
-  
-  UIBarButtonItem *buttonItem =
-    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone 
+    aNavigationBar.barStyle = UIBarStyleBlackOpaque;
+    self.flipsideNavigationBar = aNavigationBar;
+    [aNavigationBar release];
+    
+    UIBarButtonItem *buttonItem =
+    [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                   target:self
                                                   action:@selector(toggleView)];
 	
-  UISwitch *switchAutoSession = [[UISwitch alloc]
-								   initWithFrame:CGRectMake(206.0, 65.0, self.view.frame.size.width, self.view.frame.size.height)];
-	[switchAutoSession addTarget:self action:@selector(toggleAutoCreateSession)
-							forControlEvents:UIControlEventValueChanged];
-	[switchAutoSession setOn:YES];
-	self.swAuto = switchAutoSession;
-	[switchAutoSession release];
+    UISwitch *switchAutoSession = [[UISwitch alloc]
+                                   initWithFrame:CGRectMake(206.0, 65.0, self.view.frame.size.width, self.view.frame.size.height)];
+    [switchAutoSession addTarget:self action:@selector(toggleAutoCreateSession)
+                forControlEvents:UIControlEventValueChanged];
+    [switchAutoSession setOn:YES];
+    self.swAuto = switchAutoSession;
+    [switchAutoSession release];
 	
-  UILabel *labelAutoSession = [[UILabel alloc]
-                        initWithFrame:CGRectMake(12.0, 68.0, 179.0, 21.0)];
-  [labelAutoSession setText:@"Auto-create session:"];
-  [labelAutoSession setTextColor:[UIColor whiteColor]];
-  [labelAutoSession setBackgroundColor:[UIColor viewFlipsideBackgroundColor]];
-  self.lblAutoSession = labelAutoSession;
-  [labelAutoSession release];
-	
-  UINavigationItem *navigationItem =
+    UILabel *labelAutoSession = [[UILabel alloc]
+                                 initWithFrame:CGRectMake(12.0, 68.0, 179.0, 21.0)];
+    [labelAutoSession setText:@"Auto-create session:"];
+    [labelAutoSession setTextColor:[UIColor whiteColor]];
+    [labelAutoSession setBackgroundColor:[UIColor viewFlipsideBackgroundColor]];
+    self.lblAutoSession = labelAutoSession;
+    [labelAutoSession release];
+    
+    UILabel *labelVersion = [[UILabel alloc]
+                             initWithFrame:CGRectMake(12.0, 136.0, 179.0, 21.0)];
+    [labelVersion setText:@"Version:"];
+    [labelVersion setTextColor:[UIColor whiteColor]];
+    [labelVersion setBackgroundColor:[UIColor viewFlipsideBackgroundColor]];
+    self.lblVersion = labelVersion;
+    [labelVersion release];
+    
+    NSString *versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
+    UILabel *labelVersionNumber = [[UILabel alloc]
+                                   initWithFrame:CGRectMake(206.0, 136.0, 179.0, 21.0)];
+    [labelVersionNumber setText:versionString];
+    [labelVersionNumber setTextColor:[UIColor whiteColor]];
+    [labelVersionNumber setBackgroundColor:[UIColor viewFlipsideBackgroundColor]];
+    self.lblVersionNumber = labelVersionNumber;
+    [labelVersionNumber release];
+    
+    UINavigationItem *navigationItem =
     [[UINavigationItem alloc] initWithTitle:@"Details"];
-  navigationItem.rightBarButtonItem = buttonItem;
-
-  [flipsideNavigationBar pushNavigationItem:navigationItem animated:NO];
-  [navigationItem release];
-  [buttonItem release];
+    navigationItem.rightBarButtonItem = buttonItem;
+    
+    [flipsideNavigationBar pushNavigationItem:navigationItem animated:NO];
+    [navigationItem release];
+    [buttonItem release];
 }
 
 - (IBAction)toggleAutoCreateSession	{
-  isAutoCreateSession_ = [self.swAuto isOn];
+    isAutoCreateSession_ = [self.swAuto isOn];
 }
 
-- (IBAction)toggleView {    
-  /*
-   This method is called when the info or Done button is pressed.
-   It flips the displayed view from the main view to the flipside view and
-   vice-versa.
-   */
-  if (flipsideViewController == nil) {
-    [self loadFlipsideViewController];
-  }
-  
-  UIView *mainView = mainViewController.view;
-  UIView *flipsideView = flipsideViewController.view;
-  
-  [UIView beginAnimations:nil context:NULL];
-  [UIView setAnimationDuration:1];
-  [UIView setAnimationTransition:
-   ([mainView superview] ? UIViewAnimationTransitionFlipFromRight
-    : UIViewAnimationTransitionFlipFromLeft) 
-                         forView:self.view
-                           cache:YES];
-  
-  if ([mainView superview] != nil) {
-    [flipsideViewController viewWillAppear:YES];
-    [mainViewController viewWillDisappear:YES];
-    [mainView removeFromSuperview];
-    [infoButton removeFromSuperview];
-    [self.view addSubview:flipsideView];
-    [self.view insertSubview:flipsideNavigationBar aboveSubview:flipsideView];
-    [self.view insertSubview:swAuto aboveSubview:flipsideView];
-    [self.view insertSubview:lblAutoSession aboveSubview:flipsideView];
-    [mainViewController viewDidDisappear:YES];
-    [flipsideViewController viewDidAppear:YES];
-
-  } else {
-    [mainViewController viewWillAppear:YES];
-    [flipsideViewController viewWillDisappear:YES];
-    [flipsideView removeFromSuperview];
-    [flipsideNavigationBar removeFromSuperview];
-    [self.view addSubview:mainView];
-    [self.view insertSubview:infoButton aboveSubview:mainViewController.view];
-    [flipsideViewController viewDidDisappear:YES];
-    [mainViewController viewDidAppear:YES];
-  }
-  [UIView commitAnimations];
+- (IBAction)toggleView {
+    /*
+     This method is called when the info or Done button is pressed.
+     It flips the displayed view from the main view to the flipside view and
+     vice-versa.
+     */
+    if (flipsideViewController == nil) {
+        [self loadFlipsideViewController];
+    }
+    
+    UIView *mainView = mainViewController.view;
+    UIView *flipsideView = flipsideViewController.view;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:1];
+    [UIView setAnimationTransition:
+     ([mainView superview] ? UIViewAnimationTransitionFlipFromRight
+      : UIViewAnimationTransitionFlipFromLeft)
+                           forView:self.view
+                             cache:YES];
+    
+    if ([mainView superview] != nil) {
+        [flipsideViewController viewWillAppear:YES];
+        [mainViewController viewWillDisappear:YES];
+        [mainView removeFromSuperview];
+        [infoButton removeFromSuperview];
+        [self.view addSubview:flipsideView];
+        [self.view insertSubview:flipsideNavigationBar aboveSubview:flipsideView];
+        [self.view insertSubview:swAuto aboveSubview:flipsideView];
+        [self.view insertSubview:lblAutoSession aboveSubview:flipsideView];
+        [self.view insertSubview:lblVersion aboveSubview:flipsideView];
+        [self.view insertSubview:lblVersionNumber aboveSubview:flipsideView];
+        [mainViewController viewDidDisappear:YES];
+        [flipsideViewController viewDidAppear:YES];
+        
+    } else {
+        [mainViewController viewWillAppear:YES];
+        [flipsideViewController viewWillDisappear:YES];
+        [flipsideView removeFromSuperview];
+        [flipsideNavigationBar removeFromSuperview];
+        [self.view addSubview:mainView];
+        [self.view insertSubview:infoButton aboveSubview:mainViewController.view];
+        [flipsideViewController viewDidDisappear:YES];
+        [mainViewController viewDidAppear:YES];
+    }
+    [UIView commitAnimations];
 }
 
 
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:
-          (UIInterfaceOrientation)interfaceOrientation {
+(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
     return YES;
 }
 
 
 - (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
+    [super didReceiveMemoryWarning];
 }
 
 
 - (void)dealloc {
-  [infoButton release];
-  [flipsideNavigationBar release];
-  [mainViewController release];
-  [flipsideViewController release];
-  [super dealloc];
+    [infoButton release];
+    [flipsideNavigationBar release];
+    [mainViewController release];
+    [flipsideViewController release];
+    [super dealloc];
 }
 
 
