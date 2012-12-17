@@ -76,6 +76,7 @@ SearchField.css
 SegmentedButton.css
 Select.css
 Slider.css
+SplitApp.css
 Switch.css
 Text.css
 TextArea.css

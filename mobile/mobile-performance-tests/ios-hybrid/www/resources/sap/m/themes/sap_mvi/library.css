@@ -4026,59 +4026,162 @@ style: Disabled
 .sapMSplitApp {
   width: 100%;
   height: 100%;
-  display: inline-block;
+  display: -webkit-box;
 }
 .sapMSplitAppMaster {
   -webkit-box-sizing: border-box;
-  width: 320px !important;
+  width: 320px;
   border-right: 1px solid black;
   left: 0;
-}
-.sapMSplitAppContainer {
-  display: -webkit-box;
-  width: 100%;
-  height: 100%;
 }
 .sapMSplitAppDetail {
   -webkit-box-sizing: border-box;
   height: 100%;
   -webkit-box-flex: 4;
+  -webkit-transition: all 3000ms;
 }
-.sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster {
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster {
   display: inline-block;
   position: absolute;
-  -webkit-transform: translate(-400px, 0);
+  -webkit-transform: translate3d(-330px, 0, 0);
   z-index: 5;
   top: 0;
-  visibility: hidden;
   -webkit-box-sizing: border-box;
-  box-shadow: 0.0625em 0 0.625em rgba(0, 0, 0, 0.7);
   height: 100%;
   border-right: none;
 }
-.sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppDetail {
-  width: 100% !important;
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster {
+  -webkit-transform: translate3d(-330px, 0, 0);
+  -webkit-transition: all 0ms;
+}
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppDetail {
+  -webkit-box-flex: 1;
   margin-left: 0;
 }
-.sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterVisible {
-  -webkit-transform: translate(0, 0);
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterVisible {
+  -webkit-transform: translate3d(0, 0, 0);
   -webkit-transition: all 300ms;
-  visibility: visible;
 }
-.sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterHidden {
-  -webkit-transform: translate(-400px, 0);
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterHidden {
+  -webkit-transform: translate3d(-330px, 0, 0);
   -webkit-transition: all 300ms;
-  visibility: hidden;
 }
-.sapMSplitAppPortrait.sapMSplitAppStretchCompress .sapMSplitAppMaster {
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppStretchCompress .sapMSplitAppMaster {
   -webkit-box-sizing: border-box;
-  width: 220px !important;
-  border-right: 1px solid black;
+  width: 320px !important;
   left: 0;
+}
+.sap-android .sapMSplitAppMaster,
+.sap-bb .sapMSplitAppMaster {
+  border-right: none;
+  box-shadow: none;
+  width: 320px;
+}
+.sap-android .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster,
+.sap-bb .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster {
+  display: inline-block;
+  width: 0px;
+}
+.sap-android .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterVisible,
+.sap-bb .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterVisible {
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-name: sapMSplitAppSlidein;
+  width: 320px;
+  box-shadow: none;
+}
+.sap-android .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterHidden,
+.sap-bb .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMasterHidden {
+  -webkit-animation-duration: 300ms;
+  -webkit-animation-name: sapMSplitAppSlideout;
+  width: 0px;
+}
+.sap-android .sapMSplitAppPortrait.sapMSplitAppStretchCompress .sapMSplitAppMaster,
+.sap-bb .sapMSplitAppPortrait.sapMSplitAppStretchCompress .sapMSplitAppMaster {
+  width: 250px;
+}
+@-webkit-keyframes sapMSplitAppSlidein {
+  from {
+    width: 0px;
+  }
+  to {
+    width: 320px;
+  }
+}
+@-webkit-keyframes sapMSplitAppSlideout {
+  from {
+    width: 320px;
+  }
+  to {
+    width: 0px;
+  }
+}
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.7;
+  }
+}
+.sapMSplitAppPortrait .sapMSplitAppMasterBtnShow {
+  display: block;
+  -webkit-animation: fadeIn 300ms;
+}
+.sapMSplitAppPortrait .sapMSplitAppMasterBtnHide {
+  -webkit-animation: fadeOut  150ms;
+}
+.sapMSplitAppMasterBtnShow {
+  display: block;
+  -webkit-animation: fadeIn 1ms;
+}
+.sapMSplitAppMasterBtnHide {
+  -webkit-animation: fadeOut  5ms;
+}
+.sapMSplitAppMasterBtnHidden {
+  display: none;
 }
 .sapMSplitAppMobile {
   width: 100%;
   height: 100%;
+}
+/* ============================================= */
+/* CSS for control sap.m/SplitApp.control */
+/* ============================================= */
+/**************************** 
+
+iOS specific styling 
+
+*****************************/
+.sap-ios .sapMSplitAppPortrait.sapMSplitAppShowHide .sapMSplitAppMaster {
+  box-shadow: 0.0625em 0 0.625em rgba(0, 0, 0, 0.7);
+}
+/**************************** 
+
+Android specific styling 
+
+*****************************/
+.sap-android .sapMSplitAppMaster,
+sap-bb .sapMSplitAppMaster {
+  background-color: #f7f7f7;
+}
+.sap-android .sapMSplitAppDetail,
+sap-bb .sapMSplitAppDetail {
+  -webkit-box-shadow: -0.18em 0 0 rgba(0, 0, 0, 0.1), -0.5em 0 1.2em rgba(0, 0, 0, 0.08);
+  box-shadow: -0.18em 0 0 rgba(0, 0, 0, 0.1), -0.5em 0 1.2em rgba(0, 0, 0, 0.08);
+}
+.sap-android .sapMSplitAppMaster .sapMPageBgStandard,
+sap-bb .sapMSplitAppMaster .sapMPageBgStandard,
+.sap-android .sapMSplitAppMaster .sapMPageBgList,
+sap-bb .sapMSplitAppMaster .sapMPageBgList {
+  background-color: #f7f7f7;
 }
 /* ============================================= */
 /* CSS for controlsap.m/StandardListItem.control */

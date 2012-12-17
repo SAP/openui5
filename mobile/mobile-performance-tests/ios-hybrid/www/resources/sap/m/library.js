@@ -32,6 +32,7 @@ sap.ui.getCore().initLibrary({
   dependencies : ["sap.ui.core"],
   types: [
     "sap.m.ButtonType",
+    "sap.m.DateTimeInputType",
     "sap.m.DialogType",
     "sap.m.FlexAlignItems",
     "sap.m.FlexAlignSelf",
@@ -58,6 +59,7 @@ sap.ui.getCore().initLibrary({
     "sap.m.Carousel",
     "sap.m.CheckBox",
     "sap.m.CustomListItem",
+    "sap.m.DateTimeInput",
     "sap.m.Dialog",
     "sap.m.DisplayListItem",
     "sap.m.FlexBox",
@@ -154,6 +156,49 @@ sap.m.ButtonType = {
      * @public
      */
     Unstyled : "Unstyled"
+
+  };
+  
+/*!
+ * SAP UI development toolkit for HTML5 (SAPUI5)
+ * 
+ * (c) Copyright 2009-2012 SAP AG. All rights reserved
+ */
+
+/* ----------------------------------------------------------------------------------
+ * Hint: This is a derived (generated) file. Changes should be done in the underlying 
+ * source files only (*.type, *.js) or they will be lost after the next generation.
+ * ---------------------------------------------------------------------------------- */
+
+// Provides enumeration sap.m.DateTimeInputType.
+jQuery.sap.declare("sap.m.DateTimeInputType");
+
+/**
+ * @class A subset of DateTimeInput types that fit to a simple API returning one string.
+ *
+ * @version 1.9.1-SNAPSHOT
+ * @static
+ * @public
+ */
+sap.m.DateTimeInputType = {
+  
+    /**
+     * An input control for specifying a date value. The user can select a month, day of the month, and year. 
+     * @public
+     */
+    Date : "Date",
+
+    /**
+     * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day. 
+     * @public
+     */
+    DateTime : "DateTime",
+
+    /**
+     * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM. 
+     * @public
+     */
+    Time : "Time"
 
   };
   
@@ -506,22 +551,25 @@ sap.m.InputType = {
     Text : "Text",
 
     /**
-     * An input control for specifying a date value. The user can select a month, day of the month, and year. 
+     * An input control for specifying a date value. The user can select a month, day of the month, and year.
+     * DEPRECATED: Please use sap.m.DateTimeInput control with type "Date" to create date input. 
      * @public
      */
     Date : "Date",
 
     /**
-     * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day. 
+     * An input control for specifying a date and time value. The user can select a month, day of the month, year, and time of day.
+     * DEPRECATED: Please use sap.m.DateTimeInput control with type "DateTime" to create date-time input. 
      * @public
      */
     Datetime : "Datetime",
 
     /**
-     * An input control for specifying a date and time value where the format depends on the locale. 
+     * An input control for specifying a date and time value where the format depends on the locale.
+     * DEPRECATED: Please use sap.m.DateTimeInput control with type "DateTime" to create date-time input. 
      * @public
      */
-    DatetimeLocal : "DatetimeLocal",
+    DatetimeLocale : "DatetimeLocale",
 
     /**
      * A text field for specifying an email address. Brings up a keyboard optimized for email address entry. 
@@ -530,7 +578,8 @@ sap.m.InputType = {
     Email : "Email",
 
     /**
-     * An input control for selecting a month. 
+     * An input control for selecting a month.
+     * DEPRECATED: Please do not use this Input type. 
      * @public
      */
     Month : "Month",
@@ -548,7 +597,8 @@ sap.m.InputType = {
     Tel : "Tel",
 
     /**
-     * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM. 
+     * An input control for specifying a time value. The user can select the hour, minute, and optionally AM or PM.
+     * DEPRECATED: Please use sap.m.DateTimeInput control with type "Time" to create time input. 
      * @public
      */
     Time : "Time",
@@ -839,7 +889,13 @@ sap.m.SplitAppMode = {
      * Master will always be shown but in a compressed version when in portrait mode. 
      * @public
      */
-    StretchCompressMode : "StretchCompressMode"
+    StretchCompressMode : "StretchCompressMode",
+
+    /**
+     * Master will be shown inside a Popover when in portrait mode 
+     * @public
+     */
+    PopoverMode : "PopoverMode"
 
   };
   
@@ -956,3 +1012,57 @@ sap.m.touch.countContained = function(oTouchList, vElement) {
 
 	return iTouchCount;
 };
+
+
+!function(oLib) {
+
+	//Invalid date value of UI5 according to TZ
+	oLib.getInvalidDate = function() {
+		jQuery.sap.require("sap.ui.core.format.DateFormat");
+		var oDate = sap.ui.core.format.DateFormat.getDateInstance().parse("");
+
+		oLib.getInvalidDate = function() {
+			return oDate;
+		};
+
+		return oDate;
+	};
+
+
+	/**
+	* Locale helpers
+	* We should not need to create new instance to get same locale settings
+	* These methods keep them in the scope and returns same after first run
+	*/
+	oLib.getLocale = function() {
+		var oConfig = sap.ui.getCore().getConfiguration(),
+			sLocale = oConfig.getFormatSettings().getFormatLocale().toString(),
+			oLocale = new sap.ui.core.Locale(sLocale);
+
+		oLib.getLocale = function() {
+			return oLocale;
+		};
+
+		return oLocale;
+	};
+
+	oLib.getLocaleData = function() {
+		var oLocale = oLib.getLocale(),
+			oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+
+		oLib.getLocaleData = function() {
+			return oLocaleData;
+		};
+
+		return oLocaleData;
+	};
+
+	/**
+	* Generic isDate checker
+	*/
+	oLib.isDate = function(value) {
+		return value && Object.prototype.toString.call(value) == "[object Date]" && !isNaN(value);
+	};
+
+}(sap.m);
+

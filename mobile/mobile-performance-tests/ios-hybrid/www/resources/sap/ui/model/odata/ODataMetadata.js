@@ -113,14 +113,14 @@ sap.ui.model.odata.ODataMetadata.prototype._getEntityTypeByPath = function(sPath
 					if (oNavigationProperty.name === aParts[iLength - 1]) {
 						// get association for navigation property and then the collection name
 						aAssociationName = that._splitName(oNavigationProperty.relationship); 
-						oAssociation = that._getAssociation(aAssociationName[0], aAssociationName[1]);
+						oAssociation = that._getObjectMetadata("association", aAssociationName[0], aAssociationName[1]);
 						if (oAssociation) {
 							oEnd = oAssociation.end[0];
 							if (oEnd.role !== oNavigationProperty.toRole) {
 								oEnd = oAssociation.end[1];
 							}
 							aEntityTypeName = that._splitName(oEnd.type);
-							oEntityType = that._getEntityType(aEntityTypeName[0], aEntityTypeName[1]);
+							oEntityType = that._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
 						}
 						return false;
 					}
@@ -130,7 +130,7 @@ sap.ui.model.odata.ODataMetadata.prototype._getEntityTypeByPath = function(sPath
 	} else {
 		// if only one part exists it should be the name of the collection and we can get the entity type for it
 		aEntityTypeName = this._splitName(this._getEntityTypeName(aParts[0]));		
-		oEntityType = this._getEntityType(aEntityTypeName[0], aEntityTypeName[1]);
+		oEntityType = this._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
 	}
 	jQuery.sap.assert(oEntityType, "EntityType for path " + sPath + " could not be found!");  
 	return oEntityType;
@@ -150,30 +150,6 @@ sap.ui.model.odata.ODataMetadata.prototype._splitName = function(sFullName) {
 	return aParts;
 };
 
-
-/**
- * search metadata for specified association name with the specified namespace
- */
-sap.ui.model.odata.ODataMetadata.prototype._getAssociation = function(sAssociationName, sNameSpace) {
-	var oAssociation;
-	if (sAssociationName && sNameSpace) {
-		// search association in all schemas
-		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-			if (oSchema.namespace === sNameSpace && oSchema.association) {
-				if (oSchema.association) {
-					jQuery.each(oSchema.association, function(k, oCurrentAssociation) {   
-						if (oCurrentAssociation.name === sAssociationName){
-							oAssociation = oCurrentAssociation;
-							return false;
-						}
-					});					
-				}
-			}
-		});		
-	}
-	jQuery.sap.assert(oAssociation, "Association " + sAssociationName + " not found!");  
-	return oAssociation;
-};
 
 /**  
 *  search metadata for specified collection name (= entity set name)
@@ -199,43 +175,51 @@ sap.ui.model.odata.ODataMetadata.prototype._getEntityTypeName = function(sCollec
 };
 
 /**
- * get the entity type of a specified entity type name and namespace
+ * get the object of a specified type name and namespace
  */
-sap.ui.model.odata.ODataMetadata.prototype._getEntityType = function(sEntityTypeName, sNamespace) {
-	var oEntityType;
-	if (sEntityTypeName && sNamespace) {
-		// search in all schemas for the entity type
+sap.ui.model.odata.ODataMetadata.prototype._getObjectMetadata = function(sObjectType, sObjectName, sNamespace) {
+	var oObject;
+	if (sObjectName && sNamespace) {
+		// search in all schemas for the sObjectName
 		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-			// check if we found the right schema which will contain the type
-			if (oSchema.entityType && oSchema.namespace === sNamespace) {
-				jQuery.each(oSchema.entityType, function(j, oCurrentEntityType) {
-					if (oCurrentEntityType.name === sEntityTypeName) {  
-						oEntityType = oCurrentEntityType;
+			// check if we found the right schema which will contain the sObjectName
+			if (oSchema[sObjectType] && oSchema.namespace === sNamespace) {
+				jQuery.each(oSchema[sObjectType], function(j, oCurrentObject) {
+					if (oCurrentObject.name === sObjectName) {  
+						oObject = oCurrentObject;
 						return false;
 					}
 				});
-				return !oEntityType;
+				return !oObject;
 			}
 		});		
 	}	
-	jQuery.sap.assert(oEntityType, "EntityType of EntityType name " + sEntityTypeName + " not found!");  
-	return oEntityType;  
+	jQuery.sap.assert(oObject, "ObjectType " + sObjectType + " for name " + sObjectName + " not found!");  
+	return oObject;  
 };
 
 
-// TODO complex types not supported
 /**  
 *  extract the property metadata of a specified property of a entity type out of the metadata document 
 */  
 sap.ui.model.odata.ODataMetadata.prototype._getPropertyMetadata = function(oEntityType, sProperty) {
 	var oPropertyMetadata;
+	
+	var aParts = sProperty.split("/"); // path could point to a complex type
+	
 	jQuery.each(oEntityType.property, function(k, oProperty) {
-		if (oProperty.name === sProperty){
+		if (oProperty.name === aParts[0]){
 			oPropertyMetadata = oProperty;
 			return false;
 		}
 	});
 	
-	jQuery.sap.assert(oPropertyMetadata, "PropertyType for property "+sProperty+ " of EntityType " +oEntityType.name+ " not found!");  
+	// check if complex type
+	if (oPropertyMetadata && aParts.length > 1 && !jQuery.sap.startsWith(oPropertyMetadata.type.toLowerCase(), "edm.")) {		
+		var aName = this._splitName(oPropertyMetadata.type);
+		oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", aName[0], aName[1]), aParts[1]);
+	}
+	
+	jQuery.sap.assert(oPropertyMetadata, "PropertyType for property "+ aParts[0]+ " of EntityType " + oEntityType.name + " not found!");  
 	return oPropertyMetadata;  
 };

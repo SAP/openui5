@@ -87,7 +87,7 @@ sap.ui.core.Control.extend("sap.m.Input", { metadata : {
 		"valueState" : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 		"name" : {type : "string", group : "Misc", defaultValue : null},
 		"placeholder" : {type : "string", group : "Misc", defaultValue : null},
-		"dateFormat" : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd'}
+		"dateFormat" : {type : "string", group : "Misc", defaultValue : 'YYYY-MM-dd', deprecated: true}
 	},
 	events : {
 		"change" : {}, 
@@ -368,12 +368,13 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * Only used if type=date and no datepicker is available.
  * The data is displayed and the user input is parsed according to this format.
  * NOTE: The value property is always of the form RFC 3339 (YYYY-MM-dd).
- * 
  *
  * Default value is <code>YYYY-MM-dd</code>
  *
  * @return {string} the value of property <code>dateFormat</code>
  * @public
+ * @deprecated Since version 1.9.1. 
+ * sap.m.DateTimeInput should be used for date/time inputs and formating.
  * @name sap.m.Input#getDateFormat
  * @function
  */
@@ -387,6 +388,8 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
  * @param {string} sDateFormat  new value for property <code>dateFormat</code>
  * @return {sap.m.Input} <code>this</code> to allow method chaining
  * @public
+ * @deprecated Since version 1.9.1. 
+ * sap.m.DateTimeInput should be used for date/time inputs and formating.
  * @name sap.m.Input#setDateFormat
  * @function
  */
@@ -523,10 +526,6 @@ sap.m.Input.M_EVENTS = {'change':'change','liveChange':'liveChange'};
 
 // Start of sap\m\Input.js
 jQuery.sap.require("sap.ui.core.EnabledPropagator");
-jQuery.sap.require("sap.ui.core.format.DateFormat");
-
-// input types which have picker
-sap.m.Input.prototype._pickers = ['Date', 'Month', 'Datetime', 'DatetimeLocal', 'Week', 'Time'];
 
 // use labels as placeholder configuration
 sap.m.Input.prototype._showLabelAsPlaceholder = (function() {
@@ -539,49 +538,22 @@ sap.m.Input.prototype._showLabelAsPlaceholder = (function() {
 	return useLabel;
 }());
 
-
-sap.m.Input.prototype.init = function() {
-	this._hasChangeEvent = true;
-};
-
 sap.m.Input.prototype.onBeforeRendering = function() {
-	this._unbindEvents();
+	this._unbind();
 };
 
 sap.m.Input.prototype.onAfterRendering = function() {
 	this._$input = this.$().find('input');
+	this._$input.bind("change.input input.input", jQuery.proxy(this._onChange, this));
+
 	if (this._showLabelAsPlaceholder) {
 		this._$label = this.$().find('label');
-	}
-
-	this._setLabelVisibility();
-	if (this._hasChangeEvent) {
-		this._$input.bind("change.input input.input", jQuery.proxy(this.onchange, this));
-	} else {
-		this._$input.bind("blur.input focus.input", jQuery.proxy(this.onchange, this));
+		this._setLabelVisibility();
 	}
 };
-
-//In iOS5 some input types do not fire change/input events
-//TODO : check if blackberry has the same change event issue
-//http://supportforums.blackberry.com/t5/Web-and-WebWorks-Development/input-type-date-change-event/td-p/1275165
-sap.m.Input.prototype.setType = function(sType) {
-	this.setProperty("type", sType, false);
-	this._hasChangeEvent = !(jQuery.sap.touchEventMode == "ON" &&
-							jQuery.os.ios &&
-							jQuery.os.fVersion < 6 &&
-							this._pickers.indexOf(sType) + 1);
-
-	// we can show native placeholder but we still need self-made placeholder for date/time...
-	if (sap.m.Input.prototype._showLabelAsPlaceholder == null && this._pickers.indexOf(sType) + 1) {
-		this._showLabelAsPlaceholder = true;
-	}
-	return this;
-};
-
 
 sap.m.Input.prototype.exit = function() {
-	this._unbindEvents();
+	this._unbind();
 	delete this._$input;
 	delete this._$label;
 };
@@ -595,87 +567,32 @@ sap.m.Input.prototype.ontouchstart = function(oEvent) {
 	oEvent.originalEvent._sapui_handledByControl = true;
 };
 
-sap.m.Input.prototype.onchange = function(oEvent) {
-	var oldValue = this.getValue(),
-		newValue = this._formatForGetter(this._$input.val());
+sap.m.Input.prototype._onChange = function(oEvent) {
+	var value = this._$input.val();
 
-	if (oEvent.type != "change" && oldValue == newValue) {
-		return;
-	}
-
-	this.setProperty("value", newValue, true);
+	this.setProperty("value", value, true);
 	this._setLabelVisibility();
 
 	if (oEvent.type == "input") {
-		//TODO: discuss firing live change event for !this._hasChangeEvent
 		this.fireLiveChange({
-			newValue : newValue
+			newValue : value
 		});
 	} else {
 		this.fireChange({
-			newValue : newValue
+			newValue : value
 		});
 	}
 };
 
-
 sap.m.Input.prototype._setLabelVisibility = function() {
-	// maybe we don't have label e.g on desktop mode
 	if (this._showLabelAsPlaceholder) {
-		this._$label.css("display", this.getValue() ? "none" : "inline");
+		// TODO: Check visibility is better then display
+		this._$label.css("display", this.getProperty("value") ? "none" : "inline");
 	}
 };
 
-sap.m.Input.prototype._unbindEvents = function() {
+sap.m.Input.prototype._unbind = function() {
 	if (this._$input instanceof jQuery) {
 		this._$input.unbind(".input");
-	}
-};
-
-// TODO: Why do we only check date picker? for formatting
-// What about time picker am/pm
-sap.m.Input.prototype._datePickerAvailable = (function() {
-	var test = document.createElement("input");
-	test.setAttribute("type", "date");
-	return (test.type == "date");
-})();
-
-// only samsung galaxy android 4.1 has picker but it hangs after selection
-sap.m.Input.prototype._hasPickerBug = (function() {
-	return jQuery.os.android &&
-			!jQuery.browser.chrome &&
-			jQuery.os.fVersion == 4.1 &&
-			/samsung/i.test(window.navigator.userAgent);
-})();
-
-sap.m.Input.prototype._formatForGetter = function(value){
-	var oUserDateFormat,
-		oStandardDateFormat,
-		oDate;
-	if ((this.getType() == "Date") && (!this._datePickerAvailable)) {
-
-		oUserDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: this.getDateFormat()});
-		oStandardDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "YYYY-MM-dd"});
-
-		oDate = oUserDateFormat.parse(value);
-		return oStandardDateFormat.format(oDate);
-	}
-	return value;
-};
-
-sap.m.Input.prototype._formatForRendering = function(value){
-	var oUserDateFormat,
-		oStandardDateFormat,
-		oDate;
-
-	if ((this.getType() == "Date") && (!this._datePickerAvailable))  {
-
-		oUserDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: this.getDateFormat()});
-		oStandardDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "YYYY-MM-dd"});
-
-		oDate = oStandardDateFormat.parse(value);
-		return oUserDateFormat.format(oDate);
-	} else {
-		return value;
 	}
 };

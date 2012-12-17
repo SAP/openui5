@@ -3496,7 +3496,8 @@ jQuery.sap.KeyCodes = {
 		"dragleave",
 		"dragend",
 		"drop",
-		"paste"
+		"paste",
+		"cut"
 	];
 
 
@@ -4354,6 +4355,7 @@ jQuery.sap.declare("jquery.sap.mobile");
 					iphone: "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3",
 					ipad: "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206",
 					android: "Mozilla/5.0 (Linux; U; Android 4.0.3; en-us; GT-I9100 Build/IML74K) AppleWebKit/534.46 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.46",
+					android_tablet: "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19",
 					blackberry: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+",
 					blackberry10: "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.10+ (KHTML, like Gecko) Version/10.0.9.1077 Mobile Safari/537.10+"
 			}[resultUA];
@@ -6027,7 +6029,7 @@ sap.ui = jQuery.extend(sap.ui, {
 		 * @type string
 		 */
 		version: "1.9.1-SNAPSHOT",
-		buildinfo : { lastchange : "${ldi.scm.revision}", buildtime : "20121204-0202" }
+		buildinfo : { lastchange : "${ldi.scm.revision}", buildtime : "20121205-0202" }
 	});
 
 /**
@@ -11601,10 +11603,6 @@ sap.ui.base.ManagedObject.prototype.bindProperty = function(sName, oBindingInfo)
 	if (this.isBound(sName)){
 		this.unbindProperty(sName);
 	}
-	
-    // because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility 
-	// for formatter function which is now called by the property binding
-	oBindingInfo.formatter = jQuery.proxy(oBindingInfo.formatter, this);
 
 	// store binding info to create the binding, as soon as the model is available, or when the model is changed
 	this.mBindingInfos[sName] = oBindingInfo;
@@ -11639,6 +11637,11 @@ sap.ui.base.ManagedObject.prototype._bindProperty = function(sName, oBindingInfo
 
 	// Only use context for bindings on the primary model
 	oContext = oBindingInfo.model ? null : this.getBindingContext();
+	
+    // because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility 
+	// for formatter function which is now called by the property binding
+	// proxy formatter here because "this" is the correct cloned element
+	oBindingInfo.formatter = jQuery.proxy(oBindingInfo.formatter, this);
 
 	// Create binding object
 	oBinding = oModel.bindProperty(oBindingInfo.path, oContext, oBindingInfo.parameters);
@@ -16289,6 +16292,11 @@ sap.ui.core.RenderManager.prototype.writeAttributeEscaped = function(sName, sVal
  * the visibility property.
  * <code>{hidden : null}</code> ensures that no <code>aria-hidden</code> attribute is written independent of the precense
  * or absence of the visibility property.
+ * The function behaves in the same way for the associations <code>ariaDescribedBy</code> and <code>ariaLabelledBy</code>.
+ * To append additional values to the auto-generated <code>aria-describedby</code> and <code>aria-labelledby</code> attributes
+ * the following format can be used:
+ * <code>{describedby : {value: "id1 id2", append: true}}</code> => <code>aria-describedby="ida idb id1 id2"</code> (assuming that "ida idb"
+ * is the auto-generated part based on the association <code>ariaDescribedBy</code>).
  *
  * @param {sap.ui.core.Element}
  *            [oElement] the element whose accessibility state should be rendered
@@ -16341,8 +16349,29 @@ sap.ui.core.RenderManager.prototype.writeAccessibilityState = function(oElement,
 	}
 
 	if(mProps){
+		function checkValue(v){
+			var type = typeof(v);
+			return v === null || v === "" || type === "number" || type === "string" || type === "boolean";
+		}
+		
+		var prop = {};
+		var x, val, type, autoVal;
+		
+		for(x in mProps){
+			val = mProps[x];
+			if(checkValue(val)){
+				prop[x] = val;
+			}else if(typeof(val) === "object" && checkValue(val.value)){
+				autoVal = "";
+				if(val.append && (x === "describedby" || x === "labelledby")){
+					autoVal = mAriaProps[x] ? mAriaProps[x]+" " : "";
+				}
+				prop[x] = autoVal + val.value;
+			}
+		}
+		
 		//The auto-generated values above can be overridden or reset (via null)
-		jQuery.extend(mAriaProps, mProps);
+		jQuery.extend(mAriaProps, prop);
 	}
 
 	// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
