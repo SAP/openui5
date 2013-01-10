@@ -3,9 +3,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -24,7 +30,8 @@ public class Git2P4Main {
   static String range = null;
   static String resumeAfter = null;
   static boolean noFetch = false;
-
+  static boolean preview = false;
+  
   static SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -74,55 +81,76 @@ public class Git2P4Main {
 
       git.checkout("origin/" + branch);
 
-      File pom = new File(repo.gitRepository, "pom.xml");
-      Document pomDoc = XMLUtils.getDOM(pom);
-      Element versionEl = XMLUtils.findChild(pomDoc.getDocumentElement(), "version");
-      if ( versionEl == null ) {
-        versionEl = XMLUtils.findChild(pomDoc.getDocumentElement(), "parent");
-        if ( versionEl != null ) {
-          versionEl = XMLUtils.findChild(versionEl,  "version");
-        }
-      }
-      if ( versionEl != null ) {
-        System.out.println("found " + versionEl.getTextContent() + ", so far " + version);
+      Map<String,String> info = repo.getRootPOMInfo();
+      String v = info.get("version");
+      if ( v != null ) {
         if ( version == null ) {
-          version = versionEl.getTextContent();
-        } else if ( !version.equals(versionEl.getTextContent()) ){
-          System.out.println("version mismatch: " + version + " vs. " + versionEl.getTextContent());
+          version = v;
+        } else if ( !version.equals(v) ){
+          System.out.println("version mismatch between repositories: " + version + " vs. " + v);
           return null;
         }
       } else {
-        System.out.println("no version found in " + pom);
+        System.out.println("no version found in " + repo.getRepositoryName());
         return null;
       }
     }
     return version;
   }
 
-  static void milestone(String fromVersion, String toVersion, String branch) throws IOException {
-    boolean guess = false;
+  static void modifyVersions(ReleaseOperation op, String branch, String fromVersion, String toVersion) throws IOException {
 
-    if ( branch == null ) {
-      branch = "master";
-      guess = true;
-    }
-    if ( fromVersion == null && toVersion == null ) {
-      fromVersion = findVersion(branch);
-      if ( fromVersion != null && fromVersion.endsWith("-SNAPSHOT") ) {
-        toVersion = fromVersion.substring(0, fromVersion.length() - "-SNAPSHOT".length());
+    boolean guess = false;
+    
+    // first ensure branch and op
+    if ( branch != null && op == null ) {
+      if ( fromVersion == null ) {
+        fromVersion = findVersion(branch);
+        guess = true;
       }
-      guess = true;
+      Set<ReleaseOperation> ops = new Version(fromVersion).guessOperations("master".equals(branch));
+      if ( ops.size() == 1 ) {
+        op = ops.iterator().next();
+        guess = true;
+      } else {
+        throw new IllegalArgumentException("can't guess operation, might be one of " + ops);
+      }
+    } else if ( branch == null && op != null ) {
+      if ( op == ReleaseOperation.MajorRelease || op == ReleaseOperation.MinorRelease || op == ReleaseOperation.MilestoneRelease || op == ReleaseOperation.MilestoneDevelopment ) {
+        branch = "master";
+        guess = true;
+      } else {
+        throw new IllegalArgumentException("for patch operations, a branch must be specified");
+      }
+    } else if ( branch == null && op == null ) {
+      throw new IllegalArgumentException("either branch or operation must be specified");
     }
-    if ( fromVersion == null || toVersion == null ) {
-      throw new RuntimeException("could not determine version info");
+
+    
+    if ( fromVersion == null ) {
+      fromVersion = findVersion(branch);
     }
+
+    if ( toVersion == null && op != null ) {
+      // Note: might throw an exception if the operation doesn't match the current (from) version 
+      toVersion = new Version(fromVersion).nextVersion(op).toString();
+    }
+    
+    if ( op == null || branch == null || fromVersion == null || toVersion == null ) {
+      throw new IllegalArgumentException("incomplete information for version change");
+    }
+
     if ( guess ) {
-      Log.println("Please confirm the automatically determined parameters:");
+      Log.println("Automatically determined parameters:");
       Log.println("       branch: " + branch);
+      Log.println("    operation: " + op);
       Log.println("  fromVersion: " + fromVersion);
       Log.println("    toVersion: " + toVersion);
+    }
+    
+    if ( guess && git2p4.interactive ) {
       int c;
-      System.out.println("Parameters correct (y/n):");
+      System.out.println("Are the above parameters correct (y/n):");
       c = System.in.read();
       while ( System.in.available() > 0 ) {
         System.in.read();
@@ -131,89 +159,20 @@ public class Git2P4Main {
         throw new RuntimeException("operation aborted by user");
       }
     }
-    increaseVersions(fromVersion, toVersion, branch);
-  }
-
-  static void patch(String fromVersion, String toVersion, String branch) throws IOException {
-    boolean guess = false;
-
-    if ( branch == null ) {
-      throw new RuntimeException("for patch command, a branch must be specified");
-    }
-    if ( fromVersion == null && toVersion == null ) {
-      fromVersion = findVersion(branch);
-      if ( fromVersion != null && fromVersion.endsWith("-SNAPSHOT") ) {
-        toVersion = fromVersion.substring(0, fromVersion.length() - "-SNAPSHOT".length());
-      }
-      guess = true;
-    }
-    if ( fromVersion == null || toVersion == null ) {
-      throw new RuntimeException("could not determine version info");
-    }
-    if ( guess ) {
-      Log.println("Please confirm the automatically determined parameters:");
-      Log.println("       branch: " + branch);
-      Log.println("  fromVersion: " + fromVersion);
-      Log.println("    toVersion: " + toVersion);
-      int c;
-      System.out.println("Parameters correct (y/n):");
-      c = System.in.read();
-      while ( System.in.available() > 0 ) {
-        System.in.read();
-      }
-      if ( c != 'y' ) {
-        throw new RuntimeException("operation aborted by user");
-      }
-    }
-    increaseVersions(fromVersion, toVersion, branch);
-  }
-
-  static void release(String fromVersion, String toVersion, String branch) throws IOException {
-    boolean guess = false;
-
-    if ( branch == null ) {
-      branch = "master";
-      guess = true;
-    }
-    if ( fromVersion == null && toVersion == null ) {
-      fromVersion = findVersion(branch);
-      if ( fromVersion != null && fromVersion.endsWith("-SNAPSHOT") ) {
-        toVersion = fromVersion.substring(0, fromVersion.length() - "-SNAPSHOT".length());
-      }
-      guess = true;
-    }
-    if ( fromVersion == null || toVersion == null ) {
-      throw new RuntimeException("could not determine version info");
-    }
-    if ( guess ) {
-      Log.println("Please confirm the automatically determined parameters:");
-      Log.println("       branch: " + branch);
-      Log.println("  fromVersion: " + fromVersion);
-      Log.println("    toVersion: " + toVersion);
-      int c;
-      System.out.println("Parameters correct (y/n):");
-      c = System.in.read();
-      while ( System.in.available() > 0 ) {
-        System.in.read();
-      }
-      if ( c != 'y' ) {
-        throw new RuntimeException("operation aborted by user");
-      }
-    }
-    increaseVersions(fromVersion, toVersion, branch);
-  }
-
-  static void increaseVersions(String fromVersion, String toVersion, String branch) throws IOException {
+    
+    Map<String,Map<String,String[]>> suspiciousRepositories = new LinkedHashMap<String,Map<String,String[]>>(); 
+    
     for(Mapping repo : mappings) {
       git.repository = repo.gitRepository;
 
       git.checkout("origin/" + branch);
 
-      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion);
+      Map<String,String[]> suspiciousChanges = new TreeMap<String,String[]>();
+      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, suspiciousChanges);
 
       git.addAll();
 
-      String label = "development";
+      String label = "milestone development";
       if ( branch.equals("master") && !toVersion.endsWith("-SNAPSHOT") ) {
         label = "milestone";
       } else if ( !branch.equals("master") && toVersion.endsWith("-SNAPSHOT") ) {
@@ -228,33 +187,165 @@ public class Git2P4Main {
 
       git.log(1);
 
-      int c = 'y';
-      if ( git2p4.interactive || diffs != 0 ) {
-        System.out.println("Git commit prepared for version change (" + diffs + " diffs compared to last run). Push to gerrit? (y/n):");
-        c = System.in.read();
-        while ( System.in.available() > 0 ) {
-          System.in.read();
+      if ( diffs != 0 ) {
+        suspiciousRepositories.put(repo.gitRepository.getName(), suspiciousChanges);
+      }
+      
+      if ( !preview ) {
+        int c = 'y';
+        if ( git2p4.interactive ) {
+          System.out.println("Git commit prepared for version change (" + diffs + " diffs compared to last run). Push to gerrit? (y/n):");
+          c = System.in.read();
+          while ( System.in.available() > 0 ) {
+            System.in.read();
+          }
+        }
+        if ( c == 'y' ) {
+          git.push(repo.giturl, "HEAD:refs/for/" + branch);
         }
       }
-      if ( c == 'y' ) {
-        git.push(repo.giturl, "HEAD:refs/for/" + branch);
+    }
+    
+    for(Map.Entry<String,Map<String,String[]>> repo : suspiciousRepositories.entrySet() ) {
+      if ( repo.getValue().isEmpty() ) {
+        System.out.println("**** warning: no previous version change summary found for repository " + repo.getKey());
+      } else {
+        System.out.println("**** warning: suspicious version changes in repository " + repo.getKey() + ":" );
+        for(Map.Entry<String, String[]> change : repo.getValue().entrySet() ) {
+          System.out.println("  " + change.getKey() + ": " + change.getValue()[0] + " (old) vs. " + change.getValue()[1] + " (new)");
+        }
       }
     }
+
+    exitcode = suspiciousRepositories.size();
   }
 
+  static void createVersionTags(String branch, String fromVersion) throws IOException {
+    
+    if ( branch == null ) {
+      throw new IllegalArgumentException("for tag command, a branch must be specified");
+    }
+    if ( fromVersion == null ) {
+      fromVersion = findVersion(branch);
+    }
+    Version v = new Version(fromVersion);
+    if ( v.isSnapshot() || v.patch > 0 && "master".equals(branch) ) {
+      throw new IllegalArgumentException("Tags can only be created for release versions and not in the master branch (except for patch level = 0)");
+    }
+    
+    for(Mapping repo : mappings) {
+      git.repository = repo.gitRepository;
+      git.checkout("origin/" + branch);
+      
+      // retrieve GAV coordinates from root pom.xml
+      Map<String,String> info = repo.getRootPOMInfo();
+      
+      // create tag message
+      String NL = System.getProperty("line.separator");
+      StringBuilder message = new StringBuilder(1024);
+      message
+        .append("GAV: ")
+        .append(info.get("groupId")).append(':').append(info.get("artifactId")).append(':').append(fromVersion).append(NL);
+      message
+        .append("Release-Metadata: ")
+        .append("http://nexus:8081/nexus/content/groups/build.milestones/")
+        .append(info.get("groupId").replace('.', '/')).append('/')
+        .append(info.get("artifactId")).append('/')
+        .append(fromVersion).append('/')
+        .append(info.get("artifactId")).append('-').append(fromVersion).append("-releaseMetadata.zip")
+        .append(NL);
+      
+      // create tag
+      git.tag(fromVersion, message);
+      
+      System.out.println("Git tag created locally with message '" + message + "'.");
+      if ( !preview ) {
+        int c = 'y';
+        if ( git2p4.interactive ) {
+          System.out.println("Push to gerrit? (y/n):");
+          c = System.in.read();
+          while ( System.in.available() > 0 ) {
+            System.in.read();
+          }
+        }
+        if ( c == 'y' ) {
+          git.push(repo.giturl, "ref/tags/*:ref/tags/*");
+        }
+      }
+      
+    }
+    
+  }
+
+  private static void releaseNotes() {
+    List<String> fixes = new ArrayList<String>();
+    for(GitClient.Commit commit : allCommits) {
+      String desc;
+      if ( commit.mergeIns.size() > 0 && commit.isGerritMergeOf(commit.mergeIns.get(0)) ) {
+        desc = commit.mergeIns.get(0).getSummary();
+      } else {
+        desc = commit.getSummary();
+      }
+      if ( desc.matches("^\\s*(Release|Infra)\\s*:.*") ) {
+        continue;
+      }
+      fixes.add(desc);
+    }
+    Collections.sort(fixes);
+    for(String fix : fixes) {
+      Log.println(" * " + fix);
+      // TODO WIKI format 
+    }
+  }
+  
   static class Mapping {
     String giturl;
     File gitRepository;
     String p4path;
     String targetIncludes;
     String targetExcludes;
-
+    
     Mapping(String giturl, File gitRepository, String p4path, String includes, String excludes) {
       this.giturl = giturl;
       this.gitRepository = gitRepository;
       this.p4path = p4path;
       this.targetIncludes = includes;
       this.targetExcludes = excludes;
+    }
+    
+    public String getRepositoryName() {
+      return gitRepository.getName();
+    }
+    
+    public Map<String,String> getRootPOMInfo() {
+
+      class POMAnalyzer {
+        private Element docElement;
+        private Element parentElement;
+        Map<String,String> info = new HashMap<String,String>();
+        
+        POMAnalyzer() {
+          File pom = new File(gitRepository, "pom.xml");
+          Document pomDoc = XMLUtils.getDOM(pom);
+          docElement = pomDoc.getDocumentElement();
+          parentElement = XMLUtils.findChild(docElement, "parent");
+          addGAVCoordinate("groupId");
+          addGAVCoordinate("artifactId");
+          addGAVCoordinate("version");
+        }
+        
+        private void addGAVCoordinate(String name) {
+          Element elem = XMLUtils.findChild(docElement, name);
+          if ( elem == null && parentElement != null ) {
+            elem = XMLUtils.findChild(parentElement, name);
+          }
+          if ( elem != null ) {
+            info.put(name, elem.getTextContent());
+          }
+        }
+      }
+      
+      return new POMAnalyzer().info;
     }
   }
 
@@ -307,60 +398,66 @@ public class Git2P4Main {
     }
     System.out.println("Transports a range of commits from a set of Git repositories to a Perforce depot.");
     System.out.println();
-    System.out.println("Usage: Git2P4main cmd [options | -template <file> ] <commit-range>");
+    System.out.println("Usage: git2p4 <command> [<option> * ] [<commit-range>]");
     System.out.println();
     System.out.println("Commands:");
-    System.out.println(" --list <commit-range> list commits to be transferred to Perforce");
-    System.out.println(" --transfer             transfer commits from git to Perforce");
-    System.out.println(" --version <from> <to> <branch> update the version infos in branch <branch> from <from> to <to>");
-    System.out.println(" --milestone            specialized variant of 'version' cmd, suitable for a milestone build");
-    System.out.println(" --patch                specialized variant of 'version' cmd, suitable for a patch build");
-    System.out.println(" --release              specialized variant of 'version' cmd, suitable for a release build");
-    System.out.println(" --split-logs           read and parse existing transfer log files and split them in separate logs, one per commit");
-    System.out.println();
-    System.out.println("Perforce options:");
-    System.out.println(" -p, --p4-port          Perforce Host and Port (e.g. perforce1666:1666)");
-    System.out.println(" -u, --p4-user          Perforce User (e.g. claus)");
-    System.out.println(" -P, --p4-password      Perforce Password (e.g. *****)");
-    System.out.println(" -C, --p4-client        Perforce Client Workspace (e.g. MYLAPTOP0815)");
-    System.out.println(" -d, --p4-dest-path     target root path in Perforce depot (e.g. //depot/project/dev)");
-    System.out.println(" -c, --p4-change        an existing (pending) Perforce change list to be used for the first transport");
+    System.out.println(" transfer [-b <branch>] [options] <range>   transfer commits from a set of Git repositories to Perforce");
+    System.out.println(" version-change [-b <branch>]               update the version infos in branch <branch> from <from> to <to>");
+    System.out.println(" milestone-release                          special 'version-change' cmd for a milestone release build in master");
+    System.out.println(" minor-release                              special 'version-change' cmd for a minor release build in master");
+    System.out.println(" major-release                              special 'version-change' cmd for a major release build in master");
+    System.out.println(" patch-release -b <branch>                  special 'version-change' cmd for a patch release build");
+    System.out.println(" tag [-b <branch>]                          creates tags for the current head revision in the given branch (tag name == root pom version)");
     System.out.println();
     System.out.println("Git/Mapping options:");
-    System.out.println(" --git-user             SSH id used for clone or push operations");
+    System.out.println(" --git-user             SSH id used for clone or push operations, defaults to ${user.name}||hudsonvoter");
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
     System.out.println(" --git-dir              Git repository root");
-    System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories");
+    System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
     System.out.println(" --includes             List of paths, relative to root, to be included from transport");
     System.out.println(" --excludes             List of paths, relative to root, to be excluded from transport");
+    
     System.out.println(" -ra, --resume-after    Commit after which to resume the transport (must be a full SHA1)");
     System.out.println(" --no-auto-resume       Do NOT automatically resume after last commit");
     System.out.println(" -opt, --optimize-diffs Remove 'scatter' in diffs (e.g. whitespace changes or RCS keyword expansion)");
     System.out.println(" -i, --interactive      ask user after each change has been prepared, but before it is submitted");
     System.out.println(" -s, --submit           ask user after each change has been prepared, but before it is submitted");
+    System.out.println(" -b, --branch           Git branch to operate on");
     System.out.println(" --fromVersion          source version whose occurrences should be modified");
     System.out.println(" --toVersion            target version that should replace the source version");
-    System.out.println(" --branch               Git branch to operate on");
+    System.out.println();
+    System.out.println("Perforce options:");
+    System.out.println(" -p, --p4-port          Perforce Host and Port, defaults to perforce3003.wdf.sap.corp:3003");
+    System.out.println(" -u, --p4-user          Perforce User, defaults to ${user.name}|TBS");
+    System.out.println(" -P, --p4-password      Perforce Password (e.g. *****)");
+    System.out.println(" -C, --p4-client        Perforce Client Workspace (e.g. MYLAPTOP0815)");
+    System.out.println(" -d, --p4-dest-path     target root path in Perforce depot (e.g. //depot/project/dev)");
+    System.out.println(" -c, --p4-change        an existing (pending) Perforce change list to be used for the first transport");
     System.out.println();
     System.out.println("General options:");
     System.out.println(" -h, --help                 shows this help text");
     System.out.println(" -v, --verbose              be more verbose");
     System.out.println(" -l, --log-file             file path to write the log to");
     System.out.println(" -lt, --log-file-template   file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
+    System.out.println(" --preview                  file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
     System.out.println();
 
     if ( errormsg != null ) {
       throw new RuntimeException(errormsg);
     }
   }
-  public static void main(String[] args) throws IOException {
+
+  public static void main0(String[] args) throws IOException {
     String template = null;
-    String mode = "transfer";
+    String command = "transfer";
     boolean autoResume = true;
     String fromVersion = null;
     String toVersion = null;
     String branch = null;
-
+    File ui5Root = new File(".");
+    File gitDir = null;
+    ReleaseOperation op = null;
+    
     String[] argsForTrace = new String[args.length];
     System.arraycopy(args, 0, argsForTrace, 0, args.length);
 
@@ -393,31 +490,11 @@ public class Git2P4Main {
       } else if ( "--git-no-fetch".equals(args[i]) ) {
         noFetch = true;
       } else if ( "--ui5-git-root".equals(args[i]) ) {
-        if ( p4depotPath == null ) {
-          throw new RuntimeException("p4depot path must be specifed before a UI5 repository root");
-        }
-        if ( p4depotPath.contains("#") ) {
-          if ( branch == null ) {
-            throw new RuntimeException("branch must be specified before p4depot path is used");
-          }
-          p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
-          Log.println("resolved depot path: " + p4depotPath);
-        }
-        // automatically determine codeline from branch
-        createUI5Mappings(new File(args[++i]), p4depotPath);
+        ui5Root = new File(args[++i]);
+        gitDir = null;
       } else if ( "--git-dir".equals(args[i]) ) {
-        if ( p4depotPath == null ) {
-          throw new RuntimeException("p4depot path must be specifed before a git repository root");
-        }
-        if ( p4depotPath.contains("#") ) {
-          if ( branch == null ) {
-            throw new RuntimeException("branch must be specified before p4depot path is used");
-          }
-          p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
-          Log.println("resolved depot path: " + p4depotPath);
-        }
-        mappings.clear();
-        mappings.add(new Mapping(null, new File(args[++i]), p4depotPath, null, null));
+        gitDir = new File(args[++i]);
+        ui5Root = null;
       } else if ( "--includes".equals(args[i]) ) {
         if ( mappings.size() != 1 ) {
           throw new RuntimeException("includes can only be specified for an (already defined) single src root");
@@ -437,85 +514,112 @@ public class Git2P4Main {
       } else if ( "-i".equals(args[i]) || "--interactive".equals(args[i]) ) {
         git2p4.interactive = true;
       } else if ( "-s".equals(args[i]) || "--submit".equals(args[i]) ) {
-        git2p4.submit = true;
+        git2p4.preview = false;
+        preview = false;
+      } else if ( "--preview".equals(args[i]) ) {
+        git2p4.preview = true;
+        preview = true;
       } else if ( "--split-logs".equals(args[i]) ) {
-        mode = "splitLogs";
-      } else if ( "--list".equals(args[i]) ) {
-        mode = "list";
-      } else if ( "--transfer".equals(args[i]) ) {
-        mode = "transfer";
-      } else if ( "--version".equals(args[i]) ) {
-        mode = "version";
-      } else if ( "--milestone".equals(args[i]) ) {
-        mode = "milestone";
-      } else if ( "--patch".equals(args[i]) ) {
-        mode = "patch";
-      } else if ( "--release".equals(args[i]) ) {
-        mode = "release";
+        command = "splitLogs";
+      } else if ( "release-notes".equals(args[i]) ) {
+        command = "release-notes";
+        autoResume = false;
+      } else if ( "list".equals(args[i]) || "--list".equals(args[i]) ) {
+        command = "list";
+      } else if ( "transfer".equals(args[i]) || "--transfer".equals(args[i]) ) {
+        command = "transfer";
+      } else if ( "version-change".equals(args[i]) || "--version".equals(args[i]) ) {
+        op = null;
+        command = "version-change";
+      } else if ( "milestone-release".equals(args[i]) || "--milestone".equals(args[i]) ) {
+        op = ReleaseOperation.MilestoneRelease;
+        command = "version-change";
+      } else if ( "patch-release".equals(args[i]) || "--patch".equals(args[i])) {
+        op = ReleaseOperation.PatchRelease;
+        command = "version-change";
+      } else if ( "major-release".equals(args[i]) ) {
+        op = ReleaseOperation.MajorRelease;
+        command = "version-change";
+      } else if ( "minor-release".equals(args[i]) || "--release".equals(args[i]) ) {
+        op = ReleaseOperation.MinorRelease;
+        command = "version-change";
+      } else if ( "development".equals(args[i]) || "dev".equals(args[i]) ) {
+        op = ReleaseOperation.MilestoneDevelopment;
+        command = "version-change";
+      } else if ( "patch-development".equals(args[i]) || "patch-dev".equals(args[i]) ) {
+        op = ReleaseOperation.PatchDevelopment;
+        command = "version-change";
+      } else if ( "tag".equals(args[i]) ) {
+        command = "tag";
       } else if ( "--fromVersion".equals(args[i]) ) {
         fromVersion = args[++i];
       } else if ( "--toVersion".equals(args[i]) ) {
         toVersion = args[++i];
       } else if ( "--branch".equals(args[i]) ) {
         branch = args[++i];
+      } else if ( "--rebuild".equals(args[i]) ) {
+        command = "noop";
       } else if ( args[i].startsWith("-") ) {
-        throw new RuntimeException("unsupported option " + args[i]);
-      } else {
+        throw new IllegalArgumentException("unsupported option " + args[i]);
+      } else if ( command != null ) {
         range = args[i];
+      } else {
+        throw new IllegalArgumentException("unsupported command " + args[i]);
       }
     }
 
     Log.println("args = " + Arrays.toString(argsForTrace));
     Log.println("");
+    Log.println("command: " + command);
+    
+    if ( "noop".equals(command) ) {
+      return;
+    }
 
-    // clone & fetch repos
+    if ( "version-change".equals(command) && branch == null 
+       && (op == ReleaseOperation.MajorRelease || op == ReleaseOperation.MinorRelease 
+           || op == ReleaseOperation.MilestoneRelease || op == ReleaseOperation.MilestoneDevelopment) ) {
+      branch = "master";
+    }
+    
+    // automatically determine codeline from branch
+    if ( p4depotPath == null ) {
+      throw new IllegalArgumentException("p4depot path must be specifed before a UI5 repository root");
+    }
+    if ( p4depotPath.contains("#") ) {
+      if ( branch == null ) {
+        throw new IllegalArgumentException("branch must be specified before p4depot path is used");
+      }
+      p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
+      Log.println("resolved depot path: " + p4depotPath);
+    }
+
+    if ( ui5Root != null ) {
+      createUI5Mappings(ui5Root, p4depotPath);
+    } else if ( gitDir != null ) {
+      mappings.clear();
+      mappings.add(new Mapping(null, gitDir, p4depotPath, null, null));
+    } else {
+      throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
+    }
+    
+    // clone & fetch repositories
     for(Mapping repoMapping : mappings) {
       updateRepository(repoMapping);
     }
 
-    if ( "version".equals(mode) ) {
-      if ( branch == null || branch.isEmpty() || branch.contains("..") || branch.contains("/") ) {
-        throw new RuntimeException("for --version, a branch must be specified(e.g. master or 1.4)");
-      }
-      boolean guess=true;
-      if ( fromVersion == null ) {
-        fromVersion = findVersion(branch);
-        guess = true;
-      }
-      if ( guess ) {
-        Log.println("Please confirm the automatically determined parameters:");
-        Log.println("       branch: " + branch);
-        Log.println("  fromVersion: " + fromVersion);
-        Log.println("    toVersion: " + toVersion);
-        int c;
-        System.out.println("Parameters correct (y/n):");
-        c = System.in.read();
-        while ( System.in.available() > 0 ) {
-          System.in.read();
-        }
-        if ( c != 'y' ) {
-          throw new RuntimeException("operation aborted by user");
-        }
-      }
-      increaseVersions(fromVersion, toVersion, branch);
+    if ( "version-change".equals(command) ) {
+      modifyVersions(op, branch, fromVersion, toVersion);
       return;
     }
 
-    if ( "milestone".equals(mode) ) {
-      milestone(fromVersion, toVersion, branch);
+    if ( "tag".equals(command) ) {
+      createVersionTags(branch, fromVersion);
       return;
     }
-    if ( "patch".equals(mode) ) {
-      patch(fromVersion, toVersion, branch);
-      return;
-    }
-    if ( "release".equals(mode) ) {
-      release(fromVersion, toVersion, branch);
-      return;
-    }
-
+    
     if ( range == null || range.isEmpty() || !range.contains("..") ) {
-      throw new RuntimeException("A valid commit range must be provided, e.g. 1.4..origin/master");
+      throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
     }
 
     // collect commits across repositories
@@ -527,11 +631,13 @@ public class Git2P4Main {
       Log.println((index++) + ": [" + commit.repository + "] " + commit.getId() + " " + commit.getCommitDate()+ " " + commit.getSummary());
     }
 
-    p4.login();
+    if ( "transfer".equals(command) || (resumeAfter == null && autoResume) ) {
+      p4.login();
+    }
 
     // autoresume
     if ( resumeAfter == null && autoResume ) {
-      // analyze the submitted changelists to find the last commitID
+      // analyze the submitted changelists in perforce to find the last commitID
       String lastCommit = git2p4.findLastCommit(p4depotPath);
       // if one is found check whether it exists in the current commits
       if ( lastCommit != null ) {
@@ -546,10 +652,16 @@ public class Git2P4Main {
       }
     }
 
-    if ( "list".equals(mode) ) {
+    if ( "list".equals(command) ) {
       return;
     }
-    if ( "splitLogs".equals(mode) ) {
+
+    if ( "release-notes".equals(command) ) {
+      releaseNotes();
+      return;
+    }
+    
+    if ( "splitLogs".equals(command) ) {
       SplitLogs.run(template, allCommits);
       return;
     }
@@ -575,6 +687,12 @@ public class Git2P4Main {
       }
     }
 
+  }
+  
+  private static int exitcode = 0;
+  public static void main(String[] args) throws IOException {
+    main0(args);
+    System.exit(exitcode);
   }
 
 }
