@@ -25,7 +25,7 @@ public class Git2P4 {
 
   boolean opt = false;
   boolean interactive = false;
-  boolean submit = false;
+  boolean preview = false;
 
   private final List<String> targetIncludes = new ArrayList<String>();
   private final List<String> targetExcludes = new ArrayList<String>();
@@ -131,7 +131,7 @@ public class Git2P4 {
     if ( file.getDepotPath().startsWith(p4path) ) {
       return destIgnore(file.getDepotPath().substring(p4path.length()+1));
     } else {
-      throw new RuntimeException();
+      throw new IllegalStateException();
     }
   }
 
@@ -196,7 +196,7 @@ public class Git2P4 {
     //		};
 
     DescriptionBuilder (GitClient.Commit commit) {
-      desc.append("CSN: na Reason: infra Desc: BC-WD-HTM - git2p4: ").append(GerritHelper.ungerrit(commit.lines.get(0))).append(NL);
+      desc.append("CSN: na Reason: infra Desc: CA-UI5 - git2p4: ").append(GerritHelper.ungerrit(commit.lines.get(0))).append(NL);
       desc.append(NL);
 
       int first=0;
@@ -346,7 +346,7 @@ public class Git2P4 {
     }
     Log.println("Existing files found " + existingFiles.size());
     if ( localPath == null ) {
-      throw new RuntimeException("local path couldn't be determined");
+      throw new IllegalStateException("local path couldn't be determined");
     }
 
     // walk over new files and copy them
@@ -384,7 +384,7 @@ public class Git2P4 {
       }
     }
 
-    if ( submit ) {
+    if ( !preview ) {
 
       int c = 'y';
       if ( interactive ) {

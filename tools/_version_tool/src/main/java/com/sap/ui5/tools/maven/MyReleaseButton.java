@@ -30,8 +30,7 @@ public class MyReleaseButton {
   private static Writer createFileWriter(File target, boolean append,
       String encoding, int bufferSize) throws IOException {
     OutputStream os = new FileOutputStream(target, append);
-    Writer w = encoding == null ? new OutputStreamWriter(os)
-    : new OutputStreamWriter(os, encoding);
+    Writer w = encoding == null ? new OutputStreamWriter(os) : new OutputStreamWriter(os, encoding);
     if (bufferSize < 0)
       return w;
     else if (bufferSize == 0)
@@ -230,7 +229,7 @@ public class MyReleaseButton {
   /**
    * @param args
    */
-  public static int updateVersion(File repository, String oldVersion, String newVersion) throws IOException {
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String,String[]> diffDescs) throws IOException {
     File root = repository.getCanonicalFile();
     if (!root.isDirectory()) {
       throw new RuntimeException(
@@ -313,6 +312,9 @@ public class MyReleaseButton {
         String oldDiffs = prop.getProperty(entry.getKey());
         String newDiffs = entry.getValue().toString();
         if ( !newDiffs.equals(oldDiffs) ) {
+          if ( diffDescs != null ) {
+            diffDescs.put(entry.getKey(), new String[] { oldDiffs, newDiffs });
+          }
           System.out.println("**** " + entry.getKey() + ": " + oldDiffs + "(old) vs. " + newDiffs + "(new)");
           diffdiffs++;
         }
@@ -321,6 +323,9 @@ public class MyReleaseButton {
       for(Object key : prop.keySet()) {
         String oldDiffs = prop.getProperty((String) key);
         System.out.println("**** " + key + ": " + oldDiffs + "(old) vs. " + null + "(new)");
+        if ( diffDescs != null ) {
+          diffDescs.put((String)key, new String[] { oldDiffs, null });
+        }
         diffdiffs++;
       }
       System.out.println("The diff summary has changed for " + diffdiffs + " files.");
@@ -343,6 +348,6 @@ public class MyReleaseButton {
           "usage: <root-dir> <from-version> <to-version>");
     }
 
-    updateVersion(new File(args[0]), args[1], args[2]);
+    updateVersion(new File(args[0]), args[1], args[2], null);
   }
 }

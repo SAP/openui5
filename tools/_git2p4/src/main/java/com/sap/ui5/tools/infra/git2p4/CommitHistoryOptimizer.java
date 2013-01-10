@@ -26,7 +26,7 @@ class CommitHistoryOptimizer {
     while ( ids.remove(id) ) {
       GitClient.Commit parent = commits.get(id);
       if ( parent.isMerge() ) {
-        throw new RuntimeException();
+        throw new IllegalStateException();
       }
       commit.mergeIns.add(parent);
       id = parent.ids[1];
@@ -149,7 +149,7 @@ class CommitHistoryOptimizer {
     } else if ( parent1.getCommitDate().compareTo(parent2.getCommitDate()) > 0 ) {
       return 1;
     }
-    throw new RuntimeException("can't decide although it is a merge: " + commit.ids[0] + ":" + commit.ids[1] + " vs. " + commit.ids[2]);
+    throw new IllegalStateException("can't decide although it is a merge: " + commit.ids[0] + ":" + commit.ids[1] + " vs. " + commit.ids[2]);
   }
 
   private void track(String id) {
@@ -187,7 +187,7 @@ class CommitHistoryOptimizer {
 
       // sanity checks
       if ( !ids.isEmpty() ) {
-        throw new RuntimeException("dangling commits: " + ids);
+        throw new IllegalStateException("dangling commits: " + ids);
       }
       GitClient.Commit last = null;
       List<String> errors = new ArrayList<String>();

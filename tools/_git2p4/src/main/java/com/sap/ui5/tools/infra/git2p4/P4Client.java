@@ -18,7 +18,7 @@ class P4Client {
   private String NL = System.getProperty("line.separator");
   private String p4cmd = "p4";
   String port = "perforce3003.wdf.sap.corp:3003";
-  String user = "TBS";
+  String user =  System.getProperty("user.name", "TBS").toLowerCase();
   String passwd = null;
   String client = null; //
   boolean verbose = false;
@@ -397,6 +397,9 @@ class P4Client {
 
   boolean login() throws IOException {
     if ( !loggedIn ) {
+      if ( passwd == null || passwd.isEmpty() ) {
+        throw new IllegalStateException("can't login wihout password");
+      }
       loggedIn = executeWithInput(passwd, "login");
     }
     return loggedIn;

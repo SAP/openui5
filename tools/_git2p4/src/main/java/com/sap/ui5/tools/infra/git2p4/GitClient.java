@@ -21,7 +21,8 @@ class GitClient {
 
   private String gitcmd = "git.cmd";
   File repository = new File(".");
-  String sshuser = "hudsonvoter";
+  String sshuser = System.getProperty("user.name", "hudsonvoter").toLowerCase();
+
   boolean verbose = false;
   private int lastExitValue;
   private List<String> lastOutput;
@@ -172,12 +173,12 @@ class GitClient {
           commit.setField(field, value);
         }
         if ( !line.isEmpty() )
-          throw new RuntimeException();
+          throw new IllegalStateException("Parsing Git Commit Failed");
         while( i<lastOutput.size() && (m = TEXT_LINE.matcher(line = lastOutput.get(i++))).matches() ) {
           commit.lines.add(m.group(1));
         }
         if ( !line.isEmpty() )
-          throw new RuntimeException();
+          throw new IllegalStateException("Parsing Git Commit Failed");
       }
     }
 
@@ -217,7 +218,7 @@ class GitClient {
     return execute("add", "--all");
   }
 
-  public boolean commit(String message) throws IOException {
+  public boolean commit(CharSequence message) throws IOException {
     // ensure that the changeId commit hook exists
     File commitMsgHook = new File(repository, ".git/hooks/commit-msg");
     if ( !commitMsgHook.exists() ) {
@@ -227,6 +228,10 @@ class GitClient {
     return execute("-c", "core.autocrlf=false", "commit", "--message=" + message);
   }
 
+  public boolean tag(String name, CharSequence message) throws IOException {
+    return executeWithInput(message.toString(), "tag", "-F", "-", name);  
+  }
+  
   public boolean push(String gitUrl, String refSpec) throws IOException {
     return execute("push", "ssh://" + sshuser + "@" + gitUrl, refSpec);
   }
