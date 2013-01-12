@@ -129,6 +129,8 @@ public class Version {
       if ( !isMilestone() ) {
         newMinor++;
         newPatch = 0;
+      } else {
+        newPatch++;
       }
       newSuffix = SNAPSHOT_SUFFIX;
       break;
