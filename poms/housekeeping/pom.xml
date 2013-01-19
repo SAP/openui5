@@ -102,6 +102,7 @@
           <remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
           <skipDeploy>true</skipDeploy>
           <skipUndeploy>true</skipUndeploy>
+		  <timeout>180</timeout>
         </configuration>
       </plugin>
 
