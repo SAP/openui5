@@ -138,6 +138,7 @@ public class Version {
       if ( isMilestone() || isSnapshot() ) {
         throw new IllegalArgumentException("can only switch to patch development from release or patch, but is " + this);
       }
+      newPatch++;
       newSuffix = SNAPSHOT_SUFFIX;
       break;
     }
