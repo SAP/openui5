@@ -663,11 +663,7 @@
       <activation>
         <property>
           <name>sap.ui5.updatecdn</name>
-          <value>true</value>
-        </property>
-        <property>
-          <name>sap.ui5.releases-only</name>
-          <value>true</value>
+          <value>truetrue</value><!-- since multiple properties are not supported we simply concat them -->
         </property>
       </activation>
 
