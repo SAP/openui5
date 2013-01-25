@@ -45,8 +45,8 @@
 
 		<!-- deploytool infos -->
 		<command>status</command>
-		<user>dummy</user> <!-- SDN User -->
-		<password>dummy</password> <!-- SDN Password -->
+		<user></user> <!-- SDN User -->
+		<password></password> <!-- SDN Password -->
 		
 		<!-- SAPUI5 version for NW Cloud -->
 		<sapui5.version>1.9.3-SNAPSHOT</sapui5.version>
@@ -65,48 +65,20 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.2.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>2.5</version>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>nwcloud-maven-plugin</artifactId>
+					<version>1.0.0-SNAPSHOT</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 	
 		<plugins>
 		
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/deployprops</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/main/resources</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -165,31 +137,6 @@
 						</configuration>
 					</execution>
 					
-					<execution>
-						<id>deployclient</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.sap.core.deploy</groupId>
-									<artifactId>com.sap.core.deploy.client.cmd.distro</artifactId>
-									<version>0.9.18</version>
-									<classifier>assembly</classifier>
-									<type>zip</type>
-									<overWrite>false</overWrite>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/deployclient</outputDirectory>
-							<includes>**</includes>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					
 				</executions>
 				
 			</plugin>
@@ -197,7 +144,6 @@
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>nwcloud-maven-plugin</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
 				<configuration>
 					<commands>${command}</commands>
 					<properties>
