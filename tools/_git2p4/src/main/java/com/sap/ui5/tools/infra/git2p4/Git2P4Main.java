@@ -1,18 +1,23 @@
 package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
@@ -277,7 +282,8 @@ public class Git2P4Main {
     
   }
 
-  private static void releaseNotes() {
+
+  private static void releaseNotes(String branch) throws IOException {
     List<String> fixes = new ArrayList<String>();
     for(GitClient.Commit commit : allCommits) {
       String desc;
@@ -291,11 +297,26 @@ public class Git2P4Main {
       }
       fixes.add(desc);
     }
+    
+    Pattern csnPrefix = Pattern.compile("CSN[:\\s]+([- 0-9]+[0-9])(?:[-:\\s]+|$)");
+    Pattern wikiTag = Pattern.compile("\\b[A-Z][a-z0-9_]+([A-Z][a-z0-9_]+)+\\b");
+    
     Collections.sort(fixes);
+    Version version = new Version(findVersion(branch));
+    version = new Version(version.major, version.minor, version.patch, null);
+    
+    Log.println("");
+    Log.println("== Version " + version + " (" + new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH).format(new Date()) + ") ==");
+    Log.println("");
+    Log.println("A patch for the " + branch + " code line. It contains the following fixes for the UI5 Core and Controls:");
+    Log.println("");
+    Log.println("'''Fixes'''");
     for(String fix : fixes) {
+      fix = csnPrefix.matcher(fix).replaceAll("[[span((CSN $1) -, class=sapinternal)]] ");
+      fix = wikiTag.matcher(fix).replaceAll("!$0");
       Log.println(" * " + fix);
-      // TODO WIKI format 
     }
+    Log.println("");
   }
   
   static class Mapping {
@@ -618,6 +639,11 @@ public class Git2P4Main {
       return;
     }
     
+    if ( "release-notes".equals(command) && range == null ) {
+      Version current = new Version(findVersion(branch));
+      range = current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
+    }
+    
     if ( range == null || range.isEmpty() || !range.contains("..") ) {
       throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
     }
@@ -657,7 +683,7 @@ public class Git2P4Main {
     }
 
     if ( "release-notes".equals(command) ) {
-      releaseNotes();
+      releaseNotes(branch);
       return;
     }
     
