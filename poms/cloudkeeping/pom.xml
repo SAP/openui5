@@ -44,39 +44,14 @@
 	<properties>
 
 		<!-- deploytool infos -->
-		<command>help</command>
+		<command>status</command>
 		<user>dummy</user> <!-- SDN User -->
 		<password>dummy</password> <!-- SDN Password -->
 		
-		<!-- deployable type -->
-		<type>war</type> <!-- war|wab -->
-
-		<!-- common properties -->		
-		<jpaas.space>sapui5</jpaas.space>
-		<jpaas.appliance>sapui5test</jpaas.appliance>
-		<jpaas.component>sapui5test</jpaas.component>
-		<jpaas.url>ui5test</jpaas.url>
-		<jpaas.source>${project.build.directory}/deployables/sapui5.war,${project.build.directory}/deployables/demokit.war,${project.build.directory}/deployables/uilib-sample.war,${project.build.directory}/deployables/databinding.war</jpaas.source>
-		<jpaas.host>https://prod.jpaas.sapbydesign.com/</jpaas.host>
-		<jpaas.severity>info</jpaas.severity>
-		<jpaas.elasticity>1,1</jpaas.elasticity>
-		
-		<!-- WAB specific properties -->
-		<jpaas.iu></jpaas.iu>
-		<jpaas.iuVersion></jpaas.iuVersion>
-		<jpaas.services></jpaas.services>
-	
 		<!-- SAPUI5 version for NW Cloud -->
 		<sapui5.version>1.9.3-SNAPSHOT</sapui5.version>
 		<!-- deploy opt version - clear to use debug version -->
 		<sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
-	
-		<!-- proxy configuration -->
-		<http.proxyHost>proxy</http.proxyHost>
-		<http.proxyPort>8080</http.proxyPort>
-		<https.proxyHost>proxy</https.proxyHost>
-		<https.proxyPort>8080</https.proxyPort>
-		<http.nonProxyHosts>localhost</http.nonProxyHosts>
 	
 	</properties>
 	
@@ -220,37 +195,34 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>execute</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>java</executable>
-							<arguments>
-								<argument>-Dhttp.proxyHost=${http.proxyHost}</argument>
-								<argument>-Dhttp.proxyPort=${http.proxyPort}</argument>
-								<argument>-Dhttps.proxyHost=${https.proxyHost}</argument>
-								<argument>-Dhttps.proxyPort=${https.proxyPort}</argument>
-								<argument>-Dhttp.nonProxyHosts=${http.nonProxyHosts}</argument>
-								<argument>-jar</argument>
-								<argument>${project.build.directory}/deployclient/lib/jpdpl/com.sap.core.deploy.client.cmd-0.9.18.jar</argument>
-								<argument>-${command}</argument>
-								<argument>${project.build.directory}/deployprops/deploy-${type}.properties</argument>
-								<argument>-user</argument>
-								<argument>${user}</argument>
-								<argument>-password</argument>
-								<argument>${password}</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>nwcloud-maven-plugin</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<configuration>
+					<commands>${command}</commands>
+					<properties>
+						<application>sapui5test</application>
+						<account>sapui5</account>
+						<applicationURL>ui5test</applicationURL>
+						<severity>info</severity>
+						<landscape>https://prod.jpaas.sapbydesign.com/</landscape>
+						<user>${user}</user>
+						<password>${password}</password>
+						<deployables>
+							<deployable>${project.build.directory}/deployables/sapui5.war</deployable>
+							<deployable>${project.build.directory}/deployables/uilib-sample.war</deployable>
+							<deployable>${project.build.directory}/deployables/databinding.war</deployable>
+						</deployables>
+					</properties>
+					<httpProxyHost>proxy</httpProxyHost>
+					<httpProxyPort>8080</httpProxyPort>
+					<httpNonProxyHosts>localhost|*sap.corp</httpNonProxyHosts>
+					<httpsProxyHost>proxy</httpsProxyHost>
+					<httpsProxyPort>8080</httpsProxyPort>
+					<httpsNonProxyHosts>localhost|*sap.corp</httpsNonProxyHosts>
+				</configuration>
 			</plugin>
-
+      
 		</plugins>
 		
 	</build>
