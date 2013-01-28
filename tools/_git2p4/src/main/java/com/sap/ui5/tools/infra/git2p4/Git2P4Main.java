@@ -379,7 +379,7 @@ public class Git2P4Main {
         new File(repositoryRoot, "sapui5.runtime"),
         p4depotPrefix,
         "pom.xml,src/,test/",
-        "src/dist/_osgi/,src/dist/_osgi_tools/,src/platforms/,test/_selenium_tests_lsf/"
+        "src/dist/_osgi/,src/dist/_osgi_tools/,src/dist/_osgi_gwt,src/platforms/,test/_selenium_tests_lsf/"
         ));
     mappings.add(new Mapping(
         "git.wdf.sap.corp:29418/sapui5/sapui5.platforms.gwt.git",
