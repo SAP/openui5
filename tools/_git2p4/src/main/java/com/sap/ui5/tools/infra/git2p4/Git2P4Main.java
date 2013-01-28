@@ -410,6 +410,13 @@ public class Git2P4Main {
         null,
         null
         ));
+    mappings.add(new Mapping(
+        "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.gwt.git",
+        new File(repositoryRoot, "sapui5.osgi.runtime.gwt"),
+        p4depotPrefix + "/src/dist/_osgi_gwt",
+        null,
+        null
+        ));
   }
 
   private static void usage(String errormsg) {
