@@ -419,6 +419,15 @@ public class Git2P4Main {
         ));
   }
 
+  private static String getPerforceCodelineForBranch(String branch) {
+    
+    Matcher m = Pattern.compile("(?:rel-)?([0-9]+\\.[0-9]+)|master").matcher(branch);
+    if ( m.matches() ) {
+      return m.group(1) == null ? "dev" : (m.group(1) + "_COR");
+    }
+    throw new IllegalArgumentException("branch " + branch + " doesn't match a known pattern ('x.y' or 'rel-x.y')");
+  }
+  
   private static void usage(String errormsg) {
     if ( errormsg != null ) {
       System.out.println("**** error: " + errormsg);
@@ -618,7 +627,7 @@ public class Git2P4Main {
       if ( branch == null ) {
         throw new IllegalArgumentException("branch must be specified before p4depot path is used");
       }
-      p4depotPath = p4depotPath.replace("#",  "master".equals(branch) ? "dev" : (branch + "_COR"));
+      p4depotPath = p4depotPath.replace("#",  getPerforceCodelineForBranch(branch));
       Log.println("resolved depot path: " + p4depotPath);
     }
 
