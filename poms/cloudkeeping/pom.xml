@@ -49,7 +49,7 @@
 		<password></password> <!-- SDN Password -->
 		
 		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.9.3-SNAPSHOT</sapui5.version>
+		<sapui5.version>1.11.0-SNAPSHOT</sapui5.version>
 		<!-- deploy opt version - clear to use debug version -->
 		<sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
 	
