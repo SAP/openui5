@@ -372,7 +372,7 @@ public class Git2P4Main {
 
   private static List<Mapping> mappings = new ArrayList<Mapping>();
 
-  private static void createUI5Mappings(File repositoryRoot, String p4depotPrefix) {
+  private static void createUI5Mappings(File repositoryRoot, String p4depotPrefix, String branch) {
     mappings.clear();
     mappings.add(new Mapping(
         "git.wdf.sap.corp:29418/sapui5/sapui5.runtime.git",
@@ -410,14 +410,17 @@ public class Git2P4Main {
         null,
         null
         ));
-    mappings.add(new Mapping(
-        "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.gwt.git",
-        new File(repositoryRoot, "sapui5.osgi.runtime.gwt"),
-        p4depotPrefix + "/src/dist/_osgi_gwt",
-        null,
-        null
-        ));
+    if ( branch != null && ("master".equals(branch) || branch.startsWith("rel-")) ) {
+      mappings.add(new Mapping(
+          "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.gwt.git",
+          new File(repositoryRoot, "sapui5.osgi.runtime.gwt"),
+          p4depotPrefix + "/src/dist/_osgi_gwt",
+          null,
+          null
+          ));
+    }
   }
+    
 
   private static String getPerforceCodelineForBranch(String branch) {
     
@@ -632,7 +635,7 @@ public class Git2P4Main {
     }
 
     if ( ui5Root != null ) {
-      createUI5Mappings(ui5Root, p4depotPath);
+      createUI5Mappings(ui5Root, p4depotPath, branch);
     } else if ( gitDir != null ) {
       mappings.clear();
       mappings.add(new Mapping(null, gitDir, p4depotPath, null, null));
