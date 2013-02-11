@@ -1,0 +1,169 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<!--**************************************************************************
+    * POM SECTION: Maven Model Version Settings
+    ***************************************************************************-->
+	<modelVersion>4.0.0</modelVersion>
+	
+
+    <!--**************************************************************************
+    * POM SECTION: Maven Settings
+    ***************************************************************************-->
+	<groupId>com.sap.webdriver.framkwork.test</groupId>
+    <artifactId>_webdriver_tests</artifactId>
+    <version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	
+
+	<!--**************************************************************************
+    * POM SECTION: Project Settings
+    ***************************************************************************-->
+    <name>_webdriver_tests</name>
+    <description>SAPUI5 Module - desktop-webdriver-tests</description>
+	
+	<organization>
+		<name>SAP AG</name>
+		<url>http://www.sap.com</url>
+	</organization>
+
+    <!--**************************************************************************
+    * POM SECTION: Properties Settings
+    ***************************************************************************-->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- flag to disable WebDriver desktop tests -->
+        <sap.ui5.webdriver.skip>false</sap.ui5.webdriver.skip>
+	</properties>
+
+    <!--**************************************************************************
+    * POM SECTION: Repositories Settings
+    ***************************************************************************-->
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<name>SNAPSHOTS</name>
+			<url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+		</repository>
+	</repositories>
+
+    <!--**************************************************************************
+    * POM SECTION: Build Settings
+    ***************************************************************************-->
+	<build>   
+		<plugins>   
+		    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <target>1.6</target>
+                    <source>1.6</source>
+                </configuration>
+            </plugin>  
+		</plugins> 
+	</build>
+	
+	<!--**************************************************************************
+    * POM SECTION: Dependency Settings
+    ***************************************************************************-->
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		  <groupId>com.sap.selenium2.testing</groupId> 
+		  <artifactId>com.sap.selenium2.test.framework</artifactId> 
+		  <version>0.0.1-SNAPSHOT</version>
+		  <scope>runtime</scope>
+		</dependency>
+	</dependencies>
+	
+	
+	<!--**************************************************************************
+    * POM SECTION: Profiles Settings
+    ***************************************************************************-->
+    <profiles>
+        <profile>
+            <id>test.build</id>
+            <activation>  
+                <activeByDefault>true</activeByDefault>  
+            </activation>  
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.13</version>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${sap.ui5.webdriver.skip}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>    
+                            <execution>
+                                <id>mvn-antrun-process-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                                 
+                            <execution>   
+                                <id>deleteHtmlFiles</id>        
+                                <phase>pre-clean</phase>           
+                                <configuration>             
+                                    <tasks>               
+                                        <delete>
+                                            <fileset dir="${java.io.tmpdir}\Selenium_Reports" includes="**/*.*"/>
+                                        </delete>
+                                    </tasks>           
+                                </configuration>           
+                            <goals>             
+                                <goal>run</goal>           
+                            </goals>         
+                        </execution>       
+                        <execution>  
+                            <id>copyHtmlFilesToWorkspace</id>         
+                            <phase>package</phase>           
+                            <configuration>             
+                                <tasks>               
+                                    <copy todir="Selenium_Reports">
+                                        <fileset dir="${java.io.tmpdir}\Selenium_Reports"/>
+                                    </copy>
+                                </tasks>           
+                            </configuration>           
+                            <goals>             
+                                <goal>run</goal>           
+                            </goals>         
+                        </execution>   
+                    </executions>   
+                        <configuration>
+                            <tasks>
+                                <!-- copy the properties file into the temporary directory -->
+                                <mkdir dir="${env.USERPROFILE}/Automation/Test-Parameters/"/>
+                                <copy file="Environment.test.properties" tofile="${env.USERPROFILE}/Automation/Test-Parameters/Environment.properties" overwrite="true"/>
+                            </tasks> 
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            
+        </profile>
+    </profiles>
+	
+</project>
