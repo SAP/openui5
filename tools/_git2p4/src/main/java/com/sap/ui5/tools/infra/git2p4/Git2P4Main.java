@@ -694,6 +694,9 @@ public class Git2P4Main {
             break;
           }
         }
+        if ( resumeAfter == null ) {
+          throw new IllegalStateException("could not find last perforce commit in list of git changes: " + lastCommit);
+        }
       }
     }
 
