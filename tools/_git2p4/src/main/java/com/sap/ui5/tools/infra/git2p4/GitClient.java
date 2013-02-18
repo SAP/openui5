@@ -235,6 +235,18 @@ class GitClient {
     return executeWithInput(message.toString(), "tag", "-F", "-", name);  
   }
   
+  public boolean tag(String name) throws IOException {
+    if ( execute("tag", "-l", name) ) {
+      for (int i=0; i<lastOutput.size(); ) {
+        String line = lastOutput.get(i++);
+        if ( line.contains(name) ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
   public boolean push(String gitUrl, String refSpecOrTagsOption) throws IOException {
     return execute("push", "ssh://" + sshuser + "@" + gitUrl, refSpecOrTagsOption);
   }

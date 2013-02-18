@@ -261,20 +261,25 @@ public class Git2P4Main {
         .append(NL);
       
       // create tag
-      git.tag(fromVersion, message);
-      
-      System.out.println("Git tag created locally with message '" + message + "'.");
-      if ( !preview ) {
-        int c = 'y';
-        if ( git2p4.interactive ) {
-          System.out.println("Push to gerrit? (y/n):");
-          c = System.in.read();
-          while ( System.in.available() > 0 ) {
-            System.in.read();
+      if ( git.tag(fromVersion) ) {
+        System.out.println("tag " + fromVersion + " exists already for " + repo.getRepositoryName() + " (skipped)");
+      } else {
+        
+        git.tag(fromVersion, message);
+        
+        System.out.println("Git tag created locally with message '" + message + "'.");
+        if ( !preview ) {
+          int c = 'y';
+          if ( git2p4.interactive ) {
+            System.out.println("Push to gerrit? (y/n):");
+            c = System.in.read();
+            while ( System.in.available() > 0 ) {
+              System.in.read();
+            }
           }
-        }
-        if ( c == 'y' ) {
-          git.push(repo.giturl, "--tags");
+          if ( c == 'y' ) {
+            git.push(repo.giturl, "--tags");
+          }
         }
       }
       
