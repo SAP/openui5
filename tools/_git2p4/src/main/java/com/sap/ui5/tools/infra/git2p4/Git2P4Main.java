@@ -188,7 +188,7 @@ public class Git2P4Main {
         label = "patch";
       }
 
-      git.commit("Release: update to next " + label + " version " + toVersion);
+      git.commit("VERSION CHANGE ONLY\nUpdate versions to next " + label + " version " + toVersion);
 
       git.log(1);
 
@@ -274,7 +274,7 @@ public class Git2P4Main {
           }
         }
         if ( c == 'y' ) {
-          git.push(repo.giturl, "ref/tags/*:ref/tags/*");
+          git.push(repo.giturl, "--tags");
         }
       }
       
@@ -660,7 +660,7 @@ public class Git2P4Main {
     
     if ( "release-notes".equals(command) && range == null ) {
       Version current = new Version(findVersion(branch));
-      range = current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
+      range = "tags/" + current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
     }
     
     if ( range == null || range.isEmpty() || !range.contains("..") ) {
