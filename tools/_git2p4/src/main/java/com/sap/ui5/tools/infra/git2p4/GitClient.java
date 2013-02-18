@@ -73,6 +73,9 @@ class GitClient {
     long t1 = System.currentTimeMillis();
     Log.println("  Process returned exit code " + process.exitValue() + " (" + (t1-t0) + "ms)");
     Log.println("  Process returned output " + Log.summary(lines));
+    if ( lastExitValue != 0 ) {
+      throw new IOException("Git failed with error code " + lastExitValue);
+    }
     return lastExitValue == 0;
   }
 
@@ -225,14 +228,14 @@ class GitClient {
       URL url = new URL("https://git.wdf.sap.corp:8080/tools/hooks/commit-msg");
       IOUtils.copy(url.openConnection().getInputStream(), new FileOutputStream(commitMsgHook), /* close= */ true);
     }
-    return execute("-c", "core.autocrlf=false", "commit", "--message=" + message);
+    return executeWithInput(message.toString(), "-c", "core.autocrlf=false", "commit", "-F", "-");
   }
 
   public boolean tag(String name, CharSequence message) throws IOException {
     return executeWithInput(message.toString(), "tag", "-F", "-", name);  
   }
   
-  public boolean push(String gitUrl, String refSpec) throws IOException {
-    return execute("push", "ssh://" + sshuser + "@" + gitUrl, refSpec);
+  public boolean push(String gitUrl, String refSpecOrTagsOption) throws IOException {
+    return execute("push", "ssh://" + sshuser + "@" + gitUrl, refSpecOrTagsOption);
   }
 }
