@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	
+	<title>XYZ</title>
+	
+	<script id="sap-ui-bootstrap" 
+			src="http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5/resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_mvi"
+			data-sap-ui-libs="sap.m">
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	
+	<script>
+		// Tell UI5 where to find application content
+		sap.ui.localResources("util"); // paths starting with "util" will be resolved relative to the index.html location
+		sap.ui.localResources("view");
+		jQuery.sap.registerModulePath('ApplicationBase', 'ApplicationBase'); // this file will be loaded directly from the same directory
+		jQuery.sap.registerModulePath('Application', 'Application');
+	
+		// Launch application
+		jQuery.sap.require("Application");
+		var oApp = new Application({
+			root : "content"
+		}); // instantiate your application and mark the HTML element with id "content" as location for the UI
+	</script>
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
+</html>
