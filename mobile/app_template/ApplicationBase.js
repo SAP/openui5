@@ -1,23 +1,38 @@
-jQuery.sap.declare("Application");
-jQuery.sap.require("ApplicationBase");
+jQuery.sap.declare("ApplicationBase");
+jQuery.sap.require("sap.ui.base.ManagedObject");
 
-var Application = {};
-ApplicationBase.extend("Application", {
-
-	init: function() {
-		// load the global data model
-		var oJSONDataModel = new sap.ui.model.json.JSONModel("js/splitapp/model/data.json");
-		sap.ui.getCore().setModel(oJSONDataModel);
+(function(window, undefined){
+	sap.ui.base.ManagedObject.extend("ApplicationBase", {
 		
-		// load the global image source model
-		var oImgModel = new sap.ui.model.json.JSONModel("js/splitapp/model/img.json");
-		sap.ui.getCore().setModel(oImgModel, "img");
-	},
-	
-	main: function() {
-		// create app view and put to html root element
-        var root = this.getRoot();
-        sap.ui.jsview("app", "view.App").placeAt(root);
-	}
-
-});
+		metadata : {
+			properties : {
+				root : "string"
+			}
+		},
+		
+		constructor : function(oSettings) {
+			
+			sap.ui.base.ManagedObject.apply(this,arguments);
+			
+			// the init function is already called by managed object
+			
+			if (this.main) {
+				jQuery(jQuery.proxy(this.main,this));
+			}
+			
+			if (this.onBeforeExit) {
+				jQuery(window).on('beforeunload', jQuery.proxy(this.onBeforeExit, this));
+			}
+			
+			if (this.onExit) {
+				jQuery(window).on('unload', jQuery.proxy(this.onExit, this));
+			}
+			
+			if (this.onError) {
+				window.onerror = jQuery.proxy(function(sMessage, sFile, iLine) {
+					this.onError(sMessage, sFile, iLine);
+				}, this);
+			}
+		}
+	});
+})(window);
