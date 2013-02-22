@@ -7,4 +7,4 @@ sap.ui.jsview("view.App", {
 		this.app = new sap.m.App();
 		return this.app;
 	}
-}
+});
