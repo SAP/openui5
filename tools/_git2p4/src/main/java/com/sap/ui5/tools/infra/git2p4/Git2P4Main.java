@@ -188,7 +188,7 @@ public class Git2P4Main {
         label = "patch";
       }
 
-      git.commit("VERSION CHANGE ONLY\nUpdate versions to next " + label + " version " + toVersion);
+      git.commit("VERSION CHANGE ONLY\n\nUpdate versions to next " + label + " version " + toVersion);
 
       git.log(1);
 
