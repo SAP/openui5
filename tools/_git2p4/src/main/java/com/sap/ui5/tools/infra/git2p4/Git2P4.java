@@ -58,7 +58,7 @@ public class Git2P4 {
           File localFile = new File(dest, child.getName());
           touchedFiles.add(localFile);
           localFile.setWritable(true);
-          IOUtils.copy(child, localFile);
+          IOUtils.sync(child, localFile);
           /*
 					// files ignored by the current mapping also shouldn't be copied
 					if ( destIgnore() ) {

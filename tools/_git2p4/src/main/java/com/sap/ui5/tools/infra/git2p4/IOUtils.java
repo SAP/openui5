@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
 
 public class IOUtils {
 
@@ -118,8 +119,7 @@ public class IOUtils {
     copy(is, os, false);
   }
 
-  public static void copy(InputStream is, OutputStream os, boolean close) throws IOException {
-    byte[] buffer = new byte[0x10000];
+  public static void copy(InputStream is, OutputStream os, byte[] buffer, boolean close) throws IOException {
     while ( true ) {
       int n = is.read(buffer);
       if ( n < 0 ) break;
@@ -131,6 +131,19 @@ public class IOUtils {
     }
   }
 
+  public static void copy(InputStream is, OutputStream os, boolean close) throws IOException {
+    copy(is, os, new byte[0x10000], close);
+  }
+
+  public static void copy(File a, File b, byte[] buffer) throws IOException {
+    if ( !b.getParentFile().exists() ) {
+      b.getParentFile().mkdirs();
+    }
+    FileInputStream fis = new FileInputStream(a);
+    FileOutputStream fos = new FileOutputStream(b);
+    copy(fis, fos, buffer, true);
+  }
+
   public static void copy(File a, File b) throws IOException {
     if ( !b.getParentFile().exists() ) {
       b.getParentFile().mkdirs();
@@ -140,5 +153,36 @@ public class IOUtils {
     copy(fis, fos, true);
   }
 
+  public static void sync(File a, File b) throws IOException {
+    byte[] buffer1 = new byte[0x10000];
+    byte[] buffer2 = new byte[0x10000];
+    boolean equal=b.canRead() && a.length() == b.length();
+    if ( equal ) {
+      FileInputStream fiSource = new FileInputStream(a);
+      FileInputStream fiTarget = new FileInputStream(b);
+      while ( true ) {
+        int n1 = fiSource.read(buffer1);
+        int n2 = fiTarget.read(buffer2);
+        if ( n1 != n2 ) {
+          equal = false;
+          break;
+        }
+        if ( n1 < buffer1.length ) {
+          Arrays.fill(buffer1, n1, buffer1.length, (byte) 0);
+          Arrays.fill(buffer2, n2, buffer2.length, (byte) 0);
+        }
+        if ( !Arrays.equals(buffer1,  buffer2) ) {
+          equal = false;
+        } break;
+      }
+      fiSource.close();
+      fiTarget.close();
+    }
+    if ( !equal ) {
+      buffer1 = null;
+      buffer2 = null;
+      copy(a,b);
+    }
+  }
 
 }
