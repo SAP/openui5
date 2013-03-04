@@ -242,6 +242,14 @@ class P4Client {
     return false;
   }
 
+  boolean reconcile(String path, String change) throws IOException {
+    if ( execute("reconcile", "-c", change, "-e", "-a", "-d", "-f", path) ) {
+      evalFStatReport();
+      return true;
+    }
+    return false;
+  }
+
   boolean changes(String path, int max) throws IOException {
     boolean result;
     if ( max < 0 ) {

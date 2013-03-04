@@ -294,7 +294,7 @@ public class Git2P4 {
    * 
    * Collect file infos from perforce
    */
-  public String run(GitClient.Commit commit, String p4change) throws IOException  {
+  public String run_old(GitClient.Commit commit, String p4change) throws IOException  {
 
     Mapping repoMapping = (Mapping) commit.data;
     String p4path = repoMapping.p4path;
@@ -371,6 +371,138 @@ public class Git2P4 {
       }
     }
 
+    // submit
+    p4.fstat(p4path + "/...", p4change);
+    if ( p4.lastFiles.size() == 0 ) {
+      Log.println("no files to submit, skipping change");
+      return p4change;
+    } else {
+      Log.println("Description: " + desc);
+      Log.println("Files:");
+      for(P4Client.FStat file : p4.lastFiles) {
+        Log.println(file.getAction() + " " + file.getDepotPath());
+      }
+    }
+
+    if ( !preview ) {
+
+      int c = 'y';
+      if ( interactive ) {
+        System.out.println("P4 Change " + p4change + " prepared from Commit " + commit.getId() + ". Submit? ([y]es/[n]o/[a]ll yes):");
+        c = System.in.read();
+        while ( System.in.available() > 0 ) {
+          System.in.read();
+        }
+        if ( c == 'a' ) {
+          c = 'y';
+          interactive = false;
+        }
+      }
+
+      if ( c == 'y' ) {
+        p4.submit(p4change);
+        p4change =  null;
+      }
+    }
+
+    return p4change;
+  }
+
+  /*
+   * Input:
+   * - directory of (new) files
+   * - path in perforce where the files belong to
+   * 
+   * 1. sync to head
+   * 2. create new changelist
+   * 3. check out all files for edit
+   * 4. get file status from perforce
+   * 5. walk over new files and copy them
+   *    5.1 if new, add it to cl
+   * 6. revert unchanged
+   * 7. walk over file status: if file was not copied, delete it (ignore case?)
+   * 
+   * Collect file infos from perforce
+   */
+  public String run(GitClient.Commit commit, String p4change) throws IOException  {
+
+    Mapping repoMapping = (Mapping) commit.data;
+    String p4path = repoMapping.p4path;
+    this.init(repoMapping);
+
+    // sync git to commit
+    git.checkout(commit.getId());
+
+    // create a change description form the commit(s)
+    String desc = new DescriptionBuilder(commit).toString();
+
+    // create a new changelist
+    if ( p4change == null ) {
+      p4change = p4.createChange(desc);
+    } else {
+      p4.updateChange(p4change, desc);
+    }
+
+    // revert any pending changes in the given path
+    p4.revert(p4path + "/...", null);
+
+    // sync required path to head
+    p4.sync(p4path + "/...", "#head");
+
+    // check out all files for edit
+    // p4.checkOut(p4path + "/...", p4change);
+
+    // initialize bookkeeping
+    existingFiles.clear();
+    touchedFiles.clear();
+
+    // get file status from perforce
+    p4.fstat(p4path + "/...");
+    List<P4Client.FStat> before = p4.lastFiles;
+    File localPath = null;
+    for(P4Client.FStat file : before) {
+      // deleted files and files filtered out for the current repository
+      if ( file.getHeadAction().contains("delete") || destIgnore(file, p4path)) {
+        continue;
+      }
+      // all others contribute to the current p4 repository content
+      existingFiles.add(file.getFile());
+
+      // check for the local depot path
+      String depotPath = file.getDepotPath();
+      if ( depotPath.substring(0, depotPath.lastIndexOf('/')).equals(p4path) ) {
+        localPath = file.getFile().getParentFile();
+      }
+    }
+    Log.println("Existing files found " + existingFiles.size());
+    if ( localPath == null ) {
+      throw new IllegalStateException("local path couldn't be determined");
+    }
+
+    // walk over new files and copy them
+    syncTree(git.repository, p4change, localPath, "");
+
+    // revert all unchanged files (let p4 compare old and new)
+    // p4.revertUnchanged(p4change);
+
+    if ( opt ) {
+      // okay, now check the files from Peter
+      revertDummyChanges(p4, p4path, p4change);
+    }
+
+    // walk over file status, if file was not touched, delete it
+    for(P4Client.FStat file : before) {
+      if ( file.getHeadAction().contains("delete") || destIgnore(file, p4path)) {
+        continue;
+      }
+      if ( !touchedFiles.contains(file.getFile()) ) {
+        Log.println("file: " + file.getDepotPath() + ":" + file.getHeadAction());
+        p4.delete(file.getDepotPath(), p4change);
+      }
+    }
+
+    p4.reconcile(p4path + "/...", p4change);
+    
     // submit
     p4.fstat(p4path + "/...", p4change);
     if ( p4.lastFiles.size() == 0 ) {
