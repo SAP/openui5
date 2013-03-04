@@ -167,6 +167,9 @@ public class IOUtils {
           equal = false;
           break;
         }
+        if ( n1 < 0 ) {
+          break;
+        }
         if ( n1 < buffer1.length ) {
           Arrays.fill(buffer1, n1, buffer1.length, (byte) 0);
           Arrays.fill(buffer2, n2, buffer2.length, (byte) 0);
