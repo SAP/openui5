@@ -57,6 +57,7 @@ public class Git2P4 {
         } else if ( !destIgnore(localPath) ){
           File localFile = new File(dest, child.getName());
           touchedFiles.add(localFile);
+          localFile.setWritable(true);
           IOUtils.copy(child, localFile);
           /*
 					// files ignored by the current mapping also shouldn't be copied
@@ -485,24 +486,26 @@ public class Git2P4 {
     // revert all unchanged files (let p4 compare old and new)
     // p4.revertUnchanged(p4change);
 
-    if ( opt ) {
-      // okay, now check the files from Peter
-      revertDummyChanges(p4, p4path, p4change);
-    }
-
     // walk over file status, if file was not touched, delete it
     for(P4Client.FStat file : before) {
       if ( file.getHeadAction().contains("delete") || destIgnore(file, p4path)) {
         continue;
       }
       if ( !touchedFiles.contains(file.getFile()) ) {
+        file.getFile().delete();
         Log.println("file: " + file.getDepotPath() + ":" + file.getHeadAction());
-        p4.delete(file.getDepotPath(), p4change);
+        // p4.delete(file.getDepotPath(), p4change);
       }
     }
 
+    // now let perforce find the differences
     p4.reconcile(p4path + "/...", p4change);
     
+    if ( opt ) {
+      // okay, now check the files from Peter
+      revertDummyChanges(p4, p4path, p4change);
+    }
+
     // submit
     p4.fstat(p4path + "/...", p4change);
     if ( p4.lastFiles.size() == 0 ) {
