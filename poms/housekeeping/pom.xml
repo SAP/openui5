@@ -393,6 +393,51 @@
 
 
     <!-- ******************************************************************* -->
+    <!-- HOUSEKEEPING: VEUI5INFRA (Walldorf) Distribution Layer              -->
+    <!-- ******************************************************************* -->
+
+    <profile>
+
+      <id>housekeeping-dist</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-dist</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-dist</artifactId>
+                  <version>[1.0.0,)</version>
+                  <classifier>opt</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-sdk-dist</artifactId>
+                  <version>[1.0.0,)</version>
+                  <classifier>opt</classifier>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+
+
+    <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
     <!-- ******************************************************************* -->
 
