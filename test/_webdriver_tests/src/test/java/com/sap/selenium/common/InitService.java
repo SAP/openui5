@@ -1,8 +1,11 @@
 package com.sap.selenium.common;
 
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.sap.selenium.util.Constants;
 import com.sap.selenium.util.Utility;
 
@@ -50,6 +53,11 @@ public enum InitService {
 			System.exit(1);
 		}
 		
+		if (!verifyEnvironment()){
+	          System.out.println("Test environment is not valid, Please check!");
+	          System.exit(1);
+		}
+		
 		if (!initializeParameters()){
 			System.out.println("It is failed to Initialize test parameters from config file, Please check!");
 			System.exit(1);
@@ -59,6 +67,8 @@ public enum InitService {
 		System.out.println("####    Test Runtime Initialization    ####");
 		System.out.println("##OS=" + System.getProperty("os.name"));
 		System.out.println("##Architecture=" + System.getProperty("os.arch"));
+		System.out.println("##Screen Resolution=" + config.getScreenResolutionWidth()
+		                   + "*" + config.getScreenResolutionHeight());
 		System.out.println("##Browser=" + config.getBrowserName());
 		System.out.println("##Java Version=" + System.getProperty("java.version"));
 		System.out.println("##Test target=" + getBaseURL());
@@ -155,6 +165,41 @@ public enum InitService {
 		
 	}
 	
+	/** Verify test environment as expected */
+	private boolean verifyEnvironment(){
+	    
+	    //Check screen resolution
+	    Dimension targetDimension = new Dimension(config.getScreenResolutionWidth(), 
+	                                              config.getScreenResolutionHeight()); 
+	    Dimension realDimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    if (!targetDimension.equals(realDimension)) {
+	        
+	        System.out.println("The Screen resolution is not matched with configuration!");
+	        System.out.println("The target screen resolution:" + targetDimension.width 
+	                           + "*" + targetDimension.height);
+	        System.out.println("The real screen resolution:" + realDimension.width 
+                               + "*" + realDimension.height);
+	        return false;
+	    }
+	    
+	    //Check screen color depth
+	    DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment()
+	                              .getDefaultScreenDevice().getDisplayMode();
+	    
+	    int targetColorDepth = config.getScreenColorDepth();
+	    int realColorDepth = displayMode.getBitDepth();
+	    
+	    if (!(targetColorDepth == realColorDepth)) {
+	        
+	        System.out.println("The Screen color depth is not matched with configuration!");
+	        System.out.println("The target screen color depth: " + targetColorDepth);
+	        System.out.println("The real screen color depth: " + realColorDepth);
+	        
+	        return false;
+	    }
+	    
+	    return true;
+	}
 	
 	/** Get Image Base Path based on the config file setting */
 	public String getImagesbasePath(){

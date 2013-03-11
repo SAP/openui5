@@ -106,5 +106,23 @@ public enum Config {
 		
 		return config.getProperty("Run.Mode");
 	}
+	
+	public int getScreenResolutionWidth(){
+	    
+	    String s = config.getProperty("Screen.Resolution.Width");
+	    return Integer.parseInt(s);
+	}
+	
+	public int getScreenResolutionHeight(){
+	        
+	    String s = config.getProperty("Screen.Resolution.Height");
+	    return Integer.parseInt(s);
+	}
+	
+	public int getScreenColorDepth(){
+	    
+	    String s = config.getProperty("Screen.ColorDepth");
+	    return Integer.parseInt(s);
+	}
 
 }
