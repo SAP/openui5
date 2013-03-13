@@ -15,8 +15,10 @@ public interface IUserAction {
 
     public Robot getRobot();
 
-    public void moveMouseToStartPoint(WebDriver driver);
-
+    public void mouseMoveToStartPoint(WebDriver driver);
+    
+    public void mouseClickStartPoint(WebDriver driver);
+    
     public void mouseMove(Point location);
 
     public void mouseMove(WebDriver driver, String elementId);
@@ -46,13 +48,15 @@ public interface IUserAction {
     public void pressOneKey(int keycode);
 
     public void pressTwoKeys(int firstKeyCode, int secondKeyCode);
-    
-    
+
+    public void pressThreeKeys(int firstKeyCode, int secondKeyCode, int thirdKeyCode);
 
     public Dimension getElementDimension(WebDriver driver, String elementId);
 
     public Point getElementLocation(WebDriver driver, String elementId);
 
     public Point getBrowserViewBoxLocation(WebDriver driver);
+    
+    public Dimension getBrowserViewBoxDimension(WebDriver driver);
 
 }

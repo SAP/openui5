@@ -16,11 +16,11 @@ public class UserActionIE extends UserActionCommon{
  
 	/** API: Move Mouse to browser view area (1,1) */
 	@Override
-	public void moveMouseToStartPoint(WebDriver driver){
+	public void mouseMoveToStartPoint(WebDriver driver){
 		
 		Point p = getBrowserViewBoxLocation(driver);
 		p = new Point(p.x + marginX + 1, p.y + marginY +1);
-		mouseClick(p);
+		mouseMove(p);
 	}
 	
 	
@@ -107,7 +107,8 @@ public class UserActionIE extends UserActionCommon{
 	}
 	
 	/** Get Browser view area dimension */
-	protected Dimension getBrowserViewDimension(WebDriver driver){
+	@Override
+	public Dimension getBrowserViewBoxDimension(WebDriver driver){
 		
 		// The width of body including scroll bar.
 		int innerWidth = ((Long) ((JavascriptExecutor)driver).executeScript(
@@ -163,7 +164,7 @@ public class UserActionIE extends UserActionCommon{
 		int scrollLeft = getScrollLeft(driver);
 		int scrollTop = getScrollTop(driver);
 		
-		Dimension browserViewDimension = getBrowserViewDimension(driver);
+		Dimension browserViewDimension = getBrowserViewBoxDimension(driver);
 		// The width of body including scroll bar.
 		int innerWidth = browserViewDimension.width;
 		// The height of body including scroll bar.

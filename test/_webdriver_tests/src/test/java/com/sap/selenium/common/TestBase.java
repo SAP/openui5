@@ -454,6 +454,17 @@ public class TestBase extends CommonBase{
 		Assert.assertTrue("Customized Dimension UI is matched? ", verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height),  expectedImage));
 	}
 	
+	/** API: Verify UI of browser view box */
+	public void verifyBrowserViewBox(String expectedImageName){
+	    
+	    Point viewBoxLocation = userAction.getBrowserViewBoxLocation(driver);
+	    Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
+	    
+	    verifyCustomizedDimension(viewBoxLocation.x, viewBoxLocation.y, 
+	                              viewBoxDimension.width, viewBoxDimension.height, 
+	                              expectedImageName); 
+	}
+	
 
 	/** Verify full page UI by image comparing */
  	private boolean verifyFullPageUI(File expectedImage){

@@ -48,7 +48,7 @@ public class UserActionFirefox extends UserActionCommon{
 	     		                "return e;")).intValue();
 		
 		
-		Dimension browserViewDimension = getBrowserViewDimension(driver);
+		Dimension browserViewDimension = getBrowserViewBoxDimension(driver);
 		
 		// The width of body including scroll bar.
 		int innerWidth = browserViewDimension.width;
@@ -84,7 +84,8 @@ public class UserActionFirefox extends UserActionCommon{
 	}
 	
 	/** Get Browser view area dimension */
-	protected Dimension getBrowserViewDimension(WebDriver driver){
+	@Override
+	public Dimension getBrowserViewBoxDimension(WebDriver driver){
 		
 		// The width of body including scroll bar.
 		int innerWidth = ((Long) ((JavascriptExecutor)driver).executeScript(
@@ -142,7 +143,7 @@ public class UserActionFirefox extends UserActionCommon{
 		int scrollLeft = getScrollLeft(driver);
 		int scrollTop = getScrollTop(driver);
 		
-		Dimension browserViewDimension = getBrowserViewDimension(driver);
+		Dimension browserViewDimension = getBrowserViewBoxDimension(driver);
 		// The width of body including scroll bar.
 		int innerWidth = browserViewDimension.width;
 		// The height of body including scroll bar.

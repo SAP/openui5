@@ -74,12 +74,20 @@ public abstract class UserActionCommon implements IUserAction {
 	
 	/** API: Move Mouse to browser view area (1,1) */
 	@Override
-	public void moveMouseToStartPoint(WebDriver driver){
+	public void mouseMoveToStartPoint(WebDriver driver){
 		
 		Point p = getBrowserViewBoxLocation(driver);
 		p = new Point(p.x + 1, p.y + 1);
-		mouseClick(p);
+		mouseMove(p);
 	}
+	
+	   /** API: Move Mouse and click browser view area (1,1) */
+    @Override
+    public void mouseClickStartPoint(WebDriver driver){
+        
+        mouseMoveToStartPoint(driver);
+        mouseClick();
+    }
 	
 	
 	/*==== Get location and dimension =====*/
@@ -124,6 +132,21 @@ public abstract class UserActionCommon implements IUserAction {
     	robot.keyRelease(firstKeyCode);
     	robot.keyRelease(secondKeyCode);
     	
+    }
+	
+    /** API: Press the three keys on keyboard at the same time after focus on the element */
+    @Override
+    public void pressThreeKeys(int firstKeyCode, int secondKeyCode, int thirdKeyCode){
+        
+        Robot robot = getRobot();
+        
+        robot.keyPress(firstKeyCode);
+        robot.keyPress(secondKeyCode);
+        robot.keyPress(thirdKeyCode);
+        
+        robot.keyRelease(firstKeyCode);
+        robot.keyRelease(secondKeyCode);
+        robot.keyRelease(thirdKeyCode);
     }
     
 	

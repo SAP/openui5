@@ -2,7 +2,6 @@ package com.sap.selenium.tests.common;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,7 @@ public class ButtonTest extends TestBase{
 		
 		page = PageFactory.initElements(driver, ButtonPO.class);
 		driver.get(getFullUrl(targetUrl));
-	    userAction.moveMouseToStartPoint(driver);
+	    userAction.mouseClickStartPoint(driver);
 	}	
 	
 	@After
@@ -35,7 +34,7 @@ public class ButtonTest extends TestBase{
 	/** Verify full Page UI and all element initial UI, Check enable and visible all elements */
 	@Test
 	public void testAllElements(){
-
+	    
 		//Test all initial elements
 		verifyFullPageUI("full-initial");
 		
@@ -145,7 +144,7 @@ public class ButtonTest extends TestBase{
 		Point locationBtn4 = userAction.getElementLocation(driver, elementIdBtn4);
 		Point locationBtn5 = userAction.getElementLocation(driver, elementIdBtn5);
 		
-		userAction.moveMouseToStartPoint(driver);
+		userAction.mouseClickStartPoint(driver);
 		
 		if (isRtlTrue()){
 			
@@ -222,7 +221,7 @@ public class ButtonTest extends TestBase{
 		
 		
 		//Test Space Key
-		userAction.moveMouseToStartPoint(driver);
+		userAction.mouseClickStartPoint(driver);
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 		
