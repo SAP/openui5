@@ -1,0 +1,184 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+  <groupId>com.sap.ui5</groupId>
+  <artifactId>selenium-visual-tests</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Project Settings
+  ***************************************************************************-->
+  <name>selenium visual tests for UI5</name>
+  <description>SAPUI5 desktop - selenium visual tests</description>
+
+  <organization>
+       <name>SAP AG</name>
+       <url>http://www.sap.com</url>
+  </organization>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Properties Settings
+  ***************************************************************************-->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Repositories Settings
+  ***************************************************************************-->
+  <repositories>
+      <repository>
+          <id>nexus</id>
+          <name>SNAPSHOTS</name>
+          <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+      </repository>
+  </repositories>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Build Settings
+  ***************************************************************************-->
+  <build> 
+  
+      <pluginManagement>
+             <plugins>
+                <plugin>
+                     <groupId>org.eclipse.m2e</groupId>
+                     <artifactId>lifecycle-mapping</artifactId>
+                     <version>1.0.0</version>
+                     <configuration>
+                         <lifecycleMappingMetadata>
+                             <pluginExecutions>
+                                <pluginExecution>
+                                     <pluginExecutionFilter>
+                                         <groupId>org.codehaus.mojo</groupId>
+                                         <artifactId>properties-maven-plugin</artifactId>
+                                          <versionRange>[1.0-alpha-2,)</versionRange>
+                                           <goals>
+                                              <goal>write-project-properties</goal>
+                                           </goals>
+                                     </pluginExecutionFilter>
+                                      <action>
+                                          <execute>
+                                              <runOnIncremental>true</runOnIncremental>
+                                          </execute>
+                                       </action>
+                               </pluginExecution>
+                           </pluginExecutions>
+                         </lifecycleMappingMetadata>
+                     </configuration>
+                </plugin>
+             </plugins>
+      </pluginManagement>
+  
+      <plugins>  
+       
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.0</version>
+              <configuration>
+                  <fork>true</fork>
+                  <target>1.6</target>
+                  <source>1.6</source>
+              </configuration>
+          </plugin> 
+          
+          <plugin>
+                 <groupId>org.codehaus.mojo</groupId>
+                 <artifactId>properties-maven-plugin</artifactId>
+                 <version>1.0-alpha-2</version>
+                    <executions>
+                     <execution>
+                         <phase>generate-resources</phase>
+                        <goals>
+                            <goal>write-project-properties</goal>
+                        </goals>
+                    <configuration>
+                        <outputFile>
+                            ${env.USERPROFILE}/Automation/Test-Parameters/Config.properties
+                        </outputFile>
+                    </configuration>
+                   </execution>
+                </executions>
+            </plugin>
+            
+      </plugins>  
+      
+         
+  </build>
+  
+  
+  <dependencies>
+  
+    <dependency>
+      <groupId>com.sap.ui5</groupId>
+      <artifactId>selenium-visual-framework</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+  
+    <!--**************************************************************************
+    * POM SECTION: Profiles Settings
+    ***************************************************************************-->
+    <profiles>
+         <profile>
+            <id>default</id>
+            <activation>  
+                <activeByDefault>true</activeByDefault>  
+            </activation>
+            <properties>
+                <!-- Run mode: DEV, TEST
+                     DEV: If expected images are missing, the test will not be failed and save all new images 
+                     Test: If expected images are missing, the test will be failed and stopped. (TEST is default) 
+                 -->
+                <Run.Mode>TEST</Run.Mode>
+                
+                <!-- Target screen resolution and color depth-->
+                <Screen.Resolution.Width>1280</Screen.Resolution.Width>
+                <Screen.Resolution.Height>800</Screen.Resolution.Height>
+                <Screen.ColorDepth>16</Screen.ColorDepth>
+                
+                <!-- Expected images root directory -->
+                <ImageRepositoryHome>C:\Automation\UI5\ImageRepo\master</ImageRepositoryHome>
+
+                <!-- OS: Windows7_64, Windows7_32, WindowsXP_32-->
+                <Driver.OS>Windows7_64</Driver.OS>
+                
+                <!-- Browser: Firefox, IE8_32, Chrome, (IE8_64, IE9_32, IE9_64) -->
+                <Driver.Browser>firefox</Driver.Browser>
+                
+                <!-- sap-ui-theme: sap_goldreflection, sap_hcb-->
+                <URL.Parameter.sap-ui-theme>sap_goldreflection</URL.Parameter.sap-ui-theme>
+                <!-- sap-ui-rtl: false, true-->
+                <URL.Parameter.sap-ui-rtl>false</URL.Parameter.sap-ui-rtl>
+                <!-- sap-ui-jqueryversion: 1.7.1, 1.8.1-->
+                <URL.Parameter.sap-ui-jqueryversion>1.8.1</URL.Parameter.sap-ui-jqueryversion>
+
+                <!-- Target Base URL: http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample-->
+                <URL.Protocol>http</URL.Protocol>
+                <URL.Host>veui5infra</URL.Host>
+                <URL.Domain>dhcp.wdf.sap.corp</URL.Domain>
+                <URL.Port>8080</URL.Port>
+                <URL.BasePath>/uilib-sample</URL.BasePath>
+            </properties>
+        </profile>
+    </profiles>
+    
+</project>
