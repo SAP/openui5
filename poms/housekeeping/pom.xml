@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.9.0-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.11.1-SNAPSHOT</sap.ui5.version>
 
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
@@ -102,7 +102,7 @@
           <remoteTomcatPassword>${tomcat.sandbox.pwd}</remoteTomcatPassword>
           <skipDeploy>true</skipDeploy>
           <skipUndeploy>true</skipUndeploy>
-		  <timeout>180</timeout>
+      <timeout>180</timeout>
         </configuration>
       </plugin>
 
@@ -250,12 +250,12 @@
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
                   <artifactId>performance-webm</artifactId>
-                  <version>1.0.0</version>
+                  <version>[1.0.0,)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
                   <artifactId>jsunit-testrunner</artifactId>
-                  <version>1.0.0</version>
+                  <version>[1.0.0,)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
@@ -296,8 +296,12 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>theme-editor</artifactId>
+                  <artifactId>theme-designer</artifactId>
+                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
                   <version>[1.0.0,)</version>
+                  <contextPath>theme-designer</contextPath>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
                 </deployable>
               </deployables>
             </configuration>
@@ -954,7 +958,7 @@
     <!-- HOUSEKEEPING: TEST                                                  -->
     <!-- ******************************************************************* -->
 
-    <!--
+  <!--
     <profile>
 
       <id>housekeeping-test</id>
@@ -972,21 +976,18 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <!- - TOMCAT 6.x: /manager ; TOMCAT 7.x: /manager/text - ->
-              <remoteTomcatManagerUrl>http://localhost:8080/manager/text</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>http://localhost:8080${tomcat.manager.url.v7}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-internal</artifactId>
-                  <version>${sap.ui5.version}</version>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>sapui5-internal</artifactId>
-                  <version>1.3.1-SNAPSHOT</version>
-                  <contextPath>sapui5-internal-1.1.2</contextPath>
+                  <artifactId>theme-designer</artifactId>
+                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
+                  <version>[1.0.0,)</version>
+                  <contextPath>theme-designer</contextPath>
+                  <classifier>opt</classifier>
+                  <fallbackClassifier>_</fallbackClassifier>
                 </deployable>
               </deployables>
             </configuration>
@@ -995,8 +996,7 @@
       </build>
 
     </profile>
-    -->
-
+  -->
 
   </profiles>
 
