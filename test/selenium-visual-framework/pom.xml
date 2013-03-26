@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Model Version Settings
+  ***************************************************************************-->
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Maven Settings
+  ***************************************************************************-->
+  <groupId>com.sap.ui5</groupId>
+  <artifactId>selenium-visual-framework</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Project Settings
+  ***************************************************************************-->
+  <name>selenium-visual-framework</name>
+  <description>SAPUI5 selenium visual framework</description>
+
+  <organization>
+       <name>SAP AG</name>
+       <url>http://www.sap.com</url>
+  </organization>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Properties Settings
+  ***************************************************************************-->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+
+  <!--**************************************************************************
+  * POM SECTION: Repositories Settings
+  ***************************************************************************-->
+  <repositories>
+      <repository>
+          <id>nexus</id>
+          <name>SNAPSHOTS</name>
+          <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+      </repository>
+  </repositories>
+  
+  <!--**************************************************************************
+  * POM SECTION: Build Settings
+  ***************************************************************************-->
+  <build>   
+      <plugins>   
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.0</version>
+              <configuration>
+                  <fork>true</fork>
+                  <target>1.6</target>
+                  <source>1.6</source>
+              </configuration>
+          </plugin> 
+      </plugins>     
+  </build>
+  
+  
+  <!--**************************************************************************
+  * POM SECTION: Dependency Settings
+  ***************************************************************************-->
+  <dependencies>
+  
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>2.31.0</version>
+    </dependency>
+    
+  </dependencies>
+  
+  <distributionManagement>
+    <repository>
+      <id>nexus</id>
+      <name>Snapshots</name>
+      <url>http://nexus.wdf.sap.corp:8081/nexus/content/repositories/deploy.snapshots/</url>
+    </repository>
+  </distributionManagement>
+  
+</project>
