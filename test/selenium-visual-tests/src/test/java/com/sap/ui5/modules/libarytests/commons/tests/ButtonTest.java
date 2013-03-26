@@ -1,7 +1,8 @@
-package com.sap.ui5.modules.commons.tests;
+package com.sap.ui5.modules.libarytests.commons.tests;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +10,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
-import com.sap.ui5.modules.commons.pages.ButtonPO;
+import com.sap.ui5.modules.libarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.util.Constants;
 

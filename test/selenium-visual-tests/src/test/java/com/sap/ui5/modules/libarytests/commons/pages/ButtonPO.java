@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.commons.pages;
+package com.sap.ui5.modules.libarytests.commons.pages;
 
 import java.util.List;
 
