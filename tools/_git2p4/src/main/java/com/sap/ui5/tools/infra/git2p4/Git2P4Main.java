@@ -1,7 +1,6 @@
 package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -380,14 +379,14 @@ public class Git2P4Main {
   private static void createUI5Mappings(File repositoryRoot, String p4depotPrefix, String branch) {
     mappings.clear();
     mappings.add(new Mapping(
-        "git.wdf.sap.corp:29418/sapui5/sapui5.runtime.git",
+        "/sapui5/sapui5.runtime.git",
         new File(repositoryRoot, "sapui5.runtime"),
         p4depotPrefix,
         "pom.xml,src/,test/",
         "src/dist/_osgi/,src/dist/_osgi_tools/,src/dist/_osgi_gwt,src/platforms/,test/_selenium_tests_lsf/"
         ));
     mappings.add(new Mapping(
-        "git.wdf.sap.corp:29418/sapui5/sapui5.platforms.gwt.git",
+        "/sapui5/sapui5.platforms.gwt.git",
         new File(repositoryRoot, "sapui5.platforms.gwt"),
         p4depotPrefix + "/src/platforms/gwt",
         null,
@@ -402,14 +401,14 @@ public class Git2P4Main {
 		));
      */
     mappings.add(new Mapping(
-        "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.git",
+        "/sapui5/sapui5.osgi.runtime.git",
         new File(repositoryRoot, "sapui5.osgi.runtime"),
         p4depotPrefix + "/src/dist/_osgi",
         null,
         null
         ));
     mappings.add(new Mapping(
-        "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.tools.git",
+        "/sapui5/sapui5.osgi.tools.git",
         new File(repositoryRoot, "sapui5.osgi.tools"),
         p4depotPrefix + "/src/dist/_osgi_tools",
         null,
@@ -417,7 +416,7 @@ public class Git2P4Main {
         ));
     if ( branch != null && ("master".equals(branch) || branch.startsWith("rel-")) ) {
       mappings.add(new Mapping(
-          "git.wdf.sap.corp:29418/sapui5/sapui5.osgi.runtime.gwt.git",
+          "/sapui5/sapui5.osgi.runtime.gwt.git",
           new File(repositoryRoot, "sapui5.osgi.runtime.gwt"),
           p4depotPrefix + "/src/dist/_osgi_gwt",
           null,
@@ -455,7 +454,10 @@ public class Git2P4Main {
     System.out.println(" tag [-b <branch>]                          creates tags for the current head revision in the given branch (tag name == root pom version)");
     System.out.println();
     System.out.println("Git/Mapping options:");
-    System.out.println(" --git-user             SSH id used for clone or push operations, defaults to ${user.name}||hudsonvoter");
+    System.out.println(" --git-use-https        true to use HTTPS otherwise SSH is used, defaults to false");
+    System.out.println(" --git-user             User used for clone or push operations, defaults to ${user.name}||hudsonvoter");
+    System.out.println(" --git-email            Email used for the commit message (if not present the local .gitconfig is used)");
+    System.out.println(" --git-password         Password used for clone or push operations");
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
     System.out.println(" --git-dir              Git repository root");
     System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
@@ -530,8 +532,14 @@ public class Git2P4Main {
         p4change = args[++i];
       } else if ( "-d".equals(args[i]) || "--p4-dest-path".equals(args[i])) {
         p4depotPath = args[++i];
+      } else if ( "--git-use-https".equals(args[i]) ) {
+        git.useHTTPS = true;
       } else if ( "--git-user".equals(args[i]) ) {
-        git.sshuser = args[++i];
+        git.user = args[++i];
+      } else if ( "--git-email".equals(args[i]) ) {
+        git.email = args[++i];
+      } else if ( "--git-password".equals(args[i]) ) {
+        git.password = args[++i];
       } else if ( "--git-no-fetch".equals(args[i]) ) {
         noFetch = true;
       } else if ( "--ui5-git-root".equals(args[i]) ) {

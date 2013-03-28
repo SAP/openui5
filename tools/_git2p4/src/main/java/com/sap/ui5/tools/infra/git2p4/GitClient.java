@@ -21,7 +21,10 @@ class GitClient {
 
   private String gitcmd = "git.cmd";
   File repository = new File(".");
-  String sshuser = System.getProperty("user.name", "hudsonvoter").toLowerCase();
+  boolean useHTTPS = false;
+  String user = System.getProperty("user.name", "hudsonvoter").toLowerCase();
+  String email = null;
+  String password = null;
 
   boolean verbose = false;
   private int lastExitValue;
@@ -206,7 +209,7 @@ class GitClient {
   }
 
   public boolean clone(String gitUrl) throws IOException {
-    return execute("clone", "ssh://" + sshuser + "@" + gitUrl, repository.getAbsolutePath());
+    return execute("clone", createGitBaseUrl() + gitUrl, repository.getAbsolutePath());
   }
 
   public boolean fetch() throws IOException {
@@ -222,13 +225,26 @@ class GitClient {
   }
 
   public boolean commit(CharSequence message) throws IOException {
-    // ensure that the changeId commit hook exists
-    File commitMsgHook = new File(repository, ".git/hooks/commit-msg");
-    if ( !commitMsgHook.exists() ) {
-      URL url = new URL("https://git.wdf.sap.corp:8080/tools/hooks/commit-msg");
-      IOUtils.copy(url.openConnection().getInputStream(), new FileOutputStream(commitMsgHook), /* close= */ true);
-    }
-    return executeWithInput(message.toString(), "-c", "core.autocrlf=false", "commit", "-F", "-");
+  	// locally set the user to be used as committer for the commit
+  	try {
+    	if (useHTTPS && email != null) {
+    		execute("config", "--local", "--add", "user.name", user);
+    		execute("config", "--local", "--add", "user.email", email);
+    	}
+      // ensure that the changeId commit hook exists
+      File commitMsgHook = new File(repository, ".git/hooks/commit-msg");
+      if ( !commitMsgHook.exists() ) {
+        URL url = new URL("https://git.wdf.sap.corp:8080/tools/hooks/commit-msg");
+        IOUtils.copy(url.openConnection().getInputStream(), new FileOutputStream(commitMsgHook), /* close= */ true);
+      }
+      return executeWithInput(message.toString(), "-c", "core.autocrlf=false", "commit", "-F", "-");
+  	} finally {
+  		// cleanup the locally set user/email
+    	if (useHTTPS && email != null) {
+    		execute("config", "--local", "--unset", "user.name");
+    		execute("config", "--local", "--unset", "user.email");
+    	}
+  	}
   }
 
   public boolean tag(String name, CharSequence message) throws IOException {
@@ -248,6 +264,31 @@ class GitClient {
   }
   
   public boolean push(String gitUrl, String refSpecOrTagsOption) throws IOException {
-    return execute("push", "ssh://" + sshuser + "@" + gitUrl, refSpecOrTagsOption);
+    return execute("push", createGitBaseUrl() + gitUrl, refSpecOrTagsOption);
   }
+  
+  private String createGitBaseUrl() {
+  	StringBuffer baseUrl = new StringBuffer();
+  	if (useHTTPS) {
+  		baseUrl.append("https://");
+  	} else {
+  		baseUrl.append("ssh://");
+  	}
+  	if (user != null) {
+  		baseUrl.append(user);
+  		if (password != null) {
+  			baseUrl.append(":");
+  			baseUrl.append(password);
+  		}
+  		baseUrl.append("@");
+  	}
+  	baseUrl.append("git.wdf.sap.corp:");
+  	if (useHTTPS) {
+  		baseUrl.append("8080");
+  	} else {
+  		baseUrl.append("29418");
+  	}
+  	return baseUrl.toString();
+  }
+  
 }
