@@ -454,8 +454,9 @@ public class Git2P4Main {
     System.out.println(" tag [-b <branch>]                          creates tags for the current head revision in the given branch (tag name == root pom version)");
     System.out.println();
     System.out.println("Git/Mapping options:");
-    System.out.println(" --git-use-https        true to use HTTPS otherwise SSH is used, defaults to false");
-    System.out.println(" --git-user             User used for clone or push operations, defaults to ${user.name}||hudsonvoter");
+    System.out.println(" --git-ssh-user         User used for clone operations (always via SSH), defaults to ${user.name}||sapui5");
+    System.out.println(" --git-use-https        true to use HTTPS for commit or push otherwise SSH is used, defaults to false");
+    System.out.println(" --git-user             User used for commit or push operations, defaults to ${user.name}||sapui5");
     System.out.println(" --git-email            Email used for the commit message (if not present the local .gitconfig is used)");
     System.out.println(" --git-password         Password used for clone or push operations");
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
@@ -532,6 +533,8 @@ public class Git2P4Main {
         p4change = args[++i];
       } else if ( "-d".equals(args[i]) || "--p4-dest-path".equals(args[i])) {
         p4depotPath = args[++i];
+      } else if ( "--git-ssh-user".equals(args[i]) ) {
+        git.sshUser = args[++i];
       } else if ( "--git-use-https".equals(args[i]) ) {
         git.useHTTPS = true;
       } else if ( "--git-user".equals(args[i]) ) {

@@ -22,7 +22,8 @@ class GitClient {
   private String gitcmd = "git.cmd";
   File repository = new File(".");
   boolean useHTTPS = false;
-  String user = System.getProperty("user.name", "hudsonvoter").toLowerCase();
+  String sshUser = System.getProperty("user.name", "sapui5").toLowerCase();
+  String user = System.getProperty("user.name", "sapui5").toLowerCase();
   String email = null;
   String password = null;
 
@@ -209,7 +210,8 @@ class GitClient {
   }
 
   public boolean clone(String gitUrl) throws IOException {
-    return execute("clone", createGitBaseUrl() + gitUrl, repository.getAbsolutePath());
+  	// we always fetch via SSH
+    return execute("clone", createGitBaseUrl(false) + gitUrl, repository.getAbsolutePath());
   }
 
   public boolean fetch() throws IOException {
@@ -264,23 +266,27 @@ class GitClient {
   }
   
   public boolean push(String gitUrl, String refSpecOrTagsOption) throws IOException {
-    return execute("push", createGitBaseUrl() + gitUrl, refSpecOrTagsOption);
+    return execute("push", createGitBaseUrl(useHTTPS) + gitUrl, refSpecOrTagsOption);
   }
   
-  private String createGitBaseUrl() {
+  private String createGitBaseUrl(boolean useHTTPS) {
   	StringBuffer baseUrl = new StringBuffer();
   	if (useHTTPS) {
   		baseUrl.append("https://");
+    	if (user != null) {
+    		baseUrl.append(user);
+    		if (password != null) {
+    			baseUrl.append(":");
+    			baseUrl.append(password);
+    		}
+    		baseUrl.append("@");
+    	}
   	} else {
   		baseUrl.append("ssh://");
-  	}
-  	if (user != null) {
-  		baseUrl.append(user);
-  		if (password != null) {
-  			baseUrl.append(":");
-  			baseUrl.append(password);
-  		}
-  		baseUrl.append("@");
+    	if (sshUser != null) {
+    		baseUrl.append(sshUser);
+    		baseUrl.append("@");
+    	}
   	}
   	baseUrl.append("git.wdf.sap.corp:");
   	if (useHTTPS) {
