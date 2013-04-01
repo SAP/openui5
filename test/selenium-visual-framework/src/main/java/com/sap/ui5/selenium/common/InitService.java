@@ -28,14 +28,18 @@ public enum InitService {
 	private List<String> OS = new ArrayList<String>();
 	{
 		OS.add("WindowsXP_32");
+		OS.add("Windows2008_64");
 		OS.add("Windows7_64");
 	}
 	//Supported Browsers
 	private List<String> browser = new ArrayList<String>();
 	{
 		browser.add("Firefox");
-		browser.add("IE8_32");
 		browser.add("Chrome");
+		browser.add("IE8_32");
+		browser.add("IE8_64");
+		browser.add("IE9_32");
+		browser.add("IE9_64");
 	}
 
 
@@ -92,7 +96,7 @@ public enum InitService {
 	
 	/** Get directories for expected images */
 	private boolean initializeParameters(){
-		
+
 		//Get OS from config
 		if (!Utility.isValueInCollection(config.getOS(), OS)){
 			
@@ -168,7 +172,7 @@ public enum InitService {
 	
 	/** Verify test environment as expected */
 	private boolean verifyEnvironment(){
-	    
+
 	    //Check screen resolution
 	    Dimension targetDimension = new Dimension(config.getScreenResolutionWidth(), 
 	                                              config.getScreenResolutionHeight()); 

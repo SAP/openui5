@@ -40,12 +40,27 @@
   * POM SECTION: Repositories Settings
   ***************************************************************************-->
   <repositories>
-      <repository>
-          <id>nexus</id>
-          <name>SNAPSHOTS</name>
-          <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
-      </repository>
+    <repository>
+        <id>repo.jenkins-ci.org</id>
+        <url>http://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository>
+         <id>nexus</id>
+         <name>SNAPSHOTS</name>
+         <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+    </repository>
   </repositories>
+
+  <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>nexus</id>
+            <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+            </pluginRepository>
+   </pluginRepositories>
   
   <!--**************************************************************************
   * POM SECTION: Build Settings
