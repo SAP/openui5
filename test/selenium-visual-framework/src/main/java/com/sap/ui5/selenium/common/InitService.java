@@ -5,8 +5,9 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import org.openqa.selenium.Platform;
 import com.sap.ui5.selenium.util.Constants;
 import com.sap.ui5.selenium.util.Utility;
 
@@ -25,21 +26,21 @@ public enum InitService {
 	private String rtlDIR;
 	
 	//Supported OS
-	private List<String> OS = new ArrayList<String>();
+	private List<String> OSList = new ArrayList<String>();
 	{
-		OS.add("WindowsXP_32");
-		OS.add("Windows2008_64");
-		OS.add("Windows7_64");
+		OSList.add("WindowsXP_32");
+		OSList.add("Windows2008_64");
+		OSList.add("Windows7_64");
 	}
 	//Supported Browsers
-	private List<String> browser = new ArrayList<String>();
+	private List<String> browserList = new ArrayList<String>();
 	{
-		browser.add("Firefox");
-		browser.add("Chrome");
-		browser.add("IE8_32");
-		browser.add("IE8_64");
-		browser.add("IE9_32");
-		browser.add("IE9_64");
+		browserList.add("Firefox");
+		browserList.add("Chrome");
+		browserList.add("IE8_32");
+		browserList.add("IE8_64");
+		browserList.add("IE9_32");
+		browserList.add("IE9_64");
 	}
 
 
@@ -98,21 +99,32 @@ public enum InitService {
 	private boolean initializeParameters(){
 
 		//Get OS from config
-		if (!Utility.isValueInCollection(config.getOS(), OS)){
+		String OS = config.getOsName() + "_" + config.getOsBits();
+		if (!Utility.isValueInCollection(OS, OSList)){
 			
 			System.out.println("OS in config is not correct!");
 			return false;
 		}
-		osDIR = config.getOS();
+		osDIR = OS;
 		
 		
-		//Get Browser from config	
-		if (!Utility.isValueInCollection(config.getBrowserName(), browser)) {
+		//Get Browser from config
+		String browser;
+		if (config.getBrowserName().equalsIgnoreCase("IE")) {
+			
+			browser = config.getBrowserName() + config.getBrowserVersion() 
+					  + "_" + config.getBrowserBits();
+		} else {
+			
+			browser = config.getBrowserName();
+		}
+		
+		if (!Utility.isValueInCollection(browser, browserList)) {
 			
 			System.out.println("Browser in config is not correct!");
 			return false;
 		}
-		browserDIR = config.getBrowserName();
+		browserDIR = browser;
 		
 
 		//Get SAPUI5 Theme from config
@@ -226,12 +238,12 @@ public enum InitService {
 		
 		if (!Utility.isValueInCollection(config.getUrlProtocol(), protocol)){
 			
-			System.out.println("Protocol in config is not correct!");
+			System.out.println("AUT URL Protocol in config is not correct!");
 			return false;
 		}
 		
 		
-		//Check Protocol
+		//Check Run.Mode
 		List<String> runMode = new ArrayList<String>();
 		runMode.add("DEV");
 		runMode.add("TEST");
@@ -242,6 +254,16 @@ public enum InitService {
 			return false;
 		}
 		
+		//Check Run.Environment
+		List<String> runEnv = new ArrayList<String>();
+		runEnv.add("Local");
+		runEnv.add("Remote");
+		
+		if (!Utility.isValueInCollection(config.getRunEnvironment(), runEnv)){
+			
+			System.out.println("Run Environment in config is not correct!");
+			return false;
+		}
 		
 		//Add more check points here based on the need
 		
@@ -253,15 +275,15 @@ public enum InitService {
 	public int getBrowserType(){
 		
 		
-		if (config.getBrowserName().startsWith("Firefox") || config.getBrowserName().startsWith("firefox")){
+		if (config.getBrowserName().equalsIgnoreCase("Firefox")){
 			return Constants.FIREFOX;
 		}
 		
-		if (config.getBrowserName().startsWith("IE") || config.getBrowserName().startsWith("ie")){
+		if (config.getBrowserName().equalsIgnoreCase("IE")){
 			return Constants.IE;
 		}
 		
-		if (config.getBrowserName().startsWith("Chrome") || config.getBrowserName().startsWith("chrome")){
+		if (config.getBrowserName().equalsIgnoreCase("Chrome")){
 			return Constants.CHROME;
 		}
 		
@@ -272,19 +294,59 @@ public enum InitService {
 		return fileSeparator;
 	}
 	
-	/** Return true if it tests running as DEV mode */
+	/** Return true if tests run as DEV mode */
 	public boolean isDevMode(){
 		
 		if (config.getRunMode().equalsIgnoreCase("DEV")){
-			
 			return true;
-		}else{
-			
-			return false;
 		}
 		
-		
+		return false;
 	}
 	
+	/** Return true if tests run on Remote Environment */
+	public boolean isRemoteEnv(){
+		
+		if (config.getRunEnvironment().equalsIgnoreCase("Remote")){
+			return true;
+		}
+		
+		return false;
+	}
 	
+	/** Get Remote WebDriver Server URL */
+	public String getRemoteSeleniumServerURL(){
+		
+		String remoteUrl;
+		String remotePath = "/wd/hub";
+		
+		//http://veui5infra.dhcp.wdf.sap.corp:4444/wd/hub
+		remoteUrl = config.getRemoteProtocol() + ":" + "//" + config.getRemoteHost()
+				    + "." + config.getRemoteDomain() + ":" + config.getRemotePort()
+				    + remotePath;
+		
+		return remoteUrl;	
+	}
+	
+	/** Get target platform for Grid */
+	public Platform getTargetPlatform(){
+		
+		if (Utility.isValueInCollection(config.getOsName(), Arrays.asList(Constants.PLATFORM_WIN_XP))){
+			
+			return Platform.XP;
+		}
+		
+		if (Utility.isValueInCollection(config.getOsName(), Arrays.asList(Constants.PLATFORM_WIN_VISTA))){
+			
+			return Platform.VISTA;
+		}
+		
+		if (Utility.isValueInCollection(config.getOsName(), Arrays.asList(Constants.PLATFORM_WIN8))){
+			
+			return Platform.WIN8;
+		}
+		
+		System.out.println("No platform is matched by OS in config.properties");
+		return null;
+	}
 }

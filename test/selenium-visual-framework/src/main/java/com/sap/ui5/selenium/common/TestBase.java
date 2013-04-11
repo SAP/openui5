@@ -5,6 +5,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.openqa.selenium.Dimension;
@@ -13,6 +14,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.action.UserActionChrome;
 import com.sap.ui5.selenium.action.UserActionFirefox;
@@ -51,10 +54,10 @@ public class TestBase extends CommonBase{
 	private final String diffImagesDIR = testDIR + fileSeparator + "DiffImages" + fileSeparator;
 	
 	//Prefix and Suffix for Image file 
-	private final String expectedImagePrefix = this.getClass().getSimpleName() + "-";
-	private final String diffImagePrefix = this.getClass().getSimpleName() + "-diff-";
+	private final String expectedImagePrefix = "";
+	private final String diffImagePrefix = "";
 	private final String expectedImageSuffix = "." + Constants.IMAGE_TYPE;
-	private final String diffImageSuffix =  "." + Constants.IMAGE_TYPE;
+	private final String diffImageSuffix =  "-diff." + Constants.IMAGE_TYPE;
 	
 	public TestBase(){
 		
@@ -137,7 +140,7 @@ public class TestBase extends CommonBase{
 	
 	/** Initial WebDriver and return the instance */
 	private WebDriver getDriver(){
-		
+
 		//Get target driver
 		switch (getBrowserType()){
 		case Constants.FIREFOX:
@@ -180,15 +183,42 @@ public class TestBase extends CommonBase{
 		return driver;
 	}
 	
+	/** Initial WebDriver common setting */
+	private void initDriverCommonSetting(WebDriver driver){
+		
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
+		driver.manage().window().maximize();
+	}
 	/** Initialize Fiefox Driver */
 	private boolean initializeFirefoxDriver(){
 		
+		//Initial Remote Firefox Driver
+		if (service.isRemoteEnv()) {
+			DesiredCapabilities capability = DesiredCapabilities.firefox();
+			capability.setVersion(config.getBrowserVersion());
+			capability.setJavascriptEnabled(true);
+			capability.setPlatform(service.getTargetPlatform());
+			
+			URL remoteUrl;
+			try {
+				
+				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
+				driver = new RemoteWebDriver(remoteUrl, capability);
+				initDriverCommonSetting(driver);				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			return true;
+		} 
+		
+		
+		//Initial Local Firefox Driver
 		try {
-			
 			driver = new FirefoxDriver();
-			
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			driver.manage().window().maximize();
+			initDriverCommonSetting(driver);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -228,11 +258,33 @@ public class TestBase extends CommonBase{
 	/** Initialize IE Driver */
 	private boolean initializeIEDriver(){
 		
+		//Initial Remote IE Driver
+		if (service.isRemoteEnv()) {
+			DesiredCapabilities capability = DesiredCapabilities.internetExplorer();
+			capability.setVersion(config.getBrowserVersion());
+			capability.setJavascriptEnabled(true);
+			capability.setPlatform(service.getTargetPlatform());
+			
+			URL remoteUrl;
+			try {
+				
+				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
+				driver = new RemoteWebDriver(remoteUrl, capability);
+				initDriverCommonSetting(driver);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			return true;
+		}
+		
+		//Initial local IE Driver
 		try{
 			
 			driver = new InternetExplorerDriver();
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			driver.manage().window().maximize();
+			initDriverCommonSetting(driver);
 			
 			//Initialize UserAction for IE
 			userAction = new UserActionIE();
@@ -249,11 +301,32 @@ public class TestBase extends CommonBase{
 	/** Initialize Chrome Driver */
 	private boolean initializeChromeDriver(){
 		
+		//Initial Remote Chrome Driver
+		if (service.isRemoteEnv()) {
+			DesiredCapabilities capability = DesiredCapabilities.chrome();
+			capability.setVersion(config.getBrowserVersion());
+			capability.setJavascriptEnabled(true);
+			capability.setPlatform(service.getTargetPlatform());
+			
+			URL remoteUrl;
+			try {
+				
+				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
+				driver = new RemoteWebDriver(remoteUrl, capability);
+				initDriverCommonSetting(driver);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			return true;
+		}
+		
+		//Initial local Chrome Driver
 		try {
 			driver = new ChromeDriver();
-			
-			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-			driver.manage().window().maximize();
+			initDriverCommonSetting(driver);
 			
 			//Initialize UserAction for Chrome
 			userAction = new UserActionChrome();
@@ -311,6 +384,7 @@ public class TestBase extends CommonBase{
 	/** API: Take a screen shot based on specific location and dimension */
 	public boolean takeSnapShot(int locationX, int locationY, int width, int height, String fileName){
 		
+		waitForUI();
 		return 	takeSnapShot(locationX, locationY, width, height, fileName, true);
 	}
 
@@ -331,13 +405,14 @@ public class TestBase extends CommonBase{
 	/** API: Take a full screen shot */
 	public boolean takeScreenShot(String fileName){
 		
+		waitForUI();
 		return takeScreenShot(fileName, true);
 	}
 	
 	/** Generate full path for image which need be verified */
-	private String genFullPathForNeedVerifyImage(String fileName, boolean neeWrapName){
+	private String genFullPathForNeedVerifyImage(String fileName, boolean needWrapName){
 		
-		if (neeWrapName){
+		if (needWrapName){
 			
 			String fullPath = needVerifyImagesDIR + expectedImagePrefix + fileName + expectedImageSuffix;
 			return fullPath;
@@ -349,9 +424,9 @@ public class TestBase extends CommonBase{
 	}
 	
 	/** Generate full path for expected images */
-	private String genFullPathForExpectedImage(String fileName, boolean neeWrapName){
+	private String genFullPathForExpectedImage(String fileName, boolean needWrapName){
 		
-		if (neeWrapName){
+		if (needWrapName){
 			
 			String fullPath = expectedImagesDIR + expectedImagePrefix + fileName + expectedImageSuffix;
 			return fullPath;
@@ -359,6 +434,20 @@ public class TestBase extends CommonBase{
 		}else{
 
 			return expectedImagesDIR + fileName;
+		}
+	}
+	
+	/** Generate full path for diff images */
+	private String genFullPathForDiffImage(String fileName, boolean needWrapName){
+		
+		if (needWrapName){
+			
+			String fullPath = diffImagesDIR + diffImagePrefix + fileName + diffImageSuffix;
+			return fullPath;
+			
+		}else{
+			
+			return diffImagesDIR + fileName;
 		}
 	}
 
@@ -375,15 +464,6 @@ public class TestBase extends CommonBase{
 		return tempFile;
 		
 	}
-	
-	/** Create a file for diff image */
-	private File createDiffImageFile() throws Exception{
-		
-		File fileDiff = File.createTempFile(diffImagePrefix, diffImageSuffix, new File(diffImagesDIR));
-		return fileDiff;
-		
-	}
-	
 	
 	/** API: Verify specific element UI by image comparing */
 	public void verifyElementUI(String elementId, String expectedImageName){
@@ -403,56 +483,60 @@ public class TestBase extends CommonBase{
 	}
 
 	/** Verify UI part with customized dimension */
-	private boolean verifyCustomizedDimension(Point location, Dimension dimension, File expectedImage){
+	private boolean verifyCustomizedDimension(Point location, Dimension dimension, String expectedImageName){
 		
-		File fileDiff;
+		File expectedImage;
+		File actualImage;
+		File diffImage;
 		try {
-			fileDiff = createDiffImageFile();
-		} catch (Exception e1) {
-			System.out.println("Failed to create diff file!");
-			e1.printStackTrace();
+			expectedImage = new File(genFullPathForExpectedImage(expectedImageName, true));	
+			actualImage = createTempImageFile();
+			diffImage = createTempImageFile();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
  		
-		if (expectedImage == null){
-			return false;
-		}
 		
 		if (expectedImage.exists()){
 			
-			File tempFile;
-			try {
+			if (!Utility.takeSnapShot(location, dimension, actualImage.getPath())){
 				
-				tempFile = createTempImageFile();
-			} catch (Exception e) {
-				
-				e.printStackTrace();
+				actualImage.delete();
+				diffImage.delete();
 				return false;
 			}
 			
-			if (!Utility.takeSnapShot(location, dimension, tempFile.getPath())){
+			boolean results = compareImages(expectedImage, actualImage, diffImage);
+			
+			if (!results) {
 				
-				tempFile.delete();
-				fileDiff.delete();
-				return false;
+				//Move actual Image to need verify folder
+				actualImage.renameTo(new File(needVerifyImagesDIR + expectedImage.getName()));
+				
+				//Move Diff Image to diff folder
+				diffImage.renameTo(new File(genFullPathForDiffImage(expectedImageName, true)));
+				
+				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
+				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));
 			}
 			
-			return compareImages(expectedImage, tempFile, fileDiff);
+			return results;
 			
 		}else{
 			
 			
 			boolean isSuccess = takeSnapShot(location.x, location.y, dimension.width, dimension.height, expectedImage.getName(), false);
-			return handleImagesMissed(isSuccess, expectedImage, fileDiff);
+			return handleImagesMissed(isSuccess, expectedImage, diffImage);
 		}
 	}
 
 	/** API: Verify UI part with customized dimension */
 	public void verifyCustomizedDimension(int locationX, int locationY, int width, int height, String expectedImageName){
 		
-		File expectedImage = new File(genFullPathForExpectedImage(expectedImageName, true));	
-		
-		Assert.assertTrue("Customized Dimension UI is matched? ", verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height),  expectedImage));
+		waitForUI();
+		Assert.assertTrue("Customized Dimension UI is matched? ", verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height),  expectedImageName));
 	}
 	
 	/** API: Verify UI of browser view box */
@@ -465,51 +549,55 @@ public class TestBase extends CommonBase{
 	                              viewBoxDimension.width, viewBoxDimension.height, 
 	                              expectedImageName); 
 	}
-	
+
 
 	/** Verify full page UI by image comparing */
- 	private boolean verifyFullPageUI(File expectedImage){
+ 	private boolean verifyFullPage(String expectedImageName){
  		
-		File fileDiff;
+		File expectedImage;
+		File actualImage;
+		File diffImage;
 		try {
-			fileDiff = createDiffImageFile();
-		} catch (Exception e1) {
-			System.out.println("Failed to create diff file!");
-			e1.printStackTrace();
-			return false;
-		}
- 		
-		if (expectedImage == null){
+			expectedImage = new File(genFullPathForExpectedImage(expectedImageName, true));	
+			actualImage = createTempImageFile();
+			diffImage = createTempImageFile();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 		
  		
 		if (expectedImage.exists()){
 			
-			File tempFile;
-			try {
+			if (!Utility.takeScreenShot(driver, actualImage.getPath())){
 				
-				tempFile = createTempImageFile();	
-			} catch (Exception e) {
-				
-				e.printStackTrace();
+				actualImage.delete();
+				diffImage.delete();
 				return false;
 			}
 			
-			if (!Utility.takeScreenShot(driver, tempFile.getPath())){
+			boolean results = compareImages(expectedImage, actualImage, diffImage);
+			
+			if (!results) {
 				
-				tempFile.delete();
-				fileDiff.delete();
-				return false;
+				//Move actual Image to need verify folder
+				actualImage.renameTo(new File(needVerifyImagesDIR + expectedImage.getName()));
+				
+				//Move Diff Image to diff folder
+				diffImage.renameTo(new File(genFullPathForDiffImage(expectedImageName, true)));
+				
+				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
+				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));				
 			}
 			
-			return compareImages(expectedImage, tempFile, fileDiff);
+			return results;
 
 			
 		}else{
 			
 			boolean isSuccess = takeScreenShot(expectedImage.getName(), false);
-			return handleImagesMissed(isSuccess, expectedImage, fileDiff);
+			return handleImagesMissed(isSuccess, expectedImage, diffImage);
 		}
  		
 	}
@@ -517,18 +605,14 @@ public class TestBase extends CommonBase{
 	/** API: Verify full page UI by image comparing */
 	public void verifyFullPageUI(String expectedImageName){
 		
-		File expectedImage = new File(genFullPathForExpectedImage(expectedImageName, true));
-		
-		Assert.assertTrue("Full Page UI is matched?: ", verifyFullPageUI(expectedImage));
+		waitForUI();
+		Assert.assertTrue("Full Page UI is matched?: ", verifyFullPage(expectedImageName));
 	}
 	
-	
 	/** Handler when expected images are missed */
-	private boolean handleImagesMissed(boolean newImageStatus, File expectedImage, File fileDiff){
+	private boolean handleImagesMissed(boolean takeSnapshotSuccess, File expectedImage, File fileDiff){
 		
-		if (newImageStatus){
-			
-		}else{
+		if (!takeSnapshotSuccess){
 			
 			System.out.println("Failed to create a image at path: " + needVerifyImagesDIR + expectedImage.getName());
 		}
@@ -538,32 +622,32 @@ public class TestBase extends CommonBase{
 	}
 	
 	/** Compare images and set parameter: pixelThreshold and colorDistance  */
-	private boolean compareImages(File expectedImage, File tempFile, File fileDiff, StringBuilder resultMessage) throws Exception{
+	private boolean compareImages(File expectedImage, File actualImage, File diffImage, StringBuilder resultMessage) throws Exception{
 		
 		int pixelThreshold = 0;
 		int colorDistance = 0;
 		
-		return Utility.imageComparer(expectedImage, tempFile, fileDiff, colorDistance, pixelThreshold, resultMessage);
+		return Utility.imageComparer(expectedImage, actualImage, diffImage, colorDistance, pixelThreshold, resultMessage);
 		
 	}
 
 	/** Compare Images files */
-	private boolean compareImages(File expectedImage, File tempFile, File fileDiff){
+	private boolean compareImages(File expectedImage, File actualImage, File diffImage){
 		
 		StringBuilder resultMessage = new StringBuilder();
 		
 		boolean isMatched;
 		try {
 			
-			isMatched = compareImages(expectedImage, tempFile, fileDiff, resultMessage);
+			isMatched = compareImages(expectedImage, actualImage, diffImage, resultMessage);
 		} catch (Exception e) {
 			
 			System.out.println("Errors occur during image comparing, Stop this image comparing! ");
 			e.printStackTrace();
 			
-			tempFile.delete();
-			if (fileDiff != null && fileDiff.exists()){
-				fileDiff.delete();
+			actualImage.delete();
+			if (diffImage != null && diffImage.exists()){
+				diffImage.delete();
 			}
 			
 			return false;
@@ -571,18 +655,12 @@ public class TestBase extends CommonBase{
 
 		if (isMatched){
 			
-			tempFile.delete();
+			actualImage.delete();
 			
-			if (fileDiff != null && fileDiff.exists()){
-				fileDiff.delete();
+			if (diffImage != null && diffImage.exists()){
+				diffImage.delete();
 			}
 			
-		}else{
-			//Move temp Image to need verify folder
-			tempFile.renameTo(new File(needVerifyImagesDIR + expectedImage.getName()));
-	
-			System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
-			System.out.println("Differ Image is created on: " + fileDiff.getPath());
 		}
 		
 		System.out.println(resultMessage.toString());

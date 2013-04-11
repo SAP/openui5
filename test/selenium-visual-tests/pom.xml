@@ -163,7 +163,14 @@
                      DEV: If expected images are missing, the test will not be failed and save all new images 
                      Test: If expected images are missing, the test will be failed and stopped. (TEST is default) 
                  -->
-                <Run.Mode>TEST</Run.Mode>
+                <Run.Mode>DEV</Run.Mode>
+                
+                <!-- Run Environment: Local, Remote
+                     Local: The tests are executed in local machines.(Local is default) 
+                     Remote: The tests are executed in remote server by RemoteWebDriver. Grid need use it.
+                 -->
+                <Run.Environment>Local</Run.Environment>
+                
                 
                 <!-- Target screen resolution and color depth-->
                 <Screen.Resolution.Width>1280</Screen.Resolution.Width>
@@ -173,11 +180,39 @@
                 <!-- Expected images root directory -->
                 <ImageRepositoryHome>C:\Automation\UI5\ImageRepo\master</ImageRepositoryHome>
 
-                <!-- OS: Windows7_64, Windows2008_64, WindowsXP_32-->
-                <Driver.OS>Windows7_64</Driver.OS>
+
+                <!-- OS: WindowsXP, Windows7, Windows8, Windows2008, Windows2012,  -->
+                <Driver.OS.Name>Windows7</Driver.OS.Name>
+                <!-- OS Bits: 32bits, 64bits -->
+                <Driver.OS.Bits>64</Driver.OS.Bits>
                 
-                <!-- Browser: Firefox, Chrome, (IE8_32, IE8_64, IE9_32, IE9_64) -->
-                <Driver.Browser>Firefox</Driver.Browser>
+                
+                <!-- Browser: Firefox, Chrome, IE 
+                     IE: IE8 32/64bits, IE9 32/64bits
+                -->
+                <Driver.Browser.Name>Firefox</Driver.Browser.Name>
+                <Driver.Browser.Version>20</Driver.Browser.Version>
+                <!-- Browser Bits: 32, 64
+                     It is only for IE, so it is ignored by other browsers like chrome, firefox 
+                -->
+                <Driver.Browser.Bits>32</Driver.Browser.Bits>
+                
+                
+                <!-- Target AUT base URL: http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample-->
+                <URL.Protocol>http</URL.Protocol>
+                <URL.Host>veui5infra</URL.Host>
+                <URL.Domain>dhcp.wdf.sap.corp</URL.Domain>
+                <URL.Port>8080</URL.Port>
+                <URL.BasePath>/uilib-sample</URL.BasePath>                
+                
+                
+                <!-- Remote WebDriver Setting, it will take effect if Run.Environment=Remote  -->
+                <!-- If you need use Grid, modify it based on your Grid hub URL -->
+                <Driver.Remote.Protocol>http</Driver.Remote.Protocol>
+                <Driver.Remote.Host>veui5infra</Driver.Remote.Host>
+                <Driver.Remote.Domain>dhcp.wdf.sap.corp</Driver.Remote.Domain>
+                <Driver.Remote.Port>4444</Driver.Remote.Port>
+                
                 
                 <!-- sap-ui-theme: sap_goldreflection, sap_hcb-->
                 <URL.Parameter.sap-ui-theme>sap_goldreflection</URL.Parameter.sap-ui-theme>
@@ -186,12 +221,6 @@
                 <!-- sap-ui-jqueryversion: 1.7.1, 1.8.1-->
                 <URL.Parameter.sap-ui-jqueryversion>1.8.1</URL.Parameter.sap-ui-jqueryversion>
 
-                <!-- Target Base URL: http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample-->
-                <URL.Protocol>http</URL.Protocol>
-                <URL.Host>veui5infra</URL.Host>
-                <URL.Domain>dhcp.wdf.sap.corp</URL.Domain>
-                <URL.Port>8080</URL.Port>
-                <URL.BasePath>/uilib-sample</URL.BasePath>
             </properties>
         </profile>
     </profiles>

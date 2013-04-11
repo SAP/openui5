@@ -34,6 +34,19 @@ public enum Config {
 
 	}
 	
+	/** Get parameter value by key */
+	public String getParameter(String key){
+	    
+	    String value = config.getProperty(key);
+	    if (value != null) {
+	        
+	        return value;
+	    }else {
+	        
+	        throw new RuntimeException("The key " + key + " is not existing in Config.properties!");
+	    }
+	}
+	
 	/** Get Image Repository Home */
 	public String getImageRepositoryHome(){
 		
@@ -41,61 +54,104 @@ public enum Config {
 	}
 	
 	/** Get OS on tests execution platform */
-	public String getOS(){
+	public String getOsName(){
 		
-		return config.getProperty("Driver.OS");
+		return config.getProperty("Driver.OS.Name");
 	}
 	
-	/** Get Browser Name on tests execution platform */
+	/** Get OS bits: 32 or 64 */
+	public String getOsBits(){
+		
+		return config.getProperty("Driver.OS.Bits");
+	}
+	
+	/** Get target browser Name */
 	public String getBrowserName(){
 		
-		return config.getProperty("Driver.Browser");
+		return config.getProperty("Driver.Browser.Name");
 	}
 	
-	/** Get URL protocol */
+	/** Get target Browser version */
+	public String getBrowserVersion(){
+		
+		return config.getProperty("Driver.Browser.Version");
+	}
+	
+	/** Get target Browser bits: 32, 64, it is only used on IE */
+	public String getBrowserBits(){
+		
+		return config.getProperty("Driver.Browser.Bits");
+	}
+	
+	/** Get Remote WebDriver URL protocol */
+	public String getRemoteProtocol(){
+		
+		return config.getProperty("Driver.Remote.Protocol");
+	}
+	
+	/** Get Remote WebDriver URL Host */
+	public String getRemoteHost(){
+		
+		return config.getProperty("Driver.Remote.Host");
+	}
+	
+	/** Get Remote WebDriver URL Domain */
+	public String getRemoteDomain(){
+		
+		return config.getProperty("Driver.Remote.Domain");
+	}
+	
+	/** Get Remote WebDriver URL Port */
+	public String getRemotePort(){
+		
+		return config.getProperty("Driver.Remote.Port");
+	}
+	
+	
+	/** Get AUT URL protocol */
 	public String getUrlProtocol(){
 		
 		return config.getProperty("URL.Protocol");
 	}
 	
-	/** Get URL Host */
+	/** Get AUT URL Host */
 	public String getUrlHost(){
 		
 		return config.getProperty("URL.Host");
 	}
 	
-	/** Get URL Domain */
+	/** Get AUT URL Domain */
 	public String getUrlDomain(){
 		
 		return config.getProperty("URL.Domain");
 	}
 	
-	/** Get URL Port */
+	/** Get AUT URL Port */
 	public String getUrlPort(){
 		
 		return config.getProperty("URL.Port");
 	}
 	
 	
-	/** Get URL Path */
+	/** Get AUT URL Path */
 	public String getUrlBasePath(){
 		
 		return config.getProperty("URL.BasePath");
 	}
 	
-	/** Get URL Parameter Theme */
+	/** Get AUT URL Parameter Theme */
 	public String getUrlParameterTheme(){
 		
 		return config.getProperty("URL.Parameter.sap-ui-theme");
 	}
 	
-	/** Get URL Parameter rtl */
+	/** Get AUT URL Parameter rtl */
 	public String getUrlParameterRtl(){
 		
 		return config.getProperty("URL.Parameter.sap-ui-rtl");
 	}
 	
-	/** Get URL Parameter Jquery Version */
+	/** Get AUT URL Parameter Jquery Version */
 	public String getUrlParameterJquery(){
 		
 		return config.getProperty("URL.Parameter.sap-ui-jqueryversion");
@@ -105,6 +161,12 @@ public enum Config {
 	public String getRunMode(){
 		
 		return config.getProperty("Run.Mode");
+	}
+
+	/** Get Run Environment */
+	public String getRunEnvironment(){
+		
+		return config.getProperty("Run.Environment");
 	}
 	
 	public int getScreenResolutionWidth(){
@@ -125,17 +187,6 @@ public enum Config {
 	    return Integer.parseInt(s);
 	}
 	
-	/** Get parameter value by key */
-	public String getParameter(String key){
-	    
-	    String value = config.getProperty(key);
-	    if (value != null) {
-	        
-	        return value;
-	    }else {
-	        
-	        throw new RuntimeException("The key " + key + " is not existing in Config.properties!");
-	    }
-	}
+	
 
 }
