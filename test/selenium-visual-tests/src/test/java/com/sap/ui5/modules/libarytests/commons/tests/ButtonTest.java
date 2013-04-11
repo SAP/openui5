@@ -6,13 +6,10 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
-
 import com.sap.ui5.modules.libarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
-import com.sap.ui5.selenium.util.Constants;
 
 public class ButtonTest extends TestBase{
 	ButtonPO page; 
@@ -142,62 +139,24 @@ public class ButtonTest extends TestBase{
 		
 		String elementIdBtn4 = page.elementIdBtn4.getAttribute("id");
 		String elementIdBtn5 = page.elementIdBtn5.getAttribute("id");
-		Point locationBtn4 = userAction.getElementLocation(driver, elementIdBtn4);
-		Point locationBtn5 = userAction.getElementLocation(driver, elementIdBtn5);
 		
 		userAction.mouseClickStartPoint(driver);
 		
-		if (isRtlTrue()){
-			
-			switch (getBrowserType()) {
-			case Constants.IE:
+		//Test tooltip on enabled button
+		userAction.mouseOver(driver, elementIdBtn4, 3000);
+		verifyBrowserViewBox("btn4-tooltip");
+		
+		userAction.mouseOver(driver, elementIdBtn5, 3000);
+		verifyBrowserViewBox("btn5-tooltip");
+		
+		//Test tooltip on disabled button
+		page.clickEnabledCB(driver, userAction);
 
-				userAction.mouseOver(driver, elementIdBtn4, 3000);
-				verifyCustomizedDimension(locationBtn4.x - 300, locationBtn4.y, 350, 60, "btn4-tooltip");
-				
-				userAction.mouseOver(driver, elementIdBtn5, 3000);
-				verifyCustomizedDimension(locationBtn5.x - 300, locationBtn5.y, 350, 60, "btn5-tooltip");
-				break;
-				
-			case Constants.FIREFOX:
-				
-				userAction.mouseOver(driver, elementIdBtn4, 3000);
-				verifyCustomizedDimension(locationBtn5.x - 50, locationBtn5.y, 350, 60, "btn4-tooltip");
-				
-				userAction.mouseOver(driver, elementIdBtn5, 3000);
-				verifyCustomizedDimension(elementIdBtn5, 300, 60, "btn5-tooltip");
-				break;
-				
-			case Constants.CHROME:
-				
-				userAction.mouseOver(driver, elementIdBtn4, 3000);
-				verifyCustomizedDimension(locationBtn4.x - 50, locationBtn4.y, 350, 60, "btn4-tooltip");
-				
-				userAction.mouseOver(driver, elementIdBtn5, 3000);
-				verifyCustomizedDimension(elementIdBtn5, 300, 60, "btn5-tooltip");
-				
-				break;
-				
-			}
-		}else{
-			
-			//Test tooltip on enabled button
-			userAction.mouseOver(driver, elementIdBtn4, 3000);
-			verifyCustomizedDimension(elementIdBtn4, 330, 60, "btn4-tooltip");
-			
-			userAction.mouseOver(driver, elementIdBtn5, 3000);
-			verifyCustomizedDimension(elementIdBtn5, 300, 60, "btn5-tooltip");
-			
-			//Test tooltip on disabled button
-			page.clickEnabledCB(driver, userAction);
-
-			userAction.mouseOver(driver, elementIdBtn4, 3000);
-			verifyCustomizedDimension(elementIdBtn4, 330, 60, "btn4-disabled-tooltip");
-			
-			userAction.mouseOver(driver, elementIdBtn5, 3000);
-			verifyCustomizedDimension(elementIdBtn5, 300, 60, "btn5-disabled-tooltip");
-		}
-
+		userAction.mouseOver(driver, elementIdBtn4, 3000);
+		verifyBrowserViewBox("btn4-disabled-tooltip");
+		
+		userAction.mouseOver(driver, elementIdBtn5, 3000);
+		verifyBrowserViewBox("btn5-disabled-tooltip");
 		
 	}
 	

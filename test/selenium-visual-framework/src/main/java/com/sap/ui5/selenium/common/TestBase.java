@@ -116,7 +116,7 @@ public class TestBase extends CommonBase{
         
         if (!fullName.contains(modulesPackage) || !fullName.contains(testsPackage)){
             
-            System.out.println("Your package is correct, please check!");
+            System.out.println("Your package is not correct, please check!");
             System.out.println("Correct package need contain modules and tests package!");
             System.out.println("eg: com.sap.ui5.modules.commons.tests.ButtonTest.java");
             System.exit(1);

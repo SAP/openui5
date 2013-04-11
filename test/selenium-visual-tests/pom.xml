@@ -41,12 +41,27 @@
   * POM SECTION: Repositories Settings
   ***************************************************************************-->
   <repositories>
-      <repository>
-          <id>nexus</id>
-          <name>SNAPSHOTS</name>
-          <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
-      </repository>
+    <repository>
+        <id>repo.jenkins-ci.org</id>
+        <url>http://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository>
+         <id>nexus</id>
+         <name>SNAPSHOTS</name>
+         <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+    </repository>
   </repositories>
+
+  <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>nexus</id>
+            <url>http://nexus.wdf.sap.corp:8081/nexus/content/groups/build.snapshots</url>
+            </pluginRepository>
+   </pluginRepositories>
   
   
   <!--**************************************************************************
@@ -158,11 +173,11 @@
                 <!-- Expected images root directory -->
                 <ImageRepositoryHome>C:\Automation\UI5\ImageRepo\master</ImageRepositoryHome>
 
-                <!-- OS: Windows7_64, Windows7_32, WindowsXP_32-->
+                <!-- OS: Windows7_64, Windows2008_64, WindowsXP_32-->
                 <Driver.OS>Windows7_64</Driver.OS>
                 
-                <!-- Browser: Firefox, IE8_32, Chrome, (IE8_64, IE9_32, IE9_64) -->
-                <Driver.Browser>firefox</Driver.Browser>
+                <!-- Browser: Firefox, Chrome, (IE8_32, IE8_64, IE9_32, IE9_64) -->
+                <Driver.Browser>Firefox</Driver.Browser>
                 
                 <!-- sap-ui-theme: sap_goldreflection, sap_hcb-->
                 <URL.Parameter.sap-ui-theme>sap_goldreflection</URL.Parameter.sap-ui-theme>

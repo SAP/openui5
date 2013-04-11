@@ -58,7 +58,7 @@ public abstract class UserActionCommon implements IUserAction {
 			
 			try {
 				robot = new Robot();
-				robot.setAutoDelay(300);
+				robot.setAutoDelay(150);
 				return robot;
 				
 			} catch (AWTException e) {
@@ -224,7 +224,7 @@ public abstract class UserActionCommon implements IUserAction {
         Robot robot = getRobot();
         robot.mousePress(KeyEvent.BUTTON1_MASK);
         robot.mouseRelease(KeyEvent.BUTTON1_MASK);
-        robot.delay(0); // interval time = (auto-delay) + 0;
+        robot.delay(100); // interval time = (auto-delay) + 100;
         robot.mousePress(KeyEvent.BUTTON1_MASK);
         robot.mouseRelease(KeyEvent.BUTTON1_MASK);
     }
