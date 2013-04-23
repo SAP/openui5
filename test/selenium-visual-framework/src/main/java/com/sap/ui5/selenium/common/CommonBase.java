@@ -2,7 +2,10 @@ package com.sap.ui5.selenium.common;
 
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.rules.ErrorCollector;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
@@ -16,6 +19,9 @@ public abstract class CommonBase {
 	protected WebDriver driver;
 	
 	protected String fileSeparator = System.getProperty("file.separator");
+	
+	@Rule
+    public ErrorCollector errorCollector = new ErrorCollector();
 	
 	
 	/** API: Get JavaScript Executor by current driver */
@@ -111,8 +117,26 @@ public abstract class CommonBase {
 		} catch (TimeoutException e) {
 			// mysterious exception, also happens if script does not time out
 		}
-}
+	}
 
+	/** Verify* methods does not abort test execution even if it is failed,
+	 *  only log the error. mark test failure at end of test */
+	public void verifyTrue(boolean actual){
+		
+		errorCollector.checkThat(true, CoreMatchers.equalTo(actual));
+	}
+	
+	public void verifyFalse(boolean actual){
+		
+		errorCollector.checkThat(false, CoreMatchers.equalTo(actual));
+	}
+	
+	/** Verify* methods does not abort test execution even if it is failed, 
+	 *  only log the error. mark test failure at end of test */
+	public <T> void verifyEquals(T t1, T t2){
+		
+		errorCollector.checkThat(t1, CoreMatchers.equalTo(t2));
+	}
 	
 
 }

@@ -163,7 +163,7 @@
                      DEV: If expected images are missing, the test will not be failed and save all new images 
                      Test: If expected images are missing, the test will be failed and stopped. (TEST is default) 
                  -->
-                <Run.Mode>DEV</Run.Mode>
+                <Run.Mode>TEST</Run.Mode>
                 
                 <!-- Run Environment: Local, Remote
                      Local: The tests are executed in local machines.(Local is default) 

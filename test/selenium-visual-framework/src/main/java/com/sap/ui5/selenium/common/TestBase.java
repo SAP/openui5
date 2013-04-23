@@ -4,8 +4,10 @@ package com.sap.ui5.selenium.common;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.awt.im.InputContext;
 import java.io.File;
 import java.net.URL;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.openqa.selenium.Dimension;
@@ -36,7 +38,7 @@ public class TestBase extends CommonBase{
 	private String baseUrl = service.getBaseURL();  //"http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample";
 	
 	//Image repository for the current test runtime 
-	private final String imagesBasePath = service.getImagesbasePath();
+	private final String imagesBasePath = service.getImagesBasePath();
 	
 	//Image directory for each test class
 	private final String testDIR = getTestDIR();
@@ -126,8 +128,7 @@ public class TestBase extends CommonBase{
         }
         
         fullName = fullName.replace(".tests.", ".");
-		int index = fullName.lastIndexOf(modulesPackage) + modulesPackage.length();
-//		
+		int index = fullName.lastIndexOf(modulesPackage) + modulesPackage.length();		
 		fullName = fullName.substring(index);
 		
 		return imagesBasePath + fileSeparator + fullName.replace(".", fileSeparator);
@@ -150,7 +151,6 @@ public class TestBase extends CommonBase{
 					driver = null;
 					System.out.println("Failed to initialize FireFoxDriver!");
 				}
-				
 			}
 			break;
 
@@ -184,12 +184,13 @@ public class TestBase extends CommonBase{
 	}
 	
 	/** Initial WebDriver common setting */
-	private void initDriverCommonSetting(WebDriver driver){
+	private void initializeDriverSetting(WebDriver driver){
 		
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
 	}
+	
 	/** Initialize Fiefox Driver */
 	private boolean initializeFirefoxDriver(){
 		
@@ -205,7 +206,7 @@ public class TestBase extends CommonBase{
 				
 				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
 				driver = new RemoteWebDriver(remoteUrl, capability);
-				initDriverCommonSetting(driver);				
+				initializeDriverSetting(driver);				
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -216,43 +217,62 @@ public class TestBase extends CommonBase{
 		
 		
 		//Initial Local Firefox Driver
-		try {
-			driver = new FirefoxDriver();
-			initDriverCommonSetting(driver);
-			
-		}catch(Exception e){
-			e.printStackTrace();
+		driver = new FirefoxDriver();
+		initializeDriverSetting(driver);
+		if (hideFirefoxStatusBar() == false) {
 			return false;
 		}
 
+		//Initialize UserAction for Firefox
+		userAction = new UserActionFirefox();
+		userAction.setRtl(isRtlTrue());
+
+		return true;
+	}
+	
+	/** Click the two buttons "Ctrl" and "/" at the same time on the keyboard. 
+	 *  To cancel the status bar of browser */
+	private boolean hideFirefoxStatusBar(){
 		
-		// Click the two buttons "Ctrl" and "/" at the same time on the keyboard.
-		// To cancel the status bar of browser
 		Robot robot;
 		try {
 			robot = new Robot();
 			robot.delay(1000);
-			robot.keyPress(KeyEvent.VK_CONTROL);
-			robot.keyPress(KeyEvent.VK_SLASH);
-			robot.keyRelease(KeyEvent.VK_CONTROL);
-			robot.keyRelease(KeyEvent.VK_SLASH);
+			Locale keyBoardLocale = InputContext.getInstance().getLocale();
+			
+			//US KeyBoard
+			if (keyBoardLocale.equals(Locale.US)) {
+				robot.keyPress(KeyEvent.VK_CONTROL);
+				robot.keyPress(KeyEvent.VK_SLASH);
+				
+				robot.keyRelease(KeyEvent.VK_SLASH);
+				robot.keyRelease(KeyEvent.VK_CONTROL);
+				
+				return true;
+			}
+			
+			//German KeyBorad
+			if (keyBoardLocale.equals(Locale.GERMANY)) {
+				robot.keyPress(KeyEvent.VK_CONTROL);
+				robot.keyPress(KeyEvent.VK_SHIFT);
+				robot.keyPress(KeyEvent.VK_7);
+				
+				robot.keyRelease(KeyEvent.VK_7);
+				robot.keyRelease(KeyEvent.VK_SHIFT);
+				robot.keyRelease(KeyEvent.VK_CONTROL);
+				
+				return true;
+			}
+			
+			
+			System.out.println("The current keyboard locale (" + keyBoardLocale
+			                  + ") is not supported");
+			return false;
+			
 		} catch (AWTException e) {
 			e.printStackTrace();
-			System.out.println("Failed to initialize Firefox Driver! ");
 			return false;
 		}
-		
-		try {
-			//Initialize UserAction for Firefox
-			userAction = new UserActionFirefox();
-			userAction.setRtl(isRtlTrue());
-			
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
-		}
-
-		return true;
 	}
 	
 	/** Initialize IE Driver */
@@ -270,7 +290,7 @@ public class TestBase extends CommonBase{
 				
 				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
 				driver = new RemoteWebDriver(remoteUrl, capability);
-				initDriverCommonSetting(driver);
+				initializeDriverSetting(driver);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -284,7 +304,7 @@ public class TestBase extends CommonBase{
 		try{
 			
 			driver = new InternetExplorerDriver();
-			initDriverCommonSetting(driver);
+			initializeDriverSetting(driver);
 			
 			//Initialize UserAction for IE
 			userAction = new UserActionIE();
@@ -313,7 +333,7 @@ public class TestBase extends CommonBase{
 				
 				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
 				driver = new RemoteWebDriver(remoteUrl, capability);
-				initDriverCommonSetting(driver);
+				initializeDriverSetting(driver);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -326,7 +346,7 @@ public class TestBase extends CommonBase{
 		//Initial local Chrome Driver
 		try {
 			driver = new ChromeDriver();
-			initDriverCommonSetting(driver);
+			initializeDriverSetting(driver);
 			
 			//Initialize UserAction for Chrome
 			userAction = new UserActionChrome();
@@ -474,6 +494,15 @@ public class TestBase extends CommonBase{
 		verifyCustomizedDimension(location.x, location.y, dimension.width, dimension.height, expectedImageName);
 	}
 	
+	/** API: Assert specific element UI by image comparing */
+	public void assertElementUI(String elementId, String expectedImageName){
+		
+		Point location = userAction.getElementLocation(driver, elementId);
+		Dimension dimension = userAction.getElementDimension(driver, elementId);
+		
+		assertCustomizedDimension(location.x, location.y, dimension.width, dimension.height, expectedImageName);
+	}
+	
 	/** API: Verify UI part with customized dimension */
 	public void verifyCustomizedDimension(String elementId, int width, int height, String expectedImageName){
 	
@@ -482,6 +511,14 @@ public class TestBase extends CommonBase{
 		verifyCustomizedDimension(location.x, location.y, width, height, expectedImageName);
 	}
 
+	/** API: Assert UI part with customized dimension */
+	public void assertCustomizedDimension(String elementId, int width, int height, String expectedImageName){
+	
+		Point location = userAction.getElementLocation(driver, elementId);
+
+		assertCustomizedDimension(location.x, location.y, width, height, expectedImageName);
+	}
+	
 	/** Verify UI part with customized dimension */
 	private boolean verifyCustomizedDimension(Point location, Dimension dimension, String expectedImageName){
 		
@@ -533,7 +570,14 @@ public class TestBase extends CommonBase{
 	}
 
 	/** API: Verify UI part with customized dimension */
-	public void verifyCustomizedDimension(int locationX, int locationY, int width, int height, String expectedImageName){
+	public void verifyCustomizedDimension (int locationX, int locationY, int width, int height, String expectedImageName) {
+		
+		waitForUI();
+		verifyTrue(verifyCustomizedDimension (new Point(locationX, locationY), new Dimension(width, height),  expectedImageName));
+	}
+	
+	/** API: Assert UI part with customized dimension */
+	public void assertCustomizedDimension (int locationX, int locationY, int width, int height, String expectedImageName) {
 		
 		waitForUI();
 		Assert.assertTrue("Customized Dimension UI is matched? ", verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height),  expectedImageName));
@@ -546,6 +590,17 @@ public class TestBase extends CommonBase{
 	    Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
 	    
 	    verifyCustomizedDimension(viewBoxLocation.x, viewBoxLocation.y, 
+	                              viewBoxDimension.width, viewBoxDimension.height, 
+	                              expectedImageName); 
+	}
+	
+	/** API: Assert UI of browser view box */
+	public void assertBrowserViewBox(String expectedImageName){
+	    
+	    Point viewBoxLocation = userAction.getBrowserViewBoxLocation(driver);
+	    Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
+	    
+	    assertCustomizedDimension(viewBoxLocation.x, viewBoxLocation.y, 
 	                              viewBoxDimension.width, viewBoxDimension.height, 
 	                              expectedImageName); 
 	}
@@ -604,6 +659,13 @@ public class TestBase extends CommonBase{
 	
 	/** API: Verify full page UI by image comparing */
 	public void verifyFullPageUI(String expectedImageName){
+		
+		waitForUI();
+		verifyTrue(verifyFullPage(expectedImageName));
+	}
+	
+	/** API: Assert full page UI by image comparing */
+	public void assertFullPageUI(String expectedImageName){
 		
 		waitForUI();
 		Assert.assertTrue("Full Page UI is matched?: ", verifyFullPage(expectedImageName));

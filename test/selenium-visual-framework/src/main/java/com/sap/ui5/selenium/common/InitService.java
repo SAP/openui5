@@ -26,11 +26,11 @@ public enum InitService {
 	private String rtlDIR;
 	
 	//Supported OS
-	private List<String> OSList = new ArrayList<String>();
+	private List<String> osList = new ArrayList<String>();
 	{
-		OSList.add("WindowsXP_32");
-		OSList.add("Windows2008_64");
-		OSList.add("Windows7_64");
+		osList.add("WindowsXP_32");
+		osList.add("Windows2008_64");
+		osList.add("Windows7_64");
 	}
 	//Supported Browsers
 	private List<String> browserList = new ArrayList<String>();
@@ -78,7 +78,7 @@ public enum InitService {
 		System.out.println("##Browser=" + config.getBrowserName());
 		System.out.println("##Java Version=" + System.getProperty("java.version"));
 		System.out.println("##Test target=" + getBaseURL());
-		System.out.println("##Image Base Path=" + getImagesbasePath());
+		System.out.println("##Image Base Path=" + getImagesBasePath());
 		System.out.println();
 		System.out.println("####    Test Starting    ####");
 	}
@@ -100,7 +100,7 @@ public enum InitService {
 
 		//Get OS from config
 		String OS = config.getOsName() + "_" + config.getOsBits();
-		if (!Utility.isValueInCollection(OS, OSList)){
+		if (!Utility.isValueInCollection(OS, osList)){
 			
 			System.out.println("OS in config is not correct!");
 			return false;
@@ -219,7 +219,7 @@ public enum InitService {
 	}
 	
 	/** Get Image Base Path based on the config file setting */
-	public String getImagesbasePath(){
+	public String getImagesBasePath(){
 		
 		String imageBasePath = config.getImageRepositoryHome() + fileSeparator + osDIR + fileSeparator +
 				               browserDIR + fileSeparator + themeDIR + fileSeparator +
