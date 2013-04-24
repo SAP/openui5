@@ -123,11 +123,12 @@ public class Version {
       newSuffix = null;
       break;
     case MilestoneDevelopment:
-      if ( (!isMilestone() && patch != 0) || isSnapshot() ) {
+      if ( (!isMilestone() && patch != 0) ) {
         throw new IllegalArgumentException("can only switch to milestone development from initial release or milestone, but is " + this);
       }
-      if ( !isMilestone() ) {
-        newMinor++;
+      // TODO: adopt this code here to make it more clear!
+      if ( !isMilestone() || isSnapshot() ) {
+        newMinor += 2;
         newPatch = 0;
       } else {
         newPatch++;
