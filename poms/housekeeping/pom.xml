@@ -611,6 +611,15 @@
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>theme-designer</artifactId>
+                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
+                  <contextPath>theme-designer-${sap.ui5.version}</contextPath>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
@@ -691,6 +700,15 @@
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
+                  <artifactId>theme-designer</artifactId>
+                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
+                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <classifier>${sap.ui5.opt.classifier}</classifier>
+                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
+                  <contextPath>theme-designer-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
@@ -795,8 +813,8 @@
 
       <activation>
         <property>
-          <name>sap.ui5.releases-only</name>
-          <value>false</value>
+          <name>sap.ui5.deployset</name>
+          <value>dist-false</value>
         </property>
       </activation>
 
@@ -847,8 +865,8 @@
 
       <activation>
         <property>
-          <name>sap.ui5.releases-only</name>
-          <value>true</value>
+          <name>sap.ui5.deployset</name>
+          <value>dist-true</value>
         </property>
       </activation>
 
