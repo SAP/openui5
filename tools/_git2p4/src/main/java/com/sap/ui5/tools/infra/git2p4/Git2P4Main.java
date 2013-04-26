@@ -393,12 +393,12 @@ public class Git2P4Main {
         null
         ));
     /*
-		mappings.add(new Mapping(
-				new File(repositoryRoot, "sapui5.platforms.qtp-addin"),
-				p4depotPrefix + "/src/platforms/qtp-addin",
-				null,
-				null
-		));
+    mappings.add(new Mapping(
+        new File(repositoryRoot, "sapui5.platforms.qtp-addin"),
+        p4depotPrefix + "/src/platforms/qtp-addin",
+        null,
+        null
+    ));
      */
     mappings.add(new Mapping(
         "/sapui5/sapui5.osgi.runtime.git",
@@ -423,6 +423,17 @@ public class Git2P4Main {
           null
           ));
     }
+  }
+    
+  private static void createUI5DistMappings(File repositoryRoot, String p4depotPrefix, String branch) {
+    mappings.clear();
+    mappings.add(new Mapping(
+        "/sapui5/sapui5.dist.git",
+        new File(repositoryRoot, "sapui5.dist"),
+        p4depotPrefix,
+        null,
+        null
+        ));
   }
     
 
@@ -462,6 +473,7 @@ public class Git2P4Main {
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
     System.out.println(" --git-dir              Git repository root");
     System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
+    System.out.println(" --ui5-dist-git-root    Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
     System.out.println(" --includes             List of paths, relative to root, to be included from transport");
     System.out.println(" --excludes             List of paths, relative to root, to be excluded from transport");
     
@@ -502,8 +514,9 @@ public class Git2P4Main {
     String fromVersion = null;
     String toVersion = null;
     String branch = null;
-    File ui5Root = new File(".");
-    File gitDir = null;
+    String mappingSet = "runtime";
+    File gitDir = new File(".");
+    String gitRepository = null;
     ReleaseOperation op = null;
     
     String[] argsForTrace = new String[args.length];
@@ -546,11 +559,17 @@ public class Git2P4Main {
       } else if ( "--git-no-fetch".equals(args[i]) ) {
         noFetch = true;
       } else if ( "--ui5-git-root".equals(args[i]) ) {
-        ui5Root = new File(args[++i]);
-        gitDir = null;
+        gitDir = new File(args[++i]);
+        mappingSet = "runtime";
+      } else if ( "--repository-set".equals(args[i]) ) {
+        mappingSet = args[++i];
       } else if ( "--git-dir".equals(args[i]) ) {
         gitDir = new File(args[++i]);
-        ui5Root = null;
+        if ( "runtime".equals(mappingSet) ) {
+          mappingSet = null;
+        }
+      } else if ( "--git-repository".equals(args[i]) ) {
+        gitRepository = args[++i];
       } else if ( "--includes".equals(args[i]) ) {
         if ( mappings.size() != 1 ) {
           throw new RuntimeException("includes can only be specified for an (already defined) single src root");
@@ -639,22 +658,24 @@ public class Git2P4Main {
     }
     
     // automatically determine codeline from branch
-    if ( p4depotPath == null ) {
-      throw new IllegalArgumentException("p4depot path must be specifed before a UI5 repository root");
+    if ( p4depotPath == null && "transfer".equals(command) ) {
+      throw new IllegalArgumentException("p4-dest-path path must be specifed before a UI5 repository root");
     }
     if ( p4depotPath.contains("#") ) {
       if ( branch == null ) {
-        throw new IllegalArgumentException("branch must be specified before p4depot path is used");
+        throw new IllegalArgumentException("branch must be specified when p4-dest-path contains a wildcard ('#')");
       }
       p4depotPath = p4depotPath.replace("#",  getPerforceCodelineForBranch(branch));
       Log.println("resolved depot path: " + p4depotPath);
     }
 
-    if ( ui5Root != null ) {
-      createUI5Mappings(ui5Root, p4depotPath, branch);
-    } else if ( gitDir != null ) {
+    if ( (mappingSet == null || "manual".equals(mappingSet)) && gitDir != null ) {
       mappings.clear();
-      mappings.add(new Mapping(null, gitDir, p4depotPath, null, null));
+      mappings.add(new Mapping(gitRepository, gitDir, p4depotPath, null, null));
+    } else if ( "runtime".equals(mappingSet) ) {
+      createUI5Mappings(gitDir, p4depotPath, branch);
+    } else if ( "dist".equals(mappingSet) ) {
+      createUI5DistMappings(gitDir, p4depotPath, branch);
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
