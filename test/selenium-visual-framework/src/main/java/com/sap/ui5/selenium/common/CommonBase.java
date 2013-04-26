@@ -6,6 +6,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
@@ -22,6 +23,9 @@ public abstract class CommonBase {
 	
 	@Rule
     public ErrorCollector errorCollector = new ErrorCollector();
+	
+	@Rule 
+	public TestName testName = new TestName();
 	
 	
 	/** API: Get JavaScript Executor by current driver */
@@ -123,20 +127,31 @@ public abstract class CommonBase {
 	 *  only log the error. mark test failure at end of test */
 	public void verifyTrue(boolean actual){
 		
-		errorCollector.checkThat(true, CoreMatchers.equalTo(actual));
+		errorCollector.checkThat(actual, CoreMatchers.equalTo(true));
 	}
 	
 	public void verifyFalse(boolean actual){
 		
-		errorCollector.checkThat(false, CoreMatchers.equalTo(actual));
+		errorCollector.checkThat(actual, CoreMatchers.equalTo(false));
 	}
 	
 	/** Verify* methods does not abort test execution even if it is failed, 
 	 *  only log the error. mark test failure at end of test */
-	public <T> void verifyEquals(T t1, T t2){
+	public <T> void verifyEquals(T actual, T expected){
 		
-		errorCollector.checkThat(t1, CoreMatchers.equalTo(t2));
+		errorCollector.checkThat(actual, CoreMatchers.equalTo(expected));
 	}
 	
+	public void logTestStart() {
+		System.out.println();
+		System.out.println("########  Test: " + getClass().getName() + "."
+	                       + testName.getMethodName() + " is started!" + "  ########");
+	}
+	
+	public void logTestEnd() {
+		System.out.println();
+		System.out.println("########  Test: " + getClass().getName() + "."
+	                       + testName.getMethodName() + " is end!" + "  ########");
+	}
 
 }

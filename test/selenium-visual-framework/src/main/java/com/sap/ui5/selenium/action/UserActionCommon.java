@@ -172,8 +172,10 @@ public abstract class UserActionCommon implements IUserAction {
 	private Point getElementCenter(WebDriver driver, String elementId){
 	    
         Point p = getElementLocation(driver, elementId);
-        p.x = p.x + 2;
-        p.y = p.y + 2;
+        Dimension dimension = getElementDimension(driver, elementId);
+        
+        p.x = p.x + (dimension.width / 2);
+        p.y = p.y + (dimension.height / 2);
         
         return p;
 	}

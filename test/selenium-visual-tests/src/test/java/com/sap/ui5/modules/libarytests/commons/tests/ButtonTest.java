@@ -2,7 +2,6 @@ package com.sap.ui5.modules.libarytests.commons.tests;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +13,12 @@ import com.sap.ui5.selenium.common.TestBase;
 public class ButtonTest extends TestBase{
 	ButtonPO page; 
 	
+	
 	private String targetUrl = "/test-resources/sap/ui/commons/QTP/Button.html";
 	
 	@Before
 	public void setUp(){	
-		
+		logTestStart();
 		page = PageFactory.initElements(driver, ButtonPO.class);
 		driver.get(getFullUrl(targetUrl));
 	    userAction.mouseClickStartPoint(driver);
@@ -27,12 +27,13 @@ public class ButtonTest extends TestBase{
 	@After
 	public void tearDown(){
 		driver.quit();
+		logTestEnd();
 	}
 	
 	/** Verify full Page UI and all element initial UI, Check enable and visible all elements */
 	@Test
 	public void testAllElements(){
-	    
+
 		//Test all initial elements
 		verifyFullPageUI("full-initial");
 		
@@ -53,42 +54,41 @@ public class ButtonTest extends TestBase{
 		verifyFullPageUI("full-visible");
 	}
 	
-	/** Verify the mouse action on enabled elements: mouseover and click */
+	
 	@Test
-	public void testMouseActionOnEnabledElements(){
-
-		List<WebElement> buttons = page.buttons;
+	public void testMouseOverEnabledElements(){
 		
 		//Test Mouse Over
-		for (WebElement e : buttons){
-			
-			page.mouseOverButton(driver, e);
+		for (WebElement e : page.buttons){
 			
 			String elementId = e.getAttribute("id");
+			userAction.mouseOver(driver, elementId, 800);
+			
 			verifyElementUI(elementId, "MouseOver-" + elementId);
-			
-		}		
-		
+		}			
+	}
+	
+	@Test
+	public void testMouseClickEnabledElements(){
+
 		//Test click
-		for (WebElement e : buttons){
-			
-			e.click();
+		for (WebElement e : page.buttons){
 			
 			String elementId = e.getAttribute("id");
+			userAction.mouseClick(driver, elementId);
+			userAction.mouseMoveToStartPoint(driver);
+
 			verifyElementUI(elementId, "Click-" + elementId); 
 			verifyElementUI(page.outputTarget.getAttribute("id"), "Click-outputTarget-" + elementId); 
 		}
-
 	}
 	
 	/** Verify the mouse select for enable button elements */
 	@Test
-	public void testMouseSelectOnEnabledElements(){
-		
-		List<WebElement> buttons = page.buttons;
+	public void testMouseSelectEnabledElements(){
 		
 		//Test Mouse Select
-		for (WebElement e : buttons){
+		for (WebElement e : page.buttons){
 			
 			String elementId = e.getAttribute("id");
 			
@@ -103,33 +103,22 @@ public class ButtonTest extends TestBase{
 	
 	/** Verify the mouse action on disabled elements: mouseover and click */
 	@Test
-	public void testMouseActionOnDisabledElements(){
+	public void testMouseActionDisabledElements(){
 		
 		//Disable all elements
 		page.clickEnabledCB(driver, userAction);
 		
-		List<WebElement> buttons = page.buttons;
+		WebElement e = page.buttons.get(0);
+		String elementId = e.getAttribute("id");
 		
 		//Test Mouse Over
-		for (WebElement e : buttons){
-			
-			page.mouseOverButton(driver, e);
-			
-			String elementId = e.getAttribute("id");
-			verifyElementUI(elementId, "MouseOver-Disabled" + elementId);
-			
-		}		
+		userAction.mouseOver(driver, elementId, 800);
+		verifyElementUI(elementId, "MouseOver-Disabled" + elementId);
 		
 		//Test click
-		for (WebElement e : buttons){
-			
-			e.click();
-			
-			String elementId = e.getAttribute("id");
-			verifyElementUI(elementId,  "Clicke-disabled" + elementId); 
-			verifyElementUI(page.outputTarget.getAttribute("id"), "outputTarget-empty"); 
-
-		}
+		e.click();
+		verifyElementUI(elementId,  "Clicke-disabled" + elementId); 
+		verifyElementUI(page.outputTarget.getAttribute("id"), "outputTarget-empty"); 
 	}
 	
 	
@@ -195,7 +184,4 @@ public class ButtonTest extends TestBase{
 		}
 		
 	}
-	
-	
-	
 }	

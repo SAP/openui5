@@ -1,14 +1,11 @@
 package com.sap.ui5.modules.libarytests.commons.pages;
 
 import java.util.List;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.browserlaunchers.Sleeper;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-
 import com.sap.ui5.selenium.action.IUserAction;
+
 
 public class ButtonPO {
 	
@@ -35,20 +32,14 @@ public class ButtonPO {
 	public void clickEnabledCB(WebDriver driver, IUserAction userAction){
 		
 		userAction.mouseClick(driver, enabledCB.getAttribute("id"));
+		userAction.mouseClickStartPoint(driver);
 	}
 	
 	/** Click the check box "enabledCB" */
 	public void clickVisibleCB(WebDriver driver, IUserAction userAction){
-		userAction.mouseClick(driver, visibleCB.getAttribute("id")); 
-	}
-	
-	/** Mouse Over on button */
-	public void mouseOverButton(WebDriver driver, WebElement e){
 		
-		Actions action = new Actions(driver);
-		action.moveToElement(e).perform();
-		Sleeper.sleepTight(500);
+		userAction.mouseClick(driver, visibleCB.getAttribute("id"));
+		userAction.mouseClickStartPoint(driver);
 	}
-		
 
 }
