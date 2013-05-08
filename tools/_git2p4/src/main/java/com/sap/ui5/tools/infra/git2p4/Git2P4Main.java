@@ -400,21 +400,21 @@ public class Git2P4Main {
         null
     ));
      */
-    mappings.add(new Mapping(
-        "/sapui5/sapui5.osgi.runtime.git",
-        new File(repositoryRoot, "sapui5.osgi.runtime"),
-        p4depotPrefix + "/src/dist/_osgi",
-        null,
-        null
-        ));
-    mappings.add(new Mapping(
-        "/sapui5/sapui5.osgi.tools.git",
-        new File(repositoryRoot, "sapui5.osgi.tools"),
-        p4depotPrefix + "/src/dist/_osgi_tools",
-        null,
-        null
-        ));
-    if ( branch != null && ("master".equals(branch) || branch.startsWith("rel-")) ) {
+    if ( "rel-1.10".equals(branch) ) {
+      mappings.add(new Mapping(
+          "/sapui5/sapui5.osgi.runtime.git",
+          new File(repositoryRoot, "sapui5.osgi.runtime"),
+          p4depotPrefix + "/src/dist/_osgi",
+          null,
+          null
+          ));
+      mappings.add(new Mapping(
+          "/sapui5/sapui5.osgi.tools.git",
+          new File(repositoryRoot, "sapui5.osgi.tools"),
+          p4depotPrefix + "/src/dist/_osgi_tools",
+          null,
+          null
+          ));
       mappings.add(new Mapping(
           "/sapui5/sapui5.osgi.runtime.gwt.git",
           new File(repositoryRoot, "sapui5.osgi.runtime.gwt"),
