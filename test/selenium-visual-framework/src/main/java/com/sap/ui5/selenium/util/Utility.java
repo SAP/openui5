@@ -76,7 +76,7 @@ public class Utility {
 	    resultMessage.append("Image A Height: " + biA.getHeight() + "  Image A Width: " + biA.getWidth() + newLine);
 	    resultMessage.append("Image B Height: " + biB.getHeight() + "  Image B Width: " + biB.getWidth() + newLine);	        
 	    resultMessage.append("Image A Color Bit Depth: " + biA.getColorModel().getPixelSize() + newLine);
-	    resultMessage.append("Image B Color Bit Depth: " + biB.getColorModel().getPixelSize() + newLine);       
+	    resultMessage.append("Image B Color Bit Depth: " + biB.getColorModel().getPixelSize());       
 
 	        
 			
@@ -196,6 +196,21 @@ public class Utility {
 			}
 		}
 		return false;
+	}
+	
+	/** Move and replace files */
+	public static void moveFile(File source, File target) {
+		
+		if (target.exists()) target.delete();
+		source.renameTo(target);
+	}
+	
+	/** Delete File */
+	public static void deleteFile(File file) {
+		
+		if (file != null && file.exists()){
+			file.delete();
+		}
 	}
     
 	

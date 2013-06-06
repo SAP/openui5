@@ -56,12 +56,12 @@ public enum InitService {
 		
 		if(!verifyConfigIsOK()){
 			System.out.println("Config file has a fatal error, Please check!");
-			System.exit(1);
+		    System.exit(1);
 		}
 		
 		if (!verifyEnvironment()){
-	          System.out.println("Test environment is not valid, Please check!");
-	          System.exit(1);
+	        System.out.println("Test environment is not valid, Please check!");
+	        System.exit(1);
 		}
 		
 		if (!initializeParameters()){
@@ -70,7 +70,8 @@ public enum InitService {
 		}
 		
 		//Print Test Runtime Initialization Info
-		System.out.println("####    Test Runtime Initialization    ####");
+		System.out.println("############    Test Runtime Initialization    ############");
+		System.out.println("##Machine=" + System.getenv("COMPUTERNAME"));
 		System.out.println("##OS=" + System.getProperty("os.name"));
 		System.out.println("##Architecture=" + System.getProperty("os.arch"));
 		System.out.println("##Screen Resolution=" + config.getScreenResolutionWidth()
@@ -80,7 +81,8 @@ public enum InitService {
 		System.out.println("##Test target=" + getBaseURL());
 		System.out.println("##Image Base Path=" + getImagesBasePath());
 		System.out.println();
-		System.out.println("####    Test Starting    ####");
+		System.out.println("############    Test Starting    ############");
+		System.out.println("#############################################");
 	}
 	
 	/** Get base URL for all tests */

@@ -30,6 +30,8 @@ import com.sap.ui5.selenium.util.Utility;
 
 public class TestBase extends CommonBase{
 	
+	private static boolean isBeforeAllTests = true;
+	
 	private final Config config = Config.INSTANCE;
 	private final InitService service = InitService.INSTANCE;
 	
@@ -76,8 +78,13 @@ public class TestBase extends CommonBase{
 		createDIR(diffImagesDIR);
 		
 		//Clean files before testing
-		deleteAllFilesInDirectory(new File(tempImagesDIR));
-		deleteAllFilesInDirectory(new File(diffImagesDIR));
+		if (isBeforeAllTests == true) {
+			deleteAllFilesInDirectory(new File(tempImagesDIR));
+			deleteAllFilesInDirectory(new File(diffImagesDIR));
+			deleteAllFilesInDirectory(new File(needVerifyImagesDIR));
+			
+			isBeforeAllTests = false;
+		}
 		
 		//initial WebDriver
 		getDriver();
@@ -550,11 +557,11 @@ public class TestBase extends CommonBase{
 			if (!results) {
 				
 				//Move actual Image to need verify folder
-				actualImage.renameTo(new File(needVerifyImagesDIR + expectedImage.getName()));
+				Utility.moveFile(actualImage, new File(needVerifyImagesDIR + expectedImage.getName()));
 				
 				//Move Diff Image to diff folder
-				diffImage.renameTo(new File(genFullPathForDiffImage(expectedImageName, true)));
-				
+				Utility.moveFile(diffImage, new File(genFullPathForDiffImage(expectedImageName, true)));
+
 				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
 				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));
 			}
@@ -637,10 +644,10 @@ public class TestBase extends CommonBase{
 			if (!results) {
 				
 				//Move actual Image to need verify folder
-				actualImage.renameTo(new File(needVerifyImagesDIR + expectedImage.getName()));
+				Utility.moveFile(actualImage, new File(needVerifyImagesDIR + expectedImage.getName()));
 				
 				//Move Diff Image to diff folder
-				diffImage.renameTo(new File(genFullPathForDiffImage(expectedImageName, true)));
+				Utility.moveFile(diffImage, new File(genFullPathForDiffImage(expectedImageName, true)));
 				
 				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
 				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));				
@@ -700,32 +707,35 @@ public class TestBase extends CommonBase{
 		
 		boolean isMatched;
 		try {
-			
+
+			System.out.println();
+			System.out.print("####  " + "Comparing: " + expectedImage.getName() + 
+					         " (" + getClass().getSimpleName() + "." + testName.getMethodName() + ")");
 			isMatched = compareImages(expectedImage, actualImage, diffImage, resultMessage);
 		} catch (Exception e) {
 			
+			System.out.println("    ==> FAILED");
 			System.out.println("Errors occur during image comparing, Stop this image comparing! ");
+			System.out.println("#####################");
 			e.printStackTrace();
+			System.out.println("#####################");
 			
-			actualImage.delete();
-			if (diffImage != null && diffImage.exists()){
-				diffImage.delete();
-			}
-			
+			Utility.deleteFile(actualImage);
+			Utility.deleteFile(diffImage);
 			return false;
 		}
 
 		if (isMatched){
 			
-			actualImage.delete();
+			System.out.println("    ==> PASS");
+			Utility.deleteFile(actualImage);
+			Utility.deleteFile(diffImage);
 			
-			if (diffImage != null && diffImage.exists()){
-				diffImage.delete();
-			}
-			
+		} else {
+			System.out.println("    ==> FAILED");
+			System.out.println(resultMessage.toString());
 		}
 		
-		System.out.println(resultMessage.toString());
 		return isMatched;
 		
 	}
