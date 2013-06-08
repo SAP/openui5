@@ -1,7 +1,7 @@
 package com.sap.ui5.selenium.common;
 
 import java.util.List;
-
+import java.util.concurrent.TimeUnit;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -9,15 +9,19 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.TestName;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.browserlaunchers.Sleeper;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import com.sap.ui5.selenium.util.Ui5ExpectedConditions;
 
 public abstract class CommonBase {
 	
 	protected WebDriver driver;
+	protected long implicitlyWaitTime = 30;
+	protected long scriptTimeout = 30;
 	
 	protected String fileSeparator = System.getProperty("file.separator");
 	
@@ -33,43 +37,6 @@ public abstract class CommonBase {
         
         return ((JavascriptExecutor) driver);
     }
-	
-	/** API: Check target element is existing? */
-	public boolean isElementPresent(By by) {
-		try {
-			driver.findElement(by);
-			return true;
-		} catch (NoSuchElementException e) {
-			return false;
-		}
-	}
-	
-	/** API: Check target Alert is existing? */
-	public boolean isAlertPresent(){
-		
-		try {
-			driver.switchTo().alert();
-			return true;
-		}catch (NoAlertPresentException e) {
-			return false;
-		}
-	}
-	
-	/** API: Check target element is enabled? */
-	public boolean isElementEnabled(WebElement element){
-		String ariaDisabled = element.getAttribute("aria-disabled");
-		
-		//If attribute "aria-disabled" is not set or has not value, then use selenium native method
-		if ((ariaDisabled == null) || ariaDisabled.isEmpty() ){
-			
-			return element.isEnabled();
-			
-		}else {
-			
-			return !Boolean.parseBoolean(ariaDisabled);
-			
-		}	
-	}
 	
 	   /** Wait for a specific time */
 	public void waitForReady(int millisecond){
@@ -123,6 +90,33 @@ public abstract class CommonBase {
 		}
 	}
 
+	/** Wait for target element to visible or invisible  */
+	public void waitForElement(WebDriver driver, boolean isVisible, By by, long timeOutSeconds){
+		
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		
+		try {
+			WebDriverWait wait = new WebDriverWait(driver, timeOutSeconds);
+			
+			if (isVisible) {
+			wait.until(Ui5ExpectedConditions.visibilityOfElementLocated(by));
+			Sleeper.sleepTight(1000);
+			
+			} else {
+				wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
+			}
+			
+		} finally {
+			driver.manage().timeouts().implicitlyWait(implicitlyWaitTime, TimeUnit.SECONDS);
+		}
+	}
+	
+	/** Wait for target element to visible or invisible  */
+	public void waitForElement(WebDriver driver, boolean isVisible, String elementId, long timeOutSeconds){
+		By by = By.id(elementId);
+		waitForElement(driver, isVisible, by, timeOutSeconds);
+	}
+	
 	/** Verify* methods does not abort test execution even if it is failed,
 	 *  only log the error. mark test failure at end of test */
 	public void verifyTrue(boolean actual){

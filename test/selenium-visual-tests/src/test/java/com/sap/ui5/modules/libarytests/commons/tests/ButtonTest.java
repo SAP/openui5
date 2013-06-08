@@ -129,7 +129,9 @@ public class ButtonTest extends TestBase{
 		String elementIdBtn4 = page.elementIdBtn4.getAttribute("id");
 		String elementIdBtn5 = page.elementIdBtn5.getAttribute("id");
 		
-		userAction.mouseClickStartPoint(driver);
+		//Handler situation(Firefox and RTL=true)
+		userAction.mouseOver(driver, elementIdBtn4, 1000);
+		userAction.mouseMoveToStartPoint(driver);
 		
 		//Test tooltip on enabled button
 		userAction.mouseOver(driver, elementIdBtn4, 3000);

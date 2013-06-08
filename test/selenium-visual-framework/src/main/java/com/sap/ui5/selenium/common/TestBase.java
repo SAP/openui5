@@ -193,8 +193,8 @@ public class TestBase extends CommonBase{
 	/** Initial WebDriver common setting */
 	private void initializeDriverSetting(WebDriver driver){
 		
-		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-		driver.manage().timeouts().setScriptTimeout(30, TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(implicitlyWaitTime, TimeUnit.SECONDS);
+		driver.manage().timeouts().setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
 	}
 	
@@ -750,6 +750,16 @@ public class TestBase extends CommonBase{
 		}
 	}
 	
-
+	/** Show Tooltip for all browser by wrapping userAction.mouseOver() */
+	public void showToolTip(String elementId, int waitTimeMillsecond) {
+		
+		if (getBrowserType() == Constants.FIREFOX) {
+			userAction.mouseOver(driver, elementId, waitTimeMillsecond);
+			userAction.mouseMoveToStartPoint(driver); 
+		}
+		
+		userAction.mouseOver(driver, elementId, waitTimeMillsecond);
+	}
+	
 	
 }

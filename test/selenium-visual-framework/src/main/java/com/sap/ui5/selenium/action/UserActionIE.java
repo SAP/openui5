@@ -50,7 +50,7 @@ public class UserActionIE extends UserActionCommon{
 	}
 	
 	/** Get Screen Bar width */
-	protected int getScollBarWidth(WebDriver driver){
+	public int getScollBarWidth(WebDriver driver){
 		
 
 		//Browser outer width
