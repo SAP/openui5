@@ -5,7 +5,9 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.libarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
@@ -71,9 +73,12 @@ public class ButtonTest extends TestBase{
 	@Test
 	public void testMouseClickEnabledElements(){
 
+		Actions action = new Actions(driver);
+		action.sendKeys(Keys.TAB, Keys.TAB).perform();
 		//Test click
 		for (WebElement e : page.buttons){
 			
+			action.sendKeys(Keys.TAB).perform();
 			String elementId = e.getAttribute("id");
 			userAction.mouseClick(driver, elementId);
 			userAction.mouseMoveToStartPoint(driver);
@@ -86,16 +91,18 @@ public class ButtonTest extends TestBase{
 	/** Verify the mouse select for enable button elements */
 	@Test
 	public void testMouseSelectEnabledElements(){
-		
+		//Avoid unstable dashed frame on Firfox testing.
+		//Use keyboard to focus on the button then click.
+		Actions action = new Actions(driver);
+		action.sendKeys(Keys.TAB, Keys.TAB).perform();
 		//Test Mouse Select
 		for (WebElement e : page.buttons){
 			
+			action.sendKeys(Keys.TAB).perform();
 			String elementId = e.getAttribute("id");
 			
 			userAction.mouseClickAndHold(driver, elementId);
-			
 			verifyElementUI(elementId, "MouseSelect-" + elementId);
-			
 			userAction.mouseRelease();
 		}
 		

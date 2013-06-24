@@ -41,6 +41,8 @@ public enum InitService {
 		browserList.add("IE8_64");
 		browserList.add("IE9_32");
 		browserList.add("IE9_64");
+		browserList.add("IE10_32");
+		browserList.add("IE10_64");
 	}
 
 
@@ -282,7 +284,18 @@ public enum InitService {
 		}
 		
 		if (config.getBrowserName().equalsIgnoreCase("IE")){
-			return Constants.IE;
+			
+			if (config.getBrowserVersion().equalsIgnoreCase("8")) {
+				return Constants.IE8;
+			}
+			
+			if (config.getBrowserVersion().equalsIgnoreCase("9")) {
+				return Constants.IE9;
+			}
+			
+			if (config.getBrowserVersion().equalsIgnoreCase("10")) {
+				return Constants.IE10;
+			}
 		}
 		
 		if (config.getBrowserName().equalsIgnoreCase("Chrome")){
