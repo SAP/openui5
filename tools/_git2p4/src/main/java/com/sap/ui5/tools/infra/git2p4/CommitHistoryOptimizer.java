@@ -23,10 +23,12 @@ class CommitHistoryOptimizer {
   }
 
   private void mergeIn(GitClient.Commit commit, String id) {
+    Log.println("merge into " + commit.getId() + ":");
     while ( ids.remove(id) ) {
       GitClient.Commit parent = commits.get(id);
+      Log.println("  " + parent.getId());
       if ( parent.isMerge() ) {
-        throw new IllegalStateException();
+        throw new IllegalStateException("trying to merge in another merge, aborting");
       }
       commit.mergeIns.add(parent);
       id = parent.ids[1];
@@ -88,29 +90,35 @@ class CommitHistoryOptimizer {
     GitClient.Commit parent1 = commits.get(commit.ids[1]);
     GitClient.Commit parent2 = commits.get(commit.ids[2]);
     if ( parent1 != null && parent2 == null ) {
+      Log.println("  parent1 exists, but parent2 doesn't, follow parent 1");
       return 1;
     }
     if ( parent1 == null && parent2 != null ) {
-      return 2;
-    }
-
-    boolean g1 = parent1.isGerrit();
-    boolean g2 = parent2.isGerrit();
-
-    if ( g1 && !g2 ) {
-      return 1;
-    }
-    if ( !g1 && g2 ) {
+      Log.println(" parent2 exists, but parent1 doesn't, follow parent 2");
       return 2;
     }
 
     boolean m1 = commit.isGerritMergeOf(parent1);
     boolean m2 = commit.isGerritMergeOf(parent2);
     if ( m1 && !m2 ) {
+      Log.println(" current commit is a merge of parent 1, follow parent 2");
       return 2;
     }
     if ( !m1 && m2 ) {
+      Log.println(" current commit is a merge of parent 2, follow parent 1");
       return 1;
+    }
+
+    boolean g1 = parent1.isGerrit();
+    boolean g2 = parent2.isGerrit();
+
+    if ( g1 && !g2 ) {
+      Log.println(" parent1 is a Gerrit commit (merge), but parent2 isn't, follow parent 1");
+      return 1;
+    }
+    if ( !g1 && g2 ) {
+      Log.println(" parent2 is a Gerrit commit (merge), but parent1 isn't, follow parent 2");
+      return 2;
     }
 
     String[][] paths = findNearestCommonPredecessor(commit);
@@ -154,6 +162,8 @@ class CommitHistoryOptimizer {
 
   private void track(String id) {
 
+    Log.println("tracking commit " + id);
+    
     if ( !ids.remove(id) ) {
       Log.println("dead end " + id);
       return;
