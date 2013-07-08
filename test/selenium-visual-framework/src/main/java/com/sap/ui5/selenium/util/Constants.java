@@ -8,8 +8,11 @@ public class Constants {
 	public final static String USER_HOME = System.getProperty("user.home");
 	
 	public final static int FIREFOX= 1;
-	public final static int IE = 2;
-	public final static int CHROME = 3;
+	public final static int CHROME = 2;
+	public final static int SAFARI = 3;
+	public final static int IE8 = 4;
+	public final static int IE9 = 5;
+	public final static int IE10 = 6;
 	
 	public final static String[] PLATFORM_WIN_XP = {"WindowsXP", "Windows2003"};
 	public final static String[] PLATFORM_WIN_VISTA = {"WindowsVista", "Windows7", "Windows2008"};

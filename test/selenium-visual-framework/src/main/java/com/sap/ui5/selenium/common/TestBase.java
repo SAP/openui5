@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -21,7 +22,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.action.UserActionChrome;
 import com.sap.ui5.selenium.action.UserActionFirefox;
-import com.sap.ui5.selenium.action.UserActionIE;
+import com.sap.ui5.selenium.action.UserActionIE10;
+import com.sap.ui5.selenium.action.UserActionIE8;
+import com.sap.ui5.selenium.action.UserActionIE9;
 import com.sap.ui5.selenium.util.Constants;
 import com.sap.ui5.selenium.util.Utility;
 
@@ -30,7 +33,7 @@ import com.sap.ui5.selenium.util.Utility;
 
 public class TestBase extends CommonBase{
 	
-	private static boolean isBeforeAllTests = true;
+	private static boolean isBeforeClass = true;
 	
 	private final Config config = Config.INSTANCE;
 	private final InitService service = InitService.INSTANCE;
@@ -76,21 +79,25 @@ public class TestBase extends CommonBase{
 		createDIR(needVerifyImagesDIR);
 		createDIR(tempImagesDIR);
 		createDIR(diffImagesDIR);
-		
+
 		//Clean files before testing
-		if (isBeforeAllTests == true) {
+		if (isBeforeClass == true) {
 			deleteAllFilesInDirectory(new File(tempImagesDIR));
 			deleteAllFilesInDirectory(new File(diffImagesDIR));
 			deleteAllFilesInDirectory(new File(needVerifyImagesDIR));
 			
-			isBeforeAllTests = false;
+			isBeforeClass = false;
 		}
 		
 		//initial WebDriver
 		getDriver();
-		
 	}
-	
+
+	@BeforeClass
+	public static void beforeClassBase() {
+		isBeforeClass = true;
+	}
+
 	/** Create target directory by full path*/
 	private void createDIR(String Path){
 		
@@ -161,7 +168,9 @@ public class TestBase extends CommonBase{
 			}
 			break;
 
-		case Constants.IE:
+		case Constants.IE8:
+		case Constants.IE9: 
+		case Constants.IE10:
 			if(!initializeIEDriver()){
 				if (driver != null){
 					driver.quit();
@@ -197,42 +206,50 @@ public class TestBase extends CommonBase{
 		driver.manage().timeouts().setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
 	}
+	/** Initial Remote Driver */
+	private boolean initializeRemoteDriver(DesiredCapabilities capability) {
+		
+		capability.setVersion(config.getBrowserVersion());
+		capability.setJavascriptEnabled(true);
+		capability.setPlatform(service.getTargetPlatform());
+		
+		URL remoteUrl;
+		
+		try {
+			remoteUrl = new URL(service.getRemoteSeleniumServerURL());
+			driver = new RemoteWebDriver(remoteUrl, capability);
+			initializeDriverSetting(driver);				
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 	
 	/** Initialize Fiefox Driver */
 	private boolean initializeFirefoxDriver(){
 		
+		DesiredCapabilities capability = DesiredCapabilities.firefox();
+		
 		//Initial Remote Firefox Driver
 		if (service.isRemoteEnv()) {
-			DesiredCapabilities capability = DesiredCapabilities.firefox();
-			capability.setVersion(config.getBrowserVersion());
-			capability.setJavascriptEnabled(true);
-			capability.setPlatform(service.getTargetPlatform());
-			
-			URL remoteUrl;
-			try {
-				
-				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
-				driver = new RemoteWebDriver(remoteUrl, capability);
-				initializeDriverSetting(driver);				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			
-			return true;
+			return initializeRemoteDriver(capability);
 		} 
 		
-		
-		//Initial Local Firefox Driver
-		driver = new FirefoxDriver();
-		initializeDriverSetting(driver);
-		if (hideFirefoxStatusBar() == false) {
+		try {
+			//Initial Local Firefox Driver
+			driver = new FirefoxDriver(capability);
+			initializeDriverSetting(driver);
+			if (hideFirefoxStatusBar() == false) return false;
+
+			//Initialize UserAction for Firefox
+			userAction = new UserActionFirefox();
+			userAction.setRtl(isRtlTrue());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
-
-		//Initialize UserAction for Firefox
-		userAction = new UserActionFirefox();
-		userAction.setRtl(isRtlTrue());
 
 		return true;
 	}
@@ -285,81 +302,66 @@ public class TestBase extends CommonBase{
 	/** Initialize IE Driver */
 	private boolean initializeIEDriver(){
 		
+		DesiredCapabilities capability = DesiredCapabilities.internetExplorer();
+		capability.setCapability(InternetExplorerDriver.INTRODUCE_FLAKINESS_BY_IGNORING_SECURITY_DOMAINS, true);
+		
 		//Initial Remote IE Driver
 		if (service.isRemoteEnv()) {
-			DesiredCapabilities capability = DesiredCapabilities.internetExplorer();
-			capability.setVersion(config.getBrowserVersion());
-			capability.setJavascriptEnabled(true);
-			capability.setPlatform(service.getTargetPlatform());
-			
-			URL remoteUrl;
-			try {
-				
-				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
-				driver = new RemoteWebDriver(remoteUrl, capability);
-				initializeDriverSetting(driver);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			
-			return true;
+			return initializeRemoteDriver(capability);
 		}
 		
-		//Initial local IE Driver
-		try{
-			
-			driver = new InternetExplorerDriver();
+		try {
+			//Initial local IE Driver
+			driver = new InternetExplorerDriver(capability);
 			initializeDriverSetting(driver);
 			
 			//Initialize UserAction for IE
-			userAction = new UserActionIE();
+			switch (getBrowserType()){
+			
+			case Constants.IE8:
+				userAction = new UserActionIE8();
+				break;
+				
+			case Constants.IE9:
+				userAction = new UserActionIE9();
+				break;
+				
+			case Constants.IE10:
+				userAction = new UserActionIE10();
+				break;
+			}
+			
 			userAction.setRtl(isRtlTrue());
 			
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-
+		
 		return true;
 	}
 	
 	/** Initialize Chrome Driver */
 	private boolean initializeChromeDriver(){
 		
+		DesiredCapabilities capability = DesiredCapabilities.chrome();
+		
 		//Initial Remote Chrome Driver
 		if (service.isRemoteEnv()) {
-			DesiredCapabilities capability = DesiredCapabilities.chrome();
-			capability.setVersion(config.getBrowserVersion());
-			capability.setJavascriptEnabled(true);
-			capability.setPlatform(service.getTargetPlatform());
-			
-			URL remoteUrl;
-			try {
-				
-				remoteUrl = new URL(service.getRemoteSeleniumServerURL());
-				driver = new RemoteWebDriver(remoteUrl, capability);
-				initializeDriverSetting(driver);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-			
-			return true;
+
+			return initializeRemoteDriver(capability);
 		}
 		
-		//Initial local Chrome Driver
 		try {
-			driver = new ChromeDriver();
+			//Initial local Chrome Driver
+			driver = new ChromeDriver(capability);
 			initializeDriverSetting(driver);
 			
 			//Initialize UserAction for Chrome
 			userAction = new UserActionChrome();
 			userAction.setRtl(isRtlTrue());
 			
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
