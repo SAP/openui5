@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.libarytests.commons.pages;
+package com.sap.ui5.modules.librarytests.commons.pages;
 
 import java.util.List;
 import org.openqa.selenium.WebDriver;

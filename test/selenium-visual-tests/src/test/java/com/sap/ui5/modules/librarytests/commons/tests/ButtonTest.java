@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.libarytests.commons.tests;
+package com.sap.ui5.modules.librarytests.commons.tests;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -9,7 +9,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
-import com.sap.ui5.modules.libarytests.commons.pages.ButtonPO;
+
+import com.sap.ui5.modules.librarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
 
 public class ButtonTest extends TestBase{
