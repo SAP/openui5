@@ -433,8 +433,8 @@
                   <classifier>opt</classifier>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5.dist</groupId>
-                  <artifactId>sapui5-internal-dist</artifactId>
+                  <groupId>com.sap.ui5.incubation</groupId>
+                  <artifactId>sapui5-incubation</artifactId>
                   <version>[1.0.0,)</version>
                   <classifier>opt</classifier>
                 </deployable>
