@@ -432,6 +432,12 @@
                   <version>[1.0.0,)</version>
                   <classifier>opt</classifier>
                 </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.dist</groupId>
+                  <artifactId>sapui5-internal-dist</artifactId>
+                  <version>[1.0.0,)</version>
+                  <classifier>opt</classifier>
+                </deployable>
               </deployables>
             </configuration>
           </plugin>
