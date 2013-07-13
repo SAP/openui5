@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class GitClient {
+public class GitClient {
 
   private String gitcmd = "git.cmd";
   File repository = new File(".");
@@ -50,7 +50,7 @@ class GitClient {
     }
     pb.redirectErrorStream(true);
     if ( verbose ) {
-      Log.println(pb.command());
+      Log.printf("%s > %s", repository, pb.command());
     }
     long t0 = System.currentTimeMillis();
     Process process = pb.start();
@@ -83,14 +83,15 @@ class GitClient {
     return lastExitValue == 0;
   }
 
-  static class Commit {
+  public static class Commit {
     File repository;
     String[] ids;
     Map<String,String> fields = new HashMap<String,String>();
     List<String> lines = new ArrayList<String>();
     List<Commit> mergeIns = new ArrayList<Commit>();
     Object data = null;
-
+    
+    
     @Override
     public String toString() {
       return getId();
@@ -99,7 +100,8 @@ class GitClient {
     void setField(String field, String value) {
       fields.put(field, value);
     }
-    String getId() {
+
+    public String getId() {
       return ids[0];
     }
 
@@ -107,6 +109,10 @@ class GitClient {
       return ids.length == 3;
     }
 
+    public String getSummary() {
+      return lines.get(0);
+    }
+    
     boolean isGerrit() {
       return fields.containsKey("Commit") && fields.get("Commit").startsWith("Gerrit Code Review");
     }
@@ -139,9 +145,14 @@ class GitClient {
       }
     }
 
-    public String getSummary() {
-      return lines.get(0);
+    public Commit getOriginalCommit() {
+      if ( mergeIns.size() > 0 && isGerritMergeOf(mergeIns.get(0)) ) {
+        return mergeIns.get(0);
+      } else {
+        return this;
+      }
     }
+    
     public String getOrigSummary() {
       return GerritHelper.ungerrit(lines.get(0));
     }
@@ -156,6 +167,10 @@ class GitClient {
     }
     public String getCommiter() {
       return fields.get("Commit");
+    }
+    
+    public List<String> getMessageLines() {
+      return lines;
     }
   }
 
@@ -194,7 +209,21 @@ class GitClient {
   }
 
   public boolean log(String range) throws IOException {
-    if ( execute("log", "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents", range) ) {
+    return log(range, false);
+  }
+  
+  public boolean log(String range, boolean oneline, String ... paths) throws IOException {
+    String[] args = new String[] { 
+      "log", "--no-color", oneline ? "--format=commit %H%n" : "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents", range
+    };
+    if ( paths != null && paths.length > 0 ) {
+      String[] tmp = new String[args.length + 1 + paths.length];
+      System.arraycopy(args, 0, tmp, 0, args.length);
+      tmp[args.length] = "--";
+      System.arraycopy(paths, 0, tmp, args.length+1, paths.length);
+      args = tmp;
+    }
+    if ( execute(args) ) {
       evalCommitLog();
       return true;
     }
@@ -202,7 +231,7 @@ class GitClient {
   }
 
   public boolean log(int n) throws IOException {
-    if ( execute("log", "--max-count", String.valueOf(n)) ) {
+    if ( execute("log", "--no-color", "--max-count", String.valueOf(n)) ) {
       evalCommitLog();
       return true;
     }

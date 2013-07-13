@@ -40,10 +40,14 @@ public class Log {
 		System.out.println(msg);
 	}
 
-	public static void println(Object obj) {
-		println(String.valueOf(obj));
-	}
-	
+  public static void println(Object obj) {
+    println(String.valueOf(obj));
+  }
+  
+  public static void printf(String fmt, Object ...params) {
+    println(String.format(fmt, params));
+  }
+  
 	public static String summary(List<String> lines) {
 		if (lines.size() < 20 ) {
 			String summary = lines.toString();
