@@ -1,16 +1,13 @@
 package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -22,21 +19,18 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
 import com.sap.ui5.tools.maven.MyReleaseButton;
 
 public class Git2P4Main {
 
-  static GitClient git = new GitClient();
-  static P4Client p4 = new P4Client();
-  static Git2P4 git2p4 = new Git2P4(git, p4);
+  static final GitClient git = new GitClient();
+  static final P4Client p4 = new P4Client();
+  static final Git2P4 git2p4 = new Git2P4(git, p4);
   static String p4depotPath = null;
   static String p4change = null;
-  static String range = null;
   static String resumeAfter = null;
-  static boolean noFetch = false;
-  static boolean preview = false;
-  
-  static SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
+  static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
       int r = a.getCommitDate().compareTo(b.getCommitDate());
@@ -46,13 +40,43 @@ public class Git2P4Main {
     }
   });
 
+  /**
+   * This new context object is intended to contain all parameters in future
+   * (or maybe Git2P4Main implements an interface with similar methods)
+   * 
+   * For now it only contains what is absolutely necessary for the ReleaseNotes command.
+   */
+  public static class Context {
+    public final GitClient git = Git2P4Main.git;
+    public final SortedSet<GitClient.Commit> allCommits = Git2P4Main.allCommits;
+    public boolean fixOrFeatureOnly = false;
+    public String range = null;
+    public String branch = null;
+    public boolean preview = false;
+    public boolean noFetch = false;
+    public String findVersion(String branch) throws IOException {
+      return Git2P4Main.findVersion(branch);
+    }
+    public Set<String> getCommits(String...paths) throws IOException {
+      Set<String> filter = new HashSet<String>();
+      for(Mapping repo : mappings) {
+        git.repository = repo.gitRepository;
+        git.log(range, false, paths);
+        filter.addAll(git.lastCommits.keySet());
+      }
+      return filter;
+    }
+  }
+  
+  static Context context = new Context();
+  
   static void updateRepository(Mapping repo) throws IOException {
     git.repository = repo.gitRepository;
     if ( !git.repository.isDirectory() || !(new File(git.repository, ".git").isDirectory()) && repo.giturl != null ) {
       git.repository.mkdirs();
       git.clone(repo.giturl);
     }
-    if ( !noFetch ) {
+    if ( !context.noFetch ) {
       git.fetch();
     }
   }
@@ -63,7 +87,7 @@ public class Git2P4Main {
       git.repository.mkdirs();
       git.clone(repo.giturl);
     }
-    if ( !noFetch ) {
+    if ( !context.noFetch ) {
       git.fetch();
     }
     git.log(range);
@@ -195,7 +219,7 @@ public class Git2P4Main {
         suspiciousRepositories.put(repo.gitRepository.getName(), suspiciousChanges);
       }
       
-      if ( !preview ) {
+      if ( !context.preview ) {
         int c = 'y';
         if ( git2p4.interactive ) {
           System.out.println("Git commit prepared for version change (" + diffs + " diffs compared to last run). Push to gerrit? (y/n):");
@@ -267,7 +291,7 @@ public class Git2P4Main {
         git.tag(fromVersion, message);
         
         System.out.println("Git tag created locally with message '" + message + "'.");
-        if ( !preview ) {
+        if ( !context.preview ) {
           int c = 'y';
           if ( git2p4.interactive ) {
             System.out.println("Push to gerrit? (y/n):");
@@ -286,43 +310,6 @@ public class Git2P4Main {
     
   }
 
-
-  private static void releaseNotes(String branch) throws IOException {
-    List<String> fixes = new ArrayList<String>();
-    for(GitClient.Commit commit : allCommits) {
-      String desc;
-      if ( commit.mergeIns.size() > 0 && commit.isGerritMergeOf(commit.mergeIns.get(0)) ) {
-        desc = commit.mergeIns.get(0).getSummary();
-      } else {
-        desc = commit.getSummary();
-      }
-      if ( desc.matches("^\\s*(Release|Infra)\\s*:.*") ) {
-        continue;
-      }
-      fixes.add(desc);
-    }
-    
-    Pattern csnPrefix = Pattern.compile("CSN[:\\s]+([- 0-9]+[0-9])(?:[-:\\s]+|$)");
-    Pattern wikiTag = Pattern.compile("\\b[A-Z][a-z0-9_]+([A-Z][a-z0-9_]+)+\\b");
-    
-    Collections.sort(fixes);
-    Version version = new Version(findVersion(branch));
-    version = new Version(version.major, version.minor, version.patch, null);
-    
-    Log.println("");
-    Log.println("== Version " + version + " (" + new SimpleDateFormat("MMMM yyyy", Locale.ENGLISH).format(new Date()) + ") ==");
-    Log.println("");
-    Log.println("A patch for the " + branch + " code line. It contains the following fixes for the UI5 Core and Controls:");
-    Log.println("");
-    Log.println("'''Fixes'''");
-    for(String fix : fixes) {
-      fix = csnPrefix.matcher(fix).replaceAll("[[span((CSN $1) -, class=sapinternal)]] ");
-      fix = wikiTag.matcher(fix).replaceAll("!$0");
-      Log.println(" * " + fix);
-    }
-    Log.println("");
-  }
-  
   static class Mapping {
     String giturl;
     File gitRepository;
@@ -557,7 +544,7 @@ public class Git2P4Main {
       } else if ( "--git-password".equals(args[i]) ) {
         git.password = args[++i];
       } else if ( "--git-no-fetch".equals(args[i]) ) {
-        noFetch = true;
+        context.noFetch = true;
       } else if ( "--ui5-git-root".equals(args[i]) ) {
         gitDir = new File(args[++i]);
         mappingSet = "runtime";
@@ -590,10 +577,13 @@ public class Git2P4Main {
         git2p4.interactive = true;
       } else if ( "-s".equals(args[i]) || "--submit".equals(args[i]) ) {
         git2p4.preview = false;
-        preview = false;
+        context.preview = false;
       } else if ( "--preview".equals(args[i]) ) {
         git2p4.preview = true;
-        preview = true;
+        context.preview = true;
+      } else if ( "--fix-or-feature-only".equals(args[i]) ) {
+        context.fixOrFeatureOnly = true;
+        context.preview = true;
       } else if ( "--split-logs".equals(args[i]) ) {
         command = "splitLogs";
       } else if ( "release-notes".equals(args[i]) ) {
@@ -637,7 +627,7 @@ public class Git2P4Main {
       } else if ( args[i].startsWith("-") ) {
         throw new IllegalArgumentException("unsupported option " + args[i]);
       } else if ( command != null ) {
-        range = args[i];
+        context.range = args[i];
       } else {
         throw new IllegalArgumentException("unsupported command " + args[i]);
       }
@@ -695,18 +685,18 @@ public class Git2P4Main {
       return;
     }
     
-    if ( "release-notes".equals(command) && range == null ) {
+    if ( "release-notes".equals(command) && context.range == null ) {
       Version current = new Version(findVersion(branch));
-      range = "tags/" + current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
+      context.range = "tags/" + current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
     }
     
-    if ( range == null || range.isEmpty() || !range.contains("..") ) {
+    if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {
       throw new IllegalArgumentException("A valid commit range must be provided, e.g. 1.4..origin/master");
     }
 
     // collect commits across repositories
     for(Mapping repoMapping : mappings) {
-      collect(repoMapping, range);
+      collect(repoMapping, context.range);
     }
     int index=0;
     for(GitClient.Commit commit : allCommits) {
@@ -742,7 +732,8 @@ public class Git2P4Main {
     }
 
     if ( "release-notes".equals(command) ) {
-      releaseNotes(branch);
+      context.branch = branch;
+      new ReleaseNotes().execute(context);
       return;
     }
     
