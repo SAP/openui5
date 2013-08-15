@@ -5,11 +5,11 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
-
 import com.sap.ui5.modules.librarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
 
@@ -17,7 +17,7 @@ public class ButtonTest extends TestBase{
 	ButtonPO page; 
 	
 	
-	private String targetUrl = "/test-resources/sap/ui/commons/QTP/Button.html";
+	private String targetUrl = "/test-resources/sap/ui/commons/visual/Button.html";
 	
 	@Before
 	public void setUp(){	
@@ -125,8 +125,14 @@ public class ButtonTest extends TestBase{
 		
 		//Test click
 		e.click();
-		verifyElementUI(elementId,  "Clicke-disabled" + elementId); 
-		verifyElementUI(page.outputTarget.getAttribute("id"), "outputTarget-empty"); 
+		verifyElementUI(elementId,  "Clicke-disabled" + elementId);
+		
+		if (page.outputTarget.getSize().equals(new Dimension(0,0))) {
+			//this test is pass if outputTarget element size is 0 OR no text.
+		} else {
+			verifyElementUI(page.outputTarget.getAttribute("id"), "outputTarget-empty");
+		}
+		
 	}
 	
 	
