@@ -1,0 +1,28 @@
+<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad"
+xmlns:table="sap.ui.table" xmlns:viz="sap.viz" xmlns:vtypes="sap.viz.ui5.types" xmlns:ux3="sap.ui.ux3"
+controllerName="webimage.controllers.images" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Splitter splitterOrientation="Vertical" id="imageMainCont" splitterPosition="20%" minSizeFirstPane="10%" minSizeSecondPane="70%" width="100%">
+		<firstPaneContent>
+			<Tree nodes="{/root}" height="99%" showHeaderIcons="false" id="images_tree" title="Files" select="onNodeSelected">
+				<nodes>
+					<TreeNode text="{name}"></TreeNode>
+				</nodes>
+			</Tree>
+		</firstPaneContent>
+		<secondPaneContent>
+			<np:ItemSet showToolbar="false" id="images_ds">
+				<np:tools>
+					<CheckBox id="selectAll" change="selectAllHandle" tooltip="select all images"></CheckBox>
+				</np:tools>
+				<np:rightTools>
+					<layout:HorizontalLayout class="image-upload">
+						<FileUploader id="fileUpload" uploadComplete="uploadCompleteHandle" uploadOnChange="false" name="file"></FileUploader>
+					</layout:HorizontalLayout>
+					<Button text="Upload" press="uploadImageHandle" style="Emph" height="35px" width="100px"/>
+					<Button text="Delete" press="deleteImageHandle" style="Emph" height="35px" width="100px"/>
+				</np:rightTools>
+			</np:ItemSet>
+		</secondPaneContent>
+	</Splitter>
+</core:View>

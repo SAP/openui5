@@ -1,0 +1,48 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout"
+xmlns:table="sap.ui.table" xmlns:np="notepad" controllerName="webimage.controllers.ctrlResults" xmlns:html="http://www.w3.org/1999/xhtml">
+	<np:Panel showCollapseIcon="false" width="100%">
+		<np:header>
+			<np:BreadThread id="brd_thd" select="handlePressBack"></np:BreadThread>
+		</np:header>
+		<layout:MatrixLayout>
+			<layout:MatrixLayoutRow>
+				<layout:MatrixLayoutCell>
+					<table:Table id="ctrl_result_tb" visibleRowCount="{count}" selectionMode="None" rows="{results}" >
+						<table:columns>
+							<table:Column filterProperty="platform" sortProperty="platform" hAlign="Center">
+								<TextView design="Bold" text="OS"/>
+								<table:template>
+									<TextView text="{platform}"/>
+								</table:template>
+							</table:Column>
+							<table:Column filterProperty="browser" sortProperty="browser" hAlign="Center">
+								<TextView design="Bold" text="Browser"/>
+								<table:template>
+									<TextView textAlign="Center" text="{browser}"/>
+								</table:template>
+							</table:Column>
+							<table:Column filterProperty="theme" sortProperty="theme" hAlign="Center">
+								<TextView design="Bold" text="Theme"/>
+								<table:template>
+									<TextView textAlign="Center" text="{theme}"/>
+								</table:template>
+							</table:Column>
+							<table:Column filterProperty="rtl" sortProperty="rtl" hAlign="Center">
+								<TextView design="Bold" text="RTL"/>
+								<table:template>
+									<TextView textAlign="Center" text="{path:'rtl',formatter:'.formatRTL'}"/>
+								</table:template>
+							</table:Column>
+							<table:Column sortProperty="fail" hAlign="Center">
+								<TextView design="Bold" text="Fail"/>
+								<table:template>
+									<Link text="{fail}" press="displayFailImages" enabled="{path:'fail',formatter:'.formatEnable'}"></Link>
+								</table:template>
+							</table:Column>
+						</table:columns>
+					</table:Table>
+				</layout:MatrixLayoutCell>
+			</layout:MatrixLayoutRow>
+		</layout:MatrixLayout>
+	</np:Panel>
+</core:View>

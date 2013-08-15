@@ -1,0 +1,11 @@
+{
+	"data": [
+		{
+			"tokenName": "config1",
+			"imageStorePath": "C:\\Automation\\UI5\\ImageRepo\\master"
+		}, {
+			"tokenName": "config2",
+			"imageStorePath": "\\\\dwdf213\\ui-webtech\\Quality\\SAPUI5\\RefImgs\\master\\"
+		}
+	]
+}

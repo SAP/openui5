@@ -1,0 +1,157 @@
+/*--------------------Golbal Style--------------------------------------*/
+.controls-list .sapUiLbxI {
+	line-height: 30px;
+}
+.sapUiUx3ShellDesignLight > .sapUiUx3ShellWorksetBar > .sapUiUx3NavBarToplevel .sapUiUx3NavBarItem {
+	color: #bbbbbb;
+}
+.appShellContent .sapUiUx3ShellCanvas {
+	padding: 10px 32px 2px 32px;
+}
+.sapUiTabBarCnt {
+	height: 27px;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	border-bottom-color: #007dc0;
+	padding: 0;
+	font-size: 15px;
+}
+.app-title {
+	font-size: 16px !important;
+	font-weight: bold;
+}
+.padding-top{
+	padding-top: 5px;
+}
+/* ============================================== */
+/* 	CSS for compare image view*/
+/* ============================================== */
+/*--------------compare image cell-------*/
+.imageContainer {
+	border: 1px solid #b8c2cc;
+	-moz-border-radius: 2px;
+	-khtml-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	padding: 2px 2px;
+	height: 140px;
+	width: 320px;
+	overflow: hidden;
+	vertical-align: middle;
+	display: table-cell;
+}
+/* ============================================== */
+/* 	CSS for folder image view*/
+.image-upload {
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: middle;
+	padding-top: 7px;
+}
+/* ============================================== */
+/* 	CSS for jobs result view*/
+/* ============================================== */
+.job-table-cell {
+	width: 45%;
+	padding-top: 15px;
+	padding-right: 30px;
+}
+.job-chart-cell {
+	padding-left: 20px;
+}
+/* ============================================== */
+/* 	CSS for job Detail view*/
+/* ============================================== */
+/* make row repaeter horizontal layout*/
+.jobDetail ul {
+	overflow: hidden;
+}
+.jobDetail ul li {
+	width: 300px;
+	float: left;
+	margin: 0 25px;
+}
+/* ============================================== */
+/* 	CSS for notepad Contrl*/
+/* ============================================== */
+/*-------------CSS for notepad.ImageOverlay---------*/
+.modalOverLay {
+	text-align: center;
+	position: absolute;
+	top: 29px;
+	left: 29px;
+	bottom: 29px;
+	right: 29px;
+	opacity: 1;
+	padding: 0;
+}
+/*-------------CSS for notepad.ItemSet------------------------*/
+.itemSetLayout {
+	border: 2px solid #007dc0;
+	height: 99%;
+}
+.itemSetToolbar {
+	height: 35px;
+	padding: 4px 0px 4px 15px;
+	margin-bottom: 5px;
+	border-bottom: 2px solid #007dc0;
+	background-color: rgb(219, 228, 231);
+}
+.itemSetContent {
+	padding-left: 10px;
+}
+.itemSetContent > * {
+	margin-left: 5px;
+}
+.itemSetToolbarRightItem {
+	width: 79%;
+	text-align: right;
+	display: inline-block;
+}
+.itemSetToolbarItem {
+	width: 20%;
+	display: inline-block;
+}
+.itemSetToolbarRightItem > * {
+	margin-right: 5px;
+}
+.itemSetToolbarItem > * {
+	margin-right: 5px;
+}
+/*-------------CSS for notepad.ImageItem------------------------*/
+.imageItemLayout {
+	display: inline-block;
+	margin: 5px 10px 10px 10px;
+	overflow-y: hidden;
+	cursor: pointer;
+}
+.imageItemImg:hover {
+	background-color: #dddddd;
+}
+.imageItemLayout tr {
+	text-align: center;
+}
+.imageItemFooter {
+	overflow: hidden;
+	max-width: 230px;
+	border-top: 1px solid rgb(215, 231, 236);
+	/*	background-color: rgb(215, 231, 236);*/
+	padding-top: 10px;
+	border-radius: 3px;
+}
+.imageItemImg {
+	text-align: center;
+	height: 90%;
+}
+/*---------- CSS for notepad.BreadThread ---------*/
+.nav-btn {
+	font-size: 16px;
+}
+.nav-division {
+	font-size: 16px;
+	color: #999999;
+}
+/*-----------CSS for notepad.Panel---------------*/
+.notepadCont {
+	padding: 5px;
+}

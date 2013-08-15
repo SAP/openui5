@@ -1,0 +1,46 @@
+{
+	"data": [
+		{
+			"categoryName": "librarytest",
+			"modules": [
+				{
+					"count": 3,
+					"moduleName": "sap.ui.commons",
+					"controls": [
+						{
+							"controlName": "CheckBox",
+							"fail": 4
+						}, {
+							"controlName": "ComboBox",
+							"fail": 2
+						}, {
+							"controlName": "Button",
+							"fail": 2
+						}
+					]
+				}, {
+					"count": 2,
+					"moduleName": "sap.ui.table",
+					"controls": [
+						{
+							"controlName": "Table",
+							"fail": 2
+						}, {
+							"controlName": "TreeTable",
+							"fail": 2
+						}
+					]
+				}, {
+					"count": 1,
+					"moduleName": "sap.ui.ux3",
+					"controls": [
+						{
+							"controlName": "Shell",
+							"fail": 2
+						}
+					]
+				}
+			]
+		}
+	]
+}

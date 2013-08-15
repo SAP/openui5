@@ -1,0 +1,73 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout"
+xmlns:table="sap.ui.table" xmlns:np="notepad"
+controllerName="webimage.controllers.jobs" xmlns:html="http://www.w3.org/1999/xhtml">
+	<np:Panel>
+		<np:header>
+			<np:BreadThread id="brd_thd"></np:BreadThread>
+		</np:header>
+		<np:content>
+			<layout:MatrixLayout layoutFixed="false">
+				<layout:MatrixLayoutRow>
+					<layout:MatrixLayoutCell class="job-table-cell" vAlign="Top">
+						<table:Table id="table" visibleRowCount="{/jobCount}" columnSelect="colHandle" selectionMode="None" rows="{/jobs}">
+							<table:columns>
+								<table:Column showSortMenuEntry="false" sortProperty="browser" width="315px">
+									<TextView text="Job Name" design="Bold"/>
+									<table:template>
+										<TextView text="{platform}_{browser}_{theme}_{rtl}"/>
+									</table:template>
+								</table:Column>
+								<table:Column showSortMenuEntry="false" sortProperty="pass">
+									<TextView text="Pass" design="Bold"/>
+									<table:template>
+										<TextView textAlign="Center" text="{pass}"/>
+									</table:template>
+								</table:Column>
+								<table:Column id="fail_col" showSortMenuEntry="false" sortProperty="fail" hAlign="Center">
+									<TextView text="Fail" design="Bold"/>
+									<table:template>
+										<Link text="{fail}" press="displayJobDetail" enabled="{path:'fail',formatter:'.formatEnable'}"></Link>
+									</table:template>
+								</table:Column>
+							</table:columns>
+						</table:Table>
+					</layout:MatrixLayoutCell>
+					<layout:MatrixLayoutCell class="job-chart-cell">
+						<Column selectData="chartHandle" deselectData="chartHandle" xmlns="sap.viz.ui5" id="jobsChart">
+							<plotArea>
+								<VerticalBar xmlns="sap.viz.ui5.types" isRoundCorner="true" colorPalette="#9cc677,red" />
+							</plotArea>
+							<interaction>
+								<Interaction xmlns="sap.viz.ui5.types.controller">
+									<selectability>
+										<Interaction_selectability  mode="multiple"/>
+									</selectability>
+								</Interaction>
+							</interaction>
+							<dataset>
+								<FlattenedDataset xmlns="sap.viz.ui5.data" data="{/jobData}">
+									<dimensions>
+										<DimensionDefinition axis="1" name="Platform"
+										value="{platform}" />
+										<DimensionDefinition axis="1" name="Browser"
+										value="{browser}" />
+										<DimensionDefinition axis="1" name="Theme"
+										value="{theme}" />
+										<DimensionDefinition axis="1" name="RTL"
+										value="{rtl}" />
+										<DimensionDefinition axis="1" name="Platform"
+										value="{platform}" />
+									</dimensions>
+									<measures>
+										<MeasureDefinition name="Pass" value="{pass}" />
+										<MeasureDefinition name="Fail" value="{fail}" />
+									</measures>
+								</FlattenedDataset>
+							</dataset>
+						</Column>
+					</layout:MatrixLayoutCell>
+				</layout:MatrixLayoutRow>
+			</layout:MatrixLayout>
+		</np:content>
+	</np:Panel>
+</core:View>
