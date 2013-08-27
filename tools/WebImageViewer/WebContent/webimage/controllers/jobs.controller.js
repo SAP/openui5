@@ -1,7 +1,7 @@
 sap.ui.controller('webimage.controllers.jobs', {
 
 	onInit: function() {
-		this.chart = this.getView().byId('jobsChart');
+		this.chart = this.byId('jobsChart');
 		this.table = this.byId('table');
 		this._links = [{
 			text: "Jobs",
@@ -31,6 +31,10 @@ sap.ui.controller('webimage.controllers.jobs', {
 		data.jobs = data.jobData;
 		data.brdPath = this._links;
 		sap.ui.getCore().getModel().updateBindings();
+		var chart = this.chart;
+		setTimeout(function() {
+			chart.rerender();
+		});
 	},
 
 	chartHandle: function(evt) {
@@ -40,8 +44,6 @@ sap.ui.controller('webimage.controllers.jobs', {
 		$.each(indices, function() {
 			data.jobs.push(data.jobData[this]);
 		});
-
-
 		sap.ui.getCore().getModel().updateBindings();
 	},
 
@@ -66,9 +68,5 @@ sap.ui.controller('webimage.controllers.jobs', {
 		var col = evt.getParameter('column');
 		col.toggleSort();
 	},
-
-	formatEnable: function(fail) {
-		return fail !== 0;
-	}
 
 });

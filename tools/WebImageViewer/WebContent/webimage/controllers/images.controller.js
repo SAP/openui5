@@ -159,13 +159,13 @@ sap.ui.controller('webimage.controllers.images', {
 		var i = 0;
 		var node = this.tree;
 		while (i < indices.length) {
-			if (!node.getNodes()[indices[i]].getExpanded()) {
-				node.getNodes()[indices[i]].expand();
+			node = node && node.getNodes()[indices[i]];
+			if (node && !node.getExpanded()) {
+				node.expand();
 			}
-			node = node.getNodes()[indices[i]];
 			i++;
 		}
-		node.select && node.select();
+		node && node.select && node.select();
 	},
 
 	_showOverlay: function(evt) {

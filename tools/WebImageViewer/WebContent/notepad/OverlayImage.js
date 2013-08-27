@@ -35,7 +35,7 @@ sap.ui.ux3.OverlayContainer.extend("notepad.OverlayImage", {
 
 			this._image.$().css("max-width", olWidth + 'px');
 			this._image.$().css("max-height", olHeight + 'px');
-			if(imageHeight < olHeight) {
+			if(imageHeight && imageHeight < olHeight) {
 				$('#' + this.getId() + '-content').css('margin-top', (olHeight - imageHeight) / 2);
 			}
 		}

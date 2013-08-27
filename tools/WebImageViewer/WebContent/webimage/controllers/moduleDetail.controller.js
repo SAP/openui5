@@ -50,10 +50,5 @@ sap.ui.controller("webimage.controllers.moduleDetail", {
 		sap.ui.getCore().getEventBus().publish('nav', 'to', {
 			name : evt.mParameters.key,
 		});
-	},
-
-	formatEnable : function(fail) {
-		return fail !== 0;
-	},
-
+	}
 });
