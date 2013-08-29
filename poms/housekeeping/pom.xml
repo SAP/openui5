@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.11.1-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.15.1-SNAPSHOT</sap.ui5.version>
 
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
@@ -295,13 +295,11 @@
                   <version>[1.0.0,)</version>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>theme-designer</artifactId>
-                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <groupId>com.sap.ui5.themedesigner</groupId>
+                  <artifactId>themedesigner-webapp</artifactId>
+                  <version>[0.1.0,)</version>
                   <contextPath>theme-designer</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
                 </deployable>
               </deployables>
             </configuration>
@@ -617,15 +615,6 @@
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
                 </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>theme-designer</artifactId>
-                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
-                  <contextPath>theme-designer-${sap.ui5.version}</contextPath>
-                </deployable>
               </deployables>
             </configuration>
           </plugin>
@@ -706,15 +695,6 @@
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                   <contextPath>databinding-${sap.ui5.version}</contextPath>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>theme-designer</artifactId>
-                  <fallbackArtifactId>theme-editor</fallbackArtifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <fallbackClassifier>_</fallbackClassifier> <!-- underscore means no classifier -->
-                  <contextPath>theme-designer-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
