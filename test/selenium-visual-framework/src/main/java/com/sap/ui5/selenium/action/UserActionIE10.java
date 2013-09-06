@@ -1,7 +1,5 @@
 package com.sap.ui5.selenium.action;
 
+public class UserActionIE10 extends UserActionIE9 {
 
-
-public class UserActionIE10 extends UserActionIE9{
-	
 }
