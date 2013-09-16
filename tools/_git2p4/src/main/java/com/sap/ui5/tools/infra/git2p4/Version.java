@@ -128,7 +128,7 @@ public class Version {
       }
       // TODO: adopt this code here to make it more clear!
       if ( !isMilestone() || isSnapshot() ) {
-        newMinor += 2;
+        newMinor += 1;
         newPatch = 0;
       } else {
         newPatch++;
