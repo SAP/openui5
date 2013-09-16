@@ -151,6 +151,34 @@
       <version>0.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+        <groupId>com.sap.ui5.selenium</groupId>
+        <artifactId>core</artifactId>
+        <version>RELEASE</version>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>com.sap.ui5.selenium</groupId>
+        <artifactId>commons</artifactId>
+        <version>RELEASE</version>
+        <scope>test</scope>
+        </dependency>
+
+    <dependency>
+        <groupId>com.sap.ui5.selenium</groupId>
+        <artifactId>table</artifactId>
+        <version>RELEASE</version>
+        <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>com.sap.ui5.selenium</groupId>
+        <artifactId>ux3</artifactId>
+        <version>RELEASE</version>
+        <scope>test</scope>
+    </dependency>
 
   </dependencies>
   
