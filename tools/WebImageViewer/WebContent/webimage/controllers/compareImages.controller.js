@@ -4,9 +4,9 @@ sap.ui.controller('webimage.controllers.compareImages', {
 		this.table = this.byId('imageTable');
 	},
 
-	onBeforeRendering : function() {
+	onBeforeRendering: function() {
 		var ctt = this.ctt = this.getView().data('context');
-		if(ctt) {
+		if (ctt) {
 			this.getView().setBindingContext(ctt);
 			utils.storage.loadFailImages(ctt);
 
@@ -15,13 +15,13 @@ sap.ui.controller('webimage.controllers.compareImages', {
 		}
 	},
 
-	dbHandler : function(evt) {
+	dbHandler: function(evt) {
 		var src = evt.getSource().$().find('img').attr('src');
-		if(src !== "img/no-image.png") {
+		if (src !== "img/no-image.png") {
 			var oOverlayContainer = new notepad.OverlayImage({
-				openButtonVisible : false,
-				closeButtonVisible : true,
-				src : src
+				openButtonVisible: false,
+				closeButtonVisible: true,
+				src: src
 			});
 			oOverlayContainer.open();
 		}
@@ -44,12 +44,16 @@ sap.ui.controller('webimage.controllers.compareImages', {
 
 	},
 
-	updateImage : function(oEvent) {
-		var ctrl = this, indices = this.table.getSelectedIndices(), rows = this.table.getRows(), object = this.getView().data('context').getObject(), names = [];
-		if(indices.length > 0) {
+	updateImage: function(oEvent) {
+		var ctrl = this,
+			indices = this.table.getSelectedIndices(),
+			rows = this.table.getRows(),
+			object = this.getView().data('context').getObject(),
+			names = [];
+		if (indices.length > 0) {
 			sap.ui.commons.MessageBox.show("Update " + indices.length + " image(s) to expect?", sap.ui.commons.MessageBox.Icon.QUESTION, "Update", [sap.ui.commons.MessageBox.Action.YES, sap.ui.commons.MessageBox.Action.NO], function(r) {
-				if(r === "YES") {
-					for(var i = 0; i < indices.length; i++) {
+				if (r === "YES") {
+					for (var i = 0; i < indices.length; i++) {
 						names.push(object.images[indices[i]].verify.name);
 					}
 					utils.storage.updateImages(ctrl.getView().data('context'), names, function() {
@@ -63,12 +67,16 @@ sap.ui.controller('webimage.controllers.compareImages', {
 		}
 	},
 
-	abandonImage : function() {
-		var ctrl = this, indices = this.table.getSelectedIndices(), rows = this.table.getRows(), object = this.getView().data('context').getObject(), names = [];
-		if(indices.length > 0) {
+	abandonImage: function() {
+		var ctrl = this,
+			indices = this.table.getSelectedIndices(),
+			rows = this.table.getRows(),
+			object = this.getView().data('context').getObject(),
+			names = [];
+		if (indices.length > 0) {
 			sap.ui.commons.MessageBox.show("Delete " + indices.length + " image(s)?", sap.ui.commons.MessageBox.Icon.QUESTION, "Abandon", [sap.ui.commons.MessageBox.Action.YES, sap.ui.commons.MessageBox.Action.NO], function(r) {
-				if(r === "YES") {
-					for(var i = 0; i < indices.length; i++) {
+				if (r === "YES") {
+					for (var i = 0; i < indices.length; i++) {
 						names.push(object.images[indices[i]].verify.name);
 					}
 					utils.storage.deleteImages(ctrl.getView().data('context'), names, function() {
@@ -82,39 +90,39 @@ sap.ui.controller('webimage.controllers.compareImages', {
 		}
 	},
 
-	formatterWidth : function(wdith, src) {
-		if(!wdith || !src) {
+	formatterWidth: function(wdith, src) {
+		if (!wdith || !src) {
 			return;
 		}
-		if(wdith > 320) {
+		if (wdith > 320) {
 			wdith = 320;
 		}
 		return wdith + 'px';
 	},
 
-	formatterHeight : function(height, src) {
-		if(!height || !src) {
+	formatterHeight: function(height, src) {
+		if (!height || !src) {
 			return;
 		}
-		if(height > 120) {
+		if (height > 120) {
 			height = 120;
 		}
 		return height + 'px';
 	},
 
-	formatSrc : function(src) {
-		return src ? src : "img/no-image.png";
+	formatSrc: function(src) {
+		return src ? src + "?templeId=" + new Date().getTime() : "img/no-image.png";
 	},
 
-	formatEnable : function(src) {
+	formatEnable: function(src) {
 		return src ? true : false;
 	},
 
-	formatName : function(width, height, imageName) {
+	formatName: function(width, height, imageName) {
 		return imageName ? imageName + "(" + width + "x" + height + ")" : "No Image";
 	},
 
-	colHandle : function(evt) {
+	colHandle: function(evt) {
 		var col = evt.getParameter('column');
 		col.toggleSort();
 	}

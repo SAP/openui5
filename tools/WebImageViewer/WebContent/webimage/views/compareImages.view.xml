@@ -7,7 +7,7 @@ xmlns:table="sap.ui.table" xmlns:np="notepad" controllerName="webimage.controlle
 		<layout:MatrixLayout>
 			<layout:MatrixLayoutRow>
 				<layout:MatrixLayoutCell>
-					<table:Table id="imageTable" columnSelect="colHandle" visibleRowCount="3" selectionMode="Multi" rows="{images}">
+					<table:Table id="imageTable" columnSelect="colHandle" visibleRowCount="{path:'images',formatter:'utils.formatter.RowCount'}" selectionMode="Multi" rows="{images}">
 						<table:columns>
 							<table:Column showSortMenuEntry="false" sortProperty="expect/name" width="320px" hAlign="Center">
 								<TextView text="Excepted Image" design="Bold"/>

@@ -22,7 +22,7 @@
 	};
 	var beforeLoadData = function() {
 		sap.ui.core.BusyIndicator.show(0);
-	}
+	};
 
 	var afterLoadData = function(data, status, jqxhr) {
 		sap.ui.core.BusyIndicator.hide();
@@ -39,7 +39,7 @@
 		},
 
 		setImageStorePath: function(callback) {
-			if (demo) {
+			if (demo || document.location.hash == '#config') {
 				callback();
 			} else {
 				$.ajax({

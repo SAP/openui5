@@ -1,9 +1,7 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons" controllerName="webimage.controllers.moduleDetail"
-xmlns:ux3="sap.ui.ux3" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad"
-xmlns:table="sap.ui.table" xmlns:vtypes="sap.viz.ui5.types" xmlns:html="http://www.w3.org/1999/xhtml">
+<core:View controllerName="webimage.controllers.moduleDetail" xmlns="sap.ui.commons" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad" xmlns:table="sap.ui.table" xmlns:ux3="sap.ui.ux3" xmlns:vtypes="sap.viz.ui5.types">
 	<np:Panel>
 		<np:header>
-			<np:BreadThread id="brd_thd" select="handlePressBack"></np:BreadThread>
+			<np:BreadThread id="brd_thd" select="handlePressBack"/>
 		</np:header>
 		<TabStrip id="tab_strip" tabs="{modules}">
 			<tabs>
@@ -11,18 +9,24 @@ xmlns:table="sap.ui.table" xmlns:vtypes="sap.viz.ui5.types" xmlns:html="http://w
 					<layout:MatrixLayout>
 						<layout:MatrixLayoutRow>
 							<layout:MatrixLayoutCell>
-								<table:Table id="resultTable" visibleRowCount="{count}" rows="{controls}" columnSelect="colHandle" selectionMode="None">
+								<table:Table columnSelect="colHandle" id="resultTable" rows="{controls}" selectionMode="None" visibleRowCount="{count}">
 									<table:columns>
-										<table:Column showSortMenuEntry="false" sortProperty="controlName" hAlign="Center">
+										<table:Column hAlign="Center" showSortMenuEntry="false" sortProperty="controlName">
 											<TextView design="Bold" text="Name"/>
 											<table:template>
 												<TextView text="{controlName}"/>
 											</table:template>
 										</table:Column>
-										<table:Column showSortMenuEntry="false" sortProperty="fail" hAlign="Center">
+										<table:Column hAlign="Center" showSortMenuEntry="pass" sortProperty="pass">
+											<TextView design="Bold" text="Pass"/>
+											<table:template>
+												<TextView text="{pass}" textAlign="Center"/>
+											</table:template>
+										</table:Column>
+										<table:Column hAlign="Center" showSortMenuEntry="false" sortProperty="fail">
 											<TextView design="Bold" text="Fail"/>
 											<table:template>
-												<Link text="{fail}" press="displayCtrlResults" enabled="{path:'fail',formatter:'.formatEnable'}"></Link>
+												<Link enabled="{path:'fail',formatter:'utils.formatter.Enable'}" press="displayCtrlResults" text="{fail}"/>
 											</table:template>
 										</table:Column>
 									</table:columns>

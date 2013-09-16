@@ -25,10 +25,8 @@ sap.ui.controller("webimage.controllers.home", {
 					name: hash
 				});
 			}
-		})
-
+		});
 	},
-
 	navToHandler: function(channeId, eventId, oParams) {
 		this._setContentView(oParams.name, oParams.id, oParams.type, oParams.data);
 		if (this.getView().byId("wi_" + oParams.name)) {

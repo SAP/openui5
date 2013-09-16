@@ -1,32 +1,34 @@
-<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad" xmlns:table="sap.ui.table"
-controllerName="webimage.controllers.jobDetail" xmlns:html="http://www.w3.org/1999/xhtml">
+<core:View controllerName="webimage.controllers.jobDetail" xmlns="sap.ui.commons" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad" xmlns:table="sap.ui.table">
 	<np:Panel>
 		<np:header>
-			<np:BreadThread id="brd_thd" select="handlePressBack"></np:BreadThread>
+			<np:BreadThread id="brd_thd" select="handlePressBack"/>
 		</np:header>
 		<np:content>
 			<TabStrip id="category" tabs="{categorys}">
 				<tabs>
 					<Tab text="{categoryName}">
-						<RowRepeater id="jobDetail_rows" design="Transparent"
-						rows="{modules}" class="jobDetail">
+						<RowRepeater class="jobDetail" design="Transparent" id="jobDetail_rows" rows="{modules}">
 							<layout:MatrixLayout>
 								<layout:MatrixLayoutRow>
 									<layout:MatrixLayoutCell>
-										<table:Table columnSelect="colHandle" selectionMode="None" width="300px"
-										title="{moduleName}" visibleRowCount="{count}" rows="{controls}">
+										<table:Table columnSelect="colHandle" rows="{controls}" selectionMode="None" title="{moduleName}" visibleRowCount="{count}" width="300px">
 											<table:columns>
 												<table:Column showSortMenuEntry="false" sortProperty="controlName" width="200px">
-													<TextView text="Control Name" design="Bold"/>
+													<TextView design="Bold" text="Control Name"/>
 													<table:template>
-														<TextView text="{controlName}" class="job-table_font-size" />
+														<TextView text="{controlName}"/>
 													</table:template>
 												</table:Column>
-												<table:Column  hAlign="Center" showSortMenuEntry="false" sortProperty="fail"  width="40px">
-													<TextView text="Fail" design="Bold"/>
+												<table:Column hAlign="Center" showSortMenuEntry="pass" sortProperty="pass" width="40px">
+													<TextView design="Bold" text="Pass"/>
 													<table:template>
-														<Link text="{fail}" class="job-table_font-size text-align_center"
-														press="displayFailImages" />
+														<TextView textAlign="Center" text="{pass}"/>
+													</table:template>
+												</table:Column>
+												<table:Column hAlign="Center" showSortMenuEntry="false" sortProperty="fail" width="40px">
+													<TextView design="Bold" text="Fail"/>
+													<table:template>
+														<Link enabled="{path:'fail',formatter:'utils.formatter.Enable'}" press="displayFailImages" text="{fail}"/>
 													</table:template>
 												</table:Column>
 											</table:columns>
