@@ -247,7 +247,7 @@
                 <Driver.Remote.Port>4444</Driver.Remote.Port>
                 
                 
-                <!-- sap-ui-theme: sap_goldreflection, sap_hcb-->
+                <!-- sap-ui-theme: sap_goldreflection, sap_hcb, sap_bluecrystal, sap_platinum -->
                 <URL.Parameter.sap-ui-theme>sap_goldreflection</URL.Parameter.sap-ui-theme>
                 <!-- sap-ui-rtl: false, true-->
                 <URL.Parameter.sap-ui-rtl>false</URL.Parameter.sap-ui-rtl>

@@ -6,7 +6,9 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openqa.selenium.Platform;
 
@@ -44,6 +46,22 @@ public enum InitService {
 		browserList.add("IE9_64");
 		browserList.add("IE10_32");
 		browserList.add("IE10_64");
+	}
+
+	// Supported Themes
+	private final Map<String, String> themeMap = new HashMap<String, String>();
+	{
+		themeMap.put("sap_goldreflection", "goldrefection");
+		themeMap.put("sap_hcb", "hcb");
+		themeMap.put("sap_bluecrystal", "bluecrystal");
+		themeMap.put("sap_platinum", "platinum");
+	}
+
+	// Support RTL
+	private final Map<String, String> RTLMap = new HashMap<String, String>();
+	{
+		RTLMap.put("true", "Rtl_true");
+		RTLMap.put("false", "Rtl_false");
 	}
 
 	private InitService() {
@@ -128,57 +146,20 @@ public enum InitService {
 		browserDIR = browser;
 
 		// Get SAPUI5 Theme from config
-		String themeGoldrefection = "sap_goldreflection";
-		String themeHcb = "sap_hcb";
-
-		String themeGoldrefectionDIR = "goldrefection";
-		String themeHcbDIR = "hcb";
-
-		List<String> theme = new ArrayList<String>();
-		theme.add(themeGoldrefection);
-		theme.add(themeHcb);
-
-		if (!Utility.isValueInCollection(config.getUrlParameterTheme(), theme)) {
-
+		if (!themeMap.containsKey(config.getUrlParameterTheme())) {
 			System.out.println("SAPUI5 Theme information is not correctly in config property file.");
 			return false;
 		}
-
-		if (config.getUrlParameterTheme().equalsIgnoreCase(themeGoldrefection)) {
-			themeDIR = themeGoldrefectionDIR;
-		}
-
-		if (config.getUrlParameterTheme().equalsIgnoreCase(themeHcb)) {
-			themeDIR = themeHcbDIR;
-		}
+		themeDIR = themeMap.get(config.getUrlParameterTheme());
 
 		// Get SAPUI5 rtl from config
-		String rtlFalse = "false";
-		String rtlTrue = "true";
-
-		String rtlFalseDIR = "Rtl_false";
-		String rtlTrueDIR = "Rtl_true";
-
-		List<String> rtl = new ArrayList<String>();
-		rtl.add(rtlFalse);
-		rtl.add(rtlTrue);
-
-		if (!Utility.isValueInCollection(config.getUrlParameterRtl(), rtl)) {
-
+		if (!RTLMap.containsKey(config.getUrlParameterRtl())) {
 			System.out.println("SAPUI5 RTL information is not correctly in config property file.");
 			return false;
 		}
-
-		if (config.getUrlParameterRtl().equalsIgnoreCase(rtlFalse)) {
-			rtlDIR = rtlFalseDIR;
-		}
-
-		if (config.getUrlParameterRtl().equalsIgnoreCase(rtlTrue)) {
-			rtlDIR = rtlTrueDIR;
-		}
+		rtlDIR = RTLMap.get(config.getUrlParameterRtl());
 
 		return true;
-
 	}
 
 	/** Verify test environment as expected */

@@ -7,8 +7,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class ButtonPO {
+public class ButtonPO extends PageBase {
 
 	@FindBy(id = "enabledCB-CB")
 	private WebElement enabledCB;
