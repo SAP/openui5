@@ -3,7 +3,9 @@ package com.sap.ui5.modules.librarytests.commons.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ImagePO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class ImagePO extends PageBase {
 
 	@FindBy(id = "i8")
 	public WebElement image8;
