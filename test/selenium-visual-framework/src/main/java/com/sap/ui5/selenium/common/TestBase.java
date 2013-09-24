@@ -501,7 +501,7 @@ public class TestBase extends CommonBase {
 
 	/** Print log when take a screen shot */
 	private void logTakeScreenShot(String fullFilePath) {
-		System.out.println("A image is created in: " + fullFilePath);
+		System.out.println("A candidate image is created in: " + fullFilePath);
 	}
 
 	/** Create a file for temp image */
@@ -582,8 +582,8 @@ public class TestBase extends CommonBase {
 				// Move Diff Image to diff folder
 				Utility.moveFile(diffImage, new File(genFullPathForDiffImage(expectedImageName, true)));
 
-				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
-				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));
+				System.out.println("New candidate image is created on: " + needVerifyImagesDIR + expectedImage.getName());
+				System.out.println("Differ image is created on: " + genFullPathForDiffImage(expectedImageName, true));
 			}
 
 			return results;
@@ -666,8 +666,8 @@ public class TestBase extends CommonBase {
 				// Move Diff Image to diff folder
 				Utility.moveFile(diffImage, new File(genFullPathForDiffImage(expectedImageName, true)));
 
-				System.out.println("The new candidate image is saved on: " + needVerifyImagesDIR + expectedImage.getName());
-				System.out.println("Differ Image is created on: " + genFullPathForDiffImage(expectedImageName, true));
+				System.out.println("New candidate image is created on: " + needVerifyImagesDIR + expectedImage.getName());
+				System.out.println("Differ image is created on: " + genFullPathForDiffImage(expectedImageName, true));
 			}
 
 			return results;
