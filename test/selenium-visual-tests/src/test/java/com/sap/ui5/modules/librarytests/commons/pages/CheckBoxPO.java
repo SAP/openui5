@@ -6,8 +6,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class CheckBoxPO {
+public class CheckBoxPO extends PageBase {
 	@FindBy(id = "chkBox3")
 	public WebElement checkBox3;
 
