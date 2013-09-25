@@ -42,7 +42,7 @@ public class MenuTest extends TestBase {
 
 		// ------------ Mouse over on MenuItems for Menu with first item unselected --------------
 		page.clickElement(driver, userAction, page.MenuMouseBtn, page.menu1, true, this);
-		verifyBrowserViewBox("Mouse-Opened-MouseMenu");
+		verifyFullPageUI("Mouse-Opened-MouseMenu");
 
 		menuItemId = page.menuitem11txtId;
 		waitForReady(page.millisecond);
@@ -186,9 +186,9 @@ public class MenuTest extends TestBase {
 				}
 			} else if (menuItemId.equals("menuitem14-txt")) {
 				userAction.pressOneKey(KeyEvent.VK_UP);
-				verifyElementUI(page.menu1, "KB-KBMenu-UP-" + menuItemId);
+				verifyFullPageUI("KB-KBMenu-UP-" + menuItemId);
 				userAction.pressOneKey(KeyEvent.VK_ENTER);
-				verifyElementUI(page.menu1, "KB-KBMenu-ENTER-" + menuItemId);
+				verifyFullPageUI("KB-KBMenu-ENTER-" + menuItemId);
 			}
 		}
 	}

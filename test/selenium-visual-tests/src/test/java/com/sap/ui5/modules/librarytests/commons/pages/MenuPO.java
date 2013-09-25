@@ -10,8 +10,9 @@ import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.common.CommonBase;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class MenuPO {
+public class MenuPO extends PageBase {
 
 	public String oMenuEnabled = "oMenuEnabled";
 
