@@ -249,7 +249,8 @@ public enum InitService {
 		return true;
 	}
 
-	/** Get Browser type by returning int number, 1 is Firefox, 2 is IE, 3 is Chrome, 0 is error */
+	/** Get browser type by returning int number: 1 is Firefox, 2 is Chrome, 3 is Safari,
+	 *  4 is IE8, 5 is IE9, 6 is IE10, 0 is error */
 	public int getBrowserType() {
 
 		if (config.getBrowserName().equalsIgnoreCase("Firefox")) {
@@ -273,6 +274,29 @@ public enum InitService {
 
 		if (config.getBrowserName().equalsIgnoreCase("Chrome")) {
 			return Constants.CHROME;
+		}
+
+		return 0;
+	}
+
+	/** Get theme type by returning int number, 1 is goldreflection, 2 is hcb, 
+	 *  3 is bluecrystal, 4 is platinum, 0 is error */
+	public int getThemeType() {
+
+		if (config.getUrlParameterTheme().equalsIgnoreCase("sap_goldreflection")) {
+			return Constants.THEME_GOLDREFLECTION;
+		}
+
+		if (config.getUrlParameterTheme().equalsIgnoreCase("sap_hcb")) {
+			return Constants.THEME_HCB;
+		}
+
+		if (config.getUrlParameterTheme().equalsIgnoreCase("sap_bluecrystal")) {
+			return Constants.THEME_BLUECRYSTAL;
+		}
+
+		if (config.getUrlParameterTheme().equalsIgnoreCase("sap_platinum")) {
+			return Constants.THEME_PLATINUM;
 		}
 
 		return 0;

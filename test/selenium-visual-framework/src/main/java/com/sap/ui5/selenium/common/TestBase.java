@@ -166,9 +166,14 @@ public class TestBase extends CommonBase {
 		return imagesBasePath + fileSeparator + fullName.replace(".", fileSeparator);
 	}
 
-	/** Get browser type, it definition is in Constants.Class */
+	/** Get browser type, it is defined in Constants.Class */
 	public int getBrowserType() {
 		return service.getBrowserType();
+	}
+
+	/** Get UI5 theme type, it is defined in Constants.Class */
+	public int getThemeType() {
+		return service.getThemeType();
 	}
 
 	/** Initial WebDriver and return the instance */

@@ -13,6 +13,11 @@ public class Constants {
 	public final static int IE9 = 5;
 	public final static int IE10 = 6;
 
+	public final static int THEME_GOLDREFLECTION = 1;
+	public final static int THEME_HCB = 2;
+	public final static int THEME_BLUECRYSTAL = 3;
+	public final static int THEME_PLATINUM = 4;
+
 	public final static String[] PLATFORM_WIN_XP = { "WindowsXP", "Windows2003" };
 	public final static String[] PLATFORM_WIN_VISTA = { "WindowsVista", "Windows7", "Windows2008" };
 	public final static String[] PLATFORM_WIN8 = { "Windows8", "Windows2012" };
