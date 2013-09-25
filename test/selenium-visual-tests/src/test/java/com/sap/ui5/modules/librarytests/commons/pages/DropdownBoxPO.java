@@ -5,7 +5,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class DropdownBoxPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class DropdownBoxPO extends PageBase {
 
 	@FindBy(id = "oBtnClearHistory")
 	public WebElement oBtnClearHistory;
