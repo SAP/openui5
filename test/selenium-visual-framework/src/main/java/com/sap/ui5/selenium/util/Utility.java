@@ -223,7 +223,7 @@ public class Utility {
 				((Killable) driver).kill();
 			}
 			executeOnWindows("taskkill  /IM  firefox.exe /T /F");
-			System.out.println("Success to kill dead Firefox WebDriver.");
+			System.out.println("Success to clean Firefox WebDriver.");
 			return;
 
 		case Constants.IE8:
@@ -232,13 +232,13 @@ public class Utility {
 			executeOnWindows("taskkill  /IM  iexplore.exe /T /F");
 			executeOnWindows("taskkill  /IM  IEDriverServer.exe /T /F");
 			executeOnWindows("taskkill  /IM  WerFault.exe /T /F");
-			System.out.println("Success to kill dead IE WebDriver.");
+			System.out.println("Success to clean IE WebDriver.");
 			return;
 
 		case Constants.CHROME:
 			executeOnWindows("taskkill  /IM  chrome.exe /T /F");
 			executeOnWindows("taskkill  /IM  chromedriver.exe /T /F");
-			System.out.println("Success to kill dead Chrome WebDriver.");
+			System.out.println("Success to clean Chrome WebDriver.");
 			return;
 		}
 
