@@ -5,7 +5,9 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ValueHelpFieldPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class ValueHelpFieldPO extends PageBase {
 
 	@FindBy(xpath = "//div[starts-with(@data-sap-ui, 'vhf')]")
 	public List<WebElement> vhFields;
