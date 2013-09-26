@@ -88,6 +88,10 @@ public enum InitService {
 			System.exit(1);
 		}
 
+		System.out.println("############    Test Environment Clean    ############");
+		cleanDriverEnv();
+		System.out.println();
+
 		// Print Test Runtime Initialization Info
 		System.out.println("############    Test Runtime Initialization    ############");
 		System.out.println("##Machine=" + System.getenv("COMPUTERNAME"));
@@ -102,6 +106,10 @@ public enum InitService {
 		System.out.println();
 		System.out.println("############    Test Starting    ############");
 		System.out.println("#############################################");
+	}
+
+	private void cleanDriverEnv() {
+		Utility.killWebDriver(null, getBrowserType());
 	}
 
 	/** Get base URL for all tests */
