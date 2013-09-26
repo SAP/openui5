@@ -6,8 +6,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class TreePO {
+public class TreePO extends PageBase {
 
 	@FindBy(id = "tree1-node1")
 	public WebElement tree1Node1;
