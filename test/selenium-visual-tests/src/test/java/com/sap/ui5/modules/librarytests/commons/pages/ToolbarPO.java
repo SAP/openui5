@@ -13,8 +13,9 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.sap.ui5.selenium.common.Config;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class ToolbarPO {
+public class ToolbarPO extends PageBase {
 
 	@FindBy(id = "btnDlg")
 	public WebElement btnDlg;
