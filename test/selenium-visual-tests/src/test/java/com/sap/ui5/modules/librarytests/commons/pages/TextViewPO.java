@@ -1,6 +1,8 @@
 package com.sap.ui5.modules.librarytests.commons.pages;
 
-public class TextViewPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class TextViewPO extends PageBase {
 
 	public String textFieldId = "textField";
 
