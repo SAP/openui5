@@ -10,8 +10,9 @@ import org.openqa.selenium.WebElement;
 
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.common.CommonBase;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class DialogPO {
+public class DialogPO extends PageBase {
 
 	public String button1Id = "btn1";
 
