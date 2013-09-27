@@ -5,7 +5,9 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LinkPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class LinkPO extends PageBase {
 
 	@FindBy(className = "sapUiLnk")
 	public List<WebElement> enabledLinks;
