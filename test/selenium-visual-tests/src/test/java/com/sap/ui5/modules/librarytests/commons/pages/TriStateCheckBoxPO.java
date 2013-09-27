@@ -3,8 +3,9 @@ package com.sap.ui5.modules.librarytests.commons.pages;
 import org.openqa.selenium.WebDriver;
 
 import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class TriStateCheckBoxPO {
+public class TriStateCheckBoxPO extends PageBase {
 
 	public String checkBoxPcb1Id = "pcb1";
 
