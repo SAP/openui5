@@ -5,7 +5,9 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class RichTooltipPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class RichTooltipPO extends PageBase {
 
 	@FindBy(css = "*[id$=Rtt]")
 	public List<WebElement> elementsWithTooltip;
