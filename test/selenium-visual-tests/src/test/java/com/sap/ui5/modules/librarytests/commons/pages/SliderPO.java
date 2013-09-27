@@ -5,7 +5,9 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class SliderPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class SliderPO extends PageBase {
 	@FindBy(className = "sapUiSli")
 	public List<WebElement> sliders;
 
