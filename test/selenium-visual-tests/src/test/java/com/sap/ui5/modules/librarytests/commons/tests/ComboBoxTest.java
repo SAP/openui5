@@ -3,6 +3,7 @@ package com.sap.ui5.modules.librarytests.commons.tests;
 import java.awt.event.KeyEvent;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
@@ -12,6 +13,7 @@ import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.librarytests.commons.pages.ComboBoxPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class ComboBoxTest extends TestBase {
 
@@ -22,6 +24,9 @@ public class ComboBoxTest extends TestBase {
 	private final int waitMilliseconds = 1000;
 
 	private final long timeOutSeconds = 10;
+
+	@Rule
+	public UI5Timeout ui5Timeout = new UI5Timeout(15 * 60 * 1000); // 15 minutes
 
 	@Before
 	public void setUp() {

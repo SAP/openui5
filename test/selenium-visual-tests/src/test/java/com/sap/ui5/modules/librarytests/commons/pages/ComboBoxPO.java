@@ -7,7 +7,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ComboBoxPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class ComboBoxPO extends PageBase {
 
 	@FindBy(id = "myCombo")
 	public WebElement myCombo;
