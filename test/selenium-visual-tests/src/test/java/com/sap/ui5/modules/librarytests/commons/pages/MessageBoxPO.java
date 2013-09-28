@@ -16,9 +16,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.common.InitService;
+import com.sap.ui5.selenium.common.PageBase;
 import com.sap.ui5.selenium.util.Constants;
 
-public class MessageBoxPO {
+public class MessageBoxPO extends PageBase {
 
 	@FindBy(id = "msgBoxAlert1")
 	public WebElement alert1Btn;
