@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -13,8 +14,13 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.ButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
+import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class ButtonTest extends TestBase {
+
+	@Rule
+	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes
+
 	ButtonPO page;
 
 	private final String targetUrl = "/test-resources/sap/ui/commons/visual/Button.html";

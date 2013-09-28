@@ -25,7 +25,7 @@ public abstract class CommonBase {
 	public static WebDriver driver;
 	protected long implicitlyWaitTime = 30;
 	protected long scriptTimeout = 30;
-	protected int ui5TimeoutInSecond = 60 * 15; // 10 minutes
+	protected int ui5TimeoutInSecond = 60 * 15; // 15 minutes
 
 	protected String fileSeparator = System.getProperty("file.separator");
 
