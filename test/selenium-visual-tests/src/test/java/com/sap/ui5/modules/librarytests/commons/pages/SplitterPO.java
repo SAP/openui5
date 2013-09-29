@@ -4,7 +4,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
-public class SplitterPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class SplitterPO extends PageBase {
 
 	@FindBy(id = "splitter1")
 	public WebElement splitter1;
