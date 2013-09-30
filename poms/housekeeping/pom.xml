@@ -830,7 +830,7 @@
                   <artifactId>sapui5-sdk-dist</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
-                  <contextPath>demokit-${sap.ui5.version}</contextPath>
+                  <contextPath>sapui5-sdk-dist-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
