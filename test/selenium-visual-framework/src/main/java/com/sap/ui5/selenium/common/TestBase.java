@@ -98,8 +98,7 @@ public class TestBase extends CommonBase {
 	}
 
 	@AfterClass
-	public static void aterClassBase() {
-		// Utility.killWebDriver(driver, InitService.INSTANCE.getBrowserType());
+	public static void afterClassBase() {
 	}
 
 	@Before
@@ -250,7 +249,7 @@ public class TestBase extends CommonBase {
 		return true;
 	}
 
-	/** Initialize Fiefox Driver */
+	/** Initialize Firefox Driver */
 	private boolean initializeFirefoxDriver() {
 
 		DesiredCapabilities capability = DesiredCapabilities.firefox();
