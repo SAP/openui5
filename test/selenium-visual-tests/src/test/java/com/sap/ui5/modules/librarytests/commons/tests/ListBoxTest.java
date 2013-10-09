@@ -10,6 +10,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.ListBoxPO;
 import com.sap.ui5.selenium.common.TestBase;
+import com.sap.ui5.selenium.util.Constants;
 
 public class ListBoxTest extends TestBase {
 
@@ -76,11 +77,21 @@ public class ListBoxTest extends TestBase {
 
 		page.pressOneKey(userAction, KeyEvent.VK_UP, 1);
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-SPACE");
+		// Increase stability on Chrome
+		if (getBrowserType() == Constants.CHROME) {
+			verifyBrowserViewBox(listBox8Id + "-KB-SPACE");
+		} else {
+			verifyElementUI(listBox8Id, listBox8Id + "-KB-SPACE");
+		}
 		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-SPACE");
 
 		page.pressOneKey(userAction, KeyEvent.VK_LEFT, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-LEFT");
+		// Increase stability on Chrome
+		if (getBrowserType() == Constants.CHROME) {
+			verifyBrowserViewBox(listBox8Id + "-KB-LEFT");
+		} else {
+			verifyElementUI(listBox8Id, listBox8Id + "-KB-LEFT");
+		}
 
 		page.pressOneKey(userAction, KeyEvent.VK_HOME, 1);
 		verifyElementUI(listBox8Id, listBox8Id + "-KB-HOME");
