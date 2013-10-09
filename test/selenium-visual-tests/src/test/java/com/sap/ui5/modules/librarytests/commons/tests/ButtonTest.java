@@ -19,7 +19,7 @@ import com.sap.ui5.selenium.util.UI5Timeout;
 public class ButtonTest extends TestBase {
 
 	@Rule
-	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes
+	public UI5Timeout ui5Timeout = new UI5Timeout(25 * 60 * 1000); // 25 minutes
 
 	ButtonPO page;
 
