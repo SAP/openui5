@@ -1,8 +1,9 @@
 package com.sap.ui5.modules.librarytests.commons.pages;
 
 import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class MenuButtonPO {
+public class MenuButtonPO extends PageBase {
 	public String menuButton1Id = "menuButton1";
 
 	public String menuButton2Id = "menuButton2";
