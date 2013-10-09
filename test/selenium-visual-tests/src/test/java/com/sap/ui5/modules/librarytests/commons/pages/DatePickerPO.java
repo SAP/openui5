@@ -17,9 +17,10 @@ import com.sap.ui5.selenium.action.UserActionIE8;
 import com.sap.ui5.selenium.common.CommonBase;
 import com.sap.ui5.selenium.common.Config;
 import com.sap.ui5.selenium.common.InitService;
+import com.sap.ui5.selenium.common.PageBase;
 import com.sap.ui5.selenium.util.Constants;
 
-public class DatePickerPO {
+public class DatePickerPO extends PageBase {
 
 	@FindBy(css = "div[data-sap-ui^=DatePicker]")
 	public List<WebElement> datePickers;
