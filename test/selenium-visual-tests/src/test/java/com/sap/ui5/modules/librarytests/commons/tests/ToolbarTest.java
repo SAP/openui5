@@ -40,6 +40,7 @@ public class ToolbarTest extends TestBase {
 		// --------- Test toolTip on toolBar #tb4 ----------------
 		Actions actions = new Actions(driver);
 		actions.moveToElement(page.tb4Btn1).perform();
+
 		String btnId = page.tb4Btn1.getAttribute("id");
 		showToolTip(btnId, waitTimeMillsecond);
 		verifyBrowserViewBox(btnId + "-tooltip");
@@ -145,7 +146,11 @@ public class ToolbarTest extends TestBase {
 
 		if (isInDialog) {
 			// Open toolBar overflow
+			// Press Down fourth on sap_platinum theme only.
 			actions.sendKeys(Keys.DOWN, Keys.DOWN, Keys.DOWN).perform();
+			if (getThemeType() == Constants.THEME_PLATINUM) {
+				actions.sendKeys(Keys.DOWN).perform();
+			}
 			page.isDisplayedOverflow(driver, toolBarId, true, timeOutSeconds);
 			verifyBrowserViewBox(toolBarId + "-KB-dialogWithToolbarOverflow");
 			actions.sendKeys(Keys.DOWN).perform();
