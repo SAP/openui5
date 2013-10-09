@@ -44,7 +44,7 @@ public class RoadMapTest extends TestBase {
 		verifyBrowserViewBox(page.roadMap1Id + "-tooltip");
 
 		// Test toolTip of first six steps of roadMap1
-		page.expandRoadMap(driver, page.roadMap1Id);
+		userAction.mouseClick(driver, page.roadMap1Id +  "_s4");
 		userAction.mouseClickStartPoint(driver);
 		List<WebElement> boxElements = page.getSubStepBoxElements(driver, page.roadMap1Id);
 		for (WebElement boxElement : boxElements) {

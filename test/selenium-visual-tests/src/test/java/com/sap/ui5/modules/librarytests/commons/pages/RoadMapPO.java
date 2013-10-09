@@ -90,10 +90,6 @@ public class RoadMapPO {
 		return boxElement.findElement(By.xpath("./.."));
 	}
 
-	public void expandRoadMap(WebDriver driver, String roadMapId) {
-		driver.findElement(By.id(roadMapId + "_s4")).click();
-	}
-
 	public WebElement getLastSubElement(WebDriver driver, String roadMapId) {
 		List<WebElement> subElements = driver.findElement(By.id(roadMapId)).findElements(By.xpath("./ul/li"));
 		int lastIndex = subElements.size() - 1;
