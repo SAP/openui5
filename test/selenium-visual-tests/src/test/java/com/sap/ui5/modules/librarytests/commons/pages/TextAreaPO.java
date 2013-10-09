@@ -3,7 +3,9 @@ package com.sap.ui5.modules.librarytests.commons.pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class TextAreaPO {
+import com.sap.ui5.selenium.common.PageBase;
+
+public class TextAreaPO extends PageBase {
 	@FindBy(id = "txtArea5")
 	public WebElement textArea5;
 

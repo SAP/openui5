@@ -1,6 +1,7 @@
 package com.sap.ui5.modules.librarytests.commons.tests;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
@@ -11,12 +12,16 @@ import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.librarytests.commons.pages.TextAreaPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class TextAreaTest extends TestBase {
 
 	private TextAreaPO page;
 
 	private String targetUrl = "/test-resources/sap/ui/commons/visual/TextArea.html";
+
+	@Rule
+	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes
 
 	@Before
 	public void setUp() {
