@@ -10,6 +10,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.SplitterPO;
 import com.sap.ui5.selenium.common.TestBase;
+import com.sap.ui5.selenium.util.Constants;
 
 public class SplitterTest extends TestBase {
 
@@ -58,9 +59,14 @@ public class SplitterTest extends TestBase {
 	public void testSplitterTooltip() {
 		// Check Mouse Tooltip on splitterBar
 		String splitterId = page.splitter1.getAttribute("id");
+		String splitterBarId = page.splitter1Bar.getAttribute("id");
 
 		// take screenshot of Splitter control, when mouse is hovered over the SplitterBar
-		showToolTip(page.splitter1Bar.getAttribute("id"), waitTimeMillsecond);
+		showToolTip(splitterBarId, waitTimeMillsecond);
+		if (getBrowserType() == Constants.IE9) {
+			userAction.mouseMoveToStartPoint(driver);
+			userAction.mouseOver(driver, splitterBarId, waitTimeMillsecond);
+		}
 		verifyBrowserViewBox(splitterId + "-Tooltip");
 	}
 
