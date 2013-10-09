@@ -110,7 +110,7 @@ public class MessageBoxTest extends TestBase {
 	@Test
 	public void testDragAndDrop() {
 		String alert1BtnId = page.alert1Btn.getAttribute("id");
-		page.alert1Btn.click();
+		userAction.mouseClick(driver, alert1BtnId);
 		page.waitForMessageBox(driver, true, MessageBoxType.ALERT, timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
 		verifyFullPageUI(alert1BtnId + "-beforeMove");
