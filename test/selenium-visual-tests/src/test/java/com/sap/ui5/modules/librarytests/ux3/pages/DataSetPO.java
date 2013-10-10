@@ -1,20 +1,29 @@
 package com.sap.ui5.modules.librarytests.ux3.pages;
 
+import java.awt.event.KeyEvent;
+
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.browserlaunchers.Sleeper;
 import org.openqa.selenium.support.FindBy;
 
-public class DataSetPO {
+import com.sap.ui5.selenium.action.IUserAction;
+import com.sap.ui5.selenium.common.PageBase;
+import com.sap.ui5.selenium.commons.CheckBox;
+
+public class DataSetPO extends PageBase {
 
 	@FindBy(id = "cbToolbar")
-	public WebElement showToolbarCh;
+	public CheckBox showToolbar;
 
 	@FindBy(id = "cbFilter")
-	public WebElement showFilterCh;
+	public CheckBox showFilter;
 
 	@FindBy(id = "cbSearchField")
-	public WebElement showSearchFieldCh;
+	public CheckBox showSearchField;
+
+	@FindBy(id = "cbMultiSelect")
+	public CheckBox showMultipleSelect;
 
 	@FindBy(id = "dsId-view-__view0")
 	public WebElement thumbViewBtn;
@@ -52,13 +61,13 @@ public class DataSetPO {
 	@FindBy(id = "dsId-searchValue-tf-input")
 	public WebElement searchInput;
 
-	public String defaultViewId = "__view0";
-
 	public String listViewId = "__view1";
 
 	public String cardViewId = "__view2";
 
 	public String dataSetId = "content";
+
+	public String filterItemId = "dsId-filter";
 
 	public String dataSetItemsId = "dsId-items";
 
@@ -76,12 +85,12 @@ public class DataSetPO {
 		}
 	}
 
-	public void sendkeysToSearch(String searchStr) {
+	public void sendKeysToSearch(String searchStr, IUserAction userAction) {
 
 		searchInput.click();
-		searchInput.sendKeys(Keys.CONTROL, "a");
+		searchInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		searchInput.sendKeys(searchStr);
-		searchInput.sendKeys(Keys.RETURN);
+		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		searchInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 	}
 }
