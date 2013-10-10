@@ -2,6 +2,7 @@
 (function() {
 	// jQuery.sap.log.setLevel('info');
 	sap.ui.localResources("webimage");
+	sap.ui.localResources("utils");
 	sap.ui.localResources("notepad");
 
 	jQuery.sap.require('utils.formatter');
@@ -33,7 +34,6 @@
 		return this.oModel.getContext(path);
 	};
 
-
 	sap.ui.model.Context.prototype.getUpperObject = function(iLayer) {
 		return this.getUpperContext(iLayer).getObject();
 	};
@@ -47,31 +47,11 @@
 		}
 	};
 
-	/*************** END of Hijacking*************/
-	/********Hijacking for viz.Column, add getSelectedIndices Method************/
-	jQuery.sap.require('sap.viz.ui5.Column');
-	sap.viz.ui5.Column.prototype.getSelectedIndices = function() {
-		var indices = [];
-		var cols = this.$().find('g.v-datashapesgroup>*'),
-			isSelect;
-		$.each(cols, function(i, col) {
-			$(col).find('rect').each(function(i) {
-				isSelect = ($(this).attr('fill-opacity') === "1" && $(this).attr('height') > 0);
-				return !isSelect;
-			});
-
-			if (isSelect) {
-				indices.push(i);
-			}
-		});
-
-		return indices;
-	};
-
 	/*************************end Hijacking**************************/
 	/***************BusyIndicator Hijacking for Gold Reflection *************/
 	sap.ui.core.BusyIndicator.attachOpen(function(oEvent) {
 		var theme = sap.ui.getCore().getConfiguration().getTheme();
+
 		if (theme == "sap_goldreflection" || theme == "sap_bluecrystal") {
 			// this line is a hack, the rest of this coding is what a BusyIndicator hijacker could do
 			$Busy = oEvent.getParameter("$Busy");
