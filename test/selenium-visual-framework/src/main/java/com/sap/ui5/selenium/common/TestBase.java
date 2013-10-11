@@ -713,8 +713,8 @@ public class TestBase extends CommonBase {
 	/** Compare images and set parameter: pixelThreshold and colorDistance  */
 	private boolean compareImages(File expectedImage, File actualImage, File diffImage, StringBuilder resultMessage) throws Exception {
 
-		int pixelThreshold = 0;
-		int colorDistance = 0;
+		int pixelThreshold = 100;
+		int colorDistance = 5;
 
 		return Utility.imageComparer(expectedImage, actualImage, diffImage, colorDistance, pixelThreshold, resultMessage);
 
