@@ -224,7 +224,7 @@
                      IE: IE8 32/64bits, IE9 32/64bits, IE10 32/64bits
                 -->
                 <Driver.Browser.Name>Firefox</Driver.Browser.Name>
-                <Driver.Browser.Version>21</Driver.Browser.Version>
+                <Driver.Browser.Version>9</Driver.Browser.Version>
                 <!-- Browser Bits: 32, 64
                      It is only for IE, so it is ignored by other browsers like chrome, firefox 
                 -->
