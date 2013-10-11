@@ -207,7 +207,7 @@
 				obj = context.getObject();
 				sParam = obj.platform + "/" + obj.browser + "/" + obj.theme + "/" + obj.rtl + "/" + context.getUpperObject(6).categoryName + "/" + context.getUpperObject(4).moduleName + "/" + context.getUpperObject(2).controlName;
 			}
-			console.log(sParam);
+			// console.log(sParam);
 			jQuery.sap.log.info("#####resolve path>>>>>>>>>>>>>>>>>> /" + sParam);
 			return sParam;
 		},
@@ -364,7 +364,7 @@
 				var rst = JSON.parse(jqxhr.responseText);
 				sap.ui.commons.MessageBox.show("Sorry, Load Data failed! \n" + rst.message, sap.ui.commons.MessageBox.Icon.ERROR, "Error", [sap.ui.commons.MessageBox.Action.OK]);
 			} catch (e) {
-				console.log(jqxhr.responseText);
+				//console.log(jqxhr.responseText);
 			}
 			// window.location.href = "error.html?code=" + jqxhr.status + "&msg=" + jqxhr.responseText;
 		}

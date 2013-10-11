@@ -121,7 +121,7 @@ sap.ui.controller('webimage.controllers.images', {
 					sap.ui.commons.MessageBox.show("Upload Failed", sap.ui.commons.MessageBox.Icon.ERROR, "Failed", [sap.ui.commons.MessageBox.Action.OK]);
 				}
 			} catch (e) {
-				console.log("Upload failed " + sResponse);
+				// console.log("Upload failed " + sResponse);
 				sap.ui.commons.MessageBox.show("Upload failed " + sResponse, sap.ui.commons.MessageBox.Icon.ERROR, "Failed", [sap.ui.commons.MessageBox.Action.OK]);
 				this.byId('fileUpload').setValue(null);
 				this.byId('fileUpload').$().find('input').val('');
