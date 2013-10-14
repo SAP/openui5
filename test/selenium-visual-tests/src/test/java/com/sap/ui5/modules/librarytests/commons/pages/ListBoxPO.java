@@ -9,8 +9,9 @@ import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.common.CommonBase;
+import com.sap.ui5.selenium.common.PageBase;
 
-public class ListBoxPO {
+public class ListBoxPO extends PageBase {
 
 	@FindBy(className = "sapUiLbx")
 	public List<WebElement> listBoxes;
