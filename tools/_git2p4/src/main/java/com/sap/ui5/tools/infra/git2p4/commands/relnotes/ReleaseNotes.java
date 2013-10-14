@@ -68,7 +68,7 @@ public class ReleaseNotes {
     relNotes.add("");
     // _filterLog("Fixes", fixes, untouched);
     _filterLog(relNotes, "Core", fixes, untouched, "src/framework");
-    _filterLog(relNotes, "Desktop", fixes, untouched, "src/libraries/_sap.ui.commons", "src/libraries/_sap.ui.table/", "src/libraries/_sap.ui.ux3/");
+    _filterLog(relNotes, "Desktop", fixes, untouched, "src/libraries/_sap.ui.layout", "src/libraries/_sap.ui.commons", "src/libraries/_sap.ui.table/", "src/libraries/_sap.ui.ux3/");
     _filterLog(relNotes, "Mobile", fixes, untouched, "src/libraries/_sap.m/", "src/libraries/_sap.me/", "src/libraries/_sap.makit/");
     _filterLog(relNotes, "Charts", fixes, untouched, "src/libraries/_sap.viz/", "src/libraries/_sap.viz.gen/");
     _filterLog(relNotes, "Inbox", fixes, untouched, "src/libraries/_sap.uiext.inbox/");
@@ -90,7 +90,7 @@ public class ReleaseNotes {
     _filterLog(relNotes, caption, commits, untouched, filter);
   }
 
-  private static void _filterLog(List<String> relNotes, String caption, List<GitClient.Commit> commits, Set<String> untouched, Set<String> filter) throws IOException {
+  private void _filterLog(List<String> relNotes, String caption, List<GitClient.Commit> commits, Set<String> untouched, Set<String> filter) throws IOException {
     Pattern csnPrefix = Pattern.compile("(?:CSN|CSS|OSS)[:\\s]+([- 0-9]+[0-9])(?:[-:\\s(]+|$)");
     Pattern wikiTag = Pattern.compile("\\b[A-Z][a-z0-9_]+([A-Z][a-z0-9_]+)+\\b");
     
@@ -133,27 +133,30 @@ public class ReleaseNotes {
         summary += "), class=sapinternal)]]";
       }
       relNotes.add(" * " + summary);
-      List<String> body = msg.getBody();
-      if ( body != null ) {
-        relNotes.add("");
-        for(int i=0; i<body.size(); i++) {
-          String line = body.get(i);
-          if ( INTERNAL.matcher(line).find() ) {
-            break;
-          }
-          Matcher m = BULLET.matcher(line);
-          if ( m.find() ) {
-            int indent = m.group(0).length(); 
-            line = " * " + line.substring(indent); // add indent
-            while ( i+1<body.size() && getIndent(body.get(i+1)) >= indent ) {
-              i++;
-              line = line + " " + body.get(i).replaceFirst("^\\s*", "");
+      
+      if ( context.includeCommitDetails ) {
+        List<String> body = msg.getBody();
+        if ( body != null ) {
+          relNotes.add("");
+          for(int i=0; i<body.size(); i++) {
+            String line = body.get(i);
+            if ( INTERNAL.matcher(line).find() ) {
+              break;
             }
+            Matcher m = BULLET.matcher(line);
+            if ( m.find() ) {
+              int indent = m.group(0).length(); 
+              line = " * " + line.substring(indent); // add indent
+              while ( i+1<body.size() && getIndent(body.get(i+1)) >= indent ) {
+                i++;
+                line = line + " " + body.get(i).replaceFirst("^\\s*", "");
+              }
+            }
+            //line = BULLET.matcher(line).replaceAll(" * ");
+            line = csnPrefix.matcher(line).replaceAll("[[span((CSN $1) -, class=sapinternal)]] ");
+            line = wikiTag.matcher(line).replaceAll("!$0");
+            relNotes.add("   " + line);
           }
-          //line = BULLET.matcher(line).replaceAll(" * ");
-          line = csnPrefix.matcher(line).replaceAll("[[span((CSN $1) -, class=sapinternal)]] ");
-          line = wikiTag.matcher(line).replaceAll("!$0");
-          relNotes.add("   " + line);
         }
       }
     }

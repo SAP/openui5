@@ -50,6 +50,7 @@ public class Git2P4Main {
     public final GitClient git = Git2P4Main.git;
     public final SortedSet<GitClient.Commit> allCommits = Git2P4Main.allCommits;
     public boolean fixOrFeatureOnly = false;
+    public boolean includeCommitDetails = false;
     public String range = null;
     public String branch = null;
     public boolean preview = false;
@@ -583,7 +584,8 @@ public class Git2P4Main {
         context.preview = true;
       } else if ( "--fix-or-feature-only".equals(args[i]) ) {
         context.fixOrFeatureOnly = true;
-        context.preview = true;
+      } else if ( "--include-commit-details".equals(args[i]) ) {
+        context.includeCommitDetails = true;
       } else if ( "--split-logs".equals(args[i]) ) {
         command = "splitLogs";
       } else if ( "release-notes".equals(args[i]) ) {
