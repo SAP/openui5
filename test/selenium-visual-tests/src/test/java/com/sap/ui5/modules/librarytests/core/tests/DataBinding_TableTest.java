@@ -8,6 +8,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.core.pages.DataBinding_TablePO;
 import com.sap.ui5.selenium.common.TestBase;
+import com.sap.ui5.selenium.util.Constants;
 import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class DataBinding_TableTest extends TestBase {
@@ -59,6 +60,10 @@ public class DataBinding_TableTest extends TestBase {
 		userAction.mouseClick(driver, page.revenueMenuAsc.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.revenueSortIconID, timeOutSeconds);
+
+		if (isAboveIE8()) {
+			userAction.mouseMove(driver, page.revenueCol.getAttribute("id"));
+		}
 		verifyBrowserViewBox("Sort-Ascending-Revenue");
 
 		// Sort descending by Revenue
@@ -67,6 +72,10 @@ public class DataBinding_TableTest extends TestBase {
 		userAction.mouseClick(driver, page.revenueMenuDesc.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.revenueSortIconID, timeOutSeconds);
+
+		if (isAboveIE8()) {
+			userAction.mouseMove(driver, page.revenueCol.getAttribute("id"));
+		}
 		verifyBrowserViewBox("Sort-Descending-Revenue");
 
 		// Sort ascending by Employees
@@ -75,6 +84,10 @@ public class DataBinding_TableTest extends TestBase {
 		userAction.mouseClick(driver, page.employeesMenuAsc.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.employeeSortIconID, timeOutSeconds);
+
+		if (isAboveIE8()) {
+			userAction.mouseMove(driver, page.employeesCol.getAttribute("id"));
+		}
 		verifyBrowserViewBox("Sort-Ascending-Employees");
 
 		// Sort descending by Employees
@@ -83,6 +96,10 @@ public class DataBinding_TableTest extends TestBase {
 		userAction.mouseClick(driver, page.employeesMenuDesc.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.employeeSortIconID, timeOutSeconds);
+
+		if (isAboveIE8()) {
+			userAction.mouseMove(driver, page.employeesCol.getAttribute("id"));
+		}
 		verifyBrowserViewBox("Sort-Descending-Employees");
 	}
 
@@ -148,5 +165,12 @@ public class DataBinding_TableTest extends TestBase {
 		page.companyMenuFilterInput.sendKeys(str);
 		page.companyMenuFilterInput.sendKeys(Keys.RETURN);
 		this.waitForElement(driver, true, page.companyFilterIconID, timeOutSeconds);
+	}
+
+	private boolean isAboveIE8() {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+			return true;
+		}
+		return false;
 	}
 }
