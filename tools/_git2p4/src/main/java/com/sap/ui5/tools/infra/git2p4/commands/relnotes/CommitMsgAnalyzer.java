@@ -14,9 +14,10 @@ import com.sap.ui5.tools.infra.git2p4.GitClient.Commit;
 class CommitMsgAnalyzer {
   
   private static final Pattern FOOTER = Pattern.compile("^([a-zA-Z][a-zA-Z0-9_-]*)\\s*:\\s*(.*)$");
-  private static Pattern CSN_PREFIX = Pattern.compile("(?:CSN|CSS|OSS)[:\\s]+([- 0-9]+[0-9])(?:[-:\\s(]+|$)");
-  private static Pattern CSS_ID_MONOLITHIC = Pattern.compile("([0-9]{10})([0-9]{10})([0-9]{4})");
-  private static Pattern CSS_ID_SEPARATED = Pattern.compile("(?:([0-9]{1,10})\\s+)?([0-9]{1,10})(?:\\s+([0-9]{4}))?");
+  private static final Pattern CSN_PREFIX = Pattern.compile("(?:CSN|CSS|OSS)[:\\s]+([- 0-9]+[0-9])(?:[-:\\s(]+|$)");
+  private static final Pattern CSS_ID_MONOLITHIC = Pattern.compile("([0-9]{10})([0-9]{10})([0-9]{4})");
+  private static final Pattern CSS_ID_SEPARATED = Pattern.compile("(?:([0-9]{1,10})\\s+)?([0-9]{1,10})(?:\\s+([0-9]{4}))?");
+  private static final Pattern INTERNAL = Pattern.compile("\\[\\s*INTERNAL\\s*\\]", Pattern.CASE_INSENSITIVE);
 
   public static class CSS {
     
@@ -65,6 +66,7 @@ class CommitMsgAnalyzer {
 
   private String summary;
   private List<String> body;
+  private List<String> publicBody;
   private Map<String,Set<String>> footers = new HashMap<String,Set<String>>();
   private List<CSS> csses = new ArrayList<CSS>();
   
@@ -115,6 +117,32 @@ class CommitMsgAnalyzer {
     return body;
   }
 
+  public boolean hasPublicBody() {
+    getPublicBody();
+    return publicBody != null && !publicBody.isEmpty();
+  }
+  
+  public List<String> getPublicBody() {
+
+    if ( publicBody != null ) {
+      return publicBody;
+    }
+
+    if ( body == null ) {
+      return null;
+    }
+
+    int l=0;
+    while ( l<body.size() && !INTERNAL.matcher(body.get(l)).find() ) {
+      l++;
+    }
+    
+    publicBody = body.subList(0, l);
+    
+    return publicBody;
+
+  }
+  
   private void addFooter(String rel, String data) {
     if ( rel.equals("CSS") ) {
       CSS css = CSS.valueOf(data);
