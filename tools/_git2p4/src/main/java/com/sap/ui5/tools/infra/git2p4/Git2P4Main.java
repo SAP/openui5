@@ -51,6 +51,7 @@ public class Git2P4Main {
     public final SortedSet<GitClient.Commit> allCommits = Git2P4Main.allCommits;
     public boolean fixOrFeatureOnly = false;
     public boolean includeCommitDetails = false;
+    public boolean htmlOutput = false;
     public String range = null;
     public String branch = null;
     public boolean preview = false;
@@ -586,6 +587,8 @@ public class Git2P4Main {
         context.fixOrFeatureOnly = true;
       } else if ( "--include-commit-details".equals(args[i]) ) {
         context.includeCommitDetails = true;
+      } else if ( "--html-output".equals(args[i]) ) {
+        context.htmlOutput = true;
       } else if ( "--split-logs".equals(args[i]) ) {
         command = "splitLogs";
       } else if ( "release-notes".equals(args[i]) ) {
