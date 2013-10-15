@@ -67,6 +67,9 @@ public class TestBase extends CommonBase {
 	private final String expectedImageSuffix = "." + Constants.IMAGE_TYPE;
 	private final String diffImageSuffix = "-diff." + Constants.IMAGE_TYPE;
 
+	// The message of image compared results
+	private StringBuilder resultsMessage;
+
 	public TestBase() {
 
 		initialize();
@@ -603,7 +606,39 @@ public class TestBase extends CommonBase {
 	public void verifyCustomizedDimension(int locationX, int locationY, int width, int height, String expectedImageName) {
 
 		waitForUI();
-		verifyTrue(verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height), expectedImageName));
+		resultsMessage = new StringBuilder();
+		boolean results = verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height), expectedImageName);
+		resultsMessageWrapper(expectedImageName);
+		verifyTrue(resultsMessage.toString(), results);
+		resultsMessage = null;
+	}
+
+	private void resultsMessageWrapper(String expectedImageName) {
+
+		String newLine = "\n";
+		String expectedImagePath = genFullPathForExpectedImage(expectedImageName, true);
+		String needVerifyImagePah = genFullPathForNeedVerifyImage(expectedImageName, true);
+		String diffImagePath = genFullPathForDiffImage(expectedImageName, true);
+		File expectedImage = new File(expectedImagePath);
+		File needVerifyImage = new File(needVerifyImagePah);
+		File diffImage = new File(diffImagePath);
+
+		if (resultsMessage == null) {
+			resultsMessage = new StringBuilder();
+		}
+
+		resultsMessage.insert(0, "\n####  Comparing: " + expectedImage.getName() + " (" + getClass().getSimpleName() + "." + testName.getMethodName() + ")    ==> FAILED" + newLine);
+		if (needVerifyImage.exists()) {
+			resultsMessage.append("New candidate image is created on: " + needVerifyImagePah + newLine);
+		}
+
+		if (expectedImage.exists()) {
+			resultsMessage.append("Expected image is on: " + expectedImagePath + newLine);
+		}
+
+		if (diffImage.exists()) {
+			resultsMessage.append("Diff image is created on: " + diffImagePath + newLine);
+		}
 	}
 
 	/** API: Assert UI part with customized dimension */
@@ -688,7 +723,11 @@ public class TestBase extends CommonBase {
 	public void verifyFullPageUI(String expectedImageName) {
 
 		waitForUI();
-		verifyTrue(verifyFullPage(expectedImageName));
+		resultsMessage = new StringBuilder();
+		boolean results = verifyFullPage(expectedImageName);
+		resultsMessageWrapper(expectedImageName);
+		verifyTrue(resultsMessage.toString(), results);
+		resultsMessage = null;
 	}
 
 	/** API: Assert full page UI by image comparing */
@@ -723,7 +762,9 @@ public class TestBase extends CommonBase {
 	/** Compare Images files */
 	private boolean compareImages(File expectedImage, File actualImage, File diffImage) {
 
-		StringBuilder resultMessage = new StringBuilder();
+		if (resultsMessage == null) {
+			resultsMessage = new StringBuilder();
+		}
 
 		boolean isMatched;
 		try {
@@ -731,7 +772,7 @@ public class TestBase extends CommonBase {
 			System.out.println();
 			System.out.print("####  " + "Comparing: " + expectedImage.getName() +
 					" (" + getClass().getSimpleName() + "." + testName.getMethodName() + ")");
-			isMatched = compareImages(expectedImage, actualImage, diffImage, resultMessage);
+			isMatched = compareImages(expectedImage, actualImage, diffImage, resultsMessage);
 		} catch (Exception e) {
 
 			System.out.println("    ==> FAILED");
@@ -753,7 +794,7 @@ public class TestBase extends CommonBase {
 
 		} else {
 			System.out.println("    ==> FAILED");
-			System.out.println(resultMessage.toString());
+			System.out.print(resultsMessage.toString());
 		}
 
 		return isMatched;

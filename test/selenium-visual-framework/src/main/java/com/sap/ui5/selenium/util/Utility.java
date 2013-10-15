@@ -74,7 +74,7 @@ public class Utility {
 		resultMessage.append("Image A Height: " + biA.getHeight() + "  Image A Width: " + biA.getWidth() + newLine);
 		resultMessage.append("Image B Height: " + biB.getHeight() + "  Image B Width: " + biB.getWidth() + newLine);
 		resultMessage.append("Image A Color Bit Depth: " + biA.getColorModel().getPixelSize() + newLine);
-		resultMessage.append("Image B Color Bit Depth: " + biB.getColorModel().getPixelSize());
+		resultMessage.append("Image B Color Bit Depth: " + biB.getColorModel().getPixelSize() + newLine);
 
 		// Check images dimension(height, width)
 		if ((heightA * widthA) != (heightB * widthB)) {

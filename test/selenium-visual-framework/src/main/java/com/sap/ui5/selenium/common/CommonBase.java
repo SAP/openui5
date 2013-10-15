@@ -124,21 +124,25 @@ public abstract class CommonBase {
 
 	/** Verify* methods does not abort test execution even if it is failed,
 	 *  only log the error. mark test failure at end of test */
-	public void verifyTrue(boolean actual) {
+	public void verifyTrue(String reason, boolean actual) {
 
-		errorCollector.checkThat(actual, CoreMatchers.equalTo(true));
+		errorCollector.checkThat(reasonWrapper(reason), actual, CoreMatchers.equalTo(true));
 	}
 
-	public void verifyFalse(boolean actual) {
+	public void verifyFalse(String reason, boolean actual) {
 
-		errorCollector.checkThat(actual, CoreMatchers.equalTo(false));
+		errorCollector.checkThat(reasonWrapper(reason), actual, CoreMatchers.equalTo(false));
 	}
 
 	/** Verify* methods does not abort test execution even if it is failed, 
 	 *  only log the error. mark test failure at end of test */
-	public <T> void verifyEquals(T actual, T expected) {
+	public <T> void verifyEquals(String reason, T actual, T expected) {
 
-		errorCollector.checkThat(actual, CoreMatchers.equalTo(expected));
+		errorCollector.checkThat(reasonWrapper(reason), actual, CoreMatchers.equalTo(expected));
+	}
+
+	private String reasonWrapper(String reason) {
+		return reason + "\n" + "--------------------";
 	}
 
 	public void logTestStart() {
