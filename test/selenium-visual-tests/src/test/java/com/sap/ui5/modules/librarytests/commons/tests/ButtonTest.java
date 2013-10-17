@@ -1,15 +1,12 @@
 package com.sap.ui5.modules.librarytests.commons.tests;
 
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.ButtonPO;
@@ -57,34 +54,36 @@ public class ButtonTest extends TestBase {
 		verifyFullPageUI("full-visible");
 	}
 
-	@Test
-	public void testMouseOverEnabledElements() {
-
-		// Test Mouse Over
-		for (WebElement e : page.buttons) {
-
-			String elementId = e.getAttribute("id");
-			userAction.mouseOver(driver, elementId, 800);
-
-			verifyElementUI(elementId, "MouseOver-" + elementId);
-		}
-	}
-
+	/** Verify the mouse click for enable button elements */
 	@Test
 	public void testMouseClickEnabledElements() {
 
-		Actions action = new Actions(driver);
-		action.sendKeys(Keys.TAB, Keys.TAB).perform();
-		// Test click
-		for (WebElement e : page.buttons) {
+		multipleTabs(3);
 
-			action.sendKeys(Keys.TAB).perform();
-			String elementId = e.getAttribute("id");
+		int next = 1;
+		for (int i = 0; i < page.buttons.size(); i = i + next) {
+
+			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseClick(driver, elementId);
 			userAction.mouseMoveToStartPoint(driver);
 
 			verifyElementUI(elementId, "Click-" + elementId);
 			verifyElementUI(page.outputTarget.getAttribute("id"), "Click-outputTarget-" + elementId);
+			multipleTabs(next);
+		}
+	}
+
+	/** Verify the mouse over for enable button elements */
+	@Test
+	public void testMouseOverEnabledElements() {
+
+		int next = 3;
+		for (int i = 0; i < page.buttons.size(); i = i + next) {
+
+			String elementId = page.buttons.get(i).getAttribute("id");
+			userAction.mouseOver(driver, elementId, 800);
+
+			verifyElementUI(elementId, "MouseOver-" + elementId);
 		}
 	}
 
@@ -93,19 +92,18 @@ public class ButtonTest extends TestBase {
 	public void testMouseSelectEnabledElements() {
 		// Avoid unstable dashed frame on Firfox testing.
 		// Use keyboard to focus on the button then click.
-		Actions action = new Actions(driver);
-		action.sendKeys(Keys.TAB, Keys.TAB).perform();
-		// Test Mouse Select
-		for (WebElement e : page.buttons) {
+		multipleTabs(3);
 
-			action.sendKeys(Keys.TAB).perform();
-			String elementId = e.getAttribute("id");
-
+		int next = 3;
+		for (int i = 0; i < page.buttons.size(); i = i + next) {
+			
+			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseClickAndHold(driver, elementId);
 			verifyElementUI(elementId, "MouseSelect-" + elementId);
 			userAction.mouseRelease();
-		}
 
+			multipleTabs(next);
+		}
 	}
 
 	/** Verify the mouse action on disabled elements: mouseover and click */
@@ -163,38 +161,42 @@ public class ButtonTest extends TestBase {
 
 	}
 
-	/** Verify the keyboard action like TAB, Enter, Space */
+	/** Verify the keyboard action like TAB, Enter */
 	@Test
-	public void testKeyboardAction() {
+	public void testKeyboardEnterAction() {
 
-		// Test Enter Key
-		userAction.pressOneKey(KeyEvent.VK_TAB);
-		userAction.pressOneKey(KeyEvent.VK_TAB);
+		multipleTabs(3);
 
-		List<WebElement> buttons = page.buttons;
+		int next = 5;
+		for (int i = 0; i < page.buttons.size(); i = i + next) {
 
-		for (WebElement e : buttons) {
-			userAction.pressOneKey(KeyEvent.VK_TAB);
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
 
-			String elementId = e.getAttribute("id");
+			String elementId = page.buttons.get(i).getAttribute("id");
 			verifyElementUI(elementId, "Enter-" + elementId);
 			verifyElementUI(page.outputTarget.getAttribute("id"), "Enter-outputTarget-" + elementId);
+
+			multipleTabs(next);
 		}
+	}
 
-		// Test Space Key
-		userAction.mouseClickStartPoint(driver);
-		userAction.pressOneKey(KeyEvent.VK_TAB);
-		userAction.pressOneKey(KeyEvent.VK_TAB);
+	/** Verify the keyboard action like TAB, Space */
+	@Test
+	public void testKeyboardSpaceAction() {
 
-		for (WebElement e : buttons) {
-			userAction.pressOneKey(KeyEvent.VK_TAB);
-			userAction.pressOneKey(KeyEvent.VK_ENTER);
+		multipleTabs(3);
 
-			String elementId = e.getAttribute("id");
+		int next = 5;
+		for (int i = 0; i < page.buttons.size(); i = i + next) {
+
+			userAction.pressOneKey(KeyEvent.VK_SPACE);
+
+			String elementId = page.buttons.get(i).getAttribute("id");
 			verifyElementUI(elementId, "Space-" + elementId);
 			verifyElementUI(page.outputTarget.getAttribute("id"), "Space-outputTarget-" + elementId);
-		}
 
+			multipleTabs(next);
+		}
 	}
+
 }

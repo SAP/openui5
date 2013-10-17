@@ -822,4 +822,12 @@ public class TestBase extends CommonBase {
 		userAction.mouseOver(driver, elementId, waitTimeMillsecond);
 	}
 
+	/** Multiple Tab based on the specific number */
+	public void multipleTabs(int tabsNumber) {
+
+		for (int j = 0; j < tabsNumber; j++) {
+			userAction.pressOneKey(KeyEvent.VK_TAB);
+		}
+	}
+
 }
