@@ -12,6 +12,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.ProgressIndicatorPO;
 import com.sap.ui5.selenium.common.TestBase;
+import com.sap.ui5.selenium.util.Constants;
 
 public class ProgressIndicatorTest extends TestBase {
 
@@ -75,8 +76,10 @@ public class ProgressIndicatorTest extends TestBase {
 		page.oTextFieldId.sendKeys("150");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		// Increase stability on all browsers.
-		userAction.mouseClick(driver, page.progInd30Id);
-		userAction.mouseClickStartPoint(driver);
+		if (getBrowserType() != Constants.IE8) {
+			userAction.mouseClick(driver, page.progInd30Id);
+			userAction.mouseClickStartPoint(driver);
+		}
 		waitForReady(page.millisecond);
 
 		verifyElementUI(page.progInd30Id, "ValueMoreThan100Percent");
@@ -86,8 +89,10 @@ public class ProgressIndicatorTest extends TestBase {
 		page.oTextFieldId.sendKeys("50");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		// Increase stability on all browsers.
-		userAction.mouseClick(driver, page.progInd30Id);
-		userAction.mouseClickStartPoint(driver);
+		if (getBrowserType() != Constants.IE8) {
+			userAction.mouseClick(driver, page.progInd30Id);
+			userAction.mouseClickStartPoint(driver);
+		}
 		waitForReady(page.millisecond);
 
 		verifyElementUI(page.progInd30Id, "ValueLessThan100Percent");
