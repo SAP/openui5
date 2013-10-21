@@ -102,7 +102,8 @@ public class TextFieldTest extends TestBase {
 	public void testCopyAndPaste() {
 		WebElement textField2 = driver.findElement(By.id(page.textField2Id));
 
-		textField2.click();
+		userAction.mouseClick(driver, page.textField2Id);
+		userAction.mouseMoveToStartPoint(driver);
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "c"));
 		verifyElementUI(page.textField2Id, "copyTextFieldContent-" + page.textField2Id);
@@ -121,7 +122,8 @@ public class TextFieldTest extends TestBase {
 	public void testCutAndPaste() {
 		WebElement textField2 = driver.findElement(By.id(page.textField2Id));
 
-		textField2.click();
+		userAction.mouseClick(driver, page.textField2Id);
+		userAction.mouseMoveToStartPoint(driver);
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "x"));
 		textField2.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
