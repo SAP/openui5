@@ -169,12 +169,13 @@ sap.ui.controller('webimage.controllers.images', {
 	},
 
 	_showOverlay: function(evt) {
-		var source = evt.getSource();
+		var src = evt.getSource().$().find('img').attr('src');
 
 		var oOverlayContainer = new notepad.OverlayImage({
 			openButtonVisible: false,
 			closeButtonVisible: true,
-			src: source.$().find('img').attr('src'),
+			src: src,
+			text: src.substring(src.lastIndexOf("/") + 1, src.lastIndexOf("?"))
 		});
 		oOverlayContainer.open();
 	},

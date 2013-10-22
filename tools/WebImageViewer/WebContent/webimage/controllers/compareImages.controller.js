@@ -21,7 +21,8 @@ sap.ui.controller('webimage.controllers.compareImages', {
 			var oOverlayContainer = new notepad.OverlayImage({
 				openButtonVisible: false,
 				closeButtonVisible: true,
-				src: src
+				src: src,
+				text: src.substring(src.lastIndexOf("/") + 1, src.lastIndexOf("?"))
 			});
 			oOverlayContainer.open();
 		}
