@@ -63,4 +63,8 @@ public class NotificationBarPO extends PageBase {
 	public String hoverID = "notificationBar-toggler";
 
 	public String successMessageId = "notificationBar-inplaceMessage-__message1";
+
+	public String noneMessageId = "notifierIcon-messageNotifierView-messageView-__message0";
+
+	public String warnMessageId = "notifierIcon-messageNotifierView-messageView-__message3";
 }
