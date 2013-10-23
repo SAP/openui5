@@ -8,7 +8,6 @@ import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.librarytests.ux3.pages.NotificationBarPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
-import com.sap.ui5.selenium.util.Constants;
 
 public class NotificationBarTest extends TestBase {
 
@@ -49,25 +48,20 @@ public class NotificationBarTest extends TestBase {
 
 		// Check click add information message button
 		page.infoBtn.click();
+		userAction.mouseClickStartPoint(driver);
 		verifyElementUI(barId, "Add-Information-Message-" + barId);
 
-		String iconId = page.notificationIcon.getAttribute("id");
-
 		// Check mouse over notification bar and notification icon
-		if (isIEBrowser()) {
-			action.moveToElement(page.notificationIcon).perform();
-			userAction.mouseOver(driver, iconId, millisecond);
-		} else {
-			userAction.mouseOver(driver, iconId, millisecond);
-		}
+		action.moveToElement(page.notificationIcon).perform();
+		userAction.mouseOver(driver, page.notificationIcon.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.callOutContID, timeOutSeconds);
 		verifyBrowserViewBox("MouseOver-NotifictionBarIcon");
-		userAction.mouseClickStartPoint(driver);
+		userAction.mouseMoveToStartPoint(driver);
 
 		// Check click remove all button
 		page.removeAllBtn.click();
-		this.waitForElement(driver, false, barId, timeOutSeconds);
-		waitForReady(millisecond);
+		waitForReady(500);
+		userAction.mouseMove(driver, page.removeAllBtn.getId());
 		verifyBrowserViewBox("Remove-All-Messages");
 	}
 
@@ -84,14 +78,10 @@ public class NotificationBarTest extends TestBase {
 		page.warningBtn.click();
 		page.errorBtn.click();
 
-		if (isIEBrowser()) {
-			action.moveToElement(page.notificationBar).perform();
-			userAction.mouseOver(driver, barId, millisecond);
-		} else {
-			userAction.mouseOver(driver, barId, millisecond);
-		}
+		action.moveToElement(page.notificationBar).perform();
+		userAction.mouseOver(driver, barId, millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-		userAction.mouseOver(driver, page.barDown.getAttribute("id"), millisecond);
+		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 500);
 		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-BarDown");
 
 		userAction.mouseOver(driver, page.arrowUp.getAttribute("id"), millisecond);
@@ -99,30 +89,20 @@ public class NotificationBarTest extends TestBase {
 
 		// Change notification bar bar to large
 		userAction.mouseClick(driver, page.arrowUp.getAttribute("id"));
-		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.noneMessageId);
 		verifyElementUI(barId, "NotificationBar-to-Large");
 		verifyElementUI(page.outPutSpanID, "NotificationBar-to-Large-" + page.outPutSpanID);
 
-		// Check mouse over messages in notification bar
-		userAction.mouseOver(driver, page.errorMessageText.getAttribute("id"), millisecond);
-		verifyElementUI(barId, "MouseOver-NotificationBar-ErrorMessage");
-
 		// Check clicking to remove message
 		page.errorMessageText.click();
-		userAction.mouseMoveToStartPoint(driver);
+		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.warnMessageId);
 		verifyElementUI(barId, "Remove-NotificationBar-ErrorMessage");
 
-		if (isIEBrowser()) {
-			action.moveToElement(page.notificationBar).perform();
-			userAction.mouseOver(driver, barId, millisecond);
-		} else {
-			userAction.mouseOver(driver, barId, millisecond);
-		}
-		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), millisecond);
+		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), 500);
 		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
-		
+
 		// Change notification bar to normal
 		userAction.mouseClick(driver, page.arrowDown.getAttribute("id"));
 		waitForReady(millisecond);
@@ -130,46 +110,28 @@ public class NotificationBarTest extends TestBase {
 		verifyElementUI(page.outPutSpanID, "NotificationBar-Large-to-Normal-" + page.outPutSpanID);
 
 		// Change notification bar to minimal
-		if (isIEBrowser()) {
-			action.moveToElement(page.notificationBar).perform();
-			userAction.mouseOver(driver, barId, millisecond);
-		} else {
-			userAction.mouseOver(driver, barId, millisecond);
-		}
+		action.moveToElement(page.notificationBar).perform();
+		userAction.mouseMove(driver, barId);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
 		userAction.mouseClick(driver, page.barDown.getAttribute("id"));
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
+
+		action.moveToElement(page.notify).perform();
+		userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
+		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
+		verifyBrowserViewBox("NotificationBar-Normal-to-Minimal");
+		verifyElementUI(page.outPutSpanID, "NotificationBar-Normal-to-Minimal-" + page.outPutSpanID);
 
 		// Check mouse over bar up
-		if (isIEBrowser()) {
-			action.moveToElement(page.notify).perform();
-			this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-			action.moveToElement(page.barUp).perform();
-		} else {
-			userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
-			this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-			userAction.mouseOver(driver, page.barUp.getAttribute("id"), millisecond);
-		}
+		userAction.mouseOver(driver, page.barUp.getAttribute("id"), millisecond);
 		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-BarUp");
 
-		verifyBrowserViewBox("NotificationBar-Normal-to-Minimal");
-		verifyElementUI(page.outPutSpanID, "NotificationBar-Max-to-Minimal-" + page.outPutSpanID);
-
-		// Change notification bar to default
-		if (isIEBrowser()) {
-			action.moveToElement(page.notify).perform();
-			this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-			action.moveToElement(page.barUp).perform();
-		} else {
-			userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
-			this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-			userAction.mouseOver(driver, page.barUp.getAttribute("id"), millisecond);
-		}
+		// Change notification bar to minimal
 		userAction.mouseClick(driver, page.barUp.getAttribute("id"));
 		waitForReady(millisecond);
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("NotificationBar-Minimal-to-Normal");
+		userAction.mouseMove(driver, page.notificationBar.getAttribute("id"));
+		verifyElementUI(barId, "NotificationBar-Minimal-to-Normal");
 		verifyElementUI(page.outPutSpanID, "NotificationBar-Minimal-to-Normal-" + page.outPutSpanID);
 	}
 
@@ -177,23 +139,13 @@ public class NotificationBarTest extends TestBase {
 	@Test
 	public void testMessageSelected() {
 		page.listener.toggle();
-		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.listener.getId());
 		verifyBrowserViewBox("MessageSelected-Listener-Selected");
 
 		page.infoBtn.click();
 		page.successBtn.click();
 		this.waitForElement(driver, true, page.notificationBar.getAttribute("id"), timeOutSeconds);
 		userAction.mouseClick(driver, page.successMessageId);
-		waitForReady(millisecond);
-		verifyElementUI(page.notificationBar.getAttribute("id"), "MessageSelected-Listener-NotSelected");
-	}
-
-	/** Check whether the browser is IE */
-	private boolean isIEBrowser() {
-
-		if (getBrowserType() == Constants.IE8 || getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
-			return true;
-		}
-		return false;
+		verifyElementUI(page.notificationBar.getAttribute("id"), "MessageSelected-Listener-RemoveMessage");
 	}
 }
