@@ -16,7 +16,7 @@ public class CheckBoxTest extends TestBase {
 
 	private CheckBoxPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/CheckBox.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/CheckBox.html";
 
 	private int waitMilliseconds = 1000;
 
