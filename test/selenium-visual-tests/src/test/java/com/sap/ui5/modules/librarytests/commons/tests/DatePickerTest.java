@@ -17,7 +17,7 @@ public class DatePickerTest extends TestBase {
 
 	private DatePickerPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/DatePicker.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/DatePicker.html";
 
 	private int waitMilliseconds = 1000;
 
