@@ -13,7 +13,7 @@ public class LabelTest extends TestBase {
 
 	private LabelPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/Label.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Label.html";
 
 	@Before
 	public void setUp() {
