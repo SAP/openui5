@@ -12,7 +12,7 @@ public class TextViewTest extends TestBase {
 
 	private TextViewPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/TextView.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/TextView.html";
 
 	@Before
 	public void setUp() {

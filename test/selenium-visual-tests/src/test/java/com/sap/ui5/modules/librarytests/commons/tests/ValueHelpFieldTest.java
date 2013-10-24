@@ -13,7 +13,7 @@ public class ValueHelpFieldTest extends TestBase {
 
 	private ValueHelpFieldPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/ValueHelpField.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/ValueHelpField.html";
 
 	@Before
 	public void setUp() {

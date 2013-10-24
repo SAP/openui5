@@ -13,7 +13,7 @@ public class ToggleButtonTest extends TestBase {
 
 	private ToggleButtonPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/ToggleButton.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/ToggleButton.html";
 
 	@Before
 	public void setUp() {

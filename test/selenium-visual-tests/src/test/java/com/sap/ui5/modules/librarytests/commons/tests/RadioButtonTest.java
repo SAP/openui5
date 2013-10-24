@@ -18,7 +18,7 @@ public class RadioButtonTest extends TestBase {
 
 	private RadioButtonPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/RadioButton.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/RadioButton.html";
 
 	@Before
 	public void setUp() {

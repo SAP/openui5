@@ -17,7 +17,7 @@ public class MessageBoxTest extends TestBase {
 
 	private MessageBoxPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/MessageBox.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/MessageBox.html";
 
 	private final long timeOutSeconds = 10;
 

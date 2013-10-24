@@ -16,7 +16,7 @@ public class ListBoxTest extends TestBase {
 
 	private ListBoxPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/ListBox.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/ListBox.html";
 
 	@Before
 	public void setUp() {

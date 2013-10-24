@@ -11,7 +11,7 @@ public class TreeTest extends TestBase {
 
 	private TreePO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/Tree.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Tree.html";
 
 	private int waitMilliseconds = 1000;
 

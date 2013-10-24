@@ -18,7 +18,7 @@ public class RoadMapTest extends TestBase {
 
 	private RoadMapPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/RoadMap.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/RoadMap.html";
 
 	private int waitMilliseconds = 1000;
 

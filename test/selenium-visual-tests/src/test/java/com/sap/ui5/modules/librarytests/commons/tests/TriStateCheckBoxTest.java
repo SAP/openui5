@@ -13,7 +13,7 @@ public class TriStateCheckBoxTest extends TestBase {
 
 	private TriStateCheckBoxPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/TriStateCheckBox.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/TriStateCheckBox.html";
 
 	@Before
 	public void setUp() {

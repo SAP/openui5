@@ -15,7 +15,7 @@ public class MenuButtonTest extends TestBase {
 
 	private MenuButtonPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/MenuButton.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/MenuButton.html";
 
 	@Before
 	public void setUp() {

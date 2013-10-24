@@ -20,7 +20,7 @@ public class TextFieldTest extends TestBase {
 
 	private TextFieldPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/TextField.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/TextField.html";
 
 	@Rule
 	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes

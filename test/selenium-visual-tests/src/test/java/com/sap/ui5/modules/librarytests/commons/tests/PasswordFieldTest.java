@@ -15,7 +15,7 @@ public class PasswordFieldTest extends TestBase {
 
 	private PasswordFieldPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/PasswordField.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/PasswordField.html";
 
 	@Before
 	public void setUp() {

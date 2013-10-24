@@ -20,7 +20,7 @@ public class SliderTest extends TestBase {
 
 	private SliderPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/Slider.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Slider.html";
 
 	@Before
 	public void setUp() {

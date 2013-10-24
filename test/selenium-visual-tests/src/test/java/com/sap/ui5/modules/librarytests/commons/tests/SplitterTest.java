@@ -16,7 +16,7 @@ public class SplitterTest extends TestBase {
 
 	private SplitterPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/Splitter.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Splitter.html";
 
 	private int waitTimeMillsecond = 1000;
 

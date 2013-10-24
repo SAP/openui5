@@ -17,7 +17,7 @@ public class ToolbarTest extends TestBase {
 
 	private ToolbarPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/Toolbar.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Toolbar.html";
 
 	private int waitTimeMillsecond = 1000;
 

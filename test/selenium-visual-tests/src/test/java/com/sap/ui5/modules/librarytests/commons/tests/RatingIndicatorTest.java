@@ -13,7 +13,7 @@ public class RatingIndicatorTest extends TestBase {
 
 	private RatingIndicatorPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/RatingIndicator.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/RatingIndicator.html";
 
 	@Before
 	public void setUp() {

@@ -18,7 +18,7 @@ public class TextAreaTest extends TestBase {
 
 	private TextAreaPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/TextArea.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/TextArea.html";
 
 	@Rule
 	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes

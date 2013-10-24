@@ -18,7 +18,7 @@ public class ProgressIndicatorTest extends TestBase {
 
 	private ProgressIndicatorPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/ProgressIndicator.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/ProgressIndicator.html";
 
 	@Before
 	public void setUp() {

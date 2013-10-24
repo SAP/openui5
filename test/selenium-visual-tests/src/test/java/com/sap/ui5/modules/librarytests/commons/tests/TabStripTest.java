@@ -16,7 +16,7 @@ public class TabStripTest extends TestBase {
 
 	private TabStripPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/TabStrip.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/TabStrip.html";
 
 	@Before
 	public void setUp() {

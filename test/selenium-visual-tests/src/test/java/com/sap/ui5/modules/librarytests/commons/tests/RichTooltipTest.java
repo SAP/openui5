@@ -16,7 +16,7 @@ public class RichTooltipTest extends TestBase {
 
 	private RichTooltipPO page;
 
-	private String targetUrl = "/test-resources/sap/ui/commons/visual/RichTooltip.html";
+	private String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/RichTooltip.html";
 
 	private long timeOutSeconds = 10;
 
