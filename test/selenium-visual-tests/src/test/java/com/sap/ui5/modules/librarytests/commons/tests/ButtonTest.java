@@ -20,7 +20,7 @@ public class ButtonTest extends TestBase {
 
 	ButtonPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/Button.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Button.html";
 
 	@Before
 	public void setUp() {
@@ -96,7 +96,7 @@ public class ButtonTest extends TestBase {
 
 		int next = 3;
 		for (int i = 0; i < page.buttons.size(); i = i + next) {
-			
+
 			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseClickAndHold(driver, elementId);
 			verifyElementUI(elementId, "MouseSelect-" + elementId);

@@ -236,7 +236,7 @@
                 <URL.Host>veui5infra</URL.Host>
                 <URL.Domain>dhcp.wdf.sap.corp</URL.Domain>
                 <URL.Port>8080</URL.Port>
-                <URL.BasePath>/uilib-sample</URL.BasePath>                
+                <URL.BasePath></URL.BasePath>                
                 
                 
                 <!-- Remote WebDriver Setting, it will take effect if Run.Environment=Remote  -->
