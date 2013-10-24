@@ -13,7 +13,7 @@ public class ImageTest extends TestBase {
 
 	private ImagePO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/Image.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Image.html";
 
 	@Before
 	public void setUp() {
