@@ -15,7 +15,7 @@ public class DialogTest extends TestBase {
 
 	private DialogPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/Dialog.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Dialog.html";
 
 	@Before
 	public void setUp() {
