@@ -19,7 +19,7 @@ public class ComboBoxTest extends TestBase {
 
 	private ComboBoxPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/ComboBox.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/ComboBox.html";
 
 	private final int waitMilliseconds = 1000;
 
