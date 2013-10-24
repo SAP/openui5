@@ -13,7 +13,7 @@ public class TypeFormatTest extends TestBase {
 
 	private final int timeOutSeconds = 500;
 
-	private final String targetUrl = "/test-resources/sap/ui/core/visual/TypeFormat.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/core/visual/TypeFormat.html";
 
 	@Before
 	public void setUp() {
