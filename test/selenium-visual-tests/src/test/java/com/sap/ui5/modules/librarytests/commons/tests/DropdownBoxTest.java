@@ -12,7 +12,7 @@ public class DropdownBoxTest extends TestBase {
 
 	private DropdownBoxPO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/DropdownBox.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/DropdownBox.html";
 
 	@Before
 	public void setUp() {
