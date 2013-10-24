@@ -15,7 +15,7 @@ import com.sap.ui5.selenium.common.TestBase;
 public class LinkTest extends TestBase {
 
 	private LinkPO page;
-	private final String targetUrl = "/test-resources/sap/ui/commons/visual/Link.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/commons/visual/Link.html";
 
 	@Before
 	public void setUp() {
