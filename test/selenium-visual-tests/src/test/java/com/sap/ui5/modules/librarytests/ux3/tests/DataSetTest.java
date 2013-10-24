@@ -18,7 +18,7 @@ public class DataSetTest extends TestBase {
 
 	private final int timeOutSeconds = 10;
 
-	private final String targetUrl = "/test-resources/sap/ui/ux3/visual/DataSet.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/ux3/visual/DataSet.html";
 
 	@Before
 	public void setUp() {

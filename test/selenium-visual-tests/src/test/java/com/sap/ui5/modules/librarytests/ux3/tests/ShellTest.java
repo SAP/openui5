@@ -22,7 +22,7 @@ public class ShellTest extends TestBase {
 
 	private final int timeOutSeconds = 10;
 
-	private final String targetUrl = "/test-resources/sap/ui/ux3/visual/Shell.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/ux3/visual/Shell.html";
 
 	@Before
 	public void setUp() {

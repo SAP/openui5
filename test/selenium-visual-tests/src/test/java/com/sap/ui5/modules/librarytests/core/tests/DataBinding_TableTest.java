@@ -17,7 +17,7 @@ public class DataBinding_TableTest extends TestBase {
 
 	private final int timeOutSeconds = 10;
 
-	private final String targetUrl = "/test-resources/sap/ui/core/visual/DataBinding_Table.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/core/visual/DataBinding_Table.html";
 
 	@Rule
 	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000); // 20 minutes

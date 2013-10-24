@@ -18,7 +18,7 @@ public class DataBinding_TreeTest extends TestBase {
 
 	private DataBinding_TreePO page;
 
-	private final String targetUrl = "/test-resources/sap/ui/core/visual/DataBinding_Tree.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/core/visual/DataBinding_Tree.html";
 
 	// 20 minutes are not enough for IE9 and IE10.
 	@Rule

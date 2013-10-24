@@ -17,7 +17,7 @@ public class FacetFilterInTableTest extends TestBase {
 
 	private final int millisecond = 1000;
 
-	private final String targetUrl = "/test-resources/sap/ui/ux3/visual/FacetFilterInTable.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/ux3/visual/FacetFilterInTable.html";
 
 	@Before
 	public void setUp() {
