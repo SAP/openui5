@@ -48,6 +48,7 @@ public class ThingInspectorTest extends TestBase {
 
 		page.standardTIBtn.click();
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Opened");
 
 		// Disabled tools
@@ -55,7 +56,7 @@ public class ThingInspectorTest extends TestBase {
 		page.followCheckBox.toggle();
 		page.favoriteCheckBox.toggle();
 		page.flagCheckBox.toggle();
-		userAction.mouseClickStartPoint(driver);
+		userAction.mouseMove(driver, page.flagCheckBox.getId());
 		verifyBrowserViewBox("ThingInspector-AllActions-Disabled");
 
 		// Enable tools
@@ -63,10 +64,11 @@ public class ThingInspectorTest extends TestBase {
 		page.followCheckBox.toggle();
 		page.favoriteCheckBox.toggle();
 		page.flagCheckBox.toggle();
-		userAction.mouseClickStartPoint(driver);
+		userAction.mouseMove(driver, page.flagCheckBox.getId());
 		verifyBrowserViewBox("ThingInspector-AllActions-Enabled");
 
 		// Check open and closed of update tool
+		userAction.mouseMoveToStartPoint(driver);
 		page.actionBarUpdate.click();
 		waitForReady(millisecond);
 		page.actionBarUpdateInput.sendKeys("test");
@@ -77,7 +79,7 @@ public class ThingInspectorTest extends TestBase {
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
-		verifyBrowserViewBox("ThingInspector-Update-Closed");
+		verifyElementUI(page.actionBarID, "ThingInspector-Update-Closed");
 
 		// Changing status of follow
 		page.thingInspector.follow();
@@ -112,9 +114,8 @@ public class ThingInspectorTest extends TestBase {
 	public void testNavBar() {
 		page.standardTIBtn.click();
 		page.thingInspector.selectFacet(page.accountTeamID);
-		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
-		verifyBrowserViewBox("Navigate-To-LastItem-AccountTeam");
+		verifyElementUI(page.facetContentID, "Navigate-To-LastItem-AccountTeam");
 	}
 
 	/** Verify ThingGroup resizing */
@@ -140,6 +141,7 @@ public class ThingInspectorTest extends TestBase {
 		page.standardTIBtn.click();
 		page.closeBtn.click();
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Closed");
 	}
 
@@ -150,7 +152,8 @@ public class ThingInspectorTest extends TestBase {
 		verifyBrowserViewBox("ModifiedTI-Page-Open");
 
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.modifiedTIBtn.getId());
 		verifyBrowserViewBox("ModifiedTI-ENTER-Closed");
 	}
 }
