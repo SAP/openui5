@@ -15,7 +15,7 @@ public class ThingInspectorPO extends PageBase {
 
 	@FindBy(id = "modifiedTI")
 	public Button modifiedTIBtn;
-	
+
 	@FindBy(id = "thingInspector")
 	public ThingInspector thingInspector;
 
@@ -37,29 +37,12 @@ public class ThingInspectorPO extends PageBase {
 	@FindBy(id = "thingInspector-actionBar-Update")
 	public WebElement actionBarUpdate;
 
-	@FindBy(id = "thingInspector-actionBar-Follow")
-	public WebElement actionBarFollow;
-
-	@FindBy(id = "thingInspector-actionBar-Flag")
-	public WebElement actionBarFlagBtn;
-
-	@FindBy(id = "thingInspector-actionBar-Favorite")
-	public WebElement actionBarFavoriteBtn;
-
-	@FindBy(id = "thingInspector-actionBar-UpdateActionPopup-content")
-	public WebElement actionBarUpdatePopCon;
-
 	@FindBy(id = "thingInspector-actionBar-Feeder-input")
 	public WebElement actionBarUpdateInput;
 
-	@FindBy(id = "thingInspector-actionBar-holdState")
-	public WebElement actionBarFollowPause;
-
-	@FindBy(id = "thingInspector-actionBar-unholdState")
-	public WebElement actionBarFollowCon;
-
-	@FindBy(id = "thingInspector-actionBar-unfollowState")
-	public WebElement actionBarFollowStop;
-
 	public String accountTeamID = "accountTeam";
+
+	public String actionBarID = "thingInspector-actionBar";
+
+	public String facetContentID = "thingInspector-thingViewer-facetContent";
 }
