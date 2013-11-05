@@ -79,9 +79,9 @@ public class ShellPO extends PageBase {
 
 	@FindBy(id = "cb_logout")
 	public CheckBox showLogout;
-	
-	@FindBy(id = "myShell-paneBarOverflowButton")
-	public WebElement paneOverflowBtn;
+
+	@FindBy(id = "myShell-paneBarOverflowText")
+	public WebElement panebarOverflow;
 
 	public String workSetBarID = "myShell-wsBar";
 
