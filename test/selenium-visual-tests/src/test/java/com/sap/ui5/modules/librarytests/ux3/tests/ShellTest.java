@@ -1,6 +1,5 @@
 package com.sap.ui5.modules.librarytests.ux3.tests;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
@@ -33,11 +32,6 @@ public class ShellTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 	}
 
-	@After
-	public void tearDown() {
-		driver.quit();
-	}
-
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
@@ -58,35 +52,31 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
-		userAction.mouseMoveToStartPoint(driver);
 		verifyBrowserViewBox("SearchTool-Opened");
 
 		page.searchTool.click();
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
 		verifyElementUI(page.leftSideToolsID, "SearchTool-Closed");
 
-		page.feederTool.click();
+		userAction.mouseClick(driver, page.feederTool.getAttribute("id"));
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
-		userAction.mouseMoveToStartPoint(driver);
 		verifyBrowserViewBox("FeederTool-Opened");
 
 		page.feederTool.click();
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
 		verifyElementUI(page.leftSideToolsID, "FeederTool-Closed");
 
+		userAction.mouseClickStartPoint(driver);
 		page.optionsPopupTool.click();
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		verifyBrowserViewBox("OptionsPopupTool-Opened");
 
-		page.optionsPopupTool.click();
+		userAction.mouseClick(driver, page.optionsPopupTool.getAttribute("id"));
+		//page.optionsPopupTool.click();
 		this.waitForElement(driver, false, page.optionPopDivID, timeOutSeconds);
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+
 		verifyElementUI(page.leftSideToolsID, "OptionsPopupTool-Closed");
+		userAction.mouseMoveToStartPoint(driver);
 
 		// Open tool without closing the previous tool
 		page.searchTool.click();
@@ -139,14 +129,12 @@ public class ShellTest extends TestBase {
 		// Hide/Show tools and sidepane
 		page.showTool.toggle();
 		page.showPane.toggle();
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.showPane.getId());
 		verifyBrowserViewBox("Hide-Tools-and-SidePane");
 
 		page.showTool.toggle();
 		page.showPane.toggle();
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.showPane.getId());
 		verifyBrowserViewBox("Show-Tools-and-SidePane");
 
 		// Enable/Disable tools
@@ -178,19 +166,19 @@ public class ShellTest extends TestBase {
 		verifyElementUI(page.cavasID, "Jump-News");
 
 		userAction.mouseClick(driver, page.overviewID);
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
 		verifyElementUI(page.cavasID, "Overview-Home");
 
 		// Navigate to items
 		userAction.mouseOver(driver, page.marketingID, millisecond);
 		page.myShell.selectWorksetItem(page.marketingID);
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
 		verifyElementUI(page.cavasID, "Nav-To-Marketing");
 
 		page.myShell.selectWorksetItem(page.marketInfoID);
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
 		verifyElementUI(page.cavasID, "Nav-To-MarketInformation");
 
@@ -199,16 +187,17 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		driver.manage().window().setPosition(new Point(50, 50));
 		driver.manage().window().setSize(new Dimension(520, 800));
-
+		waitForReady(millisecond);
 		this.waitForElement(driver, true, page.navLeft.getAttribute("id"), timeOutSeconds);
 		this.waitForElement(driver, true, page.navRight.getAttribute("id"), timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		waitForReady(1500);
 		verifyFullPageUI("Window-Resize");
 
 		page.navRight.click();
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1000);
 
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navRight.getAttribute("id"));
@@ -216,8 +205,9 @@ public class ShellTest extends TestBase {
 		verifyElementUI(page.workSetBarID, "Nav-Overflow-Right");
 
 		page.navRight.click();
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1000);
 
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navRight.getAttribute("id"));
@@ -225,8 +215,9 @@ public class ShellTest extends TestBase {
 		verifyElementUI(page.workSetBarID, "Nav-Overflow-End");
 
 		page.navLeft.click();
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(500);
 
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navLeft.getAttribute("id"));
@@ -234,8 +225,9 @@ public class ShellTest extends TestBase {
 		verifyElementUI(page.workSetBarID, "Nav-Overflow-Left");
 
 		page.navLeft.click();
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(500);
 
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navLeft.getAttribute("id"));
@@ -295,8 +287,9 @@ public class ShellTest extends TestBase {
 
 		driver.manage().window().setPosition(new Point(50, 50));
 		driver.manage().window().setSize(new Dimension(600, 450));
-		waitForReady(millisecond);
-		page.paneOverflowBtn.click();
+		waitForReady(2000);
+		page.panebarOverflow.click();
+		waitForReady(1500);
 		verifyBrowserViewBox("Sidepane-Overflow");
 	}
 
@@ -305,6 +298,7 @@ public class ShellTest extends TestBase {
 	public void testLogout() {
 		userAction.mouseOver(driver, page.logoutID, millisecond);
 		verifyElementUI(page.logoutID, "MouseOver-Logout");
+		userAction.mouseClickStartPoint(driver);
 
 		page.myShell.logout();
 		waitForReady(millisecond);
