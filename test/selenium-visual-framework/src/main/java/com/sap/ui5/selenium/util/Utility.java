@@ -125,8 +125,8 @@ public class Utility {
 		return true;
 	}
 
-	/** API: Take full Screen Shot */
-	public static boolean takeScreenShot(WebDriver driver, String filePath) {
+	/** API: Take a picture of full html page by WebDriver */
+	public static boolean takeFullPage(WebDriver driver, String filePath) {
 
 		byte[] file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 

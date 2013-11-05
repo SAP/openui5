@@ -404,25 +404,10 @@ public class TestBase extends CommonBase {
 				+ "sap-ui-jqueryversion=" + config.getUrlParameterJquery();
 	}
 
-	/** API: Take a snapShot for a specific element */
-	public boolean takeSnapShot(String elementId, String fileName) {
-
-		Dimension d = userAction.getElementDimension(driver, elementId);
-
-		return takeSnapShot(elementId, d.width, d.height, fileName);
-
-	}
-
-	/** API: Take a snapshot based on starting a element and specific dimension */
-	public boolean takeSnapShot(String elementId, int width, int height, String fileName) {
-
-		Point location = userAction.getElementLocation(driver, elementId);
-		return takeSnapShot(location.x, location.y, width, height, fileName);
-	}
-
 	/** Take a screen shot based on specific location and dimension */
 	private boolean takeSnapShot(int locationX, int locationY, int width, int height, String fileName, boolean needWrapName) {
 
+		waitForUI();
 		String filePath = genFullPathForNeedVerifyImage(fileName, needWrapName);
 		Point location = new Point(locationX, locationY);
 		Dimension dimension = new Dimension(width, height);
@@ -436,32 +421,19 @@ public class TestBase extends CommonBase {
 		return false;
 	}
 
-	/** API: Take a screen shot based on specific location and dimension */
-	public boolean takeSnapShot(int locationX, int locationY, int width, int height, String fileName) {
+	/** Take a picture of full html page by WebDriver */
+	private boolean takeFullPage(String fileName, boolean needWrapName) {
 
 		waitForUI();
-		return takeSnapShot(locationX, locationY, width, height, fileName, true);
-	}
-
-	/** Take a full screen shot */
-	private boolean takeScreenShot(String fileName, boolean needWrapName) {
-
 		String filePath = genFullPathForNeedVerifyImage(fileName, needWrapName);
 
-		if (Utility.takeScreenShot(driver, filePath)) {
+		if (Utility.takeFullPage(driver, filePath)) {
 
 			logTakeScreenShot(filePath);
 			return true;
 		}
 
 		return false;
-	}
-
-	/** API: Take a full screen shot */
-	public boolean takeScreenShot(String fileName) {
-
-		waitForUI();
-		return takeScreenShot(fileName, true);
 	}
 
 	/** Generate full path for image which need be verified */
@@ -521,41 +493,41 @@ public class TestBase extends CommonBase {
 	}
 
 	/** API: Verify specific element UI by image comparing */
-	public void verifyElementUI(String elementId, String expectedImageName) {
+	public void verifyElement(String elementId, String expectedImageName) {
 
 		Point location = userAction.getElementLocation(driver, elementId);
 		Dimension dimension = userAction.getElementDimension(driver, elementId);
 
-		verifyCustomizedDimension(location.x, location.y, dimension.width, dimension.height, expectedImageName);
+		verifyArea(location.x, location.y, dimension.width, dimension.height, expectedImageName);
 	}
 
 	/** API: Assert specific element UI by image comparing */
-	public void assertElementUI(String elementId, String expectedImageName) {
+	public void assertElement(String elementId, String expectedImageName) {
 
 		Point location = userAction.getElementLocation(driver, elementId);
 		Dimension dimension = userAction.getElementDimension(driver, elementId);
 
-		assertCustomizedDimension(location.x, location.y, dimension.width, dimension.height, expectedImageName);
+		assertArea(location.x, location.y, dimension.width, dimension.height, expectedImageName);
 	}
 
 	/** API: Verify UI part with customized dimension */
-	public void verifyCustomizedDimension(String elementId, int width, int height, String expectedImageName) {
+	public void verifyArea(String elementId, int width, int height, String expectedImageName) {
 
 		Point location = userAction.getElementLocation(driver, elementId);
 
-		verifyCustomizedDimension(location.x, location.y, width, height, expectedImageName);
+		verifyArea(location.x, location.y, width, height, expectedImageName);
 	}
 
 	/** API: Assert UI part with customized dimension */
-	public void assertCustomizedDimension(String elementId, int width, int height, String expectedImageName) {
+	public void assertArea(String elementId, int width, int height, String expectedImageName) {
 
 		Point location = userAction.getElementLocation(driver, elementId);
 
-		assertCustomizedDimension(location.x, location.y, width, height, expectedImageName);
+		assertArea(location.x, location.y, width, height, expectedImageName);
 	}
 
 	/** Verify UI part with customized dimension */
-	private boolean verifyCustomizedDimension(Point location, Dimension dimension, String expectedImageName) {
+	private boolean verifyArea(Point location, Dimension dimension, String expectedImageName) {
 
 		File expectedImage;
 		File actualImage;
@@ -603,11 +575,11 @@ public class TestBase extends CommonBase {
 	}
 
 	/** API: Verify UI part with customized dimension */
-	public void verifyCustomizedDimension(int locationX, int locationY, int width, int height, String expectedImageName) {
+	public void verifyArea(int locationX, int locationY, int width, int height, String expectedImageName) {
 
 		waitForUI();
 		resultsMessage = new StringBuilder();
-		boolean results = verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height), expectedImageName);
+		boolean results = verifyArea(new Point(locationX, locationY), new Dimension(width, height), expectedImageName);
 		resultsMessageWrapper(expectedImageName);
 		verifyTrue(resultsMessage.toString(), results);
 		resultsMessage = null;
@@ -642,10 +614,10 @@ public class TestBase extends CommonBase {
 	}
 
 	/** API: Assert UI part with customized dimension */
-	public void assertCustomizedDimension(int locationX, int locationY, int width, int height, String expectedImageName) {
+	public void assertArea(int locationX, int locationY, int width, int height, String expectedImageName) {
 
 		waitForUI();
-		Assert.assertTrue("Customized Dimension UI is matched? ", verifyCustomizedDimension(new Point(locationX, locationY), new Dimension(width, height), expectedImageName));
+		Assert.assertTrue("Customized Dimension UI is matched? ", verifyArea(new Point(locationX, locationY), new Dimension(width, height), expectedImageName));
 	}
 
 	/** API: Verify UI of browser view box */
@@ -654,7 +626,7 @@ public class TestBase extends CommonBase {
 		Point viewBoxLocation = userAction.getBrowserViewBoxLocation(driver);
 		Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
 
-		verifyCustomizedDimension(viewBoxLocation.x, viewBoxLocation.y,
+		verifyArea(viewBoxLocation.x, viewBoxLocation.y,
 				viewBoxDimension.width, viewBoxDimension.height,
 				expectedImageName);
 	}
@@ -665,7 +637,7 @@ public class TestBase extends CommonBase {
 		Point viewBoxLocation = userAction.getBrowserViewBoxLocation(driver);
 		Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
 
-		assertCustomizedDimension(viewBoxLocation.x, viewBoxLocation.y,
+		assertArea(viewBoxLocation.x, viewBoxLocation.y,
 				viewBoxDimension.width, viewBoxDimension.height,
 				expectedImageName);
 	}
@@ -688,7 +660,7 @@ public class TestBase extends CommonBase {
 
 		if (expectedImage.exists()) {
 
-			if (!Utility.takeScreenShot(driver, actualImage.getPath())) {
+			if (!Utility.takeFullPage(driver, actualImage.getPath())) {
 
 				actualImage.delete();
 				diffImage.delete();
@@ -713,14 +685,14 @@ public class TestBase extends CommonBase {
 
 		} else {
 
-			boolean isSuccess = takeScreenShot(expectedImage.getName(), false);
+			boolean isSuccess = takeFullPage(expectedImage.getName(), false);
 			return handleImagesMissed(isSuccess, expectedImage, diffImage);
 		}
 
 	}
 
 	/** API: Verify full page UI by image comparing */
-	public void verifyFullPageUI(String expectedImageName) {
+	public void verifyPage(String expectedImageName) {
 
 		waitForUI();
 		resultsMessage = new StringBuilder();
@@ -731,7 +703,7 @@ public class TestBase extends CommonBase {
 	}
 
 	/** API: Assert full page UI by image comparing */
-	public void assertFullPageUI(String expectedImageName) {
+	public void assertPage(String expectedImageName) {
 
 		waitForUI();
 		Assert.assertTrue("Full Page UI is matched?: ", verifyFullPage(expectedImageName));

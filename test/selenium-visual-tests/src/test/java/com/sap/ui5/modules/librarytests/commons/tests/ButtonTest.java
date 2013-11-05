@@ -35,23 +35,23 @@ public class ButtonTest extends TestBase {
 	public void testAllElements() {
 
 		// Test all initial elements
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 
 		// Test all disabled elements
 		page.clickEnabledCB(driver, userAction);
-		verifyFullPageUI("full-disabled");
+		verifyPage("full-disabled");
 
 		// Test all enabled elements
 		page.clickEnabledCB(driver, userAction);
-		verifyFullPageUI("full-enabled");
+		verifyPage("full-enabled");
 
 		// Test all invisible elements
 		page.clickVisibleCB(driver, userAction);
-		verifyFullPageUI("full-invisible");
+		verifyPage("full-invisible");
 
 		// Test all visible elements
 		page.clickVisibleCB(driver, userAction);
-		verifyFullPageUI("full-visible");
+		verifyPage("full-visible");
 	}
 
 	/** Verify the mouse click for enable button elements */
@@ -67,8 +67,8 @@ public class ButtonTest extends TestBase {
 			userAction.mouseClick(driver, elementId);
 			userAction.mouseMoveToStartPoint(driver);
 
-			verifyElementUI(elementId, "Click-" + elementId);
-			verifyElementUI(page.outputTarget.getAttribute("id"), "Click-outputTarget-" + elementId);
+			verifyElement(elementId, "Click-" + elementId);
+			verifyElement(page.outputTarget.getAttribute("id"), "Click-outputTarget-" + elementId);
 			multipleTabs(next);
 		}
 	}
@@ -83,7 +83,7 @@ public class ButtonTest extends TestBase {
 			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseOver(driver, elementId, 800);
 
-			verifyElementUI(elementId, "MouseOver-" + elementId);
+			verifyElement(elementId, "MouseOver-" + elementId);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class ButtonTest extends TestBase {
 
 			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseClickAndHold(driver, elementId);
-			verifyElementUI(elementId, "MouseSelect-" + elementId);
+			verifyElement(elementId, "MouseSelect-" + elementId);
 			userAction.mouseRelease();
 
 			multipleTabs(next);
@@ -118,16 +118,16 @@ public class ButtonTest extends TestBase {
 
 		// Test Mouse Over
 		userAction.mouseOver(driver, elementId, 800);
-		verifyElementUI(elementId, "MouseOver-Disabled" + elementId);
+		verifyElement(elementId, "MouseOver-Disabled" + elementId);
 
 		// Test click
 		e.click();
-		verifyElementUI(elementId, "Clicke-disabled" + elementId);
+		verifyElement(elementId, "Clicke-disabled" + elementId);
 
 		if (page.outputTarget.getSize().equals(new Dimension(0, 0))) {
 			// this test is pass if outputTarget element size is 0 OR no text.
 		} else {
-			verifyElementUI(page.outputTarget.getAttribute("id"), "outputTarget-empty");
+			verifyElement(page.outputTarget.getAttribute("id"), "outputTarget-empty");
 		}
 
 	}
@@ -173,8 +173,8 @@ public class ButtonTest extends TestBase {
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
 
 			String elementId = page.buttons.get(i).getAttribute("id");
-			verifyElementUI(elementId, "Enter-" + elementId);
-			verifyElementUI(page.outputTarget.getAttribute("id"), "Enter-outputTarget-" + elementId);
+			verifyElement(elementId, "Enter-" + elementId);
+			verifyElement(page.outputTarget.getAttribute("id"), "Enter-outputTarget-" + elementId);
 
 			multipleTabs(next);
 		}
@@ -192,8 +192,8 @@ public class ButtonTest extends TestBase {
 			userAction.pressOneKey(KeyEvent.VK_SPACE);
 
 			String elementId = page.buttons.get(i).getAttribute("id");
-			verifyElementUI(elementId, "Space-" + elementId);
-			verifyElementUI(page.outputTarget.getAttribute("id"), "Space-outputTarget-" + elementId);
+			verifyElement(elementId, "Space-" + elementId);
+			verifyElement(page.outputTarget.getAttribute("id"), "Space-outputTarget-" + elementId);
 
 			multipleTabs(next);
 		}
