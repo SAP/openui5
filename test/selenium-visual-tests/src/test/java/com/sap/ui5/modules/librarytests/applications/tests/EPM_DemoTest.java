@@ -51,35 +51,33 @@ public class EPM_DemoTest extends TestBase {
 
 		// Select first entry in the DataTable
 		page.row0Selector.click();
-		userAction.mouseClickStartPoint(driver);
 		waitForReady(2000);
 		page.checkFieldValue(page.companyField, "Bionic Research Lab");
+		userAction.mouseMoveToStartPoint(driver);
 		verifyBrowserViewBox("Row1-Selected");
 
 		// Close Product Details Panel and Supplier Panel
 		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
 			page.productCollIco.click();
 			page.supplierCollIco.click();
+			userAction.mouseMove(driver, page.supplierCollIco.getAttribute("id"));
 		} else {
 			page.productCollArrow.click();
 			page.supplierCollArrow.click();
 		}
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("Panel-Closed");
+		verifyElementUI(page.panelRowID, "Panel-Closed");
 
 		// Open Product Details Panel and Supplier Panel
 		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
 			page.productCollIco.click();
 			page.supplierCollIco.click();
+			userAction.mouseMove(driver, page.supplierCollIco.getAttribute("id"));
+
 		} else {
 			page.productCollArrow.click();
 			page.supplierCollArrow.click();
 		}
-		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("Panel-Opened");
-
+		verifyElementUI(page.panelRowID, "Panel-Opened");
 	}
 
 	/** Verify open the selected details in a different view and back to the preview page */
@@ -109,5 +107,4 @@ public class EPM_DemoTest extends TestBase {
 		page.checkFieldValue(page.companyField, "");
 		verifyElementUI(page.table.getId(), "Sort-Descending");
 	}
-
 }
