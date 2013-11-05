@@ -54,6 +54,8 @@ public class EPM_DemoPO extends PageBase {
 
 	public String page7ID = "oTable-paginator-a--7";
 
+	public String panelRowID = "__row6";
+
 	public void checkCellText(WebElement element, String text) {
 		String innerText = element.getText();
 
