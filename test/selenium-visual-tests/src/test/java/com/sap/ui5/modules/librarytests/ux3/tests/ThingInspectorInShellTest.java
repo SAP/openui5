@@ -19,7 +19,7 @@ public class ThingInspectorInShellTest extends TestBase {
 
 	private final int timeOutSeconds = 10;
 
-	private final int millisecond = 1000;
+	private final int millisecond = 800;
 
 	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/ux3/visual/ThingInspectorInShell.html";
 
@@ -41,11 +41,10 @@ public class ThingInspectorInShellTest extends TestBase {
 	/** Verify Standard ThingInspector */
 	@Test
 	public void testStandardActions() {
-
 		// Check standard ThingInspector
 		page.standardTIBtn.click();
-		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Opened");
 
 		// Disabled actions
@@ -54,7 +53,6 @@ public class ThingInspectorInShellTest extends TestBase {
 		page.favoriteCheckbox.toggle();
 		page.flagCheckbox.toggle();
 		userAction.mouseMove(driver, page.flagCheckbox.getId());
-		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-AllActions-Disabled");
 
 		// Enable tools
@@ -68,18 +66,17 @@ public class ThingInspectorInShellTest extends TestBase {
 		this.waitForElement(driver, true, page.actionBarFlagID, timeOutSeconds);
 		userAction.mouseMove(driver, page.flagCheckbox.getId());
 		verifyBrowserViewBox("StandardTI-AllActions-Enabled");
+		userAction.mouseMoveToStartPoint(driver);
 
 		// Check open and closed of update tool
 		page.actionBarUpdate.click();
 		this.waitForElement(driver, true, page.updatePopupID, timeOutSeconds);
 		page.updateInput.sendKeys("test");
 		page.updateInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-		verifyElementUI(page.feederID, "StandarTI-Update-Opened");
+		verifyElementUI(page.feederID, "StandardTI-Update-Opened");
 
 		page.actionBarUpdate.click();
-		waitForReady(millisecond);
-		userAction.mouseClickStartPoint(driver);
-		verifyBrowserViewBox("StandarTI-Update-Closed");
+		verifyElementUI(page.actionBarID, "StandardTI-Update-Closed");
 
 		// Changing status of follow
 		page.thingInspector.follow();
@@ -87,11 +84,9 @@ public class ThingInspectorInShellTest extends TestBase {
 		verifyBrowserViewBox("StandardTI-Follow-Start");
 
 		page.thingInspector.pauseFollow();
-		waitForReady(500);
 		verifyBrowserViewBox("StandardTI-Follow-Hold");
 
 		page.thingInspector.continueFollow();
-		waitForReady(500);
 		verifyBrowserViewBox("StandardTI-Follow-Continue");
 
 		page.thingInspector.stopFollow();
@@ -115,17 +110,21 @@ public class ThingInspectorInShellTest extends TestBase {
 	/** Verify Navigation Bar */
 	@Test
 	public void testNavigationBar() {
+		Actions action = new Actions(driver);
 
 		// Navigate to the last item on the navigation bar 
 		page.standardTIBtn.click();
+		waitForReady(millisecond);
 		page.thingInspector.selectFacet(page.accountTeamID);
 		userAction.mouseMove(driver, page.accountTeamID);
 		verifyElementUI(page.thingViewerID, "Navigate-To-AccountTeam");
 
 		// Open ThingInspector in new window
-		userAction.mouseOver(driver, page.openNew.getAttribute("id"), 500);
-		verifyElementUI(page.openNew.getAttribute("id"), "MouseOver-StandTI-OpenNew");
+		action.moveToElement(page.openNew).perform();
+		userAction.mouseOver(driver, page.openNew.getAttribute("id"), millisecond);
+		verifyElementUI(page.openNew.getAttribute("id"), "MouseOver-StandardTI-OpenNew");
 
+		userAction.mouseClickStartPoint(driver);
 		page.openNew.click();
 		this.waitForElement(driver, true, page.openNewID, timeOutSeconds);
 		userAction.mouseMoveToStartPoint(driver);
@@ -134,12 +133,14 @@ public class ThingInspectorInShellTest extends TestBase {
 		page.openNewOKBtn.click();
 
 		// Close ThingInspector
-		userAction.mouseOver(driver, page.standardClose.getAttribute("id"), 500);
-		verifyElementUI(page.standardClose.getAttribute("id"), "MouseOver-StandTI-Close");
+		action.moveToElement(page.standardClose).perform();
+		userAction.mouseOver(driver, page.standardClose.getAttribute("id"), millisecond);
+		verifyElementUI(page.standardClose.getAttribute("id"), "MouseOver-StandardTI-Close");
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(2000);
 
 		page.standardClose.click();
-		waitForReady(2000);
-		verifyBrowserViewBox("StandTI-Closed");
+		verifyBrowserViewBox("StandardTI-Closed");
 	}
 
 	/** Verify ThingGroup resizing and closing by Space button.*/
@@ -155,9 +156,9 @@ public class ThingInspectorInShellTest extends TestBase {
 
 		driver.manage().window().setPosition(new Point(10, 10));
 		driver.manage().window().setSize(new Dimension(1250, 550));
-		waitForReady(1500);
+		waitForReady(2500);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		waitForReady(1000);
 		verifyBrowserViewBox("ThingGroupsResized");
 
 		driver.manage().window().setPosition(new Point(100, 100));
@@ -186,13 +187,13 @@ public class ThingInspectorInShellTest extends TestBase {
 		Actions action = new Actions(driver);
 
 		page.modifiedTIWithClose.click();
-		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ModifiedTI-with-Close-Opened");
 
 		// Open Search Tool
 		page.searchTool.click();
-		waitForReady(2000);
+		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		waitForReady(millisecond);
@@ -207,7 +208,7 @@ public class ThingInspectorInShellTest extends TestBase {
 
 		// Close ThingInspector with search tool opened
 		page.closeBtn.click();
-		waitForReady(millisecond);
+		waitForReady(1500);
 		verifyBrowserViewBox("ModifiedTI-with-Close-Closed");
 	}
 
@@ -216,30 +217,6 @@ public class ThingInspectorInShellTest extends TestBase {
 	public void testShellOptions() {
 		page.modifiedTIWithOpen.click();
 		waitForReady(millisecond);
-
-		// Change Header type to 'Brand Only'
-		page.headerTypeGroup.selectRadio(page.brandOnlyRadioID);
-		userAction.mouseMoveToStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("ModifiedTI-HeaderType-BrandOnly");
-
-		// Change Header type to 'No Navigation'
-		page.headerTypeGroup.selectRadio(page.noNavRadioID);
-		userAction.mouseMoveToStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("ModifiedTI-HeaderType-NoNavigation");
-
-		// Change Header type to 'Slim Navigation'
-		page.headerTypeGroup.selectRadio(page.slimNavRadioID);
-		userAction.mouseMoveToStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("ModifiedTI-HeaderType-SlimNavigation");
-
-		// Change Header type to 'Standard'
-		page.headerTypeGroup.selectRadio(page.standardRadioID);
-		userAction.mouseMoveToStartPoint(driver);
-		waitForReady(millisecond);
-		verifyBrowserViewBox("ModifiedTI-HeaderType-Standard");
 
 		// Hide shell tools and sidepane
 		page.showToolCheckbox.toggle();
@@ -252,6 +229,38 @@ public class ThingInspectorInShellTest extends TestBase {
 		page.showPaneCheckbox.toggle();
 		userAction.mouseMove(driver, page.showPaneCheckbox.getId());
 		verifyBrowserViewBox("ShowSidebars");
-	}
 
+		// Change Header type to 'Brand Only'
+		page.headerTypeGroup.selectRadio(page.brandOnlyRadioID);
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
+		verifyBrowserViewBox("ModifiedTI-HeaderType-BrandOnly");
+
+		// Change Header type to 'No Navigation'
+		page.headerTypeGroup.selectRadio(page.noNavRadioID);
+		waitForReady(millisecond);
+		userAction.mouseClick(driver, page.standardClose.getAttribute("id"));
+		waitForReady(millisecond);
+		verifyBrowserViewBox("ModifiedTI-HeaderType-NoNavigation");
+
+		// Change Header type to 'Slim Navigation'
+		page.modifiedTIWithOpen.click();
+		waitForReady(millisecond);
+
+		page.headerTypeGroup.selectRadio(page.slimNavRadioID);
+		waitForReady(millisecond);
+		userAction.mouseClick(driver, page.standardClose.getAttribute("id"));
+		waitForReady(millisecond);
+		verifyBrowserViewBox("ModifiedTI-HeaderType-SlimNavigation");
+
+		// Change Header type to 'Standard'
+		page.modifiedTIWithOpen.click();
+		waitForReady(millisecond);
+
+		page.headerTypeGroup.selectRadio(page.standardRadioID);
+		waitForReady(millisecond);
+		userAction.mouseClick(driver, page.standardClose.getAttribute("id"));
+		waitForReady(millisecond);
+		verifyBrowserViewBox("ModifiedTI-HeaderType-Standard");
+	}
 }

@@ -91,6 +91,8 @@ public class ThingInspectorInShellPO extends PageBase {
 
 	public String dialogID = "__mbox0";
 
+	public String actionBarID = "thingInspector-actionBar";
+
 	public String feederID = "thingInspector-actionBar-Feeder";
 
 	public String actionBarFollowID = "thingInspector-actionBar-Follow";
