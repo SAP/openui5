@@ -32,7 +32,7 @@ public class DataBinding_TableTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify sorting of the DataBinding table */

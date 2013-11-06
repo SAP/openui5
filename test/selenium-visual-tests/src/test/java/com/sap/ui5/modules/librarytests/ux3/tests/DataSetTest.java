@@ -24,15 +24,15 @@ public class DataSetTest extends TestBase {
 	public void setUp() {
 		page = PageFactory.initElements(driver, DataSetPO.class);
 		UI5PageFactory.initElements(driver, page);
-
 		driver.get(getFullUrl(targetUrl));
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond * 5);
 	}
 
 	@Test
 	public void testAllElements() {
 		waitForReady(millisecond);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -42,38 +42,38 @@ public class DataSetTest extends TestBase {
 
 		// Default View
 		userAction.mouseOver(driver, sapAGItemId, millisecond);
-		verifyElementUI(page.dataSetItemsId, "MouseOver-DefaultView-" + page.sapAGItem.getText());
+		verifyElement(page.dataSetItemsId, "MouseOver-DefaultView-" + page.sapAGItem.getText());
 
 		userAction.mouseClick(driver, ibmCorpItemId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.dataSetItemsId, "MouseClick-DefaultView-" + page.ibmCorpItem.getText());
+		verifyElement(page.dataSetItemsId, "MouseClick-DefaultView-" + page.ibmCorpItem.getText());
 
 		// List View
 		userAction.mouseClick(driver, page.listViewBtn.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		this.waitForElement(driver, true, page.listViewId, timeOutSeconds);
-		verifyElementUI(page.dataSetItemsId, "ListView");
+		verifyElement(page.dataSetItemsId, "ListView");
 
 		userAction.mouseOver(driver, sapAGItemId, millisecond);
-		verifyElementUI(page.dataSetItemsId, "MouseOver-ListView-" + sapAGItemId);
+		verifyElement(page.dataSetItemsId, "MouseOver-ListView-" + sapAGItemId);
 
 		userAction.mouseClick(driver, ibmCorpItemId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.dataSetItemsId, "MouseClick-ListView-" + ibmCorpItemId);
+		verifyElement(page.dataSetItemsId, "MouseClick-ListView-" + ibmCorpItemId);
 
 		// Bussiness Card View
 		userAction.mouseClick(driver, page.cardViewBtn.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		this.waitForElement(driver, true, page.cardViewId, timeOutSeconds);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.dataSetItemsId, "BussinessCardView");
+		verifyElement(page.dataSetItemsId, "BussinessCardView");
 
 		userAction.mouseOver(driver, sapAGItemId, millisecond);
-		verifyElementUI(page.dataSetItemsId, "MouseOver-CardView-" + page.sapAGItem.getAttribute("id"));
+		verifyElement(page.dataSetItemsId, "MouseOver-CardView-" + page.sapAGItem.getAttribute("id"));
 
 		userAction.mouseClick(driver, ibmCorpItemId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.dataSetItemsId, "MouseClick-CardView-" + page.ibmCorpItem.getAttribute("id"));
+		verifyElement(page.dataSetItemsId, "MouseClick-CardView-" + page.ibmCorpItem.getAttribute("id"));
 	}
 
 	@Test
@@ -83,18 +83,18 @@ public class DataSetTest extends TestBase {
 		// Default view filtering
 		page.showFilter.toggle();
 		this.waitForElement(driver, true, page.filterId, timeOutSeconds);
-		verifyCustomizedDimension(page.filterItemId, 1280, 200, "DefaultView-ShowToolbar-Filter");
+		verifyArea(page.filterItemId, 1280, 200, "DefaultView-ShowToolbar-Filter");
 
 		userAction.mouseClick(driver, page.item1f10.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item1f10);
-		verifyElementUI(page.dataSetId, "DefaultView-Filter-Company-SAPAG");
+		verifyElement(page.dataSetId, "DefaultView-Filter-Company-SAPAG");
 
 		userAction.mouseClick(driver, page.companyFilterAll.getAttribute("id"));
 		userAction.mouseClick(driver, page.item3f21.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item3f21);
-		verifyElementUI(page.dataSetId, "DefaultView-Filter-Headquarter");
+		verifyElement(page.dataSetId, "DefaultView-Filter-Headquarter");
 
 		// List view filtering
 		userAction.mouseClick(driver, page.headquarterAll.getAttribute("id"));
@@ -104,18 +104,18 @@ public class DataSetTest extends TestBase {
 		waitForElement(driver, true, page.listViewId, timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
-		verifyElementUI(page.dataSetId, "ListView-ShowToolbar-Filter");
+		verifyElement(page.dataSetId, "ListView-ShowToolbar-Filter");
 
 		userAction.mouseClick(driver, page.item1f11.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item1f11);
-		verifyElementUI(page.dataSetId, "ListView-Filter-Company-OracleCorp");
+		verifyElement(page.dataSetId, "ListView-Filter-Company-OracleCorp");
 
 		userAction.mouseClick(driver, page.companyFilterAll.getAttribute("id"));
 		userAction.mouseClick(driver, page.item3f21.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item3f21);
-		verifyElementUI(page.dataSetId, "ListView-Filter-Headquarter");
+		verifyElement(page.dataSetId, "ListView-Filter-Headquarter");
 
 		// Bussiness Card view filtering
 		userAction.mouseClick(driver, page.headquarterAll.getAttribute("id"));
@@ -124,18 +124,18 @@ public class DataSetTest extends TestBase {
 		waitForElement(driver, true, page.cardViewId, timeOutSeconds);
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.dataSetId, "CardView-ShowToolbar-Filter");
+		verifyElement(page.dataSetId, "CardView-ShowToolbar-Filter");
 
 		userAction.mouseClick(driver, page.item1f11.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item1f11);
-		verifyElementUI(page.dataSetId, "CardView-Filter-Company-OracleCorp");
+		verifyElement(page.dataSetId, "CardView-Filter-Company-OracleCorp");
 
 		userAction.mouseClick(driver, page.companyFilterAll.getAttribute("id"));
 		userAction.mouseClick(driver, page.item3f21.getAttribute("id"));
 		userAction.mouseClickStartPoint(driver);
 		page.checkAttribute(page.item3f21);
-		verifyElementUI(page.dataSetId, "CardView-Filter-Headquarter");
+		verifyElement(page.dataSetId, "CardView-Filter-Headquarter");
 
 		userAction.mouseClick(driver, page.headquarterAll.getAttribute("id"));
 
@@ -145,18 +145,18 @@ public class DataSetTest extends TestBase {
 		userAction.mouseClick(driver, page.item1f12.getAttribute("id"));
 		userAction.getRobot().keyRelease(KeyEvent.VK_CONTROL);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.dataSetId, "CardView-MultiFilter");
+		verifyElement(page.dataSetId, "CardView-MultiFilter");
 
 		//Reset Filter
 		userAction.mouseClick(driver, page.companyFilterAll.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		page.checkAttribute(page.companyFilterAll);
-		verifyElementUI(page.dataSetId, "Reset-filter");
+		verifyElement(page.dataSetId, "Reset-filter");
 
 		//Hide filter
 		page.showFilter.toggle();
 		this.waitForElement(driver, false, page.filterId, timeOutSeconds);
-		verifyElementUI(page.dataSetId, "Hide-Filter");
+		verifyElement(page.dataSetId, "Hide-Filter");
 	}
 
 	@Test
@@ -164,17 +164,17 @@ public class DataSetTest extends TestBase {
 
 		page.showSearchField.toggle();
 		this.waitForElement(driver, true, page.searchId, timeOutSeconds);
-		verifyElementUI(page.dataSetId, "DefaultView-SearchField");
+		verifyElement(page.dataSetId, "DefaultView-SearchField");
 		page.sendKeysToSearch("SAP", userAction);
 		waitForReady(millisecond);
-		verifyElementUI(page.dataSetItemsId, "DefaultView-Search-SAP");
+		verifyElement(page.dataSetItemsId, "DefaultView-Search-SAP");
 
 		userAction.mouseOver(driver, page.listViewBtn.getAttribute("id"), millisecond);
 		userAction.mouseClick(driver, page.listViewBtn.getAttribute("id"));
 		waitForElement(driver, true, page.listViewId, timeOutSeconds);
 		page.sendKeysToSearch("IBM", userAction);
 		waitForReady(millisecond);
-		verifyElementUI(page.dataSetItemsId, "ListView-Search-IBM");
+		verifyElement(page.dataSetItemsId, "ListView-Search-IBM");
 
 		// Search with nothing
 		userAction.mouseOver(driver, page.listViewBtn.getAttribute("id"), millisecond);
@@ -182,12 +182,12 @@ public class DataSetTest extends TestBase {
 		waitForElement(driver, true, page.cardViewId, timeOutSeconds);
 		page.sendKeysToSearch("USA", userAction);
 		waitForReady(millisecond);
-		verifyElementUI(page.dataSetId, "CardView-Search-nothing");
+		verifyElement(page.dataSetId, "CardView-Search-nothing");
 
 		// Hide SearchField
 		page.showSearchField.toggle();
 		this.waitForElement(driver, false, page.searchId, timeOutSeconds);
-		verifyElementUI(page.dataSetId, "Hide-SearchField");
+		verifyElement(page.dataSetId, "Hide-SearchField");
 	}
 
 	@Test
@@ -195,11 +195,11 @@ public class DataSetTest extends TestBase {
 
 		page.showToolbar.toggle();
 		this.waitForElement(driver, false, page.toolbarId, timeOutSeconds);
-		verifyElementUI(page.dataSetId, "Hide-Toolbar");
+		verifyElement(page.dataSetId, "Hide-Toolbar");
 
 		page.showToolbar.toggle();
 		this.waitForElement(driver, true, page.toolbarId, timeOutSeconds);
-		verifyElementUI(page.dataSetId, "Show-Tooltip");
+		verifyElement(page.dataSetId, "Show-Tooltip");
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class DataSetTest extends TestBase {
 		userAction.mouseClick(driver, page.ibmCorpItem.getAttribute("id"));
 		userAction.getRobot().keyRelease(KeyEvent.VK_CONTROL);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.dataSetId, "Show-MultipleSelect");
+		verifyElement(page.dataSetId, "Show-MultipleSelect");
 	}
 
 }

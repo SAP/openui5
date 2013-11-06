@@ -35,18 +35,18 @@ public class ExactBrowserTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(millisecond);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
 	public void testSelectAttribute() {
 		userAction.mouseClick(driver, page.rootlistHeadId);
 		this.waitForElement(driver, true, page.menuId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "HeadMenuOpen");
+		verifyElement(page.exactBrowserId, "HeadMenuOpen");
 
 		userAction.mouseClick(driver, page.rootlistContId);
 		this.waitForElement(driver, false, page.menuId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "HeadMenuClose");
+		verifyElement(page.exactBrowserId, "HeadMenuClose");
 
 		/** Select attributes*/
 		// Select several attributes in the list
@@ -58,23 +58,23 @@ public class ExactBrowserTest extends TestBase {
 		userAction.mouseClick(driver, page.salesOrderItemId);
 		userAction.mouseMoveToStartPoint(driver);
 		this.waitForElement(driver, true, page.secondListId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "Selected-severalAttributes");
-		verifyElementUI(page.resultId, "Selected-severalAttributes-" + page.resultId);
+		verifyElement(page.exactBrowserId, "Selected-severalAttributes");
+		verifyElement(page.resultId, "Selected-severalAttributes-" + page.resultId);
 
 		// Deselect attribute
 		userAction.mouseClick(driver, page.yearItemId);
 		userAction.mouseClick(driver, page.salesOrderItemId);
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(millisecond);
-		verifyElementUI(page.exactBrowserId, "Deselected-Year");
-		verifyElementUI(page.resultId, "Deselected-Year-Sales-" + page.resultId);
+		verifyElement(page.exactBrowserId, "Deselected-Year");
+		verifyElement(page.resultId, "Deselected-Year-Sales-" + page.resultId);
 
 		// Open sublist of already selected attribute
 		userAction.mouseClick(driver, page.germanyItemId);
 		userAction.mouseMoveToStartPoint(driver);
 		this.waitForElement(driver, true, page.thirdListId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "Country-Selected-Germany");
-		verifyElementUI(page.resultId, "Country-Selected-Germany-" + page.resultId);
+		verifyElement(page.exactBrowserId, "Country-Selected-Germany");
+		verifyElement(page.resultId, "Country-Selected-Germany-" + page.resultId);
 
 	}
 
@@ -88,7 +88,7 @@ public class ExactBrowserTest extends TestBase {
 
 		//Expand complete list
 		userAction.mouseOver(driver, page.countryListExpId, millisecond);
-		verifyElementUI(page.exactBrowserId, "MouseOver-CountryExpanded");
+		verifyElement(page.exactBrowserId, "MouseOver-CountryExpanded");
 		userAction.mouseClick(driver, page.countryListExpId);
 		userAction.mouseMoveToStartPoint(driver);
 
@@ -101,7 +101,7 @@ public class ExactBrowserTest extends TestBase {
 
 		// Expand long list
 		userAction.mouseOver(driver, page.germanyListExpId, millisecond);
-		verifyElementUI(page.exactBrowserId, "MouseOver-GermanyExpanded");
+		verifyElement(page.exactBrowserId, "MouseOver-GermanyExpanded");
 
 		userAction.mouseClick(driver, page.germanyListExpId);
 		userAction.mouseMoveToStartPoint(driver);
@@ -121,7 +121,7 @@ public class ExactBrowserTest extends TestBase {
 		userAction.mouseClick(driver, germanyListHideId);
 		userAction.mouseMoveToStartPoint(driver);
 		page.checkClass(driver.findElement(By.id(page.firstListId)));
-		verifyElementUI(page.exactBrowserId, "List-Country-Germany-Hidden");
+		verifyElement(page.exactBrowserId, "List-Country-Germany-Hidden");
 
 		userAction.mouseClick(driver, germanyListHideId);
 
@@ -132,12 +132,12 @@ public class ExactBrowserTest extends TestBase {
 		userAction.mouseOver(driver, page.germanyHederId, millisecond);
 		userAction.mouseClick(driver, page.germanyListCloseId);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.exactBrowserId, "List-GermanyList-Closed");
+		verifyElement(page.exactBrowserId, "List-GermanyList-Closed");
 
 		userAction.mouseOver(driver, page.countryHeaderId, millisecond);
 		userAction.mouseClick(driver, page.countryListCloseId);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.exactBrowserId, "List-Country-Closed");
+		verifyElement(page.exactBrowserId, "List-Country-Closed");
 
 		userAction.mouseClick(driver, page.countryItemId);
 		userAction.mouseMoveToStartPoint(driver);
@@ -158,7 +158,7 @@ public class ExactBrowserTest extends TestBase {
 			userAction.dragAndDrop(driver, new Point(rezWP.x + rezWI / 2, rezWP.y + 20), new Point(rezWP.x - 100, rezWP.y + 20));
 		}
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.exactBrowserId, "List-Germany-Resizing");
+		verifyElement(page.exactBrowserId, "List-Germany-Resizing");
 	}
 
 	@Test
@@ -167,20 +167,20 @@ public class ExactBrowserTest extends TestBase {
 		// Check Reset Feature
 		userAction.mouseClick(driver, page.resetCheckboxId);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.exactBrowserId, "Disable-Reset");
+		verifyElement(page.exactBrowserId, "Disable-Reset");
 
 		userAction.mouseClick(driver, page.resetCheckboxId);
 		userAction.mouseClick(driver, page.resetBtnId);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.exactBrowserId, "Enable-Reset");
-		verifyElementUI(page.resultId, "Enable-Reset-" + page.resultId);
+		verifyElement(page.exactBrowserId, "Enable-Reset");
+		verifyElement(page.resultId, "Enable-Reset-" + page.resultId);
 
 		// Check Header Feature
 		userAction.mouseClick(driver, page.showHeaderId);
-		verifyElementUI(page.exactBrowserId, "Hide-Header");
+		verifyElement(page.exactBrowserId, "Hide-Header");
 
 		userAction.mouseClick(driver, page.showHeaderId);
-		verifyElementUI(page.exactBrowserId, "Show-Header");
+		verifyElement(page.exactBrowserId, "Show-Header");
 
 		// Check ExactBrowser visibility
 		userAction.mouseClick(driver, page.visibleCheckboxId);
@@ -190,10 +190,10 @@ public class ExactBrowserTest extends TestBase {
 
 		// Check ExactBrowser Top List visibility - Hide
 		userAction.mouseClick(driver, page.showTopCheckboxId);
-		verifyElementUI(page.exactBrowserId, "Hide-TopList");
+		verifyElement(page.exactBrowserId, "Hide-TopList");
 
 		userAction.mouseClick(driver, page.showTopCheckboxId);
-		verifyElementUI(page.exactBrowserId, "Show-TopList");
+		verifyElement(page.exactBrowserId, "Show-TopList");
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class ExactBrowserTest extends TestBase {
 
 		// select reset checkbox
 		action.sendKeys(Keys.TAB, Keys.TAB, Keys.TAB, Keys.SPACE).perform();
-		verifyElementUI(page.exactBrowserId, "KB-Select-ResetCheckbox");
+		verifyElement(page.exactBrowserId, "KB-Select-ResetCheckbox");
 		action.sendKeys(Keys.SPACE).perform();
 
 		// option menu action
@@ -217,28 +217,28 @@ public class ExactBrowserTest extends TestBase {
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
 		}
 		this.waitForElement(driver, true, page.menuId, timeOutSeconds);
-		verifyFullPageUI("KB-optionsMenu-Opened");
+		verifyPage("KB-optionsMenu-Opened");
 		action.sendKeys(Keys.TAB).perform();
 		this.waitForElement(driver, false, page.menuId, timeOutSeconds);
-		verifyFullPageUI("KB-optionsMenu-Closed");
+		verifyPage("KB-optionsMenu-Closed");
 
 		// Select attributes
 		action.sendKeys(Keys.TAB, Keys.RETURN, Keys.DOWN, Keys.DOWN, Keys.SPACE, Keys.END, Keys.RETURN).perform();
 		this.waitForElement(driver, true, page.firstListId, timeOutSeconds);
 		this.waitForElement(driver, true, page.secondListId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "KB-SelectAttributes");
-		verifyElementUI(page.resultId, "KB-SelectAttributes-" + page.resultId);
+		verifyElement(page.exactBrowserId, "KB-SelectAttributes");
+		verifyElement(page.resultId, "KB-SelectAttributes-" + page.resultId);
 
 		// Show sublist
 		action.sendKeys(Keys.TAB).perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		this.waitForElement(driver, true, page.thirdListId, timeOutSeconds);
-		verifyElementUI(page.exactBrowserId, "KB-ShowSubList");
-		verifyElementUI(page.resultId, "KB-ShowSubList-" + page.resultId);
+		verifyElement(page.exactBrowserId, "KB-ShowSubList");
+		verifyElement(page.resultId, "KB-ShowSubList-" + page.resultId);
 
 		// Focus last country
 		action.sendKeys(Keys.END).perform();
-		verifyElementUI(page.exactBrowserId, "KB-Focus-LastCountry");
+		verifyElement(page.exactBrowserId, "KB-Focus-LastCountry");
 
 		// Deselect Attributes
 		if (userAction.getRtl()) {
@@ -250,16 +250,16 @@ public class ExactBrowserTest extends TestBase {
 		action.sendKeys(Keys.TAB).perform();
 		action.sendKeys(Keys.DELETE).perform();
 		waitForReady(millisecond);
-		verifyElementUI(page.exactBrowserId, "KB-DeselectAttributes");
-		verifyElementUI(page.resultId, "KB-DeselectAttributes-" + page.resultId);
+		verifyElement(page.exactBrowserId, "KB-DeselectAttributes");
+		verifyElement(page.resultId, "KB-DeselectAttributes-" + page.resultId);
 
 		// Reset browser
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_TAB);
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_TAB);
 		action.sendKeys(Keys.SPACE).perform();
 		waitForReady(millisecond);
-		verifyElementUI(page.exactBrowserId, "KB-Reset");
-		verifyElementUI(page.resultId, "KB-Reset-" + page.resultId);
+		verifyElement(page.exactBrowserId, "KB-Reset");
+		verifyElement(page.resultId, "KB-Reset-" + page.resultId);
 	}
 
 }

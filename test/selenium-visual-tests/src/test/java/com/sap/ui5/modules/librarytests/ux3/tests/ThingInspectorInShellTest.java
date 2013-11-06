@@ -35,7 +35,7 @@ public class ThingInspectorInShellTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify Standard ThingInspector */
@@ -73,10 +73,10 @@ public class ThingInspectorInShellTest extends TestBase {
 		this.waitForElement(driver, true, page.updatePopupID, timeOutSeconds);
 		page.updateInput.sendKeys("test");
 		page.updateInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-		verifyElementUI(page.feederID, "StandardTI-Update-Opened");
+		verifyElement(page.feederID, "StandardTI-Update-Opened");
 
 		page.actionBarUpdate.click();
-		verifyElementUI(page.actionBarID, "StandardTI-Update-Closed");
+		verifyElement(page.actionBarID, "StandardTI-Update-Closed");
 
 		// Changing status of follow
 		page.thingInspector.follow();
@@ -117,12 +117,12 @@ public class ThingInspectorInShellTest extends TestBase {
 		waitForReady(millisecond);
 		page.thingInspector.selectFacet(page.accountTeamID);
 		userAction.mouseMove(driver, page.accountTeamID);
-		verifyElementUI(page.thingViewerID, "Navigate-To-AccountTeam");
+		verifyElement(page.thingViewerID, "Navigate-To-AccountTeam");
 
 		// Open ThingInspector in new window
 		action.moveToElement(page.openNew).perform();
 		userAction.mouseOver(driver, page.openNew.getAttribute("id"), millisecond);
-		verifyElementUI(page.openNew.getAttribute("id"), "MouseOver-StandardTI-OpenNew");
+		verifyElement(page.openNew.getAttribute("id"), "MouseOver-StandardTI-OpenNew");
 
 		userAction.mouseClickStartPoint(driver);
 		page.openNew.click();
@@ -135,7 +135,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		// Close ThingInspector
 		action.moveToElement(page.standardClose).perform();
 		userAction.mouseOver(driver, page.standardClose.getAttribute("id"), millisecond);
-		verifyElementUI(page.standardClose.getAttribute("id"), "MouseOver-StandardTI-Close");
+		verifyElement(page.standardClose.getAttribute("id"), "MouseOver-StandardTI-Close");
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(2000);
 

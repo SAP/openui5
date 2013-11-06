@@ -31,7 +31,7 @@ public class EPM_DemoTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(millisecond);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify if data is loaded correctly from backend */
@@ -43,11 +43,11 @@ public class EPM_DemoTest extends TestBase {
 		page.pageFive.click();
 		page.checkCellText(page.tableCell09, "HT-1095");
 		userAction.mouseMove(driver, page.page7ID);
-		verifyElementUI(page.table.getId(), "NavigatePage5");
+		verifyElement(page.table.getId(), "NavigatePage5");
 
 		// Move Mousepointer over row #3 and check, whether it gets highlighted
 		userAction.mouseOver(driver, page.tableCell02ID, 1000);
-		verifyElementUI(page.table.getId(), "MouseOver-Row3");
+		verifyElement(page.table.getId(), "MouseOver-Row3");
 
 		// Select first entry in the DataTable
 		page.row0Selector.click();
@@ -65,7 +65,7 @@ public class EPM_DemoTest extends TestBase {
 			page.productCollArrow.click();
 			page.supplierCollArrow.click();
 		}
-		verifyElementUI(page.panelRowID, "Panel-Closed");
+		verifyElement(page.panelRowID, "Panel-Closed");
 
 		// Open Product Details Panel and Supplier Panel
 		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
@@ -77,7 +77,7 @@ public class EPM_DemoTest extends TestBase {
 			page.productCollArrow.click();
 			page.supplierCollArrow.click();
 		}
-		verifyElementUI(page.panelRowID, "Panel-Opened");
+		verifyElement(page.panelRowID, "Panel-Opened");
 	}
 
 	/** Verify open the selected details in a different view and back to the preview page */
@@ -105,6 +105,6 @@ public class EPM_DemoTest extends TestBase {
 		userAction.mouseMoveToStartPoint(driver);
 		page.checkCellText(page.tableCell00, "HT-9999");
 		page.checkFieldValue(page.companyField, "");
-		verifyElementUI(page.table.getId(), "Sort-Descending");
+		verifyElement(page.table.getId(), "Sort-Descending");
 	}
 }

@@ -27,7 +27,7 @@ public class MatrixLayoutTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify properties of MatrixLayout */
@@ -35,15 +35,15 @@ public class MatrixLayoutTest extends TestBase {
 	public void testMatrixProperties() {
 
 		// Check MatrixLayout with LayoutFixed = False
-		verifyElementUI(page.matrix1ID, "LayoutFixed-False");
+		verifyElement(page.matrix1ID, "LayoutFixed-False");
 
 		// Check MatrixLayout with LayoutFixed = True
 		page.tabStrip.selectTab(1);
-		verifyElementUI(page.matrix2.getAttribute("id"), "LayoutFixed-True");
+		verifyElement(page.matrix2.getAttribute("id"), "LayoutFixed-True");
 
 		// Check MatrixLayout with Colspan & Rowspan 
 		page.tabStrip.selectTab(2);
-		verifyElementUI(page.matrix3.getAttribute("id"), "Colspan-Rowspan");
+		verifyElement(page.matrix3.getAttribute("id"), "Colspan-Rowspan");
 	}
 
 	/** Verify MatrixLayout in a realistic scenario */
@@ -51,7 +51,7 @@ public class MatrixLayoutTest extends TestBase {
 	public void testChangeMatrix() {
 		page.tabStrip.selectTab(3);
 		waitForReady(millisecond);
-		verifyElementUI(page.matrix4.getAttribute("id"), "DisplayOnly");
+		verifyElement(page.matrix4.getAttribute("id"), "DisplayOnly");
 
 		userAction.mouseOver(driver, page.changeButton.getId(), 800);
 		verifyBrowserViewBox("Tooltip-ChangeButton");
@@ -69,7 +69,7 @@ public class MatrixLayoutTest extends TestBase {
 		page.urlTextField.setValue("images/face.jpg");
 		page.changeURLButton.click();
 		waitForReady(millisecond);
-		verifyElementUI(page.matrix4.getAttribute("id"), "PictureChanged");
+		verifyElement(page.matrix4.getAttribute("id"), "PictureChanged");
 
 		// Switch back to Display Mode
 		page.changeButton.click();
@@ -79,6 +79,6 @@ public class MatrixLayoutTest extends TestBase {
 		// Mover Mouse away from the button to remove RichTootip
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(millisecond);
-		verifyElementUI(page.matrix4.getAttribute("id"), "Final");
+		verifyElement(page.matrix4.getAttribute("id"), "Final");
 	}
 }

@@ -31,7 +31,7 @@ public class NotificationBarTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify adding and removing messages */
@@ -43,13 +43,13 @@ public class NotificationBarTest extends TestBase {
 		// Check click add none message button
 		page.noneBtn.click();
 		this.waitForElement(driver, true, barId, timeOutSeconds);
-		verifyElementUI(barId, "Add-None-Message-" + barId);
-		verifyElementUI(page.outPutSpanID, "AddMessage-" + page.outPutSpanID);
+		verifyElement(barId, "Add-None-Message-" + barId);
+		verifyElement(page.outPutSpanID, "AddMessage-" + page.outPutSpanID);
 
 		// Check click add information message button
 		page.infoBtn.click();
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(barId, "Add-Information-Message-" + barId);
+		verifyElement(barId, "Add-Information-Message-" + barId);
 
 		// Check mouse over notification bar and notification icon
 		action.moveToElement(page.notificationIcon).perform();
@@ -81,33 +81,33 @@ public class NotificationBarTest extends TestBase {
 		action.moveToElement(page.notificationBar).perform();
 		userAction.mouseOver(driver, barId, millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 500);
-		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-BarDown");
+		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 800);
+		verifyElement(page.togglerID, "MouseOver-NotificationBar-BarDown");
 
-		userAction.mouseOver(driver, page.arrowUp.getAttribute("id"), millisecond);
-		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
+		userAction.mouseOver(driver, page.arrowUp.getAttribute("id"), 800);
+		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
 
 		// Change notification bar bar to large
 		userAction.mouseClick(driver, page.arrowUp.getAttribute("id"));
 		waitForReady(millisecond);
 		userAction.mouseMove(driver, page.noneMessageId);
-		verifyElementUI(barId, "NotificationBar-to-Large");
-		verifyElementUI(page.outPutSpanID, "NotificationBar-to-Large-" + page.outPutSpanID);
+		verifyElement(barId, "NotificationBar-to-Large");
+		verifyElement(page.outPutSpanID, "NotificationBar-to-Large-" + page.outPutSpanID);
 
 		// Check clicking to remove message
 		page.errorMessageText.click();
 		waitForReady(millisecond);
 		userAction.mouseMove(driver, page.warnMessageId);
-		verifyElementUI(barId, "Remove-NotificationBar-ErrorMessage");
+		verifyElement(barId, "Remove-NotificationBar-ErrorMessage");
 
-		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), 500);
-		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
+		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), 800);
+		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
 
 		// Change notification bar to normal
 		userAction.mouseClick(driver, page.arrowDown.getAttribute("id"));
 		waitForReady(millisecond);
-		verifyElementUI(barId, "NotificationBar-Large-to-Normal");
-		verifyElementUI(page.outPutSpanID, "NotificationBar-Large-to-Normal-" + page.outPutSpanID);
+		verifyElement(barId, "NotificationBar-Large-to-Normal");
+		verifyElement(page.outPutSpanID, "NotificationBar-Large-to-Normal-" + page.outPutSpanID);
 
 		// Change notification bar to minimal
 		action.moveToElement(page.notificationBar).perform();
@@ -121,18 +121,18 @@ public class NotificationBarTest extends TestBase {
 		userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
 		verifyBrowserViewBox("NotificationBar-Normal-to-Minimal");
-		verifyElementUI(page.outPutSpanID, "NotificationBar-Normal-to-Minimal-" + page.outPutSpanID);
+		verifyElement(page.outPutSpanID, "NotificationBar-Normal-to-Minimal-" + page.outPutSpanID);
 
 		// Check mouse over bar up
-		userAction.mouseOver(driver, page.barUp.getAttribute("id"), millisecond);
-		verifyElementUI(page.togglerID, "MouseOver-NotificationBar-BarUp");
+		userAction.mouseOver(driver, page.barUp.getAttribute("id"), 800);
+		verifyElement(page.togglerID, "MouseOver-NotificationBar-BarUp");
 
 		// Change notification bar to minimal
 		userAction.mouseClick(driver, page.barUp.getAttribute("id"));
 		waitForReady(millisecond);
 		userAction.mouseMove(driver, page.notificationBar.getAttribute("id"));
-		verifyElementUI(barId, "NotificationBar-Minimal-to-Normal");
-		verifyElementUI(page.outPutSpanID, "NotificationBar-Minimal-to-Normal-" + page.outPutSpanID);
+		verifyElement(barId, "NotificationBar-Minimal-to-Normal");
+		verifyElement(page.outPutSpanID, "NotificationBar-Minimal-to-Normal-" + page.outPutSpanID);
 	}
 
 	/** Verify messageSelected event listener*/
@@ -146,6 +146,6 @@ public class NotificationBarTest extends TestBase {
 		page.successBtn.click();
 		this.waitForElement(driver, true, page.notificationBar.getAttribute("id"), timeOutSeconds);
 		userAction.mouseClick(driver, page.successMessageId);
-		verifyElementUI(page.notificationBar.getAttribute("id"), "MessageSelected-Listener-RemoveMessage");
+		verifyElement(page.notificationBar.getAttribute("id"), "MessageSelected-Listener-RemoveMessage");
 	}
 }

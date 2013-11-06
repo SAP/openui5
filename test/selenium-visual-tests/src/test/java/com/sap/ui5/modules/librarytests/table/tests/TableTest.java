@@ -45,7 +45,7 @@ public class TableTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify Mouse Over event on table header */
@@ -114,31 +114,31 @@ public class TableTest extends TestBase {
 		page.visibleRowCountInput.setValue("3");
 		userAction.mouseClick(driver, page.navigtionModePaginatorID);
 		closeDialog();
-		verifyElementUI(page.tableID, "VisibleRowCount-3-NavigationMode-Paginator");
+		verifyElement(page.tableID, "VisibleRowCount-3-NavigationMode-Paginator");
 
 		// Check next page
 		action.click(page.paginatorNextPage).perform();
 		userAction.mouseOver(driver, page.paginatorNextPage.getAttribute("id"), millisecond);
-		verifyElementUI(page.paginatorID, "Paginator-Next-Page");
+		verifyElement(page.paginatorID, "Paginator-Next-Page");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Check last page
 		action.click(page.paginatorLastPage).perform();
-		verifyElementUI(page.paginatorID, "Paginator-Last-Page");
+		verifyElement(page.paginatorID, "Paginator-Last-Page");
 
 		// Check previous page
 		action.click(page.paginatorPrePage).perform();
 		userAction.mouseOver(driver, page.paginatorPrePage.getAttribute("id"), millisecond);
-		verifyElementUI(page.paginatorID, "Paginator-Previous-Page");
+		verifyElement(page.paginatorID, "Paginator-Previous-Page");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Check first page
 		action.click(page.paginatorFirstPage).perform();
-		verifyElementUI(page.paginatorID, "Paginator-First-Page");
+		verifyElement(page.paginatorID, "Paginator-First-Page");
 
 		// Check middle page
 		action.click(page.paginatorMidPage).perform();
-		verifyElementUI(page.paginatorID, "Paginator-Middle-Page");
+		verifyElement(page.paginatorID, "Paginator-Middle-Page");
 	}
 
 	/** Verify table features */
@@ -152,13 +152,13 @@ public class TableTest extends TestBase {
 		page.visibleRowCountInput.setValue("6");
 		page.singleSelMode.click();
 		closeDialog();
-		verifyElementUI(page.tableID, "SelectionMode-Single-" + page.tableID);
+		verifyElement(page.tableID, "SelectionMode-Single-" + page.tableID);
 
 		// Select one entry by clicking on the row selector
 		userAction.mouseClick(driver, page.tableRowSel3ID);
 		Sleeper.sleepTightInSeconds(1);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.tableID, "Select-SingleRow-" + page.tableID);
+		verifyElement(page.tableID, "Select-SingleRow-" + page.tableID);
 
 		// Select all by clicking selector icon
 		page.dialog.openWith(openDialogBtn);
@@ -171,7 +171,7 @@ public class TableTest extends TestBase {
 		}
 
 		Sleeper.sleepTightInSeconds(1);
-		verifyElementUI(page.tableContentID, "Select-All-" + page.tableID);
+		verifyElement(page.tableContentID, "Select-All-" + page.tableID);
 
 		// Deselect some entries only
 		userAction.getRobot().keyPress(KeyEvent.VK_CONTROL);
@@ -181,7 +181,7 @@ public class TableTest extends TestBase {
 		userAction.getRobot().keyRelease(KeyEvent.VK_CONTROL);
 		userAction.mouseMoveToStartPoint(driver);
 		Sleeper.sleepTightInSeconds(1);
-		verifyElementUI(page.tableContentID, "Deselect-some-entries-" + page.tableID);
+		verifyElement(page.tableContentID, "Deselect-some-entries-" + page.tableID);
 
 		// Deselect all by clicking selector icon
 		page.selectAll.click();
@@ -194,13 +194,13 @@ public class TableTest extends TestBase {
 			page.checkSelect(driver, e, false);
 		}
 		Sleeper.sleepTightInSeconds(1);
-		verifyElementUI(page.tableContentID, "Deselect-All-" + page.tableID);
+		verifyElement(page.tableContentID, "Deselect-All-" + page.tableID);
 
 		// Check selectionMode API - No Selection
 		page.dialog.openWith(openDialogBtn);
 		page.noneSelMode.click();
 		closeDialog();
-		verifyElementUI(page.tableID, "SelectionMode-None-" + page.tableID);
+		verifyElement(page.tableID, "SelectionMode-None-" + page.tableID);
 
 		// Table list in groups
 		page.dialog.openWith(openDialogBtn);
@@ -212,15 +212,15 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.linkMenuGroupID);
 		userAction.mouseClickStartPoint(driver);
 		Sleeper.sleepTight(millisecond);
-		verifyElementUI(page.tableID, "Grouping-Link-" + page.tableID);
+		verifyElement(page.tableID, "Grouping-Link-" + page.tableID);
 
 		// Close Group
 		userAction.mouseClick(driver, page.groupRow3ID);
-		verifyElementUI(page.tableID, "Close-Groups-" + page.tableID);
+		verifyElement(page.tableID, "Close-Groups-" + page.tableID);
 
 		// Open Group
 		userAction.mouseClick(driver, page.groupRow3ID);
-		verifyElementUI(page.tableID, "Open-Groups-" + page.tableID);
+		verifyElement(page.tableID, "Open-Groups-" + page.tableID);
 	}
 
 	/** Verify block actions of table */
@@ -239,7 +239,7 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.linkID);
 		userAction.mouseMoveToStartPoint(driver);
 		this.waitForElement(driver, false, page.linkMenuID, timeOutSeconds);
-		verifyElementUI(page.tableID, "MenuBlocked-" + page.tableID);
+		verifyElement(page.tableID, "MenuBlocked-" + page.tableID);
 
 		// Check blocking column movement (using preventDefault)
 		page.dialog.openWith(openDialogBtn);
@@ -249,7 +249,7 @@ public class TableTest extends TestBase {
 		userAction.dragAndDrop(driver, page.checkedID, page.firstName.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		Sleeper.sleepTight(millisecond);
-		verifyElementUI(page.tableID, "ColumnMoveBlocked-" + page.tableID);
+		verifyElement(page.tableID, "ColumnMoveBlocked-" + page.tableID);
 
 		// Check column visibility feature
 		page.dialog.openWith(openDialogBtn);
@@ -260,14 +260,14 @@ public class TableTest extends TestBase {
 		page.ratingMenuColRating.click();
 		userAction.mouseMoveToStartPoint(driver);
 		Sleeper.sleepTight(millisecond);
-		verifyElementUI(page.tableContentID, "ColumnInvisible-" + page.tableID);
+		verifyElement(page.tableContentID, "ColumnInvisible-" + page.tableID);
 
 		page.firstName.click();
 		userAction.mouseOver(driver, page.firstNameVisibiltyID, millisecond);
 		userAction.mouseClick(driver, page.firstNameColRatingID);
 		userAction.mouseMoveToStartPoint(driver);
 		Sleeper.sleepTight(millisecond);
-		verifyElementUI(page.tableContentID, "ColumnVisible-" + page.tableID);
+		verifyElement(page.tableContentID, "ColumnVisible-" + page.tableID);
 	}
 
 	/** Verify sorting column feature */
@@ -282,7 +282,7 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.firstNameASCID);
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.firstNameSortIconID, timeOutSeconds);
-		verifyElementUI(page.tableID, "Sort-firstName-Ascending-" + page.tableID);
+		verifyElement(page.tableID, "Sort-firstName-Ascending-" + page.tableID);
 
 		// Order table by last name in descending
 		userAction.mouseClick(driver, firstNameID);
@@ -290,7 +290,7 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.firstNameDESCID);
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.firstNameSortIconID, timeOutSeconds);
-		verifyElementUI(page.tableID, "Sort-firstName-Descending-" + page.tableID);
+		verifyElement(page.tableID, "Sort-firstName-Descending-" + page.tableID);
 
 		// Order table by rating in ascending
 		userAction.mouseClick(driver, ratingID);
@@ -298,7 +298,7 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.ratingASCID);
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.ratingSortIconID, timeOutSeconds);
-		verifyElementUI(page.tableID, "Sort-rating-Ascending-" + page.tableID);
+		verifyElement(page.tableID, "Sort-rating-Ascending-" + page.tableID);
 
 		// Order table by rating in descending
 		userAction.mouseClick(driver, ratingID);
@@ -306,7 +306,7 @@ public class TableTest extends TestBase {
 		userAction.mouseClick(driver, page.ratingDESCID);
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.ratingSortIconID, timeOutSeconds);
-		verifyElementUI(page.tableID, "Sort-rating-Descending-" + page.tableID);
+		verifyElement(page.tableID, "Sort-rating-Descending-" + page.tableID);
 
 	}
 
@@ -323,7 +323,7 @@ public class TableTest extends TestBase {
 		closeDialog();
 		userAction.dragAndDrop(driver, page.firstName.getAttribute("id"), page.rating.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.tableID, "Column-Reorder-" + page.tableID);
+		verifyElement(page.tableID, "Column-Reorder-" + page.tableID);
 	}
 
 	/** Verify table properties */
@@ -335,53 +335,53 @@ public class TableTest extends TestBase {
 		page.dialog.openWith(openDialogBtn);
 		page.firstVisibleRowInput.setValue("0");
 		closeDialog();
-		verifyElementUI(page.tableID, "SetFirstVisibleRow-0-" + page.tableID);
+		verifyElement(page.tableID, "SetFirstVisibleRow-0-" + page.tableID);
 
 		// Check visibleRowCount API
 		page.dialog.openWith(openDialogBtn);
 		page.visibleRowCountInput.setValue("6");
 		closeDialog();
-		verifyElementUI(page.tableID, "SetVisibleRowCount-6-" + page.tableID);
+		verifyElement(page.tableID, "SetVisibleRowCount-6-" + page.tableID);
 
 		// Check width API
 		page.dialog.openWith(openDialogBtn);
 		page.widthInput.setValue("700px");
 		closeDialog();
-		verifyElementUI(page.tableID, "SetWidth-700px-" + page.tableID);
+		verifyElement(page.tableID, "SetWidth-700px-" + page.tableID);
 
 		// Check row height API
 		page.dialog.openWith(openDialogBtn);
 		page.widthInput.clearValue();
 		page.rowHeightInput.setValue("50");
 		closeDialog();
-		verifyElementUI(page.tableID, "SetRowHeight-50-" + page.tableID);
+		verifyElement(page.tableID, "SetRowHeight-50-" + page.tableID);
 
 		// Check column header height API
 		page.dialog.openWith(openDialogBtn);
 		page.colHeaderHeightInput.setValue("50");
 		closeDialog();
-		verifyElementUI(page.tableID, "SetColHeaderHeight-50-" + page.tableID);
+		verifyElement(page.tableID, "SetColHeaderHeight-50-" + page.tableID);
 
 		// Check column header height API
 		page.dialog.openWith(openDialogBtn);
 		page.colHeaderVisible.toggle();
 		closeDialog();
 		Sleeper.sleepTightInSeconds(1);
-		verifyElementUI(page.tableID, "SetColHeaderInvisible-" + page.tableID);
+		verifyElement(page.tableID, "SetColHeaderInvisible-" + page.tableID);
 
 		// Check column header text wrapping API
 		page.dialog.openWith(openDialogBtn);
 		page.colHeaderVisible.toggle();
 		page.colHeaderWrapping.toggle();
 		closeDialog();
-		verifyElementUI(page.tableID, "SetColHeaderWrapping-" + page.tableID);
+		verifyElement(page.tableID, "SetColHeaderWrapping-" + page.tableID);
 
 		// Check table edit API
 		page.dialog.openWith(openDialogBtn);
 		page.colHeaderWrapping.toggle();
 		page.editable.toggle();
 		closeDialog();
-		verifyElementUI(page.tableID, "SetTableReadonly-" + page.tableID);
+		verifyElement(page.tableID, "SetTableReadonly-" + page.tableID);
 
 		// Check table invisible API
 		page.dialog.openWith(openDialogBtn);

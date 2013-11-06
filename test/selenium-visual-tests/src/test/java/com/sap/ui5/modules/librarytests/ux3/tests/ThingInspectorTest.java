@@ -39,7 +39,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify Standard ThingInspector */
@@ -79,7 +79,7 @@ public class ThingInspectorTest extends TestBase {
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
-		verifyElementUI(page.actionBarID, "ThingInspector-Update-Closed");
+		verifyElement(page.actionBarID, "ThingInspector-Update-Closed");
 
 		// Changing status of follow
 		page.thingInspector.follow();
@@ -115,7 +115,7 @@ public class ThingInspectorTest extends TestBase {
 		page.standardTIBtn.click();
 		page.thingInspector.selectFacet(page.accountTeamID);
 		waitForReady(millisecond);
-		verifyElementUI(page.facetContentID, "Navigate-To-LastItem-AccountTeam");
+		verifyElement(page.facetContentID, "Navigate-To-LastItem-AccountTeam");
 	}
 
 	/** Verify ThingGroup resizing */

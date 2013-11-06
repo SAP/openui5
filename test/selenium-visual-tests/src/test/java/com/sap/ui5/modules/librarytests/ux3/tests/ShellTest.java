@@ -35,7 +35,7 @@ public class ShellTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify tools on the toolbar */
@@ -55,7 +55,7 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("SearchTool-Opened");
 
 		page.searchTool.click();
-		verifyElementUI(page.leftSideToolsID, "SearchTool-Closed");
+		verifyElement(page.leftSideToolsID, "SearchTool-Closed");
 
 		userAction.mouseClick(driver, page.feederTool.getAttribute("id"));
 		waitForReady(millisecond);
@@ -64,7 +64,7 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("FeederTool-Opened");
 
 		page.feederTool.click();
-		verifyElementUI(page.leftSideToolsID, "FeederTool-Closed");
+		verifyElement(page.leftSideToolsID, "FeederTool-Closed");
 
 		userAction.mouseClickStartPoint(driver);
 		page.optionsPopupTool.click();
@@ -75,7 +75,7 @@ public class ShellTest extends TestBase {
 		//page.optionsPopupTool.click();
 		this.waitForElement(driver, false, page.optionPopDivID, timeOutSeconds);
 
-		verifyElementUI(page.leftSideToolsID, "OptionsPopupTool-Closed");
+		verifyElement(page.leftSideToolsID, "OptionsPopupTool-Closed");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Open tool without closing the previous tool
@@ -140,20 +140,20 @@ public class ShellTest extends TestBase {
 		// Enable/Disable tools
 		page.showSearch.toggle();
 		page.showFeeder.toggle();
-		verifyElementUI(page.leftSideToolsID, "Search-and-Feeder-Disabled");
+		verifyElement(page.leftSideToolsID, "Search-and-Feeder-Disabled");
 
 		page.showLogout.toggle();
-		verifyElementUI(page.shellHeaderID, "LogoutButton-Disabled");
+		verifyElement(page.shellHeaderID, "LogoutButton-Disabled");
 
 		page.showSearch.toggle();
 		this.waitForElement(driver, true, page.searchTool.getAttribute("id"), timeOutSeconds);
 		page.showFeeder.toggle();
 		this.waitForElement(driver, true, page.feederTool.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.leftSideToolsID, "Search-and-Feeder-Enabled");
+		verifyElement(page.leftSideToolsID, "Search-and-Feeder-Enabled");
 
 		page.showLogout.toggle();
 		this.waitForElement(driver, true, page.logoutID, timeOutSeconds);
-		verifyElementUI(page.shellHeaderID, "LogoutButton-Enabled");
+		verifyElement(page.shellHeaderID, "LogoutButton-Enabled");
 	}
 
 	/** Verify Shell navigation */
@@ -163,24 +163,24 @@ public class ShellTest extends TestBase {
 		// Check jumping directly to a specific area in the Shell navigation
 		page.jumpNews.click();
 		waitForReady(millisecond);
-		verifyElementUI(page.cavasID, "Jump-News");
+		verifyElement(page.cavasID, "Jump-News");
 
 		userAction.mouseClick(driver, page.overviewID);
 		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.cavasID, "Overview-Home");
+		verifyElement(page.cavasID, "Overview-Home");
 
 		// Navigate to items
 		userAction.mouseOver(driver, page.marketingID, millisecond);
 		page.myShell.selectWorksetItem(page.marketingID);
 		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.cavasID, "Nav-To-Marketing");
+		verifyElement(page.cavasID, "Nav-To-Marketing");
 
 		page.myShell.selectWorksetItem(page.marketInfoID);
 		waitForReady(1500);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.cavasID, "Nav-To-MarketInformation");
+		verifyElement(page.cavasID, "Nav-To-MarketInformation");
 
 		//Check navigation bar overflow behavior
 		page.myShell.selectWorksetItem(page.salesOrderID);
@@ -192,7 +192,7 @@ public class ShellTest extends TestBase {
 		this.waitForElement(driver, true, page.navRight.getAttribute("id"), timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(1500);
-		verifyFullPageUI("Window-Resize");
+		verifyPage("Window-Resize");
 
 		page.navRight.click();
 		waitForReady(1500);
@@ -202,7 +202,7 @@ public class ShellTest extends TestBase {
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navRight.getAttribute("id"));
 		}
-		verifyElementUI(page.workSetBarID, "Nav-Overflow-Right");
+		verifyElement(page.workSetBarID, "Nav-Overflow-Right");
 
 		page.navRight.click();
 		waitForReady(1500);
@@ -212,7 +212,7 @@ public class ShellTest extends TestBase {
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navRight.getAttribute("id"));
 		}
-		verifyElementUI(page.workSetBarID, "Nav-Overflow-End");
+		verifyElement(page.workSetBarID, "Nav-Overflow-End");
 
 		page.navLeft.click();
 		waitForReady(1500);
@@ -222,7 +222,7 @@ public class ShellTest extends TestBase {
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navLeft.getAttribute("id"));
 		}
-		verifyElementUI(page.workSetBarID, "Nav-Overflow-Left");
+		verifyElement(page.workSetBarID, "Nav-Overflow-Left");
 
 		page.navLeft.click();
 		waitForReady(1500);
@@ -232,7 +232,7 @@ public class ShellTest extends TestBase {
 		if (isAboveIE8()) {
 			userAction.mouseMove(driver, page.navLeft.getAttribute("id"));
 		}
-		verifyElementUI(page.workSetBarID, "Nav-Overflow-Begin");
+		verifyElement(page.workSetBarID, "Nav-Overflow-Begin");
 	}
 
 	/** Verify modification of Shell */
@@ -245,37 +245,37 @@ public class ShellTest extends TestBase {
 		// Add new workset bar item
 		page.contentInput.setValue("Workset");
 		page.addWorksetItemBtn.click();
-		verifyElementUI(page.workSetBarID, "Add-WorksetItem-on-" + page.workSetBarID);
+		verifyElement(page.workSetBarID, "Add-WorksetItem-on-" + page.workSetBarID);
 
 		// Remove workset bar item 
 		page.removeWorksetItemBtn.click();
-		verifyElementUI(page.workSetBarID, "Remove-WorksetItem-from-" + page.workSetBarID);
+		verifyElement(page.workSetBarID, "Remove-WorksetItem-from-" + page.workSetBarID);
 
 		// Add new facet bar item
 		page.contentInput.clearValue();
 		page.contentInput.setValue("Facet");
 		page.addFacetBtn.click();
-		verifyElementUI(page.facetBarID, "Add-FacetItem-on-" + page.facetBarID);
+		verifyElement(page.facetBarID, "Add-FacetItem-on-" + page.facetBarID);
 
 		// Remove facet bar item
 		page.removeFacetBtn.click();
-		verifyElementUI(page.facetBarID, "Remove-FacetItem-from-" + page.facetBarID);
+		verifyElement(page.facetBarID, "Remove-FacetItem-from-" + page.facetBarID);
 
 		// Change application title
 		page.contentInput.clearValue();
 		page.contentInput.setValue("New Title");
 		page.changeTitleBtn.click();
-		verifyElementUI(page.headerID, "ChangeTitle");
+		verifyElement(page.headerID, "ChangeTitle");
 
 		// Add new pane bar item
 		page.contentInput.clearValue();
 		page.contentInput.setValue("Pane");
 		page.addPaneBarBtn.click();
-		verifyElementUI(page.paneBarID, "Add-PaneItem-on-" + page.paneBarID);
+		verifyElement(page.paneBarID, "Add-PaneItem-on-" + page.paneBarID);
 
 		// Remove pane bar item
 		page.removePaneBarBtn.click();
-		verifyElementUI(page.paneBarID, "Remove-PaneItem-from-" + page.paneBarID);
+		verifyElement(page.paneBarID, "Remove-PaneItem-from-" + page.paneBarID);
 
 		page.contentInput.clearValue();
 		page.contentInput.setValue("New Pane1");
@@ -297,7 +297,7 @@ public class ShellTest extends TestBase {
 	@Test
 	public void testLogout() {
 		userAction.mouseOver(driver, page.logoutID, millisecond);
-		verifyElementUI(page.logoutID, "MouseOver-Logout");
+		verifyElement(page.logoutID, "MouseOver-Logout");
 		userAction.mouseClickStartPoint(driver);
 
 		page.myShell.logout();

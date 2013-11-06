@@ -25,7 +25,7 @@ public class TypeFormatTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify format in different locales. */
@@ -41,40 +41,40 @@ public class TypeFormatTest extends TestBase {
 		// Verify en_US local
 		page.en_US.click();
 		this.waitForElement(driver, true, page.en_US.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.dateFormatID, "CheckDateFormat-" + enUSText);
-		verifyElementUI(page.timeFormatID, "CheckTimeFormat-" + enUSText);
-		verifyElementUI(page.datetimeFormatID, "CheckDateTimeFormat-" + enUSText);
-		verifyElementUI(page.numberFormatID, "CheckNumberFormat-" + enUSText);
+		verifyElement(page.dateFormatID, "CheckDateFormat-" + enUSText);
+		verifyElement(page.timeFormatID, "CheckTimeFormat-" + enUSText);
+		verifyElement(page.datetimeFormatID, "CheckDateTimeFormat-" + enUSText);
+		verifyElement(page.numberFormatID, "CheckNumberFormat-" + enUSText);
 
 		// Verify zh_CN local
 		page.zh_CN.click();
 		this.waitForElement(driver, true, page.zh_CN.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.dateFormatID, "CheckDateFormat-" + zhCNText);
-		verifyElementUI(page.timeFormatID, "CheckTimeFormat-" + zhCNText);
-		verifyElementUI(page.datetimeFormatID, "CheckDateTimeFormat-" + zhCNText);
-		verifyElementUI(page.numberFormatID, "CheckNumberFormat-" + zhCNText);
+		verifyElement(page.dateFormatID, "CheckDateFormat-" + zhCNText);
+		verifyElement(page.timeFormatID, "CheckTimeFormat-" + zhCNText);
+		verifyElement(page.datetimeFormatID, "CheckDateTimeFormat-" + zhCNText);
+		verifyElement(page.numberFormatID, "CheckNumberFormat-" + zhCNText);
 
 		// Verify ru_RU local
 		page.ru_RU.click();
 		this.waitForElement(driver, true, page.ru_RU.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.dateFormatID, "CheckDateFormat-" + ruRUText);
-		verifyElementUI(page.timeFormatID, "CheckTimeFormat-" + ruRUText);
-		verifyElementUI(page.datetimeFormatID, "CheckDateTimeFormat-" + ruRUText);
-		verifyElementUI(page.numberFormatID, "CheckNumberFormat-" + ruRUText);
+		verifyElement(page.dateFormatID, "CheckDateFormat-" + ruRUText);
+		verifyElement(page.timeFormatID, "CheckTimeFormat-" + ruRUText);
+		verifyElement(page.datetimeFormatID, "CheckDateTimeFormat-" + ruRUText);
+		verifyElement(page.numberFormatID, "CheckNumberFormat-" + ruRUText);
 
 		// Verify he_IL local
 		page.he_IL.click();
 		this.waitForElement(driver, true, page.he_IL.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.dateFormatID, "CheckDateFormat-" + heILText);
-		verifyElementUI(page.timeFormatID, "CheckTimeFormat-" + heILText);
-		verifyElementUI(page.datetimeFormatID, "CheckDateTimeFormat-" + heILText);
-		verifyElementUI(page.numberFormatID, "CheckNumberFormat-" + heILText);
+		verifyElement(page.dateFormatID, "CheckDateFormat-" + heILText);
+		verifyElement(page.timeFormatID, "CheckTimeFormat-" + heILText);
+		verifyElement(page.datetimeFormatID, "CheckDateTimeFormat-" + heILText);
+		verifyElement(page.numberFormatID, "CheckNumberFormat-" + heILText);
 
 		page.xx_XX.click();
 		this.waitForElement(driver, true, page.xx_XX.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.dateFormatID, "CheckDateFormat-" + xxXXText);
-		verifyElementUI(page.timeFormatID, "CheckTimeFormat-" + xxXXText);
-		verifyElementUI(page.datetimeFormatID, "CheckDateTimeFormat-" + xxXXText);
-		verifyElementUI(page.numberFormatID, "CheckNumberFormat-" + xxXXText);
+		verifyElement(page.dateFormatID, "CheckDateFormat-" + xxXXText);
+		verifyElement(page.timeFormatID, "CheckTimeFormat-" + xxXXText);
+		verifyElement(page.datetimeFormatID, "CheckDateTimeFormat-" + xxXXText);
+		verifyElement(page.numberFormatID, "CheckNumberFormat-" + xxXXText);
 	}
 }

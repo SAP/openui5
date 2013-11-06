@@ -30,7 +30,7 @@ public class FacetFilterInTableTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(millisecond);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	/** Verify filter feature in table. */
@@ -40,20 +40,20 @@ public class FacetFilterInTableTest extends TestBase {
 		// Check filtering of Car Brand only
 		page.item0f10.click();
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "Fiter-BrandOnly-BMW");
+		verifyElement(page.targetID, "Fiter-BrandOnly-BMW");
 
 		// Check filtering of Car Model only
 		page.brandAll.click();
 		page.item0f21.click();
 		page.checkAttribute(page.item0f21);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "Fiter-ModelOnly-325i");
+		verifyElement(page.targetID, "Fiter-ModelOnly-325i");
 
 		// Check filtering of Car Type only
 		page.modelAll.click();
 		page.item0f32.click();
 		page.checkAttribute(page.item0f32);
-		verifyElementUI(page.targetID, "Filter-TypeOnly-Cabrio");
+		verifyElement(page.targetID, "Filter-TypeOnly-Cabrio");
 
 		// Check multi selection in FacetFilter
 		page.typeAll.click();
@@ -62,14 +62,14 @@ public class FacetFilterInTableTest extends TestBase {
 		userAction.mouseClick(driver, page.item0f33.getAttribute("id"));
 		userAction.getRobot().keyRelease(KeyEvent.VK_CONTROL);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetID, "Filter-TypeMulti-SportsTourer");
+		verifyElement(page.targetID, "Filter-TypeMulti-SportsTourer");
 
 		// Check filtering of Car Brand and Car Model
 		userAction.mouseClickStartPoint(driver);
 		page.typeAll.click();
 		page.item0f11.click();
 		page.checkAttribute(page.item0f11);
-		verifyElementUI(page.targetID, "Filter-BrandModel-OPEL-Astra");
+		verifyElement(page.targetID, "Filter-BrandModel-OPEL-Astra");
 
 		//Check filtering of Car Model and Car Type
 		page.brandAll.click();
@@ -77,7 +77,7 @@ public class FacetFilterInTableTest extends TestBase {
 		page.item0f20.click();
 		page.checkAttribute(page.item0f20);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "Filter-ModelType-320d-SportsTourer");
+		verifyElement(page.targetID, "Filter-ModelType-320d-SportsTourer");
 
 		// Check filtering of Car Brand and Car Type
 		page.typeAll.click();
@@ -85,13 +85,13 @@ public class FacetFilterInTableTest extends TestBase {
 		page.item0f11.click();
 		page.item0f30.click();
 		page.checkAttribute(page.item0f30);
-		verifyElementUI(page.targetID, "Filter-BrandType-OPEL-Limousine");
+		verifyElement(page.targetID, "Filter-BrandType-OPEL-Limousine");
 
 		// Check reset
 		page.brandAll.click();
 		page.typeAll.click();
 		page.checkAttribute(page.typeAll);
-		verifyElementUI(page.targetID, "Filter-Reset");
+		verifyElement(page.targetID, "Filter-Reset");
 	}
 
 	/** Verify keyboard actions in table. */
@@ -103,20 +103,20 @@ public class FacetFilterInTableTest extends TestBase {
 		waitForReady(millisecond);
 		action.sendKeys(Keys.TAB, Keys.DOWN).perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.targetID, "KB-Filter-BrandOnly");
+		verifyElement(page.targetID, "KB-Filter-BrandOnly");
 
 		// Check filtering of Car Model only
 		action.sendKeys(Keys.HOME).perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		action.sendKeys(Keys.TAB, Keys.DOWN, Keys.DOWN, Keys.SPACE).perform();
-		verifyElementUI(page.targetID, "KB-Filter-ModelOnly");
+		verifyElement(page.targetID, "KB-Filter-ModelOnly");
 
 		//Check filtering of Car Type only
 		action.sendKeys(Keys.HOME).perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		action.sendKeys(Keys.TAB, Keys.DOWN, Keys.DOWN, Keys.DOWN, Keys.SPACE).perform();
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-TypeOnly");
+		verifyElement(page.targetID, "KB-Filter-TypeOnly");
 
 		// Check multi selection in Facet Filter
 		action.sendKeys(Keys.DOWN, Keys.SPACE, Keys.HOME, Keys.DOWN).perform();
@@ -124,7 +124,7 @@ public class FacetFilterInTableTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		userAction.getRobot().keyRelease(KeyEvent.VK_CONTROL);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-MultiSelect");
+		verifyElement(page.targetID, "KB-Filter-MultiSelect");
 
 		// Check filtering Car Brand and Car Model
 		action.sendKeys(Keys.HOME).perform();
@@ -138,7 +138,7 @@ public class FacetFilterInTableTest extends TestBase {
 		action.sendKeys(Keys.TAB, Keys.DOWN).perform();
 		action.sendKeys(Keys.DOWN, Keys.DOWN, Keys.SPACE).perform();
 		page.checkAttribute(page.item0f22);
-		verifyElementUI(page.targetID, "KB-Filter-BrandModel");
+		verifyElement(page.targetID, "KB-Filter-BrandModel");
 
 		// Check filtering Car Model and Car Type
 		action.sendKeys(Keys.HOME).perform();
@@ -156,7 +156,7 @@ public class FacetFilterInTableTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		page.checkAttribute(page.item0f30);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-ModelType");
+		verifyElement(page.targetID, "KB-Filter-ModelType");
 
 		// Check filtering Car Brand and Car Type
 		action.sendKeys(Keys.HOME).perform();
@@ -173,7 +173,7 @@ public class FacetFilterInTableTest extends TestBase {
 		waitForReady(millisecond);
 		page.checkAttribute(page.item0f31);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-BrandType");
+		verifyElement(page.targetID, "KB-Filter-BrandType");
 
 		// Check filtering Car Brand, Car Model and Car Type
 		action.sendKeys(Keys.HOME).perform();
@@ -192,7 +192,7 @@ public class FacetFilterInTableTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		page.checkAttribute(page.item0f11);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-BrandModelType");
+		verifyElement(page.targetID, "KB-Filter-BrandModelType");
 
 		// Check reset
 		action.sendKeys(Keys.HOME).perform();
@@ -207,6 +207,6 @@ public class FacetFilterInTableTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		page.checkAttribute(page.brandAll);
 		waitForReady(millisecond);
-		verifyElementUI(page.targetID, "KB-Filter-Reset");
+		verifyElement(page.targetID, "KB-Filter-Reset");
 	}
 }
