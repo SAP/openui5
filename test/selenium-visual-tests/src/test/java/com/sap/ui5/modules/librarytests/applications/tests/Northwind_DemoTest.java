@@ -35,7 +35,7 @@ public class Northwind_DemoTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class Northwind_DemoTest extends TestBase {
 		userAction.mouseClick(driver, page.row1SelectorId);
 		userAction.mouseMove(point);
 		waitForReady(durationMillisecond);
-		verifyFullPageUI("Select_Row1");
+		verifyPage("Select_Row1");
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class Northwind_DemoTest extends TestBase {
 		userAction.dragAndDrop(driver, sourceLocation, targetLocation);
 		userAction.mouseMove(point);
 		waitForReady(durationMillisecond);
-		verifyFullPageUI("DragScrollbar");
+		verifyPage("DragScrollbar");
 	}
 
 	@Test
@@ -92,16 +92,16 @@ public class Northwind_DemoTest extends TestBase {
 		}
 		userAction.mouseClick(point);
 		waitForReady(durationMillisecond);
-		verifyFullPageUI("Closed_AllPanels");
+		verifyPage("Closed_AllPanels");
 
 		// Open and close the selected details in a different view
 		userAction.mouseClick(driver, page.openButtonId);
 		userAction.mouseMove(point);
-		verifyFullPageUI("Open_SelectedDetails");
+		verifyPage("Open_SelectedDetails");
 
 		userAction.mouseClick(driver, page.backButtonId);
 		userAction.mouseMove(point);
-		verifyFullPageUI("Close_SelectedDetails");
+		verifyPage("Close_SelectedDetails");
 
 		// Open Product Details Panel
 		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
@@ -130,7 +130,7 @@ public class Northwind_DemoTest extends TestBase {
 		}
 		userAction.mouseClick(point);
 		waitForReady(durationMillisecond);
-		verifyFullPageUI("Opened_AllPanels");
+		verifyPage("Opened_AllPanels");
 	}
 
 	@Test
@@ -140,14 +140,14 @@ public class Northwind_DemoTest extends TestBase {
 		userAction.mouseClick(driver, page.productSortDescId);
 		userAction.mouseMove(point);
 		pageDataLoading();
-		verifyFullPageUI("Sort_Descending");
+		verifyPage("Sort_Descending");
 
 		// Check sorting of Product ID ascending
 		openMenu("ProductID", true);
 		userAction.mouseClick(driver, page.productSortAscId);
 		userAction.mouseMove(point);
 		pageDataLoading();
-		verifyFullPageUI("Sort_Ascending");
+		verifyPage("Sort_Ascending");
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class Northwind_DemoTest extends TestBase {
 		waitForReady(durationMillisecond);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		waitForReady(durationMillisecond * 10);
-		verifyFullPageUI("Filter_ProductName");
+		verifyPage("Filter_ProductName");
 
 		// Check filtering by Quantity per unit
 		openMenu("QuantityPerUnit", true);
@@ -170,7 +170,7 @@ public class Northwind_DemoTest extends TestBase {
 		waitForReady(durationMillisecond);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		waitForReady(durationMillisecond * 10);
-		verifyFullPageUI("Filter_QuantityPerUnit");
+		verifyPage("Filter_QuantityPerUnit");
 
 		// Check filtering by Discontinued
 		openMenu("Discontinued", true);
@@ -180,7 +180,7 @@ public class Northwind_DemoTest extends TestBase {
 		waitForReady(durationMillisecond);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		waitForReady(durationMillisecond * 10);
-		verifyFullPageUI("Filter_Discontinued");
+		verifyPage("Filter_Discontinued");
 
 		// Check filtering by Category Id
 		openMenu("QuantityPerUnit", true);
@@ -197,7 +197,7 @@ public class Northwind_DemoTest extends TestBase {
 		waitForReady(durationMillisecond);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		waitForReady(durationMillisecond * 10);
-		verifyFullPageUI("Filter_CategoryId");
+		verifyPage("Filter_CategoryId");
 	}
 
 	public void openMenu(String menuName, boolean isVisible) {

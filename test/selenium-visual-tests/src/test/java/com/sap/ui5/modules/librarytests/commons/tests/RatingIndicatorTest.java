@@ -24,7 +24,7 @@ public class RatingIndicatorTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -57,25 +57,25 @@ public class RatingIndicatorTest extends TestBase {
 		}
 		page.pressOneKey(userAction, KeyEvent.VK_UP, 3);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Up-" + elementId);
+		verifyElement(ratingId, "KB-Up-" + elementId);
 		page.pressOneKey(userAction, KeyEvent.VK_ENTER, 1);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Up-ENTER-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-KB-Up-ENTER-" + elementId);
-		verifyElementUI(RORatingId, "KB-Up-ENTER-" + RORatingId);
+		verifyElement(ratingId, "KB-Up-ENTER-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-KB-Up-ENTER-" + elementId);
+		verifyElement(RORatingId, "KB-Up-ENTER-" + RORatingId);
 
 		page.pressOneKey(userAction, KeyEvent.VK_RIGHT, 2);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Right-" + elementId);
+		verifyElement(ratingId, "KB-Right-" + elementId);
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Right-SPACE-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-KB-Right-SPACE-" + elementId);
-		verifyElementUI(RORatingId, "KB-Right-SPACE-" + RORatingId);
+		verifyElement(ratingId, "KB-Right-SPACE-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-KB-Right-SPACE-" + elementId);
+		verifyElement(RORatingId, "KB-Right-SPACE-" + RORatingId);
 
 		page.pressOneKey(userAction, KeyEvent.VK_LEFT, 2);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-LEFT-" + elementId);
+		verifyElement(ratingId, "KB-LEFT-" + elementId);
 
 		if (elementId.equals(page.normalId)) {
 			page.pressOneKey(userAction, KeyEvent.VK_TAB, 2);
@@ -83,9 +83,9 @@ public class RatingIndicatorTest extends TestBase {
 			page.pressTwoKey(userAction, KeyEvent.VK_SHIFT, KeyEvent.VK_TAB, 2);
 		}
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Left-TAB-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-KB-Left-TAB-" + elementId);
-		verifyElementUI(RORatingId, "KB-Left-TAB-" + RORatingId);
+		verifyElement(ratingId, "KB-Left-TAB-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-KB-Left-TAB-" + elementId);
+		verifyElement(RORatingId, "KB-Left-TAB-" + RORatingId);
 
 		if (elementId.equals(page.normalId)) {
 			page.pressTwoKey(userAction, KeyEvent.VK_SHIFT, KeyEvent.VK_TAB, 2);
@@ -95,16 +95,16 @@ public class RatingIndicatorTest extends TestBase {
 
 		page.pressOneKey(userAction, KeyEvent.VK_END, 1);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-End-" + elementId);
+		verifyElement(ratingId, "KB-End-" + elementId);
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-End-SPACE-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-KB-End-SPACE-" + elementId);
-		verifyElementUI(RORatingId, "KB-End-SPACE-" + RORatingId);
+		verifyElement(ratingId, "KB-End-SPACE-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-KB-End-SPACE-" + elementId);
+		verifyElement(RORatingId, "KB-End-SPACE-" + RORatingId);
 
 		page.pressOneKey(userAction, KeyEvent.VK_HOME, 1);
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-HOME-" + elementId);
+		verifyElement(ratingId, "KB-HOME-" + elementId);
 
 		if (elementId.equals(page.normalId)) {
 			page.pressOneKey(userAction, KeyEvent.VK_TAB, 2);
@@ -112,9 +112,9 @@ public class RatingIndicatorTest extends TestBase {
 			page.pressTwoKey(userAction, KeyEvent.VK_SHIFT, KeyEvent.VK_TAB, 2);
 		}
 		waitForReady(page.millisecond);
-		verifyElementUI(ratingId, "KB-Home-SHIFTTAB-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-KB-Home-SHIFTTAB-" + elementId);
-		verifyElementUI(RORatingId, "KB-Home-SHIFTTAB-" + RORatingId);
+		verifyElement(ratingId, "KB-Home-SHIFTTAB-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-KB-Home-SHIFTTAB-" + elementId);
+		verifyElement(RORatingId, "KB-Home-SHIFTTAB-" + RORatingId);
 	}
 
 	@Test
@@ -138,9 +138,9 @@ public class RatingIndicatorTest extends TestBase {
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(page.millisecond);
 
-		verifyElementUI(ratingId, "Mouse-Click-" + status + "-" + itemNumber + "-" + elementId);
-		verifyElementUI(page.currentRatingId, "Rating-Mouse-Click-" + status + "-" + itemNumber + "-" + elementId);
-		verifyElementUI(RORatingId, "Mouse-Click-" + status + "-" + itemNumber + "-" + RORatingId);
+		verifyElement(ratingId, "Mouse-Click-" + status + "-" + itemNumber + "-" + elementId);
+		verifyElement(page.currentRatingId, "Rating-Mouse-Click-" + status + "-" + itemNumber + "-" + elementId);
+		verifyElement(RORatingId, "Mouse-Click-" + status + "-" + itemNumber + "-" + RORatingId);
 	}
 
 }

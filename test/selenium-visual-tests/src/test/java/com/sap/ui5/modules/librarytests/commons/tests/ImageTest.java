@@ -24,7 +24,7 @@ public class ImageTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -33,8 +33,8 @@ public class ImageTest extends TestBase {
 		new Actions(driver).sendKeys(Keys.TAB, Keys.TAB, Keys.TAB, Keys.TAB).perform();
 
 		page.image8.click();
-		verifyElementUI(page.target8AreaId, page.image8.getAttribute("id") + "-clicked");
-		verifyElementUI(page.outputTargetId, "checkPressEventHandler");
+		verifyElement(page.target8AreaId, page.image8.getAttribute("id") + "-clicked");
+		verifyElement(page.outputTargetId, "checkPressEventHandler");
 	}
 
 	@Test

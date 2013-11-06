@@ -29,7 +29,7 @@ public class RadioButtonTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class RadioButtonTest extends TestBase {
 
 		// ------------ Move Mouse over RadioButton Label --------------
 		userAction.mouseMove(driver, elementId);
-		verifyElementUI(elementId, "RBLabel-MouseOver-" + elementId);
+		verifyElement(elementId, "RBLabel-MouseOver-" + elementId);
 	}
 
 	@Test
@@ -56,16 +56,16 @@ public class RadioButtonTest extends TestBase {
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
 
-		verifyElementUI("target" + idx, "RBLabel-Mouse-Click-" + elementId);
-		verifyElementUI(page.selStateId, "RBLabel-MouseEvent-Click-" + elementId);
+		verifyElement("target" + idx, "RBLabel-Mouse-Click-" + elementId);
+		verifyElement(page.selStateId, "RBLabel-MouseEvent-Click-" + elementId);
 		page.button.click();
 
 		// ------------ Click On RadioButton --------------
 		userAction.mouseClick(driver, elementId + page.radioIdSuffix);
 		userAction.mouseMoveToStartPoint(driver);
 
-		verifyElementUI("target" + idx, "RB-Mouse-Click-" + elementId);
-		verifyElementUI(page.selStateId, "RB-MouseEvent-Click-" + elementId);
+		verifyElement("target" + idx, "RB-Mouse-Click-" + elementId);
+		verifyElement(page.selStateId, "RB-MouseEvent-Click-" + elementId);
 		page.button.click();
 	}
 
@@ -97,9 +97,9 @@ public class RadioButtonTest extends TestBase {
 		userAction.dragAndDrop(driver, startPoint, endPoint);
 		userAction.mouseMoveToStartPoint(driver);
 
-		verifyElementUI("target" + idx, "selectText-" + elementId);
+		verifyElement("target" + idx, "selectText-" + elementId);
 		if (elementId.equals(page.radioBtn10Id)) {
-			verifyElementUI(page.selStateId, "selectTextStatus-" + elementId);
+			verifyElement(page.selStateId, "selectTextStatus-" + elementId);
 		}
 	}
 
@@ -132,12 +132,12 @@ public class RadioButtonTest extends TestBase {
 					action.sendKeys(Keys.TAB, Keys.TAB, Keys.TAB, Keys.TAB, Keys.TAB).perform();
 				}
 
-				verifyElementUI("target" + idx, "KB-Focus-" + elementId);
+				verifyElement("target" + idx, "KB-Focus-" + elementId);
 				action.sendKeys(Keys.SPACE).perform();
 
-				verifyElementUI("target" + idx, "KB-SPACE-" + elementId);
+				verifyElement("target" + idx, "KB-SPACE-" + elementId);
 				if (elementId.equals(page.radioBtn10Id)) {
-					verifyElementUI(page.selStateId, "KBEvent-SPACE-" + elementId);
+					verifyElement(page.selStateId, "KBEvent-SPACE-" + elementId);
 				}
 			}
 		}

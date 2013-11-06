@@ -29,7 +29,7 @@ public class SplitterTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -41,10 +41,10 @@ public class SplitterTest extends TestBase {
 		// Check whether the SplitterBar can be hidden/showed
 		userAction.mouseClick(driver, page.splitter1HideBtn.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(splitterId, splitterId + "-HideSplitterBar");
+		verifyElement(splitterId, splitterId + "-HideSplitterBar");
 		userAction.mouseClick(driver, page.splitter1ShowBtn.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(splitterId, splitterId + "-ShowSplitterBar");
+		verifyElement(splitterId, splitterId + "-ShowSplitterBar");
 
 		// Remove focus from the button
 		userAction.mouseClickStartPoint(driver);
@@ -91,29 +91,29 @@ public class SplitterTest extends TestBase {
 
 		// Shrink Pane1 to half height, using Drag and Drop
 		dragAndDrop(driver, splitter1BarId, barX, -firstPane.getSize().height / 2);
-		verifyElementUI(splitterId, splitterId + "-Mouse-ShrinkPane1");
+		verifyElement(splitterId, splitterId + "-Mouse-ShrinkPane1");
 
 		// Shrink Pane2 to half height, using Drag and Drop
 		dragAndDrop(driver, splitter1BarId, barX, secondPane.getSize().height / 2);
-		verifyElementUI(splitterId, splitterId + "-Mouse-ShrinkPane2");
+		verifyElement(splitterId, splitterId + "-Mouse-ShrinkPane2");
 
 		int barHeight = splitter1Bar.getSize().height;
 
 		// Collapse Pane1 to not being visible anymore, using Drag and Drop
 		dragAndDrop(driver, splitter1BarId, barX, -firstPane.getSize().height - barHeight);
-		verifyElementUI(splitterId, splitterId + "-Mouse-CollapsePane1");
+		verifyElement(splitterId, splitterId + "-Mouse-CollapsePane1");
 
 		// Collapse Pane2 to not being visible anymore, using Drag and Drop
 		dragAndDrop(driver, splitter1BarId, barX, secondPane.getSize().height + barHeight);
-		verifyElementUI(splitterId, splitterId + "-Mouse-CollapsePane2");
+		verifyElement(splitterId, splitterId + "-Mouse-CollapsePane2");
 
 		// Drop the Splitter outside the allowed UI area of Pane1
 		dragAndDrop(driver, splitter1BarId, barX, -firstPane.getSize().height - 10);
-		verifyElementUI(splitterId, splitterId + "-DropOutsidePane1");
+		verifyElement(splitterId, splitterId + "-DropOutsidePane1");
 
 		// Drop the Splitter outside the allowed UI area of Pane2
 		dragAndDrop(driver, splitter1BarId, barX, secondPane.getSize().height + 10);
-		verifyElementUI(splitterId, splitterId + "-DropOutsidePane2");
+		verifyElement(splitterId, splitterId + "-DropOutsidePane2");
 	}
 
 	private void checkVerticalByMouse(Actions actions) {
@@ -127,28 +127,28 @@ public class SplitterTest extends TestBase {
 
 		// Shrink Pane1 to half width, using Drag and Drop
 		dragAndDrop(driver, splitter5BarId, (-firstPane.getSize().width / 2) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-Mouse-ShrinkPane1");
+		verifyElement(splitterId, splitterId + "-Mouse-ShrinkPane1");
 
 		// Shrink Pane2 to half width, using Drag and Drop
 		dragAndDrop(driver, splitter5BarId, (secondPane.getSize().width / 2) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-Mouse-ShrinkPane2");
+		verifyElement(splitterId, splitterId + "-Mouse-ShrinkPane2");
 
 		int barWidth = splitter5Bar.getSize().width;
 		// Collapse Pane1 to not being visible anymore, using Drag and Drop
 		dragAndDrop(driver, splitter5BarId, (-firstPane.getSize().width - barWidth) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-Mouse-CollapsePane1");
+		verifyElement(splitterId, splitterId + "-Mouse-CollapsePane1");
 
 		// Collapse Pane2 to not being visible anymore, using Drag and Drop
 		dragAndDrop(driver, splitter5BarId, (secondPane.getSize().width + barWidth) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-Mouse-CollapsePane2");
+		verifyElement(splitterId, splitterId + "-Mouse-CollapsePane2");
 
 		// Drop the Splitter outside the allowed UI area of Pane1
 		dragAndDrop(driver, splitter5BarId, (-firstPane.getSize().width - 10) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-DropOutsidePane1");
+		verifyElement(splitterId, splitterId + "-DropOutsidePane1");
 
 		// Drop the Splitter outside the allowed UI area of Pane2
 		dragAndDrop(driver, splitter5BarId, (secondPane.getSize().width + 10) * isRtl, barY);
-		verifyElementUI(splitterId, splitterId + "-DropOutsidePane2");
+		verifyElement(splitterId, splitterId + "-DropOutsidePane2");
 	}
 
 	private void checkHorizontalByKeyboard(Actions actions) {
@@ -162,13 +162,13 @@ public class SplitterTest extends TestBase {
 		userAction.mouseClick(driver, page.splitter1Bar.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		actions.sendKeys(shiftUp, shiftUp).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-SHIFT-UP");
+		verifyElement(targetAreaId, splitterId + "-KB-SHIFT-UP");
 		actions.sendKeys(shiftDown, shiftDown, shiftDown, shiftDown).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-SHIFT-DOWN");
+		verifyElement(targetAreaId, splitterId + "-KB-SHIFT-DOWN");
 		actions.sendKeys(Keys.HOME).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-HOME");
+		verifyElement(targetAreaId, splitterId + "-KB-HOME");
 		actions.sendKeys(Keys.END).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-END");
+		verifyElement(targetAreaId, splitterId + "-KB-END");
 	}
 
 	private void checkVerticalByKeyboard(Actions actions) {
@@ -182,13 +182,13 @@ public class SplitterTest extends TestBase {
 		userAction.mouseClick(driver, page.splitter5Bar.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		actions.sendKeys(shiftLeft, shiftLeft, shiftLeft, shiftLeft).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-SHIFT-LEFT");
+		verifyElement(targetAreaId, splitterId + "-KB-SHIFT-LEFT");
 		actions.sendKeys(shiftRight, shiftRight).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-SHIFT-RIGHT");
+		verifyElement(targetAreaId, splitterId + "-KB-SHIFT-RIGHT");
 		actions.sendKeys(Keys.END).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-END");
+		verifyElement(targetAreaId, splitterId + "-KB-END");
 		actions.sendKeys(Keys.HOME).perform();
-		verifyElementUI(targetAreaId, splitterId + "-KB-HOME");
+		verifyElement(targetAreaId, splitterId + "-KB-HOME");
 	}
 
 	public void dragAndDrop(WebDriver driver, String sourceElementId, int offsetX, int offsetY) {

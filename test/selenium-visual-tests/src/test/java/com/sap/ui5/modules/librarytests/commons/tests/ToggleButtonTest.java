@@ -25,15 +25,15 @@ public class ToggleButtonTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(1000);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 
 		// Test all disabled elements
 		page.clickEnabledCB(driver, userAction);
-		verifyFullPageUI("full-disabled");
+		verifyPage("full-disabled");
 
 		// Test all enabled elements
 		page.clickEnabledCB(driver, userAction);
-		verifyFullPageUI("full-enabled");
+		verifyPage("full-enabled");
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class ToggleButtonTest extends TestBase {
 
 		// ------------ Mouse over on enabled buttons --------------
 		userAction.mouseOver(driver, elementId, 1000);
-		verifyElementUI(elementId, "MouseOver-" + elementId);
+		verifyElement(elementId, "MouseOver-" + elementId);
 		userAction.mouseMoveToStartPoint(driver);
 	}
 
@@ -54,24 +54,24 @@ public class ToggleButtonTest extends TestBase {
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
 
-		verifyElementUI(elementId, "Click-" + elementId);
-		verifyElementUI(page.outputTargetId, "Click-outputTarget-" + elementId);
+		verifyElement(elementId, "Click-" + elementId);
+		verifyElement(page.outputTargetId, "Click-outputTarget-" + elementId);
 	}
 
 	@Test
 	public void testKeyboardAction() {
 		// ------------ Enter/Space Key --------------
 		userAction.pressOneKey(KeyEvent.VK_TAB);
-		verifyElementUI(page.toggleButton1aId, "KB-unfocused-" + page.toggleButton1aId);
+		verifyElement(page.toggleButton1aId, "KB-unfocused-" + page.toggleButton1aId);
 		userAction.pressOneKey(KeyEvent.VK_TAB);
-		verifyElementUI(page.toggleButton1aId, "KB-focused-" + page.toggleButton1aId);
+		verifyElement(page.toggleButton1aId, "KB-focused-" + page.toggleButton1aId);
 
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.outputTargetId, "Enter-outputTarget-" + page.toggleButton1aId);
+		verifyElement(page.outputTargetId, "Enter-outputTarget-" + page.toggleButton1aId);
 
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
-		verifyElementUI(page.outputTargetId, "Space-outputTarget-" + page.toggleButton1bId);
+		verifyElement(page.outputTargetId, "Space-outputTarget-" + page.toggleButton1bId);
 	}
 
 }

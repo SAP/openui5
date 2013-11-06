@@ -26,7 +26,7 @@ public class TreeTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class TreeTest extends TestBase {
 		// Click node211. Avoid twinkle of tree node on IE9.
 		userAction.mouseClick(driver, page.tree1Node211.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.tree1Id, page.tree1Id + "-Click-NonSelectableNonExpandableNode");
+		verifyElement(page.tree1Id, page.tree1Id + "-Click-NonSelectableNonExpandableNode");
 	}
 
 	@Test
@@ -64,8 +64,8 @@ public class TreeTest extends TestBase {
 		// Click collaspeAll button in tree1
 		page.tree1CollapseAll.click();
 		waitForElement(driver, false, page.tree1Node1.getAttribute("id") + "-children", timeOutSeconds);
-		verifyElementUI(page.tree1ContentId, page.tree1Id + "-CollapseAll");
-		verifyElementUI(page.notificationAreaId, "notificationArea-" + page.tree1Id + "-CollapseAll");
+		verifyElement(page.tree1ContentId, page.tree1Id + "-CollapseAll");
+		verifyElement(page.notificationAreaId, "notificationArea-" + page.tree1Id + "-CollapseAll");
 
 		// Click expandAll button in tree1
 		page.tree1ExpandAll.click();
@@ -85,8 +85,8 @@ public class TreeTest extends TestBase {
 	}
 
 	private void verifyNotificationArea(String imageName) {
-		verifyElementUI(page.tree1Id, page.tree1Id + imageName);
-		verifyElementUI(page.notificationAreaId, "notificationArea-" + page.tree1Id + imageName);
+		verifyElement(page.tree1Id, page.tree1Id + imageName);
+		verifyElement(page.notificationAreaId, "notificationArea-" + page.tree1Id + imageName);
 	}
 
 }

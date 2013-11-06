@@ -56,7 +56,7 @@ public class ToolbarTest extends TestBase {
 		vefifyTargetForOutputArea(btn3Id, "IconButton");
 
 		page.openOverflowToolBar(driver, toolBarId, timeOutSeconds);
-		verifyElementUI(toolBarId + page.puSuffix, toolBarId + page.puSuffix + "-Mouse-ToolbarOverflow");
+		verifyElement(toolBarId + page.puSuffix, toolBarId + page.puSuffix + "-Mouse-ToolbarOverflow");
 
 		String btn9Id = toolBarId + page.btn9Suffix;
 		vefifyTargetForOutputArea(btn9Id, "LabelButton");
@@ -75,7 +75,7 @@ public class ToolbarTest extends TestBase {
 		// Define different comboBox items to be selected for each toolBar
 		userAction.mouseClick(driver, page.tb5CmbItem1Id);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetForOutputId, toolBarId + "-Mouse-combobox");
+		verifyElement(page.targetForOutputId, toolBarId + "-Mouse-combobox");
 
 		// Close overflow
 		driver.findElement(By.id(toolBarId + page.mnSuffix)).click();
@@ -107,11 +107,11 @@ public class ToolbarTest extends TestBase {
 			page.resizeWindow(driver, 50, 50, 420, 750);
 		}
 		page.checkToolBarOverflowIcons(driver, timeOutSeconds);
-		verifyElementUI(page.tb1Mn.getAttribute("id"), "Mouse-tbOverFlow-afterWindowResize");
+		verifyElement(page.tb1Mn.getAttribute("id"), "Mouse-tbOverFlow-afterWindowResize");
 
 		page.tb1Mn.click();
 		page.isDisplayedOverflow(driver, page.tb1Id, true, timeOutSeconds);
-		verifyElementUI(page.tb1PuId, page.tb1Id + "-Mouse-OverFlow-afterWindowResize");
+		verifyElement(page.tb1PuId, page.tb1Id + "-Mouse-OverFlow-afterWindowResize");
 	}
 
 	private void checkToolBarInDialogByKeyboard(Actions actions) {
@@ -122,7 +122,7 @@ public class ToolbarTest extends TestBase {
 		waitForElement(driver, true, page.dialogId, timeOutSeconds);
 		waitForReady(waitTimeMillsecond);
 		// Check dialog with toolBar
-		verifyElementUI(page.dialogId, page.dialogId + "-KB-dialogWithToolbar");
+		verifyElement(page.dialogId, page.dialogId + "-KB-dialogWithToolbar");
 
 		// Check toolBar in the dialog
 		actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
@@ -141,8 +141,8 @@ public class ToolbarTest extends TestBase {
 		String btn3Id = toolBarId + page.btn3Suffix;
 		page.moveToElementByKeyboard(actions, isRtlTrue(), 3);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(btn3Id, btn3Id + "-KB-IconButton-confirmed");
-		verifyElementUI(page.targetForOutputId, btn3Id + "-KB-IconButton-confirmedEvent");
+		verifyElement(btn3Id, btn3Id + "-KB-IconButton-confirmed");
+		verifyElement(page.targetForOutputId, btn3Id + "-KB-IconButton-confirmedEvent");
 
 		if (isInDialog) {
 			// Open toolBar overflow
@@ -162,10 +162,10 @@ public class ToolbarTest extends TestBase {
 
 		// Confirm btn9
 		String btn9Id = toolBarId + page.btn9Suffix;
-		verifyElementUI(btn9Id, btn9Id + "-KB-LabelButton-focused");
+		verifyElement(btn9Id, btn9Id + "-KB-LabelButton-focused");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(btn9Id, btn9Id + "-KB-LabelButton-confirmed");
-		verifyElementUI(page.targetForOutputId, btn9Id + "-KB-LabelButton-confirmedEvent");
+		verifyElement(btn9Id, btn9Id + "-KB-LabelButton-confirmed");
+		verifyElement(page.targetForOutputId, btn9Id + "-KB-LabelButton-confirmedEvent");
 
 		// Enter a string into a textField in the toolBar and check
 		actions.sendKeys(Keys.DOWN).perform();
@@ -182,12 +182,12 @@ public class ToolbarTest extends TestBase {
 		waitForElement(driver, true, toolBarId + "_cmb-lb", timeOutSeconds);
 		actions.sendKeys(Keys.DOWN, Keys.DOWN, Keys.DOWN).perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.targetForOutputId, toolBarId + "-KB-combobox");
+		verifyElement(page.targetForOutputId, toolBarId + "-KB-combobox");
 		// Close overflow of toolBar
 		if (isInDialog) {
 			actions.sendKeys(Keys.ESCAPE).perform();
 			page.isDisplayedOverflow(driver, page.dlgTbId, false, timeOutSeconds);
-			verifyElementUI(toolBarId, toolBarId + "-KB-afterClosingOverflow");
+			verifyElement(toolBarId, toolBarId + "-KB-afterClosingOverflow");
 		}
 	}
 
@@ -200,7 +200,7 @@ public class ToolbarTest extends TestBase {
 			page.resizeWindow(driver, 50, 50, 420, 750);
 		}
 		page.checkToolBarOverflowIcons(driver, timeOutSeconds);
-		verifyElementUI(page.tb1Id + page.mnSuffix, "KB-tbOverFlow-afterWindowResize");
+		verifyElement(page.tb1Id + page.mnSuffix, "KB-tbOverFlow-afterWindowResize");
 
 		// Check on toolBar #tb1, if toolBar overflow opens correctly
 		userAction.mouseClickStartPoint(driver);
@@ -208,7 +208,7 @@ public class ToolbarTest extends TestBase {
 		actions.sendKeys(Keys.UP).perform();
 		actions.sendKeys(Keys.DOWN).perform();
 		page.isDisplayedOverflow(driver, page.tb1Id, true, timeOutSeconds);
-		verifyElementUI(page.tb1PuId, page.tb1Id + "-KB-OverFlow-afterWindowResize");
+		verifyElement(page.tb1PuId, page.tb1Id + "-KB-OverFlow-afterWindowResize");
 
 		// Close
 		actions.sendKeys(Keys.ESCAPE).perform();
@@ -219,15 +219,15 @@ public class ToolbarTest extends TestBase {
 		userAction.mouseClick(driver, btnId);
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(waitTimeMillsecond);
-		verifyElementUI(btnId, btnId + "-Mouse-" + desc + "-Click");
-		verifyElementUI(page.targetForOutputId, btnId + "-Mouse-" + desc + "-clickEvent");
+		verifyElement(btnId, btnId + "-Mouse-" + desc + "-Click");
+		verifyElement(page.targetForOutputId, btnId + "-Mouse-" + desc + "-clickEvent");
 	}
 
 	private void verifyWithSetValueForTextField(Actions actions, String toolBarId, String eventType, String textFieldId) {
 		driver.findElement(By.id(textFieldId)).clear();
 		actions.sendKeys(toolBarId + " textfield").perform();
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.targetForOutputId, toolBarId + "-" + eventType + "-textfield");
+		verifyElement(page.targetForOutputId, toolBarId + "-" + eventType + "-textfield");
 	}
 
 }

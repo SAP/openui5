@@ -24,7 +24,7 @@ public class TriStateCheckBoxTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -33,22 +33,22 @@ public class TriStateCheckBoxTest extends TestBase {
 		new Actions(driver).sendKeys(Keys.TAB).perform();
 
 		page.clickElement(driver, userAction, page.checkBoxPcb1Id);
-		verifyElementUI(page.uiAreaId, "Selected-All-first");
+		verifyElement(page.uiAreaId, "Selected-All-first");
 
 		page.clickElement(driver, userAction, page.checkBoxCcb1Id);
-		verifyElementUI(page.uiAreaId, "Deselected-Partly");
+		verifyElement(page.uiAreaId, "Deselected-Partly");
 
 		page.clickElement(driver, userAction, page.checkBoxPcb1Id);
-		verifyElementUI(page.uiAreaId, "Selected-All-second");
+		verifyElement(page.uiAreaId, "Selected-All-second");
 
 		page.clickElement(driver, userAction, page.checkBoxPcb1Id);
-		verifyElementUI(page.uiAreaId, "Deselected-All");
+		verifyElement(page.uiAreaId, "Deselected-All");
 
 		page.clickElement(driver, userAction, page.checkBoxCcb2Id);
-		verifyElementUI(page.uiAreaId, "Selected-Partly");
+		verifyElement(page.uiAreaId, "Selected-Partly");
 
 		page.clickElement(driver, userAction, page.checkBoxCcb1Id);
-		verifyElementUI(page.uiAreaId, "Selected-All-CheckBox");
+		verifyElement(page.uiAreaId, "Selected-All-CheckBox");
 
 	}
 

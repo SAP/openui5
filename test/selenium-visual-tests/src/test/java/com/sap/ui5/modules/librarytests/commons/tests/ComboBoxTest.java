@@ -37,7 +37,7 @@ public class ComboBoxTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -57,11 +57,11 @@ public class ComboBoxTest extends TestBase {
 		}
 		userAction.mouseClick(driver, page.cmb9Icon.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.cmb9LbId, "addedListboxItems");
+		verifyElement(page.cmb9LbId, "addedListboxItems");
 
 		userAction.mouseClick(driver, page.cmb9LbI1.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.cmb9Id, "selectedAddedListboxItem");
+		verifyElement(page.cmb9Id, "selectedAddedListboxItem");
 	}
 
 	@Test
@@ -70,17 +70,17 @@ public class ComboBoxTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 
 		userAction.pressOneKey(KeyEvent.VK_DOWN);
-		verifyElementUI(myCombo1Id, myCombo1Id + "-focus");
+		verifyElement(myCombo1Id, myCombo1Id + "-focus");
 
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 
-		verifyElementUI(page.myTextId, myCombo1Id + "-checkEvent1");
+		verifyElement(page.myTextId, myCombo1Id + "-checkEvent1");
 
 		userAction.pressOneKey(KeyEvent.VK_F4);
 		userAction.pressOneKey(KeyEvent.VK_END);
 		userAction.pressOneKey(KeyEvent.VK_ESCAPE);
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
-		verifyElementUI(myCombo1Id, myCombo1Id + "-ESCAPE");
+		verifyElement(myCombo1Id, myCombo1Id + "-ESCAPE");
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class ComboBoxTest extends TestBase {
 		userAction.mouseClick(driver, myCombo1Id);
 		userAction.mouseMoveToStartPoint(driver);
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
-		verifyElementUI(myCombo1Id, myCombo1Id + "-click");
+		verifyElement(myCombo1Id, myCombo1Id + "-click");
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class ComboBoxTest extends TestBase {
 		userAction.mouseClick(driver, page.myCombo7Icon.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		waitForElement(driver, true, page.myList.getAttribute("id"), timeOutSeconds);
-		verifyElementUI(page.myList.getAttribute("id"), myCombo7Id + "-listbox");
+		verifyElement(page.myList.getAttribute("id"), myCombo7Id + "-listbox");
 
 		// Check rendering of list items
 		if (page.myListItems.isEmpty()) {
@@ -117,12 +117,12 @@ public class ComboBoxTest extends TestBase {
 
 		String lastElementId = lastElement.getAttribute("id");
 		page.scroll(driver, page.myList.getAttribute("id"));
-		verifyElementUI(page.myList.getAttribute("id"), myCombo7Id + "-lastListEntry");
+		verifyElement(page.myList.getAttribute("id"), myCombo7Id + "-lastListEntry");
 
 		userAction.mouseClick(driver, lastElementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(myCombo7Id, myCombo7Id + "-selectedLastListEntry");
-		verifyElementUI(page.cmb6And7TargetId, myCombo7Id + "-checkEvent2");
+		verifyElement(myCombo7Id, myCombo7Id + "-selectedLastListEntry");
+		verifyElement(page.cmb6And7TargetId, myCombo7Id + "-checkEvent2");
 	}
 
 	@Test
@@ -141,11 +141,11 @@ public class ComboBoxTest extends TestBase {
 		for (int i = 0; i < count; i++) {
 			actions.sendKeys(Keys.DOWN).perform();
 			if (i == 0 || i == count - 1) {
-				verifyElementUI(myCombo1Id, "comboboxEntrySelectedByKey-" + i + "-" + myCombo1Id);
+				verifyElement(myCombo1Id, "comboboxEntrySelectedByKey-" + i + "-" + myCombo1Id);
 			}
 		}
 		actions.sendKeys(Keys.TAB).perform();
-		verifyElementUI(page.myTextId, myCombo1Id + "-checkEvent3");
+		verifyElement(page.myTextId, myCombo1Id + "-checkEvent3");
 	}
 
 	@Test
@@ -164,15 +164,15 @@ public class ComboBoxTest extends TestBase {
 		for (int i = 0; i < count; i++) {
 			actions.sendKeys(Keys.DOWN).perform();
 			if (i == 0 || i == count - 1) {
-				verifyElementUI(listId, myCombo1Id + "-entry" + i);
-				verifyElementUI(myCombo1Id, "listboxItemSelectedByKey-" + i + "-" + myCombo1Id);
+				verifyElement(listId, myCombo1Id + "-entry" + i);
+				verifyElement(myCombo1Id, "listboxItemSelectedByKey-" + i + "-" + myCombo1Id);
 			}
 		}
 
 		// Close listBox by using "F4"
 		actions.sendKeys(Keys.F4).perform();
 		actions.sendKeys(Keys.TAB).perform();
-		verifyElementUI(page.myTextId, myCombo1Id + "-checkEvent4");
+		verifyElement(page.myTextId, myCombo1Id + "-checkEvent4");
 	}
 
 	@Test
@@ -184,15 +184,15 @@ public class ComboBoxTest extends TestBase {
 		page.myComboInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		page.myComboInput.sendKeys("a");
 		waitForReady(waitMilliseconds);
-		verifyElementUI(myCombo1Id, myCombo1Id + "-comboboxEntryValueSuggestion1");
+		verifyElement(myCombo1Id, myCombo1Id + "-comboboxEntryValueSuggestion1");
 
 		page.myComboInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		page.myComboInput.sendKeys("ab");
 		waitForReady(waitMilliseconds);
-		verifyElementUI(myCombo1Id, myCombo1Id + "-comboboxEntryValueSuggestion2");
+		verifyElement(myCombo1Id, myCombo1Id + "-comboboxEntryValueSuggestion2");
 
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.myTextId, myCombo1Id + "-checkEvent5");
+		verifyElement(page.myTextId, myCombo1Id + "-checkEvent5");
 
 	}
 
@@ -216,7 +216,7 @@ public class ComboBoxTest extends TestBase {
 			actions.sendKeys(Keys.chord(Keys.ALT, Keys.UP)).perform();
 		}
 		actions.sendKeys(Keys.TAB).perform();
-		verifyElementUI(page.myTextId, myCombo1Id + "-checkEvent6");
+		verifyElement(page.myTextId, myCombo1Id + "-checkEvent6");
 	}
 
 	@Test
@@ -235,9 +235,9 @@ public class ComboBoxTest extends TestBase {
 
 		page.myComboInput.sendKeys("b");
 		waitForReady(waitMilliseconds);
-		verifyElementUI(page.myCombo.getAttribute("id"), page.myCombo.getAttribute("id") + "-checkEventCombobox2");
+		verifyElement(page.myCombo.getAttribute("id"), page.myCombo.getAttribute("id") + "-checkEventCombobox2");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.myTextId, page.myCombo.getAttribute("id") + "-checkEvent8");
+		verifyElement(page.myTextId, page.myCombo.getAttribute("id") + "-checkEvent8");
 
 		userAction.mouseClick(driver, page.myComboIcon.getAttribute("id"));
 		userAction.mouseClick(driver, page.myListIb6.getAttribute("id"));
@@ -258,9 +258,9 @@ public class ComboBoxTest extends TestBase {
 		// Select value from listBox using "ENTER" key
 		actions.sendKeys(selectAll, "ab").perform();
 		waitForReady(waitMilliseconds);
-		verifyElementUI(page.myCombo.getAttribute("id"), page.myCombo.getAttribute("id") + "-checkEventCombobox-onEnter");
+		verifyElement(page.myCombo.getAttribute("id"), page.myCombo.getAttribute("id") + "-checkEventCombobox-onEnter");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.myTextId, page.myCombo.getAttribute("id") + "-checkEvent11");
+		verifyElement(page.myTextId, page.myCombo.getAttribute("id") + "-checkEvent11");
 
 		// Select value from listBox using "TAB" key
 		actions.sendKeys(selectAll, "bb").perform();
@@ -278,16 +278,16 @@ public class ComboBoxTest extends TestBase {
 			page.myComboInput.sendKeys(key);
 			waitForReady(waitMilliseconds);
 			page.myComboInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-			verifyElementUI(myComboBox1Id, myComboBox1Id + "-listboxEntryValueSuggestion" + count);
-			verifyElementUI(listId, myComboBox1Id + "-" + listId + "-listboxEntryValueSuggestion" + count);
+			verifyElement(myComboBox1Id, myComboBox1Id + "-listboxEntryValueSuggestion" + count);
+			verifyElement(listId, myComboBox1Id + "-" + listId + "-listboxEntryValueSuggestion" + count);
 			count++;
 		}
 	}
 
 	private void verifyEventForMyCombo1(String imageNameForCombo, String imageNameForOutPutArea) {
 		String myCombo1Id = page.myCombo.getAttribute("id");
-		verifyElementUI(myCombo1Id, myCombo1Id + imageNameForCombo);
-		verifyElementUI(page.myTextId, myCombo1Id + imageNameForOutPutArea);
+		verifyElement(myCombo1Id, myCombo1Id + imageNameForCombo);
+		verifyElement(page.myTextId, myCombo1Id + imageNameForOutPutArea);
 	}
 
 }

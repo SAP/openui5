@@ -30,7 +30,7 @@ public class MessageBoxTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class MessageBoxTest extends TestBase {
 
 		page.boxShow1Btn.click();
 		page.waitForMessageBox(driver, true, MessageBoxType.MBOX, timeOutSeconds);
-		verifyElementUI(page.alertDialog.getAttribute("id"), boxShow1BtnId + "-Open");
+		verifyElement(page.alertDialog.getAttribute("id"), boxShow1BtnId + "-Open");
 
 		page.closeBtn.click();
 		page.waitForMessageBox(driver, false, MessageBoxType.MBOX, timeOutSeconds);
@@ -113,10 +113,10 @@ public class MessageBoxTest extends TestBase {
 		userAction.mouseClick(driver, alert1BtnId);
 		page.waitForMessageBox(driver, true, MessageBoxType.ALERT, timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
-		verifyFullPageUI(alert1BtnId + "-beforeMove");
+		verifyPage(alert1BtnId + "-beforeMove");
 
 		page.dragDrop(driver, userAction, page.dragBar.getAttribute("id"), -100, -50);
-		verifyFullPageUI(alert1BtnId + "-afterMove");
+		verifyPage(alert1BtnId + "-afterMove");
 
 		page.closeBtn.click();
 		page.waitForMessageBox(driver, false, MessageBoxType.ALERT, timeOutSeconds);
@@ -124,7 +124,7 @@ public class MessageBoxTest extends TestBase {
 
 	private void verifyCallbackTriggerArea(String imageName) {
 		String boxShow1BtnId = page.boxShow1Btn.getAttribute("id");
-		verifyElementUI(page.callbackTriggerId, boxShow1BtnId + imageName);
+		verifyElement(page.callbackTriggerId, boxShow1BtnId + imageName);
 	}
 
 }

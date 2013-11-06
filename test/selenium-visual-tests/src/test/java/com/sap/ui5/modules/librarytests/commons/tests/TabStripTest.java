@@ -27,7 +27,7 @@ public class TabStripTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -38,13 +38,13 @@ public class TabStripTest extends TestBase {
 		String tabStripId = elementId.substring(0, 9);
 
 		userAction.mouseMove(driver, elementId);
-		verifyElementUI(tabStripId, "MouseOver-Monday-" + tabStripId);
+		verifyElement(tabStripId, "MouseOver-Monday-" + tabStripId);
 
 		// ------------ Move mouse over tab Strip1 Tuesday --------------
 		elementId = page.tabStrip1TuesdayId;
 
 		userAction.mouseMove(driver, elementId);
-		verifyElementUI(tabStripId, "MouseOver-Tuesday-" + tabStripId);
+		verifyElement(tabStripId, "MouseOver-Tuesday-" + tabStripId);
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class TabStripTest extends TestBase {
 
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(tabStripId, "Click-Monday-" + tabStripId);
+		verifyElement(tabStripId, "Click-Monday-" + tabStripId);
 
 		// ------------ Click tab Strip1 Tuesday --------------
 		elementId = page.tabStrip1TuesdayId;
@@ -64,16 +64,16 @@ public class TabStripTest extends TestBase {
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(page.millisecond);
-		verifyElementUI(tabStripId, "Click-Tuesday-" + tabStripId);
-		verifyElementUI(page.outputArea, "CheckEvent-Select-Tuesday-" + tabStripId);
+		verifyElement(tabStripId, "Click-Tuesday-" + tabStripId);
+		verifyElement(page.outputArea, "CheckEvent-Select-Tuesday-" + tabStripId);
 
 		// ------------ Click close tabs Wednesday--------------
 		elementId = page.tabStrip1WednesdayCloseId;
 
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(tabStripId, "Close-Wednesday-" + elementId);
-		verifyElementUI(page.outputArea, "CheckEvent-Close-Wednesday-" + elementId);
+		verifyElement(tabStripId, "Close-Wednesday-" + elementId);
+		verifyElement(page.outputArea, "CheckEvent-Close-Wednesday-" + elementId);
 	}
 
 	@Test
@@ -84,65 +84,65 @@ public class TabStripTest extends TestBase {
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 
 		// ------------ Close closeable tabs of a tabStrip1 --------------
-		verifyElementUI(elementId, "KB-Monday-Selected-Focused-" + elementId);
+		verifyElement(elementId, "KB-Monday-Selected-Focused-" + elementId);
 
 		if (isRtlTrue()) {
 			userAction.pressOneKey(KeyEvent.VK_LEFT);
 		} else {
 			userAction.pressOneKey(KeyEvent.VK_RIGHT);
 		}
-		verifyElementUI(elementId, "KB-Tuesday-Focused-" + elementId);
+		verifyElement(elementId, "KB-Tuesday-Focused-" + elementId);
 		sendKeys(driver, KeyEvent.VK_SPACE);
-		verifyElementUI(elementId, "KB-SPACE-TuesdaySelected-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Tuesday-Select-" + elementId);
+		verifyElement(elementId, "KB-SPACE-TuesdaySelected-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Tuesday-Select-" + elementId);
 
 		sendKeys(driver, KeyEvent.VK_END);
-		verifyElementUI(elementId, "KB-Sunday-Focused-" + elementId);
+		verifyElement(elementId, "KB-Sunday-Focused-" + elementId);
 		sendKeys(driver, KeyEvent.VK_ENTER);
-		verifyElementUI(elementId, "KB-ENTER-SundaySelected-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Sunday-Select-" + elementId);
+		verifyElement(elementId, "KB-ENTER-SundaySelected-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Sunday-Select-" + elementId);
 		userAction.pressOneKey(KeyEvent.VK_DELETE);
-		verifyElementUI(elementId, "KB-Sunday-Closed-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Sunday-Close-" + elementId);
+		verifyElement(elementId, "KB-Sunday-Closed-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Sunday-Close-" + elementId);
 
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
-		verifyElementUI(elementId, "KB-SPACE-SaturdaySelected-" + elementId);
+		verifyElement(elementId, "KB-SPACE-SaturdaySelected-" + elementId);
 
 		userAction.pressOneKey(KeyEvent.VK_UP);
-		verifyElementUI(elementId, "KB-Friday-Focused-" + elementId);
+		verifyElement(elementId, "KB-Friday-Focused-" + elementId);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(elementId, "KB-ENTER-FridaySelected-" + elementId);
+		verifyElement(elementId, "KB-ENTER-FridaySelected-" + elementId);
 
 		if (isRtlTrue()) {
 			userAction.pressOneKey(KeyEvent.VK_RIGHT);
 		} else {
 			userAction.pressOneKey(KeyEvent.VK_LEFT);
 		}
-		verifyElementUI(elementId, "KB-Thursday-Focused-" + elementId);
+		verifyElement(elementId, "KB-Thursday-Focused-" + elementId);
 		sendKeys(driver, KeyEvent.VK_SPACE);
-		verifyElementUI(elementId, "KB-SPACE-ThursdaySelected-" + elementId);
+		verifyElement(elementId, "KB-SPACE-ThursdaySelected-" + elementId);
 		userAction.pressOneKey(KeyEvent.VK_DELETE);
-		verifyElementUI(elementId, "KB-Thursday-Closed-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Thursday-Close-" + elementId);
+		verifyElement(elementId, "KB-Thursday-Closed-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Thursday-Close-" + elementId);
 
 		userAction.pressOneKey(KeyEvent.VK_HOME);
-		verifyElementUI(elementId, "KB-Monday-Unselected-Focused-" + elementId);
+		verifyElement(elementId, "KB-Monday-Unselected-Focused-" + elementId);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(elementId, "KB-ENTER-MondaySelected-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Monday-Select-" + elementId);
+		verifyElement(elementId, "KB-ENTER-MondaySelected-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Monday-Select-" + elementId);
 
 		if (isRtlTrue()) {
 			action.sendKeys(Keys.LEFT, Keys.DOWN).perform();
 		} else {
 			action.sendKeys(Keys.RIGHT, Keys.DOWN).perform();
 		}
-		verifyElementUI(elementId, "KB-Wednesday-Focused-" + elementId);
+		verifyElement(elementId, "KB-Wednesday-Focused-" + elementId);
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
-		verifyElementUI(elementId, "KB-SPACE-WednesdaySelected-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Wednesday-Select-" + elementId);
+		verifyElement(elementId, "KB-SPACE-WednesdaySelected-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Wednesday-Select-" + elementId);
 		sendKeys(driver, KeyEvent.VK_DELETE);
-		verifyElementUI(elementId, "KB-Wednesday-Closed-" + elementId);
-		verifyElementUI(page.outputArea, "KB-CheckEvent-Wednesday-Close-" + elementId);
+		verifyElement(elementId, "KB-Wednesday-Closed-" + elementId);
+		verifyElement(page.outputArea, "KB-CheckEvent-Wednesday-Close-" + elementId);
 	}
 
 	@Test

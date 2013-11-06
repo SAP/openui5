@@ -29,7 +29,7 @@ public class ListBoxTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		page.allElementsScollTop(driver, this);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Ignore
@@ -52,14 +52,14 @@ public class ListBoxTest extends TestBase {
 		int xOffset = page.listBox8.getSize().width / 2;
 		int yOffset = page.listBox8.getSize().height - 5;
 		actions.moveToElement(page.listBox8, xOffset, yOffset).perform();
-		verifyElementUI(listBox8Id, listBox8Id + "-MouseOver");
+		verifyElement(listBox8Id, listBox8Id + "-MouseOver");
 
 		// Click on ListBox8 Items
 		actions.click(page.listBox8Item2).perform();
-		verifyElementUI(page.selectionId, listBox8Id + "-Event-ClickSecond");
+		verifyElement(page.selectionId, listBox8Id + "-Event-ClickSecond");
 
 		actions.moveToElement(page.listBox8Item3, 30, 5).click().perform();
-		verifyElementUI(page.selectionId, listBox8Id + "-Event-ClickDisabledItem");
+		verifyElement(page.selectionId, listBox8Id + "-Event-ClickDisabledItem");
 	}
 
 	@Test
@@ -70,10 +70,10 @@ public class ListBoxTest extends TestBase {
 
 		page.pressOneKey(userAction, KeyEvent.VK_TAB, 2);
 		page.pressOneKey(userAction, KeyEvent.VK_END, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-END");
+		verifyElement(listBox8Id, listBox8Id + "-KB-END");
 
 		page.pressOneKey(userAction, KeyEvent.VK_UP, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-UP");
+		verifyElement(listBox8Id, listBox8Id + "-KB-UP");
 
 		page.pressOneKey(userAction, KeyEvent.VK_UP, 1);
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
@@ -81,30 +81,30 @@ public class ListBoxTest extends TestBase {
 		if (getBrowserType() == Constants.CHROME) {
 			verifyBrowserViewBox(listBox8Id + "-KB-SPACE");
 		} else {
-			verifyElementUI(listBox8Id, listBox8Id + "-KB-SPACE");
+			verifyElement(listBox8Id, listBox8Id + "-KB-SPACE");
 		}
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-SPACE");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-SPACE");
 
 		page.pressOneKey(userAction, KeyEvent.VK_LEFT, 1);
 		// Increase stability on Chrome
 		if (getBrowserType() == Constants.CHROME) {
 			verifyBrowserViewBox(listBox8Id + "-KB-LEFT");
 		} else {
-			verifyElementUI(listBox8Id, listBox8Id + "-KB-LEFT");
+			verifyElement(listBox8Id, listBox8Id + "-KB-LEFT");
 		}
 
 		page.pressOneKey(userAction, KeyEvent.VK_HOME, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-HOME");
+		verifyElement(listBox8Id, listBox8Id + "-KB-HOME");
 
 		page.pressOneKey(userAction, KeyEvent.VK_DOWN, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-DOWN");
+		verifyElement(listBox8Id, listBox8Id + "-KB-DOWN");
 
 		page.pressOneKey(userAction, KeyEvent.VK_ENTER, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-ENTER");
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-ENTER");
+		verifyElement(listBox8Id, listBox8Id + "-KB-ENTER");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-ENTER");
 
 		page.pressOneKey(userAction, KeyEvent.VK_RIGHT, 1);
-		verifyElementUI(listBox8Id, listBox8Id + "-KB-RIGHT");
+		verifyElement(listBox8Id, listBox8Id + "-KB-RIGHT");
 
 		// ---------- Check MultiSelection in listBox ----------
 		page.pressOneKey(userAction, KeyEvent.VK_HOME, 1);
@@ -114,26 +114,26 @@ public class ListBoxTest extends TestBase {
 		page.pressOneKey(userAction, KeyEvent.VK_DOWN, 1);
 		// Actions "CONTROL+SPACE" cannot work on IE9, IE10
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_SPACE);
-		verifyElementUI(listBox8Id, listBox8Id + "-MultiSelect-CTRL-SPACE");
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-CTRL-SPACE");
+		verifyElement(listBox8Id, listBox8Id + "-MultiSelect-CTRL-SPACE");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-CTRL-SPACE");
 
 		page.pressOneKey(userAction, KeyEvent.VK_END, 1);
 		// Actions "SHIFT+END" cannot work on IE9,IE10
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_END);
-		verifyElementUI(listBox8Id, listBox8Id + "-MultiSelect-SHIFT-ENTER");
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-SHIFT-ENTER");
+		verifyElement(listBox8Id, listBox8Id + "-MultiSelect-SHIFT-ENTER");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-SHIFT-ENTER");
 
 		page.pressOneKey(userAction, KeyEvent.VK_UP, 2);
 		// Actions "CONTROL+ENTER" cannot work on IE9, IE10
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_ENTER);
-		verifyElementUI(listBox8Id, listBox8Id + "-MultiSelect-CTRL-ENTER");
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-CTRL-ENTER");
+		verifyElement(listBox8Id, listBox8Id + "-MultiSelect-CTRL-ENTER");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-CTRL-ENTER");
 
 		page.pressOneKey(userAction, KeyEvent.VK_HOME, 1);
 		// Actions "SHIFT+SPACE" cannot work on IE9, IE10
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_SPACE);
-		verifyElementUI(listBox8Id, listBox8Id + "-MultiSelect-SHIFT-SPACE");
-		verifyElementUI(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-SHIFT-SPACE");
+		verifyElement(listBox8Id, listBox8Id + "-MultiSelect-SHIFT-SPACE");
+		verifyElement(page.selectionId, listBox8Id + "-KBEvent-MultiSelect-SHIFT-SPACE");
 	}
 
 }

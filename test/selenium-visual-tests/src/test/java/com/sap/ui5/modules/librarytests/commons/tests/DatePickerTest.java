@@ -32,7 +32,7 @@ public class DatePickerTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class DatePickerTest extends TestBase {
 
 		// Check MouseOver on calendar icon
 		userAction.mouseOver(driver, page.defaultDatePickerIconId, waitMilliseconds);
-		verifyElementUI(datePickerId, datePickerId + "-MouseOver");
+		verifyElement(datePickerId, datePickerId + "-MouseOver");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Check Click on calendar icon
@@ -76,7 +76,7 @@ public class DatePickerTest extends TestBase {
 		page.openDefaultDatePickerByUserAction(driver, userAction, timeOutSeconds, this);
 		WebElement thirtiethDayElement = page.getDayInCurrentMonth(driver, 30);
 		page.mouseOver(driver, userAction, thirtiethDayElement);
-		verifyElementUI(page.datePickerId, "default-MouseOverDay");
+		verifyElement(page.datePickerId, "default-MouseOverDay");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Check selection of a specific day (June 1)
@@ -84,14 +84,14 @@ public class DatePickerTest extends TestBase {
 		page.clickNoIdElement(driver, userAction, firstDayElement);
 		actions.sendKeys(page.defalutDatePickerInput, Keys.chord(Keys.CONTROL, "a")).perform();
 		String[] locale = datePickerId.split("_");
-		verifyElementUI(page.targetArea1Id, locale[1] + "-SelectDay");
-		verifyElementUI(page.currentDateId, locale[1] + "-Mouse-Event-SelectDay");
+		verifyElement(page.targetArea1Id, locale[1] + "-SelectDay");
+		verifyElement(page.currentDateId, locale[1] + "-Mouse-Event-SelectDay");
 
 		// Check, whether date is converted correctly, when entered in format 'yyyyMMdd'
 		actions.sendKeys(Keys.chord(Keys.CONTROL, "a"), "19770309").perform();
 		page.openDefaultDatePickerByUserAction(driver, userAction, timeOutSeconds, this);
 		verifyCalendar("-CalculatedDate");
-		verifyElementUI(page.currentDateId, locale[1] + "-Mouse-CalculatedDate");
+		verifyElement(page.currentDateId, locale[1] + "-Mouse-CalculatedDate");
 
 		userAction.mouseClickStartPoint(driver);
 	}
@@ -104,7 +104,7 @@ public class DatePickerTest extends TestBase {
 
 		// Check calendar Focus
 		actions.sendKeys(Keys.TAB).perform();
-		verifyElementUI(datePickerId, datePickerId + "-KB-Focus");
+		verifyElement(datePickerId, datePickerId + "-KB-Focus");
 
 		// --------- Check keyboard navigation within one month -------------
 		checkKeyboardWithinOneMonth(actions);
@@ -115,16 +115,16 @@ public class DatePickerTest extends TestBase {
 		// Check, whether a disabled datePicker is not focused in the tab chain
 		userAction.mouseClickStartPoint(driver);
 		actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
-		verifyFullPageUI("DisabledDatePickerNotFocused");
+		verifyPage("DisabledDatePickerNotFocused");
 	}
 
 	@Test
 	public void testCaldendarFormater() {
 		page.openCalendar(driver, userAction, page.defaultDatePickerId, timeOutSeconds, this);
-		verifyFullPageUI(page.defaultDatePickerId + "-Week-Starting-With-Sunday");
+		verifyPage(page.defaultDatePickerId + "-Week-Starting-With-Sunday");
 
 		page.openCalendar(driver, userAction, page.germanDatePickerId, timeOutSeconds, this);
-		verifyFullPageUI(page.germanDatePickerId + "-Week-Starting-With-Monday");
+		verifyPage(page.germanDatePickerId + "-Week-Starting-With-Monday");
 	}
 
 	private void checkKeyboardWithinOneMonth(Actions actions) {
@@ -166,7 +166,7 @@ public class DatePickerTest extends TestBase {
 		waitForElement(driver, false, page.calendarDivId, timeOutSeconds);
 		actions.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		String[] locale = page.defaultDatePickerId.split("_");
-		verifyElementUI(page.targetArea1Id, locale[1] + "-KB-CalendarClosed-ESC");
+		verifyElement(page.targetArea1Id, locale[1] + "-KB-CalendarClosed-ESC");
 	}
 
 	private void checkKeyboardWithinOneYear(Actions actions) {
@@ -218,7 +218,7 @@ public class DatePickerTest extends TestBase {
 		waitForReady(waitMilliseconds);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		String[] locale = page.defaultDatePickerId.split("_");
-		verifyElementUI(page.currentDateId, page.currentDateId + "-" + locale[1] + "-KB-CalculatedDate");
+		verifyElement(page.currentDateId, page.currentDateId + "-" + locale[1] + "-KB-CalculatedDate");
 
 		actions.sendKeys(Keys.F4).perform();
 		waitForElement(driver, true, page.calendarDivId, timeOutSeconds);
@@ -229,11 +229,11 @@ public class DatePickerTest extends TestBase {
 
 		// Check Date change using keyboard without calendar opened
 		actions.sendKeys(Keys.PAGE_UP, Keys.chord(Keys.CONTROL, "a")).perform();
-		verifyElementUI(page.defaultDatePickerId, page.defaultDatePickerId + "-KB-INC-DAY");
+		verifyElement(page.defaultDatePickerId, page.defaultDatePickerId + "-KB-INC-DAY");
 
 		// Check Date change using keyboard without calendar opened
 		actions.sendKeys(Keys.PAGE_DOWN, Keys.chord(Keys.CONTROL, "a")).perform();
-		verifyElementUI(page.defaultDatePickerId, page.defaultDatePickerId + "-KB-DEC-DAY");
+		verifyElement(page.defaultDatePickerId, page.defaultDatePickerId + "-KB-DEC-DAY");
 	}
 
 	private void verifyCalendar(String desc) {
@@ -242,9 +242,9 @@ public class DatePickerTest extends TestBase {
 
 		// Increase image stability on IE9
 		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
-			verifyFullPageUI(expectedImageName);
+			verifyPage(expectedImageName);
 		} else {
-			verifyElementUI(page.targetArea1Id, expectedImageName);
+			verifyElement(page.targetArea1Id, expectedImageName);
 		}
 	}
 
@@ -253,8 +253,8 @@ public class DatePickerTest extends TestBase {
 			actions.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		}
 		String[] locale = page.defaultDatePickerId.split("_");
-		verifyElementUI(page.targetArea1Id, locale[1] + "-KB-SelectDay-" + keyName);
-		verifyElementUI(page.currentDateId, locale[1] + "-KB-Event-SelectDay-" + keyName);
+		verifyElement(page.targetArea1Id, locale[1] + "-KB-SelectDay-" + keyName);
+		verifyElement(page.currentDateId, locale[1] + "-KB-Event-SelectDay-" + keyName);
 	}
 
 }

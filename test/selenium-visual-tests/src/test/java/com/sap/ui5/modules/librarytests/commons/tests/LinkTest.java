@@ -26,7 +26,7 @@ public class LinkTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class LinkTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.TAB, Keys.TAB).perform();
-		verifyElementUI(page.link2TargetAreaId, page.link2Id + "-focused");
+		verifyElement(page.link2TargetAreaId, page.link2Id + "-focused");
 	}
 
 	@Test
@@ -85,7 +85,7 @@ public class LinkTest extends TestBase {
 		// Avoid twinkle on IE9
 		userAction.mouseClick(driver, element.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(screenshotId, element.getAttribute("id") + imageName);
+		verifyElement(screenshotId, element.getAttribute("id") + imageName);
 	}
 
 }

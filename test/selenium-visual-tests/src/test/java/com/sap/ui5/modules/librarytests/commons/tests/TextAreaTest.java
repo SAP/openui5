@@ -32,7 +32,7 @@ public class TextAreaTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -46,7 +46,7 @@ public class TextAreaTest extends TestBase {
 		userAction.mouseMoveToStartPoint(driver);
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 
-		verifyElementUI(elementId, "Click-" + elementId);
+		verifyElement(elementId, "Click-" + elementId);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ public class TextAreaTest extends TestBase {
 			userAction.mouseDoubleClick(driver, elementId);
 			userAction.mouseMoveToStartPoint(driver);
 		}
-		verifyElementUI(elementId, "DoubleClick-" + elementId);
+		verifyElement(elementId, "DoubleClick-" + elementId);
 	}
 
 	@Test
@@ -74,15 +74,15 @@ public class TextAreaTest extends TestBase {
 		element.sendKeys("Event by leaving TextArea with mouse click on page");
 		userAction.mouseClickStartPoint(driver);
 
-		verifyElementUI(elementId, "LeaveFocusMouseClick-" + elementId);
-		verifyElementUI("currentText", "CurrentText-LeaveFocusMouseClick-" + elementId);
+		verifyElement(elementId, "LeaveFocusMouseClick-" + elementId);
+		verifyElement("currentText", "CurrentText-LeaveFocusMouseClick-" + elementId);
 
 		// ------------ Script escaping --------------
 		element.sendKeys("<script>alert('xss')</script>");
 		userAction.mouseClickStartPoint(driver);
 
-		verifyElementUI(elementId, "EscapedCrossSiteScripting-" + elementId);
-		verifyElementUI("currentText", "CurrentText-EscapedCrossSiteScripting-" + elementId);
+		verifyElement(elementId, "EscapedCrossSiteScripting-" + elementId);
+		verifyElement("currentText", "CurrentText-EscapedCrossSiteScripting-" + elementId);
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class TextAreaTest extends TestBase {
 		action.sendKeys(Keys.chord(Keys.CONTROL, Keys.HOME)).perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 
-		verifyElementUI(elementId, "AllSelected-" + elementId);
+		verifyElement(elementId, "AllSelected-" + elementId);
 
 		// ------------ Text is discarded on pressing ESCAPE key --------------
 		element.sendKeys("This text should not be visible!");
@@ -108,7 +108,7 @@ public class TextAreaTest extends TestBase {
 		element.sendKeys(Keys.chord(Keys.CONTROL, Keys.HOME));
 		element.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 
-		verifyElementUI(elementId, "ESCAPE-" + elementId);
+		verifyElement(elementId, "ESCAPE-" + elementId);
 
 		// ------------ TextArea rendering with partly text selected by press "CONTROL + SHIFT + LEFT" or --------------
 		// ------------ "CONTROL + SHIFT + RIGHT" --------------
@@ -133,7 +133,7 @@ public class TextAreaTest extends TestBase {
 				element.sendKeys(Keys.chord(Keys.CONTROL, Keys.SHIFT, Keys.RIGHT));
 			}
 		}
-		verifyElementUI(elementId, "PartlySelectedOfWord-" + elementId);
+		verifyElement(elementId, "PartlySelectedOfWord-" + elementId);
 
 		// ------------ TextArea rendering with partly text selected by press "SHIFT + LEFT" or "SHIFT + RIGHT"
 		userAction.mouseClickStartPoint(driver);
@@ -157,7 +157,7 @@ public class TextAreaTest extends TestBase {
 				element.sendKeys(Keys.chord(Keys.SHIFT, Keys.RIGHT));
 			}
 		}
-		verifyElementUI(elementId, "PartlySelectedOfCharacter-" + elementId);
+		verifyElement(elementId, "PartlySelectedOfCharacter-" + elementId);
 
 		element = page.textArea8;
 		elementId = element.getAttribute("id");
@@ -171,8 +171,8 @@ public class TextAreaTest extends TestBase {
 		element.sendKeys(Keys.TAB);
 		waitForReady(page.millisecond);
 
-		verifyElementUI(elementId, "LeaveFocusWithTAB-" + elementId);
-		verifyElementUI("currentText", "CurrentText-LeaveFocusWithTAB-" + elementId);
+		verifyElement(elementId, "LeaveFocusWithTAB-" + elementId);
+		verifyElement("currentText", "CurrentText-LeaveFocusWithTAB-" + elementId);
 
 		// ------------ script escaping --------------
 		element.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
@@ -182,8 +182,8 @@ public class TextAreaTest extends TestBase {
 		element.sendKeys(Keys.TAB);
 		waitForReady(page.millisecond);
 
-		verifyElementUI(elementId, "KB-EscapedCrossSiteScripting-" + elementId);
-		verifyElementUI("currentText", "CurrentText-KB-EscapedCrossSiteScripting-" + elementId);
+		verifyElement(elementId, "KB-EscapedCrossSiteScripting-" + elementId);
+		verifyElement("currentText", "CurrentText-KB-EscapedCrossSiteScripting-" + elementId);
 	}
 
 	@Test

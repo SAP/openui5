@@ -29,7 +29,7 @@ public class ProgressIndicatorTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -38,7 +38,7 @@ public class ProgressIndicatorTest extends TestBase {
 
 		// ------------ Move Mouse over ProgressIndicator --------------
 		userAction.mouseMove(driver, elementId);
-		verifyElementUI(elementId, "MouseOver-" + elementId);
+		verifyElement(elementId, "MouseOver-" + elementId);
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class ProgressIndicatorTest extends TestBase {
 
 		// ------------ Click on ProgressIndicator --------------
 		element.click();
-		verifyElementUI(page.target2Id, "FocusedWithClick-" + elementId);
+		verifyElement(page.target2Id, "FocusedWithClick-" + elementId);
 	}
 
 	@Test
@@ -61,11 +61,11 @@ public class ProgressIndicatorTest extends TestBase {
 		// ------------ Keyboard navigation for ProgressIndicator --------------
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 		userAction.pressOneKey(KeyEvent.VK_TAB);
-		verifyElementUI(page.target1Id, "KB-FocusOut-" + elementId);
+		verifyElement(page.target1Id, "KB-FocusOut-" + elementId);
 
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_TAB);
 		waitForReady(page.millisecond);
-		verifyElementUI(page.target1Id, "KB-FocusIn-" + elementId);
+		verifyElement(page.target1Id, "KB-FocusIn-" + elementId);
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ProgressIndicatorTest extends TestBase {
 		}
 		waitForReady(page.millisecond);
 
-		verifyElementUI(page.progInd30Id, "ValueMoreThan100Percent");
+		verifyElement(page.progInd30Id, "ValueMoreThan100Percent");
 
 		page.oTextFieldId.click();
 		page.oTextFieldId.sendKeys(Keys.chord(Keys.CONTROL, "a"));
@@ -95,7 +95,7 @@ public class ProgressIndicatorTest extends TestBase {
 		}
 		waitForReady(page.millisecond);
 
-		verifyElementUI(page.progInd30Id, "ValueLessThan100Percent");
+		verifyElement(page.progInd30Id, "ValueLessThan100Percent");
 	}
 
 	@Test

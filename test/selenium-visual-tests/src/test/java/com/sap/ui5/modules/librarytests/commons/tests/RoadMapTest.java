@@ -33,7 +33,7 @@ public class RoadMapTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -75,19 +75,19 @@ public class RoadMapTest extends TestBase {
 			userAction.mouseClick(driver, startElementId);
 		}
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-StartOfRoadMap");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-StartOfRoadMap");
 
 		// Click on label of Step #1
 		userAction.mouseClick(driver, page.step1LabelElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.roadMap2Step1Id, page.roadMap2Step1Id + "-Click_Label");
-		verifyElementUI(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + "-s1-Click-Label");
+		verifyElement(page.roadMap2Step1Id, page.roadMap2Step1Id + "-Click_Label");
+		verifyElement(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + "-s1-Click-Label");
 
 		// Click on box of disabled Step #2
 		String step2Id = page.roadMap2Step2Id;
 		userAction.mouseClick(driver, page.step2BoxElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(step2Id, step2Id + "-Click-Box-Disabled");
+		verifyElement(step2Id, step2Id + "-Click-Box-Disabled");
 		// Click on the page to remove the current focus
 		userAction.mouseClickStartPoint(driver);
 
@@ -95,7 +95,7 @@ public class RoadMapTest extends TestBase {
 		userAction.mouseClick(driver, page.step2LabelElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(waitMilliseconds);
-		verifyElementUI(step2Id, step2Id + "-Click-Label-Disabled");
+		verifyElement(step2Id, step2Id + "-Click-Label-Disabled");
 
 		// Check Step with SubSteps, Avoid twinkling on IE9 and IE10.
 		checkMouseActionsOnSubSteps();
@@ -107,7 +107,7 @@ public class RoadMapTest extends TestBase {
 			userAction.mouseClick(driver, endElement.getAttribute("id"));
 		}
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-EndOfRoadMap");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-EndOfRoadMap");
 
 	}
 
@@ -121,7 +121,7 @@ public class RoadMapTest extends TestBase {
 		// Navigate to the end of the roadMap
 		userAction.pressOneKey(KeyEvent.VK_END);
 		page.waitForNonExistClassName(driver, page.roadMapEndId, timeOutSeconds, page.endScrollClassName);
-		verifyElementUI(roadMapId, roadMapId + "-KB-END");
+		verifyElement(roadMapId, roadMapId + "-KB-END");
 
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
 		verifyRoadMapSelectedStep("-KB-END-SPACE");
@@ -129,16 +129,16 @@ public class RoadMapTest extends TestBase {
 		// Navigate to the start of the roadMap
 		userAction.pressOneKey(KeyEvent.VK_HOME);
 		page.waitForNonExistClassName(driver, page.roadMapStartId, timeOutSeconds, page.startScrollClassName);
-		verifyElementUI(roadMapId, roadMapId + "-KB-HOME");
+		verifyElement(roadMapId, roadMapId + "-KB-HOME");
 
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		verifyRoadMapSelectedStep("-KB-END-ENTER");
 
 		// Navigate to the next step using DOWN cursor key
 		userAction.pressOneKey(KeyEvent.VK_DOWN);
-		verifyElementUI(roadMapId, roadMapId + "-KB-DOWN");
+		verifyElement(roadMapId, roadMapId + "-KB-DOWN");
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
-		verifyElementUI(roadMapId, roadMapId + "-KB-DOWN-SPACE");
+		verifyElement(roadMapId, roadMapId + "-KB-DOWN-SPACE");
 
 		// ------------- Check Step with SubSteps ----------------
 		checkKeyboardOnSubSteps(actions);
@@ -154,7 +154,7 @@ public class RoadMapTest extends TestBase {
 		String step4Sub4Id = page.step4Sub4Id;
 		userAction.mouseClick(driver, page.step4Sub4BoxElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(step4Sub4Id, step4Sub4Id + "-Click-Box-Disabled");
+		verifyElement(step4Sub4Id, step4Sub4Id + "-Click-Box-Disabled");
 
 		// Click on the page to remove the current focus
 		userAction.mouseClickStartPoint(driver);
@@ -162,13 +162,13 @@ public class RoadMapTest extends TestBase {
 		// Click on label of disabled SubStep #4
 		userAction.mouseClick(driver, page.step4Sub4LabelElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(step4Sub4Id, step4Sub4Id + "-Click-Label-Disabled");
+		verifyElement(step4Sub4Id, step4Sub4Id + "-Click-Label-Disabled");
 
 		// Collapse SubSteps
 		userAction.mouseClick(driver, page.step4ExpandendElement.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
 		waitForElement(driver, false, page.step4Sub1Id, timeOutSeconds);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-Collapsed-Substeps");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-Collapsed-Substeps");
 
 		// Expand SubSteps
 		userAction.mouseClick(driver, page.step4Element.getAttribute("id"));
@@ -181,24 +181,24 @@ public class RoadMapTest extends TestBase {
 	private void checkKeyboardOnSubSteps(Actions actions) {
 		// Navigate to the first SubStep using RIGHT /LEFT cursor key.
 		page.moveToElementByKeyboard(actions, isRtlTrue(), 2);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-KB-SubStep");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-KB-SubStep");
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-KB-SubStep-ENTER");
-		verifyElementUI(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + "-KB-SubStep-ENTER");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-KB-SubStep-ENTER");
+		verifyElement(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + "-KB-SubStep-ENTER");
 
 		// Navigate to the disabled SubStep using DOWN cursor key
 		userAction.pressOneKey(KeyEvent.VK_DOWN);
 		userAction.pressOneKey(KeyEvent.VK_DOWN);
 		page.waitForElementClickable(driver, page.step4Sub4Id, timeOutSeconds);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-KB-Disbaled-SubStep");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-KB-Disbaled-SubStep");
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-KB-Disbaled-SubStep-SPACE");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-KB-Disbaled-SubStep-SPACE");
 
 		// Collapse SubSteps
 		userAction.pressOneKey(KeyEvent.VK_DOWN);
 		page.waitForElementClickable(driver, page.roadMap2Step4ExpandendId, timeOutSeconds);
 		waitForReady(waitMilliseconds);
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + "-KB-SubSteps-End");
+		verifyElement(page.roadMap2Id, page.roadMap2Id + "-KB-SubSteps-End");
 		userAction.pressOneKey(KeyEvent.VK_SPACE);
 		waitForElement(driver, false, page.step4Sub1Id, timeOutSeconds);
 		waitForReady(waitMilliseconds);
@@ -212,8 +212,8 @@ public class RoadMapTest extends TestBase {
 	}
 
 	private void verifyRoadMapSelectedStep(String imageSuffix) {
-		verifyElementUI(page.roadMap2Id, page.roadMap2Id + imageSuffix);
-		verifyElementUI(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + imageSuffix);
+		verifyElement(page.roadMap2Id, page.roadMap2Id + imageSuffix);
+		verifyElement(page.selectedStepId, page.roadMap2Id + "-" + page.selectedStepId + imageSuffix);
 	}
 
 }

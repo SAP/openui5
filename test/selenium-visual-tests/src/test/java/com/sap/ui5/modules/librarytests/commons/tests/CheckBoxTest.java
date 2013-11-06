@@ -29,7 +29,7 @@ public class CheckBoxTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -59,14 +59,14 @@ public class CheckBoxTest extends TestBase {
 		// Click on CheckBox label
 		userAction.mouseClick(driver, page.checkBox6.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetArea6Id, checkBox6Id + "-Mouse-Click1");
-		verifyElementUI(page.ckdStateId, checkBox6Id + "-MouseEvent-Click1");
+		verifyElement(page.targetArea6Id, checkBox6Id + "-Mouse-Click1");
+		verifyElement(page.ckdStateId, checkBox6Id + "-MouseEvent-Click1");
 
 		// Click on CheckBox
 		userAction.mouseClick(driver, page.checkBox6CB.getAttribute("id"));
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetArea6Id, checkBox6Id + "-Mouse-Click2");
-		verifyElementUI(page.ckdStateId, checkBox6Id + "-MouseEvent-Click2");
+		verifyElement(page.targetArea6Id, checkBox6Id + "-Mouse-Click2");
+		verifyElement(page.ckdStateId, checkBox6Id + "-MouseEvent-Click2");
 
 	}
 
@@ -76,7 +76,7 @@ public class CheckBoxTest extends TestBase {
 		new Actions(driver).sendKeys(Keys.TAB).perform();
 
 		page.dragDropOnCheckBox3(driver, userAction);
-		verifyElementUI(page.targetArea3Id, page.checkBox3.getAttribute("id") + "-selectText");
+		verifyElement(page.targetArea3Id, page.checkBox3.getAttribute("id") + "-selectText");
 	}
 
 	@Test
@@ -85,17 +85,17 @@ public class CheckBoxTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 		// Focus chkBox12
 		page.pressOneKey(userAction, KeyEvent.VK_TAB, 5);
-		verifyElementUI(page.targetArea12Id, checkBox12Id + "-KB-Focus");
+		verifyElement(page.targetArea12Id, checkBox12Id + "-KB-Focus");
 
 		// Check CheckBox with Space key
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
-		verifyElementUI(page.targetArea12Id, checkBox12Id + "-KB-SPACE1");
-		verifyElementUI(page.ckdStateId, checkBox12Id + "-KBEvent-SPACE1");
+		verifyElement(page.targetArea12Id, checkBox12Id + "-KB-SPACE1");
+		verifyElement(page.ckdStateId, checkBox12Id + "-KBEvent-SPACE1");
 
 		// UnCheck CheckBox with Space key
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
-		verifyElementUI(page.targetArea12Id, checkBox12Id + "-KB-SPACE2");
-		verifyElementUI(page.ckdStateId, checkBox12Id + "-KBEvent-SPACE2");
+		verifyElement(page.targetArea12Id, checkBox12Id + "-KB-SPACE2");
+		verifyElement(page.ckdStateId, checkBox12Id + "-KBEvent-SPACE2");
 	}
 
 }

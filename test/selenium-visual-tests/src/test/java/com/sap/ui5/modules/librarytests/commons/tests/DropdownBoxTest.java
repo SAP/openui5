@@ -23,54 +23,54 @@ public class DropdownBoxTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
 	public void testHistoryFeature() {
 		page.oBtnClearHistory.click();
 		page.ddb1Icon.click();
-		verifyElementUI(page.myListId, "ddb1-Initial");
+		verifyElement(page.myListId, "ddb1-Initial");
 
 		String[] itemIds = new String[] { page.ddb1It1, page.ddb1It3, page.ddb1It5 };
 
 		// Click items to add history
 		page.clickItems(driver, itemIds);
 		page.ddb1Icon.click();
-		verifyElementUI(page.outputTargetId, "ddb1-Item6Selected");
+		verifyElement(page.outputTargetId, "ddb1-Item6Selected");
 		page.ddb1Icon.click();
-		verifyElementUI(page.myListId, "ddb1-History");
+		verifyElement(page.myListId, "ddb1-History");
 
 		itemIds = new String[] { page.ddb1It0, page.ddb1It2, page.ddb1It4 };
 
 		// Click items to overwrite history
 		page.clickItems(driver, itemIds);
-		verifyElementUI(page.myListId, "ddb1-Overwrite-History");
+		verifyElement(page.myListId, "ddb1-Overwrite-History");
 
 		userAction.mouseClickStartPoint(driver);
 		page.oBtnClearHistory.click();
 		page.ddb1Icon.click();
-		verifyElementUI(page.myListId, "ddb1-Clear-History");
+		verifyElement(page.myListId, "ddb1-Clear-History");
 	}
 
 	@Test
 	public void testSearchHelpFeature() {
 		page.ddb2Icon.click();
-		verifyElementUI(page.myListId, "myList-ddb2-SearchHelp");
+		verifyElement(page.myListId, "myList-ddb2-SearchHelp");
 
 		// page.ddb2Shi at invisible region on IE, Focus on element first.
 		JsAction.focusOnElement(driver, page.ddb2Shi);
 
 		page.ddb2Shi.click();
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.outputTargetId, "outputTarget-ddb2-SearchHelp");
+		verifyElement(page.outputTargetId, "outputTarget-ddb2-SearchHelp");
 
 		page.ddb3Icon.click();
-		verifyElementUI(page.myListId, "myList-ddb3-SearchHelp");
+		verifyElement(page.myListId, "myList-ddb3-SearchHelp");
 
 		page.ddb3Shi.click();
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.outputTargetId, "outputTarget-ddb3-SearchHelp");
+		verifyElement(page.outputTargetId, "outputTarget-ddb3-SearchHelp");
 	}
 
 }

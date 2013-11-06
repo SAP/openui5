@@ -26,7 +26,7 @@ public class DialogTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -35,26 +35,26 @@ public class DialogTest extends TestBase {
 		String dialogId = page.myDialog3Id;
 
 		page.openDialogByBtn(driver, userAction, page.button3Id, page.myDialog3Id, this);
-		verifyElementUI(dialogId, dialogId + "-Mouse");
+		verifyElement(dialogId, dialogId + "-Mouse");
 
 		// Click close button
 		String closeBtnId = dialogId + page.closeBtnIdSuffix;
 		page.closeDialogByBtn(driver, userAction, closeBtnId, dialogId, this);
-		verifyElementUI(page.myResultTvId, dialogId + "-Mouse-Close");
+		verifyElement(page.myResultTvId, dialogId + "-Mouse-Close");
 
 		page.openDialogByBtn(driver, userAction, page.button3Id, dialogId, this);
 
 		// Click OK button
 		String okBtnId = dialogId + page.okBtnIdSuffix;
 		page.closeDialogByBtn(driver, userAction, okBtnId, dialogId, this);
-		verifyElementUI(page.myResultTvId, dialogId + "-Mouse-OK");
+		verifyElement(page.myResultTvId, dialogId + "-Mouse-OK");
 
 		page.openDialogByBtn(driver, userAction, page.button3Id, dialogId, this);
 
 		// Click cancel button
 		String cancelBtnId = dialogId + page.cancelBtnIdSuffix;
 		page.closeDialogByBtn(driver, userAction, cancelBtnId, dialogId, this);
-		verifyElementUI(page.myResultTvId, dialogId + "-Mouse-Cancel");
+		verifyElement(page.myResultTvId, dialogId + "-Mouse-Cancel");
 
 	}
 
@@ -83,11 +83,11 @@ public class DialogTest extends TestBase {
 		userAction.mouseClick(driver, page.button1Id);
 		userAction.mouseMoveToStartPoint(driver);
 		waitForElement(driver, true, page.myDialog1Id, page.timeOutSeconds);
-		verifyFullPageUI(page.myDialog1Id + "-beforeMove");
+		verifyPage(page.myDialog1Id + "-beforeMove");
 
 		page.dragDrop(driver, userAction, page.myDialog1Id + page.dialogHeaderSuffix, -100, -100);
 		waitForElement(driver, true, page.myDialog1Id, page.timeOutSeconds);
-		verifyFullPageUI(page.myDialog1Id + "-afterMove");
+		verifyPage(page.myDialog1Id + "-afterMove");
 
 		int rtlMode = 1;
 		if (userAction.getRtl()) {
@@ -106,31 +106,31 @@ public class DialogTest extends TestBase {
 
 	private void keyboardEventForDialog(Actions actions, String dialogId, Object[] navigateToOK,
 			Object[] navigateToCancel) {
-		verifyElementUI(dialogId, dialogId + "-KB");
+		verifyElement(dialogId, dialogId + "-KB");
 
 		// Use ESC to close dialog
 		page.closeDialogByKeyboard(driver, userAction, dialogId, this, KeyEvent.VK_ESCAPE);
-		verifyElementUI(page.myResultTvId, dialogId + "-KB-Close");
+		verifyElement(page.myResultTvId, dialogId + "-KB-Close");
 
 		page.openDialogByEnter(driver, userAction, dialogId, this);
 
 		// Navigate back to 'OK' button and confirm
 		page.closeDialogByKeyboard(driver, userAction, dialogId, this, navigateToOK);
-		verifyElementUI(page.myResultTvId, dialogId + "-KB-OK");
+		verifyElement(page.myResultTvId, dialogId + "-KB-OK");
 
 		page.openDialogByEnter(driver, userAction, dialogId, this);
 
 		// Navigate back to 'Cancel' button and confirm
 		page.closeDialogByKeyboard(driver, userAction, dialogId, this, navigateToCancel);
-		verifyElementUI(page.myResultTvId, dialogId + "-KB-Cancel");
+		verifyElement(page.myResultTvId, dialogId + "-KB-Cancel");
 	}
 
 	private void checkChangeDialogSizeByDragDrop(String dialogId, int rtlMode) {
 		page.dragDrop(driver, userAction, dialogId + page.dialogGripSuffix, 80 * rtlMode, 80);
-		verifyFullPageUI(dialogId + "-bigger");
+		verifyPage(dialogId + "-bigger");
 
 		page.dragDrop(driver, userAction, dialogId + page.dialogGripSuffix, -25 * rtlMode, -25);
-		verifyFullPageUI(dialogId + "-smaller");
+		verifyPage(dialogId + "-smaller");
 
 		page.closeDialogByKeyboard(driver, userAction, dialogId, this, KeyEvent.VK_ESCAPE);
 	}

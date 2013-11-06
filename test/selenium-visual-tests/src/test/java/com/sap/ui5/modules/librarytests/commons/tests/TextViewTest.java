@@ -24,7 +24,7 @@ public class TextViewTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(2000);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -42,15 +42,15 @@ public class TextViewTest extends TestBase {
 		// ------------ Selected text on mouse double-click --------------
 		userAction.mouseDoubleClick(driver, page.textView3Id);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(elementId, "DoubleClick-" + elementId);
+		verifyElement(elementId, "DoubleClick-" + elementId);
 	}
 
 	@Test
 	public void testChangeTextEvent() {
-		verifyElementUI(page.textView10Id, "beforeChanging-" + page.textView10Id);
+		verifyElement(page.textView10Id, "beforeChanging-" + page.textView10Id);
 		driver.findElement(By.id(page.textFieldId)).sendKeys("Changed text for TextView10");
 
-		verifyElementUI(page.textView10Id, "afterChanging-" + page.textView10Id);
+		verifyElement(page.textView10Id, "afterChanging-" + page.textView10Id);
 	}
 
 }

@@ -27,7 +27,7 @@ public class MenuButtonTest extends TestBase {
 	@Test
 	public void testAllElements() {
 		waitForReady(page.millisecond);
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -45,13 +45,13 @@ public class MenuButtonTest extends TestBase {
 		if (getBrowserType() == Constants.IE10) {
 			verifyBrowserViewBox("Hover-Item1-" + elementId);
 		} else {
-			verifyElementUI(page.menu2Id, "Hover-Item1-" + elementId);
+			verifyElement(page.menu2Id, "Hover-Item1-" + elementId);
 		}
 		userAction.mouseMoveToStartPoint(driver);
 
 		// ------------ Click on MenuButton item--------------
 		driver.findElement(By.id(elementId + "-itm2")).click();
-		verifyElementUI(page.outputTargetId, "Select-Item2-" + elementId);
+		verifyElement(page.outputTargetId, "Select-Item2-" + elementId);
 	}
 
 	@Test
@@ -63,13 +63,13 @@ public class MenuButtonTest extends TestBase {
 		elementId = page.menuButton3Id;
 		page.pressOneKey(userAction, KeyEvent.VK_TAB, 3);
 		waitForReady(page.millisecond);
-		verifyElementUI(elementId, "KB-Focused-" + elementId);
+		verifyElement(elementId, "KB-Focused-" + elementId);
 
 		// Actions sendKeys cannot work on IE9
 		userAction.pressTwoKeys(KeyEvent.VK_ALT, KeyEvent.VK_DOWN);
 		// Increase stability on IE10
 		if (getBrowserType() == Constants.IE10) {
-			verifyFullPageUI("KB-ALT-DOWN-" + elementId);
+			verifyPage("KB-ALT-DOWN-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-ALT-DOWN-" + elementId);
 		}
@@ -84,13 +84,13 @@ public class MenuButtonTest extends TestBase {
 		page.pressOneKey(userAction, KeyEvent.VK_ENTER, 1);
 		// Increase stability on IE10
 		if (getBrowserType() == Constants.IE10) {
-			verifyFullPageUI("KB-ENTER-" + elementId);
+			verifyPage("KB-ENTER-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-ENTER-" + elementId);
 		}
 		page.pressOneKey(userAction, KeyEvent.VK_RIGHT, 1);
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
-		verifyElementUI(page.outputTargetId, "KB-Select-SPACE-" + elementId);
+		verifyElement(page.outputTargetId, "KB-Select-SPACE-" + elementId);
 
 		// ------------ Key "SPACE" and "DOWN, ENTER" on menuButton8 --------------
 		elementId = page.menuButton8Id;
@@ -99,13 +99,13 @@ public class MenuButtonTest extends TestBase {
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
 		// Increase stability on IE10
 		if (getBrowserType() == Constants.IE10) {
-			verifyFullPageUI("KB-SPACE-" + elementId);
+			verifyPage("KB-SPACE-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-SPACE-" + elementId);
 		}
 		page.pressOneKey(userAction, KeyEvent.VK_DOWN, 1);
 		page.pressOneKey(userAction, KeyEvent.VK_ENTER, 1);
-		verifyElementUI(page.outputTargetId, "KB-Select-ENTER-" + elementId);
+		verifyElement(page.outputTargetId, "KB-Select-ENTER-" + elementId);
 	}
 
 	@Test

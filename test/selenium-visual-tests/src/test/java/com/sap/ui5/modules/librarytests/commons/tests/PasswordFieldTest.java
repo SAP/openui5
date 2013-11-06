@@ -26,7 +26,7 @@ public class PasswordFieldTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -39,8 +39,8 @@ public class PasswordFieldTest extends TestBase {
 			userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
 
-			verifyElementUI(elementId, "EnterPassword-" + elementId);
-			verifyElementUI(page.outputEventId, "Event-EnterPassword-" + elementId);
+			verifyElement(elementId, "EnterPassword-" + elementId);
+			verifyElement(page.outputEventId, "Event-EnterPassword-" + elementId);
 		}
 	}
 

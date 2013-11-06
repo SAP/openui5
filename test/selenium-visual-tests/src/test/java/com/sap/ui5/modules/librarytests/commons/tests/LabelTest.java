@@ -24,7 +24,7 @@ public class LabelTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -32,7 +32,7 @@ public class LabelTest extends TestBase {
 		String elementId = page.label5.getAttribute("id");
 		// Avoid twinkling of button on IE9, IE10
 		userAction.mouseMove(driver, elementId);
-		verifyElementUI(page.targetLabeledForId, elementId + "-MouseOver");
+		verifyElement(page.targetLabeledForId, elementId + "-MouseOver");
 	}
 
 	@Test
@@ -42,7 +42,7 @@ public class LabelTest extends TestBase {
 		// Label click on #label5
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetLabeledForId, elementId + "-Mouse-Click");
+		verifyElement(page.targetLabeledForId, elementId + "-Mouse-Click");
 	}
 
 	@Test
@@ -56,7 +56,7 @@ public class LabelTest extends TestBase {
 			userAction.mouseDoubleClick(driver, elementId);
 			userAction.mouseMoveToStartPoint(driver);
 		}
-		verifyElementUI(page.targetLabeledForId, elementId + "-Double-Mouse-Click");
+		verifyElement(page.targetLabeledForId, elementId + "-Double-Mouse-Click");
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class LabelTest extends TestBase {
 		// Drag + Drop and Mouse Selection on #label5
 		page.dragDrop(driver, userAction, page.label5);
 		String elementId = page.label5.getAttribute("id");
-		verifyElementUI(elementId, elementId + "-Mouse-Drag-Drop-Selection");
+		verifyElement(elementId, elementId + "-Mouse-Drag-Drop-Selection");
 	}
 
 }

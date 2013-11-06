@@ -24,7 +24,7 @@ public class ValueHelpFieldTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -35,7 +35,7 @@ public class ValueHelpFieldTest extends TestBase {
 		// Avoid twinkling on IE9 and IE10
 		userAction.mouseClick(driver, elementId + page.iconSuffix);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.outputTargetId, "ClickEvent-" + elementId);
+		verifyElement(page.outputTargetId, "ClickEvent-" + elementId);
 	}
 
 	@Test
@@ -45,11 +45,11 @@ public class ValueHelpFieldTest extends TestBase {
 
 		// ------------ Check focused ValueHelpField --------------
 		action.sendKeys(Keys.chord(Keys.TAB, Keys.TAB, Keys.TAB)).perform();
-		verifyElementUI(elementId, "KB-Focused-" + elementId);
+		verifyElement(elementId, "KB-Focused-" + elementId);
 
 		// ------------ Check ValueHelp trigger on pressing F4 key --------------
 		action.sendKeys(Keys.F4).perform();
-		verifyElementUI(page.outputTargetId, "KB-Event-" + elementId);
+		verifyElement(page.outputTargetId, "KB-Event-" + elementId);
 	}
 
 	@Test

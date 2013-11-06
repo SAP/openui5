@@ -29,7 +29,7 @@ public class RichTooltipTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class RichTooltipTest extends TestBase {
 				waitForElement(driver, true, elementId + page.richTooltipSuffix, timeOutSeconds);
 			}
 			waitForElement(driver, true, tooltipId, timeOutSeconds);
-			verifyElementUI(tooltipId, elementId + "-RTT");
+			verifyElement(tooltipId, elementId + "-RTT");
 			userAction.mouseMoveToStartPoint(driver);
 		}
 	}
@@ -58,7 +58,7 @@ public class RichTooltipTest extends TestBase {
 
 		// Actions "CONTROL+I" cannot work on IE9
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_I);
-		verifyElementUI(page.panelRttId + page.richTooltipSuffix, "KB_RTT_panelRTT");
+		verifyElement(page.panelRttId + page.richTooltipSuffix, "KB_RTT_panelRTT");
 	}
 
 }

@@ -31,7 +31,7 @@ public class SliderTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -55,22 +55,22 @@ public class SliderTest extends TestBase {
 		}
 		userAction.mouseMoveToStartPoint(driver);
 
-		verifyElementUI(page.targetPrefix + elementId, "DandD-Up-" + page.targetPrefix + elementId);
-		verifyElementUI(page.outputEventId, "DandD-Up-" + elementId);
+		verifyElement(page.targetPrefix + elementId, "DandD-Up-" + page.targetPrefix + elementId);
+		verifyElement(page.outputEventId, "DandD-Up-" + elementId);
 
 		if (!element.getAttribute("class").contains("sapUiSliDsbl")
 				&& !element.getAttribute("class").contains("sapUiSliRo")) {
 			userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, (int) (y * 0.75) - d.height);
 			userAction.mouseMoveToStartPoint(driver);
 
-			verifyElementUI(page.targetPrefix + elementId, "DandD-Down-" + page.targetPrefix + elementId);
-			verifyElementUI(page.outputEventId, "DandD-Down-" + elementId);
+			verifyElement(page.targetPrefix + elementId, "DandD-Down-" + page.targetPrefix + elementId);
+			verifyElement(page.outputEventId, "DandD-Down-" + elementId);
 
 			userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, d.height - y);
 			userAction.mouseMoveToStartPoint(driver);
 
-			verifyElementUI(page.targetPrefix + elementId, "DandD-Begin-" + page.targetPrefix + elementId);
-			verifyElementUI(page.outputEventId, "DandD-Begin-" + elementId);
+			verifyElement(page.targetPrefix + elementId, "DandD-Begin-" + page.targetPrefix + elementId);
+			verifyElement(page.outputEventId, "DandD-Begin-" + elementId);
 
 			if (getBrowserType() == Constants.IE10) {
 				userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, 2 * d.height + 2);
@@ -79,8 +79,8 @@ public class SliderTest extends TestBase {
 			}
 			userAction.mouseMoveToStartPoint(driver);
 
-			verifyElementUI(page.targetPrefix + elementId, "DandD-End-" + page.targetPrefix + elementId);
-			verifyElementUI(page.outputEventId, "DandD-End-" + elementId);
+			verifyElement(page.targetPrefix + elementId, "DandD-End-" + page.targetPrefix + elementId);
+			verifyElement(page.outputEventId, "DandD-End-" + elementId);
 		}
 	}
 
@@ -91,8 +91,8 @@ public class SliderTest extends TestBase {
 		// ------------ Click on slider7 center --------------
 		userAction.mouseClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(page.targetPrefix + elementId, "ClickOnSlider-" + page.targetPrefix + elementId);
-		verifyElementUI(page.outputEventId, "ClickOnSlider-" + elementId);
+		verifyElement(page.targetPrefix + elementId, "ClickOnSlider-" + page.targetPrefix + elementId);
+		verifyElement(page.outputEventId, "ClickOnSlider-" + elementId);
 	}
 
 	@Test
@@ -114,7 +114,7 @@ public class SliderTest extends TestBase {
 					} else {
 						action.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
 					}
-					verifyElementUI(page.targetPrefix + elementId, "FocusOut-" + page.targetPrefix + elementId);
+					verifyElement(page.targetPrefix + elementId, "FocusOut-" + page.targetPrefix + elementId);
 
 					// ------------ Focus slider with TAB key --------------
 					if (elementId.equals(page.slider1Id)) {
@@ -122,7 +122,7 @@ public class SliderTest extends TestBase {
 					} else {
 						action.sendKeys(Keys.TAB).perform();
 					}
-					verifyElementUI(page.targetPrefix + elementId, "FocusIn-" + page.targetPrefix + elementId);
+					verifyElement(page.targetPrefix + elementId, "FocusIn-" + page.targetPrefix + elementId);
 
 					// ------------ Decrease small increment with cursor key "Left" --------------
 					checkPressKey(Keys.LEFT, "KB-SmallIncrement-Left", elementId);
@@ -169,16 +169,16 @@ public class SliderTest extends TestBase {
 	public void checkPressKey(Keys key, String expectedImageName, String elementId) {
 
 		new Actions(driver).sendKeys(key).perform();
-		verifyElementUI(page.targetPrefix + elementId, expectedImageName + "-" + page.targetPrefix + elementId);
-		verifyElementUI(page.outputEventId, expectedImageName + "-" + elementId);
+		verifyElement(page.targetPrefix + elementId, expectedImageName + "-" + page.targetPrefix + elementId);
+		verifyElement(page.outputEventId, expectedImageName + "-" + elementId);
 	}
 
 	public void checkPressKey(int firstKey, int secondKey, String expectedImageName, String elementId) {
 
 		// Actions sendKeys method of two keys cannot work on IE9
 		userAction.pressTwoKeys(firstKey, secondKey);
-		verifyElementUI(page.targetPrefix + elementId, expectedImageName + "-" + page.targetPrefix + elementId);
-		verifyElementUI(page.outputEventId, expectedImageName + "-" + elementId);
+		verifyElement(page.targetPrefix + elementId, expectedImageName + "-" + page.targetPrefix + elementId);
+		verifyElement(page.outputEventId, expectedImageName + "-" + elementId);
 	}
 
 }

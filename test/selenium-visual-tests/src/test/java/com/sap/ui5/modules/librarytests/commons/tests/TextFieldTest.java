@@ -34,7 +34,7 @@ public class TextFieldTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -45,7 +45,7 @@ public class TextFieldTest extends TestBase {
 		// ------------ Click On TextField2 --------------
 		driver.findElement(By.id(elementId)).click();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
-		verifyElementUI(elementId, "Click-" + elementId);
+		verifyElement(elementId, "Click-" + elementId);
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class TextFieldTest extends TestBase {
 
 		userAction.mouseDoubleClick(driver, elementId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyElementUI(elementId, "DoubleClick-" + elementId);
+		verifyElement(elementId, "DoubleClick-" + elementId);
 	}
 
 	@Test
@@ -65,28 +65,28 @@ public class TextFieldTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 
 		action.sendKeys(Keys.TAB, Keys.TAB, Keys.TAB, Keys.TAB).perform();
-		verifyElementUI(elementId, "KB-Focus-" + elementId);
+		verifyElement(elementId, "KB-Focus-" + elementId);
 
 		// -------------- Press cursor key "Enter" --------------
 		element.sendKeys("[ENTER] New content for textfield " + elementId);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
-		verifyElementUI(elementId, "KB-ENTER-" + elementId);
-		verifyElementUI("currentText", "KBEventOnENTER-" + elementId);
+		verifyElement(elementId, "KB-ENTER-" + elementId);
+		verifyElement("currentText", "KBEventOnENTER-" + elementId);
 
 		// ------------ Press cursor key "Tab" --------------
 		element.sendKeys("[TAB] New content for textfield " + elementId);
 		userAction.pressOneKey(KeyEvent.VK_TAB);
 		waitForReady(page.millisecond);
-		verifyElementUI(elementId, "KB-TAB-" + elementId);
-		verifyElementUI("currentText", "KBEventOnTAB-" + elementId);
+		verifyElement(elementId, "KB-TAB-" + elementId);
+		verifyElement("currentText", "KBEventOnTAB-" + elementId);
 
 		// ------------ Press cursor key "Escape" --------------
 		action.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
 		element.sendKeys("This text should not be visible!");
 		action.sendKeys(Keys.ESCAPE).perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
-		verifyElementUI(elementId, "KB-ESCAPE-" + elementId);
+		verifyElement(elementId, "KB-ESCAPE-" + elementId);
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class TextFieldTest extends TestBase {
 
 		userAction.mouseClickStartPoint(driver);
 		action.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB), Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
-		verifyFullPageUI("DisabledReadonlyNotFocused");
+		verifyPage("DisabledReadonlyNotFocused");
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class TextFieldTest extends TestBase {
 		userAction.mouseMoveToStartPoint(driver);
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "a"));
 		textField2.sendKeys(Keys.chord(Keys.CONTROL, "c"));
-		verifyElementUI(page.textField2Id, "copyTextFieldContent-" + page.textField2Id);
+		verifyElement(page.textField2Id, "copyTextFieldContent-" + page.textField2Id);
 
 		textField2.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
 		waitForReady(page.millisecond);
@@ -114,8 +114,8 @@ public class TextFieldTest extends TestBase {
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_V);
 		waitForReady(page.millisecond);
 		userAction.mouseClickStartPoint(driver);
-		verifyElementUI(page.textField1Id, "pasteCopiedText-" + page.textField1Id);
-		verifyElementUI("currentText", "checkEvent-pasteCopiedText-currentText");
+		verifyElement(page.textField1Id, "pasteCopiedText-" + page.textField1Id);
+		verifyElement("currentText", "checkEvent-pasteCopiedText-currentText");
 	}
 
 	@Test
@@ -129,7 +129,7 @@ public class TextFieldTest extends TestBase {
 		textField2.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB));
 		waitForReady(page.millisecond);
 
-		verifyElementUI("currentText", "checkEvent-cutText-currentText");
+		verifyElement("currentText", "checkEvent-cutText-currentText");
 
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_V);
 		waitForReady(page.millisecond);
@@ -137,10 +137,10 @@ public class TextFieldTest extends TestBase {
 
 		// Avoid twinkle of textArea border on IE9
 		if (getBrowserType() != Constants.IE9 && getBrowserType() != Constants.IE10) {
-			verifyElementUI(page.textField2Id, "cutTextFieldContent-" + page.textField2Id);
+			verifyElement(page.textField2Id, "cutTextFieldContent-" + page.textField2Id);
 		}
-		verifyElementUI(page.textField1Id, "pasteCutText-" + page.textField1Id);
-		verifyElementUI("currentText", "checkEvent-pasteCutText-currentText");
+		verifyElement(page.textField1Id, "pasteCutText-" + page.textField1Id);
+		verifyElement("currentText", "checkEvent-pasteCutText-currentText");
 	}
 
 	@Test
@@ -149,11 +149,11 @@ public class TextFieldTest extends TestBase {
 
 		driver.findElement(By.id(page.lvTextFieldId)).click();
 		action.sendKeys("A").perform();
-		verifyElementUI("currentText", "liveChangeEvent1-currentText");
+		verifyElement("currentText", "liveChangeEvent1-currentText");
 		action.sendKeys("B").perform();
-		verifyElementUI("currentText", "liveChangeEvent2-currentText");
+		verifyElement("currentText", "liveChangeEvent2-currentText");
 		action.sendKeys("C").perform();
-		verifyElementUI("currentText", "liveChangeEvent3-currentText");
+		verifyElement("currentText", "liveChangeEvent3-currentText");
 	}
 
 	@Test

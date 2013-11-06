@@ -32,7 +32,7 @@ public class MenuTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		verifyFullPageUI("full-initial");
+		verifyPage("full-initial");
 	}
 
 	@Test
@@ -42,14 +42,14 @@ public class MenuTest extends TestBase {
 
 		// ------------ Mouse over on MenuItems for Menu with first item unselected --------------
 		page.clickElement(driver, userAction, page.MenuMouseBtn, page.menu1, true, this);
-		verifyFullPageUI("Mouse-Opened-MouseMenu");
+		verifyPage("Mouse-Opened-MouseMenu");
 
 		menuItemId = page.menuitem11txtId;
 		waitForReady(page.millisecond);
 
 		// Avoid twinkle of item on IE9.
 		userAction.mouseMove(driver, menuItemId);
-		verifyElementUI(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
+		verifyElement(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
 
 		menuItemId = page.menuitem12txtId;
 
@@ -57,18 +57,18 @@ public class MenuTest extends TestBase {
 		userAction.mouseMove(driver, menuItemId);
 		userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
 		waitForReady(page.millisecond);
-		verifyElementUI(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
+		verifyElement(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
 
 		menuItemId = page.menuitem13txtId;
 		userAction.mouseMove(driver, menuItemId);
-		verifyElementUI(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
+		verifyElement(page.menu1, "Mouse-MouseMenu-mouseOver-" + menuItemId);
 
 		waitForElement(driver, true, page.menu2Id, page.timeOutSeconds);
 		verifyBrowserViewBox("Mouse-Opened-MouseMenu-SubMenu1");
 
 		subMenuItemId = page.menuitem24txtId;
 		userAction.mouseMove(driver, subMenuItemId);
-		verifyElementUI(page.menu2Id, "Mouse-MouseMenu-mouseOver-" + subMenuItemId);
+		verifyElement(page.menu2Id, "Mouse-MouseMenu-mouseOver-" + subMenuItemId);
 
 		waitForElement(driver, true, page.menu3Id, page.timeOutSeconds);
 		verifyBrowserViewBox("Mouse-Opened-MouseMenu-SubMenu2");
@@ -84,7 +84,7 @@ public class MenuTest extends TestBase {
 
 		menuItemId = page.menuitem11txtId;
 		page.clickElement(driver, userAction, menuItemId, page.menu1, false, this);
-		verifyElementUI(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-" + menuItemId);
+		verifyElement(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-" + menuItemId);
 		page.clickElement(driver, userAction, page.MenuMouseBtn, page.menu1, true, this);
 
 		menuItemId = page.menuitem12txtId;
@@ -99,7 +99,7 @@ public class MenuTest extends TestBase {
 		waitForReady(page.millisecond);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
 		waitForElement(driver, false, page.menu1, page.timeOutSeconds);
-		verifyElementUI(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-" + menuItemId);
+		verifyElement(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-" + menuItemId);
 		page.clickElement(driver, userAction, page.MenuMouseBtn, page.menu1, true, this);
 
 		menuItemId = page.menuitem13txtId;
@@ -115,7 +115,7 @@ public class MenuTest extends TestBase {
 
 		userAction.mouseOver(driver, subMenuItemId, page.millisecond);
 		userAction.mouseClick(driver, page.menuitem31Id);
-		verifyElementUI(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-menuitem31");
+		verifyElement(page.selectedMenuItemId, "MouseEvent-MouseMenu-Click-menuitem31");
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class MenuTest extends TestBase {
 			if (menuItemId.equals("menuitem11-txt")) {
 				userAction.pressOneKey(KeyEvent.VK_ENTER);
 				waitForElement(driver, false, page.menu1, page.timeOutSeconds);
-				verifyElementUI(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-" + menuItemId);
+				verifyElement(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-" + menuItemId);
 				page.clickElement(driver, userAction, page.MenuKeyboardBtn, page.menu1, true, this);
 			} else if (menuItemId.equals("menuitem12-txt")) {
 				action.sendKeys(Keys.DOWN).perform();
@@ -153,7 +153,7 @@ public class MenuTest extends TestBase {
 				}
 				userAction.pressOneKey(KeyEvent.VK_ENTER);
 				waitForElement(driver, false, page.menu1, page.timeOutSeconds);
-				verifyElementUI(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-" + menuItemId);
+				verifyElement(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-" + menuItemId);
 				page.clickElement(driver, userAction, page.MenuKeyboardBtn, page.menu1, true, this);
 			} else if (menuItemId.equals("menuitem13-txt")) {
 				userAction.pressOneKey(KeyEvent.VK_DOWN);
@@ -161,7 +161,7 @@ public class MenuTest extends TestBase {
 				userAction.pressOneKey(KeyEvent.VK_ENTER);
 				waitForElement(driver, true, page.menu2Id, page.timeOutSeconds);
 				waitForReady(page.millisecond);
-				verifyFullPageUI("KBEvent-KBMenu-ENTER-" + menuItemId);
+				verifyPage("KBEvent-KBMenu-ENTER-" + menuItemId);
 
 				for (WebElement element : subList) {
 					subMenuItemIdList.add(element.getAttribute("id"));
@@ -172,23 +172,23 @@ public class MenuTest extends TestBase {
 					if (subMenuItemId.equals("menuitem24-txt")) {
 						action.sendKeys(Keys.SPACE).perform();
 						waitForElement(driver, true, page.menu3Id, page.timeOutSeconds);
-						verifyElementUI(page.menu2Id, "KB-KBMenu-SPACE-" + subMenuItemId);
+						verifyElement(page.menu2Id, "KB-KBMenu-SPACE-" + subMenuItemId);
 						userAction.pressOneKey(KeyEvent.VK_ENTER);
 						waitForElement(driver, false, page.menu1, page.timeOutSeconds);
-						verifyElementUI(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-menuitem31-txt");
+						verifyElement(page.selectedMenuItemId, "KBEvent-KBMenu-ENTER-menuitem31-txt");
 						userAction.pressOneKey(KeyEvent.VK_SPACE);
 						waitForElement(driver, true, page.menu1, page.timeOutSeconds);
 					} else {
 						action.sendKeys(Keys.SPACE).perform();
-						verifyElementUI(page.menu2Id, "KB-KBMenu-SPACE-" + subMenuItemId);
+						verifyElement(page.menu2Id, "KB-KBMenu-SPACE-" + subMenuItemId);
 						action.sendKeys(Keys.DOWN).perform();
 					}
 				}
 			} else if (menuItemId.equals("menuitem14-txt")) {
 				userAction.pressOneKey(KeyEvent.VK_UP);
-				verifyFullPageUI("KB-KBMenu-UP-" + menuItemId);
+				verifyPage("KB-KBMenu-UP-" + menuItemId);
 				userAction.pressOneKey(KeyEvent.VK_ENTER);
-				verifyFullPageUI("KB-KBMenu-ENTER-" + menuItemId);
+				verifyPage("KB-KBMenu-ENTER-" + menuItemId);
 			}
 		}
 	}
@@ -209,57 +209,57 @@ public class MenuTest extends TestBase {
 				userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
 			}
 			waitForReady(page.millisecond * 2);
-			verifyFullPageUI("KB-KBMenu-Down-" + menuItemId);
+			verifyPage("KB-KBMenu-Down-" + menuItemId);
 
 			if (menuItemId.equals("menuitem13-txt")) {
 				if (isRtlTrue()) {
 					action.sendKeys(Keys.LEFT).perform();
 					waitForElement(driver, true, page.menu2Id, page.timeOutSeconds);
-					verifyFullPageUI("KB-Opened-KBSubMenu1-LEFT");
+					verifyPage("KB-Opened-KBSubMenu1-LEFT");
 				} else {
 					action.sendKeys(Keys.RIGHT).perform();
 					waitForElement(driver, true, page.menu2Id, page.timeOutSeconds);
-					verifyFullPageUI("KB-Opened-KBSubMenu1-RIGHT");
+					verifyPage("KB-Opened-KBSubMenu1-RIGHT");
 				}
 
 				for (WebElement element : subList) {
 					String subMenu1ItemId = element.getAttribute("id");
 
 					if (subMenu1ItemId.equals("menuitem23-txt")) {
-						verifyFullPageUI("KB-KBMenu-Down-" + subMenu1ItemId);
+						verifyPage("KB-KBMenu-Down-" + subMenu1ItemId);
 
 						if (isRtlTrue()) {
 							action.sendKeys(Keys.LEFT).perform();
-							verifyFullPageUI("KB-NotOpened-KBSubMenu2-LEFT");
+							verifyPage("KB-NotOpened-KBSubMenu2-LEFT");
 						} else {
 							action.sendKeys(Keys.RIGHT).perform();
-							verifyFullPageUI("KB-NotOpened-KBSubMenu2-RIGHT");
+							verifyPage("KB-NotOpened-KBSubMenu2-RIGHT");
 						}
 					} else if (subMenu1ItemId.equals("menuitem24-txt")) {
-						verifyFullPageUI("KB-KBMenu-Down-" + subMenu1ItemId);
+						verifyPage("KB-KBMenu-Down-" + subMenu1ItemId);
 
 						if (isRtlTrue()) {
 							action.sendKeys(Keys.LEFT).perform();
 							waitForElement(driver, true, page.menu3Id, page.timeOutSeconds);
-							verifyFullPageUI("KB-Opened-KBSubMenu2-LEFT");
+							verifyPage("KB-Opened-KBSubMenu2-LEFT");
 						} else {
 							action.sendKeys(Keys.RIGHT).perform();
 							waitForElement(driver, true, page.menu3Id, page.timeOutSeconds);
-							verifyFullPageUI("KB-Opened-KBSubMenu2-RIGHT");
+							verifyPage("KB-Opened-KBSubMenu2-RIGHT");
 						}
 
 						action.sendKeys(Keys.ESCAPE).perform();
 						waitForElement(driver, false, page.menu3Id, page.timeOutSeconds);
-						verifyFullPageUI("KB-Closed-KBSubMenu2-ESCAPE");
+						verifyPage("KB-Closed-KBSubMenu2-ESCAPE");
 
 						if (isRtlTrue()) {
 							action.sendKeys(Keys.RIGHT).perform();
 							waitForElement(driver, false, page.menu2Id, page.timeOutSeconds);
-							verifyFullPageUI("KB-Closed-KBSubMenu1-RIGHT");
+							verifyPage("KB-Closed-KBSubMenu1-RIGHT");
 						} else {
 							action.sendKeys(Keys.LEFT).perform();
 							waitForElement(driver, false, page.menu2Id, page.timeOutSeconds);
-							verifyFullPageUI("KB-Closed-KBSubMenu1-LEFT");
+							verifyPage("KB-Closed-KBSubMenu1-LEFT");
 						}
 					} else {
 						action.sendKeys(Keys.DOWN).perform();
@@ -268,10 +268,10 @@ public class MenuTest extends TestBase {
 			} else if (menuItemId.equals("menuitem14-txt")) {
 				if (isRtlTrue()) {
 					action.sendKeys(Keys.ARROW_LEFT, Keys.UP).perform();
-					verifyFullPageUI("KB-NotOpened-KBSubMenu1-LEFT");
+					verifyPage("KB-NotOpened-KBSubMenu1-LEFT");
 				} else {
 					action.sendKeys(Keys.ARROW_RIGHT, Keys.UP).perform();
-					verifyFullPageUI("KB-NotOpened-KBSubMenu1-RIGHT");
+					verifyPage("KB-NotOpened-KBSubMenu1-RIGHT");
 				}
 			}
 			if (!menuItemId.equals(page.menuitem14txtId)) {
@@ -279,7 +279,7 @@ public class MenuTest extends TestBase {
 			} else {
 				userAction.mouseClickStartPoint(driver);
 				waitForElement(driver, false, page.menu1, page.timeOutSeconds);
-				verifyFullPageUI("KB-KBMenu-ClosedByMouseClickOnContentArea");
+				verifyPage("KB-KBMenu-ClosedByMouseClickOnContentArea");
 			}
 		}
 	}
@@ -290,7 +290,7 @@ public class MenuTest extends TestBase {
 
 		// ------------ Disabled MenuItem in Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuItemEnabled, page.MenuMouseBtn, this);
-		verifyElementUI(page.menu1, "MouseMenu-Item2Disabled");
+		verifyElement(page.menu1, "MouseMenu-Item2Disabled");
 
 		// ------------ Disabled Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuEnabled, page.MenuMouseBtn, this);
@@ -298,7 +298,7 @@ public class MenuTest extends TestBase {
 		menuItemId = page.menuitem12txtId;
 		userAction.mouseClick(driver, page.menuitem12lblId);
 		userAction.mouseMoveToStartPoint(driver);
-		verifyFullPageUI("Mouse-DisabledMouseMenu-Click-" + menuItemId);
+		verifyPage("Mouse-DisabledMouseMenu-Click-" + menuItemId);
 
 		menuItemId = page.menuitem11txtId;
 		List<WebElement> eList = page.menuItems;
@@ -308,26 +308,26 @@ public class MenuTest extends TestBase {
 			menuItemId = e.getAttribute("id");
 			userAction.pressOneKey(KeyEvent.VK_DOWN);
 			waitForReady(page.millisecond);
-			verifyElementUI(page.menu1, "KB-DisabledMouseMenu-Down-" + menuItemId);
+			verifyElement(page.menu1, "KB-DisabledMouseMenu-Down-" + menuItemId);
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
 			waitForReady(page.millisecond);
-			verifyElementUI(page.menu1, "KB-DisabledMouseMenu-Enter-" + menuItemId);
+			verifyElement(page.menu1, "KB-DisabledMouseMenu-Enter-" + menuItemId);
 		}
 
 		// ------------ Invisible MenuItem in Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuItemVisible, page.MenuMouseBtn, this);
-		verifyFullPageUI("MouseMenu-Item3Invisible");
+		verifyPage("MouseMenu-Item3Invisible");
 
 		// ------------ Enabled Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuEnabled, page.MenuMouseBtn, this);
-		verifyFullPageUI("MouseMenu-Enabled");
+		verifyPage("MouseMenu-Enabled");
 
 		// ------------ Enabled MenuItem in Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuItemEnabled, page.MenuMouseBtn, this);
-		verifyFullPageUI("MouseMenu-Item2Enabled");
+		verifyPage("MouseMenu-Item2Enabled");
 
 		// ------------ Visible MenuItem in Menu with first item unselected --------------
 		page.clickCheckboxAndButton(driver, userAction, page.oMenuItemVisible, page.MenuMouseBtn, this);
-		verifyFullPageUI("MouseMenu-Item3Visible");
+		verifyPage("MouseMenu-Item3Visible");
 	}
 }
