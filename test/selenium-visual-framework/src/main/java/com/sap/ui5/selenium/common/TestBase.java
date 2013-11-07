@@ -610,6 +610,14 @@ public class TestBase extends CommonBase {
 
 		if (diffImage.exists()) {
 			resultsMessage.append("Diff image is created on: " + diffImagePath + newLine);
+
+			File source = diffImage;
+			File destDIR = new File("target/surefire-reports/" + getClass().getName());
+			destDIR.mkdirs();
+			File dest = new File(destDIR, diffImage.getName());
+			Utility.copyFile(source, dest);
+
+			resultsMessage.append(newLine + "[[ATTACHMENT|" + dest.getAbsolutePath() + "]]" + newLine);
 		}
 	}
 
