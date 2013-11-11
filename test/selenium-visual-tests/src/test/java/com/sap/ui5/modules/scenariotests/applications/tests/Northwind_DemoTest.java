@@ -10,7 +10,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
 
-import com.sap.ui5.modules.librarytests.applications.pages.Northwind_DemoPO;
+import com.sap.ui5.modules.scenariotests.applications.pages.Northwind_DemoPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.util.Constants;
 

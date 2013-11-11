@@ -1,8 +1,8 @@
-package com.sap.ui5.modules.innersourcetests.InnerSource.pages;
+package com.sap.ui5.modules.innersourcetests.innersource.pages;
 
 import com.sap.ui5.selenium.common.PageBase;
 
-public class charting_vizPO extends PageBase {
+public class Charting_vizPO extends PageBase {
 
 	public String navigationPIEId = "__item1";
 

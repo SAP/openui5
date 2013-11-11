@@ -1,15 +1,15 @@
-package com.sap.ui5.modules.innersourcetests.InnerSource.tests;
+package com.sap.ui5.modules.innersourcetests.innersource.tests;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
-import com.sap.ui5.modules.librarytests.InnerSource.pages.charting_vizPO;
+import com.sap.ui5.modules.innersourcetests.innersource.pages.Charting_vizPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.util.Constants;
 
-public class charting_vizTest extends TestBase {
-	private charting_vizPO page;
+public class Charting_vizTest extends TestBase {
+	private Charting_vizPO page;
 
 	private final String targetUrl = "/uilib-sample/test-resources/sap/viz/Charting.html";
 
@@ -17,7 +17,7 @@ public class charting_vizTest extends TestBase {
 
 	@Before
 	public void setUp() {
-		page = PageFactory.initElements(driver, charting_vizPO.class);
+		page = PageFactory.initElements(driver, Charting_vizPO.class);
 		driver.get(getFullUrl(targetUrl));
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(durationMillisecond * 5);
