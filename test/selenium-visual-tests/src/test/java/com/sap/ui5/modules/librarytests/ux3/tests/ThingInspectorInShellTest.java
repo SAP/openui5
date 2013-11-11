@@ -42,6 +42,7 @@ public class ThingInspectorInShellTest extends TestBase {
 	@Test
 	public void testStandardActions() {
 		// Check standard ThingInspector
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), timeOutSeconds);
 		page.standardTIBtn.click();
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
@@ -76,20 +77,24 @@ public class ThingInspectorInShellTest extends TestBase {
 		verifyElement(page.feederID, "StandardTI-Update-Opened");
 
 		page.actionBarUpdate.click();
+		this.waitForElement(driver, false, page.updatePopupID, timeOutSeconds);
 		verifyElement(page.actionBarID, "StandardTI-Update-Closed");
 
 		// Changing status of follow
 		page.thingInspector.follow();
-		waitForReady(500);
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Follow-Start");
 
 		page.thingInspector.pauseFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Follow-Hold");
 
 		page.thingInspector.continueFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Follow-Continue");
 
 		page.thingInspector.stopFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("StandardTI-Follow-Stop");
 
 		// Changing status of favorite
@@ -112,7 +117,8 @@ public class ThingInspectorInShellTest extends TestBase {
 	public void testNavigationBar() {
 		Actions action = new Actions(driver);
 
-		// Navigate to the last item on the navigation bar 
+		// Navigate to the last item on the navigation bar
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), timeOutSeconds);
 		page.standardTIBtn.click();
 		waitForReady(millisecond);
 		page.thingInspector.selectFacet(page.accountTeamID);
@@ -150,6 +156,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		int loopNum = 0;
 
 		// Check the layout of all elements will be changed when resizing the window.
+		this.waitForElement(driver, true, page.modifiedTIWithOpen.getId(), timeOutSeconds);
 		page.modifiedTIWithOpen.click();
 		waitForReady(millisecond);
 		verifyBrowserViewBox("ModifiedTI-with-Open-Opened");
@@ -186,6 +193,7 @@ public class ThingInspectorInShellTest extends TestBase {
 	public void testShellTools() {
 		Actions action = new Actions(driver);
 
+		this.waitForElement(driver, true, page.modifiedTIWithClose.getId(), timeOutSeconds);
 		page.modifiedTIWithClose.click();
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
@@ -215,6 +223,7 @@ public class ThingInspectorInShellTest extends TestBase {
 	/** Verify Shell options, changing header type and side areas in Shell */
 	@Test
 	public void testShellOptions() {
+		this.waitForElement(driver, true, page.modifiedTIWithOpen.getId(), timeOutSeconds);
 		page.modifiedTIWithOpen.click();
 		waitForReady(millisecond);
 

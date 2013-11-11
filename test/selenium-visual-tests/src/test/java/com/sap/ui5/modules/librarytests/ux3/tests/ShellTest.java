@@ -57,6 +57,7 @@ public class ShellTest extends TestBase {
 		page.searchTool.click();
 		verifyElement(page.leftSideToolsID, "SearchTool-Closed");
 
+		userAction.mouseClickStartPoint(driver);
 		userAction.mouseClick(driver, page.feederTool.getAttribute("id"));
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
@@ -165,21 +166,24 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		verifyElement(page.cavasID, "Jump-News");
 
+		userAction.mouseMove(driver, page.overviewID);
 		userAction.mouseClick(driver, page.overviewID);
-		waitForReady(1500);
+		waitForReady(2500);
 		userAction.mouseClickStartPoint(driver);
 		verifyElement(page.cavasID, "Overview-Home");
 
 		// Navigate to items
 		userAction.mouseOver(driver, page.marketingID, millisecond);
 		page.myShell.selectWorksetItem(page.marketingID);
-		waitForReady(1500);
+		waitForReady(1000);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1000);
 		verifyElement(page.cavasID, "Nav-To-Marketing");
 
 		page.myShell.selectWorksetItem(page.marketInfoID);
-		waitForReady(1500);
+		waitForReady(1000);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1000);
 		verifyElement(page.cavasID, "Nav-To-MarketInformation");
 
 		//Check navigation bar overflow behavior
@@ -191,7 +195,7 @@ public class ShellTest extends TestBase {
 		this.waitForElement(driver, true, page.navLeft.getAttribute("id"), timeOutSeconds);
 		this.waitForElement(driver, true, page.navRight.getAttribute("id"), timeOutSeconds);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1500);
+		waitForReady(2000);
 		verifyPage("Window-Resize");
 
 		page.navRight.click();

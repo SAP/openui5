@@ -45,7 +45,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify Standard ThingInspector */
 	@Test
 	public void testStandardActions() {
-
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), 10);
 		page.standardTIBtn.click();
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
@@ -112,6 +112,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify Navigation Bar */
 	@Test
 	public void testNavBar() {
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), 10);
 		page.standardTIBtn.click();
 		page.thingInspector.selectFacet(page.accountTeamID);
 		waitForReady(millisecond);
@@ -121,6 +122,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify ThingGroup resizing */
 	@Test
 	public void testThingGResize() {
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), 10);
 		page.standardTIBtn.click();
 
 		// Check the layout of all elements will be changed when resizing the window.
@@ -138,6 +140,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify closing ThingInspector */
 	@Test
 	public void testClose() {
+		this.waitForElement(driver, true, page.standardTIBtn.getId(), 10);
 		page.standardTIBtn.click();
 		page.closeBtn.click();
 		userAction.mouseClickStartPoint(driver);
@@ -148,6 +151,7 @@ public class ThingInspectorTest extends TestBase {
 	/** Verify Modified ThingInspector */
 	@Test
 	public void testModify() {
+		this.waitForElement(driver, true, page.modifiedTIBtn.getId(), 10);
 		page.modifiedTIBtn.click();
 		verifyBrowserViewBox("ModifiedTI-Page-Open");
 
