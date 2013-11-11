@@ -60,7 +60,7 @@ public class EPM_DemoPO extends PageBase {
 		String innerText = element.getText();
 
 		if (!innerText.equals(text)) {
-			Sleeper.sleepTight(1000);
+			Sleeper.sleepTight(5000);
 		}
 	}
 
@@ -68,7 +68,7 @@ public class EPM_DemoPO extends PageBase {
 		String fieldValue = field.getValue();
 
 		if (!fieldValue.equals(text)) {
-			Sleeper.sleepTight(1000);
+			Sleeper.sleepTight(5000);
 		}
 	}
 }

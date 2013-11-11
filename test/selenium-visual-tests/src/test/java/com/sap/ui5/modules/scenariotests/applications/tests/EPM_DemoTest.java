@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
-import com.sap.ui5.modules.librarytests.applications.pages.EPM_DemoPO;
+import com.sap.ui5.modules.scenariotests.applications.pages.EPM_DemoPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
 import com.sap.ui5.selenium.table.SortOrder;
@@ -14,7 +14,7 @@ public class EPM_DemoTest extends TestBase {
 
 	private EPM_DemoPO page;
 
-	private final int millisecond = 800;
+	private int millisecond = 800;
 
 	private final String targetUrl = "/databinding/epm/products.html";
 
@@ -37,7 +37,7 @@ public class EPM_DemoTest extends TestBase {
 	/** Verify if data is loaded correctly from backend */
 	@Test
 	public void testLoadData() {
-		page.checkCellText(page.tableCell00, "AD-1000");
+		this.waitForElement(driver, true, page.tableCell00.getAttribute("id"), 10);
 
 		// Navigate to Page 5
 		page.pageFive.click();
@@ -53,8 +53,7 @@ public class EPM_DemoTest extends TestBase {
 		page.row0Selector.click();
 		waitForReady(2000);
 		page.checkFieldValue(page.companyField, "Bionic Research Lab");
-		userAction.mouseMoveToStartPoint(driver);
-		verifyBrowserViewBox("Row1-Selected");
+		verifyElement(page.panelRowID, "Row1-Selected");
 
 		// Close Product Details Panel and Supplier Panel
 		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
@@ -83,6 +82,7 @@ public class EPM_DemoTest extends TestBase {
 	/** Verify open the selected details in a different view and back to the preview page */
 	@Test
 	public void testViewDetails() {
+		this.waitForElement(driver, true, page.tableCell00.getAttribute("id"), 10);
 		page.row0Selector.click();
 		waitForReady(2000);
 		page.checkFieldValue(page.companyField, "Robert Brown Entertainment");
@@ -100,9 +100,11 @@ public class EPM_DemoTest extends TestBase {
 	/** Check sorting of data */
 	@Test
 	public void testSort() {
+		this.waitForElement(driver, true, page.tableCell00.getAttribute("id"), 10);
 		page.table.sort(0, SortOrder.Descending);
 		waitForReady(1000);
 		userAction.mouseMoveToStartPoint(driver);
+		
 		page.checkCellText(page.tableCell00, "HT-9999");
 		page.checkFieldValue(page.companyField, "");
 		verifyElement(page.table.getId(), "Sort-Descending");
