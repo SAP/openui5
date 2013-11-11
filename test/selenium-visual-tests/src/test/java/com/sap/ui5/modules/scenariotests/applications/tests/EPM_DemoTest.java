@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.applications.tests;
+package com.sap.ui5.modules.scenariotests.applications.tests;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class EPM_DemoTest extends TestBase {
 
 	private EPM_DemoPO page;
 
-	private int millisecond = 800;
+	private final int millisecond = 800;
 
 	private final String targetUrl = "/databinding/epm/products.html";
 

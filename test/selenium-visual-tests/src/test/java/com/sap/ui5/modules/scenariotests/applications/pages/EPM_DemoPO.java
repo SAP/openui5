@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.applications.pages;
+package com.sap.ui5.modules.scenariotests.applications.pages;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.browserlaunchers.Sleeper;

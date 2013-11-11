@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.applications.tests;
+package com.sap.ui5.modules.scenariotests.applications.tests;
 
 import java.awt.event.KeyEvent;
 
@@ -18,12 +18,13 @@ public class Northwind_DemoTest extends TestBase {
 
 	private Northwind_DemoPO page;
 
-	private String targetUrl = "/databinding/odata/products.html";
+	private final String targetUrl = "/databinding/odata/products.html";
 
-	private int durationMillisecond = 1000;
+	private final int durationMillisecond = 1000;
 
-	// The location of logo is (0,0).Avoid to click the logo and tooltip being displayed, use (0, 700) to instead of start point.
-	private Point point = new Point(0, 700);
+	// The location of logo is (0,0).Avoid to click the logo and tooltip being displayed, use (0,
+	// 700) to instead of start point.
+	private final Point point = new Point(0, 700);
 
 	@Before
 	public void setUp() {

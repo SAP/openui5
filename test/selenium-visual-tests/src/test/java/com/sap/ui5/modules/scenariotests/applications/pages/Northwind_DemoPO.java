@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.applications.pages;
+package com.sap.ui5.modules.scenariotests.applications.pages;
 
 import com.sap.ui5.selenium.common.PageBase;
 

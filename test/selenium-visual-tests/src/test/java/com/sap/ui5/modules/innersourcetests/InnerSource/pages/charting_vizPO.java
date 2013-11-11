@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.InnerSource.pages;
+package com.sap.ui5.modules.innersourcetests.InnerSource.pages;
 
 import com.sap.ui5.selenium.common.PageBase;
 

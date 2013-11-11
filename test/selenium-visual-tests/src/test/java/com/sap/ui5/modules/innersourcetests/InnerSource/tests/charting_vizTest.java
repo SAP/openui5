@@ -1,4 +1,4 @@
-package com.sap.ui5.modules.librarytests.InnerSource.tests;
+package com.sap.ui5.modules.innersourcetests.InnerSource.tests;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +11,9 @@ import com.sap.ui5.selenium.util.Constants;
 public class charting_vizTest extends TestBase {
 	private charting_vizPO page;
 
-	private String targetUrl = "/uilib-sample/test-resources/sap/viz/Charting.html";
+	private final String targetUrl = "/uilib-sample/test-resources/sap/viz/Charting.html";
 
-	private int durationMillisecond = 1000;
+	private final int durationMillisecond = 1000;
 
 	@Before
 	public void setUp() {
@@ -71,7 +71,7 @@ public class charting_vizTest extends TestBase {
 		userAction.mouseOver(driver, page.stackedVChartId, durationMillisecond);
 		verifyBrowserViewBox("StackedVChart-MouseOver");
 
-		// Check stacked V  % chart
+		// Check stacked V % chart
 		clickAction(page.navigationSTACKEDVPctId);
 		verifyBrowserViewBox("StackedVPctChart-normal");
 
