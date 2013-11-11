@@ -52,7 +52,6 @@ public class MatrixLayoutTest extends TestBase {
 		page.tabStrip.selectTab(3);
 		waitForReady(millisecond);
 		verifyElement(page.matrix4.getAttribute("id"), "DisplayOnly");
-
 		userAction.mouseOver(driver, page.changeButton.getId(), 800);
 		verifyBrowserViewBox("Tooltip-ChangeButton");
 
@@ -68,7 +67,9 @@ public class MatrixLayoutTest extends TestBase {
 		page.urlTextField.clearValue();
 		page.urlTextField.setValue("images/face.jpg");
 		page.changeURLButton.click();
-		waitForReady(millisecond);
+		userAction.mouseMoveToStartPoint(driver);
+		waitForReady(1000);
+		userAction.mouseClickStartPoint(driver);
 		verifyElement(page.matrix4.getAttribute("id"), "PictureChanged");
 
 		// Switch back to Display Mode
