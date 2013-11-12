@@ -32,9 +32,6 @@ public class ShellPO extends PageBase {
 	@FindBy(id = "jump_news")
 	public Link jumpNews;
 
-	@FindBy(id = "jump_cont_overview")
-	public Link jumpContOverview;
-
 	@FindBy(id = "myShell-wsBar-ofb")
 	public WebElement navLeft;
 
@@ -43,6 +40,9 @@ public class ShellPO extends PageBase {
 
 	@FindBy(id = "wi_item")
 	public TextField contentInput;
+
+	@FindBy(id = "wi_home_overview")
+	public WebElement overview;
 
 	@FindBy(id = "btn_add_wi")
 	public Button addWorksetItemBtn;
