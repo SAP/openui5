@@ -193,6 +193,7 @@ public class DatePickerTest extends TestBase {
 		// actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform() cannot make sure focus on the element;
 		userAction.pressTwoKeys(KeyEvent.VK_SHIFT, KeyEvent.VK_TAB);
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
+		waitForReady(waitMilliseconds * 2);
 		waitForElement(driver, false, page.calendarDivId, timeOutSeconds);
 		verifyElements(actions, Keys.ENTER.name());
 
@@ -209,7 +210,8 @@ public class DatePickerTest extends TestBase {
 		// Check date selection with SPACE key
 		// actions.sendKeys(Keys.TAB).perform() cannot make sure focus on the element;
 		userAction.pressOneKey(KeyEvent.VK_TAB);
-		actions.sendKeys(Keys.SPACE).perform();
+		userAction.pressOneKey(KeyEvent.VK_SPACE);
+		waitForReady(waitMilliseconds * 2);
 		waitForElement(driver, false, page.calendarDivId, timeOutSeconds);
 		verifyElements(actions, Keys.SPACE.name());
 
