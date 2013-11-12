@@ -302,7 +302,7 @@
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
-                  <groupId>com.sap.ui5.testing</groupId>
+                  <groupId>com.sap.ui5.training</groupId>
                   <artifactId>ui5school</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
