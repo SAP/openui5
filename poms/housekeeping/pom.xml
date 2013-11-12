@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.15.1-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.17.0-SNAPSHOT</sap.ui5.version>
 
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
@@ -300,6 +300,11 @@
                   <version>[0.1.0,)</version>
                   <contextPath>theme-designer</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5.testing</groupId>
+                  <artifactId>ui5school</artifactId>
+                  <version>[1.0.0,)</version>
                 </deployable>
               </deployables>
             </configuration>
