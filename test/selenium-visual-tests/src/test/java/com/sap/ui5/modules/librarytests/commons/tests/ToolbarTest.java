@@ -55,7 +55,7 @@ public class ToolbarTest extends TestBase {
 		String btn3Id = toolBarId + page.btn3Suffix;
 		vefifyTargetForOutputArea(btn3Id, "IconButton");
 
-		page.openOverflowToolBar(driver, toolBarId, timeOutSeconds);
+		page.openOverflowToolBar(driver, toolBarId, timeOutSeconds, this);
 		verifyElement(toolBarId + page.puSuffix, toolBarId + page.puSuffix + "-Mouse-ToolbarOverflow");
 
 		String btn9Id = toolBarId + page.btn9Suffix;
@@ -110,7 +110,7 @@ public class ToolbarTest extends TestBase {
 		verifyElement(page.tb1Mn.getAttribute("id"), "Mouse-tbOverFlow-afterWindowResize");
 
 		page.tb1Mn.click();
-		page.isDisplayedOverflow(driver, page.tb1Id, true, timeOutSeconds);
+		waitForElement(driver, true, page.tb1Id + page.puSuffix, timeOutSeconds);
 		verifyElement(page.tb1PuId, page.tb1Id + "-Mouse-OverFlow-afterWindowResize");
 	}
 
@@ -151,7 +151,7 @@ public class ToolbarTest extends TestBase {
 			if (getThemeType() == Constants.THEME_PLATINUM) {
 				actions.sendKeys(Keys.DOWN).perform();
 			}
-			page.isDisplayedOverflow(driver, toolBarId, true, timeOutSeconds);
+			waitForElement(driver, true, toolBarId + page.puSuffix, timeOutSeconds);
 			verifyBrowserViewBox(toolBarId + "-KB-dialogWithToolbarOverflow");
 			actions.sendKeys(Keys.DOWN).perform();
 			actions.sendKeys(Keys.SPACE).perform();
@@ -186,7 +186,7 @@ public class ToolbarTest extends TestBase {
 		// Close overflow of toolBar
 		if (isInDialog) {
 			actions.sendKeys(Keys.ESCAPE).perform();
-			page.isDisplayedOverflow(driver, page.dlgTbId, false, timeOutSeconds);
+			waitForElement(driver, false, page.dlgTbId + page.puSuffix, timeOutSeconds);
 			verifyElement(toolBarId, toolBarId + "-KB-afterClosingOverflow");
 		}
 	}
@@ -207,12 +207,12 @@ public class ToolbarTest extends TestBase {
 		actions.sendKeys(Keys.TAB).perform();
 		actions.sendKeys(Keys.UP).perform();
 		actions.sendKeys(Keys.DOWN).perform();
-		page.isDisplayedOverflow(driver, page.tb1Id, true, timeOutSeconds);
+		waitForElement(driver, true, page.tb1Id + page.puSuffix, timeOutSeconds);
 		verifyElement(page.tb1PuId, page.tb1Id + "-KB-OverFlow-afterWindowResize");
 
 		// Close
 		actions.sendKeys(Keys.ESCAPE).perform();
-		page.isDisplayedOverflow(driver, page.tb1Id, false, timeOutSeconds);
+		waitForElement(driver, false, page.tb1Id + page.puSuffix, timeOutSeconds);
 	}
 
 	private void vefifyTargetForOutputArea(String btnId, String desc) {

@@ -6,7 +6,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.browserlaunchers.Sleeper;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
@@ -14,6 +13,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.sap.ui5.selenium.common.Config;
 import com.sap.ui5.selenium.common.PageBase;
+import com.sap.ui5.selenium.common.TestBase;
 
 public class ToolbarPO extends PageBase {
 
@@ -79,30 +79,9 @@ public class ToolbarPO extends PageBase {
 		resizeWindow(driver, startPoint, dimension);
 	}
 
-	public void openOverflowToolBar(WebDriver driver, String toolbarId, long timeOutSeconds) {
+	public void openOverflowToolBar(WebDriver driver, String toolbarId, long timeOutSeconds, TestBase base) {
 		driver.findElement(By.id(toolbarId + mnSuffix)).click();
-		isDisplayedOverflow(driver, toolbarId, true, timeOutSeconds);
-	}
-
-	public void isDisplayedOverflow(WebDriver driver, final String toolbarId, boolean isVisible, long timeOutSeconds) {
-		WebDriverWait wait = new WebDriverWait(driver, timeOutSeconds);
-		if (isVisible) {
-			wait.until(new ExpectedCondition<Boolean>() {
-				@Override
-				public Boolean apply(WebDriver driver) {
-					return driver.findElement(By.id(toolbarId + puSuffix)).getLocation().x > 0;
-				}
-			});
-			Sleeper.sleepTight(1000);
-			return;
-		}
-
-		wait.until(new ExpectedCondition<Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return driver.findElement(By.id(toolbarId + puSuffix)).getLocation().x <= 0;
-			}
-		});
+		base.waitForElement(driver, true, toolbarId + puSuffix, timeOutSeconds);
 	}
 
 	public void checkToolBarOverflowIcons(WebDriver driver, long timeOutSeconds) {
