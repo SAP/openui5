@@ -12,19 +12,19 @@
                                 <Tab text="{moduleName}">
                                     <table:Table columnSelect="colHandle" rows="{controls}" selectionMode="None" visibleRowCount="{count}">
                                         <table:columns>
-                                            <table:Column showSortMenuEntry="false" sortProperty="controlName" width="200px">
+                                            <table:Column showSortMenuEntry="false" sortProperty="controlName" width="60%">
                                                 <TextView design="Bold" text="Control Name"/>
                                                 <table:template>
                                                     <TextView text="{controlName}"/>
                                                 </table:template>
                                             </table:Column>
-                                            <table:Column hAlign="Center" showSortMenuEntry="pass" sortProperty="pass" width="40px">
+                                            <table:Column hAlign="Center" showSortMenuEntry="pass" sortProperty="pass" width="20%">
                                                 <TextView design="Bold" text="Pass"/>
                                                 <table:template>
                                                     <TextView textAlign="Center" text="{pass}"/>
                                                 </table:template>
                                             </table:Column>
-                                            <table:Column hAlign="Center" showSortMenuEntry="false" sortProperty="fail" width="40px">
+                                            <table:Column hAlign="Center" showSortMenuEntry="false" sortProperty="fail" width="20%">
                                                 <TextView design="Bold" text="Fail"/>
                                                 <table:template>
                                                     <Link enabled="{path:'fail',formatter:'utils.formatter.Enable'}" press="displayFailImages" text="{fail}"/>

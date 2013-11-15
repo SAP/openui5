@@ -1,51 +1,51 @@
 <core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons" xmlns:layout="sap.ui.commons.layout"
 xmlns:table="sap.ui.table" xmlns:np="notepad" controllerName="webimage.controllers.compareImages" xmlns:html="http://www.w3.org/1999/xhtml">
-	<np:Panel>
-		<np:header>
-			<np:BreadThread id="brd_thd" select="handlePressBack"></np:BreadThread>
-		</np:header>
-		<layout:MatrixLayout>
-			<layout:MatrixLayoutRow>
-				<layout:MatrixLayoutCell>
-					<table:Table id="imageTable" columnSelect="colHandle" visibleRowCount="{path:'images',formatter:'utils.formatter.RowCount'}" selectionMode="Multi" rows="{images}">
-						<table:columns>
-							<table:Column showSortMenuEntry="false" sortProperty="expect/name" width="320px" hAlign="Center">
-								<TextView text="Excepted Image" design="Bold"/>
-								<table:template>
-									<np:PressCell enable="{path:'expect/src',formatter:'.formatEnable'}" tip="{parts:[{path:'expect/width'},{path:'expect/height'},{path:'expect/name'}],formatter : '.formatName'}" press="dbHandler"  class="imageContainer">
-										<Image src="{path:'expect/src',formatter:'.formatSrc'}" width="{parts:[{path:'expect/width'},{path:'expect/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'expect/height'},{path:'expect/src'}],formatter : '.formatterHeight'}"/>
-									</np:PressCell>
-								</table:template>
-							</table:Column>
-							<table:Column showSortMenuEntry="false" sortProperty="verify/name" width="320px" hAlign="Center">
-								<TextView text="Need Verify Image" design="Bold"/>
-								<table:template>
-									<np:PressCell enable="{path:'verify/src',formatter:'.formatEnable'}" tip="{parts:[{path:'verify/width'},{path:'verify/height'},{path:'verify/name'}],formatter : '.formatName'}" press="dbHandler" class="imageContainer">
-										<Image src="{path:'verify/src',formatter:'.formatSrc'}" width="{parts:[{path:'verify/width'},{path:'verify/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'verify/height'},{path:'verify/src'}],formatter : '.formatterHeight'}"/>
-									</np:PressCell>
-								</table:template>
-							</table:Column>
-							<table:Column showSortMenuEntry="false" sortProperty="diff/name" width="320px" hAlign="Center" class="image-table-td">
-								<TextView text="Different Image" design="Bold"/>
-								<table:template>
-									<np:PressCell enable="{path:'diff/src',formatter:'.formatEnable'}" tip="{parts:[{path:'diff/width'},{path:'diff/height'},{path:'diff/name'}],formatter : '.formatName'}" press="dbHandler" class="imageContainer">
-										<Image src="{path:'diff/src',formatter:'.formatSrc'}" width="{parts:[{path:'diff/width'},{path:'diff/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'diff/height'},{path:'diff/src'}],formatter : '.formatterHeight'}"/>
-									</np:PressCell>
-								</table:template>
-							</table:Column>
-						</table:columns>
-					</table:Table>
-				</layout:MatrixLayoutCell>
-			</layout:MatrixLayoutRow>
-			<layout:MatrixLayoutRow>
-				<layout:MatrixLayoutCell>
-					<layout:HorizontalLayout>
-						<Button text="Update" style="Emph" height="35px" width="100px" press="updateImage"/>
-						<Button lite="true" text=" " enabled="false"></Button>
-						<Button text="Abandon" style="Emph" height="35px" width="100px" press="abandonImage"/>
-					</layout:HorizontalLayout>
-				</layout:MatrixLayoutCell>
-			</layout:MatrixLayoutRow>
-		</layout:MatrixLayout>
-	</np:Panel>
+    <np:Panel>
+        <np:header>
+            <np:BreadThread id="brd_thd" select="handlePressBack"></np:BreadThread>
+        </np:header>
+        <layout:MatrixLayout>
+            <layout:MatrixLayoutRow>
+                <layout:MatrixLayoutCell>
+                    <table:Table id="imageTable" columnSelect="colHandle" visibleRowCount="{path:'images',formatter:'utils.formatter.RowCount'}" selectionMode="Multi" rows="{images}">
+                        <table:columns>
+                            <table:Column showSortMenuEntry="false" sortProperty="expect/name" width="30%" hAlign="Center">
+                                <TextView text="Excepted Image" design="Bold"/>
+                                <table:template>
+                                    <np:PressCell enable="{path:'expect/src',formatter:'.formatEnable'}" tip="{parts:[{path:'expect/width'},{path:'expect/height'},{path:'expect/name'}],formatter : '.formatName'}" press="dbHandler"  class="imageContainer">
+                                        <Image src="{path:'expect/src',formatter:'.formatSrc'}" width="{parts:[{path:'expect/width'},{path:'expect/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'expect/height'},{path:'expect/src'}],formatter : '.formatterHeight'}"/>
+                                    </np:PressCell>
+                                </table:template>
+                            </table:Column>
+                            <table:Column showSortMenuEntry="false" sortProperty="verify/name" width="30%" hAlign="Center">
+                                <TextView text="Need Verify Image" design="Bold"/>
+                                <table:template>
+                                    <np:PressCell enable="{path:'verify/src',formatter:'.formatEnable'}" tip="{parts:[{path:'verify/width'},{path:'verify/height'},{path:'verify/name'}],formatter : '.formatName'}" press="dbHandler" class="imageContainer">
+                                        <Image src="{path:'verify/src',formatter:'.formatSrc'}" width="{parts:[{path:'verify/width'},{path:'verify/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'verify/height'},{path:'verify/src'}],formatter : '.formatterHeight'}"/>
+                                    </np:PressCell>
+                                </table:template>
+                            </table:Column>
+                            <table:Column showSortMenuEntry="false" sortProperty="diff/name" width="30%" hAlign="Center" class="image-table-td">
+                                <TextView text="Different Image" design="Bold"/>
+                                <table:template>
+                                    <np:PressCell enable="{path:'diff/src',formatter:'.formatEnable'}" tip="{parts:[{path:'diff/width'},{path:'diff/height'},{path:'diff/name'}],formatter : '.formatName'}" press="dbHandler" class="imageContainer">
+                                        <Image src="{path:'diff/src',formatter:'.formatSrc'}" width="{parts:[{path:'diff/width'},{path:'diff/src'}],formatter : '.formatterWidth'}" height="{parts:[{path:'diff/height'},{path:'diff/src'}],formatter : '.formatterHeight'}"/>
+                                    </np:PressCell>
+                                </table:template>
+                            </table:Column>
+                        </table:columns>
+                    </table:Table>
+                </layout:MatrixLayoutCell>
+            </layout:MatrixLayoutRow>
+            <layout:MatrixLayoutRow>
+                <layout:MatrixLayoutCell>
+                    <layout:HorizontalLayout>
+                        <Button text="Update" style="Emph" height="35px" width="100px" press="updateImage"/>
+                        <Button lite="true" text=" " enabled="false"></Button>
+                        <Button text="Abandon" style="Emph" height="35px" width="100px" press="abandonImage"/>
+                    </layout:HorizontalLayout>
+                </layout:MatrixLayoutCell>
+            </layout:MatrixLayoutRow>
+        </layout:MatrixLayout>
+    </np:Panel>
 </core:View>

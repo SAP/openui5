@@ -1,60 +1,60 @@
 <core:View controllerName="webimage.controllers.modules" xmlns="sap.ui.commons" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:layout="sap.ui.commons.layout" xmlns:np="notepad" xmlns:table="sap.ui.table">
-	<np:Panel>
-		<np:header>
-			<np:BreadThread id="brd_thd"/>
-		</np:header>
-		<layout:MatrixLayout layoutFixed="false">
-			<layout:MatrixLayoutRow>
-				<layout:MatrixLayoutCell class="job-table-cell" vAlign="Top">
-					<table:Table columnSelect="colHandle" id="table" rows="{/categorys}" selectionMode="None">
-						<table:columns>
-							<table:Column showSortMenuEntry="false" sortProperty="browser" width="150px">
-								<TextView design="Bold" text="Name"/>
-								<table:template>
-									<Link press="displayModuleDetail" text="{categoryName}"/>
-								</table:template>
-							</table:Column>
-							<table:Column showSortMenuEntry="false" sortProperty="pass" width="40px">
-								<TextView design="Bold" text="Pass"/>
-								<table:template>
-									<TextView text="{pass}" textAlign="Center"/>
-								</table:template>
-							</table:Column>
-							<table:Column hAlign="Center" id="fail_col" showSortMenuEntry="false" sortProperty="fail" width="40px">
-								<TextView design="Bold" text="Fail"/>
-								<table:template>
-									<TextView text="{fail}" textAlign="Center"/>
-								</table:template>
-							</table:Column>
-						</table:columns>
-					</table:Table>
-				</layout:MatrixLayoutCell>
-				<layout:MatrixLayoutCell class="job-chart-cell">
-					<Column id="jobsChart" xmlns="sap.viz.ui5">
-						<plotArea>
-							<VerticalBar colorPalette="#9cc677,red" isRoundCorner="true" xmlns="sap.viz.ui5.types"/>
-						</plotArea>
-						<interaction>
-							<Interaction xmlns="sap.viz.ui5.types.controller">
-								<selectability>
-									<Interaction_selectability mode="multiple"/>
-								</selectability>
-							</Interaction>
-						</interaction>
-						<dataset>
-							<FlattenedDataset data="{/categorys}" xmlns="sap.viz.ui5.data">
-								<dimensions>
-									<DimensionDefinition axis="1" name="Browser" value="{categoryName}"/>
-								</dimensions>
-								<measures>
-									<MeasureDefinition name="Pass" value="{pass}"/>
-									<MeasureDefinition name="Fail" value="{fail}"/>
-								</measures>
-							</FlattenedDataset>
-						</dataset>
-					</Column>
-				</layout:MatrixLayoutCell>
-			</layout:MatrixLayoutRow>
-		</layout:MatrixLayout>
-	</np:Panel>
+    <np:Panel>
+        <np:header>
+            <np:BreadThread id="brd_thd"/>
+        </np:header>
+        <layout:MatrixLayout layoutFixed="false">
+            <layout:MatrixLayoutRow>
+                <layout:MatrixLayoutCell class="job-table-cell" vAlign="Top">
+                    <table:Table columnSelect="colHandle" id="table" rows="{/categorys}" selectionMode="None">
+                        <table:columns>
+                            <table:Column showSortMenuEntry="false" sortProperty="browser" width="60%">
+                                <TextView design="Bold" text="Name"/>
+                                <table:template>
+                                    <Link press="displayModuleDetail" text="{categoryName}"/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column showSortMenuEntry="false" sortProperty="pass" width="20%">
+                                <TextView design="Bold" text="Pass"/>
+                                <table:template>
+                                    <TextView text="{pass}" textAlign="Center"/>
+                                </table:template>
+                            </table:Column>
+                            <table:Column hAlign="Center" id="fail_col" showSortMenuEntry="false" sortProperty="fail" width="20%">
+                                <TextView design="Bold" text="Fail"/>
+                                <table:template>
+                                    <TextView text="{fail}" textAlign="Center"/>
+                                </table:template>
+                            </table:Column>
+                        </table:columns>
+                    </table:Table>
+                </layout:MatrixLayoutCell>
+                <layout:MatrixLayoutCell class="job-chart-cell">
+                    <Column id="jobsChart" xmlns="sap.viz.ui5">
+                        <plotArea>
+                            <VerticalBar colorPalette="#9cc677,red" isRoundCorner="true" xmlns="sap.viz.ui5.types"/>
+                        </plotArea>
+                        <interaction>
+                            <Interaction xmlns="sap.viz.ui5.types.controller">
+                                <selectability>
+                                    <Interaction_selectability mode="multiple"/>
+                                </selectability>
+                            </Interaction>
+                        </interaction>
+                        <dataset>
+                            <FlattenedDataset data="{/categorys}" xmlns="sap.viz.ui5.data">
+                                <dimensions>
+                                    <DimensionDefinition axis="1" name="Browser" value="{categoryName}"/>
+                                </dimensions>
+                                <measures>
+                                    <MeasureDefinition name="Pass" value="{pass}"/>
+                                    <MeasureDefinition name="Fail" value="{fail}"/>
+                                </measures>
+                            </FlattenedDataset>
+                        </dataset>
+                    </Column>
+                </layout:MatrixLayoutCell>
+            </layout:MatrixLayoutRow>
+        </layout:MatrixLayout>
+    </np:Panel>
 </core:View>
