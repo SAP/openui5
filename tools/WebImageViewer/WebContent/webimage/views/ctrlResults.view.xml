@@ -28,7 +28,7 @@ xmlns:table="sap.ui.table" xmlns:np="notepad" controllerName="webimage.controlle
 								</table:template>
 							</table:Column>
 							<table:Column filterProperty="rtl" sortProperty="rtl" hAlign="Center">
-								<TextView design="Bold" text="RTL"/>
+								<TextView design="Bold" text="Text Direction"/>
 								<table:template>
 									<TextView textAlign="Center" text="{path:'rtl',formatter:'.formatRTL'}"/>
 								</table:template>
