@@ -84,7 +84,7 @@ public class CheckBoxTest extends TestBase {
 		String checkBox12Id = page.checkBox12.getAttribute("id");
 		userAction.mouseClickStartPoint(driver);
 		// Focus chkBox12
-		page.pressOneKey(userAction, KeyEvent.VK_TAB, 5);
+		page.pressOneKey(userAction, KeyEvent.VK_TAB, 2);
 		verifyElement(page.targetArea12Id, checkBox12Id + "-KB-Focus");
 
 		// Check CheckBox with Space key
