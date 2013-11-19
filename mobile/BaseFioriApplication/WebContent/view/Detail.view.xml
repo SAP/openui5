@@ -1,0 +1,11 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns="sap.m" controllerName="BaseFioriApplication.view.Detail">
+	<Page> 
+		<content>
+			<ObjectHeader title="{CustomerName}"
+						number="{SalesOrderNumber}"
+						numberUnit="{Currency}"></ObjectHeader>
+			<Label text="Insert your controls here..."></Label>
+		</content>
+	</Page>
+</core:View>
