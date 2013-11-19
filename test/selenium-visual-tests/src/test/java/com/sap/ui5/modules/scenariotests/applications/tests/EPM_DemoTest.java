@@ -41,7 +41,7 @@ public class EPM_DemoTest extends TestBase {
 
 		// Navigate to Page 5
 		page.pageFive.click();
-		page.checkCellText(page.tableCell09, "HT-1095");
+		page.checkCellText(page.tableCell09, "HT-1096");
 		userAction.mouseMove(driver, page.page7ID);
 		verifyElement(page.table.getId(), "NavigatePage5");
 
@@ -52,7 +52,7 @@ public class EPM_DemoTest extends TestBase {
 		// Select first entry in the DataTable
 		page.row0Selector.click();
 		waitForReady(2000);
-		page.checkFieldValue(page.companyField, "Bionic Research Lab");
+		page.checkFieldValue(page.companyField, "Indian IT Trading Company");
 		verifyElement(page.panelRowID, "Row1-Selected");
 
 		// Close Product Details Panel and Supplier Panel
@@ -104,7 +104,7 @@ public class EPM_DemoTest extends TestBase {
 		page.table.sort(0, SortOrder.Descending);
 		waitForReady(1000);
 		userAction.mouseMoveToStartPoint(driver);
-		
+
 		page.checkCellText(page.tableCell00, "HT-9999");
 		page.checkFieldValue(page.companyField, "");
 		verifyElement(page.table.getId(), "Sort-Descending");
