@@ -1,5 +1,4 @@
 jQuery.sap.declare("BaseFioriApplication.Component");
-jQuery.sap.require("BaseFioriApplication.Configuration");
 
 sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 	metadata : {
@@ -29,8 +28,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			// "startupImage1496x2048" : null
 
 			"serviceConfig" : {
-				host: "/uilib-sample/proxy/http/ec2-54-225-119-138.compute-1.amazonaws.com:50000",
-				url: "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/"
+				url: "/com.sap.odata.dynamic.service.provider/odata/SalesOrder/", //  GM6: "/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/",
 			}
 		},
 
@@ -67,12 +65,21 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 		this.getRouter().initialize();
 		
 		var oServiceConfig = this.getMetadata().getConfig()["serviceConfig"];
-		var sServiceUrl = oServiceConfig.host + oServiceConfig.url;
+		var sServiceUrl = oServiceConfig.url;
+		var sServiceProtocol = oServiceConfig.protocol;
+		
+		// if proxy needs to be used for local testing...
+		var bUseProxy = true; // TODO
+		if (bUseProxy) {
+			sServiceUrl = "proxy" + sServiceUrl;
+		} else {
+			sServiceUrl = sServiceProtocol + "://" + sServiceUrl;
+		}
 
 		// start mock server if required
 		var responderOn = jQuery.sap.getUriParameters().get("responderOn");
-		var bUsesMockData = ("true" === responderOn);
-		if (bUsesMockData) {
+		var bUseMockData = ("true" === responderOn);
+		if (bUseMockData) {
 			jQuery.sap.require("sap.ui.app.MockServer");
 			var oMockServer = new sap.ui.app.MockServer({
 				rootUri: sServiceUrl
@@ -81,9 +88,9 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			oMockServer.start();
 
 			var msg = "Running in demo mode with mock data."; // TODO: translate?
-			sap.m.MessageToast.show(msg, {
-				duration: 4000
-			});
+//			sap.m.MessageToast.show(msg, {
+//				duration: 4000
+//			});
 		}
 
 		// set data model
