@@ -26,7 +26,7 @@ public enum InitService {
 	private String osDIR;
 	private String browserDIR;
 	private String themeDIR;
-	private String rtlDIR;
+	private String textDirectionDIR;
 
 	// Supported OS
 	private final List<String> osList = new ArrayList<String>();
@@ -58,10 +58,10 @@ public enum InitService {
 	}
 
 	// Support RTL
-	private final Map<String, String> RTLMap = new HashMap<String, String>();
+	private final Map<String, String> textDirectionMap = new HashMap<String, String>();
 	{
-		RTLMap.put("true", "Rtl_true");
-		RTLMap.put("false", "Rtl_false");
+		textDirectionMap.put("true", "RTL");
+		textDirectionMap.put("false", "LTR");
 	}
 
 	private InitService() {
@@ -160,12 +160,12 @@ public enum InitService {
 		}
 		themeDIR = themeMap.get(config.getUrlParameterTheme());
 
-		// Get SAPUI5 rtl from config
-		if (!RTLMap.containsKey(config.getUrlParameterRtl())) {
+		// Get SAPUI5 text direction from config
+		if (!textDirectionMap.containsKey(config.getUrlParameterRtl())) {
 			System.out.println("SAPUI5 RTL information is not correctly in config property file.");
 			return false;
 		}
-		rtlDIR = RTLMap.get(config.getUrlParameterRtl());
+		textDirectionDIR = textDirectionMap.get(config.getUrlParameterRtl());
 
 		return true;
 	}
@@ -211,7 +211,7 @@ public enum InitService {
 
 		String imageBasePath = config.getImageRepositoryHome() + fileSeparator + osDIR + fileSeparator +
 				browserDIR + fileSeparator + themeDIR + fileSeparator +
-				rtlDIR;
+				textDirectionDIR;
 		return imageBasePath;
 
 	}
