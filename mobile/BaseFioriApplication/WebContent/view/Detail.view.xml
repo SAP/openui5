@@ -1,8 +1,9 @@
 <core:View xmlns:core="sap.ui.core" xmlns="sap.m"
 	controllerName="BaseFioriApplication.view.Detail">
 	<Page class="sapUiFioriObjectPage" title="{i18n>DETAIL_TITLE}">
+	
 		<content>
-			<ObjectHeader title="{CustomerName}" number="{SalesOrderNumber}"
+			<ObjectHeader title="{CustomerName}" number="{TotalAmount}"
 				numberUnit="{Currency}"></ObjectHeader>
 			<Label text="{i18n>DETAIL_TEXT}"></Label>
 			<IconTabBar>

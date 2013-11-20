@@ -17,10 +17,10 @@
 			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}"
 				select="_handleSelect" growing="true" growingScrollToLoad="true">
 				<ObjectListItem id="MAIN_LIST_ITEM" type="{device>/listItemType}"
-					title="{CustomerName}" number="{SalesOrderNumber}" numberUnit="{Currency}">
+					title="{CustomerName}" number="{TotalAmount}" numberUnit="{Currency}">
 					<attributes>
 						<ObjectAttribute id="ATTR1" text="{PO}" />
-						<ObjectAttribute id="ATTR2" text="{ShipToCountry}" />
+						<ObjectAttribute id="ATTR2" text="{SalesOrderNumber}" />
 					</attributes>
 				</ObjectListItem>
 			</List>

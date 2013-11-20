@@ -23,7 +23,8 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 		var filters = [];
 		var searchString = this.getView().byId("searchField").getValue();
 		if (searchString && searchString.length > 0) {
-			filters = [ new sap.ui.model.Filter("CustomerName", sap.ui.model.FilterOperator.Contains, searchString) ];
+			filters = [ new sap.ui.model.Filter("SalesOrderNumber", sap.ui.model.FilterOperator.Contains, searchString) ];
+			// FIXME: currently seaarches for SalesOrderNumber because CustomerName search is broken in the backend
 		}
 		
 		// update list binding
