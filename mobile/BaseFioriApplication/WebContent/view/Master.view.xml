@@ -1,0 +1,18 @@
+<core:View xmlns:core="sap.ui.core"
+	xmlns="sap.m" controllerName="BaseFioriApplication.view.Master">
+	<Page id="page">
+		<content>
+			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}" select="_handleSelect">
+				<ObjectListItem id="MAIN_LIST_ITEM" type="{device>/listItemType}"
+					title="{CustomerName}"
+                    number="{SalesOrderNumber}"
+                    numberUnit="{Currency}">
+					<attributes>
+						<ObjectAttribute id="ATTR1" text="{PO}" />
+						<ObjectAttribute id="ATTR2" text="{ShipToCountry}" />
+					</attributes>
+				</ObjectListItem>
+			</List>
+		</content>
+	</Page>
+</core:View>

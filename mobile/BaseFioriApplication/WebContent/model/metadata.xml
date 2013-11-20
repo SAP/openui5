@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="SRA018_SO_TRACKING_SRV" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Subscription" sap:semantics="subscriptions"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="32" sap:label="Sub. ID" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
+				<Property Name="user" Type="Edm.String" MaxLength="12"
+					m:FC_TargetPath="SyndicationAuthorName" m:FC_KeepInContent="false"
+					sap:label="User Name" sap:creatable="false" sap:filterable="false" />
+				<Property Name="updated" Type="Edm.DateTime" Precision="0"
+					m:FC_TargetPath="SyndicationUpdated" m:FC_KeepInContent="false"
+					sap:label="Time Stamp" sap:creatable="false" sap:filterable="false" />
+				<Property Name="title" Type="Edm.String" MaxLength="255"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="false"
+					sap:label="Title" sap:filterable="false" />
+				<Property Name="deliveryAddress" Type="Edm.String"
+					sap:label="Delivery Address" sap:filterable="false" />
+				<Property Name="persistNotifications" Type="Edm.Boolean"
+					sap:label="Persist Notification" sap:filterable="false" />
+				<Property Name="collection" Type="Edm.String" MaxLength="40"
+					sap:label="Collection" sap:filterable="false" />
+				<Property Name="filter" Type="Edm.String" sap:label="Filter"
+					sap:filterable="false" />
+				<Property Name="select" Type="Edm.String" MaxLength="255"
+					sap:label="Select" sap:filterable="false" />
+				<Property Name="changeType" Type="Edm.String" MaxLength="30"
+					sap:label="Change Type" />
+			</EntityType>
+			<EntityType Name="Notification" sap:semantics="notifications"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="32" sap:label="Notification ID" />
+				<Property Name="collection" Type="Edm.String" MaxLength="40"
+					sap:label="Collection" />
+				<Property Name="title" Type="Edm.String" m:FC_TargetPath="SyndicationTitle"
+					m:FC_KeepInContent="false" sap:label="Notif. Text" />
+				<Property Name="updated" Type="Edm.DateTime" Precision="0"
+					m:FC_TargetPath="SyndicationUpdated" m:FC_KeepInContent="false"
+					sap:label="Time Stamp" />
+				<Property Name="changeType" Type="Edm.String" MaxLength="30"
+					sap:label="Change Type" />
+				<Property Name="entriesOfInterest" Type="Edm.Int32"
+					sap:label="No. of Entries" />
+				<Property Name="recipient" Type="Edm.String" MaxLength="112"
+					sap:label="Recipient" sap:creatable="false" sap:updatable="false" />
+			</EntityType>
+			<EntityType Name="SalesOrder" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SalesOrderNumber" />
+				</Key>
+				<Property Name="SalesOrderNumber" Type="Edm.String"
+					Nullable="false" MaxLength="10" m:FC_TargetPath="SyndicationTitle"
+					m:FC_KeepInContent="true" sap:label="Sales Order Number" />
+				<Property Name="Division" Type="Edm.String" MaxLength="2"
+					sap:label="Division" />
+				<Property Name="DistributionChannel" Type="Edm.String"
+					MaxLength="2" sap:label="Distribution Channel" />
+				<Property Name="ShipToPostalCode" Type="Edm.String"
+					MaxLength="10" sap:label="Postal Code" />
+				<Property Name="ShipToRegion" Type="Edm.String" MaxLength="3"
+					sap:label="Region" />
+				<Property Name="ShipToCountry" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="PO" Type="Edm.String" MaxLength="20"
+					sap:label="Purchase Order" />
+				<Property Name="TotalAmount" Type="Edm.Decimal" Precision="15"
+					Scale="2" sap:label="Total Amount" />
+				<Property Name="Currency" Type="Edm.String" MaxLength="5"
+					sap:label="Currency" sap:semantics="currency-code" />
+				<Property Name="Status" Type="Edm.String" MaxLength="1"
+					sap:label="Status" />
+				<Property Name="ShipToPartyName" Type="Edm.String"
+					MaxLength="35" sap:label="Party Name" />
+				<Property Name="OrderDate" Type="Edm.String" sap:label="Order Date" />
+				<Property Name="RequestedDate" Type="Edm.String" sap:label="Request Date" />
+				<Property Name="ShipToContact" Type="Edm.String" sap:label="Contact" />
+				<Property Name="ShipToAddressLine1" Type="Edm.String"
+					MaxLength="35" sap:label="Address Line1" />
+				<Property Name="ShipToAddressLine2" Type="Edm.String"
+					MaxLength="35" sap:label="Address Line2" />
+				<Property Name="ShipToAddressLine3" Type="Edm.String"
+					MaxLength="35" sap:label="Address Line3" />
+				<Property Name="TotalSchedulesCount" Type="Edm.String"
+					sap:label="Total Schedules Count" />
+				<Property Name="OpenSchedulesCount" Type="Edm.String"
+					sap:label="Open Schedules Count" />
+				<Property Name="InProcessSchedulesCount" Type="Edm.String"
+					sap:label="In Process Schedules Count" />
+				<Property Name="ShippedSchedulesCount" Type="Edm.String"
+					sap:label="Shipped Schedules Count" />
+				<Property Name="OrderItemsCount" Type="Edm.String"
+					sap:label="Order Items Count" />
+				<Property Name="PaymentTerms" Type="Edm.String" sap:label="Payment Terms" />
+				<Property Name="NetPriceAmount" Type="Edm.Decimal"
+					Precision="15" Scale="14" sap:unit="Currency" sap:label="Net Price Amount" />
+				<Property Name="TaxAmount" Type="Edm.Decimal" Precision="29"
+					Scale="9" sap:label="Tax Amount" />
+				<Property Name="ShipToCity" Type="Edm.String" MaxLength="35"
+					sap:label="City" />
+				<Property Name="CustomerID" Type="Edm.String" MaxLength="10"
+					sap:label="Customer ID" />
+				<Property Name="SalesOrganization" Type="Edm.String"
+					MaxLength="4" sap:label="Sales Organization" />
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="35"
+					sap:label="Customer Name" />
+				<NavigationProperty Name="OrderItems"
+					Relationship="SRA018_SO_TRACKING_SRV.SalesOrderOrderItem" FromRole="FromRole_SalesOrderOrderItem"
+					ToRole="ToRole_SalesOrderOrderItem" />
+				<NavigationProperty Name="Attachments"
+					Relationship="SRA018_SO_TRACKING_SRV.SalesOrderAttachment"
+					FromRole="FromRole_SalesOrderAttachment" ToRole="ToRole_SalesOrderAttachment" />
+				<NavigationProperty Name="ScheduledItems"
+					Relationship="SRA018_SO_TRACKING_SRV.SalesOrderScheduledItem"
+					FromRole="FromRole_SalesOrderScheduledItem" ToRole="ToRole_SalesOrderScheduledItem" />
+			</EntityType>
+			<EntityType Name="OrderItem" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ItemNumber" />
+					<PropertyRef Name="SalesOrderNumber" />
+				</Key>
+				<Property Name="ItemNumber" Type="Edm.String" Nullable="false"
+					MaxLength="6" m:FC_TargetPath="SyndicationTitle"
+					m:FC_KeepInContent="true" sap:label="Item Number" />
+				<Property Name="SalesOrderNumber" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:label="Sales Order Number" />
+				<Property Name="OrderItemSimulate" Type="Edm.String"
+					MaxLength="1" sap:label="Item Simulation Flag" />
+				<Property Name="EditEnabled" Type="Edm.String" MaxLength="1"
+					sap:label="Edit Enabled Flag" />
+				<Property Name="Name" Type="Edm.String" MaxLength="40"
+					sap:label="Name" />
+				<Property Name="Quantity" Type="Edm.Decimal" Precision="15"
+					Scale="3" sap:label="Quantity" />
+				<Property Name="UnitOfMeasure" Type="Edm.String" sap:label="Unit Of Measure" />
+				<Property Name="StatusCode" Type="Edm.String" MaxLength="1"
+					sap:label="Status Code" />
+				<Property Name="PricePerUnit" Type="Edm.String" sap:label="Price per Unit" />
+				<Property Name="Amount" Type="Edm.Decimal" Precision="15"
+					Scale="14" sap:unit="Currency" sap:label="Amount" />
+				<Property Name="Status" Type="Edm.String" sap:label="Status" />
+				<Property Name="TaxAmountChange" Type="Edm.String"
+					sap:label="Tax Change Amount" />
+				<Property Name="PercentageOfShippedItems" Type="Edm.String"
+					sap:label="Percentage of Shipped Items" />
+				<Property Name="NumberOfLateScheduledItems" Type="Edm.String"
+					sap:label="Number of Late Scheduled Items" />
+				<Property Name="MaterialNumber" Type="Edm.String"
+					MaxLength="18" sap:label="Material Number" />
+				<Property Name="FreightAmountChange" Type="Edm.String"
+					sap:label="Freight Change Amount" />
+				<Property Name="Description" Type="Edm.String" MaxLength="40"
+					sap:label="Description" />
+				<Property Name="CustomerMaterialNumber" Type="Edm.String"
+					MaxLength="22" sap:label="Customer Material Number" />
+				<Property Name="ShipToAddressLine1" Type="Edm.String"
+					MaxLength="35" sap:label="Ship To Address Line1" />
+				<Property Name="TotalChange" Type="Edm.String" sap:label="Total Change Amount" />
+				<Property Name="ShipToAddressLine2" Type="Edm.String"
+					MaxLength="35" sap:label="Ship To Address Line2" />
+				<Property Name="ShipToAddressLine3" Type="Edm.String"
+					MaxLength="35" sap:label="Ship To Address Line3" />
+				<Property Name="Method" Type="Edm.String" sap:label="Shipping Method" />
+				<Property Name="TotalChangeSign" Type="Edm.String"
+					sap:label="Total Change Amount Sign" />
+				<Property Name="RefernceMaterialNumber" Type="Edm.String"
+					MaxLength="18" sap:label="Reference Material Number" />
+				<Property Name="ShipToCity" Type="Edm.String" MaxLength="35"
+					sap:label="City" />
+				<Property Name="ShipToCountry" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="FreightChangeSign" Type="Edm.String"
+					sap:label="Freight Change Amount Sign" />
+				<Property Name="ShipToRegion" Type="Edm.String" MaxLength="3"
+					sap:label="Region" />
+				<Property Name="ShipToPartyName" Type="Edm.String"
+					MaxLength="35" sap:label="Party Name" />
+				<Property Name="ShipToPostalCode" Type="Edm.String"
+					MaxLength="10" sap:label="Postal Code" />
+				<Property Name="TaxChangeSign" Type="Edm.String"
+					sap:label="Tax Change Amount Sign" />
+				<Property Name="UnitofMeasureTxt" Type="Edm.String"
+					MaxLength="10" sap:label="Sales Unit Text" />
+				<Property Name="ShipToTelephone" Type="Edm.String"
+					MaxLength="16" sap:label="Telephone Number" />
+				<Property Name="ShippingCarrier" Type="Edm.String"
+					sap:label="Shipping Carrier" />
+				<Property Name="Currency" Type="Edm.String" MaxLength="5"
+					sap:label="Currency" sap:semantics="currency-code" />
+				<Property Name="ShippingIncoTerms" Type="Edm.String"
+					sap:label="Shipping Inco Terms" />
+				<Property Name="CurrPerUnit" Type="Edm.String" MaxLength="3"
+					sap:label="Currency ISO" />
+				<Property Name="CurrAmount" Type="Edm.String" MaxLength="3"
+					sap:label="Currency Amount" />
+				<NavigationProperty Name="SalesOrder"
+					Relationship="SRA018_SO_TRACKING_SRV.SalesOrderOrderItem" FromRole="ToRole_SalesOrderOrderItem"
+					ToRole="FromRole_SalesOrderOrderItem" />
+				<NavigationProperty Name="ScheduledItems"
+					Relationship="SRA018_SO_TRACKING_SRV.OrderItemScheduledItem"
+					FromRole="FromRole_OrderItemScheduledItem" ToRole="ToRole_OrderItemScheduledItem" />
+			</EntityType>
+			<EntityType Name="ScheduledItem" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ScheduleID" />
+					<PropertyRef Name="SalesOrderNumber" />
+					<PropertyRef Name="ItemNumber" />
+				</Key>
+				<Property Name="OrderItemNumber" Type="Edm.String"
+					sap:label="Order Item Number" sap:filterable="false" />
+				<Property Name="ScheduleID" Type="Edm.String" Nullable="false"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="true"
+					sap:label="Schedule Id" />
+				<Property Name="ProductName" Type="Edm.String" sap:label="Product Name"
+					sap:filterable="false" />
+				<Property Name="Quantity" Type="Edm.String" sap:label="Quantity Text"
+					sap:filterable="false" />
+				<Property Name="UnitOfMeasure" Type="Edm.String" sap:label="Unit of Measure"
+					sap:filterable="false" />
+				<Property Name="PromisedDate" Type="Edm.String" sap:label="Promised Date"
+					sap:filterable="false" />
+				<Property Name="RequestedDate" Type="Edm.String" sap:label="Requested Date"
+					sap:filterable="false" />
+				<Property Name="Status" Type="Edm.String" sap:label="Status"
+					sap:filterable="false" />
+				<Property Name="IsLate" Type="Edm.String" sap:label="Is Late Flag"
+					sap:filterable="false" />
+				<Property Name="CarrierName" Type="Edm.String" sap:label="Carrier Name"
+					sap:filterable="false" />
+				<Property Name="CarrierTrackingNumber" Type="Edm.String"
+					sap:label="Carrier Tracking No." sap:filterable="false" />
+				<Property Name="ShippedDate" Type="Edm.String" sap:label="Shipped Date"
+					sap:filterable="false" />
+				<Property Name="StatusCode" Type="Edm.String" sap:label="Status Code" />
+				<Property Name="SalesOrderNumber" Type="Edm.String"
+					Nullable="false" sap:label="Sales Order Number" />
+				<Property Name="ItemNumber" Type="Edm.String" Nullable="false"
+					sap:label="Item Number" />
+				<Property Name="UnitofMeasureTxt" Type="Edm.String"
+					MaxLength="10" sap:label="Sales Unit Text" />
+				<NavigationProperty Name="OrderItem"
+					Relationship="SRA018_SO_TRACKING_SRV.OrderItemScheduledItem"
+					FromRole="ToRole_OrderItemScheduledItem" ToRole="FromRole_OrderItemScheduledItem" />
+			</EntityType>
+			<EntityType Name="Attachment" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id" />
+				</Key>
+				<Property Name="Id" Type="Edm.Int32" Nullable="false"
+					sap:label="File Id" />
+				<Property Name="FileSize" Type="Edm.String" Nullable="false"
+					sap:label="File Size" />
+				<Property Name="Type" Type="Edm.String" Nullable="false"
+					sap:label="File Type" />
+				<Property Name="Description" Type="Edm.String" Nullable="false"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="true"
+					sap:label="File Description" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					sap:label="File Name" />
+				<NavigationProperty Name="SalesOrder"
+					Relationship="SRA018_SO_TRACKING_SRV.SalesOrderAttachment"
+					FromRole="ToRole_SalesOrderAttachment" ToRole="FromRole_SalesOrderAttachment" />
+			</EntityType>
+			<EntityType Name="Contact" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CustomerID" />
+					<PropertyRef Name="Id" />
+				</Key>
+				<Property Name="SalesOrderNumber" Type="Edm.String"
+					Nullable="false" sap:label="Sales Order Number" />
+				<Property Name="CustomerID" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Customer ID" />
+				<Property Name="Id" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Contact Id" />
+				<Property Name="email" Type="Edm.String" MaxLength="241"
+					sap:label="Email" />
+				<Property Name="Name" Type="Edm.String" MaxLength="35"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="true"
+					sap:label="Name" />
+				<Property Name="Title" Type="Edm.String" MaxLength="40"
+					sap:label="Title" />
+				<Property Name="phoneNo" Type="Edm.String" MaxLength="30"
+					sap:label="Phone Number" />
+			</EntityType>
+			<EntityType Name="Country" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CountryKey" />
+				</Key>
+				<Property Name="CountryKey" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Country Key" />
+				<Property Name="CountryName" Type="Edm.String" Nullable="false"
+					MaxLength="15" m:FC_TargetPath="SyndicationTitle"
+					m:FC_KeepInContent="true" sap:label="Country Name" />
+			</EntityType>
+			<EntityType Name="Customer" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CustomerID" />
+				</Key>
+				<Property Name="CustomerID" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Customer ID" />
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="35"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="true"
+					sap:label="Customer Name" />
+				<Property Name="SalesOrganization" Type="Edm.String"
+					MaxLength="4" sap:label="Sales Organization" />
+				<Property Name="DistributionChannel" Type="Edm.String"
+					MaxLength="2" sap:label="Distribution Channel" />
+				<Property Name="Division" Type="Edm.String" MaxLength="2"
+					sap:label="Division" />
+				<Property Name="SalesOrganizationName" Type="Edm.String"
+					MaxLength="20" sap:label="SalesOrganizationName" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="DistributionChannelName" Type="Edm.String"
+					MaxLength="20" sap:label="DistributionChannelName" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="DivisionName" Type="Edm.String" MaxLength="20"
+					sap:label="DviisionName" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="City" Type="Edm.String" MaxLength="40"
+					sap:label="City" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10"
+					sap:label="Postal Code" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="CityZip" Type="Edm.String" MaxLength="51"
+					sap:label="City/Zip" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+			</EntityType>
+			<Association Name="SalesOrderAttachment"
+				sap:content-version="1">
+				<End Type="SRA018_SO_TRACKING_SRV.SalesOrder" Multiplicity="1"
+					Role="FromRole_SalesOrderAttachment" />
+				<End Type="SRA018_SO_TRACKING_SRV.Attachment" Multiplicity="*"
+					Role="ToRole_SalesOrderAttachment" />
+			</Association>
+			<Association Name="SalesOrderScheduledItem"
+				sap:content-version="1">
+				<End Type="SRA018_SO_TRACKING_SRV.SalesOrder" Multiplicity="1"
+					Role="FromRole_SalesOrderScheduledItem" />
+				<End Type="SRA018_SO_TRACKING_SRV.ScheduledItem" Multiplicity="*"
+					Role="ToRole_SalesOrderScheduledItem" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_SalesOrderScheduledItem">
+						<PropertyRef Name="SalesOrderNumber" />
+					</Principal>
+					<Dependent Role="ToRole_SalesOrderScheduledItem">
+						<PropertyRef Name="SalesOrderNumber" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="SalesOrderOrderItem"
+				sap:content-version="1">
+				<End Type="SRA018_SO_TRACKING_SRV.SalesOrder" Multiplicity="1"
+					Role="FromRole_SalesOrderOrderItem" />
+				<End Type="SRA018_SO_TRACKING_SRV.OrderItem" Multiplicity="*"
+					Role="ToRole_SalesOrderOrderItem" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_SalesOrderOrderItem">
+						<PropertyRef Name="SalesOrderNumber" />
+					</Principal>
+					<Dependent Role="ToRole_SalesOrderOrderItem">
+						<PropertyRef Name="SalesOrderNumber" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="OrderItemScheduledItem"
+				sap:content-version="1">
+				<End Type="SRA018_SO_TRACKING_SRV.OrderItem" Multiplicity="1"
+					Role="FromRole_OrderItemScheduledItem" />
+				<End Type="SRA018_SO_TRACKING_SRV.ScheduledItem" Multiplicity="*"
+					Role="ToRole_OrderItemScheduledItem" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_OrderItemScheduledItem">
+						<PropertyRef Name="ItemNumber" />
+						<PropertyRef Name="SalesOrderNumber" />
+					</Principal>
+					<Dependent Role="ToRole_OrderItemScheduledItem">
+						<PropertyRef Name="OrderItemNumber" />
+						<PropertyRef Name="SalesOrderNumber" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="SRA018_SO_TRACKING_SRV_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="SubscriptionCollection" EntityType="SRA018_SO_TRACKING_SRV.Subscription"
+					sap:content-version="1" />
+				<EntitySet Name="NotificationCollection" EntityType="SRA018_SO_TRACKING_SRV.Notification"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:addressable="false" sap:content-version="1" />
+				<EntitySet Name="SalesOrders" EntityType="SRA018_SO_TRACKING_SRV.SalesOrder"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="OrderItems" EntityType="SRA018_SO_TRACKING_SRV.OrderItem"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="ScheduledItems" EntityType="SRA018_SO_TRACKING_SRV.ScheduledItem"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="Attachments" EntityType="SRA018_SO_TRACKING_SRV.Attachment"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="Contacts" EntityType="SRA018_SO_TRACKING_SRV.Contact"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="Countries" EntityType="SRA018_SO_TRACKING_SRV.Country"
+					sap:requires-filter="true" sap:content-version="1" />
+				<EntitySet Name="Customers" EntityType="SRA018_SO_TRACKING_SRV.Customer"
+					sap:content-version="1" />
+				<AssociationSet Name="SalesOrderScheduledItem"
+					Association="SRA018_SO_TRACKING_SRV.SalesOrderScheduledItem"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1">
+					<End EntitySet="SalesOrders" Role="FromRole_SalesOrderScheduledItem" />
+					<End EntitySet="ScheduledItems" Role="ToRole_SalesOrderScheduledItem" />
+				</AssociationSet>
+				<AssociationSet Name="OrderItemScheduledItem"
+					Association="SRA018_SO_TRACKING_SRV.OrderItemScheduledItem"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1">
+					<End EntitySet="OrderItems" Role="FromRole_OrderItemScheduledItem" />
+					<End EntitySet="ScheduledItems" Role="ToRole_OrderItemScheduledItem" />
+				</AssociationSet>
+				<AssociationSet Name="SalesOrderOrderItem"
+					Association="SRA018_SO_TRACKING_SRV.SalesOrderOrderItem"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1">
+					<End EntitySet="SalesOrders" Role="FromRole_SalesOrderOrderItem" />
+					<End EntitySet="OrderItems" Role="ToRole_SalesOrderOrderItem" />
+				</AssociationSet>
+				<AssociationSet Name="SalesOrderAttachment"
+					Association="SRA018_SO_TRACKING_SRV.SalesOrderAttachment"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1">
+					<End EntitySet="SalesOrders" Role="FromRole_SalesOrderAttachment" />
+					<End EntitySet="Attachments" Role="ToRole_SalesOrderAttachment" />
+				</AssociationSet>
+			</EntityContainer>
+			<atom:link rel="self"
+				href="https://LDCIGM6.WDF.SAP.CORP:44333/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version"
+				href="https://LDCIGM6.WDF.SAP.CORP:44333/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
