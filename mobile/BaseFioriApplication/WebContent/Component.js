@@ -12,7 +12,8 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 
 		"config" : {
 			"resourceBundle" : "i18n/i18n.properties",
-			// "titleResource" : "SHELL_TITLE",
+			"titleResource" : "SHELL_TITLE",
+			
 			// "icon" : "sap-icon://Fiori2/F0002",
 			// "favIcon" : "./resources/sap/ca/ui/themes/base/img/favicon/F0002_My_Accounts.ico",
 			// "homeScreenIconPhone" : "./resources/sap/ca/ui/themes/base/img/launchicon/F0002_My_Accounts/57_iPhone_Desktop_Launch.png",
@@ -28,7 +29,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			// "startupImage1496x2048" : null
 
             "serviceConfig" : {
-                //url: "/com.sap.odata.dynamic.service.provider/odata/SalesOrder/"
+                // url: "/com.sap.odata.dynamic.service.provider/odata/SalesOrder/"
                 url: "/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/"
             }
 		},
@@ -55,7 +56,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			         	view : "Detail",
 			         	name : "catchall", // name used for listening or navigating to this route
 			         }
-			         ]
+			   ]
 		}
 	},
 
@@ -87,10 +88,11 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			oMockServer.simulate(rootPath + "/model/metadata.xml", rootPath + "/model/");
 			oMockServer.start();
 
-			var msg = "Running in demo mode with mock data."; // TODO: translate?
-//			sap.m.MessageToast.show(msg, {
-//				duration: 4000
-//			});
+			var msg = "Running in demo mode with mock data."; // not translated because only for development scenario
+			jQuery.sap.require("sap.m.MessageToast");
+			sap.m.MessageToast.show(msg, {
+				duration: 4000
+			});
 		}
 
 		// set data model

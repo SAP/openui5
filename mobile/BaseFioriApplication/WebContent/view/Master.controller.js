@@ -1,8 +1,8 @@
 sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 	
 	onInit: function() {
-		var view = this.getView();
-
+//		var view = this.getView();
+//
 //		sap.ui.core.UIComponent.getRouterFor(this).attachRouteMatched(function(oEvent) {
 //			if (oEvent.getParameter("name") === "Detail" && !(oEvent.getParameter("arguments").from === "master")) { // initial call via bookmark
 //				// select the listItem referenced in the bookmark
@@ -19,7 +19,9 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 	},
 	
 	_handleSelect: function(oEvent) {
-		var oListItem = oEvent.getParameter("listItem");
+		var oListItem = oEvent.getParameter("listItem"); // find out which ListItem was selected
+		
+		// trigger routing to BindingPath of this ListItem - this will update the data on the detail page
 		sap.ui.core.UIComponent.getRouterFor(this).navTo("Detail",{from: "master", contextPath: oListItem.getBindingContext().getPath().substr(1)});
 	}
 });	

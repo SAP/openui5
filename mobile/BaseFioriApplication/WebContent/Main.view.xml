@@ -5,7 +5,7 @@
 			<mvc:XMLView viewName="BaseFioriApplication.view.Master"/>
 		</masterPages>
 		<detailPages>
-			<!-- filled dynamically in controller -->
+			<!-- filled dynamically by routing -->
 		</detailPages>
 	</SplitApp>
 </mvc:View>

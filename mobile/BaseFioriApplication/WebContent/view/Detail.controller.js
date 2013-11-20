@@ -4,6 +4,7 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Detail", {
 		var view = this.getView();
 
 		sap.ui.core.UIComponent.getRouterFor(this).attachRouteMatched(function(oEvent) {
+			// when detail navigation occurs, update the binding context
 			if (oEvent.getParameter("name") === "Detail") {
 				var context = new sap.ui.model.Context(view.getModel(), '/' + oEvent.getParameter("arguments").contextPath);
 				view.setBindingContext(context);

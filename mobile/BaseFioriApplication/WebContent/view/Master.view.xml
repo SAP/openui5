@@ -1,6 +1,6 @@
 <core:View xmlns:core="sap.ui.core"
 	xmlns="sap.m" controllerName="BaseFioriApplication.view.Master">
-	<Page id="page">
+	<Page id="page" title="{i18n>MASTER_TITLE}">
 		<content>
 			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}" select="_handleSelect">
 				<ObjectListItem id="MAIN_LIST_ITEM" type="{device>/listItemType}"
