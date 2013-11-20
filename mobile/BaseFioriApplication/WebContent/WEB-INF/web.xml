@@ -29,7 +29,7 @@
 	<!-- but has to be switched off for productive use on a Java server! -->
 	<context-param>
 		<param-name>com.sap.ui5.resource.DEV_MODE</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 	<!-- END: DEV MODE -->
 
@@ -81,17 +81,18 @@
 <!--     <param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name> -->
 <!--     <param-value>http://fiodevdsp.wdf.sap.corp:8080</param-value> -->
 <!--   </context-param> -->
-       <context-param>
-         <param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
-         <param-value>https://ldcigm6.wdf.sap.corp:44333</param-value>
-       </context-param>
-  
+	<context-param>
+	  <param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
+	  <param-value>https://ldcigm6.wdf.sap.corp:44333</param-value>
+	</context-param>
+
+
 	<!-- ============================================================== -->
 	<!-- Welcome file list                                              -->
 	<!-- ============================================================== -->
 
 	<welcome-file-list>
-		<welcome-file>noShellIndex.html</welcome-file>
+		<welcome-file>main.html</welcome-file>
 	</welcome-file-list>
 
 

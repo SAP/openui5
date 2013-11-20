@@ -18,6 +18,20 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 //		}, this);
 	},
 	
+	_handleSearch: function() {
+		// add filter for search
+		var filters = [];
+		var searchString = this.getView().byId("searchField").getValue();
+		if (searchString && searchString.length > 0) {
+			filters = [ new sap.ui.model.Filter("CustomerName", sap.ui.model.FilterOperator.Contains, searchString) ];
+		}
+		
+		// update list binding
+		var list = this.getView().byId("list");
+		var binding = list.getBinding("items");
+		binding.filter(filters);
+	},
+	
 	_handleSelect: function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem"); // find out which ListItem was selected
 		

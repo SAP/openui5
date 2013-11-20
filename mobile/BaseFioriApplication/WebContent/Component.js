@@ -6,7 +6,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 		"version" : "1.0",
 		"includes" : [],
 		"dependencies" : {
-			"libs" : ["sap.m", "sap.me"],
+			"libs" : ["sap.m", "sap.me", "sap.ushell"],
 			"components" : []
 		},
 

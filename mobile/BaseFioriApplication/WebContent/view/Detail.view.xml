@@ -1,11 +1,27 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns="sap.m" controllerName="BaseFioriApplication.view.Detail">
-	<Page class="sapUiFioriObjectPage" title="{i18n>DETAIL_TITLE}"> 
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
+	controllerName="BaseFioriApplication.view.Detail">
+	<Page class="sapUiFioriObjectPage" title="{i18n>DETAIL_TITLE}">
 		<content>
-			<ObjectHeader title="{CustomerName}"
-						number="{SalesOrderNumber}"
-						numberUnit="{Currency}"></ObjectHeader>
+			<ObjectHeader title="{CustomerName}" number="{SalesOrderNumber}"
+				numberUnit="{Currency}"></ObjectHeader>
 			<Label text="{i18n>DETAIL_TEXT}"></Label>
+			<IconTabBar>
+				<items>
+					<IconTabFilter icon="sap-icon://hint"></IconTabFilter>
+				</items>
+				<content>
+					<Label text="{i18n>DETAIL_TEXT}"></Label>
+				</content>
+			</IconTabBar>
 		</content>
+
+		<footer>
+			<Bar>
+				<contentRight>
+					<Button id="actionButton" icon="sap-icon://action" press="_openActionSheet"></Button>
+				</contentRight>
+
+			</Bar>
+		</footer>
 	</Page>
 </core:View>

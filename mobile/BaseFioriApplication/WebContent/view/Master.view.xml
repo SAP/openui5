@@ -1,12 +1,23 @@
-<core:View xmlns:core="sap.ui.core"
-	xmlns="sap.m" controllerName="BaseFioriApplication.view.Master">
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
+	xmlns:shellfooter="sap.ushell.ui.footerbar" controllerName="BaseFioriApplication.view.Master">
+	
 	<Page id="page" title="{i18n>MASTER_TITLE}">
+		<subHeader>
+			<Bar id="searchBar">
+				<contentMiddle>
+					<SearchField id="searchField" showRefreshButton="{device>/isNoTouch}"
+						placeholder="{i18n>MASTER_SEARCH_PLACEHOLDER}" search="_handleSearch"
+						tooltip="{i18n>MASTER_SEARCH_TOOLTIP}" width="100%">
+					</SearchField>
+				</contentMiddle>
+			</Bar>
+		</subHeader>
+		
 		<content>
-			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}" select="_handleSelect">
+			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}"
+				select="_handleSelect" growing="true" growingScrollToLoad="true">
 				<ObjectListItem id="MAIN_LIST_ITEM" type="{device>/listItemType}"
-					title="{CustomerName}"
-                    number="{SalesOrderNumber}"
-                    numberUnit="{Currency}">
+					title="{CustomerName}" number="{SalesOrderNumber}" numberUnit="{Currency}">
 					<attributes>
 						<ObjectAttribute id="ATTR1" text="{PO}" />
 						<ObjectAttribute id="ATTR2" text="{ShipToCountry}" />
@@ -14,5 +25,14 @@
 				</ObjectListItem>
 			</List>
 		</content>
+		
+		<footer>
+			<Bar>
+				<contentLeft>
+					<shellfooter:SettingsButton></shellfooter:SettingsButton>
+				</contentLeft>
+			</Bar>
+		</footer>
 	</Page>
+	
 </core:View>
