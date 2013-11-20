@@ -12,6 +12,7 @@ import com.sap.ui5.modules.librarytests.ux3.pages.ShellPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
 import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.util.JsAction;
 
 public class ShellTest extends TestBase {
 
@@ -48,13 +49,15 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("MouseOver-tool-" + page.searchTool.getAttribute("id"));
 
 		// Open and close tool on the toolbar
-		page.searchTool.click();
+		userAction.mouseClick(driver, page.searchTool.getAttribute("id"));
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		verifyBrowserViewBox("SearchTool-Opened");
 
-		page.searchTool.click();
+		userAction.mouseClick(driver, page.searchTool.getAttribute("id"));
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(1200);
 		verifyElement(page.leftSideToolsID, "SearchTool-Closed");
 
 		userAction.mouseClickStartPoint(driver);
@@ -64,23 +67,22 @@ public class ShellTest extends TestBase {
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		verifyBrowserViewBox("FeederTool-Opened");
 
-		page.feederTool.click();
+		userAction.mouseClick(driver, page.feederTool.getAttribute("id"));
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		verifyElement(page.leftSideToolsID, "FeederTool-Closed");
 
-		userAction.mouseClickStartPoint(driver);
-		page.optionsPopupTool.click();
+		userAction.mouseClick(driver, page.optionsPopupTool.getAttribute("id"));
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		verifyBrowserViewBox("OptionsPopupTool-Opened");
 
 		userAction.mouseClick(driver, page.optionsPopupTool.getAttribute("id"));
-		//page.optionsPopupTool.click();
 		this.waitForElement(driver, false, page.optionPopDivID, timeOutSeconds);
-
 		verifyElement(page.leftSideToolsID, "OptionsPopupTool-Closed");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Open tool without closing the previous tool
-		page.searchTool.click();
+		userAction.mouseClick(driver, page.searchTool.getAttribute("id"));
 		waitForReady(millisecond);
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
 		verifyBrowserViewBox("SearchTool-OptionsPopupTool-Opened");
@@ -89,9 +91,8 @@ public class ShellTest extends TestBase {
 	/** Verify Shell options*/
 	@Test
 	public void testShellOptions() {
-
 		// Hide/Show Header Shell areas
-		page.optionsPopupTool.click();
+		userAction.mouseClick(driver, page.optionsPopupTool.getAttribute("id"));
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		userAction.mouseClick(driver, page.optionHeaderIconID);
 		this.waitForElement(driver, true, page.headerTypeList.getId(), timeOutSeconds);
@@ -100,8 +101,8 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("HeaderType-BrandOnly");
 
 		// Hide top level navigation, but show Title
-		page.optionsPopupTool.click();
-		waitForReady(millisecond);
+		JsAction.focusOnElement(driver, page.optionsPopupTool);
+		JsAction.clickElement(driver, page.optionsPopupTool);
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		userAction.mouseClick(driver, page.optionHeaderIconID);
 		this.waitForElement(driver, true, page.headerTypeList.getId(), timeOutSeconds);
@@ -110,7 +111,8 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("HeaderType-noNavigation");
 
 		// Show slim top level navigation
-		page.optionsPopupTool.click();
+		JsAction.focusOnElement(driver, page.optionsPopupTool);
+		JsAction.clickElement(driver, page.optionsPopupTool);
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		userAction.mouseClick(driver, page.optionHeaderIconID);
 		this.waitForElement(driver, true, page.headerTypeList.getId(), timeOutSeconds);
@@ -119,7 +121,8 @@ public class ShellTest extends TestBase {
 		verifyBrowserViewBox("HeaderType-SlimNavigation");
 
 		// Show top level navigation
-		page.optionsPopupTool.click();
+		JsAction.focusOnElement(driver, page.optionsPopupTool);
+		JsAction.clickElement(driver, page.optionsPopupTool);
 		this.waitForElement(driver, true, page.optionPopDivID, timeOutSeconds);
 		userAction.mouseClick(driver, page.optionHeaderIconID);
 		this.waitForElement(driver, true, page.headerTypeList.getId(), timeOutSeconds);
@@ -147,13 +150,11 @@ public class ShellTest extends TestBase {
 		verifyElement(page.shellHeaderID, "LogoutButton-Disabled");
 
 		page.showSearch.toggle();
-		this.waitForElement(driver, true, page.searchTool.getAttribute("id"), timeOutSeconds);
+
 		page.showFeeder.toggle();
-		this.waitForElement(driver, true, page.feederTool.getAttribute("id"), timeOutSeconds);
 		verifyElement(page.leftSideToolsID, "Search-and-Feeder-Enabled");
 
 		page.showLogout.toggle();
-		this.waitForElement(driver, true, page.logoutID, timeOutSeconds);
 		verifyElement(page.shellHeaderID, "LogoutButton-Enabled");
 	}
 
@@ -168,8 +169,9 @@ public class ShellTest extends TestBase {
 
 		userAction.mouseMove(driver, page.overviewID);
 		userAction.mouseClick(driver, page.overviewID);
-		waitForReady(2500);
+		waitForReady(1000);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1500);
 		verifyElement(page.cavasID, "Overview-Home");
 
 		// Navigate to items
@@ -177,7 +179,7 @@ public class ShellTest extends TestBase {
 		page.myShell.selectWorksetItem(page.marketingID);
 		waitForReady(1000);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1000);
+		waitForReady(1500);
 		verifyElement(page.cavasID, "Nav-To-Marketing");
 
 		page.myShell.selectWorksetItem(page.marketInfoID);
@@ -293,7 +295,7 @@ public class ShellTest extends TestBase {
 		driver.manage().window().setSize(new Dimension(600, 450));
 		waitForReady(2000);
 		page.panebarOverflow.click();
-		waitForReady(1500);
+		waitForReady(2500);
 		verifyBrowserViewBox("Sidepane-Overflow");
 	}
 
@@ -304,7 +306,7 @@ public class ShellTest extends TestBase {
 		verifyElement(page.logoutID, "MouseOver-Logout");
 		userAction.mouseClickStartPoint(driver);
 
-		page.myShell.logout();
+		userAction.mouseClick(driver, page.logoutID);
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		verifyBrowserViewBox("Logout-Shell");

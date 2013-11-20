@@ -165,7 +165,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		driver.manage().window().setSize(new Dimension(1250, 550));
 		waitForReady(2500);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1000);
+		waitForReady(1500);
 		verifyBrowserViewBox("ThingGroupsResized");
 
 		driver.manage().window().setPosition(new Point(100, 100));
@@ -200,7 +200,8 @@ public class ThingInspectorInShellTest extends TestBase {
 		verifyBrowserViewBox("ModifiedTI-with-Close-Opened");
 
 		// Open Search Tool
-		page.searchTool.click();
+		userAction.mouseClick(driver, page.searchTool.getAttribute("id"));
+		userAction.mouseMoveToStartPoint(driver);
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
@@ -216,7 +217,7 @@ public class ThingInspectorInShellTest extends TestBase {
 
 		// Close ThingInspector with search tool opened
 		page.closeBtn.click();
-		waitForReady(1500);
+		waitForReady(2000);
 		verifyBrowserViewBox("ModifiedTI-with-Close-Closed");
 	}
 
@@ -241,8 +242,8 @@ public class ThingInspectorInShellTest extends TestBase {
 
 		// Change Header type to 'Brand Only'
 		page.headerTypeGroup.selectRadio(page.brandOnlyRadioID);
-		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.brandOnlyRadioID);
 		verifyBrowserViewBox("ModifiedTI-HeaderType-BrandOnly");
 
 		// Change Header type to 'No Navigation'
