@@ -25,58 +25,59 @@ public class Charting_vizTest extends TestBase {
 
 	@Test
 	public void testDifferentCharts() {
-		// Check line chart
-		verifyBrowserViewBox("LineChart-normal");
-
-		userAction.mouseOver(driver, page.lineChartId, durationMillisecond);
-		verifyBrowserViewBox("LineChart-MouseOver");
-
 		// Check pie chart
 		clickAction(page.navigationPIEId);
-		verifyBrowserViewBox("PieChart-normal");
+		verifyFullPage("PieChart-normal");
+
+		// Check line chart
+		clickAction(page.navigationLINEId);
+		verifyFullPage("LineChart-normal");
+
+		userAction.mouseOver(driver, page.lineChartId, durationMillisecond);
+		verifyFullPage("LineChart-MouseOver");
 
 		// Check donut chart
 		clickAction(page.navigationDONUTId);
-		verifyBrowserViewBox("DonutChart-normal");
+		verifyFullPage("DonutChart-normal");
 
 		// Check bar chart
 		clickAction(page.navigationBARId);
-		verifyBrowserViewBox("BarChart-normal");
+		verifyFullPage("BarChart-normal");
 
 		userAction.mouseOver(driver, page.barChartId, durationMillisecond);
-		verifyBrowserViewBox("BarChart-MouseOver");
+		verifyFullPage("BarChart-MouseOver");
 
 		// Check column chart
 		clickAction(page.navigationCOLUMNId);
-		verifyBrowserViewBox("ColumnChart-normal");
+		verifyFullPage("ColumnChart-normal");
 
 		userAction.mouseOver(driver, page.columnChartId, durationMillisecond);
-		verifyBrowserViewBox("ColumnChart-MouseOver");
+		verifyFullPage("ColumnChart-MouseOver");
 
 		// Check combination chart
 		clickAction(page.navigationCOMBINATIONId);
-		verifyBrowserViewBox("CombinationChart-normal");
+		verifyFullPage("CombinationChart-normal");
 
 		userAction.mouseOver(driver, page.combinationChartId, durationMillisecond);
-		verifyBrowserViewBox("CombinationChart-MouseOver");
+		verifyFullPage("CombinationChart-MouseOver");
 
 		// Check bubble chart
 		clickAction(page.navigationBUBBLEId);
-		verifyBrowserViewBox("BubbleChart-normal");
+		verifyFullPage("BubbleChart-normal");
 
 		// Check stacked V chart
 		clickAction(page.navigationSTACKEDVId);
-		verifyBrowserViewBox("StackedVChart-normal");
+		verifyFullPage("StackedVChart-normal");
 
 		userAction.mouseOver(driver, page.stackedVChartId, durationMillisecond);
-		verifyBrowserViewBox("StackedVChart-MouseOver");
+		verifyFullPage("StackedVChart-MouseOver");
 
 		// Check stacked V % chart
 		clickAction(page.navigationSTACKEDVPctId);
-		verifyBrowserViewBox("StackedVPctChart-normal");
+		verifyFullPage("StackedVPctChart-normal");
 
 		userAction.mouseOver(driver, page.stackedVPctChartId, durationMillisecond);
-		verifyBrowserViewBox("StackedVPctChart-MouseOver");
+		verifyFullPage("StackedVPctChart-MouseOver");
 	}
 
 	public void clickAction(String elementId) {
@@ -85,6 +86,15 @@ public class Charting_vizTest extends TestBase {
 			userAction.mouseClickStartPoint(driver);
 		}
 		waitForReady(durationMillisecond * 5);
+	}
+
+	public void verifyFullPage(String expectedImageName) {
+		if (getBrowserType() == Constants.CHROME) {
+			verifyPage(expectedImageName);
+		}
+		else {
+			verifyBrowserViewBox(expectedImageName);
+		}
 	}
 
 }
