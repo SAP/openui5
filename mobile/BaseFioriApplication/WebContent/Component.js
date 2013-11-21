@@ -101,7 +101,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 
 		// set i18n model
 		var i18nModel = new sap.ui.model.resource.ResourceModel({
-			bundleUrl : "i18n/i18n.properties"
+			bundleUrl : rootPath + "/i18n/i18n.properties"
 		});
 		this.setModel(i18nModel, "i18n");
 
