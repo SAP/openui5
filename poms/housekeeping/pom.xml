@@ -60,7 +60,7 @@
     <tomcat.sandbox.manager.url>${tomcat.manager.url.v7}</tomcat.sandbox.manager.url>
 
     <!-- Sandbox Tomcat configuration for QTP tests -->
-    <qtp.tomcat.sandbox.url>http://veui5test.dhcp.wdf.sap.corp:8081</qtp.tomcat.sandbox.url>
+    <qtp.tomcat.sandbox.url>http://veui5test:8081</qtp.tomcat.sandbox.url>
 
   </properties>
 
