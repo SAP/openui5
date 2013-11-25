@@ -69,17 +69,20 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 		var oServiceConfig = this.getMetadata().getConfig()["serviceConfig"];
 		var sServiceUrl = oServiceConfig.url;
 
+		// always use absolute paths relative to our own component
+		// (relative paths will fail if running in the Fiori Launchpad)
+		var rootPath = jQuery.sap.getModulePath("BaseFioriApplication");
+
 		// if proxy needs to be used for local testing...
 		var sProxyOn = jQuery.sap.getUriParameters().get("proxyOn");
 		var bUseProxy = ("true" === sProxyOn);
 		if (bUseProxy) {
-			sServiceUrl = "proxy" + sServiceUrl;
+			sServiceUrl = rootPath + "/proxy" + sServiceUrl;
 		} 
-		
+
 		// start mock server if required
 		var responderOn = jQuery.sap.getUriParameters().get("responderOn");
 		var bUseMockData = ("true" === responderOn);
-		var rootPath = jQuery.sap.getModulePath("BaseFioriApplication");
 		if (bUseMockData) {
 			jQuery.sap.require("sap.ui.app.MockServer");
 			var oMockServer = new sap.ui.app.MockServer({
