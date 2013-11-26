@@ -53,6 +53,7 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		action.sendKeys("text").perform();
 		action.sendKeys(Keys.chord(Keys.CONTROL, "a")).perform();
+		userAction.mouseMoveToStartPoint(driver);
 		verifyBrowserViewBox("SearchTool-Opened");
 
 		userAction.mouseClick(driver, page.searchTool.getAttribute("id"));
@@ -294,6 +295,8 @@ public class ShellTest extends TestBase {
 		driver.manage().window().setPosition(new Point(50, 50));
 		driver.manage().window().setSize(new Dimension(600, 450));
 		waitForReady(2000);
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		page.panebarOverflow.click();
 		waitForReady(2500);
 		verifyBrowserViewBox("Sidepane-Overflow");

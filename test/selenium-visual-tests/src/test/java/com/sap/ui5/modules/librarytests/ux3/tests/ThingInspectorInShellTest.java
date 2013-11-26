@@ -185,7 +185,8 @@ public class ThingInspectorInShellTest extends TestBase {
 
 		action.sendKeys(Keys.SPACE).perform();
 		waitForReady(millisecond);
-		verifyBrowserViewBox("ModifiedTI-Space-Closed");
+		userAction.mouseMove(driver, page.modifiedTIWithOpen.getId());
+		verifyPage("ModifiedTI-Space-Closed");
 	}
 
 	/** Verify Shell tool opened and ThingInspector closed with search tool opened */
@@ -243,7 +244,9 @@ public class ThingInspectorInShellTest extends TestBase {
 		// Change Header type to 'Brand Only'
 		page.headerTypeGroup.selectRadio(page.brandOnlyRadioID);
 		waitForReady(millisecond);
-		userAction.mouseMove(driver, page.brandOnlyRadioID);
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
+		userAction.mouseClickStartPoint(driver);
 		verifyBrowserViewBox("ModifiedTI-HeaderType-BrandOnly");
 
 		// Change Header type to 'No Navigation'
