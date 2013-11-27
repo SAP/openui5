@@ -35,6 +35,47 @@
 				oComponentContainer.placeAt("content");
 			});
 		</script>
+		
+		
+		<style id="SAP-antiClickjackStyle" type="text/css">
+			body { display : none !important; }
+		</style>
+		
+		<script type="text/javascript">
+			(function () {
+				"use strict";
+				/*global window, document, parent, top, self */
+				var loc, err;
+				
+				function unlock() {
+					var antiClickjack;
+					antiClickjack = document.getElementById("SAP-antiClickjackStyle");
+					antiClickjack.parentNode.removeChild(antiClickjack);
+				}
+				
+				if (top === self) {
+					// page is not embedded
+					unlock();
+				} else {
+					// page embedded, check for same domain
+					try {
+						//try to access a property of parent to check same
+						domain
+						loc = parent.location.href;
+						if (typeof loc !== "undefined") {
+							unlock();
+						}
+					} catch (e) {
+						// fail and stay hidden
+						err = new Error();
+						err.name = "ClickjackingProtectionError";
+						err.message = "Clickjacking protection prevented the Application to load in a frame";
+						throw(err);
+					}
+				}
+			}());
+		</script>
+	
 	</head>
 	
 	<!-- UI Content -->
