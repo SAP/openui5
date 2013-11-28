@@ -21,7 +21,7 @@
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-xx-bindingSyntax="complex"
 				data-sap-ui-compatVersion="1.16"
-				data-sap-ui-resourceroots='{"BaseFioriApplication": "./"}'>
+				data-sap-ui-resourceroots='{"my.demo.basefioriapp": "./"}'>
 			
 		</script>
 		
@@ -30,11 +30,12 @@
 			sap.ui.getCore().attachInitEvent(function() {
 				var oComponentContainer = new sap.ui.core.ComponentContainer({
 					height : "100%",
-					name : "BaseFioriApplication"
+					name : "my.demo.basefioriapp"
 				});
 				oComponentContainer.placeAt("content");
 			});
 		</script>
+		
 		
 		
 		<style id="SAP-antiClickjackStyle" type="text/css">
@@ -42,6 +43,7 @@
 		</style>
 		
 		<script type="text/javascript">
+			// clickjacking protection code
 			(function () {
 				"use strict";
 				/*global window, document, parent, top, self */

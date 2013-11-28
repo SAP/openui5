@@ -1,5 +1,5 @@
 <core:View xmlns:core="sap.ui.core" xmlns="sap.m"
-	controllerName="BaseFioriApplication.view.Detail">
+	controllerName="my.demo.basefioriapp.view.Detail">
 	<Page class="sapUiFioriObjectPage" title="{i18n>DETAIL_TITLE}">
 	
 		<content>

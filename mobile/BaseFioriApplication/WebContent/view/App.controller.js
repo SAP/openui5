@@ -1,3 +1,3 @@
-sap.ui.controller("BaseFioriApplication.view.App", {
+sap.ui.controller("my.demo.basefioriapp.view.App", {
 	
 });

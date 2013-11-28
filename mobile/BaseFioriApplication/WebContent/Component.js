@@ -1,6 +1,6 @@
-jQuery.sap.declare("BaseFioriApplication.Component");
+jQuery.sap.declare("my.demo.basefioriapp.Component");
 
-sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
+sap.ui.core.UIComponent.extend("my.demo.basefioriapp.Component", {
 	metadata : {
 		"name" : "Master Detail Sample",
 		"version" : "1.0",
@@ -37,7 +37,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 		routing: {
 			config: {
 				viewType : "XML",
-				viewPath: "BaseFioriApplication.view",  // common prefix
+				viewPath: "my.demo.basefioriapp.view",  // common prefix
 				targetControl: "fioriContent",
 				targetAggregation: "detailPages",
 				clearTarget: false,
@@ -71,7 +71,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 
 		// always use absolute paths relative to our own component
 		// (relative paths will fail if running in the Fiori Launchpad)
-		var rootPath = jQuery.sap.getModulePath("BaseFioriApplication");
+		var rootPath = jQuery.sap.getModulePath("my.demo.basefioriapp");
 
 		// if proxy needs to be used for local testing...
 		var sProxyOn = jQuery.sap.getUriParameters().get("proxyOn");
@@ -135,7 +135,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 				component : this
 		};
 		return sap.ui.view({
-			viewName : "BaseFioriApplication.view.App",
+			viewName : "my.demo.basefioriapp.view.App",
 			type : sap.ui.core.mvc.ViewType.XML,
 			viewData : oViewData
 		});

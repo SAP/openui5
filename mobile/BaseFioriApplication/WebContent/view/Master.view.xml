@@ -1,5 +1,5 @@
 <core:View xmlns:core="sap.ui.core" xmlns="sap.m"
-	xmlns:shellfooter="sap.ushell.ui.footerbar" controllerName="BaseFioriApplication.view.Master">
+	xmlns:shellfooter="sap.ushell.ui.footerbar" controllerName="my.demo.basefioriapp.view.Master">
 	
 	<Page id="page" title="{i18n>MASTER_TITLE}">
 		<subHeader>

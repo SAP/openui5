@@ -1,4 +1,4 @@
-sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
+sap.ui.core.mvc.Controller.extend("my.demo.basefioriapp.view.Master", {
 	
 	onInit: function() {
 //		var view = this.getView();
