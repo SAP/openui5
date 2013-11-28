@@ -198,7 +198,14 @@ public class DatePickerTest extends TestBase {
 		verifyElements(actions, Keys.ENTER.name());
 
 		// Check navigation to the next month
-		actions.sendKeys(Keys.F4, Keys.PAGE_DOWN).perform();
+		if (getBrowserType() == Constants.IE10) {
+			userAction.pressOneKey(KeyEvent.VK_F4);
+			userAction.pressOneKey(KeyEvent.VK_PAGE_DOWN);
+		}
+		else {
+			actions.sendKeys(Keys.F4).perform();
+			actions.sendKeys(Keys.PAGE_DOWN).perform();
+		}
 		waitForReady(waitMilliseconds);
 		verifyCalendar("-KB-Navigate-NextMonth");
 
