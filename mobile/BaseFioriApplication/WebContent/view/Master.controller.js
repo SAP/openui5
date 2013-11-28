@@ -18,7 +18,7 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 //		}, this);
 	},
 	
-	_handleSearch: function() {
+	handleSearch: function() {
 		// add filter for search
 		var filters = [];
 		var searchString = this.getView().byId("searchField").getValue();
@@ -33,7 +33,7 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Master", {
 		binding.filter(filters);
 	},
 	
-	_handleSelect: function(oEvent) {
+	handleSelect: function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem"); // find out which ListItem was selected
 		
 		// trigger routing to BindingPath of this ListItem - this will update the data on the detail page

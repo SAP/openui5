@@ -11,7 +11,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 		},
 
 		"config" : {
-			"resourceBundle" : "i18n/i18n.properties",
+			"resourceBundle" : "i18n/messageBundle.properties",
 			"titleResource" : "SHELL_TITLE",
 			
 			// "icon" : "sap-icon://Fiori2/F0002",
@@ -28,10 +28,10 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			// "startupImage1536x2008" : null,
 			// "startupImage1496x2048" : null
 
-            "serviceConfig" : {
-                // url: "/com.sap.odata.dynamic.service.provider/odata/SalesOrder/"
-                url: "/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/"
-            }
+			"serviceConfig" : {
+				// url: "/com.sap.odata.dynamic.service.provider/odata/SalesOrder/"
+				url: "/sap/opu/odata/sap/SRA018_SO_TRACKING_SRV/"
+			}
 		},
 
 		routing: {
@@ -46,17 +46,17 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 				}
 			},
 			routes: [
-						{
-							pattern : "Detail/{contextPath}", // will be the url and from has to be provided in the data
-							view : "Detail",
-							name : "Detail" // name used for listening or navigating to this route
-						},
-			         {
-			         	pattern : ":all*:", // catchall
-			         	view : "Detail",
-			         	name : "catchall", // name used for listening or navigating to this route
-			         }
-			   ]
+				{
+					pattern : "Detail/{contextPath}", // will be the url and from has to be provided in the data
+					view : "Detail",
+					name : "Detail" // name used for listening or navigating to this route
+				},
+				{
+					pattern : ":all*:", // catchall
+					view : "Detail",
+					name : "catchall", // name used for listening or navigating to this route
+				}
+			]
 		}
 	},
 
@@ -98,15 +98,18 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 			});
 		}
 
+		
+		// set i18n model
+		var i18nModel = new sap.ui.model.resource.ResourceModel({
+			bundleUrl : rootPath + "/i18n/messageBundle.properties"
+		});
+		this.setModel(i18nModel, "i18n");
+		
+		
 		// set data model
 		var m = new sap.ui.model.odata.ODataModel(sServiceUrl, true);
 		this.setModel(m);
-
-		// set i18n model
-		var i18nModel = new sap.ui.model.resource.ResourceModel({
-			bundleUrl : rootPath + "/i18n/i18n.properties"
-		});
-		this.setModel(i18nModel, "i18n");
+		
 
 		// set device model
 		var deviceModel = new sap.ui.model.json.JSONModel({
@@ -132,7 +135,7 @@ sap.ui.core.UIComponent.extend("BaseFioriApplication.Component", {
 				component : this
 		};
 		return sap.ui.view({
-			viewName : "BaseFioriApplication.Main",
+			viewName : "BaseFioriApplication.view.App",
 			type : sap.ui.core.mvc.ViewType.XML,
 			viewData : oViewData
 		});

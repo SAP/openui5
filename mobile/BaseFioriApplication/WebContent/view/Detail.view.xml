@@ -19,7 +19,7 @@
 		<footer>
 			<Bar>
 				<contentRight>
-					<Button id="actionButton" icon="sap-icon://action" press="_openActionSheet"></Button>
+					<Button id="actionButton" icon="sap-icon://action" press="openActionSheet"></Button>
 				</contentRight>
 
 			</Bar>
