@@ -13,7 +13,7 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Detail", {
 		}, this);
 	},
 	
-	_openActionSheet: function() {
+	openActionSheet: function() {
 
 		if (!this._oActionSheet) {
 			this._oActionSheet = new sap.m.ActionSheet({
@@ -24,5 +24,12 @@ sap.ui.core.mvc.Controller.extend("BaseFioriApplication.view.Detail", {
 		}
 		
 		this._oActionSheet.openBy(this.getView().byId("actionButton"));
+	},
+	
+	onExit: function() {
+		if (this._oActionSheet) {
+			this._oActionSheet.destroy();
+			this._oActionSheet = null;
+		}
 	}
 });

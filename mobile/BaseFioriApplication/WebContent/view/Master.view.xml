@@ -6,7 +6,7 @@
 			<Bar id="searchBar">
 				<contentMiddle>
 					<SearchField id="searchField" showRefreshButton="{device>/isNoTouch}"
-						placeholder="{i18n>MASTER_SEARCH_PLACEHOLDER}" search="_handleSearch"
+						placeholder="{i18n>MASTER_SEARCH_PLACEHOLDER}" search="handleSearch"
 						tooltip="{i18n>MASTER_SEARCH_TOOLTIP}" width="100%">
 					</SearchField>
 				</contentMiddle>
@@ -15,7 +15,7 @@
 		
 		<content>
 			<List id="list" items="{/SalesOrders}" mode="{device>/listMode}"
-				select="_handleSelect" growing="true" growingScrollToLoad="true">
+				select="handleSelect" growing="true" growingScrollToLoad="true">
 				<ObjectListItem id="MAIN_LIST_ITEM" type="{device>/listItemType}"
 					title="{CustomerName}" number="{TotalAmount}" numberUnit="{Currency}">
 					<attributes>
