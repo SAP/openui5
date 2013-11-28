@@ -1,4 +1,5 @@
 jQuery.sap.declare("my.demo.basefioriapp.Component");
+jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
 
 sap.ui.core.UIComponent.extend("my.demo.basefioriapp.Component", {
 	metadata : {
@@ -38,31 +39,35 @@ sap.ui.core.UIComponent.extend("my.demo.basefioriapp.Component", {
 			config: {
 				viewType : "XML",
 				viewPath: "my.demo.basefioriapp.view",  // common prefix
-				targetControl: "fioriContent",
 				targetAggregation: "detailPages",
-				clearTarget: false,
-				callback: function(oRoute, oArguments, oConfig, oControl, oView) {
-					oControl.toDetail(oView.getId());
-				}
+				clearTarget: false
 			},
-			routes: [
-				{
-					pattern : "Detail/{contextPath}", // will be the url and from has to be provided in the data
-					view : "Detail",
-					name : "Detail" // name used for listening or navigating to this route
-				},
-				{
-					pattern : ":all*:", // catchall
-					view : "Detail",
-					name : "catchall", // name used for listening or navigating to this route
-				}
-			]
+			routes:
+				[{
+					name : "Master",
+					view : "Master",
+					targetAggregation : "masterPages",
+					targetControl: "fioriContent",
+					subroutes : [
+									{
+										pattern : "Detail/{contextPath}", // will be the url and from has to be provided in the data
+										view : "Detail",
+										name : "Detail" // name used for listening or navigating to this route
+									},
+									{
+										pattern : ":all*:", // catchall
+										view : "Detail",
+										name : "catchall", // name used for listening or navigating to this route
+									}
+								]
+				}]
 		}
 	},
 
 	init : function() {
 		sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
 
+		this._oRouteMatchedHandler = new sap.m.routing.RouteMatchedHandler(this.getRouter());
 		// this component should automatically initialize the router
 		this.getRouter().initialize();
 		

@@ -2,7 +2,7 @@
 	controllerName="my.demo.basefioriapp.view.App" displayBlock="true" height="100%">
 	<SplitApp id="fioriContent" showHeader="false">
 		<masterPages>
-			<mvc:XMLView viewName="my.demo.basefioriapp.view.Master"/>
+			<!-- filled dynamically by routing -->
 		</masterPages>
 		<detailPages>
 			<!-- filled dynamically by routing -->
