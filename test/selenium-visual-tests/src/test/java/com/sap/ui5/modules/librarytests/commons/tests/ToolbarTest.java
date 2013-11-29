@@ -168,7 +168,7 @@ public class ToolbarTest extends TestBase {
 		verifyElement(page.targetForOutputId, btn9Id + "-KB-LabelButton-confirmedEvent");
 
 		// Enter a string into a textField in the toolBar and check
-		actions.sendKeys(Keys.DOWN).perform();
+		userAction.pressOneKey(KeyEvent.VK_DOWN);
 		verifyWithSetValueForTextField(actions, toolBarId, "KB", textFieldId);
 
 		// Select a value from a comboBox in the toolBar
