@@ -31,7 +31,7 @@ public class DataSetTest extends TestBase {
 
 	@Test
 	public void testAllElements() {
-		waitForReady(millisecond);
+		waitForReady(1500);
 		verifyPage("full-initial");
 	}
 
@@ -41,7 +41,7 @@ public class DataSetTest extends TestBase {
 		String ibmCorpItemId = page.ibmCorpItem.getAttribute("id");
 
 		// Default View
-		userAction.mouseOver(driver, sapAGItemId, millisecond);
+		userAction.mouseOver(driver, sapAGItemId, 800);
 		verifyElement(page.dataSetItemsId, "MouseOver-DefaultView-" + page.sapAGItem.getText());
 
 		userAction.mouseClick(driver, ibmCorpItemId);
@@ -78,7 +78,7 @@ public class DataSetTest extends TestBase {
 
 	@Test
 	public void testFilterFeature() {
-		waitForReady(millisecond);
+		waitForReady(1500);
 
 		// Default view filtering
 		page.showFilter.toggle();
@@ -162,6 +162,7 @@ public class DataSetTest extends TestBase {
 	@Test
 	public void testSearchFeature() {
 
+		waitForReady(1500);
 		page.showSearchField.toggle();
 		this.waitForElement(driver, true, page.searchId, timeOutSeconds);
 		verifyElement(page.dataSetId, "DefaultView-SearchField");
@@ -193,6 +194,7 @@ public class DataSetTest extends TestBase {
 	@Test
 	public void testHideShowToolbar() {
 
+		waitForReady(1500);
 		page.showToolbar.toggle();
 		this.waitForElement(driver, false, page.toolbarId, timeOutSeconds);
 		verifyElement(page.dataSetId, "Hide-Toolbar");
@@ -205,6 +207,7 @@ public class DataSetTest extends TestBase {
 	@Test
 	public void testMultipleSelect() {
 
+		waitForReady(1500);
 		page.showMultipleSelect.toggle();
 		userAction.mouseClick(driver, page.sapAGItem.getAttribute("id"));
 		userAction.getRobot().keyPress(KeyEvent.VK_CONTROL);

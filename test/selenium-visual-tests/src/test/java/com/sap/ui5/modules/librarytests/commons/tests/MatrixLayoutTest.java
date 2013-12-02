@@ -52,7 +52,7 @@ public class MatrixLayoutTest extends TestBase {
 		page.tabStrip.selectTab(3);
 		waitForReady(millisecond);
 		verifyElement(page.matrix4.getAttribute("id"), "DisplayOnly");
-		userAction.mouseOver(driver, page.changeButton.getId(), 800);
+		userAction.mouseOver(driver, page.changeButton.getId(), 500);
 		verifyBrowserViewBox("Tooltip-ChangeButton");
 
 		// Switch view to Edit Mode
@@ -67,9 +67,9 @@ public class MatrixLayoutTest extends TestBase {
 		page.urlTextField.clearValue();
 		page.urlTextField.setValue("images/face.jpg");
 		page.changeURLButton.click();
-		userAction.mouseMoveToStartPoint(driver);
-		waitForReady(1000);
+		waitForReady(800);
 		userAction.mouseClickStartPoint(driver);
+		waitForReady(1500);
 		verifyElement(page.matrix4.getAttribute("id"), "PictureChanged");
 
 		// Switch back to Display Mode
