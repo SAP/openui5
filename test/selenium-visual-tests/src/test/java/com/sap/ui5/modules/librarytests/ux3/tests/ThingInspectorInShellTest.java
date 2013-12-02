@@ -166,7 +166,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		waitForReady(2500);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(1500);
-		verifyBrowserViewBox("ThingGroupsResized");
+		verifyPage("ThingGroupsResized");
 
 		driver.manage().window().setPosition(new Point(100, 100));
 		driver.manage().window().setSize(new Dimension(900, 700));
@@ -184,7 +184,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		}
 
 		action.sendKeys(Keys.SPACE).perform();
-		waitForReady(millisecond);
+		waitForReady(1000);
 		userAction.mouseMove(driver, page.modifiedTIWithOpen.getId());
 		verifyPage("ModifiedTI-Space-Closed");
 	}
@@ -219,7 +219,8 @@ public class ThingInspectorInShellTest extends TestBase {
 		// Close ThingInspector with search tool opened
 		page.closeBtn.click();
 		waitForReady(2000);
-		verifyBrowserViewBox("ModifiedTI-with-Close-Closed");
+		userAction.mouseClickStartPoint(driver);
+		verifyPage("ModifiedTI-with-Close-Closed");
 	}
 
 	/** Verify Shell options, changing header type and side areas in Shell */
@@ -247,7 +248,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
-		verifyBrowserViewBox("ModifiedTI-HeaderType-BrandOnly");
+		verifyPage("ModifiedTI-HeaderType-BrandOnly");
 
 		// Change Header type to 'No Navigation'
 		page.headerTypeGroup.selectRadio(page.noNavRadioID);
@@ -273,7 +274,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		page.headerTypeGroup.selectRadio(page.standardRadioID);
 		waitForReady(millisecond);
 		userAction.mouseClick(driver, page.standardClose.getAttribute("id"));
-		waitForReady(millisecond);
+		waitForReady(1200);
 		verifyBrowserViewBox("ModifiedTI-HeaderType-Standard");
 	}
 }

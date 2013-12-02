@@ -296,7 +296,7 @@ public class ShellTest extends TestBase {
 		driver.manage().window().setSize(new Dimension(600, 450));
 		waitForReady(2000);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		waitForReady(2000);
 		page.panebarOverflow.click();
 		waitForReady(2500);
 		verifyBrowserViewBox("Sidepane-Overflow");
