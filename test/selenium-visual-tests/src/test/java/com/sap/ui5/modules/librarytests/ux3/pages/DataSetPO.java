@@ -81,7 +81,7 @@ public class DataSetPO extends PageBase {
 
 		String eleClass = element.getAttribute("class");
 		if (!eleClass.contains("sapUiLbxISel")) {
-			Sleeper.sleepTight(500);
+			Sleeper.sleepTight(2000);
 		}
 	}
 
