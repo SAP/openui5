@@ -205,10 +205,36 @@ public class Utility {
 	}
 
 	/** Delete File */
-	public static void deleteFile(File file) {
+	public static boolean deleteFile(File file) {
 
-		if (file != null && file.exists()) {
-			file.delete();
+		if (file == null || !file.exists() || !file.isFile()) {
+			return false;
+		}
+
+		return file.delete();
+	}
+
+	/** Delete directory */
+	public static boolean deleteDir(File dir) {
+
+		if (dir != null && dir.exists()) {
+
+			File childenFiles[] = dir.listFiles();
+
+			if (childenFiles != null) {
+				for (File file : childenFiles) {
+					if (file.isDirectory()) {
+						deleteDir(file);
+					} else {
+						file.delete();
+					}
+				}
+			}
+
+			return dir.delete();
+
+		} else {
+			return false;
 		}
 	}
 
@@ -242,6 +268,32 @@ public class Utility {
 				os.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+
+	/** Copy the a folder */
+	public static void copyDir(File srcFolder, File destFolder) {
+
+		if (!srcFolder.exists()) {
+			System.out.println("The source folder does not exists!");
+			return;
+		}
+
+		if (!srcFolder.isDirectory()) {
+
+			copyFile(srcFolder, destFolder);
+
+		} else {
+			if (!destFolder.exists()) {
+				destFolder.mkdirs();
+			}
+
+			File childenFiles[] = srcFolder.listFiles();
+			for (File srcFile : childenFiles) {
+
+				File destFile = new File(destFolder, srcFile.getName());
+				copyDir(srcFile, destFile);
 			}
 		}
 	}
