@@ -77,8 +77,8 @@ public class ButtonTest extends TestBase {
 	@Test
 	public void testMouseOverEnabledElements() {
 
-		int next = 3;
-		for (int i = 0; i < page.buttons.size(); i = i + next) {
+		int next = 6;
+		for (int i = 0; i < page.buttons.size() - 2; i = i + next) {
 
 			String elementId = page.buttons.get(i).getAttribute("id");
 			userAction.mouseOver(driver, elementId, 800);
@@ -94,7 +94,7 @@ public class ButtonTest extends TestBase {
 		// Use keyboard to focus on the button then click.
 		multipleTabs(3);
 
-		int next = 3;
+		int next = 6;
 		for (int i = 0; i < page.buttons.size(); i = i + next) {
 
 			String elementId = page.buttons.get(i).getAttribute("id");
@@ -167,7 +167,7 @@ public class ButtonTest extends TestBase {
 
 		multipleTabs(3);
 
-		int next = 5;
+		int next = 6;
 		for (int i = 0; i < page.buttons.size(); i = i + next) {
 
 			userAction.pressOneKey(KeyEvent.VK_ENTER);
@@ -186,7 +186,7 @@ public class ButtonTest extends TestBase {
 
 		multipleTabs(3);
 
-		int next = 5;
+		int next = 6;
 		for (int i = 0; i < page.buttons.size(); i = i + next) {
 
 			userAction.pressOneKey(KeyEvent.VK_SPACE);
