@@ -31,7 +31,7 @@ public class TableTest extends TestBase {
 	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/table/visual/Table.html";
 
 	@Rule
-	public UI5Timeout ui5Timeout = new UI5Timeout(15 * 60 * 1000);
+	public UI5Timeout ui5Timeout = new UI5Timeout(18 * 60 * 1000);
 
 	@Before
 	public void setUp() {
