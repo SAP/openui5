@@ -498,7 +498,24 @@ public class TestBase extends CommonBase {
 		Point location = userAction.getElementLocation(driver, elementId);
 		Dimension dimension = userAction.getElementDimension(driver, elementId);
 
-		verifyArea(location.x, location.y, dimension.width, dimension.height, expectedImageName);
+		// if the element size > browserViewBox size,
+		// only take the screenshot of the element in browser view box.
+
+		Point viewBoxStartPoint = userAction.getBrowserViewBoxLocation(driver);
+		Dimension viewBoxDimension = userAction.getBrowserViewBoxDimension(driver);
+		Point viewBoxEndPoint = new Point(viewBoxStartPoint.x + viewBoxDimension.width, viewBoxStartPoint.y + viewBoxDimension.height);
+
+		int width = dimension.width;
+		int height = dimension.height;
+		if ((location.x + dimension.width) > viewBoxEndPoint.x) {
+			width = viewBoxEndPoint.x - location.x;
+		}
+
+		if ((location.y + dimension.height) > viewBoxEndPoint.y) {
+			height = viewBoxEndPoint.y - location.y;
+		}
+
+		verifyArea(location.x, location.y, width, height, expectedImageName);
 	}
 
 	/** API: Assert specific element UI by image comparing */
