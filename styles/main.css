@@ -185,6 +185,11 @@ ol li {
 	padding-left: 24px;
 }
 
+.corset {
+	width:762px;
+	overflow:hidden;
+}
+
 dl dt {
   font-weight: bold;
 }

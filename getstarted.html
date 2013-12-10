@@ -23,27 +23,29 @@
 		<link rel="icon" 
 			type="image/png" 
 			href="images/favicon.ico">
-		<title>OpenUI5</title>		
+		<title>OpenUI5</title>	
+			
 		<script id='sap-ui-bootstrap' type='text/javascript'
 			src='https://openui5.hana.ondemand.com/resources/sap-ui-core.js'
 			data-sap-ui-theme='sap_bluecrystal'
-			data-sap-ui-libs='sap.m'></script>
+			data-sap-ui-libs='sap.ui.commons'></script>
 		<script>
-			var btn = new sap.m.Button({
+			var btn = new sap.ui.commons.Button({
 					text:'Press me!',
 					press: function() {
 						alert("Hello!")
 					}
 			});
 			btn.placeAt('content');
-		</script>	
+		</script>
+	
 		<style>
 			body {
 			background-image: none;
 			}
 		</style>
 	</head>
-	<body>
+	<body class='sapUiBody'>
 		<!-- HEADER -->
 		<div id="header_wrap" class="outer">
 			<div class="wrap_ie9">
@@ -65,7 +67,7 @@
 &lt;script id="sap-ui-bootstrap"
    src="<a href="resources/sap-ui-core.js"><script>document.write(loc)</script>resources/sap-ui-core.js</a>"
    data-sap-ui-theme="sap_bluecrystal"
-   data-sap-ui-libs="sap.m"&gt;&lt;/script&gt;</pre>
+   data-sap-ui-libs="sap.ui.commons"&gt;&lt;/script&gt;</pre>
 				<p>
 					A simple application looks like this:  
 				</p>
@@ -78,10 +80,10 @@
     &lt;script id='sap-ui-bootstrap' 
         src='<a href="resources/sap-ui-core.js"><script>document.write(loc)</script>resources/sap-ui-core.js</a>'  
         data-sap-ui-theme='sap_bluecrystal'  
-        data-sap-ui-libs='sap.m'&gt;&lt;/script&gt;   
+        data-sap-ui-libs='sap.ui.commons'&gt;&lt;/script&gt;   
   
 &lt;script&gt;  
-    var btn = new sap.m.Button({
+    var btn = new sap.ui.commons.Button({
         text:'Press me!',
         press: function() {
             alert("Hello!")
@@ -95,7 +97,8 @@
     &lt;div id='content'>&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</pre>
-	
+
+
 				<div class="result">
 					<p>
 						This is the result  
@@ -105,10 +108,16 @@
 					<p>
 						Try it out yourself! 
 					</p>
-					<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/3/embed?html,output&height=600px&width=760px">Hello World</a>
-					<script src="http://static.jsbin.com/js/embed.js"></script>
-				</div>				
+					<div class="corset"> <!-- for Ipad -->
+						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/8/embed?html,output&height=600px&width=760px">Hello World</a>
+						<script src="http://static.jsbin.com/js/embed.js"></script>
+					</div>
+				</div>	
+
 				
+				
+				
+
 				<div class="resultIE">
 					<p>
 						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.   
@@ -121,33 +130,36 @@
 					<a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html">API Reference</a> 
 				</p> 
 				<div class="result">
-				<p>
-					or look into more examples
-					<ul class="download">
-						<li>
-							<a target="_blank" href="http://jsbin.com/openui5-xml-view/7/edit?html,output">UI5 MVC example with JS view</a>
-						</li>
-						<li>
-							<a target="_blank" href="http://jsbin.com/openui5-js-view/6/edit?html,output">UI5 XML view example</a>
-						</li>
-						<li>
-							<a target="_blank" href="http://jsbin.com/openui5-table-json/6/edit?html,output">UI5 table example with local JSON model</a>
-						</li>
-						<li>
-							<a target="_blank" href="http://jsbin.com/openui5-custom-control/2/edit?html,output">Create your own UI5 control</a>
-						</li>
-						<li>
-							<a target="_blank" href="http://jsbin.com/openui5-mobile-list-databinding/2/edit?html,output">UI5 mobile list with databinding</a>
-						</li>					
-					</ul>
+					<p>
+						or look into more examples
+						<ul class="download">
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-xml-view/7/edit?html,output">UI5 MVC example with JS view</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-js-view/6/edit?html,output">UI5 XML view example</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-table-json/6/edit?html,output">UI5 table example with local JSON model</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-custom-control/2/edit?html,output">Create your own UI5 control</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-mobile-list-databinding/2/edit?html,output">UI5 mobile list with databinding</a>
+							</li>					
+						</ul>
+					</p>
 				</div>
+
 			</div>
 		</div>
 		<!-- FOOTER  -->
 		<div id="footer_wrap" class="outer">
 			<div class="wrap_ie9">
 				<div class="inner">
-					<p class="copyright">&copy SAP AG, made available under Apache License 2.0</p>
+					<p class="copyright">&copy; SAP AG, made available under Apache License 2.0</p>
+					<img src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px">
 				</div>
 			</div>
 		</div>
