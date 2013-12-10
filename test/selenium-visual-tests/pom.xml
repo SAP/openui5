@@ -162,6 +162,9 @@
                 <configuration>
                     <!-- Update Junit test results, even if tests fail -->
                     <testFailureIgnore>true</testFailureIgnore>
+                    <includes>
+                        <include>${IncludedTests}</include>
+                    </includes>
                 </configuration>
             </plugin>
             
@@ -218,6 +221,8 @@
                 <activeByDefault>true</activeByDefault>  
             </activation>
             <properties>
+                <!-- Target test scope -->
+                <IncludedTests>%regex[.*]</IncludedTests>
                 <!-- Run mode: DEV, TEST
                      DEV: If expected images are missing, the test will not be failed and save all new images 
                      Test: If expected images are missing, the test will be failed and stopped. (TEST is default) 
