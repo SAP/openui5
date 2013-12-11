@@ -23,3 +23,8 @@ What's next?
 On top of the regular download package updates, source files will be transferred into a github repository. We’ll offer build and assembly steps for e.g. CSS calculation and packaging soon. Once these are available contributions can be considered.
 
 Please be patient... This is work in progress.
+
+Known defects
+-------------
+- No issue tracker on Github or otherwise to report bugs
+- Library assumes subset of operating systems based on user agent sniffing is suitable for the open web (eg, FreeBSD users receive an entirely blank webpage when browsing the site).
