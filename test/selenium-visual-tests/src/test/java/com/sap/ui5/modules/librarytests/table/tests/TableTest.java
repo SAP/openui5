@@ -138,6 +138,7 @@ public class TableTest extends TestBase {
 
 		// Check middle page
 		action.click(page.paginatorMidPage).perform();
+		userAction.mouseOver(driver, page.paginatorMidPage.getAttribute("id"), millisecond);
 		verifyElement(page.paginatorID, "Paginator-Middle-Page");
 	}
 
@@ -208,6 +209,7 @@ public class TableTest extends TestBase {
 		page.visibleRowCountInput.setValue("10");
 		page.enableGroup.toggle();
 		closeDialog();
+		waitForReady(600);
 		userAction.mouseClick(driver, page.linkID);
 		userAction.mouseClick(driver, page.linkMenuGroupID);
 		userAction.mouseClickStartPoint(driver);
@@ -307,7 +309,6 @@ public class TableTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 		this.waitForElement(driver, true, page.ratingSortIconID, timeOutSeconds);
 		verifyElement(page.tableID, "Sort-rating-Descending-" + page.tableID);
-
 	}
 
 	/** Verify reordering of column*/
