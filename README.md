@@ -12,7 +12,7 @@ Check out our [interactive control playground](https://openui5.hana.ondemand.com
 
 Get it!
 -------
-It's free. Download the complete [UI5 Runtime](https://openui5.hana.ondemand.com/downloads/openui5-runtime-1.16.7.zip) or [UI5 Runtime Mobile](https://openui5.hana.ondemand.com/downloads/openui5-runtime-mobile-1.16.7.zip), the load optimized package for mobile deployment in hybrid containers and the [UI5 SDK](https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.16.7.zip).
+It's free. Download the complete [UI5 Runtime](https://openui5.hana.ondemand.com/downloads/openui5-runtime-1.16.7.zip) or [UI5 Runtime Mobile](https://openui5.hana.ondemand.com/downloads/openui5-runtime-mobile-1.16.7.zip), the load optimized package for mobile deployment in hybrid containers and the [UI5 SDK](https://openui5.hana.ondemand.com/downloads/openui5-sdk-1.16.7.zip). To get the sources, just look inside the UI5 Runtime archive, it contains all source files also in non-minified format (*-dbg.js). 
 
 Get started!
 ------------
