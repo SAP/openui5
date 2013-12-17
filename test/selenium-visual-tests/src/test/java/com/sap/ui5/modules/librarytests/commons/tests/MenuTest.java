@@ -146,7 +146,7 @@ public class MenuTest extends TestBase {
 				action.sendKeys(Keys.DOWN).perform();
 				WebElement menuitem12 = driver.findElement(By.id(page.menuitem12tfId));
 				userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
-				if (getBrowserType() == Constants.FIREFOX) {
+				if (getBrowserType() == Constants.FIREFOX || getBrowserType() == Constants.FIREFOX_ESR) {
 					menuitem12.sendKeys("New Filter Value");
 				} else {
 					action.sendKeys("New Filter Value").perform();

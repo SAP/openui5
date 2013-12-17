@@ -72,7 +72,7 @@ public class RadioButtonTest extends TestBase {
 	@Test
 	public void testTextSelection() {
 		// Avoid generating no dashed on FIREFOX
-		if (getBrowserType() == Constants.FIREFOX) {
+		if (getBrowserType() == Constants.FIREFOX || getBrowserType() == Constants.FIREFOX_ESR) {
 			new Actions(driver).sendKeys(Keys.TAB).perform();
 		}
 

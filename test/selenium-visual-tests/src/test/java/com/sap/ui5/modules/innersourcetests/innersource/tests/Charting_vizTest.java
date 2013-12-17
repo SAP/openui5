@@ -20,7 +20,7 @@ public class Charting_vizTest extends TestBase {
 		page = PageFactory.initElements(driver, Charting_vizPO.class);
 		driver.get(getFullUrl(targetUrl));
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(durationMillisecond * 5);
+		waitForReady(durationMillisecond * 10);
 	}
 
 	@Test
