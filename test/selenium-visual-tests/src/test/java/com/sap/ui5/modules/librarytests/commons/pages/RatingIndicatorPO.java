@@ -42,6 +42,7 @@ public class RatingIndicatorPO extends PageBase {
 		case Constants.IE10:
 			userAction.mouseClick(driver, elementId);
 		case Constants.FIREFOX:
+		case Constants.FIREFOX_ESR:
 			userAction.mouseOver(driver, elementId, waitMillisecond);
 			userAction.mouseMoveToStartPoint(driver);
 		}

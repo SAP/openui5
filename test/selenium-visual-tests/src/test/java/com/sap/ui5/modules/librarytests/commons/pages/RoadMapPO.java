@@ -138,7 +138,7 @@ public class RoadMapPO {
 	}
 
 	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId, int waitMilliseconds) {
-		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX) {
+		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX || InitService.INSTANCE.getBrowserType() == Constants.FIREFOX_ESR) {
 			moveToElementStartPoint(driver, userAction, elementId);
 			Sleeper.sleepTight(waitMilliseconds);
 			userAction.mouseMoveToStartPoint(driver);

@@ -31,7 +31,7 @@ public class TextFieldPO extends PageBase {
 	public int millisecond = 1000;
 
 	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId) {
-		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX) {
+		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX || InitService.INSTANCE.getBrowserType() == Constants.FIREFOX_ESR) {
 			userAction.mouseOver(driver, elementId, millisecond);
 			userAction.mouseMoveToStartPoint(driver);
 			userAction.mouseOver(driver, elementId, millisecond);
