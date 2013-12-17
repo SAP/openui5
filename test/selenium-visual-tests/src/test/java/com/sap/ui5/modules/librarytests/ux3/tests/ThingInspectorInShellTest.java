@@ -35,6 +35,7 @@ public class ThingInspectorInShellTest extends TestBase {
 	/** Verify full Page UI and all element initial UI */
 	@Test
 	public void testAllElements() {
+		waitForReady(millisecond);
 		verifyPage("full-initial");
 	}
 

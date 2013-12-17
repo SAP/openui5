@@ -314,7 +314,7 @@ public class TableTest extends TestBase {
 	/** Verify reordering of column*/
 	@Test
 	public void testReorder() {
-		if (getBrowserType() == Constants.FIREFOX) {
+		if (getBrowserType() == Constants.FIREFOX || getBrowserType() == Constants.FIREFOXESR) {
 			userAction.pressOneKey(KeyEvent.VK_TAB);
 		}
 
