@@ -1,6 +1,6 @@
 OpenUI5
 =======
-[OpenUI5. Build Once. Run Everywhere.](http://sap.github.io/openui5/)
+[OpenUI5. Build Once. Run on any device.](http://sap.github.io/openui5/)
 
 What is it?
 -----------
