@@ -251,7 +251,7 @@
                 <Driver.OS.Bits>64</Driver.OS.Bits>
                 
                 
-                <!-- Browser: Firefox, Chrome, IE 
+                <!-- Browser: Firefox/FirefoxESR, Chrome, IE 
                      IE: IE8 32/64bits, IE9 32/64bits, IE10 32/64bits
                 -->
                 <Driver.Browser.Name>Firefox</Driver.Browser.Name>

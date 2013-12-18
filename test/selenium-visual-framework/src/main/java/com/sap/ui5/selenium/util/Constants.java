@@ -6,12 +6,13 @@ public class Constants {
 	public final static String FILE_SEPARATOR = System.getProperty("file.separator");
 	public final static String USER_HOME = System.getProperty("user.home");
 
-	public final static int FIREFOX = 1;
-	public final static int CHROME = 2;
-	public final static int SAFARI = 3;
-	public final static int IE8 = 4;
-	public final static int IE9 = 5;
-	public final static int IE10 = 6;
+	public final static int FIREFOX = 10;
+	public final static int FIREFOX_ESR = 11;
+	public final static int CHROME = 20;
+	public final static int SAFARI = 30;
+	public final static int IE8 = 40;
+	public final static int IE9 = 41;
+	public final static int IE10 = 42;
 
 	public final static int THEME_GOLDREFLECTION = 1;
 	public final static int THEME_HCB = 2;

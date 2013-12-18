@@ -308,6 +308,7 @@ public class Utility {
 		switch (browserType) {
 
 		case Constants.FIREFOX:
+		case Constants.FIREFOX_ESR:
 			if (driver != null) {
 				((Killable) driver).kill();
 			}

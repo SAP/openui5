@@ -39,6 +39,7 @@ public enum InitService {
 	private final List<String> browserList = new ArrayList<String>();
 	{
 		browserList.add("Firefox");
+		browserList.add("FirefoxESR");
 		browserList.add("Chrome");
 		browserList.add("IE8_32");
 		browserList.add("IE8_64");
@@ -263,6 +264,10 @@ public enum InitService {
 
 		if (config.getBrowserName().equalsIgnoreCase("Firefox")) {
 			return Constants.FIREFOX;
+		}
+
+		if (config.getBrowserName().equalsIgnoreCase("FirefoxESR")) {
+			return Constants.FIREFOX_ESR;
 		}
 
 		if (config.getBrowserName().equalsIgnoreCase("IE")) {

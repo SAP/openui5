@@ -26,6 +26,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import com.sap.ui5.selenium.action.IUserAction;
 import com.sap.ui5.selenium.action.UserActionChrome;
 import com.sap.ui5.selenium.action.UserActionFirefox;
+import com.sap.ui5.selenium.action.UserActionFirefoxESR;
 import com.sap.ui5.selenium.action.UserActionIE10;
 import com.sap.ui5.selenium.action.UserActionIE8;
 import com.sap.ui5.selenium.action.UserActionIE9;
@@ -184,6 +185,7 @@ public class TestBase extends CommonBase {
 		// Get target driver
 		switch (getBrowserType()) {
 		case Constants.FIREFOX:
+		case Constants.FIREFOX_ESR:
 			if (!initializeFirefoxDriver()) {
 				if (driver != null) {
 					driver.quit();
@@ -270,8 +272,12 @@ public class TestBase extends CommonBase {
 				return false;
 			}
 
-			// Initialize UserAction for Firefox
-			userAction = new UserActionFirefox();
+			// Initialize UserAction for Firefox/FirefoxESR
+			if (getBrowserType() == Constants.FIREFOX) {
+				userAction = new UserActionFirefox();
+			} else {
+				userAction = new UserActionFirefoxESR();
+			}
 			userAction.setRtl(isRtlTrue());
 
 		} catch (Exception e) {
@@ -811,7 +817,7 @@ public class TestBase extends CommonBase {
 	/** Show Tooltip for all browser by wrapping userAction.mouseOver() */
 	public void showToolTip(String elementId, int waitTimeMillsecond) {
 
-		if (getBrowserType() == Constants.FIREFOX) {
+		if ((getBrowserType() == Constants.FIREFOX) || (getBrowserType() == Constants.FIREFOX_ESR)) {
 			userAction.mouseOver(driver, elementId, waitTimeMillsecond);
 			userAction.mouseMoveToStartPoint(driver);
 		}
