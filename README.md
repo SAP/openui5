@@ -3,7 +3,7 @@ OpenUI5
 [OpenUI5. Build Once. Run on any device.](http://sap.github.io/openui5/)
 
 What is it?
------------
+----------- 
 Open UI5 lets you build enterprise-ready web applications, responsive to all devices, running on almost any browser of your choice. It’s based on JavaScript, using JQuery as its foundation and follows web standards. It eases your development with a client-side HTML5 rendering library including a rich set of controls and supports data binding to different models (JSON, XML and OData).
 
 Try it!
