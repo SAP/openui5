@@ -2,6 +2,9 @@ package com.sap.ui5.modules.innersourcetests.innersource.tests;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.innersourcetests.innersource.pages.Charting_vizPO;
@@ -33,9 +36,6 @@ public class Charting_vizTest extends TestBase {
 		clickAction(page.navigationLINEId);
 		verifyFullPage("LineChart-normal");
 
-		userAction.mouseOver(driver, page.lineChartId, durationMillisecond);
-		verifyFullPage("LineChart-MouseOver");
-
 		// Check donut chart
 		clickAction(page.navigationDONUTId);
 		verifyFullPage("DonutChart-normal");
@@ -44,22 +44,19 @@ public class Charting_vizTest extends TestBase {
 		clickAction(page.navigationBARId);
 		verifyFullPage("BarChart-normal");
 
-		userAction.mouseOver(driver, page.barChartId, durationMillisecond);
+		mouseOverAction();
 		verifyFullPage("BarChart-MouseOver");
 
 		// Check column chart
 		clickAction(page.navigationCOLUMNId);
 		verifyFullPage("ColumnChart-normal");
 
-		userAction.mouseOver(driver, page.columnChartId, durationMillisecond);
+		mouseOverAction();
 		verifyFullPage("ColumnChart-MouseOver");
 
 		// Check combination chart
 		clickAction(page.navigationCOMBINATIONId);
 		verifyFullPage("CombinationChart-normal");
-
-		userAction.mouseOver(driver, page.combinationChartId, durationMillisecond);
-		verifyFullPage("CombinationChart-MouseOver");
 
 		// Check bubble chart
 		clickAction(page.navigationBUBBLEId);
@@ -69,15 +66,26 @@ public class Charting_vizTest extends TestBase {
 		clickAction(page.navigationSTACKEDVId);
 		verifyFullPage("StackedVChart-normal");
 
-		userAction.mouseOver(driver, page.stackedVChartId, durationMillisecond);
+		mouseOverAction();
 		verifyFullPage("StackedVChart-MouseOver");
 
 		// Check stacked V % chart
 		clickAction(page.navigationSTACKEDVPctId);
 		verifyFullPage("StackedVPctChart-normal");
 
-		userAction.mouseOver(driver, page.stackedVPctChartId, durationMillisecond);
+		mouseOverAction();
 		verifyFullPage("StackedVPctChart-MouseOver");
+	}
+
+	public void mouseOverAction() {
+		Point location = driver.findElement(By.className(page.className)).getLocation();
+		Point viewBoxLocation = userAction.getBrowserViewBoxLocation(driver);
+		Dimension size = driver.findElement(By.className(page.className)).getSize();
+		int xPoint = location.x + viewBoxLocation.x + size.width / 2 -30;
+		int yPoint = location.y + viewBoxLocation.y + size.height / 2 - 20;
+		Point newLocation = new Point(xPoint, yPoint);
+		userAction.mouseMove(newLocation);
+		waitForReady(durationMillisecond * 5);
 	}
 
 	public void clickAction(String elementId) {

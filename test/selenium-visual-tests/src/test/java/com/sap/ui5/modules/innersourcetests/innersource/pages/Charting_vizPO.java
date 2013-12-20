@@ -21,16 +21,6 @@ public class Charting_vizPO extends PageBase {
 
 	public String navigationSTACKEDVPctId = "__item9";
 
-	public String lineChartId = "__line0";
-
-	public String barChartId = "__bar0";
-
-	public String columnChartId = "__column0";
-
-	public String combinationChartId = "__combination0";
-
-	public String stackedVChartId = "__column1";
-
-	public String stackedVPctChartId = "__column2";
+	public String className = "v-datashapesgroup";
 
 }
