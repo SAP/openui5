@@ -8,6 +8,7 @@ import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.librarytests.ux3.pages.NotificationBarPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
+import com.sap.ui5.selenium.util.JsAction;
 
 public class NotificationBarTest extends TestBase {
 
@@ -52,6 +53,7 @@ public class NotificationBarTest extends TestBase {
 		verifyElement(barId, "Add-Information-Message-" + barId);
 
 		// Check mouse over notification bar and notification icon
+		waitForReady(millisecond);
 		action.moveToElement(page.notificationIcon).perform();
 		userAction.mouseOver(driver, page.notificationIcon.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.callOutContID, timeOutSeconds);
@@ -60,7 +62,7 @@ public class NotificationBarTest extends TestBase {
 
 		// Check click remove all button
 		page.removeAllBtn.click();
-		waitForReady(500);
+		waitForReady(1500);
 		userAction.mouseMove(driver, page.removeAllBtn.getId());
 		verifyBrowserViewBox("Remove-All-Messages");
 	}
@@ -84,7 +86,7 @@ public class NotificationBarTest extends TestBase {
 		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 800);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-BarDown");
 
-		userAction.mouseOver(driver, page.arrowUp.getAttribute("id"), 800);
+		JsAction.focusOnElement(driver, page.arrowUp);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
 
 		// Change notification bar bar to large
@@ -100,7 +102,7 @@ public class NotificationBarTest extends TestBase {
 		userAction.mouseMove(driver, page.warnMessageId);
 		verifyElement(barId, "Remove-NotificationBar-ErrorMessage");
 
-		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), 800);
+		JsAction.focusOnElement(driver, page.arrowDown);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
 
 		// Change notification bar to normal
@@ -117,6 +119,7 @@ public class NotificationBarTest extends TestBase {
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 
+		waitForReady(1200);
 		action.moveToElement(page.notify).perform();
 		userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
