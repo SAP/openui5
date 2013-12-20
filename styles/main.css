@@ -374,5 +374,27 @@ Small Device Styles
     max-width: 480px;
     font-size: 11px;
   }
+  
+  .headertitle {
+	display: block;
+  }
+  
+  .headerdivide {
+	display: none;
+  }
+  
+  #header_wrap .inner {
+	padding-top: 30px;
+  }	
+  
+  #project_title {
+    font-size: 33px;
+  }  
 
+  .corset {
+    width: 100%;
+  }  
+  
 }
+
+
