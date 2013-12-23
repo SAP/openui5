@@ -37,6 +37,8 @@ public class ExactBrowserPO extends PageBase {
 
 	public String germanyListExpId = "__list1-exp";
 
+	public String countryListId = "__list0-lst";
+
 	public String countryHeaderId = "__list0-head";
 
 	public String countryListExpId = "__list0-exp";
@@ -44,6 +46,8 @@ public class ExactBrowserPO extends PageBase {
 	public String countryHideId = "__list0-hide";
 
 	public String countryListCloseId = "__list0-close";
+
+	public String germanyListId = "__list1-lst";
 
 	public String germanyListHideId = "__list1-hide";
 

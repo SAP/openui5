@@ -97,7 +97,7 @@ public class ExactBrowserTest extends TestBase {
 			userAction.mouseMove(driver, page.countryListExpId);
 		}
 		waitForReady(millisecond);
-		verifyBrowserViewBox("List-Country-Expanded");
+		verifyElement(page.countryListId, "List-Country-Expanded");
 
 		// Expand long list
 		userAction.mouseOver(driver, page.germanyListExpId, millisecond);
@@ -111,7 +111,7 @@ public class ExactBrowserTest extends TestBase {
 			userAction.mouseMove(driver, page.germanyListExpId);
 		}
 		waitForReady(millisecond);
-		verifyBrowserViewBox("List-Germany-Expanded");
+		verifyElement(page.germanyListId, "List-Germany-Expanded");
 		userAction.mouseClick(driver, page.germanyListExpId);
 
 		String germanyListHideId = page.germanyListHideId;
