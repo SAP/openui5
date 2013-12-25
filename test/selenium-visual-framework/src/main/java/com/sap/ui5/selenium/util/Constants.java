@@ -13,6 +13,7 @@ public class Constants {
 	public final static int IE8 = 40;
 	public final static int IE9 = 41;
 	public final static int IE10 = 42;
+	public final static int IE11 = 43;
 
 	public final static int THEME_GOLDREFLECTION = 1;
 	public final static int THEME_HCB = 2;

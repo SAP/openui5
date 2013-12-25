@@ -47,6 +47,8 @@ public enum InitService {
 		browserList.add("IE9_64");
 		browserList.add("IE10_32");
 		browserList.add("IE10_64");
+		browserList.add("IE11_32");
+		browserList.add("IE11_64");
 	}
 
 	// Supported Themes
@@ -258,8 +260,8 @@ public enum InitService {
 		return true;
 	}
 
-	/** Get browser type by returning int number: 1 is Firefox, 2 is Chrome, 3 is Safari,
-	 *  4 is IE8, 5 is IE9, 6 is IE10, 0 is error */
+	/** Get browser type by returning int number: Firefox:10, FirefoxESR:11, Chrome:20, Safari:30,
+	 *  IE8:40, IE9:41, IE10:42, IE11:43, and 0 is error */
 	public int getBrowserType() {
 
 		if (config.getBrowserName().equalsIgnoreCase("Firefox")) {
@@ -283,6 +285,11 @@ public enum InitService {
 			if (config.getBrowserVersion().equalsIgnoreCase("10")) {
 				return Constants.IE10;
 			}
+			
+			if (config.getBrowserVersion().equalsIgnoreCase("11")) {
+				return Constants.IE11;
+			}
+			
 		}
 
 		if (config.getBrowserName().equalsIgnoreCase("Chrome")) {

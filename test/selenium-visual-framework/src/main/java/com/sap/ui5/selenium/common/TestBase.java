@@ -28,6 +28,7 @@ import com.sap.ui5.selenium.action.UserActionChrome;
 import com.sap.ui5.selenium.action.UserActionFirefox;
 import com.sap.ui5.selenium.action.UserActionFirefoxESR;
 import com.sap.ui5.selenium.action.UserActionIE10;
+import com.sap.ui5.selenium.action.UserActionIE11;
 import com.sap.ui5.selenium.action.UserActionIE8;
 import com.sap.ui5.selenium.action.UserActionIE9;
 import com.sap.ui5.selenium.util.Constants;
@@ -198,6 +199,7 @@ public class TestBase extends CommonBase {
 		case Constants.IE8:
 		case Constants.IE9:
 		case Constants.IE10:
+		case Constants.IE11:
 			if (!initializeIEDriver()) {
 				if (driver != null) {
 					driver.quit();
@@ -362,6 +364,11 @@ public class TestBase extends CommonBase {
 			case Constants.IE10:
 				userAction = new UserActionIE10();
 				break;
+				
+			case Constants.IE11:
+				userAction = new UserActionIE11();
+				break;
+				
 			}
 
 			userAction.setRtl(isRtlTrue());

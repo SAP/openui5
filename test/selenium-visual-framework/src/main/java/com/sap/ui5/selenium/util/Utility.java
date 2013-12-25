@@ -319,6 +319,7 @@ public class Utility {
 		case Constants.IE8:
 		case Constants.IE9:
 		case Constants.IE10:
+		case Constants.IE11:
 			executeOnWindows("taskkill  /IM  iexplore.exe /T /F");
 			executeOnWindows("taskkill  /IM  IEDriverServer.exe /T /F");
 			executeOnWindows("taskkill  /IM  WerFault.exe /T /F");
