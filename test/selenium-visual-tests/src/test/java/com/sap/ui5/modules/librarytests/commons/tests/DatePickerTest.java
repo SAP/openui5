@@ -198,7 +198,7 @@ public class DatePickerTest extends TestBase {
 		verifyElements(actions, Keys.ENTER.name());
 
 		// Check navigation to the next month
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			userAction.pressOneKey(KeyEvent.VK_F4);
 			userAction.pressOneKey(KeyEvent.VK_PAGE_DOWN);
 		}
@@ -250,7 +250,7 @@ public class DatePickerTest extends TestBase {
 		String expectedImageName = locale[1] + desc;
 
 		// Increase image stability on IE9
-		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			verifyPage(expectedImageName);
 		} else {
 			verifyElement(page.targetArea1Id, expectedImageName);

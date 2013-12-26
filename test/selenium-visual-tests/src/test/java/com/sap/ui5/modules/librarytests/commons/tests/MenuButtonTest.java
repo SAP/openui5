@@ -42,7 +42,7 @@ public class MenuButtonTest extends TestBase {
 		// Item is twinking when mouseOver by Action moveToElement on IE9.
 		userAction.mouseMove(driver, elementId + "-itm1");
 		// Increase stability on IE10
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			verifyBrowserViewBox("Hover-Item1-" + elementId);
 		} else {
 			verifyElement(page.menu2Id, "Hover-Item1-" + elementId);
@@ -68,7 +68,7 @@ public class MenuButtonTest extends TestBase {
 		// Actions sendKeys cannot work on IE9
 		userAction.pressTwoKeys(KeyEvent.VK_ALT, KeyEvent.VK_DOWN);
 		// Increase stability on IE10
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			verifyPage("KB-ALT-DOWN-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-ALT-DOWN-" + elementId);
@@ -83,7 +83,7 @@ public class MenuButtonTest extends TestBase {
 
 		page.pressOneKey(userAction, KeyEvent.VK_ENTER, 1);
 		// Increase stability on IE10
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			verifyPage("KB-ENTER-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-ENTER-" + elementId);
@@ -98,7 +98,7 @@ public class MenuButtonTest extends TestBase {
 
 		page.pressOneKey(userAction, KeyEvent.VK_SPACE, 1);
 		// Increase stability on IE10
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			verifyPage("KB-SPACE-" + elementId);
 		} else {
 			verifyBrowserViewBox("KB-SPACE-" + elementId);

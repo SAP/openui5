@@ -136,7 +136,7 @@ public class TextFieldTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 
 		// Avoid twinkle of textArea border on IE9
-		if (getBrowserType() != Constants.IE9 && getBrowserType() != Constants.IE10) {
+		if (getBrowserType() != Constants.IE9 && getBrowserType() != Constants.IE10 && getBrowserType() != Constants.IE11) {
 			verifyElement(page.textField2Id, "cutTextFieldContent-" + page.textField2Id);
 		}
 		verifyElement(page.textField1Id, "pasteCutText-" + page.textField1Id);

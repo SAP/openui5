@@ -125,7 +125,9 @@ public class ToolbarTest extends TestBase {
 		verifyElement(page.dialogId, page.dialogId + "-KB-dialogWithToolbar");
 
 		// Check toolBar in the dialog
-		actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
+		if (getBrowserType() != Constants.IE11) {
+			actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
+		}
 
 		checkToolBarByKeyboard(actions, page.dlgTbId, true, page.dlgTbTfId);
 
@@ -174,7 +176,7 @@ public class ToolbarTest extends TestBase {
 		// Select a value from a comboBox in the toolBar
 		page.moveToElementByKeyboard(actions, isRtlTrue(), 1);
 		// Actions userAction "ALT+DOWN" cannot work on IE9, use "F4" to replace.
-		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			userAction.pressOneKey(KeyEvent.VK_F4);
 		} else {
 			actions.sendKeys(Keys.chord(Keys.ALT, Keys.DOWN)).perform();

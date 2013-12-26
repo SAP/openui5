@@ -40,6 +40,7 @@ public class RatingIndicatorPO extends PageBase {
 	public void showToolTip(WebDriver driver, IUserAction userAction, String elementId, int waitMillisecond) {
 		switch (InitService.INSTANCE.getBrowserType()) {
 		case Constants.IE10:
+		case Constants.IE11:
 			userAction.mouseClick(driver, elementId);
 		case Constants.FIREFOX:
 		case Constants.FIREFOX_ESR:

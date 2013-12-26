@@ -209,7 +209,7 @@ public class ComboBoxTest extends TestBase {
 		verifySendKeysToInputElement("b", "bb", "bbc");
 
 		// Close listBox by using "ALT+UP". Actions and userAction "ALT+UP" cannot work on IE9, IE10
-		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			actions.sendKeys(Keys.F4).perform();
 		}
 		else {

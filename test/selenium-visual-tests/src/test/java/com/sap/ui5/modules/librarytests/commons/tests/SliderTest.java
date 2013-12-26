@@ -48,7 +48,7 @@ public class SliderTest extends TestBase {
 		y = element.getSize().height - 3;
 
 		// ------------ Check Drag and Drop on Slider control --------------
-		if (getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, (int) (y * 0.25) - d.height + 2);
 		} else {
 			userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, (int) (y * 0.25) - d.height);
@@ -72,7 +72,7 @@ public class SliderTest extends TestBase {
 			verifyElement(page.targetPrefix + elementId, "DandD-Begin-" + page.targetPrefix + elementId);
 			verifyElement(page.outputEventId, "DandD-Begin-" + elementId);
 
-			if (getBrowserType() == Constants.IE10) {
+			if (getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 				userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, 2 * d.height + 2);
 			} else {
 				userAction.dragAndDrop(driver, elementId + page.gripSuffix, x, 2 * d.height);
