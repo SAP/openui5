@@ -126,4 +126,6 @@ public class ShellPO extends PageBase {
 	public String messageBoxID = "__mbox0";
 
 	public String logoutID = "myShell-logout";
+
+	public String facetBarListID = "myShell-facetBar-list";
 }

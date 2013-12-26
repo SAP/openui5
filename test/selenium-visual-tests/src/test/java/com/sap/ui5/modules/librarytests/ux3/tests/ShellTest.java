@@ -170,7 +170,7 @@ public class ShellTest extends TestBase {
 
 		userAction.mouseMove(driver, page.overviewID);
 		userAction.mouseClick(driver, page.overviewID);
-		waitForReady(1000);
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(1500);
 		verifyElement(page.cavasID, "Overview-Home");
@@ -178,16 +178,18 @@ public class ShellTest extends TestBase {
 		// Navigate to items
 		userAction.mouseOver(driver, page.marketingID, millisecond);
 		page.myShell.selectWorksetItem(page.marketingID);
-		waitForReady(1000);
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1500);
-		verifyElement(page.cavasID, "Nav-To-Marketing");
+		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.marketingID);
+		verifyElement(page.workSetBarID, "Nav-To-Marketing");
 
 		page.myShell.selectWorksetItem(page.marketInfoID);
-		waitForReady(1000);
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1000);
-		verifyElement(page.cavasID, "Nav-To-MarketInformation");
+		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.marketInfoID);
+		verifyElement(page.facetBarListID, "Nav-To-MarketInformation");
 
 		//Check navigation bar overflow behavior
 		page.myShell.selectWorksetItem(page.salesOrderID);
@@ -197,8 +199,10 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		this.waitForElement(driver, true, page.navLeft.getAttribute("id"), timeOutSeconds);
 		this.waitForElement(driver, true, page.navRight.getAttribute("id"), timeOutSeconds);
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(2000);
+		userAction.mouseMove(driver, page.salesOrderID);
 		verifyPage("Window-Resize");
 
 		page.navRight.click();
@@ -291,18 +295,18 @@ public class ShellTest extends TestBase {
 		page.contentInput.clearValue();
 		page.contentInput.setValue("New Pane2");
 		page.addPaneBarBtn.click();
+		page.myShell.selectWorksetItem(page.salesOrderID);
 
 		driver.manage().window().setPosition(new Point(50, 50));
 		driver.manage().window().setSize(new Dimension(600, 450));
-		waitForReady(2000);
+		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(2000);
+		waitForReady(1500);
 		page.panebarOverflow.click();
-		waitForReady(2500);
 		verifyBrowserViewBox("Sidepane-Overflow");
 	}
 
-	/** Verify logout Shell  */
+	/** Verify logout Shell */
 	@Test
 	public void testLogout() {
 		userAction.mouseOver(driver, page.logoutID, millisecond);
