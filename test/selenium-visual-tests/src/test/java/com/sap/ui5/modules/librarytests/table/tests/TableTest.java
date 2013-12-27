@@ -18,6 +18,7 @@ import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.commons.Button;
 import com.sap.ui5.selenium.core.UI5PageFactory;
 import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.util.JsAction;
 import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class TableTest extends TestBase {
@@ -218,10 +219,12 @@ public class TableTest extends TestBase {
 
 		// Close Group
 		userAction.mouseClick(driver, page.groupRow3ID);
+		JsAction.focusOnElement(driver, page.groupRow);
 		verifyElement(page.tableID, "Close-Groups-" + page.tableID);
 
 		// Open Group
 		userAction.mouseClick(driver, page.groupRow3ID);
+		JsAction.focusOnElement(driver, page.groupRow);
 		verifyElement(page.tableID, "Open-Groups-" + page.tableID);
 	}
 

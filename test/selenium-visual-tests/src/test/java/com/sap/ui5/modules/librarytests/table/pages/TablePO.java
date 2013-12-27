@@ -40,6 +40,9 @@ public class TablePO extends PageBase {
 	@FindBy(id = "rating-menu-column-visibilty-menu-item-6")
 	public WebElement ratingMenuColRating;
 
+	@FindBy(id = "tableId-rows-row6")
+	public WebElement groupRow;
+
 	// Table Paginator
 	@FindBy(id = "tableId-paginator--firstPageLink")
 	public WebElement paginatorFirstPage;
