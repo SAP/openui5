@@ -839,5 +839,23 @@ public class TestBase extends CommonBase {
 			userAction.pressOneKey(KeyEvent.VK_TAB);
 		}
 	}
+	
+	/** Is current browser IE */
+	public boolean browserIsIE(){
+		
+		return ((int) (getBrowserType() / 10) == (int) (Constants.IE8 / 10)) ;
+	}
+	
+	/** Is current browser Firefox */
+	public boolean browserIsFirefox(){
+		
+		return ((int) (getBrowserType() / 10) == (int) (Constants.FIREFOX / 10)) ;
+	}
+	
+	/** Is current browser Chrome */
+	public boolean browserIsChrome(){
+		
+		return ((int) (getBrowserType() / 10) == (int) (Constants.CHROME / 10)) ;
+	}
 
 }
