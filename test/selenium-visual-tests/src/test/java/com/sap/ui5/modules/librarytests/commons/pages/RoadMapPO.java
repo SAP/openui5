@@ -15,8 +15,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.sap.ui5.selenium.action.IUserAction;
-import com.sap.ui5.selenium.common.InitService;
-import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.common.TestBase;
 
 public class RoadMapPO {
 
@@ -137,8 +136,8 @@ public class RoadMapPO {
 		actions.sendKeys(keys).perform();
 	}
 
-	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId, int waitMilliseconds) {
-		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX || InitService.INSTANCE.getBrowserType() == Constants.FIREFOX_ESR) {
+	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId, TestBase base, int waitMilliseconds) {
+		if (base.browserIsFirefox()) {
 			moveToElementStartPoint(driver, userAction, elementId);
 			Sleeper.sleepTight(waitMilliseconds);
 			userAction.mouseMoveToStartPoint(driver);

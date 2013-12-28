@@ -12,7 +12,6 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.RadioButtonPO;
 import com.sap.ui5.selenium.common.TestBase;
-import com.sap.ui5.selenium.util.Constants;
 
 public class RadioButtonTest extends TestBase {
 
@@ -72,7 +71,7 @@ public class RadioButtonTest extends TestBase {
 	@Test
 	public void testTextSelection() {
 		// Avoid generating no dashed on FIREFOX
-		if (getBrowserType() == Constants.FIREFOX || getBrowserType() == Constants.FIREFOX_ESR) {
+		if (browserIsFirefox()) {
 			new Actions(driver).sendKeys(Keys.TAB).perform();
 		}
 

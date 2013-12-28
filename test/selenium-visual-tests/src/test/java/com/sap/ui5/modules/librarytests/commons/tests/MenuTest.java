@@ -14,7 +14,6 @@ import org.openqa.selenium.support.PageFactory;
 
 import com.sap.ui5.modules.librarytests.commons.pages.MenuPO;
 import com.sap.ui5.selenium.common.TestBase;
-import com.sap.ui5.selenium.util.Constants;
 
 public class MenuTest extends TestBase {
 
@@ -146,7 +145,7 @@ public class MenuTest extends TestBase {
 				action.sendKeys(Keys.DOWN).perform();
 				WebElement menuitem12 = driver.findElement(By.id(page.menuitem12tfId));
 				userAction.pressTwoKeys(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
-				if (getBrowserType() == Constants.FIREFOX || getBrowserType() == Constants.FIREFOX_ESR) {
+				if (browserIsFirefox()) {
 					menuitem12.sendKeys("New Filter Value");
 				} else {
 					action.sendKeys("New Filter Value").perform();

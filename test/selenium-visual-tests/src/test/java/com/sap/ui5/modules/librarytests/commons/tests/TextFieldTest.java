@@ -160,7 +160,7 @@ public class TextFieldTest extends TestBase {
 	public void testTextFieldTooltip() {
 		String elementId = page.textField1Id;
 
-		page.showTooltip(driver, userAction, elementId);
+		page.showTooltip(driver, userAction, elementId, this);
 		waitForReady(1000);
 		verifyBrowserViewBox("Tooltip-" + elementId);
 	}

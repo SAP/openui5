@@ -8,9 +8,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.action.IUserAction;
-import com.sap.ui5.selenium.common.InitService;
 import com.sap.ui5.selenium.common.PageBase;
-import com.sap.ui5.selenium.util.Constants;
+import com.sap.ui5.selenium.common.TestBase;
 
 public class TextFieldPO extends PageBase {
 	@FindBy(className = "sapUiTf")
@@ -30,8 +29,8 @@ public class TextFieldPO extends PageBase {
 
 	public int millisecond = 1000;
 
-	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId) {
-		if (InitService.INSTANCE.getBrowserType() == Constants.FIREFOX || InitService.INSTANCE.getBrowserType() == Constants.FIREFOX_ESR) {
+	public void showTooltip(WebDriver driver, IUserAction userAction, String elementId, TestBase base) {
+		if (base.browserIsFirefox()) {
 			userAction.mouseOver(driver, elementId, millisecond);
 			userAction.mouseMoveToStartPoint(driver);
 			userAction.mouseOver(driver, elementId, millisecond);

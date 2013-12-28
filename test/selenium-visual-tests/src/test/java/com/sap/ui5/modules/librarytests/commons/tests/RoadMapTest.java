@@ -40,7 +40,7 @@ public class RoadMapTest extends TestBase {
 	public void testTooltip() {
 		int count = 0;
 		// Test toolTip of roadMap1
-		page.showTooltip(driver, userAction, page.roadMap1Id, waitMilliseconds);
+		page.showTooltip(driver, userAction, page.roadMap1Id, this, waitMilliseconds);
 		verifyBrowserViewBox(page.roadMap1Id + "-tooltip");
 
 		// Test toolTip of first six steps of roadMap1
