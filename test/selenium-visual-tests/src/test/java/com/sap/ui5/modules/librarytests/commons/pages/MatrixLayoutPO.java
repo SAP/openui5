@@ -4,7 +4,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import com.sap.ui5.selenium.common.PageBase;
-import com.sap.ui5.selenium.commons.Button;
 import com.sap.ui5.selenium.commons.TabStrip;
 import com.sap.ui5.selenium.commons.TextField;
 
@@ -23,10 +22,10 @@ public class MatrixLayoutPO extends PageBase {
 	public TabStrip tabStrip;
 
 	@FindBy(id = "B-Change")
-	public Button changeButton;
+	public WebElement changeButton;
 
 	@FindBy(id = "B-URL")
-	public Button changeURLButton;
+	public WebElement changeURLButton;
 
 	@FindBy(id = "TF-URL")
 	public TextField urlTextField;

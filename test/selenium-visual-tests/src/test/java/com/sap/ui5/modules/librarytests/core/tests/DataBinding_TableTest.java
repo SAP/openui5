@@ -168,7 +168,7 @@ public class DataBinding_TableTest extends TestBase {
 	}
 
 	private boolean isAboveIE8() {
-		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			return true;
 		}
 		return false;

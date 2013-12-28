@@ -57,12 +57,15 @@ public class NotificationBarTest extends TestBase {
 		action.moveToElement(page.notificationIcon).perform();
 		userAction.mouseOver(driver, page.notificationIcon.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.callOutContID, timeOutSeconds);
+		waitForReady(600);
 		verifyBrowserViewBox("MouseOver-NotifictionBarIcon");
 		userAction.mouseMoveToStartPoint(driver);
 
 		// Check click remove all button
 		page.removeAllBtn.click();
-		waitForReady(1500);
+		waitForReady(800);
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(millisecond);
 		userAction.mouseMove(driver, page.removeAllBtn.getId());
 		verifyBrowserViewBox("Remove-All-Messages");
 	}
@@ -83,9 +86,11 @@ public class NotificationBarTest extends TestBase {
 		action.moveToElement(page.notificationBar).perform();
 		userAction.mouseOver(driver, barId, millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 800);
+		JsAction.focusOnElement(driver, page.barDown);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-BarDown");
 
+		action.moveToElement(page.notificationBar).perform();
+		waitForReady(500);
 		JsAction.focusOnElement(driver, page.arrowUp);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
 
@@ -102,6 +107,8 @@ public class NotificationBarTest extends TestBase {
 		userAction.mouseMove(driver, page.warnMessageId);
 		verifyElement(barId, "Remove-NotificationBar-ErrorMessage");
 
+		action.moveToElement(page.notificationBar).perform();
+		waitForReady(500);
 		JsAction.focusOnElement(driver, page.arrowDown);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
 

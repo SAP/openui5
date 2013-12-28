@@ -7,6 +7,7 @@ import org.openqa.selenium.support.PageFactory;
 import com.sap.ui5.modules.librarytests.commons.pages.MatrixLayoutPO;
 import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
+import com.sap.ui5.selenium.util.JsAction;
 
 public class MatrixLayoutTest extends TestBase {
 
@@ -52,29 +53,30 @@ public class MatrixLayoutTest extends TestBase {
 		page.tabStrip.selectTab(3);
 		waitForReady(millisecond);
 		verifyElement(page.matrix4.getAttribute("id"), "DisplayOnly");
-		userAction.mouseOver(driver, page.changeButton.getId(), 500);
+		JsAction.focusOnElement(driver, page.changeButton);
 		verifyBrowserViewBox("Tooltip-ChangeButton");
 
 		// Switch view to Edit Mode
 		page.changeButton.click();
 		waitForReady(2000);
 		userAction.mouseMoveToStartPoint(driver);
-		userAction.mouseOver(driver, page.changeButton.getId(), millisecond);
+		userAction.mouseOver(driver, page.changeButton.getAttribute("id"), millisecond);
 		verifyBrowserViewBox("Switch-EditMode");
 		userAction.mouseMoveToStartPoint(driver);
 
 		//Change picture location and apply the change
 		page.urlTextField.clearValue();
 		page.urlTextField.setValue("images/face.jpg");
-		page.changeURLButton.click();
+		userAction.mouseClick(driver, page.changeURLButton.getAttribute("id"));
 		waitForReady(800);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(1500);
+		waitForReady(millisecond);
+		JsAction.focusOnElement(driver, page.changeButton);
 		verifyElement(page.matrix4.getAttribute("id"), "PictureChanged");
 
 		// Switch back to Display Mode
 		page.changeButton.click();
-		userAction.mouseOver(driver, page.changeButton.getId(), millisecond);
+		userAction.mouseOver(driver, page.changeButton.getAttribute("id"), millisecond);
 		verifyBrowserViewBox("Switch-DisplayMode");
 
 		// Mover Mouse away from the button to remove RichTootip

@@ -303,6 +303,7 @@ public class ShellTest extends TestBase {
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(1500);
 		page.panebarOverflow.click();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("Sidepane-Overflow");
 	}
 
@@ -321,7 +322,7 @@ public class ShellTest extends TestBase {
 
 	private boolean isAboveIE8() {
 
-		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10) {
+		if (getBrowserType() == Constants.IE9 || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			return true;
 		}
 		return false;
