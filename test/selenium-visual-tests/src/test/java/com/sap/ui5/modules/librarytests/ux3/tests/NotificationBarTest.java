@@ -95,7 +95,7 @@ public class NotificationBarTest extends TestBase {
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
 
 		// Change notification bar bar to large
-		userAction.mouseClick(driver, page.arrowUp.getAttribute("id"));
+		JsAction.clickElement(driver, page.arrowUp);
 		waitForReady(millisecond);
 		userAction.mouseMove(driver, page.noneMessageId);
 		verifyElement(barId, "NotificationBar-to-Large");
