@@ -125,9 +125,7 @@ public class ToolbarTest extends TestBase {
 		verifyElement(page.dialogId, page.dialogId + "-KB-dialogWithToolbar");
 
 		// Check toolBar in the dialog
-		if (getBrowserType() != Constants.IE11) {
-			actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
-		}
+		actions.sendKeys(Keys.chord(Keys.SHIFT, Keys.TAB)).perform();
 
 		checkToolBarByKeyboard(actions, page.dlgTbId, true, page.dlgTbTfId);
 
