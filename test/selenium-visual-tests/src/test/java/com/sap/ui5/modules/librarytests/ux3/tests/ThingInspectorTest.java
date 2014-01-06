@@ -2,7 +2,6 @@ package com.sap.ui5.modules.librarytests.ux3.tests;
 
 import java.awt.event.KeyEvent;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
@@ -29,11 +28,6 @@ public class ThingInspectorTest extends TestBase {
 
 		driver.get(getFullUrl(targetUrl));
 		userAction.mouseClickStartPoint(driver);
-	}
-
-	@After
-	public void tearDown() {
-		driver.quit();
 	}
 
 	/** Verify full Page UI and all element initial UI */
@@ -73,39 +67,49 @@ public class ThingInspectorTest extends TestBase {
 		waitForReady(millisecond);
 		page.actionBarUpdateInput.sendKeys("test");
 		page.actionBarUpdateInput.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-		verifyBrowserViewBox("ThingInspector-Update-Open");
+		verifyElement(page.feederID, "ThingInspector-Update-Open");
 
-		page.actionBarUpdate.click();
+		userAction.mouseClick(driver, page.actionBarUpdate.getAttribute("id"));
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 		waitForReady(millisecond);
+		userAction.mouseMove(driver, page.actionBarUpdate.getAttribute("id"));
 		verifyElement(page.actionBarID, "ThingInspector-Update-Closed");
+		userAction.mouseClickStartPoint(driver);
 
 		// Changing status of follow
 		page.thingInspector.follow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Follow-Start");
 
 		page.thingInspector.pauseFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Follow-Hold");
 
 		page.thingInspector.continueFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Follow-Continue");
 
 		page.thingInspector.stopFollow();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Follow-Stop");
 
 		// Changing status of favorite
 		page.thingInspector.favorite();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-markAsFavorite");
 
 		page.thingInspector.favorite();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-unmarkAsFavorite");
 
 		// Changing status of flag
 		page.thingInspector.flag();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-Flag");
 
 		page.thingInspector.flag();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ThingInspector-unflag");
 	}
 

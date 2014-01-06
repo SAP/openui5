@@ -44,5 +44,7 @@ public class ThingInspectorPO extends PageBase {
 
 	public String actionBarID = "thingInspector-actionBar";
 
+	public String feederID = "thingInspector-actionBar-Feeder";
+
 	public String facetContentID = "thingInspector-thingViewer-facetContent";
 }
