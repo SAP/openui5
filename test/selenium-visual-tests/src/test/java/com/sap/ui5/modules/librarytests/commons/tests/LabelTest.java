@@ -50,7 +50,7 @@ public class LabelTest extends TestBase {
 		String elementId = page.label5.getAttribute("id");
 
 		// Label Double Click on #label5
-		if (getBrowserType() == Constants.CHROME) {
+		if (getBrowserType() == Constants.CHROME || getBrowserType() == Constants.IE10 || getBrowserType() == Constants.IE11) {
 			new Actions(driver).doubleClick(page.label5).perform();
 		} else {
 			userAction.mouseDoubleClick(driver, elementId);
