@@ -199,10 +199,10 @@ public class ShellTest extends TestBase {
 		waitForReady(millisecond);
 		this.waitForElement(driver, true, page.navLeft.getAttribute("id"), timeOutSeconds);
 		this.waitForElement(driver, true, page.navRight.getAttribute("id"), timeOutSeconds);
-		waitForReady(millisecond);
-		userAction.mouseClickStartPoint(driver);
 		waitForReady(2000);
-		userAction.mouseMove(driver, page.salesOrderID);
+		userAction.mouseClickStartPoint(driver);
+		waitForReady(1500);
+		userAction.mouseOver(driver, page.salesOrderID, millisecond);
 		verifyPage("Window-Resize");
 
 		page.navRight.click();
