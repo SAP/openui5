@@ -1,6 +1,7 @@
 package com.sap.ui5.modules.librarytests.ux3.tests;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -13,6 +14,7 @@ import com.sap.ui5.selenium.common.TestBase;
 import com.sap.ui5.selenium.core.UI5PageFactory;
 import com.sap.ui5.selenium.util.Constants;
 import com.sap.ui5.selenium.util.JsAction;
+import com.sap.ui5.selenium.util.UI5Timeout;
 
 public class ShellTest extends TestBase {
 
@@ -23,6 +25,9 @@ public class ShellTest extends TestBase {
 	private final int timeOutSeconds = 10;
 
 	private final String targetUrl = "/uilib-sample/test-resources/sap/ui/ux3/visual/Shell.html";
+
+	@Rule
+	public UI5Timeout ui5Timeout = new UI5Timeout(20 * 60 * 1000);
 
 	@Before
 	public void setUp() {

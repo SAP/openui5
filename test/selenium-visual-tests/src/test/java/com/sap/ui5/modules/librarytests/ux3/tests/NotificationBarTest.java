@@ -65,7 +65,7 @@ public class NotificationBarTest extends TestBase {
 		page.removeAllBtn.click();
 		waitForReady(800);
 		userAction.mouseClickStartPoint(driver);
-		waitForReady(millisecond);
+		waitForReady(1500);
 		userAction.mouseMove(driver, page.removeAllBtn.getId());
 		verifyBrowserViewBox("Remove-All-Messages");
 	}
@@ -86,12 +86,12 @@ public class NotificationBarTest extends TestBase {
 		action.moveToElement(page.notificationBar).perform();
 		userAction.mouseOver(driver, barId, millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
-		JsAction.focusOnElement(driver, page.barDown);
+		userAction.mouseOver(driver, page.barDown.getAttribute("id"), 800);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-BarDown");
 
 		action.moveToElement(page.notificationBar).perform();
 		waitForReady(500);
-		JsAction.focusOnElement(driver, page.arrowUp);
+		userAction.mouseOver(driver, page.arrowUp.getAttribute("id"), 800);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowUp");
 
 		// Change notification bar bar to large
@@ -109,7 +109,7 @@ public class NotificationBarTest extends TestBase {
 
 		action.moveToElement(page.notificationBar).perform();
 		waitForReady(500);
-		JsAction.focusOnElement(driver, page.arrowDown);
+		userAction.mouseOver(driver, page.arrowDown.getAttribute("id"), 800);
 		verifyElement(page.togglerID, "MouseOver-NotificationBar-ArrowDown");
 
 		// Change notification bar to normal
@@ -126,8 +126,9 @@ public class NotificationBarTest extends TestBase {
 		waitForReady(millisecond);
 		userAction.mouseClickStartPoint(driver);
 
-		waitForReady(1200);
+		waitForReady(millisecond);
 		action.moveToElement(page.notify).perform();
+		JsAction.focusOnElement(driver, page.notify);
 		userAction.mouseOver(driver, page.notify.getAttribute("id"), millisecond);
 		this.waitForElement(driver, true, page.hoverID, timeOutSeconds);
 		verifyBrowserViewBox("NotificationBar-Normal-to-Minimal");

@@ -14,7 +14,7 @@ public class EPM_DemoTest extends TestBase {
 
 	private EPM_DemoPO page;
 
-	private int millisecond = 800;
+	private final int millisecond = 800;
 
 	private final String targetUrl = "/databinding/epm/products.html";
 
@@ -56,25 +56,24 @@ public class EPM_DemoTest extends TestBase {
 		verifyElement(page.panelRowID, "Row1-Selected");
 
 		// Close Product Details Panel and Supplier Panel
-		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
+		if (getThemeType() == Constants.THEME_HCB) {
+			page.productCollArrow.click();
+			page.supplierCollArrow.click();
+		} else {
 			page.productCollIco.click();
 			page.supplierCollIco.click();
 			userAction.mouseMove(driver, page.supplierCollIco.getAttribute("id"));
-		} else {
-			page.productCollArrow.click();
-			page.supplierCollArrow.click();
 		}
 		verifyElement(page.panelRowID, "Panel-Closed");
 
 		// Open Product Details Panel and Supplier Panel
-		if (getThemeType() == Constants.THEME_GOLDREFLECTION || getThemeType() == Constants.THEME_PLATINUM) {
+		if (getThemeType() == Constants.THEME_HCB) {
+			page.productCollArrow.click();
+			page.supplierCollArrow.click();
+		} else {
 			page.productCollIco.click();
 			page.supplierCollIco.click();
 			userAction.mouseMove(driver, page.supplierCollIco.getAttribute("id"));
-
-		} else {
-			page.productCollArrow.click();
-			page.supplierCollArrow.click();
 		}
 		verifyElement(page.panelRowID, "Panel-Opened");
 	}
