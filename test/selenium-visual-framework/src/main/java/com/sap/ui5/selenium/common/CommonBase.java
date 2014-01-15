@@ -23,9 +23,11 @@ import com.sap.ui5.selenium.util.UI5Timeout;
 public abstract class CommonBase {
 
 	public static WebDriver driver;
-	protected long implicitlyWaitTime = 30;
-	protected long scriptTimeout = 30;
-	protected int ui5TimeoutInSecond = 60 * 15; // 15 minutes
+	protected final long implicitlyWaitTime = 30;
+	protected final long scriptTimeout = 30;
+	protected final long pageLoadTimeout = 45;
+	protected final long domLoadTimeout = 30;
+	protected final int ui5TimeoutInSecond = 60 * 15; // 15 minutes
 
 	protected String fileSeparator = System.getProperty("file.separator");
 
@@ -66,11 +68,28 @@ public abstract class CommonBase {
 		return driver.findElements(By.className(className));
 	}
 
+	/** Wait for UI ready */
+	public void waitForUI() {
+
+		// waitForDomReady(domLoadTimeout);
+		// waitForUI5Ready();
+	}
+
+	/** Wait for DOM Ready */
+	public void waitForDomReady(WebDriver driver, long timeOutSeconds) {
+
+		WebDriverWait wait = new WebDriverWait(driver, timeOutSeconds);
+		wait.until(UI5ExpectedConditions.domReady());
+	}
+
 	/**
+	 * ****  the JS script is Disabled *****
+	 * *************************************
 	 * Waits until the application is ready.
 	 * Covers Core initialization, delays in rendering and active jQuery requests
 	 */
-	public void waitForUI() {
+	@SuppressWarnings(value = { "unused" })
+	private void waitForUI5Ready() {
 
 		String code =
 				"var callback = arguments[arguments.length - 1];" +

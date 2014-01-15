@@ -223,6 +223,7 @@
             <properties>
                 <!-- Target test scope -->
                 <IncludedTests>%regex[.*]</IncludedTests>
+                
                 <!-- Run mode: DEV, TEST
                      DEV: If expected images are missing, the test will not be failed and save all new images 
                      Test: If expected images are missing, the test will be failed and stopped. (TEST is default) 

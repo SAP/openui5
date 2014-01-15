@@ -2,6 +2,7 @@ package com.sap.ui5.selenium.util;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
@@ -89,6 +90,25 @@ public class UI5ExpectedConditions {
 					return true;
 				}
 				return !isElementVisible(driver.findElement(by));
+			}
+		};
+	}
+
+	/** Wait Condition for DOM ready*/
+	public static ExpectedCondition<Boolean> domReady() {
+
+		return new ExpectedCondition<Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver driver) {
+
+				String jsCode = "return document.readyState;";
+				String results = (String) ((JavascriptExecutor) driver).executeScript(jsCode);
+
+				if ("complete".equals(results)) {
+					return true;
+				}
+				return false;
 			}
 		};
 	}

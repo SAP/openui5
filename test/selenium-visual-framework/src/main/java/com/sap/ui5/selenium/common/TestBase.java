@@ -233,6 +233,7 @@ public class TestBase extends CommonBase {
 
 		driver.manage().timeouts().implicitlyWait(implicitlyWaitTime, TimeUnit.SECONDS);
 		driver.manage().timeouts().setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);
+		driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
 		driver.manage().window().maximize();
 	}
 
@@ -364,11 +365,11 @@ public class TestBase extends CommonBase {
 			case Constants.IE10:
 				userAction = new UserActionIE10();
 				break;
-				
+
 			case Constants.IE11:
 				userAction = new UserActionIE11();
 				break;
-				
+
 			}
 
 			userAction.setRtl(isRtlTrue());
@@ -839,23 +840,23 @@ public class TestBase extends CommonBase {
 			userAction.pressOneKey(KeyEvent.VK_TAB);
 		}
 	}
-	
+
 	/** Is current browser IE */
-	public boolean browserIsIE(){
-		
-		return ((int) (getBrowserType() / 10) == (int) (Constants.IE8 / 10)) ;
+	public boolean browserIsIE() {
+
+		return (getBrowserType() / 10 == Constants.IE8 / 10);
 	}
-	
+
 	/** Is current browser Firefox */
-	public boolean browserIsFirefox(){
-		
-		return ((int) (getBrowserType() / 10) == (int) (Constants.FIREFOX / 10)) ;
+	public boolean browserIsFirefox() {
+
+		return (getBrowserType() / 10 == Constants.FIREFOX / 10);
 	}
-	
+
 	/** Is current browser Chrome */
-	public boolean browserIsChrome(){
-		
-		return ((int) (getBrowserType() / 10) == (int) (Constants.CHROME / 10)) ;
+	public boolean browserIsChrome() {
+
+		return (getBrowserType() / 10 == Constants.CHROME / 10);
 	}
 
 }
