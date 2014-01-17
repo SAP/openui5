@@ -145,6 +145,7 @@ public class ThingInspectorInShellTest extends TestBase {
 		waitForReady(2000);
 
 		page.standardClose.click();
+		waitForReady(1500);
 		verifyBrowserViewBox("StandardTI-Closed");
 	}
 
@@ -219,7 +220,8 @@ public class ThingInspectorInShellTest extends TestBase {
 		page.closeBtn.click();
 		waitForReady(2000);
 		userAction.mouseClickStartPoint(driver);
-		verifyPage("ModifiedTI-with-Close-Closed");
+		waitForReady(millisecond);
+		verifyBrowserViewBox("ModifiedTI-with-Close-Closed");
 	}
 
 	/** Verify Shell options, changing header type and side areas in Shell */

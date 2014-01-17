@@ -155,6 +155,7 @@ public class ThingInspectorTest extends TestBase {
 	public void testModify() {
 		this.waitForElement(driver, true, page.modifiedTIBtn.getId(), 10);
 		page.modifiedTIBtn.click();
+		waitForReady(millisecond);
 		verifyBrowserViewBox("ModifiedTI-Page-Open");
 
 		userAction.pressOneKey(KeyEvent.VK_ENTER);
