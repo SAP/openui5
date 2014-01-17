@@ -18,8 +18,7 @@ public class ValueHelpFieldTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, ValueHelpFieldPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

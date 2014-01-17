@@ -21,8 +21,7 @@ public class ListBoxTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, ListBoxPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Ignore

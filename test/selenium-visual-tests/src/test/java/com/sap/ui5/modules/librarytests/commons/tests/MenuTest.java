@@ -23,10 +23,8 @@ public class MenuTest extends TestBase {
 
 	@Before
 	public void setUp() {
-		logTestStart();
 		page = PageFactory.initElements(driver, MenuPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

@@ -26,8 +26,7 @@ public class TextAreaTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, TextAreaPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

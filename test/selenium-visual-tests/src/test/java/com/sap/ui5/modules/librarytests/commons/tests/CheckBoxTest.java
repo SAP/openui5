@@ -23,8 +23,7 @@ public class CheckBoxTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, CheckBoxPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

@@ -26,8 +26,7 @@ public class ToolbarTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, ToolbarPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

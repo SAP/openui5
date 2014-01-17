@@ -20,8 +20,7 @@ public class LinkTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, LinkPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

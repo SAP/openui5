@@ -20,8 +20,7 @@ public class TreeTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, TreePO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

@@ -29,7 +29,7 @@ public class Northwind_DemoTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, Northwind_DemoPO.class);
-		driver.get(getFullUrl(targetUrl));
+		loadPage(targetUrl);
 		userAction.mouseClick(point);
 		pageDataLoading();
 	}

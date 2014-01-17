@@ -20,8 +20,7 @@ public class PasswordFieldTest extends TestBase {
 	@Before
 	public void setUp() {
 		page = PageFactory.initElements(driver, PasswordFieldPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test
