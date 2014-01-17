@@ -21,9 +21,7 @@ public class MatrixLayoutTest extends TestBase {
 	public void setUp() {
 		page = PageFactory.initElements(driver, MatrixLayoutPO.class);
 		UI5PageFactory.initElements(driver, page);
-
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	@Test

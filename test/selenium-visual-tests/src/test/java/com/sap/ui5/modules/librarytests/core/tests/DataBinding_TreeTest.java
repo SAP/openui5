@@ -28,9 +28,7 @@ public class DataBinding_TreeTest extends TestBase {
 	public void setUp() {
 		page = PageFactory.initElements(driver, DataBinding_TreePO.class);
 		UI5PageFactory.initElements(driver, page);
-
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	/** Verify full Page UI and all element initial UI */

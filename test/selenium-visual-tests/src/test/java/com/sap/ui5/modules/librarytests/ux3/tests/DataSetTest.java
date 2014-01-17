@@ -24,8 +24,7 @@ public class DataSetTest extends TestBase {
 	public void setUp() {
 		page = PageFactory.initElements(driver, DataSetPO.class);
 		UI5PageFactory.initElements(driver, page);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 		waitForReady(millisecond * 5);
 	}
 
