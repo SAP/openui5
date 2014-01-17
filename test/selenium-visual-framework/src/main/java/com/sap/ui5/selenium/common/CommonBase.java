@@ -25,7 +25,7 @@ public abstract class CommonBase {
 	public static WebDriver driver;
 	protected final long implicitlyWaitTime = 30;
 	protected final long scriptTimeout = 30;
-	protected final long pageLoadTimeout = 45;
+	protected final long pageLoadTimeout = 90;
 	protected final long domLoadTimeout = 30;
 	protected final int ui5TimeoutInSecond = 60 * 15; // 15 minutes
 

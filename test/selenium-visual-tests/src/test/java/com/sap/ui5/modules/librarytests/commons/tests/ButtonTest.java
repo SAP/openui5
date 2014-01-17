@@ -26,8 +26,7 @@ public class ButtonTest extends TestBase {
 	public void setUp() {
 
 		page = PageFactory.initElements(driver, ButtonPO.class);
-		driver.get(getFullUrl(targetUrl));
-		userAction.mouseClickStartPoint(driver);
+		loadPage(targetUrl);
 	}
 
 	/** Verify full Page UI and all element initial UI, Check enable and visible all elements */

@@ -114,6 +114,14 @@ public class TestBase extends CommonBase {
 		getDriver();
 	}
 
+	/** Load page base on the target URL
+	 *  And mouse click the left-up corner */
+	public void loadPage(String targetUrl) {
+
+		driver.get(getFullUrl(targetUrl));
+		userAction.mouseClickStartPoint(driver);
+	}
+
 	@After
 	public void baseTearDown() {
 		driver.quit();
