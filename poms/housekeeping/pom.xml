@@ -291,6 +291,11 @@
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
+                  <artifactId>ui5teamapp</artifactId>
+                  <version>[1.0.0,)</version>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui5</groupId>
                   <artifactId>charting-sample</artifactId>
                   <version>[1.0.0,)</version>
                 </deployable>
