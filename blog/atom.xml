@@ -4,7 +4,7 @@
   <title><![CDATA[OpenUI5]]></title>
   <link href="http://SAP.github.io/openui5/atom.xml" rel="self"/>
   <link href="http://SAP.github.io/openui5/"/>
-  <updated>2014-03-01T19:08:39+00:00</updated>
+  <updated>2014-03-01T19:15:46+00:00</updated>
   <id>http://SAP.github.io/openui5/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -19,24 +19,6 @@
     <updated>2014-03-01T18:43:16+00:00</updated>
     <id>http://SAP.github.io/openui5/openui5/blog/2014/03/01/test3</id>
     <content type="html"><![CDATA[<p>Thanks to the superb help from <a href="http://jcla1.com">Joseph Adams</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Another Test Post, This Time for DJ.]]></title>
-    <link href="http://SAP.github.io/openui5/openui5/blog/2014/03/01/another-test-post-this-time-for-dj/"/>
-    <updated>2014-03-01T18:43:16+00:00</updated>
-    <id>http://SAP.github.io/openui5/openui5/blog/2014/03/01/another-test-post-this-time-for-dj</id>
-    <content type="html"><![CDATA[<p>This is just another test post.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[First Test Post]]></title>
-    <link href="http://SAP.github.io/openui5/openui5/blog/2014/03/01/first-test-post/"/>
-    <updated>2014-03-01T18:33:01+00:00</updated>
-    <id>http://SAP.github.io/openui5/openui5/blog/2014/03/01/first-test-post</id>
-    <content type="html"><![CDATA[<p>Hello this test is from DJ.</p>
 ]]></content>
   </entry>
   
