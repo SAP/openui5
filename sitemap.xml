@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>http://SAP.github.io/openui5/openui5/blog/2014/03/01/first-test-post/</loc>
+        <lastmod>2014-03-01T18:52:24+00:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://SAP.github.io/openui5/openui5/blog/2014/03/01/another-test-post-this-time-for-dj/
+        </loc>
+        <lastmod>2014-03-01T18:52:24+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://SAP.github.io/openui5/openui5/blog/2014/03/01/test3/</loc>
+        <lastmod>2014-03-01T19:05:56+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://SAP.github.io/openui5/blog/archives/</loc>
+        <lastmod>2014-03-01T19:05:56+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://SAP.github.io/openui5/blog/</loc>
+        <lastmod>2014-03-01T19:05:56+00:00</lastmod>
+    </url>
+    <url>
+        <loc>http://SAP.github.io/openui5/robots.txt</loc>
+        <lastmod>2014-03-01T18:52:24+00:00</lastmod>
+    </url>
+</urlset>
