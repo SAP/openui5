@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+		<style>
+			.resultIE {
+				display:none;
+			}
+		</style>
+		<!--[if lt IE 10]>
+			<style>
+				.result {
+					display:none;
+				}
+				.resultIE {
+					display:block;
+				}
+			</style>
+		<![endif]-->
+		<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
+		<link rel="icon"
+			type="image/png"
+			href="images/favicon.ico">
+		<title>OpenUI5 - Get Started</title>
+
+		<script id='sap-ui-bootstrap' type='text/javascript'
+			src='https://openui5.hana.ondemand.com/resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_bluecrystal'
+			data-sap-ui-libs='sap.ui.commons'></script>
+		<script>
+			var btn = new sap.ui.commons.Button({
+					text:'Press me!',
+					press: function() {
+						alert("Hello!")
+					}
+			});
+			btn.placeAt('content');
+		</script>
+
+		<style>
+			body {
+			background-image: none;
+			}
+		</style>
+	</head>
+	<body class='sapUiBody'>
+		<!-- HEADER -->
+		<div id="header_wrap" class="outer">
+			<div class="wrap_ie9">
+				<div class="inner">
+					<img src="images/icotxt_white_220x72_blue_open.png" class="ui5logo" alt="OpenUI5 Logo" />
+					<h1 id="project_title">
+						<span class="headertitle">OpenUI5. </span>
+						<span class="headertitle">Build once. </span>
+						<span class="headertitle">Run on any device. </span>
+					</h1>
+					<h2 id="project_tagline">
+						<span class="headertitle"><a href="index.html">Intro</a></span>
+						<span class="headerdivide"> | </span>
+						<span class="headertitle">Get Started</span>
+						<span class="headerdivide"> | </span>
+						<span class="headertitle"><a href="download.html">Download</a></span>
+					</h2>
+				</div>
+			</div>
+		</div>
+		<!-- MAIN CONTENT -->
+		<div id="main_content_wrap" class="outer">
+			<div id="main_content" class="inner">
+				<h3 id="what-is-it-about">Get the Basics!</h3>
+				<p>
+					You can use SAPUI5 in any HTML file with the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
+				</p>
+				<pre class="codeblock">
+&lt;script id="sap-ui-bootstrap"
+   src="resources/sap-ui-core.js"
+   data-sap-ui-theme="sap_bluecrystal"
+   data-sap-ui-libs="sap.ui.commons"&gt;&lt;/script&gt;</pre>
+				<p>
+					A simple application looks like this:
+				</p>
+				<pre class="codeblock">
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;
+    &lt;meta http-equiv='X-UA-Compatible' content='IE=edge' /&gt;
+    &lt;title&gt;Hello World&lt;/title&gt;
+
+    &lt;script id='sap-ui-bootstrap'
+        src='resources/sap-ui-core.js'
+        data-sap-ui-theme='sap_bluecrystal'
+        data-sap-ui-libs='sap.ui.commons'&gt;&lt;/script&gt;
+
+&lt;script&gt;
+    var btn = new sap.ui.commons.Button({
+        text:'Press me!',
+        press: function() {
+            alert("Hello!")
+        }
+    });
+    btn.placeAt('content');
+&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body class='sapUiBody'&gt;
+    &lt;div id='content'>&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+
+
+				<div class="result">
+					<p>
+						This is the result
+					</p>
+					<div id="content">
+					</div>
+					<p>
+						Try it out yourself!
+					</p>
+					<div class="corset"> <!-- for Ipad -->
+						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/8/embed?html,output&height=600px&width=760px">Hello World</a>
+						<script src="http://static.jsbin.com/js/embed.js"></script>
+					</div>
+				</div>
+
+
+
+
+
+				<div class="resultIE">
+					<p>
+						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
+					</p>
+				</div>
+
+				<h3>Dig Deeper!</h3>
+				<p>Read the
+					<a href="https://openui5.hana.ondemand.com/#docs/guide/Documentation.html">Developer Guide</a> and refer to the
+					<a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html">API Reference</a>
+				</p>
+				<div class="result">
+					<p>
+						or look into more examples
+						<ul class="download">
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-xml-view/7/edit?html,output">UI5 MVC example with JS view</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-js-view/6/edit?html,output">UI5 XML view example</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-table-json/6/edit?html,output">UI5 table example with local JSON model</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-custom-control/2/edit?html,output">Create your own UI5 control</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-mobile-list-databinding/2/edit?html,output">UI5 mobile list with databinding</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-HTML-templates/1/edit">UI5 with HTML templating</a>
+							</li>
+							<li>
+								<a target="_blank" href="http://jsbin.com/openui5-custom-d3-chart-and-table/1/edit">A sample of using D3.js wrapped as a UI5 control with a synced table</a>
+							</li>
+						</ul>
+					</p>
+				</div>
+
+			</div>
+		</div>
+		<!-- FOOTER  -->
+		<div id="footer_wrap" class="outer">
+			<div class="wrap_ie9">
+				<div class="inner">
+					<p class="copyright">&copy; SAP AG, made available under Apache License 2.0</p>
+					<img src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px"  alt="counter">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
