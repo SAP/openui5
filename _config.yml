@@ -2,8 +2,8 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://jcla1.com/openui5/
-title: My Octopress Blog
+url: sap.github.com/openui5/
+title: OpenUI5
 subtitle: A blogging framework for hackers.
 author: Your Name
 simple_search: http://google.com/search
