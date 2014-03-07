@@ -168,12 +168,12 @@ ul, ol, dl {
   margin-bottom: 16px
 }
 
-ul li {
-  list-style: none;
+ul > li {
+  list-style: disc inside;
   padding-left: 24px;
 }
 
-ol li {
+ol > li {
   list-style: decimal inside;
   padding-left: 24px;
 }
@@ -398,3 +398,14 @@ Small Device Styles
 }
 
 
+/*******************************************************************************
+Common Styles
+*******************************************************************************/
+
+.strong {
+	font-weight: bold;
+}
+
+.underlined {
+	text-decoration: underline;
+}
