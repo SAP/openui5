@@ -82,6 +82,8 @@
 				
 				You are welcome to report bugs, but we can only handle well-reported, actual bugs, so please follow the guidelines below and use forums like <a href="http://stackoverflow.com/questions/tagged/sapui5">stackoverflow</a> for support questions or when in doubt whether the issue is an actual bug.
 				
+				Once you have familiarized with the guidelines, you can go to the <a href="https://github.com/SAP/openui5/issues/new">Github issue tracker for OpenUI5</a> to report the issue.
+				
 				<br/> <br/>
 				
 				<h4>Requirements for a bug report</h4>
@@ -95,13 +97,13 @@
 							<li>issues caused by the usage of non-public UI5 methods. Only the public methods listed in the API documentation may be used.</li>
 							<li>something that behaves just different from what you expected. A bug is when something behaves different than specified. When in doubt, ask in a forum.</li>
 							<li>something you do not get to work properly. Use a support forum like stackoverflow to request help.</li>
-							<li>feature or enhancement requests.</li>
+							<li>feature requests. Well, this is arguable: critical or easy-to-do enhancement suggestions are welcome, but we do not want to use the issue tracker as wish list.</li>
 						</ul>
 					</li>
 					<li><span class="strong">No duplicate</span>: you have searched the issue tracker to make sure the bug has not yet been reported</li>
 					<li><span class="strong">Good summary</span>: the summary should be specific to the issue</li>
 					<li><span class="strong">Current bug</span>: the bug can be reproduced in the most current version (state the tested version!)</li>
-					<li><span class="strong">Reproducible bug</span>: there are clear steps to reproduce given. This includes:
+					<li><span class="strong">Reproducible bug</span>: clear steps to reproduce are given. This includes:
 						<ul>
 							<li>a <span class="underlined">URL</span> to access the example</li>
 							<li>any required <span class="underlined">user/password</span> information (do not reveal any credentials that could be mis-used!)</li>
@@ -113,7 +115,7 @@
 							<li>precisely state the <span class="underlined">expected and the actual</span> behavior</li>
 							<li>give information about the used <span class="underlined">browser/device</span> and its version, if possible also the behavior in other browsers/devices</li>
 							<li>if the bug is about wrong UI appearance, attach a <span class="underlined">screenshot</span> and mark what is wrong</li>
-							<li>generally give as much <span class="underlined">additional information</span> as possible. (But find the right balance: don not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)</li>
+							<li>generally give as much <span class="underlined">additional information</span> as possible. (But find the right balance: do not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)</li>
 						</ul>
 				   </li>
 					<li><span class="strong">Minimal example</span>: it is highly encouraged to provide a minimal example to reproduce in e.g. <a href="http://www.jsbin.com">jsbin</a>: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can <a href="http://scn.sap.com/docs/DOC-50988">create a gist</a>. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.</li>
@@ -128,6 +130,8 @@
 
 				<p>If the bug appears to be a regression introduced in a new version of UI5, try to find the closest versions between which it was introduced and take special care to make sure the issue is not caused by your application's usage of any internal method which changed its behavior.
 				</p>
+				
+				<p>Be aware that issues cannot be deleted once they are created, so be careful when creating them and do not use the issue tracker for testing.</p>
 
 				<!-- <p>These guidelines are similar to those of <a href="https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines">other Open Source projects</a>. Those can give additional guidance to write good bug reports.</p> -->
 				
@@ -149,7 +153,7 @@
 
 				<p>Labels for issue categories:
 					<ul>
-						<li><span class="issuelabel" style="background-color: #ff0000;color:white;">bug</span>: this issue is a bug in the code</li>
+						<li><span class="issuelabel" style="background-color: #fc2929;color:white;">bug</span>: this issue is a bug in the code</li>
 						<li><span class="issuelabel" style="background-color: #AE00FF;color:white;">documentation</span>: this issue is about wrong documentation</li>
 						<li><span class="issuelabel" style="background-color: #0000ff;color:white;">enhancement</span>: this is not a bug report, but an enhancement request</li>
 					</ul>
