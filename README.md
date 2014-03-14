@@ -16,7 +16,7 @@ It's free. Download the complete [UI5 Runtime](https://openui5.hana.ondemand.com
 
 Get started!
 ------------
-Try the [Hello World](http://sap.github.io/openui5/getstarted.html), read the [Developer Guide](https://openui5.hana.ondemand.com/#docs/guide/Documentation.html) and refer to the [API Reference](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html).
+Try the [Hello World](http://sap.github.io/openui5/getstarted.html), read the [Developer Guide](https://openui5.hana.ondemand.com/#docs/guide/Documentation.html) and refer to the [API Reference](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html). Check out [stackoverflow.com] (http://stackoverflow.com/questions/tagged/sapui5) to discuss code-related problems and questions. The OpenUI5 team will check regularly here for questions tagged with 'sapui5'. 
 
 What's next?
 ------------
