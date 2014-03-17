@@ -349,6 +349,15 @@ Full-Width Styles
 
 }
 
+.counter {
+	position: absolute;
+}
+
+.legal {
+	font-size: 11px;
+	margin-right: 4em;
+}
+
 .ui5logo {
   height: 36px;
   margin-left: -2px;
