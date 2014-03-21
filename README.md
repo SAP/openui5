@@ -12,7 +12,7 @@ Check out our [interactive control playground](https://openui5.hana.ondemand.com
 
 Get it!
 -------
-It's free. Go to the [download page](http://sap.github.io/openui5/download.html) and get the complete UI5 Runtime or UI5 Runtime Mobile (the load optimized package for mobile deployment in hybrid containers) and the UI5 SDK containing the documentation and many example apps. To get the sources, just look inside the UI5 Runtime archive, it contains all source files also in non-minified format (*-dbg.js). 
+It's free. Go to the [download page](http://sap.github.io/openui5/download.html) and get the complete UI5 Runtime or UI5 Runtime Mobile (the load optimized package for mobile deployment in hybrid containers) and the UI5 SDK containing the documentation and many example apps as well as the complete runtime. To get the sources, just look inside the UI5 Runtime archive, it contains all source files also in non-minified format (*-dbg.js). 
 
 Get started!
 ------------
