@@ -64,25 +64,17 @@
 			</plugins>
 		</pluginManagement>
 				
-		<plugins>
-			<plugin>
-				<groupId>com.sap.watt</groupId>
-				<artifactId>com.sap.watt-maven-plugin</artifactId>
-				<configuration>
-					<gitEmail>${gitEmail}</gitEmail><!-- GIT email -->
-					<gitPassword>${gitPassword}</gitPassword><!-- GIT password -->
-					<cloudUser>${cloudUser}</cloudUser><!-- SCN user -->
-					<cloudPassword>${cloudPassword}</cloudPassword><!-- SCN password -->
-					<cloudAccount>${cloudAccount}</cloudAccount><!-- hcproxy -->
-					<cloudLandscape>${cloudLandscape}</cloudLandscape><!-- dispatcher.dev009.jpaas.sapbydesign.com -->
-					<cloudApplications>
-						<cloudApplications>sapui5</cloudApplications>
-						<cloudApplications>sapui5sdk</cloudApplications>
-					</cloudApplications>
-				</configuration>
-			</plugin>
-		</plugins>
-		
 	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Modules Settings
+	***************************************************************************-->
+	
+	<modules>
+		<module>sapui5</module>
+		<module>sapui5sdk</module>
+	</modules>
+
 
 </project>

@@ -35,7 +35,7 @@
 	***************************************************************************-->
 
 	<name>${project.artifactId}</name>
-	<description>SAPUI5 HANA Cloud Proxy Repository</description>
+	<description>SAPUI5 SDK Helium Application</description>
 	
 
 	<!--**************************************************************************
@@ -142,16 +142,18 @@
 				<groupId>com.sap.watt</groupId>
 				<artifactId>com.sap.watt-maven-plugin</artifactId>
 				<configuration>
+				
 					<gitUser>${gitUser}</gitUser>
-					<gitPassword>${gitPassword}</gitPassword>
 					<gitEmail>${gitEmail}</gitEmail>
 					<gitPassword>${gitPassword}</gitPassword>
 					<gitBranch>${gitBranch}</gitBranch>
-					<cloudLandscape>${cloudLandscape}</cloudLandscape>
+					
 					<cloudUser>${cloudUser}</cloudUser>
 					<cloudPassword>${cloudPassword}</cloudPassword>
+					<cloudLandscape>${cloudLandscape}</cloudLandscape>
 					<cloudAccount>${cloudAccount}</cloudAccount>
-					<cloudApplication>${cloudApplication}</cloudApplication>
+					
+					<cloudApplication>sapui5sdk</cloudApplication>
 					<!-- excludedChangedFiles>
 						<excludedChangedFile>resources/sap/watt/uitools/version.json</excludedChangedFile>
 					</excludedChangedFiles -->
@@ -162,6 +164,7 @@
 						<classifier>static</classifier>
 						<type>zip</type>
 					</versionReference>
+					
 				</configuration>
 			</plugin>
 

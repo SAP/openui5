@@ -144,19 +144,18 @@
 				<groupId>com.sap.watt</groupId>
 				<artifactId>com.sap.watt-maven-plugin</artifactId>
 				<configuration>
+				
 					<gitUser>${gitUser}</gitUser>
-					<gitPassword>${gitPassword}</gitPassword>
 					<gitEmail>${gitEmail}</gitEmail>
 					<gitPassword>${gitPassword}</gitPassword>
 					<gitBranch>${gitBranch}</gitBranch>
-					<cloudLandscape>${cloudLandscape}</cloudLandscape>
+					
 					<cloudUser>${cloudUser}</cloudUser>
 					<cloudPassword>${cloudPassword}</cloudPassword>
+					<cloudLandscape>${cloudLandscape}</cloudLandscape>
 					<cloudAccount>${cloudAccount}</cloudAccount>
-					<cloudApplication>${cloudApplication}</cloudApplication>
-					<!-- excludedChangedFiles>
-						<excludedChangedFile>resources/sap/watt/uitools/version.json</excludedChangedFile>
-					</excludedChangedFiles -->
+					
+					<cloudApplication>sapui5</cloudApplication>
 					<versionReference>
 						<groupId>com.sap.ui5.dist</groupId>
 						<artifactId>${project.artifactId}</artifactId>
@@ -164,6 +163,7 @@
 						<classifier>static</classifier>
 						<type>zip</type>
 					</versionReference>
+					
 				</configuration>
 			</plugin>
 
