@@ -1,0 +1,6 @@
+{
+    "cacheControl": [{
+        "maxAge": 604800
+    }],
+	"ui5CacheBuster": true
+}

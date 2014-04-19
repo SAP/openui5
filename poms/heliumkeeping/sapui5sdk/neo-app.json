@@ -1,0 +1,21 @@
+{
+    "welcomeFile": "index.html",
+    "routes": [
+        {
+            "path": "/resources",
+            "target": {
+              "type": "application",
+              "account":"sapui5",
+              "name": "sapui5",
+              "entryPath": "/resources",
+              "preferLocal": true,
+			  "version": "1.20.3"
+            },
+            "description": "SAPUI5 HTML5 Application"
+        }
+    ],
+    "cacheControl": [{
+        "maxAge": 604800
+    }],
+	"ui5CacheBuster": true
+}
