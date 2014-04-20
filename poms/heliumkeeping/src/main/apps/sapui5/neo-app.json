@@ -1,0 +1,13 @@
+{
+    "maven": {
+        "groupId": "${sapui5.groupId}",
+        "artifactId": "${sapui5.artifactId}",
+        "version": "${sapui5.version}",
+        "classifier": "${sapui5.classifier}",
+        "type": "${sapui5.type}"
+    },
+    "cacheControl": [{
+        "maxAge": 604800
+    }],
+    "ui5CacheBuster": true
+}

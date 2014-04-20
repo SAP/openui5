@@ -1,4 +1,11 @@
 {
+    "maven": {
+        "groupId": "${sapui5sdk.groupId}",
+        "artifactId": "${sapui5sdk.artifactId}",
+        "version": "${sapui5sdk.version}",
+        "classifier": "${sapui5sdk.classifier}",
+        "type": "${sapui5sdk.type}"
+    },
     "welcomeFile": "index.html",
     "routes": [
         {
@@ -9,7 +16,7 @@
               "name": "sapui5",
               "entryPath": "/resources",
               "preferLocal": true,
-			  "version": "${project.version}"
+              "version": "${sapui5.version}"
             },
             "description": "SAPUI5 HTML5 Application"
         }
