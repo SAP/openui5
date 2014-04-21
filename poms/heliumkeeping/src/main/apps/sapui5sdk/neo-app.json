@@ -12,8 +12,8 @@
             "path": "/resources",
             "target": {
               "type": "application",
-              "account":"sapui5",
-              "name": "sapui5",
+              "account":"${account}",
+              "name": "${sapui5.application}",
               "entryPath": "/resources",
               "preferLocal": true,
               "version": "${sapui5.version}"
