@@ -51,6 +51,7 @@
 		<version></version>
 		<skipCreate>true</skipCreate>
 		<skipCreateVersion>true</skipCreateVersion>
+		<skipActivateVersion>true</skipActivateVersion>
 	
 		<!-- SAPUI5 coordinates -->
 		<sapui5.application>sapui5</sapui5.application>
@@ -168,12 +169,10 @@
 					
 					<!-- create the versions of the applications -->
 					<execution>
-						<id>sapui5-helium-version</id>
+						<id>sapui5-helium-create-version</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>helium-create-version</goal>
-							<goal>helium-stop</goal>
-							<goal>helium-start</goal>
 						</goals>
 						<configuration>
 							<application>${sapui5.application}</application>
@@ -182,17 +181,45 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>sapui5sdk-helium-version</id>
+						<id>sapui5sdk-helium-create-version</id>
 						<phase>process-resources</phase>
 						<goals>
 							<goal>helium-create-version</goal>
+						</goals>
+						<configuration>
+							<application>${sapui5sdk.application}</application>
+							<applicationVersion>${sapui5sdk.version}</applicationVersion>
+							<skip>${skipCreateVersion}</skip>
+						</configuration>
+					</execution>
+					
+					<!-- activate the versions of the applications -->
+					<execution>
+						<id>sapui5-helium-activate-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-activate-version</goal>
+							<goal>helium-stop</goal>
+							<goal>helium-start</goal>
+						</goals>
+						<configuration>
+							<application>${sapui5.application}</application>
+							<applicationVersion>${sapui5.version}</applicationVersion>
+							<skip>${skipActivateVersion}</skip>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sapui5sdk-helium-activate-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-activate-version</goal>
 							<goal>helium-stop</goal>
 							<goal>helium-start</goal>
 						</goals>
 						<configuration>
 							<application>${sapui5sdk.application}</application>
 							<applicationVersion>${sapui5sdk.version}</applicationVersion>
-							<skip>${skipCreateVersion}</skip>
+							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
 					
