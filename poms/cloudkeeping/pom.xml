@@ -49,7 +49,7 @@
 		<password></password> <!-- SDN Password -->
 		
 		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.21.1-SNAPSHOT</sapui5.version>
+		<sapui5.version>1.21.2-SNAPSHOT</sapui5.version>
 		<!-- deploy opt version - clear to use debug version -->
 		<sap.ui5.opt.classifier>opt</sap.ui5.opt.classifier>
 	
@@ -109,7 +109,7 @@
 									<classifier>${sap.ui5.opt.classifier}</classifier>
 									<type>war</type>
 									<overWrite>false</overWrite>
-									<destFileName>demokit.war</destFileName>
+									<destFileName>sapui5-sdk.war</destFileName>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sap.ui5</groupId>
@@ -151,11 +151,12 @@
 						<account>sapui5</account>
 						<applicationURL>ui5test</applicationURL>
 						<severity>info</severity>
-						<landscape>https://prod.jpaas.sapbydesign.com/</landscape>
+						<landscape>https://neo.ondemand.com/</landscape>
 						<user>${user}</user>
 						<password>${password}</password>
 						<deployables>
 							<deployable>${project.build.directory}/deployables/sapui5.war</deployable>
+							<deployable>${project.build.directory}/deployables/sapui5-sdk.war</deployable>
 							<deployable>${project.build.directory}/deployables/uilib-sample.war</deployable>
 							<deployable>${project.build.directory}/deployables/databinding.war</deployable>
 						</deployables>
