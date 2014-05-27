@@ -59,8 +59,8 @@
     <tomcat.sandbox.pwd>phoenix123</tomcat.sandbox.pwd>
     <tomcat.sandbox.manager.url>${tomcat.manager.url.v7}</tomcat.sandbox.manager.url>
 
-    <!-- Sandbox Tomcat configuration for QTP tests -->
-    <qtp.tomcat.sandbox.url>http://veui5test:8081</qtp.tomcat.sandbox.url>
+    <!-- Sandbox Tomcat configuration for Visual tests -->
+    <visual.tomcat.sandbox.url>http://veui5test:8081</visual.tomcat.sandbox.url>
 
   </properties>
 
@@ -456,16 +456,16 @@
 
 
     <!-- ******************************************************************* -->
-    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - Test Server                -->
     <!-- ******************************************************************* -->
 
     <profile>
 
-      <id>housekeeping-qtp</id>
+      <id>housekeeping-visual</id>
 
       <activation>
         <property>
-          <name>housekeeping-qtp</name>
+          <name>housekeeping-visual</name>
           <value>true</value>
         </property>
       </activation>
@@ -476,7 +476,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>${visual.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
@@ -498,58 +498,6 @@
                   <version>${sap.ui5.version}</version>
                   <contextPath>demokit</contextPath>
                 </deployable>
-              </deployables>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-
-    </profile>
-
-
-    <!-- ******************************************************************* -->
-    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
-    <!-- ******************************************************************* -->
-
-    <profile>
-
-      <id>housekeeping-qtp-legacy</id>
-
-      <activation>
-        <property>
-          <name>housekeeping-qtp-legacy</name>
-          <value>true</value>
-        </property>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.sap.ui5.tools.maven</groupId>
-            <artifactId>maven-tomcat-plugin</artifactId>
-            <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
-              <skipDeploy>false</skipDeploy>
-              <skipUndeploy>false</skipUndeploy>
-              <deployables>
-                <deployable>
-                  <groupId>com.sap.ui5.test</groupId>
-                  <artifactId>databinding</artifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <contextPath>databinding-${sap.ui5.version}</contextPath>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>uilib-sample</artifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <contextPath>uilib-sample-${sap.ui5.version}</contextPath>
-                </deployable>
-                <deployable>
-                  <groupId>com.sap.ui5</groupId>
-                  <artifactId>demokit</artifactId>
-                  <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
-                  <contextPath>demokit-${sap.ui5.version}</contextPath>
-                </deployable>                
               </deployables>
             </configuration>
           </plugin>
@@ -910,12 +858,12 @@
 
 
     <!-- ******************************************************************* -->
-    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - QTP Test Server                -->
+    <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - Test Server                -->
     <!-- ******************************************************************* -->
 
     <profile>
 
-      <id>housekeeping-patch-qtp</id>
+      <id>housekeeping-patch-visual</id>
 
       <build>
         <plugins>
@@ -923,7 +871,7 @@
             <groupId>com.sap.ui5.tools.maven</groupId>
             <artifactId>maven-tomcat-plugin</artifactId>
             <configuration>
-              <remoteTomcatManagerUrl>${qtp.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
+              <remoteTomcatManagerUrl>${visual.tomcat.sandbox.url}${tomcat.sandbox.manager.url}</remoteTomcatManagerUrl>
               <skipDeploy>false</skipDeploy>
               <skipUndeploy>false</skipUndeploy>
               <deployables>
