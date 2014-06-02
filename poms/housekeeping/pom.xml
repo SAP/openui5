@@ -455,6 +455,56 @@
     </profile>
 
 
+    <!-- **************************************************************************************** -->
+    <!-- HOUSEKEEPING: VEUI5INFRA (Walldorf) Launchpad parts outside of the Distribution Layer    -->
+    <!-- **************************************************************************************** -->
+
+    <profile>
+
+      <id>housekeeping-launchpad</id>
+
+      <activation>
+        <property>
+          <name>housekeeping-launchpad</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.sap.ui5.tools.maven</groupId>
+            <artifactId>maven-tomcat-plugin</artifactId>
+            <configuration>
+              <skipDeploy>false</skipDeploy>
+              <skipUndeploy>false</skipUndeploy>
+              <deployables>
+                <deployable>
+                  <groupId>com.sap.ushell</groupId>
+                  <artifactId>ushell</artifactId>
+                  <version>[1.0.0,)</version>
+                  <classifier>opt</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ushell</groupId>
+                  <artifactId>ushell_gwa</artifactId>
+                  <version>[1.0.0,)</version>
+                  <classifier>opt</classifier>
+                </deployable>
+                <deployable>
+                  <groupId>com.sap.ui2.srvc</groupId>
+                  <artifactId>services</artifactId>
+                  <version>[1.0.0,)</version>
+                </deployable>
+              </deployables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
+    </profile>
+    
+    
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - Test Server                -->
     <!-- ******************************************************************* -->
