@@ -417,6 +417,12 @@
 		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
 		<profile>
 			<id>master-deployment</id>
+			<activation>
+				<property>
+					<name>deployMaster</name>
+					<value>true</value>
+				</property>
+			</activation>
 			<properties>
 				<branch>master</branch>
 				<versionAlias>snapshot</versionAlias>
