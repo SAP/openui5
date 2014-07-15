@@ -6,8 +6,8 @@
         "classifier": "${sapui5sdk.classifier}",
         "type": "${sapui5sdk.type}"
     },
-    "authenticationMethod": "none",
     "welcomeFile": "index.html",
+    "authenticationMethod": "none",
     "routes": [
         {
             "path": "/resources",

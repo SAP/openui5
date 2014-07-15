@@ -1,0 +1,14 @@
+{
+  "welcomeFile": "index.html",
+  "authenticationMethod": "none",
+  "routes": [
+    {
+      "path": "/",
+      "target": {
+        "type": "destination",
+        "name": "ui5-snapshot"
+      },
+      "description": "SAPUI5 CDN (Runtime) - Version Alias: ${versionAlias}"
+    }
+  ]
+}

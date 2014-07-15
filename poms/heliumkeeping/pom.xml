@@ -15,7 +15,7 @@
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4</version>
 	</parent>
 
 
@@ -48,24 +48,30 @@
 		<username></username>
 		<password></password>
 		<email></email>
+		<branch></branch>
 		<version></version>
+		<versionAlias></versionAlias>
 		<skipCreate>true</skipCreate>
 		<skipCreateVersion>true</skipCreateVersion>
 		<skipActivateVersion>true</skipActivateVersion>
 	
 		<!-- SAPUI5 coordinates -->
 		<sapui5.application>sapui5</sapui5.application>
+		<sapui5.application.dir>${sapui5.application}</sapui5.application.dir>
 		<sapui5.groupId>com.sap.ui5.dist</sapui5.groupId>
 		<sapui5.artifactId>sapui5-dist</sapui5.artifactId>
 		<sapui5.version>${version}</sapui5.version>
+		<sapui5.versionAlias>${versionAlias}</sapui5.versionAlias>
 		<sapui5.classifier>static</sapui5.classifier>
 		<sapui5.type>zip</sapui5.type>
 		
 		<!-- SAPUI5 SDK coordinates -->
 		<sapui5sdk.application>sapui5sdk</sapui5sdk.application>
+		<sapui5sdk.application.dir>${sapui5sdk.application}</sapui5sdk.application.dir>
 		<sapui5sdk.groupId>${sapui5.groupId}</sapui5sdk.groupId>
 		<sapui5sdk.artifactId>sapui5-sdk-dist</sapui5sdk.artifactId>
 		<sapui5sdk.version>${version}</sapui5sdk.version>
+		<sapui5sdk.versionAlias>${versionAlias}</sapui5sdk.versionAlias>
 		<sapui5sdk.classifier>${sapui5.classifier}</sapui5sdk.classifier>
 		<sapui5sdk.type>${sapui5.type}</sapui5sdk.type>
 
@@ -129,6 +135,7 @@
 						<configuration>
 							<application>${sapui5.application}</application>
 							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					<execution>
@@ -140,6 +147,7 @@
 						<configuration>
 							<application>${sapui5sdk.application}</application>
 							<applicationVersion>${sapui5sdk.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					
@@ -153,6 +161,7 @@
 						<configuration>
 							<application>${sapui5.application}</application>
 							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					<execution>
@@ -164,6 +173,7 @@
 						<configuration>
 							<application>${sapui5sdk.application}</application>
 							<applicationVersion>${sapui5sdk.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					
@@ -177,6 +187,7 @@
 						<configuration>
 							<application>${sapui5.application}</application>
 							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 							<skip>${skipCreateVersion}</skip>
 						</configuration>
 					</execution>
@@ -189,6 +200,7 @@
 						<configuration>
 							<application>${sapui5sdk.application}</application>
 							<applicationVersion>${sapui5sdk.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
 							<skip>${skipCreateVersion}</skip>
 						</configuration>
 					</execution>
@@ -205,6 +217,7 @@
 						<configuration>
 							<application>${sapui5.application}</application>
 							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
@@ -219,6 +232,7 @@
 						<configuration>
 							<application>${sapui5sdk.application}</application>
 							<applicationVersion>${sapui5sdk.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
 							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
@@ -230,105 +244,13 @@
 					<username>${username}</username>
 					<password>${password}</password>
 					<gitEmail>${email}</gitEmail>
+					<gitBranch>${branch}</gitBranch>
 					<httpsProxyHost>proxy</httpsProxyHost>
 					<httpsProxyPort>8080</httpsProxyPort>
 					<httpsNonProxyHosts>localhost,*sap.corp</httpsNonProxyHosts>
 				</configuration>
 			</plugin>
 			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>unpack-sapui5</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${sapui5.groupId}</groupId>
-									<artifactId>${sapui5.artifactId}</artifactId>
-									<version>${sapui5.version}</version>
-									<classifier>${sapui5.classifier}</classifier>
-									<type>${sapui5.type}</type>
-									<excludes>
-										index.html,
-										css/**,
-										res/**,
-										discovery/**,
-										test-resources/**,
-										resources/testsuite/**,
-										resources/sap-ui5.js,
-										resources/sap-ui5-dbg.js,
-										resources/sap-ui-core-lean.js,
-										resources/sap-ui-core-lean-dbg.js,
-										resources/sap-ui-testenv.js,
-										resources/sap-ui-testenv-dbg.js,
-										resources/jquery-*.js,
-										resources/*-all.js,
-										resources/*-all-dbg.js,
-										resources/**/library.dependencies.json,
-										resources/**/library.dependencies.xml,
-										resources/**/library.properties,
-										resources/**/library-all.js,
-										resources/**/library-all-dbg.js,
-										resources/**/themes/base/img-RTL/**,
-										resources/**/themes/sap_platinum/**,
-										resources/**/themes/sap_ux/**,
-										resources/**/themes/simple/**,
-										resources/**/themes/advanced/**,
-										resources/**/*.control,
-										resources/**/*.interface,
-										resources/**/*.type,
-										resources/**/*.type.off,
-										resources/sap/ui/test/**
-									</excludes>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/${sapui5.application}</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					<execution>
-						<id>unpack-sapui5sdk</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>${sapui5sdk.groupId}</groupId>
-									<artifactId>${sapui5sdk.artifactId}</artifactId>
-									<version>${sapui5sdk.version}</version>
-									<classifier>${sapui5sdk.classifier}</classifier>
-									<type>${sapui5sdk.type}</type>
-									<includes>
-										*.*,
-										content/**,
-										discovery/**,
-										docs/**,
-										js/**,
-										test-resources/**,
-										theme/**,
-										resources/sap/fiori/**,
-										resources/sap/ui/demokit/**,
-										resources/**/.library
-									</includes>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/${sapui5sdk.application}</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -343,7 +265,7 @@
 							<outputDirectory>${project.build.directory}/${sapui5.application}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/src/main/apps/${sapui5.application}</directory>
+									<directory>${basedir}/src/main/apps/${sapui5.application.dir}</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
@@ -359,7 +281,7 @@
 							<outputDirectory>${project.build.directory}/${sapui5sdk.application}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>${basedir}/src/main/apps/${sapui5sdk.application}</directory>
+									<directory>${basedir}/src/main/apps/${sapui5sdk.application.dir}</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
@@ -374,6 +296,136 @@
 		</plugins>
 		
 	</build>
+	
+	
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+	
+		<!-- default profile used to extract sapui5/sapui5sdk for upload into Git repo -->
+		<profile>
+			<id>default-deployment</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			
+			<build>
+			
+				<plugins>
+			
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack-sapui5</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${sapui5.groupId}</groupId>
+											<artifactId>${sapui5.artifactId}</artifactId>
+											<version>${sapui5.version}</version>
+											<classifier>${sapui5.classifier}</classifier>
+											<type>${sapui5.type}</type>
+											<excludes>
+												index.html,
+												css/**,
+												res/**,
+												discovery/**,
+												test-resources/**,
+												resources/testsuite/**,
+												resources/sap-ui5.js,
+												resources/sap-ui5-dbg.js,
+												resources/sap-ui-core-lean.js,
+												resources/sap-ui-core-lean-dbg.js,
+												resources/sap-ui-testenv.js,
+												resources/sap-ui-testenv-dbg.js,
+												resources/jquery-*.js,
+												resources/*-all.js,
+												resources/*-all-dbg.js,
+												resources/**/library.dependencies.json,
+												resources/**/library.dependencies.xml,
+												resources/**/library.properties,
+												resources/**/library-all.js,
+												resources/**/library-all-dbg.js,
+												resources/**/themes/base/img-RTL/**,
+												resources/**/themes/sap_platinum/**,
+												resources/**/themes/sap_ux/**,
+												resources/**/themes/simple/**,
+												resources/**/themes/advanced/**,
+												resources/**/*.control,
+												resources/**/*.interface,
+												resources/**/*.type,
+												resources/**/*.type.off,
+												resources/sap/ui/test/**
+											</excludes>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/${sapui5.application}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+								</configuration>
+							</execution>
+							<execution>
+								<id>unpack-sapui5sdk</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${sapui5sdk.groupId}</groupId>
+											<artifactId>${sapui5sdk.artifactId}</artifactId>
+											<version>${sapui5sdk.version}</version>
+											<classifier>${sapui5sdk.classifier}</classifier>
+											<type>${sapui5sdk.type}</type>
+											<includes>
+												*.*,
+												content/**,
+												discovery/**,
+												docs/**,
+												js/**,
+												test-resources/**,
+												theme/**,
+												resources/sap/fiori/**,
+												resources/sap/ui/demokit/**,
+												resources/**/.library
+											</includes>
+										</artifactItem>
+									</artifactItems>
+									<outputDirectory>${project.build.directory}/${sapui5sdk.application}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					
+				</plugins>
+				
+			</build>
+			
+		</profile>
+	
+		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
+		<profile>
+			<id>master-deployment</id>
+			<properties>
+				<branch>master</branch>
+				<versionAlias>snapshot</versionAlias>
+				<sapui5.application.dir>${sapui5.application}-master</sapui5.application.dir>
+				<sapui5sdk.application.dir>${sapui5sdk.application}-master</sapui5sdk.application.dir>
+			</properties>
+		</profile>
+	
+	</profiles>
 
 
 </project>
