@@ -6,9 +6,9 @@
       "path": "/",
       "target": {
         "type": "destination",
-        "name": "ui5-snapshot"
+        "name": "ui5sdk-snapshot"
       },
-      "description": "SAPUI5 CDN (Runtime) - Version Alias: ${versionAlias}"
+      "description": "SAPUI5 SDK (incl. CDN) - Version Alias: ${versionAlias}"
     }
   ]
 }
