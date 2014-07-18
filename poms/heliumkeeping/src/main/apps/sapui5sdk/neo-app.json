@@ -15,9 +15,10 @@
               "type": "application",
               "account":"${account}",
               "name": "${sapui5.application}",
-              "version": "${sapui5.version}"
+              "version": "${sapui5.version}",
+              "preferLocal": true
             },
-            "description": "SAPUI5 SDK"
+            "description": "SAPUI5 SDK (incl. CDN)"
         }
     ],
     "cacheControl": [{
