@@ -140,8 +140,8 @@
 						</goals>
 						<configuration>
 							<application>${sapui5sdk.application}</application>
-							<applicationVersion>${sapui5sdk.version}</applicationVersion>
-							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
+							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					
@@ -166,8 +166,8 @@
 						</goals>
 						<configuration>
 							<application>${sapui5sdk.application}</application>
-							<applicationVersion>${sapui5sdk.version}</applicationVersion>
-							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
+							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 						</configuration>
 					</execution>
 					
@@ -193,8 +193,8 @@
 						</goals>
 						<configuration>
 							<application>${sapui5sdk.application}</application>
-							<applicationVersion>${sapui5sdk.version}</applicationVersion>
-							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
+							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 							<skip>${skipCreateVersion}</skip>
 						</configuration>
 					</execution>
@@ -225,8 +225,8 @@
 						</goals>
 						<configuration>
 							<application>${sapui5sdk.application}</application>
-							<applicationVersion>${sapui5sdk.version}</applicationVersion>
-							<applicationVersionAlias>${sapui5sdk.versionAlias}</applicationVersionAlias>
+							<applicationVersion>${sapui5.version}</applicationVersion>
+							<applicationVersionAlias>${sapui5.versionAlias}</applicationVersionAlias>
 							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
