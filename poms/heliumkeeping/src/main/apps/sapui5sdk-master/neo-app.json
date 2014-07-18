@@ -1,14 +1,16 @@
 {
-  "welcomeFile": "index.html",
-  "authenticationMethod": "none",
-  "routes": [
-    {
-      "path": "/",
-      "target": {
-        "type": "destination",
-        "name": "ui5sdk-snapshot"
-      },
-      "description": "SAPUI5 SDK (Demokit) - Version Alias: ${versionAlias}"
-    }
-  ]
+    "welcomeFile": "index.html",
+    "authenticationMethod": "none",
+    "routes": [
+        {
+            "path": "/",
+            "target": {
+              "type": "application",
+              "account":"${account}",
+              "name": "${sapui5.application}",
+              "version": "${sapui5.version}"
+            },
+            "description": "SAPUI5 SDK"
+        }
+    ]
 }

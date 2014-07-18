@@ -55,25 +55,19 @@
 		<skipCreateVersion>true</skipCreateVersion>
 		<skipActivateVersion>true</skipActivateVersion>
 	
-		<!-- SAPUI5 coordinates -->
+		<!-- SAPUI5 coordinates (will use the SDK for the sapui5 app) -->
 		<sapui5.application>sapui5</sapui5.application>
 		<sapui5.application.dir>${sapui5.application}</sapui5.application.dir>
 		<sapui5.groupId>com.sap.ui5.dist</sapui5.groupId>
-		<sapui5.artifactId>sapui5-dist</sapui5.artifactId>
+		<sapui5.artifactId>sapui5-sdk-dist</sapui5.artifactId>
 		<sapui5.version>${version}</sapui5.version>
 		<sapui5.versionAlias>${versionAlias}</sapui5.versionAlias>
 		<sapui5.classifier>static</sapui5.classifier>
 		<sapui5.type>zip</sapui5.type>
 		
-		<!-- SAPUI5 SDK coordinates -->
+		<!-- SAPUI5 SDK coordinates (deprecated) -->
 		<sapui5sdk.application>sapui5sdk</sapui5sdk.application>
 		<sapui5sdk.application.dir>${sapui5sdk.application}</sapui5sdk.application.dir>
-		<sapui5sdk.groupId>${sapui5.groupId}</sapui5sdk.groupId>
-		<sapui5sdk.artifactId>sapui5-sdk-dist</sapui5sdk.artifactId>
-		<sapui5sdk.version>${version}</sapui5sdk.version>
-		<sapui5sdk.versionAlias>${versionAlias}</sapui5sdk.versionAlias>
-		<sapui5sdk.classifier>${sapui5.classifier}</sapui5sdk.classifier>
-		<sapui5sdk.type>${sapui5.type}</sapui5sdk.type>
 
 	</properties>
 
@@ -334,11 +328,7 @@
 											<classifier>${sapui5.classifier}</classifier>
 											<type>${sapui5.type}</type>
 											<excludes>
-												index.html,
-												css/**,
-												res/**,
-												discovery/**,
-												test-resources/**,
+												.index/**,
 												resources/testsuite/**,
 												resources/sap-ui5.js,
 												resources/sap-ui5-dbg.js,
@@ -354,53 +344,14 @@
 												resources/**/library.properties,
 												resources/**/library-all.js,
 												resources/**/library-all-dbg.js,
-												resources/**/themes/base/img-RTL/**,
+												resources/**/themes/base/img-RTL/**, <!-- base images are necessary for Fiori Launchpad icons -->
 												resources/**/themes/sap_platinum/**,
 												resources/**/themes/sap_ux/**,
-												resources/**/themes/simple/**,
-												resources/**/themes/advanced/**,
-												resources/**/*.control,
-												resources/**/*.interface,
-												resources/**/*.type,
-												resources/**/*.type.off,
-												resources/sap/ui/test/**
+												resources/**/*.type.off
 											</excludes>
 										</artifactItem>
 									</artifactItems>
 									<outputDirectory>${project.build.directory}/${sapui5.application}</outputDirectory>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>true</overWriteSnapshots>
-								</configuration>
-							</execution>
-							<execution>
-								<id>unpack-sapui5sdk</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>${sapui5sdk.groupId}</groupId>
-											<artifactId>${sapui5sdk.artifactId}</artifactId>
-											<version>${sapui5sdk.version}</version>
-											<classifier>${sapui5sdk.classifier}</classifier>
-											<type>${sapui5sdk.type}</type>
-											<includes>
-												*.*,
-												content/**,
-												discovery/**,
-												docs/**,
-												js/**,
-												test-resources/**,
-												theme/**,
-												resources/sap/fiori/**,
-												resources/sap/ui/demokit/**,
-												resources/**/.library
-											</includes>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>${project.build.directory}/${sapui5sdk.application}</outputDirectory>
 									<overWriteReleases>false</overWriteReleases>
 									<overWriteSnapshots>true</overWriteSnapshots>
 								</configuration>
