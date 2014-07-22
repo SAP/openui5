@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 15,
+    "title": "Matchday 15",
+    "start_at": "2014/06/26",
+    "end_at": "2014/06/26"
+  },
+  "games": [
+    {
+      "team1_key": "usa",
+      "team1_title": "United States",
+      "team1_code": "USA",
+      "team2_key": "ger",
+      "team2_title": "Germany",
+      "team2_code": "GER",
+      "play_at": "2014/06/26",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "por",
+      "team1_title": "Portugal",
+      "team1_code": "POR",
+      "team2_key": "gha",
+      "team2_title": "Ghana",
+      "team2_code": "GHA",
+      "play_at": "2014/06/26",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "kor",
+      "team1_title": "South Korea",
+      "team1_code": "KOR",
+      "team2_key": "bel",
+      "team2_title": "Belgium",
+      "team2_code": "BEL",
+      "play_at": "2014/06/26",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "alg",
+      "team1_title": "Algeria",
+      "team1_code": "ALG",
+      "team2_key": "rus",
+      "team2_title": "Russia",
+      "team2_code": "RUS",
+      "play_at": "2014/06/26",
+      "score1": 1,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+}

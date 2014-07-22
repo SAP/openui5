@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 4,
+    "title": "Matchday 4",
+    "start_at": "2014/06/15",
+    "end_at": "2014/06/15"
+  },
+  "games": [
+    {
+      "team1_key": "sui",
+      "team1_title": "Switzerland",
+      "team1_code": "SUI",
+      "team2_key": "ecu",
+      "team2_title": "Ecuador",
+      "team2_code": "ECU",
+      "play_at": "2014/06/15",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "fra",
+      "team1_title": "France",
+      "team1_code": "FRA",
+      "team2_key": "hon",
+      "team2_title": "Honduras",
+      "team2_code": "HON",
+      "play_at": "2014/06/15",
+      "score1": 3,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "arg",
+      "team1_title": "Argentina",
+      "team1_code": "ARG",
+      "team2_key": "bih",
+      "team2_title": "Bosnia-Herzegovina",
+      "team2_code": "BIH",
+      "play_at": "2014/06/15",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

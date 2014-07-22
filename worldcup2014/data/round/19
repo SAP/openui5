@@ -1,0 +1,29 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 19,
+    "title": "Match for third place",
+    "start_at": "2014/07/12",
+    "end_at": "2014/07/12"
+  },
+  "games": [
+    {
+      "team1_key": "bra",
+      "team1_title": "Brazil",
+      "team1_code": "BRA",
+      "team2_key": "ned",
+      "team2_title": "Netherlands",
+      "team2_code": "NED",
+      "play_at": "2014/07/12",
+      "score1": 0,
+      "score2": 3,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

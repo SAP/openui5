@@ -1,0 +1,29 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 1,
+    "title": "Matchday 1",
+    "start_at": "2014/06/12",
+    "end_at": "2014/06/12"
+  },
+  "games": [
+    {
+      "team1_key": "bra",
+      "team1_title": "Brazil",
+      "team1_code": "BRA",
+      "team2_key": "cro",
+      "team2_title": "Croatia",
+      "team2_code": "CRO",
+      "play_at": "2014/06/12",
+      "score1": 3,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

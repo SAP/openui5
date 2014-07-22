@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 5,
+    "title": "Matchday 5",
+    "start_at": "2014/06/16",
+    "end_at": "2014/06/16"
+  },
+  "games": [
+    {
+      "team1_key": "irn",
+      "team1_title": "Iran",
+      "team1_code": "IRN",
+      "team2_key": "nga",
+      "team2_title": "Nigeria",
+      "team2_code": "NGA",
+      "play_at": "2014/06/16",
+      "score1": 0,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "ger",
+      "team1_title": "Germany",
+      "team1_code": "GER",
+      "team2_key": "por",
+      "team2_title": "Portugal",
+      "team2_code": "POR",
+      "play_at": "2014/06/16",
+      "score1": 4,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "gha",
+      "team1_title": "Ghana",
+      "team1_code": "GHA",
+      "team2_key": "usa",
+      "team2_title": "United States",
+      "team2_code": "USA",
+      "play_at": "2014/06/16",
+      "score1": 1,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

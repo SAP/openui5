@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 6,
+    "title": "Matchday 6",
+    "start_at": "2014/06/17",
+    "end_at": "2014/06/17"
+  },
+  "games": [
+    {
+      "team1_key": "bel",
+      "team1_title": "Belgium",
+      "team1_code": "BEL",
+      "team2_key": "alg",
+      "team2_title": "Algeria",
+      "team2_code": "ALG",
+      "play_at": "2014/06/17",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "rus",
+      "team1_title": "Russia",
+      "team1_code": "RUS",
+      "team2_key": "kor",
+      "team2_title": "South Korea",
+      "team2_code": "KOR",
+      "play_at": "2014/06/17",
+      "score1": 1,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "bra",
+      "team1_title": "Brazil",
+      "team1_code": "BRA",
+      "team2_key": "mex",
+      "team2_title": "Mexico",
+      "team2_code": "MEX",
+      "play_at": "2014/06/17",
+      "score1": 0,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

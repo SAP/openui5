@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 3,
+    "title": "Matchday 3",
+    "start_at": "2014/06/14",
+    "end_at": "2014/06/14"
+  },
+  "games": [
+    {
+      "team1_key": "col",
+      "team1_title": "Colombia",
+      "team1_code": "COL",
+      "team2_key": "gre",
+      "team2_title": "Greece",
+      "team2_code": "GRE",
+      "play_at": "2014/06/14",
+      "score1": 3,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "civ",
+      "team1_title": "Côte d'Ivoire",
+      "team1_code": "CIV",
+      "team2_key": "jpn",
+      "team2_title": "Japan",
+      "team2_code": "JPN",
+      "play_at": "2014/06/14",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "uru",
+      "team1_title": "Uruguay",
+      "team1_code": "URU",
+      "team2_key": "crc",
+      "team2_title": "Costa Rica",
+      "team2_code": "CRC",
+      "play_at": "2014/06/14",
+      "score1": 1,
+      "score2": 3,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "eng",
+      "team1_title": "England",
+      "team1_code": "ENG",
+      "team2_key": "ita",
+      "team2_title": "Italy",
+      "team2_code": "ITA",
+      "play_at": "2014/06/14",
+      "score1": 1,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 7,
+    "title": "Matchday 7",
+    "start_at": "2014/06/18",
+    "end_at": "2014/06/18"
+  },
+  "games": [
+    {
+      "team1_key": "cmr",
+      "team1_title": "Cameroon",
+      "team1_code": "CMR",
+      "team2_key": "cro",
+      "team2_title": "Croatia",
+      "team2_code": "CRO",
+      "play_at": "2014/06/18",
+      "score1": 0,
+      "score2": 4,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "esp",
+      "team1_title": "Spain",
+      "team1_code": "ESP",
+      "team2_key": "chi",
+      "team2_title": "Chile",
+      "team2_code": "CHI",
+      "play_at": "2014/06/18",
+      "score1": 0,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "aus",
+      "team1_title": "Australia",
+      "team1_code": "AUS",
+      "team2_key": "ned",
+      "team2_title": "Netherlands",
+      "team2_code": "NED",
+      "play_at": "2014/06/18",
+      "score1": 2,
+      "score2": 3,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

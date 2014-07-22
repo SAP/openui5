@@ -1,0 +1,59 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 9,
+    "title": "Matchday 9",
+    "start_at": "2014/06/20",
+    "end_at": "2014/06/20"
+  },
+  "games": [
+    {
+      "team1_key": "ita",
+      "team1_title": "Italy",
+      "team1_code": "ITA",
+      "team2_key": "crc",
+      "team2_title": "Costa Rica",
+      "team2_code": "CRC",
+      "play_at": "2014/06/20",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "sui",
+      "team1_title": "Switzerland",
+      "team1_code": "SUI",
+      "team2_key": "fra",
+      "team2_title": "France",
+      "team2_code": "FRA",
+      "play_at": "2014/06/20",
+      "score1": 2,
+      "score2": 5,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "hon",
+      "team1_title": "Honduras",
+      "team1_code": "HON",
+      "team2_key": "ecu",
+      "team2_title": "Ecuador",
+      "team2_code": "ECU",
+      "play_at": "2014/06/20",
+      "score1": 1,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

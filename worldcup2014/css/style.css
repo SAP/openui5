@@ -1,0 +1,34 @@
+.flagList .sapMImg {
+	width: 4.5em;
+	box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+}
+
+.gameListing .score{
+	font-size: 2rem;
+	line-height: 4rem;
+}
+
+.gameListing .flag{
+	width: 4rem;
+	height: 3rem;
+	margin: 0.5rem;
+	box-shadow: 0 0 0.5em rgba(0,0,0,0.5);
+}
+
+.gameListing .team{
+	font-size: 1.5rem;
+	width: 10rem;
+	line-height: 4rem;
+}
+@media (max-width: 1024px){
+	.gameListing .team{
+		font-size:1rem;
+		line-height:3.5rem;
+	}
+	.gameListing .flag{
+		margin:0.5rem 0 0 0 ;
+	}
+	.gameListing .score{
+		line-height:3.5rem;
+	}
+}

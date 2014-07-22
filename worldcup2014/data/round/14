@@ -1,0 +1,74 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 14,
+    "title": "Matchday 14",
+    "start_at": "2014/06/25",
+    "end_at": "2014/06/25"
+  },
+  "games": [
+    {
+      "team1_key": "hon",
+      "team1_title": "Honduras",
+      "team1_code": "HON",
+      "team2_key": "sui",
+      "team2_title": "Switzerland",
+      "team2_code": "SUI",
+      "play_at": "2014/06/25",
+      "score1": 0,
+      "score2": 3,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "ecu",
+      "team1_title": "Ecuador",
+      "team1_code": "ECU",
+      "team2_key": "fra",
+      "team2_title": "France",
+      "team2_code": "FRA",
+      "play_at": "2014/06/25",
+      "score1": 0,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "nga",
+      "team1_title": "Nigeria",
+      "team1_code": "NGA",
+      "team2_key": "arg",
+      "team2_title": "Argentina",
+      "team2_code": "ARG",
+      "play_at": "2014/06/25",
+      "score1": 2,
+      "score2": 3,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "bih",
+      "team1_title": "Bosnia-Herzegovina",
+      "team1_code": "BIH",
+      "team2_key": "irn",
+      "team2_title": "Iran",
+      "team2_code": "IRN",
+      "play_at": "2014/06/25",
+      "score1": 3,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 

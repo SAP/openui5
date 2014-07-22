@@ -1,0 +1,55 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout" controllerName="view.Detail">
+	<Page id="detailPage" title="Selected Round" showNavButton="false" navButtonPress="handleBack">
+		<content>
+			<ObjectHeader title="{rounds>title}">
+				<attributes>
+					<ObjectAttribute text="From {rounds>start_at}" />
+					<ObjectAttribute text="To {rounds>end_at}" />
+				</attributes>
+			</ObjectHeader>
+			<List headerText="Matches" items="{rounds>games}">
+				<items>
+					<CustomListItem type="Navigation" press="onPress"
+						class="gameListing">
+						<layout:Grid
+						width="100%"
+						defaultSpan="L2 M2 S6"
+						containerQuery="true"
+						>
+								<Image
+									src="{path:'rounds>team1_title', formatter:'util.Formatter.getFlagUrl'}"
+									class="flag">
+									<layoutData>
+										<layout:GridData linebreakS="true"/>
+									</layoutData>
+								</Image>
+								<Label text="{rounds>team1_title}" class="team" />
+								<Label
+									text="{parts:[{path:'rounds>score1'},{path:'rounds>score1ot'},{path:'rounds>score1p'},{path:'rounds>score2'},{path:'rounds>score2ot'},{path:'rounds>score2p'}], formatter:'util.Formatter.formatScore'}"
+									class="score">
+									<layoutData>
+										<layout:GridData linebreakS="true" spanS="12"/>
+									</layoutData>
+								</Label>
+								<Image
+									src="{path:'rounds>team2_title', formatter:'util.Formatter.getFlagUrl'}"
+									class="flag">
+									<layoutData>
+										<layout:GridData linebreakS="true" visibleL="false" visibleM="false"  visibleS="true"/>
+									</layoutData>
+								</Image>	
+								<Label text="{rounds>team2_title}" class="team" />	
+								<Image
+									src="{path:'rounds>team2_title', formatter:'util.Formatter.getFlagUrl'}"
+									class="flag">
+									<layoutData>
+										<layout:GridData linebreakS="true" visibleS="false" />
+									</layoutData>
+								</Image>	
+						</layout:Grid>
+					</CustomListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

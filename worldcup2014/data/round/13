@@ -1,0 +1,89 @@
+{
+  "event": {
+    "key": "world.2014",
+    "title": "World Cup 2014"
+  },
+  "round": {
+    "pos": 13,
+    "title": "Matchday 13",
+    "start_at": "2014/06/24",
+    "end_at": "2014/06/24"
+  },
+  "games": [
+    {
+      "team1_key": "jpn",
+      "team1_title": "Japan",
+      "team1_code": "JPN",
+      "team2_key": "col",
+      "team2_title": "Colombia",
+      "team2_code": "COL",
+      "play_at": "2014/06/24",
+      "score1": 1,
+      "score2": 4,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "civ",
+      "team1_title": "Côte d'Ivoire",
+      "team1_code": "CIV",
+      "team2_key": "gre",
+      "team2_title": "Greece",
+      "team2_code": "GRE",
+      "play_at": "2014/06/24",
+      "score1": 1,
+      "score2": 2,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "gre",
+      "team1_title": "Greece",
+      "team1_code": "GRE",
+      "team2_key": "civ",
+      "team2_title": "Côte d'Ivoire",
+      "team2_code": "CIV",
+      "play_at": "2014/06/24",
+      "score1": 2,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "ita",
+      "team1_title": "Italy",
+      "team1_code": "ITA",
+      "team2_key": "uru",
+      "team2_title": "Uruguay",
+      "team2_code": "URU",
+      "play_at": "2014/06/24",
+      "score1": 0,
+      "score2": 1,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    },
+    {
+      "team1_key": "crc",
+      "team1_title": "Costa Rica",
+      "team1_code": "CRC",
+      "team2_key": "eng",
+      "team2_title": "England",
+      "team2_code": "ENG",
+      "play_at": "2014/06/24",
+      "score1": 0,
+      "score2": 0,
+      "score1ot": null,
+      "score2ot": null,
+      "score1p": null,
+      "score2p": null
+    }
+  ]
+} 
