@@ -249,6 +249,9 @@ Full-Width Styles
 
 .outer {
   width: 100%;
+}
+
+#main_content_wrap {
   background: #ffffff;
 }
 
