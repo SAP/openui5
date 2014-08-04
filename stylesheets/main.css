@@ -333,10 +333,10 @@ Full-Width Styles
   background: url(../images/sprite_download.png) no-repeat top right;
 }
 
-#main_content_wrap {
+/*#main_content_wrap {
   border-top: 1px solid #F2F2F2;
   border-bottom: 1px solid #F2F2F2;
-}
+}*/
 
 #main_content {
   padding: 12px 0 80px 0;
