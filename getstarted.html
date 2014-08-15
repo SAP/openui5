@@ -9,6 +9,9 @@
 			.resultIE {
 				display:none;
 			}
+			.smaller {
+				font-size:70%;
+			}
 		</style>
 		<!--[if lt IE 10]>
 			<style>
@@ -84,7 +87,7 @@
 			<div id="main_content" class="inner">
 				<h3 id="what-is-it-about">Get the Basics!</h3>
 				<p>
-					You can use SAPUI5 in any HTML file with the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
+					You can use OpenUI5 in any HTML file with the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
 				</p>
 				<pre class="codeblock">
 &lt;script id="sap-ui-bootstrap"
@@ -92,7 +95,8 @@
    data-sap-ui-theme="sap_bluecrystal"
    data-sap-ui-libs="sap.ui.commons"&gt;&lt;/script&gt;</pre>
 				<p>
-					A simple application looks like this:
+					A simple application looks like this:<br>
+					<span class="smaller">(Note: it uses the "sap.ui.commons" control library. To run it with the reduced mobile package of OpenUI5, use the "sap.m" library instead.)</span>
 				</p>
 				<pre class="codeblock">
 &lt;!DOCTYPE html&gt;
@@ -124,12 +128,12 @@
 
 				<div class="result">
 					<p>
-						This is the result
+						This Button is the result:
 					</p>
 					<div id="content">
 					</div>
 					<p>
-						Try it out yourself!
+						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
 						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/8/embed?html,output&height=600px&width=760px">Hello World</a>
@@ -154,7 +158,7 @@
 				<p>Watch training videos on our <a href="https://www.youtube.com/channel/UCOlLpeus2uAJhmxjKHHGTgA">YouTube channel</a>
 				<p>Discuss about OpenUI5 on <a href="http://scn.sap.com/community/developer-center/front-end/content">SCN</a> and <a href="http://stackoverflow.com/questions/tagged/sapui5%20or%20openui5">StackOverflow</a>
 					<p>
-						or look into more examples
+						or look into more examples on jsbin.com:
 						<ul class="download">
 							<li>
 								<a target="_blank" href="http://jsbin.com/openui5-xml-view/7/edit?html,output">UI5 MVC example with JS view</a>
