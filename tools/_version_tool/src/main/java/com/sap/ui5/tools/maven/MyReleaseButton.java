@@ -14,7 +14,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -139,10 +141,12 @@ public class MyReleaseButton {
 
   enum ProcessingTypes {
     RepositoryPaths, VersionWithSnapshot, VersionWithTimestamp, VersionWithQualifier_POM, VersionWithQualifier,
+    ContributorsVersions
   };
 
   static Pattern fromS, fromT, fromQ_POM, fromQ, fromR;
   static String toS, toT, toQ, toR;
+  static Map<Pattern, String> contributorsPatterns = new HashMap<Pattern, String>();
 
   private static void processFile(File file, String path) throws IOException {
     String encoding = UTF8;
@@ -152,6 +156,9 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
       processingTypes.add(ProcessingTypes.VersionWithTimestamp);
+      if (path.contains("uilib-collection")) {
+        processingTypes.add(ProcessingTypes.ContributorsVersions);
+      }
     } else if (file.getName().endsWith(".library")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     } else if (file.getName().endsWith(".target")) {
@@ -174,6 +181,7 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.RepositoryPaths);
     }
+    
 
     if ( !processingTypes.isEmpty() ) {
       CharSequence orig = readFile(file, encoding);
@@ -195,6 +203,9 @@ public class MyReleaseButton {
       }
       if (processingTypes.contains(ProcessingTypes.VersionWithQualifier)) {
         s = fromQ.matcher(s).replaceAll(toQ);
+      }
+      if (processingTypes.contains(ProcessingTypes.ContributorsVersions)) {
+        s = processContributorsVersions(s);
       }
       if (s != orig) {
         String str = (String) s;
@@ -226,10 +237,16 @@ public class MyReleaseButton {
     }
   }
 
+
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String, String[]> diffDescs) throws IOException {
+    return updateVersion(repository, oldVersion, newVersion, null, diffDescs);
+  }
+  
+  
   /**
    * @param args
    */
-  public static int updateVersion(File repository, String oldVersion, String newVersion, Map<String,String[]> diffDescs) throws IOException {
+  public static int updateVersion(File repository, String oldVersion, String newVersion, Properties contributorsVersions, Map<String,String[]> diffDescs) throws IOException {
     File root = repository.getCanonicalFile();
     if (!root.isDirectory()) {
       throw new RuntimeException(
@@ -287,6 +304,9 @@ public class MyReleaseButton {
     } else {
       toT = newOSGiVersion + "</$1.osgi.version>";
     }
+    
+    prepareContributorsPatterns(contributorsVersions);
+    
     // TODO What about target files?
 
     diffs.clear();
@@ -342,7 +362,33 @@ public class MyReleaseButton {
     return diffdiffs;
   }
 
-  public static void main(String[] args) throws IOException {
+
+  private static void prepareContributorsPatterns(Properties contributorsVersions) {
+    contributorsPatterns.clear();
+    if (contributorsVersions == null) {
+      return;
+    }
+    for (Object artifactKey : contributorsVersions.keySet()) {
+      String[] artifact = artifactKey.toString().split(":");
+      // artifact[0] - groupId, artifact[1] - artifactId
+      String propName = !artifact[0].startsWith("com.sap.ui5") ? artifact[0] : artifact[1].contentEquals("vbm") ? "com.sap.ui5.vbm" : "";
+      if (!"".equals(propName)) {
+        // map - pattern => version
+        contributorsPatterns.put(Pattern.compile("(?<=" + propName + ".version>).*(?=</)"), contributorsVersions.getProperty(artifactKey.toString()));
+      }
+    }
+
+  }
+
+
+  private static CharSequence processContributorsVersions(CharSequence s) {
+    for (Entry<Pattern, String> entry : contributorsPatterns.entrySet()) {
+      s = entry.getKey().matcher(s).replaceAll(entry.getValue());
+    }
+    return s;
+  }
+
+	public static void main(String[] args) throws IOException {
     if (args.length < 3) {
       throw new RuntimeException(
           "usage: <root-dir> <from-version> <to-version>");

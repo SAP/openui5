@@ -27,7 +27,7 @@
 	***************************************************************************-->
 
 	<groupId>com.sap.ui5.tools</groupId>
-	<artifactId>infra-tools-reactor</artifactId>
+	<artifactId>version-helper-reactor</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -37,7 +37,7 @@
 	***************************************************************************-->
 
 	<name>${project.artifactId}</name>
-	<description>SAPUI5 Infrastructure Tools Reactor POM</description>
+	<description>SAPUI5 Version Helper Tools Reactor POM</description>
 	
 
 	<!--**************************************************************************
@@ -45,9 +45,7 @@
 	***************************************************************************-->
 
 	<modules>
-		<module>_version_tool</module>
-		<module>_git2p4</module>
-		<module>_version_helper</module>
+		<module>maven-plugin</module>
 	</modules>
 
 </project>

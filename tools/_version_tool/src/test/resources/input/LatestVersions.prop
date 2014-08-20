@@ -1,0 +1,29 @@
+#This is a first versions
+#Wed Sep 03 11:26:13 EEST 2014
+com.sap.ui5.dist\:uilib-collection=1.22.8
+com.sap.ui5\:inbox=1.22.8
+com.sap.portal.ui5\:portal-ui5-ext=1.22.2
+com.sap.ui5\:themelib_sap_bluecrystal=1.22.8
+com.sap.ui5\:richtexteditor=1.22.8
+com.sap.ui5\:themelib_sap_platinum=1.22.8
+com.sap.suite\:suite-ui-commons=1.22.3
+com.sap.collaboration\:collaboration-commons=1.22.3
+com.sap.ui5\:mobile-ext=1.22.8
+com.sap.ui5\:table=1.22.8
+com.sap.ushell\:ushell-lib=1.22.6
+com.sap.ui5\:layout=1.22.8
+com.sap.ui5\:unified=1.22.8
+com.sap.apf\:apf-lib=1.22.2
+com.sap.ui5\:core=1.22.8
+com.sap.ui5\:comp=1.22.8
+com.sap.ca\:scfld.md=1.22.2
+com.sap.ui5\:vbm=1.22.5
+com.sap.smartbusiness\:suite.smartbusiness=1.22.3
+com.sap.ui5\:makit=1.22.8
+com.sap.ui5\:viz=1.22.8
+com.sap.ui5\:mobile=1.22.8
+com.sap.ui5\:ux3=1.22.8
+com.sap.ui5\:commons=1.22.8
+com.sap.ui5\:themelib_sap_goldreflection=1.22.8
+com.sap.ca\:ui=1.22.2
+com.sap.ui5\:uilib-collection=1.22.8

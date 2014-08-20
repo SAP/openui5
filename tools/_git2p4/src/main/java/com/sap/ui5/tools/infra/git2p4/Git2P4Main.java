@@ -1,5 +1,7 @@
 package com.sap.ui5.tools.infra.git2p4;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -24,6 +27,7 @@ import com.sap.ui5.tools.maven.MyReleaseButton;
 
 public class Git2P4Main {
 
+  private static final String TOOLS_VERSION_HELPER_POM = "tools/_version_helper/pom";
   static final GitClient git = new GitClient();
   static final P4Client p4 = new P4Client();
   static final Git2P4 git2p4 = new Git2P4(git, p4);
@@ -190,6 +194,9 @@ public class Git2P4Main {
       }
     }
     
+    //Get versions only for patch release operation 
+    Properties contributorsVersions = op.equals(ReleaseOperation.PatchRelease) ? retrieveLatestVersions(fromVersion) : null;
+        
     Map<String,Map<String,String[]>> suspiciousRepositories = new LinkedHashMap<String,Map<String,String[]>>(); 
     
     for(Mapping repo : mappings) {
@@ -198,7 +205,7 @@ public class Git2P4Main {
       git.checkout("origin/" + branch);
 
       Map<String,String[]> suspiciousChanges = new TreeMap<String,String[]>();
-      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, suspiciousChanges);
+      int diffs = MyReleaseButton.updateVersion(repo.gitRepository, fromVersion, toVersion, contributorsVersions, suspiciousChanges);
 
       git.addAll();
 
@@ -249,6 +256,22 @@ public class Git2P4Main {
 
     exitcode = suspiciousRepositories.size();
   }
+
+
+  private static Properties retrieveLatestVersions(String fromVersion) throws IOException, FileNotFoundException {
+    //read latest versions for uilib-collections.pom
+    Version fromV = new Version(fromVersion);
+    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "").toString() + ")";
+    Log.println("Contributors version range: " + versionRange);
+    MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_POM).getAbsoluteFile(), "install", "-DversionOrRange=" + versionRange);
+    File versionFile = new File(".", TOOLS_VERSION_HELPER_POM + "/target/LatestVersions.prop");
+    Log.println("Version properties file: " + versionFile.getAbsolutePath());
+    Properties contributorsVersions = new Properties();
+    contributorsVersions.load(new FileInputStream(versionFile));
+    Log.println("Versions loaded from file: " + contributorsVersions.toString());
+    return contributorsVersions;
+  }
+
 
   static void createVersionTags(String branch, String fromVersion) throws IOException {
     
@@ -674,6 +697,7 @@ public class Git2P4Main {
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
+
     
     // clone & fetch repositories
     for(Mapping repoMapping : mappings) {
