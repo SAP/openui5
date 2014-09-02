@@ -1,0 +1,293 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--************************************************************************ 
+	* POM SECTION: Parent POM Settings 
+	************************************************************************ -->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.4</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<artifactId>ui5-heliumkeeping2</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 - Automated Helium Deployment</name>
+	<description>SAPUI5 - Automated Helium Deployment</description>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- global HANA cloud information (deployment related) -->
+		<landscape></landscape><!-- dispatcher.dev009.jpaas.sapbydesign.com -->
+		<account></account><!-- hcproxy -->
+		<username></username>
+		<password></password>
+		<email></email>
+		<branch></branch>
+		<version></version>
+		<versionAlias></versionAlias>
+		
+		<!-- skip properties for commands -->
+		<skipCreate>true</skipCreate>
+		<skipCreateVersion>true</skipCreateVersion>
+		<skipActivateVersion>true</skipActivateVersion>
+		<skipCopy>false</skipCopy>
+		<skipUnpack>false</skipUnpack>
+	
+		<!-- application to deploy -->
+		<application.name>sapui5preview</application.name>
+		<application.dir>${application}</application.dir>
+		
+		<!-- deployable --> 
+		<deployable.groupId>com.sap.ui5.dist</deployable.groupId>
+		<deployable.artifactId>sapui5-sdk-dist</deployable.artifactId>
+		<deployable.version>${version}</deployable.version>
+		<deployable.versionAlias>${versionAlias}</deployable.versionAlias>
+		<deployable.classifier>static</deployable.classifier>
+		<deployable.type>zip</deployable.type>
+		
+	</properties>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+	
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>nwcloud-maven-plugin</artifactId>
+					<version>1.0.0-SNAPSHOT</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		
+		<plugins>
+		
+			<plugin>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>nwcloud-maven-plugin</artifactId>
+				<executions>
+				
+					<!-- create Helium applications -->
+					<execution>
+						<id>sapui5-helium-create</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-create</goal>
+						</goals>
+						<configuration>
+							<application>${application.name}</application>
+							<skip>${skipCreate}</skip>
+						</configuration>
+					</execution>
+					
+					<!-- prepare the workspaces in the target folder -->
+					<execution>
+						<id>sapui5-helium-prepare</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-prepare</goal>
+						</goals>
+						<configuration>
+							<application>${application.name}</application>
+							<applicationVersion>${deployable.version}</applicationVersion>
+							<applicationVersionAlias>${deployable.versionAlias}</applicationVersionAlias>
+						</configuration>
+					</execution>
+					
+					<!-- uploading the new sources into the Git repository -->
+					<execution>
+						<id>sapui5-helium-upload</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-upload</goal>
+						</goals>
+						<configuration>
+							<application>${application.name}</application>
+							<applicationVersion>${deployable.version}</applicationVersion>
+							<applicationVersionAlias>${deployable.versionAlias}</applicationVersionAlias>
+						</configuration>
+					</execution>
+					
+					<!-- create the versions of the applications -->
+					<execution>
+						<id>sapui5-helium-create-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-create-version</goal>
+						</goals>
+						<configuration>
+							<application>${application.name}</application>
+							<applicationVersion>${deployable.version}</applicationVersion>
+							<applicationVersionAlias>${deployable.versionAlias}</applicationVersionAlias>
+							<skip>${skipCreateVersion}</skip>
+						</configuration>
+					</execution>
+					
+					<!-- activate the versions of the applications -->
+					<execution>
+						<id>sapui5-helium-activate-version</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-activate-version</goal>
+							<goal>helium-stop</goal>
+							<goal>helium-start</goal>
+						</goals>
+						<configuration>
+							<application>${application.name}</application>
+							<applicationVersion>${deployable.version}</applicationVersion>
+							<applicationVersionAlias>${deployable.versionAlias}</applicationVersionAlias>
+							<skip>${skipActivateVersion}</skip>
+						</configuration>
+					</execution>
+					
+				</executions>
+				<configuration>
+					<landscape>${landscape}</landscape>
+					<account>${account}</account>
+					<username>${username}</username>
+					<password>${password}</password>
+					<gitEmail>${email}</gitEmail>
+					<gitBranch>${branch}</gitBranch>
+					<httpsProxyHost>proxy</httpsProxyHost>
+					<httpsProxyPort>8080</httpsProxyPort>
+					<httpsNonProxyHosts>localhost,*sap.corp</httpsNonProxyHosts>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sapui5-copy-resources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${application.name}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/apps/${application.dir}</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<overwrite>true</overwrite>
+							<skip>${skipCopy}</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>unpack-deployable</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${deployable.groupId}</groupId>
+									<artifactId>${deployable.artifactId}</artifactId>
+									<version>${deployable.version}</version>
+									<classifier>${deployable.classifier}</classifier>
+									<type>${deployable.type}</type>
+									<excludes>
+										.index/**,
+										resources/testsuite/**,
+										resources/sap-ui5.js,
+										resources/sap-ui5-dbg.js,
+										resources/sap-ui-core-lean.js,
+										resources/sap-ui-core-lean-dbg.js,
+										resources/sap-ui-testenv.js,
+										resources/sap-ui-testenv-dbg.js,
+										resources/jquery-*.js,
+										resources/*-all.js,
+										resources/*-all-dbg.js,
+										resources/**/library.dependencies.json,
+										resources/**/library.dependencies.xml,
+										resources/**/library.properties,
+										resources/**/library-all.js,
+										resources/**/library-all-dbg.js,
+										resources/**/themes/base/img-RTL/**, <!-- base images are necessary for Fiori Launchpad icons -->
+										resources/**/themes/sap_platinum/**,
+										resources/**/themes/sap_ux/**,
+										resources/**/*.type.off
+									</excludes>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${project.build.directory}/${application.name}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<skip>${skipUnpack}</skip>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+	
+	
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+	
+		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
+		<profile>
+			<id>master-deployment</id>
+			<activation>
+				<property>
+					<name>deployMaster</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<branch>master</branch>
+				<versionAlias>snapshot</versionAlias>
+				<application.name.dir>${application.name}-master</application.name.dir>
+			</properties>
+		</profile>
+	
+	</profiles>
+
+
+</project>
