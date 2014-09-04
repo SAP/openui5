@@ -839,11 +839,13 @@
                   <artifactId>ushell</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
                   <classifier>opt</classifier>
+                  <contextPath>ushell-${sap.ui5.version}</contextPath>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui2.srvc</groupId>
                   <artifactId>services</artifactId>
                   <version>[${sap.ui5.version}-SNAPSHOT,${sap.ui5.version}.9999]</version>
+                  <contextPath>services-${sap.ui5.version}</contextPath>
                 </deployable>
               </deployables>
             </configuration>
