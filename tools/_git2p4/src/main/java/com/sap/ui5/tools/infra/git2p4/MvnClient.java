@@ -19,6 +19,7 @@ public class MvnClient {
       args.add(cmd);
     }
     pb.redirectErrorStream(true);
+    pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
     Log.printf("%s > %s", pb.directory(), pb.command());
 
     long t0 = System.currentTimeMillis();
