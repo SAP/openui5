@@ -194,8 +194,7 @@ public class Git2P4Main {
       }
     }
     
-    //Get versions only for patch release operation 
-    Properties contributorsVersions = op.equals(ReleaseOperation.PatchRelease) ? retrieveLatestVersions(fromVersion) : null;
+    Properties contributorsVersions = retrieveLatestVersions(fromVersion, op);
         
     Map<String,Map<String,String[]>> suspiciousRepositories = new LinkedHashMap<String,Map<String,String[]>>(); 
     
@@ -258,7 +257,11 @@ public class Git2P4Main {
   }
 
 
-  private static Properties retrieveLatestVersions(String fromVersion) throws IOException, FileNotFoundException {
+  private static Properties retrieveLatestVersions(String fromVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
+    //Filter operations to apply to
+    if (!(op.equals(ReleaseOperation.PatchRelease)||op.equals(ReleaseOperation.PatchDevelopment))){
+      return null;
+    }
     //read latest versions for uilib-collections.pom
     Version fromV = new Version(fromVersion);
     String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "").toString() + ")";
@@ -269,6 +272,13 @@ public class Git2P4Main {
     Properties contributorsVersions = new Properties();
     contributorsVersions.load(new FileInputStream(versionFile));
     Log.println("Versions loaded from file: " + contributorsVersions.toString());
+    if (op.equals(ReleaseOperation.PatchDevelopment)){
+      //set all versions to version range
+      Object devRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
+      for (Object key : contributorsVersions.keySet()){
+        contributorsVersions.put(key, devRange);
+      }
+    }
     return contributorsVersions;
   }
 
