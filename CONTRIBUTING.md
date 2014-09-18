@@ -38,26 +38,26 @@ Once you have familiarized with the guidelines, you can go to the [Github issue 
 ### Requirements for a bug report
 
 These eight requirements are the mandatory base of a good bug report:
-1. **Only real bugs**: please do your best to make sure to only report real bugs in OpenUI5! Do not report:
+ 1. **Only real bugs**: please do your best to make sure to only report real bugs in OpenUI5! Do not report:
    * issues caused by application code or any code outside UI5.
    * issues caused by the usage of non-public UI5 methods. Only the public methods listed in the API documentation may be used.
    * something that behaves just different from what you expected. A bug is when something behaves different than specified. When in doubt, ask in a forum.
    * something you do not get to work properly. Use a support forum like stackoverflow to request help.
    * feature requests. Well, this is arguable: critical or easy-to-do enhancement suggestions are welcome, but we do not want to use the issue tracker as wishlist.
-2. No duplicate: you have searched the issue tracker to make sure the bug has not yet been reported
-3. Good summary: the summary should be specific to the issue
-4. Current bug: the bug can be reproduced in the most current version (state the tested version!)
-5. Reproducible bug: there are clear steps to reproduce given. This includes:
+ 2. No duplicate: you have searched the issue tracker to make sure the bug has not yet been reported
+ 3. Good summary: the summary should be specific to the issue
+ 4. Current bug: the bug can be reproduced in the most current version (state the tested version!)
+ 5. Reproducible bug: there are clear steps to reproduce given. This includes:
    * a URL to access the example
    * any required user/password information (do not reveal any credentials that could be mis-used!)
    * detailed and complete step-by-step instructions to reproduce the bug
-6. Precise description:
+ 6. Precise description:
    * precisely state the expected and the actual behavior
    * give information about the used browser/device and its version, if possible also the behavior in other browsers/devices
    * if the bug is about wrong UI appearance, attach a screenshot and mark what is wrong
    * generally give as much additional information as possible. (But find the right balance: don not invest hours for a very obvious and easy to solve issue. When in doubt, give more information.)
-7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
-8. Only one bug per report: open different tickets for different issues
+ 7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
+ 8. Only one bug per report: open different tickets for different issues
 
 You are encouraged use [this template](http://sap.github.io/openui5/bugreport_template.txt).
 
