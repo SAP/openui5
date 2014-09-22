@@ -1,0 +1,1048 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Planet OpenUI5</title>
+		<meta name="generator" content="Planet/2.0 +http://www.planetplanet.org">
+
+		<link rel="alternate" href="http://openui5.org/atom.xml" title="" type="application/atom+xml">
+
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="http://openui5.org/stylesheets/main.css">
+		<link rel="icon" type="image/png" href="http://openui5.org/images/favicon.ico">
+		
+		<script>
+  			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  			ga('create', 'UA-50072417-1', 'sap.github.io');
+			ga('set', 'anonymizeIp', true);
+  			ga('send', 'pageview');
+		</script>
+		<style>
+		/* menu */
+		aside.categories {
+			border-left: 1px solid #666;
+			padding-left: 1rem;
+			margin-top: 1.8rem;
+			float: right;
+			width: 150px;
+		}
+		
+		aside.categories h2 {
+			margin: 0;
+			padding: 0;
+		}
+		
+		aside.categories li {
+			list-style: none;
+			font-weight: bold;
+			padding-left: 0;
+		}
+		
+		/* content */
+		.posts {
+			margin-right: 196px;
+		}
+		
+		/* post */
+		section.post .meta {
+			font-size: 80%;
+			padding-bottom: 1rem;
+		}
+		
+		section.post .meta .source {
+		  white-space: nowrap;
+		  width: 100%;                   
+		  overflow: hidden;
+		  text-overflow:    ellipsis;
+		}
+		section.post h2 {
+			margin-bottom: 0;
+		}
+		section.post p {
+			margin-top: 0;
+			margin-bottom: 12px;
+		}
+
+		section.post .image {
+			margin-right: 1rem;
+			float: left;
+		}
+		section.post .image img {
+			max-width: 300px;
+			max-height: 300px;
+		}
+		
+		section.post .link {
+			font-size: 20px;
+		}
+		
+		section.post .clearPost {
+			clear: left;
+		}
+		
+		.daygroup h4 {
+			margin-bottom: 0px;
+		}
+		
+		.daygroup {
+			position: relative;
+		}
+		
+		/* small screen version  displaying nav above content*/
+		@media screen and (max-width: 800px) {
+			aside.categories {
+				float: inherit;
+				border: 0;
+				padding: 0;
+				width: 100%;
+			}
+			.posts {
+				margin-right: 0;
+			}
+		}
+		
+		.feed {
+			margin-left: 3px;
+			padding: 0 0 0 19px;
+			background: url("../images/feed-icon-14x14.png") no-repeat 0 50%;
+		}
+		
+		.contentOuter {
+			min-height: 400px;
+		}
+		
+		.disclaimer {
+			margin-bottom: 0;
+			font-size: small;
+		}
+		
+		.dateRotate {
+			transform: rotate(-90.0deg);  /* default */
+			-moz-transform: rotate(-90.0deg);  /* FF3.5+ */
+			-o-transform: rotate(-90.0deg);  /* Opera 10.5 */
+			-webkit-transform: rotate(-90.0deg);  /* Saf3.1+, Chrome */
+			filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+			-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+			font-size: 20px;
+			color: #666;
+			position: absolute;
+			left: -155px;
+			top: 137px;
+			width: 250px;
+			text-align: end;
+		}
+		
+		.feedImage {
+            min-width: 200px;
+			max-width: 100%;
+			max-height: 400px;
+			border: 1px solid #ccc;
+		}
+		
+		.channel {
+			margin: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 100%;
+			white-space: nowrap;
+		}
+
+		/* layout fixes to page to make all ui5 pages look the same */
+		html {
+			min-height: 100%;
+		}
+		.ui5logo {
+			margin-bottom: 7px;
+		}
+		</style>
+</head>
+
+
+<body>
+	<!-- HEADER -->
+	<div id="header_wrap" class="outer">
+		<div class="wrap_ie9">
+			<div class="inner">
+				<img src="../images/icotxt_white_220x72_blue_open.png" class="ui5logo" alt="OpenUI5 Logo"/>
+				<h1 id="project_title">
+					<span class="headertitle">OpenUI5. </span>
+					<span class="headertitle">Build once. </span>
+					<span class="headertitle">Run on any device.</span>
+				</h1>
+				<h2 id="project_tagline">
+					<span class="headertitle"><a href="../intro.html">Intro</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../getstarted.html">Get Started</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../download.html">Download</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle">News</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="http://openui5.tumblr.com/">Blog</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../bugreports.html">Report a Bug</a></span>
+				</h2>
+			</div>
+		</div>
+	</div>
+
+	
+	<!-- MAIN CONTENT -->
+	<div id="main_content_wrap" class="contentOuter">
+		<div id="main_content" class="inner">
+			<aside class="categories">
+				<nav class="categories">
+					<h4>Categories</h4>
+					<ul>
+						<li><a href="index.html">What's Hot</a></li>
+						<li><a href="index_recommended.html">Recommended</a></li>
+						<li><a href="index_news.html">News</a></li>
+						<li>&gt; Blogs</li>
+						<li><a href="index_videos.html">Videos</a></li>
+						<li><a href="index_trainings.html">Trainings</a></li>
+						<li><a href="index_events.html">Events</a></li>
+						<li><a href="index_demos.html">Demos</a></li>
+					</ul>
+					<h4>Subscriptions</h4>
+
+					<p class="channel"><a href="http://openui5.tumblr.com/rss" title="subscribe" class="feed"> OpenUI5 Blog</a></p>
+
+					<p class="channel"><a href="http://openui5.blogspot.com/feeds/posts/default" title="subscribe" class="feed"> OpenUI5 Developer</a></p>
+
+					<p class="channel"><a href="http://openui5picks.tumblr.com/tagged/ui5picksnews/rss" title="subscribe" class="feed"> Web Blogs</a></p>
+
+					<p class="channel"><a href="http://openui5picks.tumblr.com/tagged/ui5picksblogs/rss" title="subscribe" class="feed"> openui5picks</a></p>
+
+				</nav>
+			</aside>
+
+			<div class="posts">
+
+
+
+
+
+	<div class="daygroup">
+	<div class="dateRotate">September 22, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5.tumblr.com/post/98143036857">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.tumblr.com/post/98143036857">New features to expect in OpenUI5 1.24</a></h2>
+
+		<div class="meta">Added on September 22, 2014 01:31 PM 
+
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.tumblr.com/post/98143036857">http://openui5.tumblr.com/post/98143036857</a>
+
+        </div></div>
+		<p><img src="https://31.media.tumblr.com/33b00a9927c620f9623f8a1b99a3aa6d/tumblr_inline_ncb054PfrZ1sb8vfp.png" class="feedImage" /><br/><br/>With version 1.22 released a bit more than two months ago, we want to share what you can expect in UI5 version 1.24, which will be available around 15th of October.
+Due to the vacation period...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.tumblr.com/post/98143036857" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">September 08, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-3518524117527391217">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/09/browser-compatibility-matrix.html">Browser Compatibility Matrix</a></h2>
+
+		<div class="meta">Added on September 08, 2014 01:40 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/09/browser-compatibility-matrix.html">http://openui5.blogspot.com/2014/09/browser-compatibility-matrix.html</a>
+
+        </div></div>
+		<p><img src="http://3.bp.blogspot.com/--dYtj7ui86w/VA2JIrfwmhI/AAAAAAAAAz4/fQpvaeIABVE/s1600/BrowserCompatibilityMatrix.png" class="feedImage" /><br/><br/>If you are deploying your new UI5 app for the public, you maybe will run into additional support needs.The reason for this are the UI5 SDK restrictions concerning supported devices. Currently the...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/09/browser-compatibility-matrix.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">August 26, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-3359449556099642679">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/08/using-badges-on-buttons.html">Using Badges on Buttons</a></h2>
+
+		<div class="meta">Added on August 26, 2014 03:06 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/08/using-badges-on-buttons.html">http://openui5.blogspot.com/2014/08/using-badges-on-buttons.html</a>
+
+        </div></div>
+		<p><img src="http://1.bp.blogspot.com/-i09l_3m030U/U_yDmgI6daI/AAAAAAAAAzk/D26BC-bXRcc/s1600/button_badges.png" class="feedImage" /><br/><br/>I needed to add some button notifications (known as badges) to some buttons.The following example uses css styled badges attached to buttons using the custom-data property.Badge NotificationsExplorer...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/08/using-badges-on-buttons.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">August 11, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5.tumblr.com/post/94420670937">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.tumblr.com/post/94420670937">OpenUI5 at OSCON 2014</a></h2>
+
+		<div class="meta">Added on August 11, 2014 08:53 AM 
+
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.tumblr.com/post/94420670937">http://openui5.tumblr.com/post/94420670937</a>
+
+        </div></div>
+		<p><img src="https://31.media.tumblr.com/741c7c26fe212795902d2049aaf97cb3/tumblr_inline_na4vvbrQxJ1sb8vfp.jpg" class="feedImage" /><br/><br/>The OReilly Open Source Convention" in Portland is one of the largest Open Source conferences, with roughly 4000 attendees. So it was the perfect place to spread the word about OpenUI5. Frederic and...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.tumblr.com/post/94420670937" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">July 29, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/97297647570">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.infoworld.com/d/open-source-software/sap-embraces-opens-source-sort-of-247005">SAP embraces opens source - sort of</a></h2>
+
+		<div class="meta">Added on July 29, 2014 12:48 PM , written by <a href="http://www.infoworld.com/author-bios/simon-phipps)">Simon Phipps</a>
+ <br/><div class="source">Source: 
+
+            <a href="http://www.infoworld.com/d/open-source-software/sap-embraces-opens-source-sort-of-247005">http://www.infoworld.com/d/open-source-software/sap-embraces-opens-source-sort-of-247005</a>
+
+        </div></div>
+		<p>Years of slow change are finally leading to new openness at SAP, at least in connection with SAP HANA. At the annual OSCON (Open Source Convention) last week, those stuck in a worldview of open...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.infoworld.com/d/open-source-software/sap-embraces-opens-source-sort-of-247005" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">July 22, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/97297424175">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://thenewstack.io/saps-openui5-javascript-library-is-surprisingly-well-done-comparable-to-angularjs/">SAPs OpenUI5 JavaScript Library is Surprisingly Well Done, Comparable to AngularJS</a></h2>
+
+		<div class="meta">Added on July 22, 2014 12:42 PM , written by <a href="http://thenewstack.io/author/chrisdawson/)">Chris Dawson</a>
+ <br/><div class="source">Source: 
+
+            <a href="http://thenewstack.io/saps-openui5-javascript-library-is-surprisingly-well-done-comparable-to-angularjs/">http://thenewstack.io/saps-openui5-javascript-library-is-surprisingly-well-done-comparable-to-angularjs/</a>
+
+        </div></div>
+		<p>I really wanted to hate the SAP OpenUI5 Javascript library introduction at OSCON yesterday. I’m an AngularJS zealot (and I love the brilliance of ReactJS). The SAP team started off with such...</p>
+		<div class="clearPost"/>
+
+            <a href="http://thenewstack.io/saps-openui5-javascript-library-is-surprisingly-well-done-comparable-to-angularjs/" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">July 16, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/97285673170">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.tumblr.com/post/91942465212/new-release-openui5-1-22">New OpenUI5 version 1.22 released!</a></h2>
+
+		<div class="meta">Added on July 16, 2014 05:50 PM 
+
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.tumblr.com/post/91942465212/new-release-openui5-1-22">http://openui5.tumblr.com/post/91942465212/new-release-openui5-1-22</a>
+
+        </div></div>
+		<p>UI5 developers have been very busy during the last three months to bring you a huge load of new features in version 1.22. There are a couple new controls, mainly in the sap.m library, like a ComboBox,...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.tumblr.com/post/91942465212/new-release-openui5-1-22" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">May 14, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-2727011500166867544">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/03/openui5-1189-available.html">OpenUI5 1.18.9 available</a></h2>
+
+		<div class="meta">Added on May 14, 2014 09:01 AM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/03/openui5-1189-available.html">http://openui5.blogspot.com/2014/03/openui5-1189-available.html</a>
+
+        </div></div>
+		<p>The OpenUI5 SDK has been updated to the lastest release (even newer than SAPUI5 SDK 1.18.6) and is available for download!To find out was has changed have a look into the release notes.Hopefully for...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/03/openui5-1189-available.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-709898606807628087">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/03/google-chrome-and-chrome-canary-side-by.html">Google Chrome and Chrome Canary side-by-side</a></h2>
+
+		<div class="meta">Added on May 14, 2014 09:01 AM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/03/google-chrome-and-chrome-canary-side-by.html">http://openui5.blogspot.com/2014/03/google-chrome-and-chrome-canary-side-by.html</a>
+
+        </div></div>
+		<p><img src="http://4.bp.blogspot.com/-NiMVSkQRyQU/UxmHzH-XKOI/AAAAAAAAAuE/DIXuB6htiAE/s1600/chrome_logo_2x.png" class="feedImage" /><br/><br/>Chrome StableThe Google Chrome browser is my prefered browser for surfing and developing.I like the included developer tools that make it quit funny to inspect CSS, debug JavaScript and trace network...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/03/google-chrome-and-chrome-canary-side-by.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-8287334733297185688">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/04/splash-screen.html">Splash Screen</a></h2>
+
+		<div class="meta">Added on May 14, 2014 09:01 AM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/04/splash-screen.html">http://openui5.blogspot.com/2014/04/splash-screen.html</a>
+
+        </div></div>
+		<p><img src="http://4.bp.blogspot.com/-jwRb7oAVylM/Uz6gFGRLjwI/AAAAAAAAAv8/N7vFVfM_b4o/s1600/splash-screen.png" class="feedImage" /><br/><br/>If you try to open an UI5 app inside a phone device that has a slow connection you will see a blank page for a long time. The user does not get to know if something is going wrong or he still has to...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/04/splash-screen.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-8171460675397031923">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/05/be-inspired-by-sap-fiori.html">Be inspired by SAP Fiori</a></h2>
+
+		<div class="meta">Added on May 14, 2014 09:00 AM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/05/be-inspired-by-sap-fiori.html">http://openui5.blogspot.com/2014/05/be-inspired-by-sap-fiori.html</a>
+
+        </div></div>
+		<p>Since SAPUI5 is the leading user interface strategy for SAP, all the new developments focus on UI5. SAP is developing a lot of business apps for their ERP System named SAP Fiori.SAP Fiori – meaning...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/05/be-inspired-by-sap-fiori.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">February 14, 2014</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/98137672830">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.bluefinsolutions.com/Blogs/DJ-Adams/February-2014/The-essentials-SAP-UI5-OpenUI5-and-Fiori/">The essentials: SAPUI5, OpenUI5 and Fiori</a></h2>
+
+		<div class="meta">Added on February 14, 2014 12:19 PM , written by <a href="http://www.bluefinsolutions.com/Blogs/DJ-Adams/)">DJ Adams</a>
+ <br/><div class="source">Source: 
+
+            <a href="http://www.bluefinsolutions.com/Blogs/DJ-Adams/February-2014/The-essentials-SAP-UI5-OpenUI5-and-Fiori/">http://www.bluefinsolutions.com/Blogs/DJ-Adams/February-2014/The-essentials-SAP-UI5-OpenUI5-and-Fiori/</a>
+
+        </div></div>
+		<p>The SAP User Interface (UI) and User Experience (UX) revolution is truly underway. There are some tactical solutions out there, but the chief strategic solution that SAP is basing its UI/UX future on...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.bluefinsolutions.com/Blogs/DJ-Adams/February-2014/The-essentials-SAP-UI5-OpenUI5-and-Fiori/" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 28, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-3669242797340990666">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/application-deployment-on-as-abap.html">Application deployment without Eclipse</a></h2>
+
+		<div class="meta">Added on January 28, 2014 06:04 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/application-deployment-on-as-abap.html">http://openui5.blogspot.com/2014/01/application-deployment-on-as-abap.html</a>
+
+        </div></div>
+		<p><img src="http://3.bp.blogspot.com/-iBV0xsaxUGM/Ut6ud_yLMgI/AAAAAAAAAoE/lQe2cJ3PBo0/s1600/BSP_UPDATE_MIMEREPOS.png" class="feedImage" /><br/><br/>If you want to deploy you generated app on a SAP AS ABAP system, you normally would do this using the SAP Development Tools for Eclipse.The ABAP Development Tools for SAP NetWeaver will allow you to...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/application-deployment-on-as-abap.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 26, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-7373783879833398733">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/simple-chat-server-example-using-ui5.html">Simple chat server example using UI5 WebSocket</a></h2>
+
+		<div class="meta">Added on January 26, 2014 01:15 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/simple-chat-server-example-using-ui5.html">http://openui5.blogspot.com/2014/01/simple-chat-server-example-using-ui5.html</a>
+
+        </div></div>
+		<p><img src="http://1.bp.blogspot.com/-PaGRZosqzts/UuK1LHLPHZI/AAAAAAAAApU/7qJach5j_jE/s1600/websocketchat.png" class="feedImage" /><br/><br/>Today i will show you an example using node.js to provide a simple chat server to play around with the WebSocket API sap.ui.core.ws.WebSocketthat is part of UI5.To offer some useful tricks and...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/simple-chat-server-example-using-ui5.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 25, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-3497599246601250322">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/how-to-add-notifications-to-ui5.html">How to add notifications to UI5</a></h2>
+
+		<div class="meta">Added on January 25, 2014 12:18 AM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/how-to-add-notifications-to-ui5.html">http://openui5.blogspot.com/2014/01/how-to-add-notifications-to-ui5.html</a>
+
+        </div></div>
+		<p><img src="http://2.bp.blogspot.com/-Etfr4-tYarI/UuKLQgIlkRI/AAAAAAAAAo8/XL3ndlAhuPA/s1600/noty-v2-logo.png" class="feedImage" /><br/><br/>Just playing around with UI5 found out that i currently miss a lighweight notifier widget.UI5 depends on jQuery and there a countless community plugins that will do such a job.To make live easier just...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/how-to-add-notifications-to-ui5.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 24, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-5813743883507350137">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/sap-is-open.html">SAP goes Open Source!</a></h2>
+
+		<div class="meta">Added on January 24, 2014 05:15 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/sap-is-open.html">http://openui5.blogspot.com/2014/01/sap-is-open.html</a>
+
+        </div></div>
+		<p><img src="http://3.bp.blogspot.com/-5Xwuy_a7AF0/UtpjaiZA12I/AAAAAAAAAfM/MQJjvorNVp8/s1600/icotxt_white_220x72_blue_open.png" class="feedImage" /><br/><br/>At the end of last year SAP decided to give his HTML5 libary "SAPUI5" to the public for free under the Apache 2.0 Open Source license.http://sap.github.io/openui5/UI5 lets you build enterprise-ready...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/sap-is-open.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-495243996994535086">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/kickstart-sdk.html">Kickstart the SDK</a></h2>
+
+		<div class="meta">Added on January 24, 2014 05:14 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/kickstart-sdk.html">http://openui5.blogspot.com/2014/01/kickstart-sdk.html</a>
+
+        </div></div>
+		<p><img src="http://2.bp.blogspot.com/-V6EpBXMm3NY/Ut4qf7dL4iI/AAAAAAAAAn0/joqhQICcUSs/s1600/UI5+SDK+Folder.png" class="feedImage" /><br/><br/>How can you get a quick start into the UI5 SDK?What about just downloading the SDK and just open it inside Google Chrome?1) First download the needed SDKDownload SDKYou can choose betweeen the UI5...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/kickstart-sdk.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 23, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-5239384898657015216">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/differences-between-openui5-sapui5.html">Differences between OpenUI5 / SAPUI5</a></h2>
+
+		<div class="meta">Added on January 23, 2014 08:33 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/differences-between-openui5-sapui5.html">http://openui5.blogspot.com/2014/01/differences-between-openui5-sapui5.html</a>
+
+        </div></div>
+		<p>At the end of last year, SAP Employee Andreas Kunz wrote a blog postWhat is OpenUI5 / SAPUI5?explaining what is OpenUI5/SAPUI5 and also telling about the history of UI5 and the differences between the...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/differences-between-openui5-sapui5.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">January 20, 2014</div>
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-9096529797642675748">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/adding-syntax-highlighting-to-blog.html">Introducing Syntax Highlighting</a></h2>
+
+		<div class="meta">Added on January 20, 2014 10:29 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/adding-syntax-highlighting-to-blog.html">http://openui5.blogspot.com/2014/01/adding-syntax-highlighting-to-blog.html</a>
+
+        </div></div>
+		<p>Just added Prism Syntax Highlighting to the Blog.Now things like this will be more colorful and readable  !DOCTYPE html  html   head      meta http-equiv='X-UA-Compatible' content='IE=edge' /     ...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/adding-syntax-highlighting-to-blog.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:blogger.com,1999:blog-494686961189127136.post-80905040173114337">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://openui5.blogspot.com/2014/01/ui-design-made-easy-with-appbuilder.html">Mobile UI Design made easy with AppBuilder</a></h2>
+
+		<div class="meta">Added on January 20, 2014 10:26 PM 
+by Holger Schäfer (noreply@blogger.com) 
+ <br/><div class="source">Source: 
+
+            <a href="http://openui5.blogspot.com/2014/01/ui-design-made-easy-with-appbuilder.html">http://openui5.blogspot.com/2014/01/ui-design-made-easy-with-appbuilder.html</a>
+
+        </div></div>
+		<p><img src="http://1.bp.blogspot.com/-xACM4My0zZY/Ut1CKUXUfRI/AAAAAAAAAlg/M3N-uwDdaLo/s1600/AppBuilder.png" class="feedImage" /><br/><br/>SAP is offering a node.js based tool to visually design user interfaces.AppBuilder is a browser-based Integrated Development Environment built with standard technology (HTML5/JavaScript) to create and...</p>
+		<div class="clearPost"/>
+
+            <a href="http://openui5.blogspot.com/2014/01/ui-design-made-easy-with-appbuilder.html" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">December 23, 2013</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/98139037900">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.plinky.it/blog/2013/12/23/like-openui5/#axzz3E2plQHgy">This is why I like openUI5!</a></h2>
+
+		<div class="meta">Added on December 23, 2013 12:36 PM , written by <a href="http://www.plinky.it/blog/author/admin/)">Ivan Femia</a>
+ <br/><div class="source">Source: 
+
+            <a href="http://www.plinky.it/blog/2013/12/23/like-openui5/#axzz3E2plQHgy">http://www.plinky.it/blog/2013/12/23/like-openui5/#axzz3E2plQHgy</a>
+
+        </div></div>
+		<p>Last week at SAP TechEd Bangalore, SAP made a great step forward for the embracement of the Open Source development: OPENUI5 was released; Andreas Kunz wrote a very detailed blog What is OpenUI5 /...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.plinky.it/blog/2013/12/23/like-openui5/#axzz3E2plQHgy" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">December 11, 2013</div>
+
+
+	<div class="entrygroup" id="http://openui5picks.tumblr.com/post/97285349690">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://scn.sap.com/community/developer-center/front-end/blog/2013/12/11/what-is-openui5-sapui5">What is OpenUI5 / SAPUI5 ?</a></h2>
+
+		<div class="meta">Added on December 11, 2013 07:46 AM 
+
+ <br/><div class="source">Source: 
+
+            <a href="http://scn.sap.com/community/developer-center/front-end/blog/2013/12/11/what-is-openui5-sapui5">http://scn.sap.com/community/developer-center/front-end/blog/2013/12/11/what-is-openui5-sapui5</a>
+
+        </div></div>
+		<p><img src="https://31.media.tumblr.com/ae93cfdb822cac0de68d0a2e191bd093/tumblr_inline_nbs0268stI1sb8vfp.png" class="feedImage" /><br/><br/>Read the OpenUI5 announcement on the SAP Community Network (SCN) of SAP. Andreas explains the reasons for open sourceing UI5 and what OpenUI5 is about
+[source:...</p>
+		<div class="clearPost"/>
+
+            <a href="http://scn.sap.com/community/developer-center/front-end/blog/2013/12/11/what-is-openui5-sapui5" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+	
+	</div>
+	
+	</div>
+
+
+
+				<br/>
+				<p><em>Last updated on September 22, 2014 02:01 PM UTC</em></p>
+
+				<p class="disclaimer">External links are selected and reviewed when the page is published. Further content is included from other feed sources directly (see subscriptions). We are not responsible for the content of external websites. This feed is powered by <a href="http://www.planetplanet.org/">planetplanet</a>.</p>
+			</div>
+		</div>
+			
+		</div>
+		
+			<p id="twitter_section" class="inner">
+					<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			</p>
+		<!-- FOOTER  -->
+		<div id="footer_wrap" class="outer">
+			<div class="wrap_ie9">
+				<div class="inner">
+					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
+					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px"  alt="counter">
+					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
+					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
+					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
+					<a class="legal" href="ga_disclaimer.html">Google Analytics Disclaimer</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

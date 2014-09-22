@@ -1,0 +1,790 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Planet OpenUI5</title>
+		<meta name="generator" content="Planet/2.0 +http://www.planetplanet.org">
+
+		<link rel="alternate" href="http://openui5.org/atom.xml" title="" type="application/atom+xml">
+
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="http://openui5.org/stylesheets/main.css">
+		<link rel="icon" type="image/png" href="http://openui5.org/images/favicon.ico">
+		
+		<script>
+  			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  			ga('create', 'UA-50072417-1', 'sap.github.io');
+			ga('set', 'anonymizeIp', true);
+  			ga('send', 'pageview');
+		</script>
+		<style>
+		/* menu */
+		aside.categories {
+			border-left: 1px solid #666;
+			padding-left: 1rem;
+			margin-top: 1.8rem;
+			float: right;
+			width: 150px;
+		}
+		
+		aside.categories h2 {
+			margin: 0;
+			padding: 0;
+		}
+		
+		aside.categories li {
+			list-style: none;
+			font-weight: bold;
+			padding-left: 0;
+		}
+		
+		/* content */
+		.posts {
+			margin-right: 196px;
+		}
+		
+		/* post */
+		section.post .meta {
+			font-size: 80%;
+			padding-bottom: 1rem;
+		}
+		
+		section.post .meta .source {
+		  white-space: nowrap;
+		  width: 100%;                   
+		  overflow: hidden;
+		  text-overflow:    ellipsis;
+		}
+		section.post h2 {
+			margin-bottom: 0;
+		}
+		section.post p {
+			margin-top: 0;
+			margin-bottom: 12px;
+		}
+
+		section.post .image {
+			margin-right: 1rem;
+			float: left;
+		}
+		section.post .image img {
+			max-width: 300px;
+			max-height: 300px;
+		}
+		
+		section.post .link {
+			font-size: 20px;
+		}
+		
+		section.post .clearPost {
+			clear: left;
+		}
+		
+		.daygroup h4 {
+			margin-bottom: 0px;
+		}
+		
+		.daygroup {
+			position: relative;
+		}
+		
+		/* small screen version  displaying nav above content*/
+		@media screen and (max-width: 800px) {
+			aside.categories {
+				float: inherit;
+				border: 0;
+				padding: 0;
+				width: 100%;
+			}
+			.posts {
+				margin-right: 0;
+			}
+		}
+		
+		.feed {
+			margin-left: 3px;
+			padding: 0 0 0 19px;
+			background: url("../images/feed-icon-14x14.png") no-repeat 0 50%;
+		}
+		
+		.contentOuter {
+			min-height: 400px;
+		}
+		
+		.disclaimer {
+			margin-bottom: 0;
+			font-size: small;
+		}
+		
+		.dateRotate {
+			transform: rotate(-90.0deg);  /* default */
+			-moz-transform: rotate(-90.0deg);  /* FF3.5+ */
+			-o-transform: rotate(-90.0deg);  /* Opera 10.5 */
+			-webkit-transform: rotate(-90.0deg);  /* Saf3.1+, Chrome */
+			filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+			-ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+			font-size: 20px;
+			color: #666;
+			position: absolute;
+			left: -155px;
+			top: 137px;
+			width: 250px;
+			text-align: end;
+		}
+		
+		.feedImage {
+            min-width: 200px;
+			max-width: 100%;
+			max-height: 400px;
+			border: 1px solid #ccc;
+		}
+		
+		.channel {
+			margin: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 100%;
+			white-space: nowrap;
+		}
+
+		/* layout fixes to page to make all ui5 pages look the same */
+		html {
+			min-height: 100%;
+		}
+		.ui5logo {
+			margin-bottom: 7px;
+		}
+		</style>
+</head>
+
+
+<body>
+	<!-- HEADER -->
+	<div id="header_wrap" class="outer">
+		<div class="wrap_ie9">
+			<div class="inner">
+				<img src="../images/icotxt_white_220x72_blue_open.png" class="ui5logo" alt="OpenUI5 Logo"/>
+				<h1 id="project_title">
+					<span class="headertitle">OpenUI5. </span>
+					<span class="headertitle">Build once. </span>
+					<span class="headertitle">Run on any device.</span>
+				</h1>
+				<h2 id="project_tagline">
+					<span class="headertitle"><a href="../intro.html">Intro</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../getstarted.html">Get Started</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../download.html">Download</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle">News</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="http://openui5.tumblr.com/">Blog</a></span>
+					<span class="headerdivide"> | </span>
+					<span class="headertitle"><a href="../bugreports.html">Report a Bug</a></span>
+				</h2>
+			</div>
+		</div>
+	</div>
+
+	
+	<!-- MAIN CONTENT -->
+	<div id="main_content_wrap" class="contentOuter">
+		<div id="main_content" class="inner">
+			<aside class="categories">
+				<nav class="categories">
+					<h4>Categories</h4>
+					<ul>
+						<li><a href="index.html">What's Hot</a></li>
+						<li><a href="index_recommended.html">Recommended</a></li>
+						<li><a href="index_news.html">News</a></li>
+						<li><a href="index_blogs.html">Blogs</a></li>
+						<li>&gt; Videos</li>
+						<li><a href="index_trainings.html">Trainings</a></li>
+						<li><a href="index_events.html">Events</a></li>
+						<li><a href="index_demos.html">Demos</a></li>
+					</ul>
+					<h4>Subscriptions</h4>
+
+					<p class="channel"><a href="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dU-v1v0R3RbgMVnTuA1_x6K" title="subscribe" class="feed"> Application Videos</a></p>
+
+					<p class="channel"><a href="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVIzruMDKBv2MjDx-e48-t5" title="subscribe" class="feed"> Coding Videos</a></p>
+
+					<p class="channel"><a href="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXzi41H9fFXe-IBDs7INW4v" title="subscribe" class="feed"> Event Videos</a></p>
+
+					<p class="channel"><a href="http://www.youtube.com/rss/user/openui5videos/" title="subscribe" class="feed"> OpenUI5 @ YouTube</a></p>
+
+					<p class="channel"><a href="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXitA851NZJJHFNGxgGL0iK" title="subscribe" class="feed"> Presentation Videos</a></p>
+
+					<p class="channel"><a href="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVR_rwZ1zRfzwa7d90vniwN" title="subscribe" class="feed"> Talks & Sessions</a></p>
+
+					<p class="channel"><a href="http://openui5picks.tumblr.com/tagged/ui5picksvideos/rss" title="subscribe" class="feed"> Videos</a></p>
+
+				</nav>
+			</aside>
+
+			<div class="posts">
+
+
+
+
+
+	<div class="daygroup">
+	<div class="dateRotate">August 21, 2014</div>
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXzi41H9fFXe-IBDs7INW4v/PLpn00q5M_t0CIAZQb4cp0mTLWKBkuiCsCQEZT5mKvvxA">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata">Untitled Video</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:50 PM 
+by openui5videos 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>We had the opportunity to present an introduction to OpenUI5 at the OSCON 2014 conference. This is the recording of our session, the slides are available at slidehare. 
+
+OSCON Homepage:...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="tag:youtube.com,2008:video:y7iR3RBUUpY">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata">OpenUI5 Presentation @ OSCON 2014</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:50 PM 
+by OpenUI5 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p><img src="http://i.ytimg.com/vi/y7iR3RBUUpY/default.jpg" class="feedImage" /><br/><br/>
+
+OpenUI5 Presentation @ OSCON 2014
+
+We had the opportunity to present an introduction to OpenUI5 at the OSCON 2014 conference. This is the recording of our session, the slides are available at...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=y7iR3RBUUpY&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dU-v1v0R3RbgMVnTuA1_x6K/PLpn00q5M_t0CkMPRvhUFKAK9A3GA5sRVPZ2NF7kDOCoE">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=7jeo0REvmjg&amp;feature=youtube_gdata">Introducing SAP Fiori</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:44 PM 
+by sapenterprisemobile 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=7jeo0REvmjg&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=7jeo0REvmjg&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>SAP Fiori is a collection of apps with a simple and easy to use experience for broadly and frequently used SAP software functions that work seamlessly across devices -- desktop, tablet, or smartphone....</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=7jeo0REvmjg&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dU-v1v0R3RbgMVnTuA1_x6K/PLpn00q5M_t0CkMPRvhUFKALt762gQT5UQ41H17EhrD5I">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=mYbn9Q6P0cU&amp;feature=youtube_gdata">SAP Fiori Demo Video</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:43 PM 
+by sapenterprisemobile 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=mYbn9Q6P0cU&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=mYbn9Q6P0cU&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>See SAP Fiori in action including key features such as responsive design, customizable layout, notifications and alerts. The demo also highlights employee self-service functions (My Travel Requests,...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=mYbn9Q6P0cU&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXitA851NZJJHFNGxgGL0iK/PLpn00q5M_t0BiuN2auQoe3yzhnQxfI77Bq9d0iyE0snA">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=NFUw4an3mUs&amp;feature=youtube_gdata">Untitled Video</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:42 PM 
+by mattimaier 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=NFUw4an3mUs&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=NFUw4an3mUs&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>Das OpenUI5 Framework ist die Open Source Variante von SAP UI5, einem HTML5/CSS/JavaScript Framework für Web UIs. In diesem Video gebe ich eine kleine Einführung in OpenUI5 und erzähle etwas über...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=NFUw4an3mUs&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXzi41H9fFXe-IBDs7INW4v/PLpn00q5M_t0CIAZQb4cp0mb6yuhx6kE6Nv1djlwF1vTo">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=_hOWQ9zFn4A&amp;feature=youtube_gdata">OpenUI5 Team at OSCON 2014</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:40 PM 
+by sapdevs 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=_hOWQ9zFn4A&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=_hOWQ9zFn4A&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>OpenUI5 team members Andreas and Frederic give a detailed view into OpenUI5 from OSCON.</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=_hOWQ9zFn4A&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dXzi41H9fFXe-IBDs7INW4v/PLpn00q5M_t0CIAZQb4cp0mcAIDdHxDuvtWdhI63kNgWA">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=9tvHv445aGM&amp;feature=youtube_gdata">OpenUI5 at OSCON 2014</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:40 PM 
+by sapdevs 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=9tvHv445aGM&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=9tvHv445aGM&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>Bluefin Solutions and SAP specialist DJ Adams gives an introduction to OSCON (Open Source Convention), and gives his thoughts on SAP's new toolkit: Open UI5.</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=9tvHv445aGM&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVR_rwZ1zRfzwa7d90vniwN/PLpn00q5M_t0D9e9YEz8tOhCQV6iqu1ACSEKqhTG6F8gM">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=uWbfTNIzUec&amp;feature=youtube_gdata">SAP CodeTalk: OpenUI5</a></h2>
+
+		<div class="meta">Added on August 21, 2014 03:39 PM 
+by sapcommunities 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=uWbfTNIzUec&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=uWbfTNIzUec&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>In this CodeTalk Ian Thain interviews Stefan Beck, Chief Product Owner of SAPUI5 and Web Application Toolkit at SAP and finds out about the recent announcement of OpenUI5. SAP is contributing key...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=uWbfTNIzUec&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">July 02, 2014</div>
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVR_rwZ1zRfzwa7d90vniwN/PLpn00q5M_t0D9e9YEz8tOhI1HGBdgYqLKsCz8hew1w1U">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=r-QszpA-HiI&amp;feature=youtube_gdata">SAP CodeTalk: SAPUI5 &amp; Fiori - Part #2</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:26 PM 
+by sapcommunities 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=r-QszpA-HiI&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=r-QszpA-HiI&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>Continued... Ian Thain talk to DJ Adams, SAP Mentor  Principal Consultant at Bluefin, about SAPUI5 and Fiori. Please Note that this CodeTalk is in two parts, this being Part #2Continued... Ian Thain...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=r-QszpA-HiI&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVR_rwZ1zRfzwa7d90vniwN/PLpn00q5M_t0D9e9YEz8tOhFYhuRCBDQ-JkWjpaEIWEEI">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=HQd9kVApjkE&amp;feature=youtube_gdata">SAP CodeTalk: SAPUI5 &amp; Fiori - Part #1</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:26 PM 
+by sapcommunities 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=HQd9kVApjkE&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=HQd9kVApjkE&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>Ian Thain talk to DJ Adams, SAP Mentor  Principal Consultant at Bluefin, about SAPUI5 and Fiori. Please Note that this CodeTalk is in two parts, this being Part #1Ian Thain talk to DJ Adams, SAP...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=HQd9kVApjkE&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVIzruMDKBv2MjDx-e48-t5/PLpn00q5M_t0BhtLo85TZYlWyB_ftqr60gZy9PJ9kyolg">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=Fgp_e3Uv5Xs&amp;feature=youtube_gdata">Using Gists on Github to share code</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:24 PM 
+by qmacro99 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=Fgp_e3Uv5Xs&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=Fgp_e3Uv5Xs&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>This screencast relates to a document on SCN "Help Us To Help You - Share Your Code" that describes how and why you should share your code that you want help with, using Gists on Github.
+
+Here is a...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=Fgp_e3Uv5Xs&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVIzruMDKBv2MjDx-e48-t5/PLpn00q5M_t0BhtLo85TZYlWMLznG_5NpQEQgGLDIdNmY">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=iZa4pEP3GZw&amp;feature=youtube_gdata">Untitled Video</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:24 PM 
+by qmacro99 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=iZa4pEP3GZw&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=iZa4pEP3GZw&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>A quick recap of what we did during the UI5 Mentor Monday in March 2014, showing how easy it is to construct good looking UIs with UI5, and also the great facilities of JSBin - creating, viewing and...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=iZa4pEP3GZw&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVIzruMDKBv2MjDx-e48-t5/PLpn00q5M_t0BhtLo85TZYlQ4WgwyfkazbE_BWp3lCVQY">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=nRtocPEPLYI&amp;feature=youtube_gdata">Manipulating UI5 Controls from the Chrome Dev Console</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:23 PM 
+by qmacro99 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=nRtocPEPLYI&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=nRtocPEPLYI&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>Just a quick screencast to show how easy it can be to find, grab, manipulate and create controls in a UI5 application from the Chrome Developer Console.Just a quick screencast to show how easy it can...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=nRtocPEPLYI&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVIzruMDKBv2MjDx-e48-t5/PLpn00q5M_t0BhtLo85TZYlUUg9_tr-6uBZlegi2JkeO0">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=ts0EogQZvS8&amp;feature=youtube_gdata">Untitled Video</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:23 PM 
+by qmacro99 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=ts0EogQZvS8&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=ts0EogQZvS8&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>SublimeUI5 (https://github.com/qmacro/SublimeUI5) is a package for Sublime Text 2 for developing SAPUI5 / OpenUI5 applications. There are two parts to it - a series of snippets and some basic...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=ts0EogQZvS8&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	<div class="entrygroup" id="http://gdata.youtube.com/feeds/api/playlists/PLHUs_FUbq4dVR_rwZ1zRfzwa7d90vniwN/PLpn00q5M_t0D9e9YEz8tOhF_JDcC0xOKLA9J6IKCL--c">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=IEXNLHn9Yus&amp;feature=youtube_gdata">SAP CodeTalk: OpenUI5</a></h2>
+
+		<div class="meta">Added on July 02, 2014 01:18 PM 
+by sapcommunities 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=IEXNLHn9Yus&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=IEXNLHn9Yus&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p>In this CodeTalk, Ian Thain from the Developer Relations Team at SAP speaks to DJ Adams, Principal at Bluefin Solutions  SAP Mentor, on OpenUI5.In this CodeTalk, Ian Thain from the Developer Relations...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=IEXNLHn9Yus&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+
+
+
+	
+	</div>
+
+	<div class="daygroup">
+	<div class="dateRotate">July 01, 2014</div>
+
+
+	<div class="entrygroup" id="tag:youtube.com,2008:video:4KPS2-LHoO0">
+	<section class="post">
+
+	<h2><a target="_blank" href="http://www.youtube.com/watch?v=4KPS2-LHoO0&amp;feature=youtube_gdata">Developing Custom Controls with UI5</a></h2>
+
+		<div class="meta">Added on July 01, 2014 01:20 PM 
+by OpenUI5 
+ <br/><div class="source">Source: 
+
+            <a href="http://www.youtube.com/watch?v=4KPS2-LHoO0&amp;feature=youtube_gdata">http://www.youtube.com/watch?v=4KPS2-LHoO0&amp;feature=youtube_gdata</a>
+
+        </div></div>
+		<p><img src="http://i.ytimg.com/vi/4KPS2-LHoO0/default.jpg" class="feedImage" /><br/><br/>
+
+Developing Custom Controls with UI5
+
+This 10 minute video lecture describes how to implement custom controls using the open source UI5 library available at http://openui5.org The video is part...</p>
+		<div class="clearPost"/>
+
+            <a href="http://www.youtube.com/watch?v=4KPS2-LHoO0&amp;feature=youtube_gdata" class="link">Go to the original post</a>
+
+	</section>
+	</div>
+
+	
+	
+	
+	
+	
+
+
+	
+	</div>
+	
+	</div>
+
+
+
+				<br/>
+				<p><em>Last updated on September 22, 2014 02:01 PM UTC</em></p>
+
+				<p class="disclaimer">External links are selected and reviewed when the page is published. Further content is included from other feed sources directly (see subscriptions). We are not responsible for the content of external websites. This feed is powered by <a href="http://www.planetplanet.org/">planetplanet</a>.</p>
+			</div>
+		</div>
+			
+		</div>
+		
+			<p id="twitter_section" class="inner">
+					<a href="https://twitter.com/OpenUI5" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @OpenUI5</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+			</p>
+		<!-- FOOTER  -->
+		<div id="footer_wrap" class="outer">
+			<div class="wrap_ie9">
+				<div class="inner">
+					<p class="copyright">&copy; SAP SE, made available under Apache License 2.0</p>
+					<img class="counter" src="https://openui5.hana.ondemand.com/resources/sap/ui/core/themes/base/img/1x1.gif?page=getstarted" style="width:1px;height:1px"  alt="counter">
+					<a class="legal" href="impressum.html">Legal Disclosure / Impressum</a>
+					<a class="legal" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
+					<a class="legal" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
+					<a class="legal" href="ga_disclaimer.html">Google Analytics Disclaimer</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
