@@ -16,6 +16,7 @@
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138885150" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138078515" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/89849494395" />
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98219217490" />
 		</rdf:Seq>
 	</items>
 </channel>
@@ -40,6 +41,12 @@
 Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
 [source: http://www.tippfieber.de]</content:encoded>
 	<dc:date>2014-06-25T10:26:00+00:00</dc:date>
+</item>
+<item rdf:about="http://openui5picks.tumblr.com/post/98219217490">
+	<title>Demos</title>
+	<link>http://openui5picks.tumblr.com/post/98219217490</link>
+	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content:encoded>
+	<dc:date>2013-09-14T11:36:00+00:00</dc:date>
 </item>
 
 </rdf:RDF>
