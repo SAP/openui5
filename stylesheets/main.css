@@ -356,7 +356,7 @@ Full-Width Styles
 }*/
 
 #main_content {
-  padding: 12px 0 80px 0;
+  padding: 12px 10px 80px 10px;
 }
 
 /*#footer_wrap {
@@ -375,21 +375,120 @@ Full-Width Styles
 }
 
 .ui5logo {
-  height: 36px;
+  height: 40px;
   margin-left: -2px;
 }
 
 
 /*******************************************************************************
+Feature Styles
+*******************************************************************************/
+
+
+.feature-content {
+  padding: 50px 0px;
+}
+
+
+.feature-container {
+  background: #F5F5F5;
+  min-height: 370px
+}
+
+
+.feature-list-container{
+  float: left;
+  min-height: 100px;
+}
+
+.teaser-header {
+  line-height: 42px;
+  margin-bottom: 26px;
+}
+
+
+.teaser-pic-container {
+  float: right;
+  position: relative;
+  top: -50px;
+}
+
+
+ul.features > li {
+  font-size: 26px;
+  color: #666;
+  font-family: "Arial Narrow", HelveticaNeue-CondensedBold, Arial, sans-serif;
+  list-style: none; 
+} 
+
+ul.feature-links > li {
+  font-size: 18px;
+  padding-top: 20px;
+  padding-left: 0px;
+  padding-right: 20px;
+  float: left;
+  color: #666;
+  font-family: "Arial Narrow", HelveticaNeue-CondensedBold, Arial, sans-serif;
+  list-style: none; 
+} 
+
+.feature-header {
+  font-size: 26px;
+  color: #666;
+  font-family: "Arial Narrow", HelveticaNeue-CondensedBold, Arial, sans-serif;
+}
+
+
+.feature-list {
+  float: left;
+  margin-bottom: 0px;
+}
+
+.feature-anchor {
+    color: black;
+}
+
+/*******************************************************************************
 Small Device Styles
 *******************************************************************************/
 
+/* Hack for Feature List*/
+
+@media screen and (max-width: 960px) {
+  .feature-list-container {
+    float: none;
+  }
+  .feature-container {
+      min-height: 490px;
+  }
+  .feature-list {
+    width: 100%;
+  }
+  .teaser-pic {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 840px) {
+  .teaser-pic{
+    display:  none;
+  }
+} 
+
 @media screen and (max-width: 800px) {
 
-  #downloads {
+  #downloads,
+  .feature-list-container,
+  .feature-links,
+  .spacer {
     display: none;
   }
-
+  .feature-container {
+    min-height: 285px;
+  }
+  .feature-content {
+    padding: 0px;
+  }
   .inner {
      margin: 0 24px;
   }
@@ -401,16 +500,17 @@ Small Device Styles
   }
   
   .headertitle {
-	display: block;
+  display: block;
+  padding-right: 16px; 
   }
   
   .headerdivide {
-	display: none;
+  display: none;
   }
   
   #header_wrap .inner {
-	padding-top: 30px;
-  }	
+  padding-top: 30px;
+  } 
   
   #project_title {
     font-size: 33px;
@@ -418,8 +518,10 @@ Small Device Styles
 
   .corset {
     width: 100%;
-  }  
-  
+  }
+  #main_content {
+    padding: 12px 10px 80px 10px;
+  }
 }
 
 
@@ -433,6 +535,20 @@ Common Styles
 
 .underlined {
 	text-decoration: underline;
+}
+
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+.blocksatz {
+  text-align: justify;
+}
+
+.headertitle {
+padding-right: 10px; 
 }
 
 
