@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<opml version="1.1">
+	<head>
+		<title>Planet OpenUI5</title>
+		<dateModified>Thu, 25 Sep 2014 15:00:18 +0000</dateModified>
+		<ownerName>OpenUI5 Team</ownerName>
+		<ownerEmail>openui5team@gmail.com</ownerEmail>
+	</head>
+	
+	<body>
+		<outline type="rss" text="Demos" xmlUrl="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss" title="openui5picks" />
+	</body>
+</opml>

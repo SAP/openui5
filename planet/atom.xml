@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+	<title>Planet OpenUI5</title>
+	<link rel="self" href="http://openui5.org/atom.xml"/>
+	<link href="http://openui5.org/"/>
+	<id>http://openui5.org/atom.xml</id>
+	<updated>2014-09-25T15:00:18+00:00</updated>
+	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
+
+	<entry>
+		<title type="html">Configuring JetBrains WebStorm for UI5 development</title>
+		<link href="http://openui5picks.tumblr.com/post/98297520315"/>
+		<id>http://openui5picks.tumblr.com/post/98297520315</id>
+		<updated>2014-09-22T11:46:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T15:00:18+00:00</updated>
+		</source>
+	</entry>
+
+	<entry>
+		<title type="html">Scratching an itch - UI5 Icon Finder</title>
+		<link href="http://openui5picks.tumblr.com/post/98219217490"/>
+		<id>http://openui5picks.tumblr.com/post/98219217490</id>
+		<updated>2014-09-14T11:36:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T15:00:18+00:00</updated>
+		</source>
+	</entry>
+
+	<entry>
+		<title type="html">Using Badges on Buttons</title>
+		<link href="http://openui5picks.tumblr.com/post/98138885150"/>
+		<id>http://openui5picks.tumblr.com/post/98138885150</id>
+		<updated>2014-08-26T11:36:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/f1c45e5ff103de71fe5219c3344d2328/tumblr_inline_ncawzfnAiv1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I needed to add some button notifications (known as badges) to some buttons. The following example uses css styled badges attached to buttons using the custom-data...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T15:00:18+00:00</updated>
+		</source>
+	</entry>
+
+	<entry>
+		<title type="html">Simple openUI5 application II: How to create frontend in UI5 that will consume oData service</title>
+		<link href="http://openui5picks.tumblr.com/post/98138078515"/>
+		<id>http://openui5picks.tumblr.com/post/98138078515</id>
+		<updated>2014-07-22T11:30:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/e3f5044854c1337926274cf2bc9bdf55/tumblr_inline_ncawc3i6eG1sb8vfp.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After the first part of tutorial, we have created and run oData service that can write/read data to SAP database table. In this part, I will explain how frontend openUI5 application works. Whole...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T15:00:18+00:00</updated>
+		</source>
+	</entry>
+
+	<entry>
+		<title type="html">Soccer App built with OpenUI5</title>
+		<link href="http://openui5picks.tumblr.com/post/89849494395"/>
+		<id>http://openui5picks.tumblr.com/post/89849494395</id>
+		<updated>2014-06-25T10:26:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/d165a06948b8688771813f6efd9cfb1f/tumblr_inline_n7pzstrZff1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
+[source: http://www.tippfieber.de]</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T15:00:18+00:00</updated>
+		</source>
+	</entry>
+
+</feed>
