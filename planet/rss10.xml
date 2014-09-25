@@ -13,6 +13,7 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98297520315" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98219217490" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138885150" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138078515" />
@@ -21,6 +22,12 @@
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/98297520315">
+	<title>Demos: Configuring JetBrains WebStorm for UI5 development</title>
+	<link>http://openui5picks.tumblr.com/post/98297520315</link>
+	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content:encoded>
+	<dc:date>2014-09-22T11:46:00+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/98219217490">
 	<title>Demos: Scratching an itch - UI5 Icon Finder</title>
 	<link>http://openui5picks.tumblr.com/post/98219217490</link>

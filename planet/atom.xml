@@ -5,8 +5,26 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2014-09-25T06:00:19+00:00</updated>
+	<updated>2014-09-25T07:00:13+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
+
+	<entry>
+		<title type="html">Configuring JetBrains WebStorm for UI5 development</title>
+		<link href="http://openui5picks.tumblr.com/post/98297520315"/>
+		<id>http://openui5picks.tumblr.com/post/98297520315</id>
+		<updated>2014-09-22T11:46:00+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2014-09-25T07:00:13+00:00</updated>
+		</source>
+	</entry>
 
 	<entry>
 		<title type="html">Scratching an itch - UI5 Icon Finder</title>
@@ -22,7 +40,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2014-09-25T06:00:19+00:00</updated>
+			<updated>2014-09-25T07:00:13+00:00</updated>
 		</source>
 	</entry>
 
@@ -40,7 +58,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2014-09-25T06:00:19+00:00</updated>
+			<updated>2014-09-25T07:00:13+00:00</updated>
 		</source>
 	</entry>
 
@@ -58,7 +76,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2014-09-25T06:00:19+00:00</updated>
+			<updated>2014-09-25T07:00:13+00:00</updated>
 		</source>
 	</entry>
 
@@ -79,7 +97,7 @@ Have a look at this great world cup prediction game app built with OpenUI5. It 
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2014-09-25T06:00:19+00:00</updated>
+			<updated>2014-09-25T07:00:13+00:00</updated>
 		</source>
 	</entry>
 
