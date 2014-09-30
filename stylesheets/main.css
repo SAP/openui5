@@ -95,7 +95,9 @@ h2 {
 #header_wrap h2, #header_wrap h2 a {
   text-shadow: 0 0 2px white;
 }
-
+img {
+  max-width: 100%
+}
 h3 {
   font-size: 26px;
   margin: 32px 0 0px 0;
@@ -480,7 +482,8 @@ Small Device Styles
   #downloads,
   .feature-list-container,
   .feature-links,
-  .spacer {
+  .spacer,
+  .features {
     display: none;
   }
   .feature-container {
@@ -522,8 +525,11 @@ Small Device Styles
   #main_content {
     padding: 12px 10px 80px 10px;
   }
+  .ui5logo {
+  height: 50px;
+  margin-left: -2px;
+  }
 }
-
 
 /*******************************************************************************
 Common Styles
