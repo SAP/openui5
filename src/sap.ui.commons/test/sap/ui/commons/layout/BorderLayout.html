@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html style="width:100%; height:100%">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>BorderLayout - sap.ui.commons.layout</title>
+	<script src="../../../../../resources/sap-ui-core.js"
+		type="text/javascript" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.commons" data-sap-ui-theme="sap_goldreflection">
+	</script>
+	
+	<style type="text/css">
+	.sapUiBorderLayoutTop {
+		background-color: red;
+	}
+	
+	.sapUiBorderLayoutBegin {
+		background-color: white;
+	}
+	
+	.sapUiBorderLayoutCenter {
+		background-color: beige;
+	}
+	
+	.sapUiBorderLayoutEnd {
+		background-color: magenta;
+	}
+	
+	.sapUiBorderLayoutBottom {
+		background-color: green;
+	}
+	</style>
+	
+	<script>
+		function toggle(sAreaId, bAnimated) {
+			var oArea = oMyLayout.getAreaById(sAreaId);
+			if (sAreaId === "center" && oArea.getVisible()) {
+				alert("Ha Ha!!");
+			}
+			if ( bAnimated ) {
+				oArea.setVisible(!oArea.getVisible(), oMyLayout);
+			} else {
+				oArea.setVisible(!oArea.getVisible());
+			}
+		}
+	
+		function noFunction() {
+			alert("This Link has no function!");
+		}
+		
+		var oMyLayout = new sap.ui.commons.layout.BorderLayout("myLayout", {
+			text : "Ich bin ein Layout",
+			tooltip : "Ich bin ein Tooltip",
+			rtl : false
+		});
+	
+		// outer top
+		var oMenu = new sap.ui.commons.MenuBar("myMenu", {
+			items : [
+				new sap.ui.commons.MenuItem({text : "menu1"}),
+				new sap.ui.commons.MenuItem({text : "menu2"})
+			]
+		});
+		oMyLayout.createArea("top", oMenu);
+		oMyLayout.setAreaData("top", {
+			size : "32px",
+			visible : true
+		});
+		
+		// outer begin
+		var oMyMatrix3 = new sap.ui.commons.layout.MatrixLayout();
+		var oLink1 = new sap.ui.commons.Link({
+			text : "Link1",
+			press : noFunction
+		});
+		var oLink2 = new sap.ui.commons.Link({
+			text : "Link2"
+		});
+		var oLink3 = new sap.ui.commons.Link({
+			text : "Link3"
+		});
+		var oLink4 = new sap.ui.commons.Link({
+			text : "Link4"
+		});
+		var oLink5 = new sap.ui.commons.Link({
+			text : "Link5",
+			press : function() { toggle("center", false); } 
+		});
+		oMyMatrix3.createRow(oLink1);
+		oMyMatrix3.createRow(oLink2);
+		oMyMatrix3.createRow(oLink3);
+		oMyMatrix3.createRow(oLink4);
+		oMyMatrix3.createRow(oLink5);
+	
+		oMyLayout.createArea("begin", oMyMatrix3);
+		oMyLayout.setAreaData("begin", {
+			size : "112px",
+			visible : true
+		});
+		
+		//--CENTER
+		var oMyLayout2 = new sap.ui.commons.layout.BorderLayout("myLayout2", {
+			text : "Ich bin ein Layout",
+			tooltip : "Ich bin ein Tooltip",
+			top : {
+				areaId : "top",
+				size : "22px",
+				contentAlign : "center",
+				visible : true,			
+				content : [
+					new sap.ui.commons.Button({
+						text : "Top",
+						press : function() { toggle("top", false); }
+				    }),
+				    new sap.ui.commons.Button({
+				    	text : "Top with animation",
+				    	press : function() { toggle("top", true); }
+				    })
+				]
+			}
+		});
+	
+		var oMyMatrix = new sap.ui.commons.layout.MatrixLayout();
+	
+	
+	
+		var oB121 = new sap.ui.commons.Button('button121', {
+			text : "Begin",
+			press : function() { toggle("begin", false); }
+		});
+		var oB122 = new sap.ui.commons.Button('button122', {
+			text : "Begin with animation",
+			press : function() { toggle("begin", true); }
+		});
+	
+		var oB131 = new sap.ui.commons.Button('button131', {
+			text : "End",
+			press : function() { toggle("end", false); }
+		});
+		var oB132 = new sap.ui.commons.Button('button132', {
+			text : "End with animation",
+			press : function() { toggle("end", true); }
+		});
+	
+		var oB141 = new sap.ui.commons.Button('button141', {
+			text : "Bottom",
+			press : function() { toggle("bottom", false); }
+		});
+		var oB142 = new sap.ui.commons.Button('button142', {
+			text : "Bottom with animation",
+			press : function() { toggle("bottom", true); }
+		});
+	
+		var oB15 = new sap.ui.commons.Button('button15', {
+			text : "Center",
+			press : function() { toggle("center", false); }
+		});
+	
+		oMyLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.begin,
+				oB121, oB122);
+		oMyLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.begin, {
+			size : "200px",
+			contentAlign : "west",
+			visible : true
+		});
+	
+		oMyLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center,
+				oB15);
+		oMyLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.center,
+				{/*size : "22px", */
+					contentAlign : "center",
+					visible : true
+				});
+	
+		oMyLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.end,
+				oB131, oB132);
+		oMyLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.end, {
+			size : "150px",
+			contentAlign : "right",
+			visible : true
+		});
+	
+		oMyLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom,
+				oB141, oB142);
+		oMyLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom,
+				{
+					size : "22px",
+					contentAlign : "center",
+					visible : true
+				});
+	
+		var oPanel = new sap.ui.commons.Panel({
+			width : "450px",
+			height : "130px",
+			title : new sap.ui.core.Title({
+				text : "Visibility change demos"
+			})
+		});
+	
+		oPanel.addContent(oMyLayout2);
+		oMyLayout.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center,
+				oPanel);
+		//--End
+		var oMyImg2 = new sap.ui.commons.Image(
+				{
+					src : sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_134x35.png")
+				});
+	
+		oMyLayout.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.end,
+				oMyImg2);
+		oMyLayout.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.end, {
+			size : "245px"
+		});
+		//--Bottom
+		var oMyImg = new sap.ui.commons.Image({
+			src : sap.ui.resource("sap.ui.core", "mimes/logo/sap_73x36.gif")
+		});
+		//oMyLayout.addSouthControl(oMyImg);
+		oMyLayout.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom,
+				oMyImg);
+		oMyLayout.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom, {
+			size : "36px"
+		});
+	
+		oMyLayout.placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" style="margin: 0; width: 100%; height: 100%">
+	<!-- <h1>Test Page for sap.ui.commons.layout.BorderLayout</h1> -->
+	<div id="content" style="height:100%; width: 100%;"></div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectListItem.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		items="{/ProductCollection}"
+		headerText="Products">
+		<items>
+			<ObjectListItem
+				title="{Name}"
+				type="Active"
+				press="onListItemPress"
+				number="{Price}"
+				numberUnit="{CurrencyCode}">
+				<firstStatus>
+					<ObjectStatus
+						text="{Status}"
+						state="{
+							path: 'Status',
+							formatter: 'sap.m.sample.ObjectListItem.Formatter.status'
+						}" />
+				</firstStatus>
+				<attributes>
+					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+				</attributes>
+			</ObjectListItem>
+		</items>
+	</List>
+</mvc:View>

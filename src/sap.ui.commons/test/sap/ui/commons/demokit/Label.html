@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.Label">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Label - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_platinum"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script id='Label1'>
+		var oLabel = new sap.ui.commons.Label("l1"); 
+		oLabel.setText("Test label"); 
+		oLabel.placeAt("sample1");
+		</script>
+
+		<script id='LabelBold'>
+		var oLabel = new sap.ui.commons.Label("l2");
+		oLabel.setText("Label with bold text");
+		oLabel.setDesign(sap.ui.commons.LabelDesign.Bold);
+		oLabel.placeAt("sample2");
+		</script>
+
+        <script id='Label3'>
+		var oLabel = new sap.ui.commons.Label("l3");
+		oLabel.setText("Test label");
+		oLabel.setTooltip("Some Tooltip");
+		oLabel.setWidth("4em");
+		oLabel.placeAt("sample3");
+		</script>
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/label-icon.png">Label</h1>
+
+<h2>Introduction</h2>
+		<p>The Label control provides some short explanative text, generally next to a value holder like a TextField. 
+		It informs the user about what data is displayed or expected in the value holder.
+		The Label is associated with its value holder by setting the <code>labelFor</code> association accordingly.
+		Using the <code>design</code> property, the appearance of the Label can be configured in a limited way. 
+		For a broader choice of designs, applications can use custom styles.
+
+		<h2>Examples</h2>
+
+		<h3>Basic Label</h3>
+
+		<div code-sample="sample1" script="Label1"></div>
+
+		<h3>Bold Label</h3>
+
+		<div code-sample="sample2" script="LabelBold"></div>
+
+		<h3>Basic Label with truncated text</h3>
+
+		<div code-sample="sample3" script="Label3"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Label.html">API documentation</a>
+		</p>
+	</body>
+</html>

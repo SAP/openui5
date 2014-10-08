@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.UIArea control
+  Author: d020684
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for UIArea control</title>
+
+		<script>
+		  window["sap-ui-config"] = {
+				  resourceRoots : {
+					  "sap.ui.testlib" : "./testdata/uilib/"
+				  }
+		  };
+		</script>
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core,sap.ui.testlib" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			var oCore = sap.ui.getCore();
+			var text1 = new sap.ui.testlib.TestButton("text1", {text:"Text 1"});
+			var text2 = new sap.ui.testlib.TestButton("text2", {text:"Text 2"}); 
+			var html3 = new sap.ui.core.HTML("html3", {content:"<div style='background-color:red; width:64px;height:64px;'></div>"}); 
+
+			qutils.delayTestStart();
+
+			/**
+			 * Adds two controls to an empty UIArea and renders it.
+			 * After rendering, the two controls should be visible in the UIArea
+			 * their order should match the order in which they have been added
+			 */
+	    test("basic rendering", function() {
+        text1.placeAt("uiArea1");
+	      text2.placeAt("uiArea1");
+	      oCore.applyChanges();
+			  equal(jQuery("#uiArea1 > button").length, 2, "two spans have been rendered");	    
+			  equal(jQuery(jQuery("#uiArea1 > button").get(0)).text(), "Text 1", "first span shows first text");	    
+			  equal(jQuery(jQuery("#uiArea1 > button").get(1)).text(), "Text 2", "second span shows second text");	    
+	    });
+
+			/**
+			 * Removes the controls from the UIArea
+			 * UIArea must be empty after the rendering 
+			 */
+	    test("removeAllContent", function() {
+	    	oCore.getUIArea("uiArea1").removeAllContent();
+	      oCore.applyChanges();
+				equal(jQuery("#uiArea1").children().length, 0, "no more content");
+				ok(oCore.byId("text1"), "remove must not destroy child 1");
+				ok(oCore.byId("text2"), "remove must not destroy child 2");
+	    });
+	    
+			/**
+			 * Test where an UIArea already has some DOM content
+			 * Rendering after addiition or removal of controls must not destroy
+			 * the content nor modify its order
+			 */
+	    test("initial DOM content", function() {
+	    	var $originalDom = jQuery("#uiArea2").children();
+			  equal($originalDom.length, 1, "precondition: one span exists already in UIArea");	    
+			  equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");	    
+        
+			  text1.placeAt("uiArea2");
+	      text2.placeAt("uiArea2");
+	      oCore.applyChanges();
+	      var $currentDom = jQuery("#uiArea2").children();
+			  equal($currentDom.length, 3, "two more spans have been rendered");	    
+			  equal($currentDom.get(0), $originalDom.get(0), "initial DOM must still exist");	    
+			  equal(jQuery($currentDom.get(0)).text(), "Before", "initial DOM must still exist");	    
+			  equal(jQuery($currentDom.get(1)).text(), "Text 1", "first span shows first text");	    
+			  equal(jQuery($currentDom.get(2)).text(), "Text 2", "second span shows second text");
+			  
+			  oCore.getUIArea("uiArea2").removeAllContent();
+	      oCore.applyChanges();
+	      var $currentDom = jQuery("#uiArea2").children();
+			  equal($currentDom.length, 1, "initial DOM still exists in UIArea");	    
+			  equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");	    
+	    });
+	    
+			/**
+			 * When additional pure DOM content is added to an UIArea, 
+			 * that content must not be modified by the UIArea rerendering
+			 */
+	    test("additional DOM content", function() {
+	    	// check preconditions
+	    	var $originalDom = jQuery("#uiArea2").children();
+			  equal($originalDom.length, 1, "precondition: one span exists already in UIArea");	    
+			  equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");	    
+        ok(oCore.byId("text1"), "precondition: control 1 still exists");
+        ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
+        ok(oCore.byId("text2"), "precondition: control 2 still exists");
+        ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+        
+        // do some interleaved modifications: Control / DOM / Control / DOM
+			  text1.placeAt("uiArea2");
+	      oCore.applyChanges();
+			  jQuery("#uiArea2").append("<span>In Between</span>");
+	      text2.placeAt("uiArea2");
+	      oCore.applyChanges();
+		    jQuery("#uiArea2").append("<span>After</span>");
+
+		    // check results. Note: controls are rendered in one, contiguous block
+		    var $currentDom = jQuery("#uiArea2").children();
+			  equal($currentDom.length, 5, "3 spans by dom manip, 2 rendered");	    
+			  equal($currentDom.get(0), $originalDom.get(0), "initial DOM must still exist");	    
+			  equal(jQuery($currentDom.get(0)).text(), "Before", "initial DOM must still exist");	    
+			  equal(jQuery($currentDom.get(1)).text(), "In Between", "3rd span shows dynamically added text");
+			  equal(jQuery($currentDom.get(2)).text(), "Text 1", "next span shows first control text");	    
+			  equal(jQuery($currentDom.get(3)).text(), "Text 2", "4th span shows second control text");	    
+			  equal(jQuery($currentDom.get(4)).text(), "After", "last span shows dynamically added end");	    
+			  
+			  // now remove controls, check that the remainigs are as expected
+			  oCore.getUIArea("uiArea2").removeAllContent();
+	      oCore.applyChanges();
+	      var $currentDom = jQuery("#uiArea2").children();
+			  equal($currentDom.length, 3, "initial DOM still exists in UIArea");	    
+			  equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");	    
+			  equal(jQuery($currentDom.get(1)).text(), "In Between", "second span shows second text");
+			  equal(jQuery($currentDom.get(2)).text(), "After", "first span shows first text");	    
+	    });
+	    
+			/**
+			 * When the UIArea contains a control that preserves its DOM,
+			 * then rerendering of the UIArea must not delete such preserved DOM
+			 */
+	    test("preserved DOM content", function() {
+        ok(oCore.byId("text1"), "precondition: control 1 still exists");
+        ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
+        ok(oCore.byId("text2"), "precondition: control 2 still exists");
+        ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+        var $originalDom = jQuery("#uiArea1").children();
+		  	equal($originalDom.length, 0, "precondition: UIArea1 is empty");	    
+
+		  	// ---- aspect 1: add controls and render ----
+		    text1.placeAt("uiArea1");
+	      text2.placeAt("uiArea1");
+	      html3.placeAt("uiArea1");
+        oCore.applyChanges();
+        
+        // check that the rendering had the expected result
+	      var $currentDom = jQuery("#uiArea1").children();
+			  equal($currentDom.length, 3, "3 items rendered");	    
+			  equal(jQuery($currentDom.get(0)).text(), "Text 1", "first control rendered");	    
+			  equal(jQuery($currentDom.get(1)).text(), "Text 2", "second control rendered");	    
+			  equal(jQuery($currentDom.get(2))[0].tagName, "DIV", "3rd control rendered");	    
+        
+			  // ---- aspect 2: modify the DOM of the HTML control ----
+			  jQuery("#html3").css("background-color", "blue");
+			  jQuery("#html3").css("width", "128px");
+			  equal(jQuery($currentDom.get(2)).css('width'), "128px", "width changed");	    
+			  
+			  // rerender the whole UIArea
+			  text1.getUIArea().invalidate();
+			  oCore.applyChanges();
+			  
+			  // check that the modified DOM is still there
+			  equal(jQuery($currentDom.get(0)).text(), "Text 1", "first control rendered");	    
+			  equal(jQuery($currentDom.get(1)).text(), "Text 2", "second control rendered");	    
+			  equal(jQuery($currentDom.get(2))[0].tagName, "DIV", "3rd control rendered");	    
+			  equal(jQuery($currentDom.get(2)).css('width'), "128px", "width changed");	    
+				// TODO check for same DOM object
+				
+				// ---- aspect 3: remove all content must not delete the preserved dOM ----
+				
+				// remove content and rerender
+			  oCore.getUIArea("uiArea1").removeAllContent();
+		    oCore.applyChanges();
+		    
+		    // check that UIArea is empoty, but preserved content still exists
+	      var $currentDom = jQuery("#uiArea1").children();
+		    equal($currentDom.length, 0, "no more DOM in the UIArea");
+		    var $preserved = jQuery("#html3");
+		    equal($preserved.length, 1, "preserved html still exists");	    
+		    equal($preserved[0].parentNode.id, "sap-ui-preserve", "preserved DOM is in preserve area");	    
+			  
+	    });
+
+		</script>
+		
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for HTML Control</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="uiArea1"></div>
+		<div id="uiArea2">
+			<span>Before</span>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemInfo.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List 
+		headerText="Products"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<items>
+			<StandardListItem
+				title="{Name}"
+				info="{Status}"
+				infoState="{
+					path: 'Status',
+					formatter: 'sap.m.sample.StandardListItemInfo.Formatter.status'
+				}"
+				 />
+		</items>
+	</List>
+</mvc:View>

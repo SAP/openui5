@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.CollectionInspector">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+<title>CollectionInspector - SAPUI5 Demo Kit</title>
+<meta name="keywords" content="Control FacetFilter" />
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.core,sap.ui.commons,sap.ui.demokit">
+	
+</script>
+<script src="../../../../../js/utils.js"></script>
+
+<script id='BasicCollectionInspector'>
+	var oThingViewer = new sap.ui.ux3.ThingViewer({
+		type : "Account",
+		firstTitle: "Arrango Corp."
+	});
+
+	var oAccount1 = new sap.ui.core.Item({
+		'text' : 'Arrango Corp.'
+	});
+	var oAccount2 = new sap.ui.core.Item({
+		'text' : 'ACME Corp.'
+	});
+	var oAccount3 = new sap.ui.core.Item({
+		'text' : 'Binary Bar Co.'
+	});
+	var oAccount4 = new sap.ui.core.Item({
+		'text' : 'Gravity'
+	});
+	var oAccount5 = new sap.ui.core.Item({
+		'text' : 'Silverstar Wholesale Inc.'
+	});
+	var oAccount6 = new sap.ui.core.Item({
+		'text' : 'Tiny Boots Corp.'
+	});
+	var oAccount7 = new sap.ui.core.Item({
+		'text' : 'Time Loop'
+	});
+	var oAccount8 = new sap.ui.core.Item({
+		'text' : 'USV Steam'
+	});
+	var oAccount9 = new sap.ui.core.Item({
+		'text' : 'Ullah Ing. Corp.'
+	});
+	var oAccount10 = new sap.ui.core.Item({
+		'text' : 'Universal Inc.'
+	});
+	var oAccount11 = new sap.ui.core.Item({
+		'text' : 'XC Counter'
+	});
+
+	var oHistory1 = new sap.ui.core.Item({
+		'text' : 'History1'
+	});
+
+	var oHistory2 = new sap.ui.core.Item({
+		'text' : 'History2'
+	});
+
+	var oHistory3 = new sap.ui.core.Item({
+		'text' : 'History3'
+	});
+
+	var oHistory4 = new sap.ui.core.Item({
+		'text' : 'History4'
+	});
+
+	var oHistory5 = new sap.ui.core.Item({
+		'text' : 'History5'
+	});
+
+	var oCollectionInspector = new sap.ui.ux3.CollectionInspector({
+		'fitParent' : false,
+		'collections' : [
+				new sap.ui.ux3.Collection({
+					'title' : 'My Accounts',
+					'items' : [ oAccount1, oAccount2, oAccount3,
+							oAccount4, oAccount5, oAccount6, oAccount7,
+							oAccount8, oAccount9, oAccount10, oAccount11 ]
+				}),
+				new sap.ui.ux3.Collection({
+					'title' : 'History',
+					'items' : [ oHistory1, oHistory2, oHistory3,
+							oHistory4, oHistory5 ]
+				}) ],
+		'content' : [ oThingViewer ],
+		'itemSelectionChanged' : function(oEvent) {
+			var oItem = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection()).getSelectedItems()[0];
+			if (oItem) {
+				oThingViewer.setFirstTitle(sap.ui.getCore().byId(oItem).getText());
+			}
+		}
+	});
+
+	oCollectionInspector.placeAt("sample1");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody">
+
+	<h1 color="Blue" icon="images/ctrls/collectioninspector-icon.png">CollectionInspector</h1>
+
+	<h2>Introduction</h2>
+
+	<p>The CollectionInspector displays several collections which can
+		contain several Things. It consists of two navigation bars. The top
+		navigation is used to select a collection. The sidebar is used to
+		selected a thing in the collection. The sidebar can be opened and
+		closed by the user.</p>
+
+	<h2>Example</h2>
+	<p>The following example shows a basic collection inspector with
+		two collections which both contain some things. Updating the content
+		needs to be handled by the user.</p>
+	<div code-sample="sample1" script="BasicCollectionInspector"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.CollectionInspector.html">API documentation</a>
+	</p>
+</body>
+</html>
+

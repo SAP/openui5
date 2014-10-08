@@ -1,0 +1,413 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Shell Usecases - sap.ui.ux3</title>
+<script src="../../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+<script src="../resources/ShellSettings.js" type="text/javascript"></script>
+<link type="text/css" rel="stylesheet" href="../resources/ShellSettings.css"/>
+
+<style>
+		
+.sapUiPanel .sapUiLnk { /* hacky! this should be done in the layout around the links! Do not copy! */
+	display: block;
+	margin-bottom: 3px;
+}
+		
+</style>
+
+<script>
+
+var c = sap.ui.commons; /* shorthand */
+
+//Add more settings here
+var mShellSettings = {
+	"default": {fullHeightContent: false, contentPadding: true},
+	"fullHeight_DefaultPadding":  {fullHeightContent: true, contentPadding: true},
+	"fullHeight_NoPadding": {fullHeightContent: true, contentPadding: false}
+};
+
+//Add more content here
+var mContent = {
+	"Home":	{
+		content: function(){
+			var layout = new c.layout.MatrixLayout();
+			var p1 = new c.Panel().setText("Home Quick Links");
+			p1.addContent(new c.Link({text:"Open Activities (5)"}));
+			p1.addContent(new c.Link({text:"Open Alerts (0)"}));
+			p1.addContent(new c.Link({text:"Open Tasks (8)"}));
+			p1.addContent(new c.Link({text:"Open Notifications (0)"}));
+			var cell1 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p1);
+			
+			var p2 = new c.Panel().setText("My Top Worklists");
+			p2.addContent(new c.Link({text:"Open Activities - Activities - Account Management (1)"}));
+			p2.addContent(new c.Link({text:"Open Tasks - Sales Quotes - New Business (2)"}));
+			p2.addContent(new c.Link({text:"Open Tasks - Returns - Sales Orders (2)"}));
+			var cell2 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p2);
+			layout.createRow(cell1, cell2);
+			
+			var cell = new c.layout.MatrixLayoutCell({colSpan:2});
+			var p3 = new c.Panel().setText("Latest News");
+			p3.addContent(new c.TextView({text:"No news available."}));
+			cell.addContent(p3);
+			layout.createRow(cell);
+			
+			return layout;
+		}
+	},
+	"SAPHomepage":	{
+		title: "SAP Homepage",
+		settings: mShellSettings["fullHeight_NoPadding"],
+		content: function(){
+			return new sap.ui.core.HTML({content:"<iframe src=\"http://www.sap.com\" frameborder=\"0\" style=\"width:100%;height:100%;display:block;\"></iframe>"});
+		}
+	},
+	"LoremIpsum":	{
+		title: "Some Lorem Ipsum",
+		content: function(){
+			var oMatrix = new c.layout.MatrixLayout();
+			for(var i=0; i<50; i++){
+				oMatrix.createRow("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.");
+			}
+			return new c.Panel({
+				title : new c.Title({
+					text: "Some Lorem Ipsum" 
+				}),
+				content : oMatrix
+			});
+		}
+	},
+	"ThingViewer":	{
+		settings: mShellSettings["fullHeight_NoPadding"],
+		content: function(){
+			function createLMatrixLayoutRowRow(sLabel, sText) {
+				return new c.layout.MatrixLayoutRow({
+					cells : [
+						new c.layout.MatrixLayoutCell({
+							hAlign : c.layout.HAlign.End,
+							vAlign : c.layout.VAlign.Top,
+							content : new c.Label({text : sLabel+":"})
+						}),
+						new c.layout.MatrixLayoutCell({
+							hAlign : c.layout.HAlign.Begin,
+							vAlign : c.layout.VAlign.Top,
+							content : new c.TextView({text : sText})
+						})
+					]
+				});
+			}
+
+			var oTV = new sap.ui.ux3.ThingViewer({
+				firstTitle : "ThingTitle First",
+				secondTitle : "ThingTitle Second",
+				type : "ThingType",
+				icon : "../images/Account_48.png",
+				facets : [
+					new sap.ui.ux3.NavigationItem({
+						key : "overview",
+						text : "Overview"
+					}),
+					new sap.ui.ux3.NavigationItem({
+						key : "feed",
+						text : "Feed"
+					}),
+					new sap.ui.ux3.NavigationItem({
+						key : "activities",
+						text : "Activities"
+					})
+				],
+				actionBar: sap.ui.ux3.ActionBar(),
+				headerContent : [
+					new sap.ui.ux3.ThingGroup({
+						title : "About",
+						content: new c.layout.MatrixLayout()
+					}),
+					new sap.ui.ux3.ThingGroup({
+						title : "Contact",
+						content: new c.layout.MatrixLayout()
+					})
+				]
+			});
+			oTV.setSelectedFacet(oTV.getFacets()[1]);
+
+			var oLayout = oTV.getHeaderContent()[0].getContent()[0];
+			oLayout.addRow(createLMatrixLayoutRowRow("Status", "active"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Owner", "Erwin M."));
+			oLayout.addRow(createLMatrixLayoutRowRow("Territory", "a Contact"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Classification", "Some classification"));
+
+			oLayout = oTV.getHeaderContent()[1].getContent()[0];
+			oLayout.addRow(createLMatrixLayoutRowRow("Address", "Somewhere, Street + No"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Phone", "06221/23428374"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Fax", "06221/23423432"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Email", "hugo.m@web.de"));
+
+			return oTV;
+		}
+	},
+	"CollectionInspector":	{
+		title: "Collection Inspector",
+		settings: mShellSettings["fullHeight_NoPadding"],
+		content: function() {
+			//CollectionInspector
+			var oThingViewer = new sap.ui.ux3.ThingViewer({
+					type : "Account",
+					firstTitle: "Arrango Corp."
+				});
+
+				var oAccount1 = new sap.ui.core.Item({
+					'text' : 'Arrango Corp.'
+				});
+				var oAccount2 = new sap.ui.core.Item({
+					'text' : 'ACME Corp.'
+				});
+				var oAccount3 = new sap.ui.core.Item({
+					'text' : 'Binary Bar Co.'
+				});
+				var oAccount4 = new sap.ui.core.Item({
+					'text' : 'Gravity'
+				});
+				var oAccount5 = new sap.ui.core.Item({
+					'text' : 'Silverstar Wholesale Inc.'
+				});
+				var oAccount6 = new sap.ui.core.Item({
+					'text' : 'Tiny Boots Corp.'
+				});
+				var oAccount7 = new sap.ui.core.Item({
+					'text' : 'Time Loop'
+				});
+				var oAccount8 = new sap.ui.core.Item({
+					'text' : 'USV Steam'
+				});
+				var oAccount9 = new sap.ui.core.Item({
+					'text' : 'Ullah Ing. Corp.'
+				});
+				var oAccount10 = new sap.ui.core.Item({
+					'text' : 'Universal Inc.'
+				});
+				var oAccount11 = new sap.ui.core.Item({
+					'text' : 'XC Counter'
+				});
+
+				var oHistory1 = new sap.ui.core.Item({
+					'text' : 'History1'
+				});
+
+				var oHistory2 = new sap.ui.core.Item({
+					'text' : 'History2'
+				});
+
+				var oHistory3 = new sap.ui.core.Item({
+					'text' : 'History3'
+				});
+
+				var oHistory4 = new sap.ui.core.Item({
+					'text' : 'History4'
+				});
+
+				var oHistory5 = new sap.ui.core.Item({
+					'text' : 'History5'
+				});
+
+				var oCollectionInspector = new sap.ui.ux3.CollectionInspector({
+					'fitParent' : true,
+					'collections' : [
+							new sap.ui.ux3.Collection({
+								'title' : 'My Accounts',
+								'items' : [ oAccount1, oAccount2, oAccount3,
+										oAccount4, oAccount5, oAccount6, oAccount7,
+										oAccount8, oAccount9, oAccount10, oAccount11 ]
+							}),
+							new sap.ui.ux3.Collection({
+								'title' : 'History',
+								'items' : [ oHistory1, oHistory2, oHistory3,
+										oHistory4, oHistory5 ]
+							}) ],
+					'content' : [ oThingViewer ],
+					'itemSelectionChanged' : function(oEvent) {
+						var oItem = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection()).getSelectedItems()[0];
+						if (oItem) {
+							oThingViewer.setTitle(sap.ui.getCore().byId(oItem).getText());
+						}
+					}
+				});
+
+			var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
+			oOverlayContainer.addContent(oCollectionInspector.clone());
+
+			var oButton = new sap.ui.commons.Button({
+				text : 'open CollectionInspector in overlay'
+			});
+			oButton.attachPress(function() {
+				oOverlayContainer.open();
+			});
+			oThingViewer.addHeaderContent(new sap.ui.ux3.ThingGroup({ title: "Demo", content: [oButton]}));
+			return oCollectionInspector;
+		}
+	},
+	"More":	{
+		children: ["SAPHomepage2", "LoremIpsum2", "LoremIpsum3"]
+	},
+	
+	//Sub Items
+	
+	"SAPHomepage2":	{
+		title: "SAP Homepage",
+		subitem: true,
+		settings: mShellSettings["fullHeight_DefaultPadding"],
+		content: "SAPHomepage"
+	},
+	"LoremIpsum2":	{
+		title: "Some Lorem Ipsum",
+		subitem: true,
+		content: "LoremIpsum"
+	},
+	"LoremIpsum3":	{
+		title: "Some more Lorem Ipsum",
+		subitem: true,
+		settings: mShellSettings["fullHeight_DefaultPadding"],
+		content: "LoremIpsum"
+	}
+};
+
+//Add more pane content here
+var mPaneContent = {
+	"Settings":	{
+		content: function(){
+			return getShellOptionsPanel(oShell, null, true);
+		}
+	}
+};
+
+//Add more header items here
+var aHeaderItems = [
+    new sap.ui.commons.MenuButton({
+		text: "Help",
+		tooltip: "Help Menu",
+		menu: new sap.ui.commons.Menu({
+			items:[
+				new sap.ui.commons.MenuItem({text:"Help", tooltip: "Help"}),
+				new sap.ui.commons.MenuItem({text:"Report Incident", tooltip: "Report an incident"}),
+				new sap.ui.commons.MenuItem({text:"About", tooltip: "About this application", startsSection: true})
+			]
+	})})
+];
+
+
+//************************************************************************
+
+
+function handleContentChange(bPane, sKey){
+	var _mContent = bPane ? mPaneContent : mContent;
+	var oContent =  _mContent[sKey];
+	
+	if(!bPane){
+		var oSettings = oContent.settings ? oContent.settings : mShellSettings["default"];
+		oShell.setFullHeightContent(oSettings.fullHeightContent);
+		oShell.setApplyContentPadding(oSettings.contentPadding);
+	}
+	
+	if(!bPane && oShell.isPaneOpen() && oShell.__currentPane === "Settings"){
+		oShell.setPaneContent(mPaneContent["Settings"].content());
+	}
+	
+	var oControl;
+	if(oContent._content instanceof sap.ui.core.Control){
+		oControl = oContent._content;
+	}else{
+		var getContent = typeof(oContent.content) === "string" ? _mContent[oContent.content].content : oContent.content;
+		oControl = getContent ? getContent() : null;
+		if(!(bPane && sKey === "Settings")){
+			oContent._content = oControl; // Always refresh settings
+		}
+	}
+	
+	if(oControl){
+		if(bPane){
+			oShell.setPaneContent(oControl);
+			oShell.__currentPane = sKey;
+		}else{
+			oShell.setContent(oControl);
+		}
+	}
+};
+
+
+var oShell = new sap.ui.ux3.Shell("myShell", {
+	appIcon:"../images/sap_18.png",
+	appIconTooltip: "SAP Logo",
+	appTitle: "Shell Usecases",
+	showFeederTool: false,
+	showInspectorTool: false,
+	notificationBar: new sap.ui.ux3.NotificationBar({messageNotifier: new sap.ui.ux3.Notifier({
+		title : "Messages"
+	})}),
+	logout: function() {
+		alert("Logout Button has been clicked.\nThe application can now do whatever is required.\nThis example page will just clear the screen.");
+	},
+	worksetItemSelected: function(oEvent) {
+		handleContentChange(false, oEvent.getParameter("key"));
+	},
+	paneBarItemSelected: function(oEvent) {
+		handleContentChange(true, oEvent.getParameter("key"));
+	}
+});
+oShell.placeAt("shellArea");
+
+
+var oItem, oContent, oChildContent;
+var bFirst = true;
+
+for(var sKey in mContent){
+	oContent = mContent[sKey];
+	if(!oContent.subitem){
+		oItem = new sap.ui.ux3.NavigationItem(sKey, {
+			key: sKey,
+			text: oContent.title ? oContent.title : sKey
+		});
+		oShell.addWorksetItem(oItem);
+		
+		if(oContent.children){
+			for(j=0; j<oContent.children.length; j++){
+				var sChildKey = oContent.children[j];
+				oChildContent = mContent[sChildKey];
+				oItem.addSubItem(new sap.ui.ux3.NavigationItem(sChildKey, {
+					key: sChildKey,
+					text: oChildContent.title ? oChildContent.title : sChildKey
+				}));
+			}
+		}
+		
+		if(bFirst){
+			oShell.setSelectedWorksetItem(sKey);
+			handleContentChange(false, sKey);
+			bFirst = false;
+		}
+	}
+}
+
+
+for(var sKey in mPaneContent){
+	oShell.addPaneBarItem(new sap.ui.core.Item(sKey, {
+		key: sKey,
+		text: mPaneContent[sKey].title ? mPaneContent[sKey].title : sKey
+	}));
+}
+
+
+for(var i=0; i<aHeaderItems.length; i++){
+	oShell.addHeaderItem(aHeaderItems[i]);
+}
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+<div id="shellArea"></div>
+</body>
+</html>

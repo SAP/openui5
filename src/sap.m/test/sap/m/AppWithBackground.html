@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		
+		<title>App with background images - sap.m</title>
+		
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		
+		<script type="text/javascript">
+			var app = new sap.m.App("myApp", {
+				initialPage:"page1"
+			});
+			
+			var page1 = new sap.m.Page("page1", {
+				title:"Page 1",
+				content : [
+					new sap.m.Button({
+						text : "To Page 2",
+						press : function() {
+							app.to("page2");
+						}
+					}),
+					
+					// background image switches
+					new sap.m.Button({
+						text : "Stretched Cheetah",
+						press : function() {
+							app.setBackgroundImage("images/demo/nature/huntingLeopard.jpg");
+							app.setBackgroundColor("");
+							app.setBackgroundOpacity(1);
+							sap.ui.getCore().byId("opacitySlider").setValue(1);
+							app.setBackgroundRepeat(false);
+							sap.ui.getCore().byId("repeatSelect").setSelectedKey("stretch");
+						}
+					}),
+					
+					new sap.m.Button({
+						text : "Repeating translucent Cheetah",
+						press : function() {
+							app.setBackgroundImage("images/demo/nature/huntingLeopard.jpg");
+							app.setBackgroundColor("#f00");
+							app.setBackgroundOpacity(0.6);
+							sap.ui.getCore().byId("opacitySlider").setValue(0.6);
+							app.setBackgroundRepeat(true);
+							sap.ui.getCore().byId("repeatSelect").setSelectedKey("repeat");
+						}
+					}),
+					
+					new sap.m.Button({
+						text : "Clear Background",
+						press : function() {
+							app.setBackgroundImage("");
+							app.setBackgroundColor("");
+							app.setBackgroundOpacity(1);
+							sap.ui.getCore().byId("opacitySlider").setValue(1);
+							app.setBackgroundRepeat(false);
+							sap.ui.getCore().byId("repeatSelect").setSelectedKey("stretch");
+						}
+					}),
+					
+					new sap.m.Select("repeatSelect", {items:[
+							new sap.ui.core.Item({text:"Stretch background",key:"stretch"}),
+							new sap.ui.core.Item({text:"Repeat background",key:"tile"})
+						],
+						change: function(oEvent){
+							var selectedItem = oEvent.getParameter("selectedItem");
+							app.setBackgroundRepeat(selectedItem.getKey() === "stretch" ? false : true);
+						}
+					}),
+					
+					new sap.m.Slider("opacitySlider", {
+						width: "50%",
+						min: 0,
+						max: 1,
+						step: 0.01,
+						liveChange: function(oEvent){
+							var value = oEvent.getParameter("value");
+							app.setBackgroundOpacity(value);
+						}
+					}),
+				]
+				
+			});
+
+			var page2 = new sap.m.Page("page2", {
+				title:"Page 2",
+				showNavButton: true,
+				navButtonText: "Page 1",
+				navButtonPress: function(){ app.back(); },
+				content : [ 
+					new sap.m.Button({
+						text : "Back to Page 1",
+						press : function() {
+							app.back();
+						}
+					})
+				]
+			});
+			app.addPage(page1).addPage(page2);
+
+			app.placeAt("body");
+		</script>
+		
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

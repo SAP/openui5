@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.NavigationBar,sap.ui.ux3.NavigationItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  	<meta name="keywords" content="Control NavigationBar" />
+		<title>NavigationBar - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+				data-sap-ui-language="en"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='samplescript1'>
+		var oNavigationBar1 = new sap.ui.ux3.NavigationBar({
+			items:[
+				new sap.ui.ux3.NavigationItem({key:"item1", text:"Item 1"}),
+				new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"}),
+				new sap.ui.ux3.NavigationItem({key:"item3", text:"Item with some text 3"})
+			]
+		});
+
+		oNavigationBar1.placeAt("sample1");
+		</script>
+
+		<script id='samplescript2'>
+		var oNavigationItem3 = new sap.ui.ux3.NavigationItem({key:"item3", text:"Item with some text 3"});
+		var oNavigationBar2 = new sap.ui.ux3.NavigationBar({
+			items:[
+				new sap.ui.ux3.NavigationItem({key:"item1", text:"i1"}),
+				new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"}),
+				oNavigationItem3,
+				new sap.ui.ux3.NavigationItem({key:"item4", text:"i4"}),
+				new sap.ui.ux3.NavigationItem({key:"item5", text:"Item with some text 5"}),
+				new sap.ui.ux3.NavigationItem({key:"item6", text:"Item with some text 6"}),
+				new sap.ui.ux3.NavigationItem({key:"item7", text:"Item with some text 7"}),
+				new sap.ui.ux3.NavigationItem({key:"item8", text:"Item with some text 8"}),
+				new sap.ui.ux3.NavigationItem({key:"item9", text:"Item with some text 9"}),
+				new sap.ui.ux3.NavigationItem({key:"item10", text:"i10"}),
+				new sap.ui.ux3.NavigationItem({key:"item11", text:"Item with some text 11"}),
+				new sap.ui.ux3.NavigationItem({key:"item12", text:"Item with some text 12"})
+			],
+			selectedItem:oNavigationItem3,
+			select: function(oEvent) {
+				if (oEvent.getParameter("item").getKey() == "item5") {
+					oEvent.preventDefault();
+					alert("Navigation to item 5 is not allowed.")
+				}
+			}	
+		});
+
+		oNavigationBar2.placeAt("sample2");
+		</script>
+
+		<script id='samplescript3'>
+		var oNavigationItem4 = new sap.ui.ux3.NavigationItem({key:"item4", text:"Associated Item 4"});
+		var oNavigationBar3 = new sap.ui.ux3.NavigationBar({
+			associatedItems:[
+				new sap.ui.ux3.NavigationItem({key:"item1", text:"Associated Item 1"}),
+				new sap.ui.ux3.NavigationItem({key:"item2", text:"Associated Item 2"}),
+				new sap.ui.ux3.NavigationItem({key:"item3", text:"Associated Item 3"}),
+				oNavigationItem4,
+				new sap.ui.ux3.NavigationItem({key:"item5", text:"Associated Item 5"}),
+				new sap.ui.ux3.NavigationItem({key:"item6", text:"Associated Item 6"}),
+				new sap.ui.ux3.NavigationItem({key:"item7", text:"Associated Item 7"})
+			],
+			selectedItem:oNavigationItem4
+		});
+		
+		oNavigationBar3.placeAt("sample3");
+		</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/navigationbar-icon.png">NavigationBar</h1>
+		<h2>Introduction</h2>
+
+		<p>The NavigationBar provides enhanced navigation capabilities and is the parent control of NavigationItems. It is displayed in the form of a horizontal line 
+		with switching markers depending on the currently selected item. The size of an item which is currently chosen by the user is enlarged and highlighted. In the case 
+		that a large number of items are defined for the bar, this is made transparent to the user by showing symbols for scrolling options (forwards and backwards) 
+		to see the next or previous items. Alternatively to the items aggregation you can use associated items when the items should be aggregated by other entities.</p>
+		<br/>
+
+		<h2>Basic Example</h2>
+		<p>A simple NavigationBar without initial selection.</p>
+		<div code-sample="sample1" script="samplescript1"></div>
+		<br/><br/>
+
+		<h2>Complex Example</h2>
+		<p>Another NavigationBar with the third item selected and some more items in order to visualize the scrolling capability. Item 5 is disabled within this example using the <code>select</code> event and the preventDefault(): method.</p>
+		<div code-sample="sample2" script="samplescript2"></div>
+		<br/><br/>
+
+		<h2>Example with associated items</h2>
+		<p>The following Navigation Bar does not own any items, but is associated with them. Item 4 is selected.</p>
+		<div code-sample="sample3" script="samplescript3"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.NavigationBar.html" >API documentation</a>
+		</p>
+	</body>
+</html>

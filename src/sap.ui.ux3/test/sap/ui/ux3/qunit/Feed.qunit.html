@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.ux3.Feed
+  Author: D031513
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.ux3">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	var sEvent = "";
+	var sEventParameter = "";
+
+	function handleToggleLive(oEvent){
+		sEvent = "ToggleLive";
+		sEventParameter = oEvent.getParameter('live');
+	}
+
+	function handleToolsItemSelected(oEvent){
+		sEvent = "ToolsItemSelected";
+		sEventParameter = oEvent.getParameter('itemId');
+	}
+
+	function handleFilterChange(oEvent){
+		sEvent = "FilterChange";
+		sEventParameter = oEvent.getParameter('newValue');
+	}
+
+	function handleSearch(oEvent){
+		sEvent = "Search";
+		sEventParameter = oEvent.getParameter('query');
+	}
+
+	function handleChunkAdded(oEvent){
+		sEvent = "ChunkAdded";
+		sEventParameter = oEvent.getParameter('chunk');
+	}
+
+	var oFeed = new sap.ui.ux3.Feed("Feed1",{
+		feederThumbnailSrc: '../images/feeder/w_01.png',
+		feederSender: 'FeederSender',
+		filterItems: [ new sap.ui.core.ListItem('FilterItem1',{
+										key: 'item1',
+										text: 'Filter1'
+										}),
+									 new sap.ui.core.ListItem('FilterItem2',{
+										key: 'item2',
+										text: 'Filter2'
+										})],
+		filterChange: handleFilterChange,
+		search: handleSearch,
+		chunkAdded: handleChunkAdded,
+		toggleLive: handleToggleLive,
+		toolsItemSelected: handleToolsItemSelected,												
+		chunks: [ new sap.ui.ux3.FeedChunk("Chunk1", {
+								thumbnailSrc: "../images/feeder/m_01.png",
+				  			sender: "Sender", 
+		    				text: "Text", 
+								timestamp: "date",
+								flagged: true,
+								favorite: true,
+								shared: true}),
+							new sap.ui.ux3.FeedChunk("Chunk2", {
+								//thumbnailSrc: "images/feeder/male.jpg",
+				  			sender: "Sender", 
+		    				text: "Text", 
+								timestamp: "date",
+								flagged: false,
+								favorite: true,
+								shared: false,
+								deletionAllowed: true,
+								comments: [ new sap.ui.ux3.FeedChunk("commentChunk1", {
+									 						sender: "CommentSender", 
+								    					text: "Comment", 
+								    					timestamp: "date"})
+								           ]
+								})
+		         ]
+		}).placeAt("uiArea1");
+
+
+		module("Appearance");
+
+		test("Output of elements", function() {
+			// feeder
+			ok(jQuery.sap.byId("Feed1").children(".sapUiFeeder").get(0), "Feeder rendered");
+			equal(sap.ui.getCore().getControl("Feed1-Feeder").getThumbnailSrc(), "../images/feeder/w_01.png", "ThumbnailSrc of feeder");
+
+			// no menu button if no items
+			ok(!jQuery.sap.byId("Feed1-toolsButton").get(0), "No Menu button if no items");
+
+			// live button
+			ok(jQuery.sap.byId("Feed1-liveButton").get(0), "Live button rendered");
+
+			// filter
+			ok(jQuery.sap.byId("Feed1-filter").get(0), "filter rendered");
+			equal(sap.ui.getCore().getControl("Feed1-filter").getItems().length, 2, "Number of filter items");
+			equal(sap.ui.getCore().getControl("Feed1-filter").getItems()[0].getId(), "FilterItem1", "Id of first filter item");
+
+			//search field
+			ok(jQuery.sap.byId("Feed1-search").get(0), "searchField rendered");
+
+			// chunks
+			ok(jQuery.sap.byId("Feed1").children("section").get(0), "chunk section rendered");
+			ok(jQuery.sap.byId("Chunk1").get(0), "First Chunk rendered rendered");
+			ok(jQuery.sap.byId("Chunk2").get(0), "Second Chunk rendered rendered");
+			equal(jQuery.sap.byId("Feed1").children("section").children("article").get(0).id, "Chunk1", "first chunk rendered at first");
+
+		});
+
+		asyncTest("add menu items", function() {
+			oFeed.addToolsMenuItem(new sap.ui.commons.MenuItem('MenuItem1',{ text: 'Item1' }));
+			oFeed.addToolsMenuItem(new sap.ui.commons.MenuItem('MenuItem2',{ text: 'Item2' }));
+
+			var delayedCall = function() {
+				ok(jQuery.sap.byId("Feed1-toolsButton").get(0), "Menu button rendered");
+				equal(sap.ui.getCore().getControl("Feed1-toolsButton").getMenu().getItems().length, 2, "Number of menu items");
+				start();
+			};
+			setTimeout(delayedCall, 0);
+		});
+
+		module("Behaviour");
+
+		test("live button", function() {
+			qutils.triggerMouseEvent("Feed1-liveButton", "click");
+			equal(sEvent, "ToggleLive", "Event by clicking live button");
+			equal(sEventParameter, false, "live state after click on live button");
+			sEvent = "";
+			sEventParameter = "";
+
+			qutils.triggerMouseEvent("Feed1-liveButton", "click");
+			equal(sEvent, "ToggleLive", "Event by clicking live button");
+			equal(sEventParameter, true, "live state after click on live button");
+			sEvent = "";
+			sEventParameter = "";
+
+			// if toggle button available test for toggle state
+		});
+
+		test("menu button", function() {
+			qutils.triggerMouseEvent("Feed1-toolsButton", "click");
+			qutils.triggerMouseEvent("MenuItem1", "click");
+			equal(sEvent, "ToolsItemSelected", "Event by clicking fist item of menu button");
+			equal(sEventParameter, "MenuItem1", "ID of clicked menu item");
+			sEvent = "";
+			sEventParameter = "";
+
+		});
+
+		asyncTest("filter", function() {
+			jQuery.sap.domById("Feed1-filter").focus();
+			qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent("Feed1-filter", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			var delayedCall = function() {
+				equal(sEvent, "FilterChange", "Event by changing filter value");
+				equal(sEventParameter, "Filter2", "New value of filter");
+				sEvent = "";
+				sEventParameter = "";
+				start();
+			};
+			setTimeout(delayedCall,0);
+
+		});
+
+		test("search field", function() {
+			var oSearchDomRef = sap.ui.getCore().getControl("Feed1-search").getFocusDomRef();
+			qutils.triggerCharacterInput(oSearchDomRef, "Test");
+			qutils.triggerKeyEvent("keyup", oSearchDomRef, jQuery.sap.KeyCodes.T);
+			qutils.triggerKeyboardEvent(oSearchDomRef, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			equal(sEvent, "Search", "Event by entering value in search field");
+			equal(sEventParameter, "Test", "search query");
+			sEvent = "";
+			sEventParameter = ""; 
+
+		});
+
+		asyncTest("Add chunk", function() {
+
+			jQuery.sap.domById("Feed1-Feeder-input").focus();
+			jQuery.sap.byId("Feed1-Feeder-input").text("Test");
+			qutils.triggerKeyup("Feed1-Feeder-input", jQuery.sap.KeyCodes.T, false, false, false);
+			qutils.triggerMouseEvent("Feed1-Feeder-send", "click");
+			equal(sEvent, "ChunkAdded", "event fired on adding a new chunk");
+			equal(sEventParameter.getId(), oFeed.getChunks()[0].getId(), "chunk returned from event must be the first one in aggregation");
+			equal(oFeed.getChunks()[0].getText(), "Test","Text of the chunk");
+			equal(oFeed.getChunks()[0].getSender(), "FeederSender","Sender of the chunk");
+			equal(oFeed.getChunks()[0].getThumbnailSrc(), "../images/feeder/w_01.png","Thunmnail source of the chunk");
+			sEvent = "";
+			sEventSourceId = "";
+			sEventParameter = "";
+
+			var delayedCall = function() {
+				var aChunks = jQuery.sap.byId("Feed1").children("section").children("article");
+				equal(aChunks.get(0).id, "Feed1-new-2", "New chunk must be the first one");
+				start();
+			};
+			setTimeout(delayedCall, 0);
+		});
+
+	</script>
+
+	<title>qunit Test for Feed</title>
+ 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feed.gif"> 
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.Feed</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1" style="width:80%;"></div>
+
+</body>
+</html>

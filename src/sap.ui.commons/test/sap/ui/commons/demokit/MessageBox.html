@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Dialog" data-sap-ui-dk-controls="sap.ui.commons.MessageBox">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>MessageBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script>
+			jQuery.sap.require("sap.ui.demokit.CodeViewer");
+			jQuery.sap.require("sap.ui.commons.MessageBox");
+			var source = sap.ui.demokit.CodeViewer.showScript;
+		</script>
+
+<script id="alert">
+function openAlert() {
+  // say "Hello World" with one short line of code
+	sap.ui.commons.MessageBox.alert("Hello World from MessageBox.alert()!");
+}
+
+// to call the above function, we create a simple button
+new sap.ui.commons.Button({text:"Show Alert!", press : openAlert}).placeAt("sample1");
+</script>
+
+<script id="confirm">
+function openConfirm() {
+	// open a simple confirm box
+	sap.ui.commons.MessageBox.confirm("Do you want to rule the world?", fnCallbackConfirm, "A Question");
+}
+function fnCallbackConfirm(bResult) {
+	alert("Result returned to fnCallbackConfirm: " + bResult);
+}
+
+// to call the above function, we create a simple button
+new sap.ui.commons.Button({text:"Show Confirm!", press : openConfirm}).placeAt("sample2"); 
+</script>
+
+<script id="show">
+// a callback that will be called when the message box is closed again
+function fnCallbackMessageBox(sResult) {
+	alert("Result returned to fnCallbackShow1: " + sResult);
+}
+
+function openMessageBox() {
+	// this is required since there is no direct access to the box's icons like MessageBox.Icon.WARNING 
+	jQuery.sap.require("sap.ui.commons.MessageBox");
+	
+	// open a fully configured message box
+	sap.ui.commons.MessageBox.show("Ruling the world is a time-consuming task. You will not have a lot of spare time.\nStill convinced to do it?",
+			sap.ui.commons.MessageBox.Icon.WARNING,
+			"This could be dangerous",
+			[sap.ui.commons.MessageBox.Action.YES, sap.ui.commons.MessageBox.Action.NO], 
+			fnCallbackMessageBox,
+			sap.ui.commons.MessageBox.Action.YES);
+}
+
+// to call the above function, we create a simple button
+new sap.ui.commons.Button({text:"Show MessageBox", press : openMessageBox}).placeAt("sample3");
+
+</script>
+
+	</head>
+  <body class="sapUiDemokitBody" role="application">
+
+    <h1 color="Pink" icon="images/ctrls/messagebox-icon.png">MessageBox</h1>
+
+		<h2>Introduction</h2>
+		<p>
+		The MessageBox utility class implements some convenience functionality based on the Dialog control. MessageBox defines a template that can be easily configured with the method parameters. 
+		Each method of the MessageBox class addresses a different use case: <code>alert()</code>, <code>confirm()</code>, and <code>show()</code>. The MessageBox is always used when a Dialog control would be too much overhead (since there are no restrictions regarding the content of a Dialog, it can consist of any combination of controls). 
+		</p>
+
+		<h2>Asynchronous Nature of MessageBox</h2>
+		<p>
+		There is one big difference between the dialogs provided by the framework's MessageBox class and the standard JavaScript boxes such as alert, confirm, input: MessageBox acts event-driven. 
+		When calling one of the MessageBox methods, a dialog control is created and opened (rendered in the page). 
+		Then the method returns: The browser monitors the user activity and sends the events to the control (for example, the 
+		user has moved the dialog, or resized it). Each such interaction is delivered as a separate event and processed by the  
+		control or one of its children. When the user finally closes the dialog (for example by clicking the close icon), this 
+		browser click event is also processed by the dialog. The dialog is closed and the callback function is triggered.		
+		<br><br>
+		<b>This means that your code will receive the result of the <code>show()</code> or <code>confirm()</code> method 
+		in the callback function, and not as a return value of one of the two methods.</b>
+		</p>
+
+		<!-- a invisible dummy heading to avoid automatic insertion of a 'settings' section -->
+		<h2 id="settings" style="display:none">Settings</h2>
+
+		<h2>Examples</h2>
+
+		<h3>A Simple Alert Box: <font face=courier size=4>alert()</font></h3>
+		This is the basic use case of the MessageBox control. It creates a purely informational dialog with any message and an OK button:
+		<br><br>
+		<div class="sapUiDemokitScreenshot">
+		  <img src="images/alert1_sap_ux.png"></img><br>
+		  <span><i> How it looks like (UX theme)</i></span>
+		</div>
+
+		<p>
+		An alert window can be configured with any text to be displayed. You can register a callback function that is called when the dialog is 
+		closed by the user, and you can specify a title. For details about the parameters and their defaults, see the
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MessageBox.html#alert">API documentation.</a>
+		The following code sample shows a typical usage of the <code>alert()</code> function:
+		</p>
+		<div code-sample="sample1" script="alert"></div>
+
+
+		<h3>A Simple Confirmation Question: <font face=courier size=4>confirm()</font></h3>
+		A simple way to request a user decision is using <code>MessageBox.confirm(sMessage,fnCallback,sTitle)</code>.
+		Such a MessageBox has a question mark icon as well as an OK and a Cancel button. 
+		The given callback will receive a boolean value as parameter, which is <font face=courier size=2>true</font> if the user clicked &quot;OK&quot; and <font face=courier size=2>false</font>
+		if the user clicked &quot;Cancel&quot; or the X-close button.
+		</p>
+		<div class="sapUiDemokitScreenshot">
+		  <img src="images/confirm1_sap_ux.png"></img><br>
+		  <span><i> How it looks like (UX theme)</i></span>
+		</div>
+
+		<p>
+		The following code sample shows a typical usage of the <code>confirm()</code> function:
+		</p>
+		<div code-sample="sample2" script="confirm"></div>
+
+		<h3>General MessageBox Dialog: <font face=courier size=4>show()</font></h3>
+		A more flexible but still simple way to display popup dialogs containing error, success, information, or warning messages is offered by the
+		<br><br>
+		<code>MessageBox.show(sMessage,oIcon,sTitle,vActions,fnCallback,oDefaultAction)</code> 
+		<br><br>
+		method. All exept the first parameter are optional. The strength of this method is how <code>oIcon</code> and <code>vActions</code> let you choose from pre-defined enumerations: For the icons you can use preset values like 
+		<br><br>
+		<code>sap.ui.commons.MessageBox.Icon.WARNING</code> or
+		<br><br>
+		<code>sap.ui.commons.MessageBox.Icon.ERROR</code>.
+		<br><br> 
+		For the buttons to be displayed, you can use values such as
+		<br><br>
+		<code>sap.ui.commons.MessageBox.Action.YES</code> or
+		<br><br>
+		<code>sap.ui.commons.MessageBox.Action.NO</code>.
+		<br><br> 
+		The labeled buttons will be displayed, and the dialog result given to the callback method will equal the value of the selected button.<br>		
+		<br>
+		<div class="sapUiDemokitScreenshot">
+		  <img src="images/show1_sap_ux.png"></img><br>
+		  <span><i> How it looks like (UX theme)</i></span>
+		</div>
+
+		<p>
+		The following code sample shows a typical usage of the <code>show()</code> function:
+		</p>
+		<div code-sample="sample3" script="show"></div>
+
+    	<br>
+    <p>
+    <h2>API Documentation</h2>
+    See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MessageBox.html">API documentation</a>
+    </p>
+    See also: <a class="sapUiDemokitSrcLink" href="Dialog.html">Dialog</a>
+  </body>
+</html>

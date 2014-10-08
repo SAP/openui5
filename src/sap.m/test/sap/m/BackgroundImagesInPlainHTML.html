@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+		<title>Background Image in Plain HTML Test</title>
+
+		<link type="text/css" rel="stylesheet" href="../../../resources/sap/ui/core/themes/sap_bluecrystal/library.css">
+		<link type="text/css" rel="stylesheet" href="../../../resources/sap/m/themes/sap_bluecrystal/library.css">
+		
+		
+		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+			}
+			
+			.background {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+			}
+			
+			.logo {
+				position: absolute;
+				left: 100px;
+				top: 100px;
+				width: 200px;
+				height: 100px;
+			}
+			
+			.branding-bar {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 4px;
+			}
+		</style>
+	</head>
+	<body class="sapUiBody">
+		<div class="background sapMGlobalBackgroundColor">
+			<div class="sapMGlobalBackgroundImage"></div>
+			<span class="branding-bar sapThemeBrand-asBackgroundColor"></span>
+			<div class="logo sapMGlobalLogoImage"></div>
+		</div>
+		<div class="mainContent">
+		This page should have the theme background image, a bar with branding color on top and a logo image below this text - IF a logo image is configured in the theme, which is usually NOT the case by default.
+		</div>
+	</body>
+</html>

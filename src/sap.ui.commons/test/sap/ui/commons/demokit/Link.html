@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.Link">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Link - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script id='LinkToAction'>
+// creates a simple link with an action and property href not set
+var oLink1 = new sap.ui.commons.Link({
+	text: "Link to Action", 
+	tooltip: "This is a test tooltip",
+	press: function() {alert('Alert from ' + oLink1.getText());}});
+// attach the link to the DOM
+oLink1.placeAt("sample1");
+		</script>
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/link-icon.png">Link</h1>
+
+	<h2>Introduction</h2>
+	<p>The Link control represents a simple click link. It can be used for navigation or for initiating actions, such as Save or Print. If the <code>href</code> property is set, the link behaves like the basic HTML anchor tag (&lt;A>) and opens the specified URL in the given target frame (<code>target</code> property). Alternatively, the <code>press</code> event can be used to execute the action.
+	</p>
+
+	<h2>Example</h2>
+	<div code-sample="sample1" script="LinkToAction"></div>
+	
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Link.html">API documentation</a>
+	</p>
+	</body>
+</html>

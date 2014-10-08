@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.ui.core.BusyIndicator
+  Author: d046011
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.LocalBusyIndicator</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons">
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+		var oListBox = new sap.ui.commons.ListBox({
+			tooltip : "Country",
+			editable : false,
+			width : "200px",
+			height : "200px",
+			items : [ new sap.ui.core.ListItem({
+				text : "I'm an item, and you?"
+			}) ]
+		}).placeAt("target1");
+		
+		var oSlider = new sap.ui.commons.Slider({
+
+		}).placeAt("target2");
+		
+    	
+		// make sure the controls are not busy
+    	test("InitialCheck", function() {
+    		equal(oSlider.getBusy(), false, "Slider is not busy");
+    		equal(oListBox.getBusy(), false, "Listbox is not busy");
+    	});
+		
+		
+		asyncTest("Delayed opening", function() {
+			oListBox.setBusy(true);
+			
+			equal(oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
+			equal(oListBox.getBusy(), true, 'ListBox is busy');
+		
+			setTimeout(function() {
+				equal(oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
+				start();
+			}, 1200);
+		});
+		
+		asyncTest("Close Busy Indicator", function() {
+			oListBox.setBusy(false);
+			
+			setTimeout(function() {
+				equal(oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator was romoved from DOM');
+				equal(oListBox.getBusy(), false, 'ListBox is not busy anymore');
+				start();
+			}, 250);
+		});
+		
+		asyncTest("Open multiple busy indicators", function() {
+			oListBox.setBusy(true);
+			oSlider.setBusy(true);
+			
+			equal(oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Listbox Busy Indicator not yet added to DOM');
+			equal(oSlider.$().children('.sapUiLocalBusyIndicator').length, 0, 'Slider Busy Indicator not yet added to DOM');
+			equal(oListBox.getBusy(), true, 'ListBox is busy');
+			equal(oSlider.getBusy(), true, 'Slider is busy');
+		
+			setTimeout(function() {
+				equal(oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Listbox Busy Indicator is part of the DOM');
+				equal(oSlider.$().children('.sapUiLocalBusyIndicator').length, 1, 'Slider Busy Indicator is part of the DOM');
+				start();
+			}, 1200);
+		});
+
+    </script>
+	</head>
+	<body>
+    <h1 id="qunit-header">qUnit Page for sap.ui.core.LocalBusyIndicator</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="target1"></div>
+    <div id="target2"></div>
+    <div id="target3"></div>
+	</body>
+</html>

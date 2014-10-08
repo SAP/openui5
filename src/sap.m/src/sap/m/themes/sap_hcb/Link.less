@@ -1,0 +1,53 @@
+/* ============================================= */
+/* CSS for control sap.m/Link.control            */
+/* High Contrast Black theme                      */
+/* ============================================= */
+
+.sapMLnk {
+	color: @sapHCStandardFG;
+	text-decoration: underline;
+}
+
+.sapMLnk.sapMLnkDsbl {
+	outline: none;
+	cursor: default;
+	color: @sapHCReducedFG;
+	text-decoration: underline;
+}
+
+/* Hover Decoration only for desktop clients*/
+.sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	color: @sapHCStandardFG;
+	text-decoration: none;
+}
+.sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
+	color: @sapHCStandardFG;
+	text-decoration: none;
+}
+
+.sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
+	outline: none;
+}
+	
+.sapMLIBActive .sapMLnk {
+	color: @sapHCStandardFG;
+	text-decoration: underline;
+}
+
+.sapMLnk:active {
+	background-color: transparent;
+}
+
+.sapUiFormEdit .sapMLnk {
+	line-height: 3rem;
+}
+
+.sapMLnkEmphasized {
+	font-weight: bold;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapMLnk {
+	line-height: 2rem;
+}

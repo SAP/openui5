@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+		<title>sap.m.Shell Test</title>
+		
+		<script src="../../../resources/sap-ui-core.js" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m" 
+			data-sap-ui-theme="sap_bluecrystal"></script>
+		
+		<script>
+			var oShell= new sap.m.Shell("myShell", {
+				title: "My Application",
+				logo: "images/SAPUI5.png",
+				headerRightText: "Nora Crush",
+				logout: function() {alert("Logout button was pressed");}
+			});
+			
+			var oApp = new sap.m.SplitApp("myApp", {
+				masterPages: new sap.m.Page("page1", {
+					title: "Some Master"
+				}),
+				detailPages: new sap.m.Page("page2", {
+					title: "Some Detail",
+					content: [
+						new sap.m.HBox({items:[
+							new sap.m.Label({
+								text: "Logo: "
+							}),
+							new sap.m.Button({
+								text: "SAPUI5 Logo",
+								press: function() {
+									oShell.setLogo("images/SAPUI5.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "SAP big",
+								press: function() {
+									oShell.setLogo("images/SAPLogo@2.jpg");
+								}
+							}),
+							new sap.m.Button({
+								text: "SAP small",
+								press: function() {
+									oShell.setLogo("images/SAPLogo.jpg");
+								}
+							}),
+							new sap.m.Button({
+								text: "Wide Logo",
+								press: function() {
+									oShell.setLogo("images/wide-logo.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "Tall Logo",
+								press: function() {
+									oShell.setLogo("images/tall-logo.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "NO Logo",
+								press: function() {
+									oShell.setLogo("");
+								}
+							})
+						]}),
+						new sap.m.HBox({items:[
+							new sap.m.Label({
+								text: "Limit App Width: "
+							}),
+							new sap.m.Switch({
+								state: true,
+								change: function(oEvent) {
+									var bLimit = oEvent.getParameter("state");
+									oShell.setAppWidthLimited(bLimit);
+								}
+							})
+						]})
+					]
+				})
+			});
+			
+			oShell.setApp(oApp);
+			oShell.placeAt("content");
+		</script>
+	
+	</head>
+	<body class='sapUiBody' role="application" id="content">
+	</body>
+</html>

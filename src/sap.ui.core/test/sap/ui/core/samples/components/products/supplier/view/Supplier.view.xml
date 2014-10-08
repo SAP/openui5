@@ -1,0 +1,45 @@
+<mvc:View controllerName="samples.components.products.supplier.view.Supplier" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:table="sap.ui.table" xmlns="sap.ui.commons" xmlns:cl="sap.ui.commons.layout" xmlns:html="http://www.w3.org/1999/xhtml" width="100%">
+	
+	
+	<html:div style="margin-top: 10px;">
+	
+					<Panel>
+						<title>
+							<Title text="{texts>EPM_PROD_SUPP_DETAIL_HDR}"></Title>
+						</title>
+						<cl:MatrixLayout id="lytSupplier" layoutFixed="false">
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_COMP}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="3">
+									<TextField editable="false" value="{Name}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_STREET}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="3">
+									<TextField editable="false" value="{Address/Street}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_COUNTRYZIPCITY}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell padding="End">
+									<TextField editable="false" value="{Address/Country}" width="30px"></TextField>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell padding="End">
+									<TextField editable="false" value="{Address/Zip}" width="60px"></TextField>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell>
+									<TextField editable="false" value="{Address/City}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+						</cl:MatrixLayout>
+					</Panel>
+	</html:div>
+	
+</mvc:View>

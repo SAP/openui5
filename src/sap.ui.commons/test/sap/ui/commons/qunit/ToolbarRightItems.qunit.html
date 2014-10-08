@@ -1,0 +1,208 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.ui.commons.Toolbar
+  The focus is on the correct calculation of the number of visible items. When toolbar item widths are influenced
+  by images and these images are only loaded AFTER onAfterRendering (which happens sometimes in Safari and always in Chrome)
+  the calculation is wrong and not repeated after the images are loaded.
+  Author: d029506
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+	<title>Test Page for sap.ui.commons.Toolbar with Right Side Items</title>
+
+		<script id="sap-ui-bootstrap"
+			      type="text/javascript"
+			      src="../../../../../resources/sap-ui-core.js"
+			      data-sap-ui-theme="sap_bluecrystal"
+			      data-sap-ui-noConflict="true"
+			      data-sap-ui-libs="sap.ui.commons">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script type="text/javascript">
+		function addManyItems(oToolbar) {
+			var id = oToolbar.getId();
+
+		    // 10 buttons
+		    var aIcons =
+		      [
+		        "../images/new.png",
+		        "../images/open.png",
+		        "../images/save.png",
+		        "../images/cut.png",
+		        "../images/copy.png",
+		        "../images/paste2.png",
+		        null,
+		        null,
+		        null,
+		        null
+		      ];
+		    var aLabels =
+			  [
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "Forward",
+				  "Process",
+				  "View All",
+				  "Approve"
+		     ];
+
+		    // create ten buttons
+		    for (var i = 0; i < 10; ++i) {
+		      var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i]});
+		      if (aIcons[i]) {
+		    	  oButton.setIcon(aIcons[i]);
+		      }
+
+		      // add separators at various positions
+		      if (i==2) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
+		      } else if (i==5) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
+		      } else if (i==8) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
+		      }
+
+		      oToolbar.addItem(oButton);
+		    }
+
+		    // input field
+		    var oTextField = new sap.ui.commons.TextField(id + "_tf",
+			  {
+			    value : "#0"
+			  });
+		    oToolbar.addItem(oTextField);
+
+		    // combo box for 2nd button's text
+		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb", 
+		      {
+		        items :
+		        [
+		          new sap.ui.core.ListItem({text : "#1"}), 
+		          new sap.ui.core.ListItem({text : "Do it"}),
+		          new sap.ui.core.ListItem({text : "Hello world"}),
+		          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
+		        ]
+		      });
+		    oToolbar.addItem(oComboBox);
+
+		    //Add Right side items
+		    for (var i = 0; i < 4; ++i) {
+		       var oButton = new sap.ui.commons.Button(id + "_bRi_" + i, {text : aLabels[i]});
+		       if (aIcons[i]) {
+		    	  oButton.setIcon(aIcons[i]);
+		       }
+
+		       // add separators at various positions
+		       if (i==1) {
+		    	  oToolbar.addRightItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
+		       } else if (i==3) {
+		    	  oToolbar.addRightItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.Standard}));
+		      }
+			oToolbar.addRightItem(oButton);
+		    }
+		    return oToolbar;
+		}
+
+
+		var oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width:"490px"}).placeAt("uiArea1");
+		addManyItems(oCtrl);
+
+
+		// ========================================================
+		// test number of toolbar items on right and left sides
+		// ========================================================
+		asyncTest("VisibleItems calculation with images involved", function() {
+			expect(3);
+			setTimeout(function(){ // give the Toolbar some time to recognize the change
+				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible on the left side (6 Buttons + 2 Separators)");
+				equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
+				equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
+				start();
+			}, 500);
+		});
+
+		// ==================================================
+		// test property settings
+		// ==================================================
+
+
+		/**
+		 * Tests accessor method for property visible of the whole Toolbar.
+		 */
+		test("VisibleOk", function() {
+			strictEqual(oCtrl.getVisible(), true);
+		});
+
+		/**
+		 * Tests accessor method for property width of the whole Toolbar.
+		 */
+		test("WidthOk", function() {
+			strictEqual(oCtrl.getWidth(), "490px");
+		});
+
+		asyncTest("VisibleItems calculation with item size change", function() {
+			expect(3);
+			strictEqual(oCtrl.getWidth(), "490px");
+			oCtrl.setWidth("350px");
+		    sap.ui.getCore().applyChanges();
+			setTimeout(function(){ // give the Toolbar some time to recognize the change
+				equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
+				equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
+				start();
+			}, 500);
+		});
+
+		test("WidthOk after resize", function() {
+			strictEqual(sap.ui.getCore().byId("Toolbar").getWidth(), "350px");
+		});
+
+		// ==================================================
+		//          helper functions
+		// ==================================================
+
+		/**
+		 * Helper method using internal knowledge of the renderer to get the DomRef of oCtrl's overflow button
+		 */
+		function getOverflowDomRef() {
+			var sOverflowId = oCtrl.getId() + "-mn";
+			return jQuery.sap.domById(sOverflowId);
+		}
+
+		/**
+		 * Returns the overflow popup DomRef for oCtrl or null if it does not exist
+		 */
+		function getPopupDomRef() {
+			var child = jQuery.sap.domById(oCtrl.getId()+"-pu");
+			if (child) {
+				return child.parentNode;
+			} else {
+				return null;
+			}
+		}
+
+    </script>
+  </head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar with Right Side Items</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>	
+		<div id="uiArea1"></div>
+	</body>
+</html>

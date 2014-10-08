@@ -1,0 +1,61 @@
+<mvc:View
+	controllerName="sap.m.sample.InputStates.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+
+			<Label text="Product not editable" />
+			<Input
+				id="InputNoEdit"
+				type="Text"
+				placeholder="Product..."
+				enabled="true"
+				editable="false"
+			/>
+			
+			<Label text="Product not enabled" />
+			<Input
+				id="InputDisabled"
+				type="Text"
+				placeholder="Product ..."
+				enabled="false"
+			/>
+			
+			<Label text="Product editable" />
+			<Input
+				id="InputEdit"
+				type="Text"
+				placeholder="Enter Product..."
+				enabled="true"
+				editable="true"
+			/>
+			
+			<Label text="Product with Value Help" />
+			<Input
+				id="InputValueHelp"
+				type="Text"
+				placeholder="Enter Product..."
+				enabled="true"
+				editable="true"
+				showValueHelp="true"
+				valueHelpRequest="handleValueHelp"
+			/>
+			
+			<Label text="Product with Value Help Only" />
+			<Input
+				id="productInputVHO"
+				type="Text"
+				placeholder="Enter Product..."
+				enabled="true"
+				editable="true"
+				showValueHelp="true"
+				valueHelpOnly="true"
+				valueHelpRequest="handleValueHelp"
+			/>
+		</items>
+	</VBox>
+</mvc:View>

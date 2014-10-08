@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Paginator - sap.ui.commons</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+		var sId = "paginator1";
+		var lastSrcPage = null;
+		var lastTargetPage = null;
+		var lastEventType = null;
+		
+		function pageEventHandler(oEvent) {
+			lastSrcPage = oEvent.getParameter("srcPage");
+			lastTargetPage = oEvent.getParameter("targetPage");
+			lastEventType = oEvent.getParameter("type");
+			equal(oEvent.getParameter("id"), sId, "ID should be the one of the Paginator"); // this also tests by being counted in the respective real test
+		}
+
+		
+		var oCtrl = new sap.ui.commons.Paginator(sId, {
+			currentPage:1,
+			numberOfPages:110,
+			page:pageEventHandler
+		});
+		oCtrl.placeAt("uiArea1");
+		
+		
+		
+		test("Initial Check", function() {
+			expect(2);
+			ok(oCtrl, "Paginator should exist after creating");
+  		var oDomRef = jQuery.sap.domById(sId);
+  		ok(oDomRef, "Paginator root element should exist in the page");
+		});
+		
+		test("Last Page Link", function() {
+			expect(2);
+  		var oDomRef = jQuery.sap.domById(sId + "--lastPageLink");
+  		ok(oDomRef, "'Last Page' link should exist in the page");
+  		equal(jQuery(oDomRef).text(), "Page 110", "'Last Page' link should display 'Page 110'");
+		});
+		
+		test("Page Links", function() {
+			expect(8);
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.length, 1, "pages ul tag should exist in the page");
+  		equal($pages.children().length, 5, "pages ul tag should have five children");
+  		equal($pages.children(":eq(0)").text(), "1", "first page link should say '1'");
+  		ok($pages.children(":eq(0)").hasClass("sapUiPagPage"), "first page link should be a page link");
+  		ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
+  		equal($pages.children(":eq(1)").text(), "2", "second page link should say '1'");
+  		ok($pages.children(":eq(1)").hasClass("sapUiPagPage"), "second page link should be a page link");
+  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+		});
+		
+		test("Change Current Page", function() {
+			expect(3); // no event should be fired
+			oCtrl.setCurrentPage(2);
+			sap.ui.getCore().applyChanges();
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.children().length, 5, "pages ul tag should have five children");
+  		ok($pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should be current");
+  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+		});
+		
+		test("Change Current Page To The Middle", function() {
+			expect(9); // no event should be fired
+			oCtrl.setCurrentPage(50);
+			sap.ui.getCore().applyChanges();
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.children().length, 5, "pages ul tag should have five children");
+  		equal($pages.children(":eq(0)").text(), "48", "first displayed page link should say '48'");
+  		equal($pages.children(":eq(1)").text(), "49", "second page link should say '49'");
+  		equal($pages.children(":eq(2)").text(), "50", "middle page link should say '50'");
+  		equal($pages.children(":eq(4)").text(), "52", "last page link should say '52'");
+  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+  		ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
+  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+		});
+		
+		test("Change Current Page Close To The End", function() {
+			expect(6); // no event should be fired
+			oCtrl.setCurrentPage(109);
+			sap.ui.getCore().applyChanges();
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.children().length, 5, "pages ul tag should have five children");
+  		equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
+  		equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
+  		equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
+  		ok($pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should be current");
+  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+		});
+		
+		test("Trigger Forward (mouse)", function() {
+			expect(17); // including event handler
+			equal(lastTargetPage, null, "lastTargetPage should be initial");
+			
+			// click forward once
+			var target = jQuery.sap.domById(sId + "--forwardLink");
+			qutils.triggerMouseEvent(target, "click");
+			equal(lastTargetPage, 110, "lastTargetPage should be 110 after the click event");
+			equal(lastSrcPage, 109, "lastTargetPage should be 109 after the first click event");
+			equal(lastEventType, "Next", "lastEventType should be 'Next' after the click event");
+			
+			equal(oCtrl.getCurrentPage(), 110, "current page should now be 110");
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
+  		equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
+  		equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
+  		ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
+  		ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
+  		
+  		// another forward click even though we are already at the end
+  		target = jQuery.sap.domById(sId + "--forwardLink");
+			qutils.triggerMouseEvent(target, "click");
+			
+			equal(oCtrl.getCurrentPage(), 110, "current page should now be 110");
+  		var $pages = jQuery.sap.byId(sId + "-pages");
+  		equal($pages.children(":eq(0)").text(), "106", "first displayed page link should say '106'");
+  		equal($pages.children(":eq(3)").text(), "109", "second to last page link should say '109'");
+  		equal($pages.children(":eq(4)").text(), "110", "last page link should say '110'");
+  		ok($pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should be current");
+  		ok(!$pages.children(":eq(3)").hasClass("sapUiPagCurrentPage"), "second to last page link should not be current");
+		});
+		
+		asyncTest("Trigger Back (mouse)", function() {
+			expect(16); // including event handlers
+			
+			// click back multiple times
+			var target = jQuery.sap.domById(sId + "--backLink");
+			qutils.triggerMouseEvent(target, "click");
+			target = jQuery.sap.domById(sId + "--backLink");
+			qutils.triggerMouseEvent(target, "click");
+			target = jQuery.sap.domById(sId + "--backLink");
+			qutils.triggerMouseEvent(target, "click");
+			target = jQuery.sap.domById(sId + "--backLink");
+			qutils.triggerMouseEvent(target, "click");
+			target = jQuery.sap.domById(sId + "--backLink");
+			qutils.triggerMouseEvent(target, "click");
+			
+			equal(lastTargetPage, 105, "lastTargetPage should be 105 after the click event");
+			equal(lastSrcPage, 106, "lastTargetPage should be 106 after the click event");
+			equal(lastEventType, "Previous", "lastEventType should be 'Previous' after the click event");
+			
+			equal(oCtrl.getCurrentPage(), 105, "current page should now be 110");
+			setTimeout(function(){
+	  		var $pages = jQuery.sap.byId(sId + "-pages");
+	  		equal($pages.children().length, 5, "pages ul tag should have five children");
+	  		
+	  		equal($pages.children(":eq(0)").text(), "103", "first displayed page link should say '103'");
+	  		equal($pages.children(":eq(2)").text(), "105", "middle page link should say '105'");
+	  		equal($pages.children(":eq(4)").text(), "107", "last page link should say '107'");
+	  		
+	  		ok(!$pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should not be current");
+	  		ok($pages.children(":eq(2)").hasClass("sapUiPagCurrentPage"), "middle page link should be current");
+	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+	  		start();
+			}, 600);
+		});
+		
+		asyncTest("Trigger First (mouse)", function() {
+			expect(12); // including event handler
+			
+			// click "Page 1"
+			var target = jQuery.sap.domById(sId + "--firstPageLink");
+			qutils.triggerMouseEvent(target, "click");
+			
+			equal(lastTargetPage, 1, "lastTargetPage should be 1 after the click event");
+			equal(lastSrcPage, 105, "lastTargetPage should be 105 after the  click event");
+			equal(lastEventType, "First", "lastEventType should be 'Back' after the click event");
+			
+			equal(oCtrl.getCurrentPage(), 1, "current page should now be 1");
+			setTimeout(function(){
+	  		var $pages = jQuery.sap.byId(sId + "-pages");
+	  		equal($pages.children().length, 5, "pages ul tag should have five children");
+	  		
+	  		equal($pages.children(":eq(0)").text(), "1", "first displayed page link should say '1'");
+	  		equal($pages.children(":eq(2)").text(), "3", "middle page link should say '3'");
+	  		equal($pages.children(":eq(4)").text(), "5", "last page link should say '5'");
+	  		
+	  		ok($pages.children(":eq(0)").hasClass("sapUiPagCurrentPage"), "first page link should be current");
+	  		ok(!$pages.children(":eq(1)").hasClass("sapUiPagCurrentPage"), "second page link should not be current");
+	  		ok(!$pages.children(":eq(4)").hasClass("sapUiPagCurrentPage"), "last page link should not be current");
+	  		start();
+			}, 600);
+		});
+		
+		
+
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.ui.commons.Paginator</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		
+		<div style="margin-top:10px;" id="uiArea1"></div>
+	</body>
+</html>

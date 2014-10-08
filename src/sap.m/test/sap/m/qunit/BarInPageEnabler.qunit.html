@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.BarBase</title>
+
+		<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+		function renderBarInPageTestCase(sTestName, sContext, sExpectedTag, sExpectedClass) {
+			test(sTestName, function () {
+				// System under Test + Act
+				var oBar = new sap.m.Bar();
+
+				oBar.placeAt("qunit-fixture");
+
+				// Act
+				oBar.applyTagAndContextClassFor(sContext);
+
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				strictEqual(oBar.getDomRef().nodeName, sExpectedTag.toUpperCase());
+				ok(oBar.$().hasClass(sExpectedClass), "The bar has the context class: " + sExpectedClass);
+
+				// Cleanup
+				oBar.destroy();
+			});
+		};
+
+		renderBarInPageTestCase("Should render the header context", "header", "header", "sapMHeader-CTX");
+
+		renderBarInPageTestCase("Should render the subheader context", "subheader", "header", "sapMSubHeader-CTX");
+
+		renderBarInPageTestCase("Should render the footer context", "footer", "footer", "sapMFooter-CTX");
+
+		</script>
+
+	</head>
+
+	<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.BarBase</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+	</body>
+
+</html>

@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="sap.m.sample.ListUnread.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Products"
+		showUnread="true"
+		items="{
+			path: '/ProductCollection'
+		}" >
+		<StandardListItem
+			title="{Name}"
+			unread="{
+				path: 'Name',
+				formatter: 'sap.m.sample.ListUnread.Formatter.randomBoolean'
+			}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
+	</List>
+</mvc:View>

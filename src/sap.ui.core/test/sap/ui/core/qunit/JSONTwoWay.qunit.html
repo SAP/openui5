@@ -1,0 +1,385 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.Binding
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	var oModel;
+	var testData;
+	var bindings;
+	var aTextFields;
+	
+	function setup(){
+		// reset stuff
+		bindings = new Array();
+		jQuery(aTextFields).each(function (i, entry){
+			entry.destroy();
+		});
+		aTextFields = new Array();
+		testData = {
+	    		clients:[
+		    		        {firstName:"Donald", lastName:"Duck", id: "1", rating : 5},
+		    		        {firstName:"Lucky", lastName:"Luke", id: "2", rating : 2},
+		    		        {firstName:"Micky", lastName:"Mouse", id: "3", rating : 1},
+		    		        {firstName:"Black", lastName:"Spider", id: "4", rating : 3},
+		    		        {firstName:"Judge", lastName:"Dredd", id: "5", rating : 4},
+		    		        {firstName:"Captain", lastName:"Comic", id: "6", rating : 5},
+		    		        {firstName:"Flash", lastName:"Gordon", id: "7" , rating : 0}
+		    		     ]
+		    	
+		};
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(testData);
+		sap.ui.getCore().setModel(oModel);
+		
+	
+	};
+
+	function createPropertyBindings(path, property, context){
+		// create bindings
+
+		jQuery(testData.clients).each(function (i, entry){
+			bindings[i] = oModel.bindProperty(path + "/" + i + "/" + property, context);
+			//oModel.bindProperty(".teamMembers.lastName", entry.lastName);
+		});
+		
+	};
+	
+	function createPropertyBindingsUI(sName, sProperty, sMode){
+		// create bindings
+		var oTextField;
+		
+		jQuery(testData.clients).each(function (i, entry){
+			oTextField = new sap.ui.commons.TextField();
+			oTextField.bindProperty(sName, "/clients/" + i + "/" + sProperty, null, sMode);
+			oTextField.placeAt("target1");
+			aTextFields.push(oTextField);	
+		});
+		
+	};	
+	
+	test("supported BindingModes", function(){
+		setup();
+		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneWay), "One Way supported");
+		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.TwoWay), "Two Way supported");
+		ok(oModel.isBindingModeSupported(sap.ui.model.BindingMode.OneTime), "One Time supported");
+		ok(!oModel.isBindingModeSupported(sap.ui.model.BindingMode.Default), "Default not supported");
+	});
+	
+	test("getDefaultBindingMode", function(){
+		setup();
+		var sMode = oModel.getDefaultBindingMode();
+		equal(sMode, sap.ui.model.BindingMode.TwoWay, "default binding mode");
+	});
+	
+	test("setDefaultBindingMode", function(){
+		setup();
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		var sMode = oModel.getDefaultBindingMode();		
+		equal(sMode, sap.ui.model.BindingMode.OneWay, "new default binding mode");
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		sMode = oModel.getDefaultBindingMode();		
+		equal(sMode, sap.ui.model.BindingMode.TwoWay, "new default binding mode");
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
+		sMode = oModel.getDefaultBindingMode();		
+		equal(sMode, sap.ui.model.BindingMode.OneTime, "new default binding mode");
+		raises(function(){oModel.setDefaultBindingMode(sap.ui.model.BindingMode.Default)}, "test set not supported binding mode");
+	});
+		
+	test("One Way model test", function(){
+		setup();
+		// should be set first before any binding creation
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		createPropertyBindingsUI("value", "firstName", "");
+		
+		equal(aTextFields.length, testData.clients.length, "check amount");
+		
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+	});
+	
+	test("Two Way model test", function(){
+		setup();
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		createPropertyBindingsUI("value", "firstName", "");
+		
+		equal(aTextFields.length, testData.clients.length, "check amount");
+		
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+	});
+	
+	test("One Way model with Two Way bindings", function(){
+		setup();
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		createPropertyBindingsUI("value", "firstName", sap.ui.model.BindingMode.TwoWay);
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue == "ggg" + i, "check value should have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+		
+	});
+	
+	test("Two Way model with One Way bindings", function(){
+		setup();
+		//oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		createPropertyBindingsUI("value", "firstName", sap.ui.model.BindingMode.OneWay);
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+	});
+	
+	test("Two Way with multimodels", function(){
+		setup();
+		
+		// create 2nd model
+		var oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2.setData({ test : [
+		                           {enabled:true}
+		                           ]
+		    		     })
+		sap.ui.getCore().setModel(oModel2, "model2");
+		
+		// create bindings
+		var oTextField = new sap.ui.commons.TextField();
+		oTextField.bindProperty("value", "/clients/0/lastName");
+		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
+		oTextField.placeAt("target1");
+		aTextFields.push(oTextField);
+		
+		var oValue = oModel.getProperty("/clients/0/lastName");
+		equal(oValue, "Duck", "old value check");
+		var bEnabled = oModel2.getProperty("/test/0/enabled");
+		ok(bEnabled, "old value check");
+		
+		// modify
+		oTextField.setValue("newValue");
+		oTextField.setEnabled(false);
+		
+		//check
+		var oValue = oModel.getProperty("/clients/0/lastName");
+		equal(oValue, "newValue", "new value check");
+		var bEnabled = oModel2.getProperty("/test/0/enabled");
+		ok(!bEnabled, "new value check");
+		
+	});
+	
+	test("One Way with multimodels", function(){
+		setup();
+		
+		// create 2nd model
+		var oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2.setData({ test : [
+		                           {enabled:true}
+		                           ]
+		    		     })
+		sap.ui.getCore().setModel(oModel2, "model2");
+		oModel2.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		
+		// create bindings
+		var oTextField = new sap.ui.commons.TextField();
+		oTextField.bindProperty("value", "/clients/0/lastName");
+		oTextField.bindProperty("enabled", "model2>/test/0/enabled");
+		oTextField.placeAt("target1");
+		aTextFields.push(oTextField);
+		
+		var oValue = oModel.getProperty("/clients/0/lastName");
+		equal(oValue, "Duck", "old value check");
+		var bEnabled = oModel2.getProperty("/test/0/enabled");
+		ok(bEnabled, "old value check");
+		
+		// modify
+		oTextField.setValue("newValue");
+		oTextField.setEnabled(false);
+		
+		//check
+		var oValue = oModel.getProperty("/clients/0/lastName");
+		equal(oValue, "newValue", "new value check");
+		var bEnabled = oModel2.getProperty("/test/0/enabled");
+		ok(bEnabled, "new value check");
+		
+	});
+	
+	test("One Time model test", function(){
+		setup();
+		// should be set first before any binding creation
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneTime);
+		createPropertyBindingsUI("value", "firstName");
+		
+		equal(aTextFields.length, testData.clients.length, "check amount");
+		
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+		// modify value in model...nothing should change in UI
+		jQuery(aTextFields).each(function (i, oTextField){
+			oModel.setProperty("/clients/" + i + "/firstName", "newmodelvalue" + i);
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			equal(oValue, "newmodelvalue" + i, "new model value");
+		});
+				
+		jQuery(aTextFields).each(function (i, oTextField){
+			var oValue = oTextField.getValue();			
+			// check model value
+			ok(oValue != null, "value null check");
+			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			counter++;
+		});
+		
+	});
+	
+	test("One Way model with One Time bindings", function(){
+		setup();
+		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+		createPropertyBindingsUI("value", "firstName", sap.ui.model.BindingMode.OneTime);
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+		// modify value in model...nothing should change in UI
+		jQuery(aTextFields).each(function (i, oTextField){
+			oModel.setProperty("/clients/" + i + "/firstName", "newmodelvalue" + i);
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			equal(oValue, "newmodelvalue" + i, "new model value");
+		});
+				
+		jQuery(aTextFields).each(function (i, oTextField){
+			var oValue = oTextField.getValue();			
+			// check model value
+			ok(oValue != null, "value null check");
+			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			counter++;
+		});
+		
+	});
+	
+	test("Two Way model with One Time bindings", function(){
+		setup();
+		//oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		createPropertyBindingsUI("value", "firstName", sap.ui.model.BindingMode.OneTime);
+		
+		var counter = 0;
+		// try to modify value
+		jQuery(aTextFields).each(function (i, oTextField){
+			oTextField.setValue("ggg" + i);			
+			// check model value
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			ok(oValue != null, "value null check");
+			ok(oValue != "ggg" + i, "check value should not have changed in model: " + oValue);
+			counter++;
+		});
+		equal(counter, testData.clients.length, "check amount");
+		
+		// modify value in model...nothing should change in UI
+		jQuery(aTextFields).each(function (i, oTextField){
+			oModel.setProperty("/clients/" + i + "/firstName", "newmodelvalue" + i);
+			var oValue = oModel.getProperty("/clients/" + i + "/firstName");
+			equal(oValue, "newmodelvalue" + i, "new model value");
+		});
+				
+		jQuery(aTextFields).each(function (i, oTextField){
+			var oValue = oTextField.getValue();			
+			// check model value
+			ok(oValue != null, "value null check");
+			ok(oValue == "ggg" + i, "check value should not have changed in control " + oValue);
+			counter++;
+		});
+	});
+	
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding JSON Two Way Binding</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

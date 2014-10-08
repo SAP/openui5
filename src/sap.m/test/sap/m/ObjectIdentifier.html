@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>ObjectIdentifier - sap.m</title>
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+	
+</script>
+<script type="text/javascript">
+	var bCheckBoxSet = true;
+
+	var oi1 = new sap.m.ObjectIdentifier("oi1", {
+		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1",
+		text : "Gummib\u00E4" + "r\u00E7" + "he\u00D1 bla bla bla bla bla bla bla bla bla silly table",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		visible : true
+	});
+
+	var cb1 = new sap.m.CheckBox("cb1", {
+		text : "Is visible",
+		visible : true,
+		selected : true,
+		select : function() {
+			bCheckBoxSet = !bCheckBoxSet;
+			on1.setVisible(bCheckBoxSet);
+		}
+	});
+	
+	var oi2 = new sap.m.ObjectIdentifier("oi2", {
+		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1" + "are what I need most of all",
+		text : "Tiny Text",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		visible : true
+	});
+	
+	var oi3 = new sap.m.ObjectIdentifier("oi3", {
+		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+		text : "Tiny Text",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		visible : true
+	});
+
+	var app = new sap.m.App();
+	var page = new sap.m.Page({
+		showHeader : false,
+		enableScrolling : true
+	});
+	app.setInitialPage(page.getId());
+	app.addPage(page);
+
+	page.addContent(oi1);
+	page.addContent(cb1);
+	page.addContent(oi2);
+	page.addContent(oi3);
+	app.placeAt('body');
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

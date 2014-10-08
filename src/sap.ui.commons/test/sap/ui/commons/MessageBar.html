@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>MessageBar Test Page</title>
+    <script id="sap-ui-bootstrap" 
+      data-sap-ui-theme="sap_goldreflection"
+      data-sap-ui-trace="true"
+      type="text/javascript"
+      data-sap-ui-libs="sap.ui.commons"
+      src="../../../../resources/sap-ui-core.js"
+      >
+  </script>
+  <script type="text/javascript">
+    function getDetails(sId) {
+    	var details = "";
+    	if (sId != "error1") {
+    		details = '<B><SPAN style="color:red;">Message ' + sId + ' says:</SPAN></B><BR><BR>';
+    	}
+        details += "<B>Diagnosis</B><BR>"
+		        + "The BI system you are trying to call cannot be reached.<BR><BR>"
+		        + "<B>System Response</B><BR>"
+		        + "You cannot see any report from that BI system.<BR><BR>"
+		        + "<B>Procedure</B><BR>"
+		        + "System may be temporarily unavailable. "
+		        + "If the problem persists contact your system administration.<BR><BR>"
+		        + "<B>Procedure for System Administration</B><BR>"
+		        + "Check availability of the RFC destination 66 in transaction SM59. "
+		        + "If the system is available analyze the logon settings. "
+		        + "SAP recommends setting up trust relationship between SAP CRM and "
+		        + "the target BI system so the current CRM user is automatically logged "
+		        + "on to the BI system.";
+		// Wrapping those details into a DIV container for width definition:
+		details = "<DIV style=\"width:312px;\">" + details + "</DIV>";
+		return details;
+    }
+
+    // ERRORs:
+    var error1 = new sap.ui.commons.Message("error1", {type:sap.ui.commons.MessageType.Error, text:"Error 1"});      	  
+    var error2 = new sap.ui.commons.Message("error2", {type:sap.ui.commons.MessageType.Error, text:"Error 2"});      	  
+    var error3 = new sap.ui.commons.Message("error3", {type:sap.ui.commons.MessageType.Error, text:"Error 3"});
+    var error4 = new sap.ui.commons.Message("error4", {type:sap.ui.commons.MessageType.Error, text:"Error 4"});      	  
+    error1.setAssociatedElementId("TA1");
+    error1.bindDetails(getDetails);
+  	error3.bindDetails(getDetails);
+
+    var aErrors = new Array();
+    aErrors.push(error1);
+    var aErrorIds = new Array();
+    aErrorIds.push("error1");
+
+    var aErrorsB = new Array();
+    aErrorsB.push(error2);
+    aErrorsB.push(error3);
+    aErrorsB.push(error4);
+    var aErrorIdsB = new Array();
+    aErrorIdsB.push("error2");
+    aErrorIdsB.push("error3");
+    aErrorIdsB.push("error4");
+
+    // WARNINGs:
+    var warning1 = new sap.ui.commons.Message("warning1", {type:sap.ui.commons.MessageType.Warning, text:"Warning 1"});
+    var warning2 = new sap.ui.commons.Message("warning2", {type:sap.ui.commons.MessageType.Warning, text:"Warning 2"});
+    var warning3 = new sap.ui.commons.Message("warning3", {type:sap.ui.commons.MessageType.Warning, text:"Warning 3"});
+    var warning4 = new sap.ui.commons.Message("warning4", {type:sap.ui.commons.MessageType.Warning, text:"Warning 4"});
+    warning1.bindDetails(getDetails);
+    warning2.bindDetails(getDetails);
+
+    var aWarnings = new Array();
+    aWarnings.push(warning1);
+    var aWarningIds = new Array();
+    aWarningIds.push("warning1");
+
+    var aWarningsB = new Array();
+    aWarningsB.push(warning2);
+    aWarningsB.push(warning3);
+    aWarningsB.push(warning4);
+    var aWarningIdsB = new Array();
+    aWarningIdsB.push("warning3");
+    aWarningIdsB.push("warning4");
+    aWarningIdsB.push("warning2");
+
+    // SUCCESSes:
+    var success1 = new sap.ui.commons.Message("success1", {type:sap.ui.commons.MessageType.Success, text:"Success 1"});
+    var success2 = new sap.ui.commons.Message("success2", {type:sap.ui.commons.MessageType.Success, text:"Success 2"});
+    var success3 = new sap.ui.commons.Message("success3", {type:sap.ui.commons.MessageType.Success, text:"Success 3"});
+    var success4 = new sap.ui.commons.Message("success4", {type:sap.ui.commons.MessageType.Success, text:"Success 4"});
+    success1.bindDetails(getDetails);
+    success2.bindDetails(getDetails);
+
+    var aSuccesses = new Array();
+    aSuccesses.push(success1);
+    var aSuccessIds = new Array();
+    aSuccessIds.push("success1");
+
+    var aSuccessesB = new Array();
+    aSuccessesB.push(success2);
+    aSuccessesB.push(success3);
+    aSuccessesB.push(success4);
+    var aSuccessIdsB = new Array();
+    aSuccessIdsB.push("success2");
+    aSuccessIdsB.push("success3");
+    aSuccessIdsB.push("success4");
+
+    // Instantiating a MessageBar:
+    var msgBar = new sap.ui.commons.MessageBar("msgBar");
+    // There is no "sap.ui.setRoot()", as the MessageBar positions itself!
+    //sap.ui.setRoot("message", msgBar);
+    msgBar.setAnchorID("message");
+    //msgBar.setAnchorSnapPoint("begin top");
+
+    // ERROR buttons
+    // Instantiating a button for adding 1 Error:
+	var addErrorButton = new sap.ui.commons.Button("addErrorButton");
+	addErrorButton.setText("Add 1 error");
+	addErrorButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aErrors);
+	  }
+	);
+	addErrorButton.placeAt("addOne");
+
+	// Instantiating a button for removing that 1 Error:
+	var deleteErrorButton = new sap.ui.commons.Button("deleteErrorButton");
+	deleteErrorButton.setText("Delete 1 error");
+	deleteErrorButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aErrorIds);
+	  }
+	);
+	deleteErrorButton.placeAt("deleteOne");
+
+	var addErrorButtonB = new sap.ui.commons.Button("addErrorButtonB");
+	addErrorButtonB.setText("Add 3 errors");
+	addErrorButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aErrorsB);
+	  }
+	);
+	addErrorButtonB.placeAt("addOneB");
+
+	var deleteErrorButtonB = new sap.ui.commons.Button("deleteErrorButtonB");
+	deleteErrorButtonB.setText("Delete 3 errors");
+	deleteErrorButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aErrorIdsB);
+	  }
+	);
+	deleteErrorButtonB.placeAt("deleteOneB");
+
+	// WARNING buttons
+    // Instantiating a button for adding 2 Warnings:
+	var addWarningButton = new sap.ui.commons.Button("addWarningButton");
+	addWarningButton.setText("Add 1 warning");
+	addWarningButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aWarnings);
+	  }
+	);
+	addWarningButton.placeAt("addTwo");
+    // Instantiating a button for removing those 2 Warnings:
+	var deleteWarningButton = new sap.ui.commons.Button("deleteWarningButton");
+	deleteWarningButton.setText("Delete 1 warning");
+	deleteWarningButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aWarningIds);
+	  }
+	);
+	deleteWarningButton.placeAt("deleteTwo");
+
+	var addWarningButtonB = new sap.ui.commons.Button("addWarningButtonB");
+	addWarningButtonB.setText("Add 3 warnings");
+	addWarningButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aWarningsB);
+	  }
+	);
+	addWarningButtonB.placeAt("addTwoB");
+
+	var deleteWarningButtonB = new sap.ui.commons.Button("deleteWarningButtonB");
+	deleteWarningButtonB.setText("Delete 3 warnings");
+	deleteWarningButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aWarningIdsB);
+	  }
+	);
+	deleteWarningButtonB.placeAt("deleteTwoB");
+
+    // SUCCESS buttons
+    // Instantiating a button for adding 3 Informations:
+	var addInformationButton = new sap.ui.commons.Button("addInformationButton");
+	addInformationButton.setText("Add 1 success");
+	addInformationButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aSuccesses);
+	  }
+	);
+	addInformationButton.placeAt("addThree");
+    // Instantiating a button for removing those 3 Informations:
+	var deleteInformationButton = new sap.ui.commons.Button("deleteInformationButton");
+	deleteInformationButton.setText("Delete 1 success");
+	deleteInformationButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aSuccessIds);
+	  }
+	);
+	deleteInformationButton.placeAt("deleteThree");
+
+	var addInformationButtonB = new sap.ui.commons.Button("addInformationButtonB");
+	addInformationButtonB.setText("Add 3 successes");
+	addInformationButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.addMessages(aSuccessesB);
+	  }
+	);
+	addInformationButtonB.placeAt("addThreeB");
+
+	var deleteInformationButtonB = new sap.ui.commons.Button("deleteInformationButtonB");
+	deleteInformationButtonB.setText("Delete 3 successes");
+	deleteInformationButtonB.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteMessages(aSuccessIdsB);
+	  }
+	);
+	deleteInformationButtonB.placeAt("deleteThreeB");
+
+
+  	// MELIMELO:
+    var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error,   text:"Error 5"});      	  
+    var meliWarning = new sap.ui.commons.Message("meliWarning", {type:sap.ui.commons.MessageType.Warning, text:"Warning 5"});
+    var meliSuccess = new sap.ui.commons.Message("meliSuccess", {type:sap.ui.commons.MessageType.Success, text:"Success 5"});
+    meliError.bindDetails(getDetails);
+    meliWarning.bindDetails(getDetails);
+    meliSuccess.bindDetails(getDetails);
+
+    var aMeliMelos = new Array();
+    aMeliMelos.push(meliError);
+    aMeliMelos.push(meliWarning);
+    aMeliMelos.push(meliSuccess);
+    var aMeliMeloIdsB = new Array();
+    aMeliMeloIdsB.push("meliError");
+    aMeliMeloIdsB.push("meliWarning");
+    aMeliMeloIdsB.push("meliSuccess");
+
+  	var addMeliMeloButton = new sap.ui.commons.Button("addMeliMeloButton");
+  	addMeliMeloButton.setText("Add 3 melimelo");
+  	addMeliMeloButton.attachPress(
+  	  function (oControlEvent) {
+  	    msgBar.addMessages(aMeliMelos);
+  	  }
+  	);
+  	addMeliMeloButton.placeAt("addMeliMelo");
+
+  	var deleteMeliMeloButton = new sap.ui.commons.Button("deleteMeliMeloButton");
+  	deleteMeliMeloButton.setText("Delete 3 melimelo");
+  	deleteMeliMeloButton.attachPress(
+  	  function (oControlEvent) {
+  	    msgBar.deleteMessages(aMeliMeloIdsB);
+  	  }
+  	);
+  	deleteMeliMeloButton.placeAt("deleteMeliMelo");
+
+
+
+	// Instantiating a button for REMOVING the ALL previous messages:
+	var clearMessageButton = new sap.ui.commons.Button("clearMessages");
+	clearMessageButton.setText("Delete all messages");
+	clearMessageButton.attachPress(
+	  function (oControlEvent) {
+	    msgBar.deleteAllMessages();
+	  }
+	);
+	clearMessageButton.placeAt("deleteAll");
+
+	// Some text area to show that life goes on while toasts are burning:
+	var oTextArea = new sap.ui.commons.TextArea("TA1");
+	oTextArea.setWidth("300px"); 
+	oTextArea.setHeight("100px"); 
+	oTextArea.setTooltip("Yes, type something in!");
+	oTextArea.setValue("Check that life goes on while toasts are burning!");
+	oTextArea.placeAt("textArea");
+
+  </script>
+
+
+</head>
+<body class="sapUiBody" >
+
+		<h1>Test Page for sap.ui.commons.MessageBar</h1>
+	    <br>
+	    <br>
+
+	    <table>
+	      <tbody>
+	        <tr><td id="addOne"></td><td id="deleteOne"></td><td><span>Message Area:</span></td><td><span id="message"></span></td></tr>
+	        <tr><td id="addOneB"></td><td id="deleteOneB"></td><td></td><td></td></tr>
+	        <tr><td id="addTwo"></td><td id="deleteTwo"></td><td></td><td></td></tr>
+	        <tr><td id="addTwoB"></td><td id="deleteTwoB"></td><td></td><td></td></tr>
+	        <tr><td id="addThree"></td><td id="deleteThree"></td><td></td><td></td></tr>
+	        <tr><td id="addThreeB"></td><td id="deleteThreeB"></td><td></td><td></td></tr>
+	        <tr><td id="addMeliMelo"></td><td id="deleteMeliMelo"></td><td></td><td></td></tr>
+	        <tr><td id="deleteAll"></td><td></td><td></td><td></td></tr>
+	      </tbody>
+	    </table>
+	    <br>
+	    <div id="textArea"/>
+
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectHeaderCondensed.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<ObjectHeader
+		binding="{/ProductCollection/0}"
+		title="{Name}"
+		condensed="true"
+		number="{Price}"
+		numberUnit="{CurrencyCode}" >
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit} {Width} x {Depth} x {Height} {DimUnit}" />
+		</attributes>
+	</ObjectHeader>
+</mvc:View>

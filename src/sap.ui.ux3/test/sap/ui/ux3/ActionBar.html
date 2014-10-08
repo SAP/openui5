@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ActionBar - sap.ui.ux3</title>
+	<script src="../../../../resources/sap-ui-core.js"
+		type="text/javascript" 
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+		data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	
+	<script>
+		/**********************************************************
+		   ActionBar with business actions menu
+		*/
+	
+	    //Specify business actions "create", "delete" and "duplicate"
+		var oCreateAction = new sap.ui.ux3.ThingAction({
+			id : "create",
+			text : "Create Survey"
+		});
+	    
+	    var oDeleteAction =  new sap.ui.ux3.ThingAction({
+			id : "delete",
+			text : "Delete"
+		});
+	   
+		var oDuplicateAction = new sap.ui.ux3.ThingAction({
+			id : "duplicate",
+			text : "Duplicate"
+		});
+		
+		
+		jQuery.sap.require("sap.ui.ux3.ActionBar");
+	   		
+		
+	    var oActionBar1 = new sap.ui.ux3.ActionBar({
+			id : "ActionBar0001",
+			businessActions: [ oCreateAction, oDeleteAction, oDuplicateAction ],
+		});
+	    
+	    
+		 
+		
+		//event handler for standard and business actions 
+		oActionBar1.attachActionSelected(function(oControlEvent) {
+			var id = oControlEvent.getParameters().id;
+			alert("Action \"" + id + "\" of Thing \""
+					+ oControlEvent.getSource().getId()
+					+ "\" selected\n- action: "
+					+ oControlEvent.getParameters().action
+					+ "\n- newState: " + oControlEvent.getParameters().state);
+		}); 
+		
+		//event handler for submitted feeds
+		oActionBar1.attachFeedSubmit(function(oEvent) {
+			alert("Feed entry submitted: " + oEvent.getParameter("text"));
+		});
+
+		//Create a panel instance
+		var oPanel1 = new sap.ui.commons.Panel("panel1");
+		oPanel1.setVisible(false);
+		//Add actionBar to the panel's content area
+		oPanel1.addContent(oActionBar1);
+		//Attach the panel to the page
+		oPanel1.placeAt("target1");
+		
+		
+		
+		
+		
+		
+		
+		/**********************************************************
+			ActionBar with individual business action buttons
+		*/
+		
+		
+		//Specify business actions "create", "delete" and "duplicate"
+		var oSaveAction = new sap.ui.ux3.ThingAction({
+			id : "save",
+			text : "Save"
+		});
+		
+		var oCreateAction1 = new sap.ui.ux3.ThingAction({
+			id : "create1",
+			text : "New"
+		});
+	    
+	    var oDeleteAction1 =  new sap.ui.ux3.ThingAction({
+			id : "delete1",
+			text : "Delete"
+		});
+	   
+		var oDuplicateAction1 = new sap.ui.ux3.ThingAction({
+			id : "duplicate1",
+			text : "Duplicate"
+		});
+		
+		var oMoreAction1 = new sap.ui.ux3.ThingAction({
+			id : "more1",
+			text : "Data Mining"
+		});
+		oMoreAction1.showInMoreMenu = true;
+		
+		var oMoreAction2 = new sap.ui.ux3.ThingAction({
+			id : "more2",
+			text : "Process Chains"
+		});
+		oMoreAction2.showInMoreMenu = true;
+		
+		var oMoreAction3 = new sap.ui.ux3.ThingAction({
+			id : "more3",
+			text : "Analysis Process Designer"
+		});
+		oMoreAction3.showInMoreMenu = true;
+	   
+		
+		
+				
+		
+	    var oActionBar2 = new sap.ui.ux3.ActionBar({
+			id : "ActionBar0002",
+			alwaysShowMoreMenu : false,
+			businessActions: [ oSaveAction, oCreateAction1, oDeleteAction1, oDuplicateAction1],
+			dividerWidth: "250px"
+			
+		});
+		 
+		
+		//event handler for standard and business actions 
+		oActionBar2.attachActionSelected(function(oControlEvent) {
+			var id = oControlEvent.getParameters().id;
+			alert("Action \"" + id + "\" of Thing \""
+					+ oControlEvent.getSource().getId()
+					+ "\" selected\n- action: "
+					+ oControlEvent.getParameters().action
+					+ "\n- newState: " + oControlEvent.getParameters().state);
+		}); 
+		
+		//event handler for submitted feeds
+		oActionBar2.attachFeedSubmit(function(oEvent) {
+			alert("Feed entry submitted: " + oEvent.getParameter("text"));
+		});
+
+		//Create a panel instance
+		var oPanel2 = new sap.ui.commons.Panel("panel2");
+		oPanel2.setVisible(false);
+		//Add actionBar to the panel's content area
+		oPanel2.addContent(oActionBar2);
+		//Attach the panel to the page 
+		oPanel2.placeAt("target2"); 
+		
+		
+		
+		
+		
+		//show/hide buttons
+		var showQuickViewDivButton = new sap.ui.commons.Button("b1");
+		showQuickViewDivButton.setLite(true);
+		showQuickViewDivButton.setText("Show");
+		showQuickViewDivButton.attachPress(function() {
+			oPanel1.setVisible(true);
+			var oPanel1DomRef = jQuery.sap.byId(oPanel1.getId());
+			if(oPanel1DomRef.is(":visible")) {
+				oPanel1DomRef.hide();
+				showQuickViewDivButton.setText("Show");
+			} else {
+				oPanel1DomRef.show();
+				showQuickViewDivButton.setText("Hide");
+			}
+		});
+		
+		showQuickViewDivButton.placeAt("label1"); 
+		
+		var showThingInspectorDivButton = new sap.ui.commons.Button("b2");
+		showThingInspectorDivButton.setLite(true);
+		showThingInspectorDivButton.setText("Show");
+		showThingInspectorDivButton.attachPress(function() {
+			oPanel2.setVisible(true);
+			var oPanel2DomRef = jQuery.sap.byId(oPanel2.getId());
+			if(oPanel2DomRef.is(":visible")) {
+				oPanel2DomRef.hide();
+				showThingInspectorDivButton.setText("Show");
+			} else {
+				oPanel2DomRef.show();
+				showThingInspectorDivButton.setText("Hide");
+			}
+		});
+		
+		showThingInspectorDivButton.placeAt("label2"); 
+		
+		
+		
+		
+		
+		
+	</script>
+</head>
+<body class="sapUiBody">
+	<h1>Test Page for ActionBar</h1>	
+	<div id="label1" style="background-color: #f2f2f2; width: 100%">Business actions as menu items (as used in QuickView): </div>
+	<div id="target1"></div>
+	<p style="height: 36px"/>
+	<div id="label2" style="background-color: #f2f2f2; width: 250px; border-right-style:dotted;">Business actions as buttons (as used in ThingInspector): </div>
+	<div id="target2"></div>
+	
+	
+
+	
+</body>
+</html>

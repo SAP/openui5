@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>TreeTable - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.TreeTable.gif">
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" 
+	type="text/javascript"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
+	data-sap-ui-theme="sap_goldreflection"
+	src="../../../../resources/sap-ui-core.js"></script>
+
+<script type="text/javascript">	
+	
+    var oData = {
+    		root:{
+    			name: "root",
+    			description: "root description",
+    			checked: false,
+    			0: {
+    				name: "item1",
+        			description: "item1 description",
+        			checked: true,
+    				0: {
+    					name: "subitem1-1",
+            			description: "subitem1-1 description",
+            			checked: true,
+    					0: {
+    						name: "subsubitem1-1-1",
+   		        			description: "subsubitem1-1-1 description",
+   		        			checked: true
+    					},
+    					1: {
+    						name: "subsubitem1-1-2",
+   		        			description: "subsubitem1-1-2 description",
+   		        			checked: true
+    					}
+    				},
+    				1: {
+    					name: "subitem1-2",
+	        			description: "subitem1-2 description",
+  		        		checked: true,
+    					0: {
+    						name: "subsubitem1-2-1",
+   		        			description: "subsubitem1-2-1 description",
+   		        			checked: true
+    					}
+    				}
+    				
+    			},
+    			1:{
+    				name: "item2",
+        			description: "item2 description",
+        			checked: true,
+    				0: {
+    					name: "subitem2-1",
+	        			description: "subitem2-1 description",
+	        			checked: true
+    				}
+    			},
+    			2:{
+    				name: "item3",
+        			description: "item3 description",
+        			checked: true
+    			}
+    			
+    		}
+    			
+    };
+    
+    for (var i = 0; i < 20; i++) {
+		oData["root"][2][i] = {
+			name: "subitem3-" + i,
+   			description: "subitem3-" + i + " description",
+   			checked: false
+		};
+    }
+
+    var oModel = new sap.ui.model.json.JSONModel();
+    oModel.setData(oData);
+    
+	var oTable = new sap.ui.table.TreeTable({
+		title: "TreeTable",
+		toolbar: new sap.ui.commons.Toolbar({
+			items: [
+				new sap.ui.commons.Button({text: "Expand",
+					press: function() {
+						var iSelectedIndex = oTable.getSelectedIndex();
+						oTable.getBinding("rows").expandContext(oTable.getContextByIndex(iSelectedIndex));
+						oTable.setSelectedIndex(iSelectedIndex);
+					}
+				}),
+				new sap.ui.commons.Button({text: "Collapse",
+					press: function() {
+						var iSelectedIndex = oTable.getSelectedIndex();
+						oTable.getBinding("rows").collapseContext(oTable.getContextByIndex(iSelectedIndex));
+						oTable.setSelectedIndex(iSelectedIndex);
+					}
+				}),
+				new sap.ui.commons.Button({text: "Add",
+					press: function() {
+						oModel.setData({
+							root: {
+				    			3: {
+				    				name: "new item",
+				        			description: "new item description",
+				        			checked: false
+				    			}
+							}
+						}, true);
+					}
+				}),
+				new sap.ui.commons.Button({text: "Remove",
+					press: function() {
+						var oData = oModel.getData();
+						delete oData.root[3];
+						oModel.setData(oData);
+					}
+				})
+			]
+		}),
+		columns: [
+			new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
+			new sap.ui.table.Column({label: "Description", template: "description"})
+		],
+		selectionMode: sap.ui.table.SelectionMode.MultiToggle,
+		enableColumnReordering: true,
+		expandFirstLevel: true
+	});
+	
+	oTable.attachToggleOpenState(function(oEvent) {
+		jQuery.sap.log.info("ToggleOpenState: rowIndex: " + oEvent.getParameter("rowIndex") + 
+				" - rowContext: " + oEvent.getParameter("rowContext") + 
+				" - expanded? " + oEvent.getParameter("expanded"));
+	});
+	
+	oTable.attachRowSelectionChange(function(oEvent) {
+		jQuery.sap.log.info("RowSelectionChange: rowIndex: " + oEvent.getParameter("rowIndex") + 
+				" - rowContext: " + oEvent.getParameter("rowContext"));
+	});
+	
+	oTable.setModel(oModel);
+	oTable.bindRows("/root");
+	
+	oTable.placeAt("content");
+	
+</script>
+
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" role="application">
+<h1>Test Page for <code>sap.ui.table.TreeTable</code></h1>
+<p>
+<div id="content"></div>
+</body>
+</html>

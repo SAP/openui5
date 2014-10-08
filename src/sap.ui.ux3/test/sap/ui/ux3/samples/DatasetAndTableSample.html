@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<title>DataSet Demokit</title>
+
+<script src="../../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+
+<style>
+.CustomItemLayout {
+	position: relative;
+	padding: 3px;
+	min-width: 200px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.CustomItemLayoutInner {
+	position: relative;
+	border: 1px solid #DDDDDD;
+	padding: 5px;
+}
+
+.CustomItemLayoutTitle {
+	position: relative;
+}
+
+.CustomItemLayoutCntnt {
+	position: relative;
+	display: inline-block;
+}
+
+.sapUiUx3DSSVFloating > .sapUiUx3DSSVItem > .CustomItemLayout {
+	width: 200px;
+}
+
+/*Small*/
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle {
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 40px;
+	top: 8px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	right: 40px;
+	left: auto;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > img {
+	width: 31px;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutCntnt {
+	width: 100%;
+}
+
+/*Large*/
+
+.CustomItemLayout.CustomItemLayoutLarge > .CustomItemLayoutInner {
+	height: 65px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	position: absolute;
+	left: 255px;
+	right: 3px;
+	top: 0;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	right: 255px;
+	left: 3px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle {
+	width: 250px;
+	margin-top: 4px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > img {
+	width: 50px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle a {
+	font-size: 14px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 60px;
+	top: 18px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	right: 60px;
+	left: auto;
+}
+
+</style>
+
+<script>
+
+try{
+	sap.ui.getCore().loadLibrary("sap.ui.table");
+}catch(e){
+	alert("This test page requires the library 'sap.ui.table' which is not available.");
+	throw(e);
+}
+
+sap.ui.core.Control.extend("ItemLayout", {
+    metadata : {
+        aggregations : {
+			"link" : {type : "sap.ui.commons.Link", multiple : false},
+			"image" : {type : "sap.ui.commons.Image", multiple : false},
+			"form" : {type : "sap.ui.commons.form.Form", multiple : false},
+        }
+    },
+
+	renderer: function(rm, ctrl){
+		rm.write("<div");
+		rm.writeControlData(ctrl);
+		rm.writeAttribute("class", "CustomItemLayout");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutInner");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutTitle");
+		rm.write(">");
+		rm.renderControl(ctrl.getImage());
+		rm.write("<div>");
+		rm.renderControl(ctrl.getLink());
+		rm.write("</div></div><div");
+		rm.writeAttribute("class", "CustomItemLayoutCntnt");
+		rm.write(">");
+		rm.renderControl(ctrl.getForm());
+		rm.write("</div></div></div>");
+    },
+    
+    onBeforeRendering : function(){
+    	if(this.resizeTimer){
+    		clearTimeout(this.resizeTimer);
+    		this.resizeTimer = null;
+    	}
+    },
+    
+    onAfterRendering : function(){
+    	var $This = this.$();
+    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+    		this._resize();
+    	}else{
+    		$This.addClass("CustomItemLayoutSmall");
+    	}
+    },
+    
+    _resize: function(){
+    	if(!this.getDomRef()){
+    		return;
+    	}
+    	var $This = this.$();
+    	if($This.outerWidth() >= 440){
+    		$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
+    	}else{
+    		$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
+    	}
+    	setTimeout(jQuery.proxy(this._resize, this), 300);
+    }
+});
+
+// Initialize the Model
+
+var data = {products:[]};
+var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
+for(var i=0; i<aTitles.length; i++){
+	var sTitle = aTitles[i];
+	var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
+			title: sTitle, rating: Math.floor((Math.random()*5))+1};
+	if(sTitle.indexOf("Notebook") >= 0){
+		oProduct.category = "Notebook";
+	}else if(sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0){
+		oProduct.category = "Mobile";
+	}
+	oProduct.image = "../images/"+oProduct.category+".png";
+	data.products.push(oProduct);
+}
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(data);
+
+
+//Initialize the Dataset
+
+function createTemplate(){
+	var c = sap.ui.commons;
+	return new ItemLayout({
+		link: new c.Link({text: "{title}"}),
+		image: new c.Image({src: "{image}"}),
+		form: new c.form.Form({
+			width: "100%",
+			layout: new c.form.GridLayout(),
+			formContainers: [
+				new c.form.FormContainer({
+					formElements: [
+						new c.form.FormElement({
+							label: new c.Label({text: "Category", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{category}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Price", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{price}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Rating", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.RatingIndicator({value: "{rating}", editable: false})]
+						})
+					]
+				})
+			]
+		})
+	});
+}
+
+
+
+var oTile1View = new sap.ui.ux3.DataSetSimpleView({
+	floating: true,
+	responsive: false,
+	itemMinWidth: 0,
+	template: createTemplate()
+});
+var oTile2View = new sap.ui.ux3.DataSetSimpleView({
+	floating: true,
+	responsive: true,
+	itemMinWidth: 200,
+	template: createTemplate()
+});
+var oRowView = new sap.ui.ux3.DataSetSimpleView({
+	floating: false,
+	responsive: false,
+	itemMinWidth: 0,
+	template: createTemplate()
+});
+
+var oDataSet = new sap.ui.ux3.DataSet({
+	items: {
+		path: "/products",
+		template: new sap.ui.ux3.DataSetItem({
+			title : "{title}",
+			iconSrc : "{image}"
+		})
+	},
+	views: [oTile1View, oTile2View, oRowView],
+	showToolbar: false,
+	selectionChanged: function(oEvent){
+		oTable.setSelectedIndex(oEvent.getParameter("newLeadSelectedIndex"));
+	}
+});
+oDataSet.setModel(oModel);
+
+
+var oTable = new sap.ui.table.Table({
+	selectionMode: "Single",
+	rowSelectionChange: function(oEvent){
+		oDataSet.setLeadSelection(oEvent.getParameter("rowIndex"));
+	},
+	columns: [
+		new sap.ui.table.Column({
+			label: new sap.ui.commons.Label({text: "Product Name"}),
+			template: new sap.ui.commons.TextView().bindProperty("text", "title")
+		}),
+		new sap.ui.table.Column({
+			label: new sap.ui.commons.Label({text: "Category"}),
+			template: new sap.ui.commons.TextView().bindProperty("text", "category")
+		}),
+		new sap.ui.table.Column({
+			label: new sap.ui.commons.Label({text: "Price"}),
+			template: new sap.ui.commons.TextView().bindProperty("text", "price")
+		}),
+		new sap.ui.table.Column({
+			label: new sap.ui.commons.Label({text: "Rating"}),
+			template: new sap.ui.commons.RatingIndicator({editable: false}).bindProperty("value", "rating")
+		})
+	],
+	rows: {path: "/products"}
+});
+oTable.setModel(oModel);
+oTable.placeAt("data");
+var bTableVisible = true;
+
+
+var oToolbar = new sap.ui.commons.Toolbar({
+	design: "Standard",
+	rightItems: [
+		new sap.ui.commons.SearchField({
+			enableListSuggest: false,
+			enableClear: true,
+			enableFilterMode: true,
+			search: function(oEvent){
+				var sQuery = oEvent.getParameter("query");
+				var oFilter = !sQuery ? [] : [new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sQuery)];
+				oDataSet.getBinding("items").filter(oFilter);
+				oTable.getBinding("rows").filter(oFilter);
+				oDataSet.setLeadSelection(-1);
+				oTable.clearSelection();
+			}
+		})          
+	],
+	items: [
+		new sap.ui.commons.SegmentedButton({
+			buttons: [
+				new sap.ui.commons.Button("typeTable", {text: "Table", lite: true}),
+				new sap.ui.commons.Button("typeSingleLine", {text: "Rows", lite: true}),
+				new sap.ui.commons.Button("typeTiles1", {text: "Tiles 1", lite: true}),
+				new sap.ui.commons.Button("typeTiles2", {text: "Tiles 2", lite: true})
+			],
+			select: function(oEvent){
+				var oView = null;
+				
+				switch(oEvent.getParameter("selectedButtonId")){
+					case "typeTable":
+						if(!bTableVisible){
+							oTable.placeAt("data", "only");
+							bTableVisible = true;
+						}
+						break;
+					case "typeTiles1":
+						oView = oTile1View;
+						break;
+					case "typeTiles2":
+						oView = oTile2View;
+						break;
+					case "typeSingleLine":
+						oView = oRowView;
+						break;
+				}
+				
+				if(oView){
+					if(bTableVisible){
+						oDataSet.placeAt("data", "only");
+						bTableVisible = false;
+					}
+					oDataSet.setSelectedView(oView);
+				}
+			},
+			selectedButton: "typeTable" 
+		})
+	]
+});
+oToolbar.placeAt("toolbar");
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="toolbar"></div>
+	<div id="data"></div>
+</body>
+</html>

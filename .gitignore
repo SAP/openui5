@@ -1,0 +1,20 @@
+# Ignore .gitignore and target folders
+src/*/.gitignore
+src/*/target/
+/target
+
+# Ignore Eclipse project and settings files
+.classpath
+.settings
+.project
+.externalToolBuilders
+
+# Ignore temp folders
+grunt/bin
+
+# Ignore npm files/folders
+node_modules
+npm-debug.log
+
+# Ignore bower folder
+bower_components

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>FeedChunk - sap.ui.ux3</title>
+ 	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.FeedChunk.gif">
+ 
+  <script 
+				src="../../../../resources/sap-ui-core.js" 
+        type="text/javascript" 
+        id="sap-ui-bootstrap"            
+        data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+				data-sap-ui-theme="sap_goldreflection" 
+				data-sap-ui-areas="target1,target2" >
+  </script>
+
+ 	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+		function handleDeleted(oEvent){
+			alert("Chunk "+ oEvent.oSource.getId() + " deleted");
+		}
+		
+		function handleSenderClicked(oEvent){
+			alert("Chunk "+ oEvent.oSource.getId() + ": click on sender");
+		}
+		
+		function handleReferenceClicked(oEvent){
+			alert("Reference "+ oEvent.getParameter('text') + " clicked");
+		}
+		
+		function handleCommentAdded(oEvent){
+			var oComment = oEvent.getParameter('comment');
+			alert("Comment --"+ oComment.getText() + "-- added");
+			oComment.attachDeleted(handleDeleted);
+			oComment.attachSenderClicked(handleSenderClicked);
+			oComment.attachReferenceClicked(handleReferenceClicked);
+		}
+		
+		function handleToggleFlagged(oEvent){
+			alert("Flagged : "+ oEvent.getParameter('flagged'));
+		}
+
+		function handleToggleFavorite(oEvent){
+			alert("Favorite : "+ oEvent.getParameter('favorite'));
+		}
+
+		function handleInspect(oEvent){
+			alert('Inspect button pressed');
+		}
+
+		function handleToggleShared(oEvent){
+			alert("Shared : "+ oEvent.getParameter('shared'));
+		}
+
+		function handleActionItemSelected(oEvent){
+			alert("Tools item "+ oEvent.getParameter('itemId') + ' selected!');
+		}
+
+		//without comments
+	  var oChunk = new sap.ui.ux3.FeedChunk("Chunk1", {
+	//		thumbnailSrc: "images/feeder/male.jpg",
+		  sender: "Ñagçyfox", 
+	    text: "Ñagçyfox", 
+			timestamp: "2011-05-12T06:06:06.000Z",
+//			feederThumbnailSrc: 
+			feederSender: 'Supergirl',
+			flagged: false,
+			favorite: true,
+			shared: false,
+			deletionAllowed: true,
+			actionMenuItems: [ new sap.ui.commons.MenuItem('MenuItem1',{
+				text: 'Item1'
+			}),
+			new sap.ui.commons.MenuItem('MenuItem2',{
+				text: 'Item2'
+			})],
+			deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded,
+			toggleFlagged: handleToggleFlagged,
+			toggleFavorite: handleToggleFavorite,
+			inspect: handleInspect,
+			toggleShared: handleToggleShared,
+			actionItemSelected: handleActionItemSelected												
+			}).placeAt("target1");
+	
+	
+		// with comments
+		oChunk = new sap.ui.ux3.FeedChunk("Chunk2", {
+			thumbnailSrc: "images/feeder/m_01.png",
+		  sender: "Edward", 
+	    text: "Hi People! \n@Max Mustermann there is a party today!\nI hope you will come.\nBeer and some food is here. If you like other drinks bring it with you.\nThe end time is nor scheduled now!\nIf you like to drink, don't drive home.", 
+			timestamp: "2011-12-02T10:10:10.000Z",
+			feederThumbnailSrc: "images/feeder/w_01.png",
+			feederSender: 'Supergirl',
+			flagged: true,
+			favorite: true,
+			shared: true,
+			deletionAllowed: false,
+			deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded,
+			toggleFlagged: handleToggleFlagged,
+			toggleFavorite: handleToggleFavorite,
+			inspect: handleInspect,
+			toggleShared: handleToggleShared,
+			actionItemSelected: handleActionItemSelected
+			}).placeAt("target2");
+
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk6", {
+		  sender: "Gaius Julius Caesar", 
+	    text: "Veni, vidi, vici", 
+	    timestamp: "long time ago", 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk5", {
+		  sender: "Ñagçyfox", 
+			thumbnailSrc: "images/feeder/m_03.png",
+	    text: "Ñagçyfox", 
+	    timestamp: "5",
+	    deletionAllowed: true, 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk4", {
+		  sender: "Dagobert Duck", 
+	    text: "Here are some References: @One or @Two or @Three. At least @Four. ", 
+	    timestamp: "3", 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk3", {
+		  sender: "Donald Duck", 
+	    text: "Very Long Text ... Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla Bla!", 
+	    timestamp: "2",
+	    deletionAllowed: true, 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk2", {
+			sender: "John Smith", 
+			thumbnailSrc: "images/feeder/m_02.png",
+	    text: "I will come to @Max too.  ", 
+	    timestamp: "Today",
+	    deletionAllowed: true, 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+	  oChunk.addComment( new sap.ui.ux3.FeedChunk("commentChunk1", {
+		  sender: "Sebastian", 
+//		  thumbnailSrc: "images/feeder/male.jpg", 
+	    text: "Yes, I will be there. I hope to meet a lot of people. Bye", 
+	    timestamp: "30 minutes ago", 
+	    deleted: handleDeleted,
+			senderClicked: handleSenderClicked,
+			referenceClicked: handleReferenceClicked,
+			commentAdded: handleCommentAdded
+	  }));
+
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+	<h1>Test Page for sap.ui.ux3.FeedChunk</h1>
+
+	Chunk without Comments <br>
+	<div id="target1" style="width:80%;"> </div>
+
+	Chunk with comments <br> 
+	<div id="target2" style="width:80%;"> </div>
+</body>
+
+</html>

@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:gp="http://www.sap.com/Protocols/SAPData/GenericPlayer"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" xmlns:ux="http://www.sap.com/Protocols/OData4SAP/UX">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="RMTSAMPLEFLIGHT" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Subscription" sap:semantics="subscriptions"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="32" sap:label="Sub. ID" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
+				<Property Name="user" Type="Edm.String" MaxLength="12"
+					m:FC_TargetPath="SyndicationAuthorName" m:FC_KeepInContent="false"
+					sap:label="User Name" sap:creatable="false" sap:filterable="false" />
+				<Property Name="updated" Type="Edm.DateTime" Precision="0"
+					m:FC_TargetPath="SyndicationUpdated" m:FC_KeepInContent="false"
+					sap:label="Time Stamp" sap:creatable="false" sap:filterable="false" />
+				<Property Name="title" Type="Edm.String" MaxLength="255"
+					m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="false"
+					sap:label="Title" sap:filterable="false" />
+				<Property Name="deliveryAddress" Type="Edm.String"
+					sap:label="Delivery Address" sap:filterable="false" />
+				<Property Name="persistNotifications" Type="Edm.Boolean"
+					sap:label="Persist Notification" sap:filterable="false" />
+				<Property Name="collection" Type="Edm.String" MaxLength="40"
+					sap:label="Collection" sap:filterable="false" />
+				<Property Name="filter" Type="Edm.String" sap:label="Filter"
+					sap:filterable="false" />
+				<Property Name="select" Type="Edm.String" MaxLength="255"
+					sap:label="Select" sap:filterable="false" />
+				<Property Name="changeType" Type="Edm.String" MaxLength="30"
+					sap:label="Change Type" />
+			</EntityType>
+			<EntityType Name="Notification" sap:semantics="notifications"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="32" sap:label="Notification ID" />
+				<Property Name="collection" Type="Edm.String" MaxLength="40"
+					sap:label="Collection" />
+				<Property Name="title" Type="Edm.String" m:FC_TargetPath="SyndicationTitle"
+					m:FC_KeepInContent="false" sap:label="Notif. Text" />
+				<Property Name="updated" Type="Edm.DateTime" Precision="0"
+					m:FC_TargetPath="SyndicationUpdated" m:FC_KeepInContent="false"
+					sap:label="Time Stamp" />
+				<Property Name="changeType" Type="Edm.String" MaxLength="30"
+					sap:label="Change Type" />
+				<Property Name="entriesOfInterest" Type="Edm.Int32"
+					sap:label="No. of Entries" />
+				<Property Name="recipient" Type="Edm.String" MaxLength="112"
+					sap:label="Recipient" sap:creatable="false" sap:updatable="false" />
+			</EntityType>
+			<EntityType Name="Flight" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="carrid" />
+					<PropertyRef Name="connid" />
+					<PropertyRef Name="fldate" />
+				</Key>
+				<Property Name="flightDetails" Type="RMTSAMPLEFLIGHT.FlightDetails"
+					Nullable="false" />
+				<Property Name="carrid" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Airline" />
+				<Property Name="connid" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Flight Number" />
+				<Property Name="fldate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:label="Date" />
+				<Property Name="PRICE" Type="Edm.Decimal" Precision="15"
+					Scale="2" sap:unit="CURRENCY" sap:label="Airfare" />
+				<Property Name="CURRENCY" Type="Edm.String" MaxLength="5"
+					sap:label="Airline Currency" sap:sortable="false" sap:semantics="currency-code" />
+				<Property Name="PLANETYPE" Type="Edm.String" MaxLength="10"
+					sap:label="Type of the plane" />
+				<Property Name="SEATSMAX" Type="Edm.Int32" sap:label="Max. capacity econ." />
+				<Property Name="SEATSOCC" Type="Edm.Int32" sap:label="Occupied econ." />
+				<Property Name="PAYMENTSUM" Type="Edm.Decimal" Precision="17"
+					Scale="2" sap:label="Total" />
+				<Property Name="SEATSMAX_B" Type="Edm.Int32" sap:label="Max. capacity bus." />
+				<Property Name="SEATSOCC_B" Type="Edm.Int32" sap:label="Occupied bus." />
+				<Property Name="SEATSMAX_F" Type="Edm.Int32" sap:label="Max. capacity 1st" />
+				<Property Name="SEATSOCC_F" Type="Edm.Int32" sap:label="Occupied 1st" />
+				<NavigationProperty Name="flightbooking"
+					Relationship="RMTSAMPLEFLIGHT.BookingFlight" FromRole="FromRole_BookingFlight"
+					ToRole="ToRole_BookingFlight" />
+				<NavigationProperty Name="flightBookings"
+					Relationship="RMTSAMPLEFLIGHT.FlightBookings" FromRole="FromRole_FlightBookings"
+					ToRole="ToRole_FlightBookings" />
+				<NavigationProperty Name="FlightCarrier"
+					Relationship="RMTSAMPLEFLIGHT.CarrierToFlight" FromRole="ToRole_CarrierToFlight"
+					ToRole="FromRole_CarrierToFlight" />
+			</EntityType>
+			<EntityType Name="Flight_DQ" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="carrid" />
+					<PropertyRef Name="connid" />
+					<PropertyRef Name="fldate" />
+				</Key>
+				<Property Name="carrid" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Airline" />
+				<Property Name="connid" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Flight Number" />
+				<Property Name="fldate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:label="Date" />
+				<Property Name="PRICE" Type="Edm.Decimal" Precision="15"
+					Scale="2" sap:unit="CURRENCY" sap:label="Airfare" />
+				<Property Name="CURRENCY" Type="Edm.String" MaxLength="5"
+					sap:label="Airline Currency" sap:sortable="false" sap:semantics="currency-code" />
+				<Property Name="PLANETYPE" Type="Edm.String" MaxLength="10"
+					sap:label="Type of the plane" />
+				<Property Name="SEATSMAX" Type="Edm.Int32" sap:label="Max. capacity econ." />
+				<Property Name="SEATSOCC" Type="Edm.Int32" sap:label="Occupied econ." />
+				<Property Name="PAYMENTSUM" Type="Edm.Decimal" Precision="17"
+					Scale="2" sap:label="Total" />
+				<Property Name="SEATSMAX_B" Type="Edm.Int32" sap:label="Max. capacity bus." />
+				<Property Name="SEATSOCC_B" Type="Edm.Int32" sap:label="Occupied bus." />
+				<Property Name="SEATSMAX_F" Type="Edm.Int32" sap:label="Max. capacity 1st" />
+				<Property Name="SEATSOCC_F" Type="Edm.Int32" sap:label="Occupied 1st" />
+			</EntityType>
+			<EntityType Name="Booking" sap:label="Flight Booking"
+				sap:semantics="FLIGHT_BOOKING" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="carrid" />
+					<PropertyRef Name="connid" />
+					<PropertyRef Name="fldate" />
+					<PropertyRef Name="bookid" />
+				</Key>
+				<Property Name="carrid" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Airline" />
+				<Property Name="connid" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Flight Number" />
+				<Property Name="fldate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:label="Date" />
+				<Property Name="bookid" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:label="Booking number" />
+				<Property Name="CUSTOMID" Type="Edm.String" MaxLength="8"
+					sap:label="Customer Number" />
+				<Property Name="CUSTTYPE" Type="Edm.String" MaxLength="1"
+					sap:label="B/P customer" />
+				<Property Name="SMOKER" Type="Edm.String" MaxLength="1"
+					sap:label="Smoker" />
+				<Property Name="WUNIT" Type="Edm.String" MaxLength="3"
+					sap:label="Unit of measure" sap:semantics="unit-of-measure" />
+				<Property Name="LUGGWEIGHT" Type="Edm.Decimal" Precision="9"
+					Scale="4" sap:unit="WUNIT" sap:label="Luggage Weight" />
+				<Property Name="INVOICE" Type="Edm.String" MaxLength="1"
+					sap:label="Invoice pty." />
+				<Property Name="CLASS" Type="Edm.String" MaxLength="1"
+					sap:label="Class" />
+				<Property Name="FORCURAM" Type="Edm.Decimal" Precision="15"
+					Scale="14" sap:unit="FORCURKEY" sap:label="Amount" />
+				<Property Name="FORCURKEY" Type="Edm.String" MaxLength="5"
+					sap:label="Paymnt currency" sap:semantics="currency-code" />
+				<Property Name="LOCCURAM" Type="Edm.Decimal" Precision="15"
+					Scale="14" sap:unit="LOCCURKEY" sap:label="Amount" />
+				<Property Name="LOCCURKEY" Type="Edm.String" MaxLength="5"
+					sap:label="Airline Currency" sap:semantics="currency-code" />
+				<Property Name="ORDER_DATE" Type="Edm.DateTime" Precision="0"
+					ConcurrencyMode="Fixed" sap:label="Booking date" sap:updatable="false" />
+				<Property Name="COUNTER" Type="Edm.String" MaxLength="8"
+					sap:label="Sales office" sap:updatable="false" />
+				<Property Name="AGENCYNUM" Type="Edm.String" MaxLength="8"
+					sap:label="Agency No." sap:updatable="false" />
+				<Property Name="CANCELLED" Type="Edm.String" MaxLength="1"
+					sap:label="Cancelation flag" sap:updatable="false" />
+				<Property Name="RESERVED" Type="Edm.String" MaxLength="1"
+					sap:label="Reserved" sap:updatable="false" />
+				<Property Name="PASSNAME" Type="Edm.String" MaxLength="25"
+					sap:label="Passenger Name" />
+				<Property Name="PASSFORM" Type="Edm.String" MaxLength="15"
+					sap:label="Title" />
+				<Property Name="PASSBIRTH" Type="Edm.DateTime" Precision="0"
+					sap:label="DOB of Passeng." />
+				<NavigationProperty Name="bookedFlight"
+					Relationship="RMTSAMPLEFLIGHT.BookingFlight" FromRole="ToRole_BookingFlight"
+					ToRole="FromRole_BookingFlight" sap:label="Flight bookings"
+					gp:display-order="0111" />
+			</EntityType>
+			<EntityType Name="Carrier" m:HasStream="true"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="carrid" />
+				</Key>
+				<Property Name="carrid" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Airline" />
+				<Property Name="CARRNAME" Type="Edm.String" MaxLength="20"
+					sap:label="Airline" />
+				<Property Name="CURRCODE" Type="Edm.String" MaxLength="5"
+					sap:label="Airline Currency" sap:semantics="currency-code" />
+				<Property Name="URL" Type="Edm.String" MaxLength="255"
+					sap:label="URL" />
+				<Property Name="mimeType" Type="Edm.String" MaxLength="128"
+					sap:label="MIME Type" sap:filterable="false" />
+				<NavigationProperty Name="carrierFlights"
+					Relationship="RMTSAMPLEFLIGHT.CarrierToFlight" FromRole="FromRole_CarrierToFlight"
+					ToRole="ToRole_CarrierToFlight" />
+			</EntityType>
+			<EntityType Name="Travelagency" ux:thing-name="travel agency"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="agencynum" />
+				</Key>
+				<Property Name="agencynum" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:label="Agency No." />
+				<Property Name="NAME" Type="Edm.String" MaxLength="25"
+					sap:label="Travel agency name" />
+				<Property Name="STREET" Type="Edm.String" MaxLength="30"
+					sap:label="Street" />
+				<Property Name="POSTBOX" Type="Edm.String" MaxLength="10"
+					sap:label="PO Box" />
+				<Property Name="POSTCODE" Type="Edm.String" MaxLength="10"
+					sap:label="Postal Code" />
+				<Property Name="CITY" Type="Edm.String" MaxLength="25"
+					sap:label="City" />
+				<Property Name="COUNTRY" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="REGION" Type="Edm.String" MaxLength="3"
+					sap:label="Region" />
+				<Property Name="TELEPHONE" Type="Edm.String" MaxLength="30"
+					sap:label="Tel." />
+				<Property Name="URL" Type="Edm.String" MaxLength="255"
+					sap:label="Travel agency URL" />
+				<Property Name="LANGU" Type="Edm.String" MaxLength="2"
+					sap:label="Language" />
+				<Property Name="CURRENCY" Type="Edm.String" MaxLength="5"
+					sap:label="Trav.Agency.Curr" sap:semantics="currency-code" />
+				<Property Name="mimeType" Type="Edm.String" MaxLength="128"
+					sap:label="MIME Type" />
+			</EntityType>
+			<EntityType Name="Travelagency_DQ" ux:thing-name="travel agency"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="agencynum" />
+				</Key>
+				<Property Name="agencynum" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:label="Agency No." />
+				<Property Name="NAME" Type="Edm.String" MaxLength="25"
+					sap:label="Travel agency name" />
+				<Property Name="STREET" Type="Edm.String" MaxLength="30"
+					sap:label="Street" />
+				<Property Name="POSTBOX" Type="Edm.String" MaxLength="10"
+					sap:label="PO Box" />
+				<Property Name="POSTCODE" Type="Edm.String" MaxLength="10"
+					sap:label="Postal Code" />
+				<Property Name="CITY" Type="Edm.String" MaxLength="25"
+					sap:label="City" />
+				<Property Name="COUNTRY" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="REGION" Type="Edm.String" MaxLength="3"
+					sap:label="Region" />
+				<Property Name="TELEPHONE" Type="Edm.String" MaxLength="30"
+					sap:label="Tel." />
+				<Property Name="URL" Type="Edm.String" MaxLength="255"
+					sap:label="Travel agency URL" />
+				<Property Name="LANGU" Type="Edm.String" MaxLength="2"
+					sap:label="Language" />
+				<Property Name="CURRENCY" Type="Edm.String" MaxLength="5"
+					sap:label="Trav.Agency.Curr" sap:semantics="currency-code" />
+				<Property Name="mimeType" Type="Edm.String" MaxLength="128"
+					sap:label="MIME Type" />
+			</EntityType>
+			<ComplexType Name="FlightDetails" gp:display-order="0010">
+				<Property Name="countryFrom" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="cityFrom" Type="Edm.String" MaxLength="20"
+					sap:label="Depart.city" />
+				<Property Name="airportFrom" Type="Edm.String" MaxLength="3"
+					sap:label="Dep. airport" />
+				<Property Name="countryTo" Type="Edm.String" MaxLength="3"
+					sap:label="Country" />
+				<Property Name="cityTo" Type="Edm.String" MaxLength="20"
+					sap:label="Arrival city" />
+				<Property Name="airportTo" Type="Edm.String" MaxLength="3"
+					sap:label="Dest. airport" />
+				<Property Name="flightTime" Type="Edm.Int32" sap:label="Flight time" />
+				<Property Name="departureTime" Type="Edm.Time" Precision="0"
+					sap:label="Departure" />
+				<Property Name="arrivalTime" Type="Edm.Time" Precision="0"
+					sap:label="Arrival Time" />
+				<Property Name="distance" Type="Edm.Decimal" Precision="9"
+					Scale="4" sap:unit="distanceUnit" sap:label="Distance" />
+				<Property Name="distanceUnit" Type="Edm.String" MaxLength="3"
+					sap:label="Distance in" sap:semantics="unit-of-measure" />
+				<Property Name="flightType" Type="Edm.String" MaxLength="1"
+					sap:label="Charter" />
+				<Property Name="period" Type="Edm.Byte" sap:label="n day(s) later" />
+			</ComplexType>
+			<ComplexType Name="FlightAvailability">
+				<Property Name="ECONOMAX" Type="Edm.Int32" sap:label="Max. capacity econ." />
+				<Property Name="ECONOFREE" Type="Edm.Int32" sap:label="Free seats" />
+				<Property Name="BUSINMAX" Type="Edm.Int32" sap:label="Max. capacity bus." />
+				<Property Name="BUSINFREE" Type="Edm.Int32" sap:label="Free seats" />
+				<Property Name="FIRSTMAX" Type="Edm.Int32" sap:label="Max. capacity 1st" />
+				<Property Name="FIRSTFREE" Type="Edm.Int32" sap:label="Free seats" />
+			</ComplexType>
+			<ComplexType Name="FlightAvailability2" BaseType="RMTSAMPLEFLIGHT.FlightAvailability" />
+			<Association Name="CarrierToFlight" sap:content-version="1">
+				<End Type="RMTSAMPLEFLIGHT.Carrier" Multiplicity="1"
+					Role="FromRole_CarrierToFlight" />
+				<End Type="RMTSAMPLEFLIGHT.Flight" Multiplicity="*"
+					Role="ToRole_CarrierToFlight" />
+			</Association>
+			<Association Name="BookingFlight" sap:content-version="1"
+				sap:label="Booking Flight Association">
+				<End Type="RMTSAMPLEFLIGHT.Flight" Multiplicity="1"
+					Role="FromRole_BookingFlight" />
+				<End Type="RMTSAMPLEFLIGHT.Booking" Multiplicity="1"
+					Role="ToRole_BookingFlight" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_BookingFlight">
+						<PropertyRef Name="fldate" />
+						<PropertyRef Name="connid" />
+						<PropertyRef Name="carrid" />
+					</Principal>
+					<Dependent Role="ToRole_BookingFlight">
+						<PropertyRef Name="fldate" />
+						<PropertyRef Name="connid" />
+						<PropertyRef Name="carrid" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<Association Name="FlightBookings" sap:content-version="1">
+				<End Type="RMTSAMPLEFLIGHT.Flight" Multiplicity="1"
+					Role="FromRole_FlightBookings" />
+				<End Type="RMTSAMPLEFLIGHT.Booking" Multiplicity="*"
+					Role="ToRole_FlightBookings" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_FlightBookings">
+						<PropertyRef Name="fldate" />
+						<PropertyRef Name="connid" />
+						<PropertyRef Name="carrid" />
+					</Principal>
+					<Dependent Role="ToRole_FlightBookings">
+						<PropertyRef Name="fldate" />
+						<PropertyRef Name="connid" />
+						<PropertyRef Name="carrid" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="RMTSAMPLEFLIGHT_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="BookingCollection" EntityType="RMTSAMPLEFLIGHT.Booking"
+					sap:pageable="false" sap:content-version="1" />
+				<EntitySet Name="CarrierCollection" EntityType="RMTSAMPLEFLIGHT.Carrier"
+					sap:creatable="false" sap:deletable="false" sap:content-version="1" />
+				<EntitySet Name="TravelagencyCollection" EntityType="RMTSAMPLEFLIGHT.Travelagency"
+					sap:label="Travel Agencies" sap:searchable="true"
+					sap:content-version="1">
+					<gp:collectionLayout display-order="0010"
+						top-level="true" />
+				</EntitySet>
+				<EntitySet Name="TravelAgencies" EntityType="RMTSAMPLEFLIGHT.Travelagency"
+					sap:searchable="true" sap:content-version="1" />
+				<EntitySet Name="TravelAgencies_DQ" EntityType="RMTSAMPLEFLIGHT.Travelagency_DQ"
+					sap:searchable="true" sap:content-version="1" />
+				<EntitySet Name="SubscriptionCollection" EntityType="RMTSAMPLEFLIGHT.Subscription"
+					sap:content-version="1" />
+				<EntitySet Name="NotificationCollection" EntityType="RMTSAMPLEFLIGHT.Notification"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:addressable="false" sap:content-version="1" />
+				<EntitySet Name="FlightCollection" EntityType="RMTSAMPLEFLIGHT.Flight"
+					sap:content-version="1">
+					<gp:collectionLayout display-order="0010"
+						top-level="true" />
+				</EntitySet>
+				<EntitySet Name="FlightCollection_DQ" EntityType="RMTSAMPLEFLIGHT.Flight_DQ"
+					sap:content-version="1" />
+				<AssociationSet Name="CarrierToFlight_AssocSet"
+					Association="RMTSAMPLEFLIGHT.CarrierToFlight" sap:creatable="false"
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="CarrierCollection" Role="FromRole_CarrierToFlight" />
+					<End EntitySet="FlightCollection" Role="ToRole_CarrierToFlight" />
+				</AssociationSet>
+				<AssociationSet Name="AssocSet_FlightBookings"
+					Association="RMTSAMPLEFLIGHT.FlightBookings" sap:creatable="false"
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="FlightCollection" Role="FromRole_FlightBookings" />
+					<End EntitySet="BookingCollection" Role="ToRole_FlightBookings" />
+				</AssociationSet>
+				<AssociationSet Name="AssocSet_BookingFlight"
+					Association="RMTSAMPLEFLIGHT.BookingFlight" sap:creatable="false"
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="FlightCollection" Role="FromRole_BookingFlight" />
+					<End EntitySet="BookingCollection" Role="ToRole_BookingFlight" />
+				</AssociationSet>
+				<FunctionImport Name="CheckFlightAvailability"
+					ReturnType="RMTSAMPLEFLIGHT.FlightAvailability" m:HttpMethod="GET"
+					sap:label="Check availability of flight" sap:action-for="RMTSAMPLEFLIGHT.Flight">
+					<Parameter Name="airlineid" Type="Edm.String" Mode="In"
+						MaxLength="3">
+						<Documentation>
+							<Summary>Airline</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="connectionid" Type="Edm.String" Mode="In"
+						MaxLength="4">
+						<Documentation>
+							<Summary>Flight Number</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="flightdate" Type="Edm.DateTime" Mode="In"
+						Precision="0">
+						<Documentation>
+							<Summary>Date</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+				</FunctionImport>
+				<FunctionImport Name="GetAvailableFlights"
+					ReturnType="Collection(RMTSAMPLEFLIGHT.Flight)" EntitySet="FlightCollection"
+					m:HttpMethod="GET">
+					<Parameter Name="fromdate" Type="Edm.DateTime" Mode="In"
+						Precision="0">
+						<Documentation>
+							<Summary>Date</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="todate" Type="Edm.DateTime" Mode="In"
+						Precision="0">
+						<Documentation>
+							<Summary>Date</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="cityfrom" Type="Edm.String" Mode="In"
+						MaxLength="20">
+						<Documentation>
+							<Summary>Depart.city</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="cityto" Type="Edm.String" Mode="In"
+						MaxLength="20">
+						<Documentation>
+							<Summary>Arrival city</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+				</FunctionImport>
+				<FunctionImport Name="GetFlightDetails" ReturnType="RMTSAMPLEFLIGHT.FlightDetails"
+					m:HttpMethod="GET" sap:action-for="RMTSAMPLEFLIGHT.Flight">
+					<Parameter Name="airlineid" Type="Edm.String" Mode="In"
+						MaxLength="3">
+						<Documentation>
+							<Summary>Airline</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="connectionid" Type="Edm.String" Mode="In"
+						MaxLength="4">
+						<Documentation>
+							<Summary>Flight Number</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+				</FunctionImport>
+				<FunctionImport Name="GetAgencyDetails" ReturnType="RMTSAMPLEFLIGHT.Travelagency"
+					EntitySet="TravelagencyCollection" m:HttpMethod="GET"
+					sap:action-for="RMTSAMPLEFLIGHT.Travelagency">
+					<Parameter Name="agency_id" Type="Edm.String" Mode="In"
+						MaxLength="8">
+						<Documentation>
+							<Summary>Agency No.</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+				</FunctionImport>
+				<FunctionImport Name="UpdateAgencyPhoneNo"
+					ReturnType="RMTSAMPLEFLIGHT.Travelagency" EntitySet="TravelagencyCollection"
+					m:HttpMethod="PUT" sap:action-for="RMTSAMPLEFLIGHT.Travelagency">
+					<Parameter Name="agency_id" Type="Edm.String" Mode="In"
+						MaxLength="8">
+						<Documentation>
+							<Summary>Agency No.</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+					<Parameter Name="telephone" Type="Edm.String" Mode="In"
+						MaxLength="30" Nullable="true">
+						<Documentation>
+							<Summary>Tel.</Summary>
+							<LongDescription />
+						</Documentation>
+					</Parameter>
+				</FunctionImport>
+			</EntityContainer>
+			<atom:link rel="self"
+				href="http://testservice:8080/sap/opu/odata/iwfnd/RMTSAMPLEFLIGHT/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version"
+				href="http://testservice:8080/sap/opu/odata/iwfnd/RMTSAMPLEFLIGHT/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

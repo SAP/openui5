@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>sap.m.Text</title>
+		<style>
+			#text1, #text2, #text3, #text4, #text5, #text6, #text7, #text8 {
+				margin: 0.4375em 0.4375em 0em 0.4375em;
+				border
+			}
+			#text4 {
+				padding: 0em 0.4375em 0em 0.4375em;
+				border-width: 1px;
+				border-color: red;
+				border-style: solid;
+				color: blue;
+				background-color: #FFFFDD;
+			}
+		</style>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script>
+
+			// create and add app
+			var app = new sap.m.App("myApp", {initialPage:"textPage"});
+			app.placeAt("body");
+			
+			// create and add a page with texts 
+			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+			var page = new sap.m.Page("textPage", {
+				title:"Text",
+				content : [ 
+			   		new sap.m.Text("text1", {
+			   			text: "[1. STANDARD] " + lorem 
+			   		}),
+			   		new sap.m.Text("text2", {
+			   			text: "[2. NO WRAPPING] " + lorem,
+			   			wrapping: false
+			   		}),
+			   		new sap.m.Text("text3", {
+			   			text: "[3. FIXED WIDTH] " + lorem,
+			   			width: "45em"
+			   		}),
+			   		new sap.m.Text("text4", {
+			   			text: "[4. STYLED] " + lorem
+			   		}),
+			   		new sap.m.Text("text5", {
+			   			text: "[5. RIGHT ALIGNED] " + lorem,
+			   			textAlign: sap.ui.core.TextAlign.End
+			   		}),
+			   		new sap.m.Text("text6", {
+			   			text: "Text [6. RTL] " + lorem,
+			   			textDirection: sap.ui.core.TextDirection.RTL
+			   		}),
+			   		new sap.m.Text("text7", {
+			   			text: "[7. LINE BREAKS]\n...\n" + lorem
+			   		}),
+			   		new sap.m.Text("text8", {
+			   			text: "[8. INVISIBLE] " + lorem,
+			   			visible: false
+			   		}),
+			   		new sap.m.Text("text9", {
+			   			text: "[9. MAXLINE:3] " + lorem + lorem + lorem,
+			   			maxLines: 3
+			   		}),
+			   		new sap.m.Text("text10", {
+			   			text: "Text [10. RTL + MAXLINE:2] " + lorem,
+			   			textDirection: "RTL",
+			   			maxLines: 2
+			   		})
+	            ]
+			});
+			app.addPage(page);
+		
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

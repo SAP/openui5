@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+
+	<title>TileContainer - sap.m</title>
+
+	<link rel="stylesheet"
+		href="../../../../resources/sap/ui/thirdparty/qunit.css"
+		type="text/css" media="screen"/>
+
+	<!-- UI5 Bootstrap -->
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"></script>
+
+	<!-- QUnit libraries -->
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script type="text/javascript">
+		var core = sap.ui.getCore();
+	
+		test("ShouldRenderNiceHtml", function() {	
+			// SUT
+			var id,
+				expectedWidth = "100px",
+				expectedHeight = "200px",
+				sut = new sap.m.TileContainer({ 
+						width : expectedWidth,
+						height : expectedHeight 
+					});
+			
+			sut.placeAt("qunit-fixture");
+			id = sut.getId();
+			
+			// Act
+			core.applyChanges();
+
+			// Assert
+			strictEqual(sut.$().css("width"),expectedWidth);
+			strictEqual(sut.$().css("height"),expectedHeight);
+			
+			ok($("#" + id + "-scrl").length > 0);
+			ok($("#" + id + "-blind").length > 0);
+			ok($("#" + id + "-cnt").length > 0);
+			ok($("#" + id + "-pager").length > 0);
+			
+			
+			sut.destroy();
+		});
+		
+		test("ShouldRenderMultipleTiles", function() {
+			// Arrange
+			var tile1 = new sap.m.StandardTile(),
+				tile2 = new sap.m.CustomTile(),
+				sut;
+				
+
+			// SUT
+			sut = new sap.m.TileContainer({tiles : [tile1,tile2]});
+			
+			
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+
+			// Assert
+			//The only that contains a tile id is id+ "-remove" that's why it's retrived like this
+			equal($("#" + tile1.getId()+ "-remove").length,1);
+			equal($("#" + tile2.getId()+ "-remove").length,1);
+
+			// Cleanup
+			sut.destroy();
+		});
+		
+		test("ShouldSetEditable", function() {
+			// Arrange
+			var tile1 = new sap.m.StandardTile(),
+				tile2 = new sap.m.CustomTile(),
+				tiles = [tile1,tile2],
+				sut, 
+				i;
+			
+			// SUT
+			sut = new sap.m.TileContainer({tiles : tiles});
+						
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+			sut.setEditable(true);
+
+			// Assert
+			ok(sut.$().hasClass("sapMTCEditable"));
+			ok(sut.getEditable());
+			for ( i = 0; i < tiles.length; i++) {
+				equal(tiles[i].isEditable(),true);
+			}
+			
+			// Cleanup
+			sut.destroy();
+				
+		});
+		
+		test("ShouldMoveATile", function() {
+			// Arrange
+			var m = sap.m,
+				tile0 = new m.StandardTile(),
+				tile1 = new m.CustomTile(),
+				tiles = [tile0,tile1],
+				sut, 
+				i;
+			
+			// SUT
+			sut = new m.TileContainer({tiles : tiles});
+						
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+			sut.moveTile(tile0,1);
+
+			// Assert
+			strictEqual(sut.getTiles()[0], tile1);
+			strictEqual(sut.getTiles()[1], tile0);
+			
+			
+			// Cleanup
+			sut.destroy();
+		});
+		
+		test("ShouldInsertATile", function() {
+			// Arrange
+			var sut,
+				m = sap.m,
+				tileToAdd = new m.StandardTile();
+
+			// SUT
+			sut = new m.TileContainer();
+			
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+			sut.addTile(tileToAdd);
+
+			// Assert
+			strictEqual(sut.getTiles()[0], tileToAdd)
+			
+			// Cleanup
+			sut.destroy();
+		});
+		
+		test("ShouldDeleteATile", function() {
+			// Arrange
+			var sut,
+				m = sap.m,
+				tileToDelete = new m.StandardTile();
+
+			// SUT
+			sut = new m.TileContainer({
+				tiles : tileToDelete
+			});
+			
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+			sut.deleteTile(tileToDelete);
+	
+			// Assert
+			strictEqual(sut.getTiles().length, 0)
+			
+			// Cleanup
+			sut.destroy();
+		});
+		
+		asyncTest("ShouldApplyDimensions", function() {
+			// Arrange
+			var sut,
+				id,
+				oDim,
+				$rightEdge,
+				$leftEdge,
+				$scroll,
+				pagerHeight,
+				m = sap.m,
+				expectedOffset = jQuery.device.is.phone ? 2 : 0,
+				tile = new m.StandardTile();
+
+			// SUT
+			sut = new m.TileContainer({
+				tiles : tile
+			});
+			
+			// Act
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+
+			// Assert
+			//timeout needed to have the content at its actual size
+			setTimeout(function(){
+				sut._applyDimension();
+				id= sut.getId();
+				oDim = sut._getContainerDimension();
+				pagerHeight = jQuery.sap.byId( id + "-pager").outerHeight();
+				
+				equal(sut.$().css("visibility"),"visible","TileContainer was visible");
+				
+				$scroll = jQuery.sap.byId(id + "-scrl");
+				equal($scroll.css("width"), oDim.outerwidth + "px","scroll width");
+				equal($scroll.css("height"), (oDim.outerheight - pagerHeight) + "px","scroll height");
+				
+				
+				$rightEdge = jQuery.sap.byId(id + "-rightedge");
+				equal($rightEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","right edge top");
+				equal($rightEdge.css("right"),expectedOffset + "px");
+				
+				$leftEdge = jQuery.sap.byId(id + "-leftedge");
+				equal($leftEdge.css("top"), (sut.getDomRef().offsetTop + expectedOffset) + "px","left edge top");
+				equal($leftEdge.css("left"),expectedOffset + "px");
+
+				start();
+				// Cleanup
+				sut.destroy();
+				
+			},100);
+		});
+		
+		test("ShouldScrollIntoAView", function() {
+			//Arrange
+			var sut,
+				m = sap.m,
+				lastTile;
+			
+						
+			//SUT
+			sut = new m.TileContainer({tiles : new m.StandardTile()});
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
+			sut._calculatePositions();
+			
+			//Add one more Tile than total amount of Tiles fitting in the current container
+			while(sut._iMaxTiles +1 > sut.getTiles().length){
+				lastTile = new m.StandardTile();
+				sut.addTile(lastTile);
+				sut._calculatePositions();
+			}
+			
+			//Act
+			sut.scrollIntoView(lastTile,false);
+			
+			//Assert
+			equal(sut._iCurrentPage, 1);
+			equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
+			
+			//Cleanup
+			sut.destroy();
+		});
+
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

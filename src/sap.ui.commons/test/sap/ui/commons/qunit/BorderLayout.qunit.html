@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.layout.BorderLayout
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	var oLayout = new sap.ui.commons.layout.BorderLayout("myLayout1");
+
+	var oLayoutInner = new sap.ui.commons.layout.BorderLayout("myLayoutInner");
+
+	oLayoutInner.createArea("top", new sap.ui.commons.TextField("inner_top", {value: "Inner Top" , width: "80px"}));
+
+	oLayoutInner.createArea("begin", new sap.ui.commons.TextField("inner_begin", {value: "Inner Begin" , width: "80px"}));
+	oLayoutInner.createArea("center", new sap.ui.commons.TextField("inner_center", {value: "Inner Center" , width: "80px"}));
+	oLayoutInner.createArea("end", new sap.ui.commons.TextField("inner_end", {value: "Inner End" , width: "80px"}));
+	oLayoutInner.createArea("bottom", new sap.ui.commons.TextField("inner_bottom", {value: "Inner Bottom" , width: "80px"}));
+
+	oLayout.createArea("top", new sap.ui.commons.TextField("top", {value: "Top" , width: "50px"}) );
+	oLayout.createArea("begin", new sap.ui.commons.TextField("begin", {value: "Begin" , width: "50px"}) );
+	oLayout.createArea("center", new sap.ui.commons.TextField("center", {value: "Center" , width: "50px"}), oLayoutInner );
+	oLayout.createArea("end", new sap.ui.commons.TextField("end", {value: "End" , width: "50px"}) );
+	oLayout.createArea("bottom", new sap.ui.commons.TextField("bottom", {value: "Bottom" , width: "50px"}) );
+
+	oLayout.setAreaData("top", 		{overflowX: "auto" , overflowY: "auto" ,contentAlign: "center", size: "50px", visible: true});
+	oLayout.setAreaData("begin", 	{overflowX: "hidden" , overflowY: "hidden" ,contentAlign: "center", size: "30px", visible: true});
+	oLayout.setAreaData("center", 	{contentAlign: "center"});
+	oLayout.setAreaData("end", 		{overflowX: "scroll" , overflowY: "scroll" ,contentAlign: "left", size: "78px", visible: true});
+	oLayout.setAreaData("bottom", 	{overflowX: "scroll" , overflowY: "hidden" ,contentAlign: "right", size: "66px", visible: true});
+
+	sap.ui.setRoot("uiArea1", oLayout);
+	
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+	qutils.delayTestStart();
+
+	module("Parent-Properties");
+
+	test("Custom Values", function() {
+		equal(oLayout.getRtl()		 , false, "Custom 'rtl': "); 		
+	});
+
+	test("Default Values", function() {
+		equal(oLayoutInner.getRtl()      , false, "Default 'rtl': "); 		
+	});
+
+	module("Area-Properties");
+
+	test("Custom Area Values", function() {
+		var oData;
+		//Top
+		equal(oLayout.getTop().getAreaId(), "top", "Top AUTO 'areaId': ");
+		oData = oLayout.getAreaData("top");		
+		equal(oData.overflowX, "auto", "Top Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Top Custom 'overflowY': ");
+		equal(oData.contentAlign, "center", "Top Custom 'contentAlign': ");
+		equal(oData.size, "50px", "Top Custom 'size': ");
+		equal(oData.visible, true, "Top Custom 'visible': ");
+
+		//Begin
+		equal(oLayout.getBegin().getAreaId(), "begin", "Begin AUTO 'areaId': ");
+		oData = oLayout.getAreaData("begin");
+		equal(oData.overflowX, "hidden", "Begin Custom 'overflowX': ");
+		equal(oData.overflowY, "hidden", "Begin Custom 'overflowY': ");
+		equal(oData.contentAlign, "center", "Begin Custom 'contentAlign': ");
+		equal(oData.size, "30px", "Begin Custom 'size': ");
+		equal(oData.visible, true, "Begin Custom 'visible': ");
+
+		//Center
+		equal(oLayout.getCenter().getAreaId(), "center", "Center AUTO 'areaId': ");
+		oData = oLayout.getAreaData("center");
+		equal(oData.overflowX, "auto", "Center Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Center Custom 'overflowY': ");
+		equal(oData.contentAlign, "center", "Center Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Center Custom 'size': ");
+		equal(oData.visible, true, "Center Custom 'visible': ");		
+		
+		//End
+		equal(oLayout.getEnd().getAreaId(), "end", "End AUTO 'areaId': ");
+		oData = oLayout.getAreaData("end"); 
+		equal(oData.overflowX, "scroll", "End Custom 'overflowX': ");
+		equal(oData.overflowY, "scroll", "End Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "End  Custom 'contentAlign': ");
+		equal(oData.size, "78px", "Center Custom 'size': ");
+		equal(oData.visible, true, "Center Custom 'visible': ");
+		
+		//Bottom
+		equal(oLayout.getBottom().getAreaId(), "bottom", "Bottom AUTO 'areaId': ");
+		oData = oLayout.getAreaData("bottom");
+		equal(oData.overflowX, "scroll", "Bottom Custom 'overflowX': ");
+		equal(oData.overflowY, "hidden", "Bottom Custom 'overflowY': ");
+		equal(oData.contentAlign, "right", "Bottom  Custom 'contentAlign': ");
+		equal(oData.size, "66px", "Bottom Custom 'size': ");
+		equal(oData.visible, true, "Bottom Custom 'visible': ");
+	});
+
+	test("Default Area Values", function() {
+		var oData;
+		//Inner Top
+		equal(oLayoutInner.getTop().getAreaId(), "top", "Inner Top AUTO 'areaId': ");
+		oData = oLayoutInner.getAreaData("top");		
+		equal(oData.overflowX, "auto", "Inner Top Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Inner Top Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "Inner Top Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Inner Top Custom 'size': ");
+		equal(oData.visible, true, "InnerTop Custom 'visible': ");
+
+		//Begin
+		equal(oLayoutInner.getBegin().getAreaId(), "begin", "Inner Begin AUTO 'areaId': ");
+		oData = oLayoutInner.getAreaData("begin");		
+		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
+		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
+		
+		//Center
+		equal(oLayoutInner.getCenter().getAreaId(), "center", "Inner Center AUTO 'areaId': ");
+		oData = oLayoutInner.getAreaData("center");		
+		equal(oData.overflowX, "auto", "Inner Begin Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Inner Begin Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "Inner TBegin Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Inner Begin Custom 'size': ");
+		equal(oData.visible, true, "Inner Begin Custom 'visible': ");
+		
+		//End
+		equal(oLayoutInner.getEnd().getAreaId(), "end", "Inner End AUTO 'areaId': ");
+		oData = oLayoutInner.getAreaData("end");		
+		equal(oData.overflowX, "auto", "Inner End Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Inner End Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "Inner End Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Inner End Custom 'size': ");
+		equal(oData.visible, true, "Inner End Custom 'visible': ");
+		
+		//Bottom
+		equal(oLayoutInner.getBottom().getAreaId(), "bottom", "Inner Bottom AUTO 'areaId': ");
+		oData = oLayoutInner.getAreaData("bottom");		
+		equal(oData.overflowX, "auto", "Inner Bottom Custom 'overflowX': ");
+		equal(oData.overflowY, "auto", "Inner Bottom Custom 'overflowY': ");
+		equal(oData.contentAlign, "left", "Inner Bottom Custom 'contentAlign': ");
+		equal(oData.size, "100px", "Inner Bottom Custom 'size': ");
+		equal(oData.visible, true, "Inner Bottom Custom 'visible': ");
+	});
+
+	module("BorderLayout Helper Methods");
+	var oLink1;
+	test("Adding Content", function() {
+		//Add one Control
+		oLink1 = new sap.ui.commons.Link("link1", {text : "Link1 added by addContent"});		
+		oLayout.addContent("top", oLink1);
+		sap.ui.getCore().applyChanges();
+		equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Link1 was added: ");
+		
+		//Add more than one Control
+		var oLink2 = new sap.ui.commons.Link("link2", {text : "Link2 added by addContent"});
+		var oLink3 = new sap.ui.commons.Link("link3", {text : "Link3 added by addContent"});
+		oLayout.addContent("end", oLink2, oLink3);
+		sap.ui.getCore().applyChanges();
+
+		equal(oLayout.getEnd().getContent()[1].getId(), "link2", "End Link2 was added: ");
+		equal(oLayout.getEnd().getContent()[2].getId(), "link3", "End Link3 was added: ");			
+	});
+
+	test("Inserting Content", function() {
+		//Insert one Control
+		var oLink4 = new sap.ui.commons.Link("link4", {text : "Link4 inserted by insertContent to index 0"});
+		oLayout.insertContent("bottom", 0, oLink4);
+		sap.ui.getCore().applyChanges();
+
+		equal(oLayout.getBottom().getContent()[0].getId(), "link4", "Bottom Link4 was added to Index 0");
+
+		//Insert more than one Controls
+		var oLink5 = new sap.ui.commons.Link("link5", {text : "Link5 inserted by insertContent to index 1"});
+		var oLink6 = new sap.ui.commons.Link("link6", {text : "Link6 inserted by insertContent to index 1"});
+		oLayout.insertContent("bottom", 1, oLink5, oLink6);
+		sap.ui.getCore().applyChanges();
+
+		equal(oLayout.getBottom().getContent()[1].getId(), "link5", "Bottom Link5 and Link6 were added to Index 1");
+		equal(oLayout.getBottom().getContent()[2].getId(), "link6", "Bottom Link5 and Link6 were added to Index 1");		
+	});
+
+	test("Removing Content", function() {
+		//Remove one Control
+		oLayout.removeContent("end", 1);
+		sap.ui.getCore().applyChanges();
+
+		equal(oLayout.getEnd().getContent()[1].getId(), "link3", "End Link2 was removed from index 1");
+
+		//Remove all Control
+		oLayout.removeAllContent("bottom");
+		sap.ui.getCore().applyChanges();
+
+		equal(oLayout.getBottom().getContent().length, 0, "Bottom All content has been removed");
+	});
+
+	test("Getting Content", function() {
+		//Getting Content Object (Array)
+		var content;
+		content = oLayout.getContent("top");
+
+		equal(oLayout.getTop().getContent()[0].getId(), "top", "Top Content with index 0");
+		equal(oLayout.getTop().getContent()[1].getId(), "link1", "Top Content with index 1");
+
+		equal(oLayout.indexOfContent("center", oLayoutInner), 1, "Center Index of Content (inner BorderLayout)");
+		equal(oLayout.indexOfContent("center", sap.ui.getCore().byId("center")), 0, "Center Index of Content (text field)");
+	});
+
+	test("Destroying Content", function() {
+		oLayout.destroyContent("begin");
+
+		equal(oLayout.getBegin().getContent().length, 0, "Begin Aggregations were destroyed");
+	});
+
+	test("Getting Area Elements", function() {
+		var oArea = oLayout.getAreaById("top");
+		equal(oArea.getId(), "myLayout1--top", "Area Element Top");
+
+		oArea = oLayout.getAreaById("begin");
+		equal(oArea.getId(), "myLayout1--begin", "Area Element Begin");
+
+		oArea = oLayout.getAreaById("center");
+		equal(oArea.getId(), "myLayout1--center", "Area Element Center");
+
+		oArea = oLayout.getAreaById("end");
+		equal(oArea.getId(), "myLayout1--end", "Area Element End");
+
+		oArea = oLayout.getAreaById("bottom");
+		equal(oArea.getId(), "myLayout1--bottom", "Area Element Bottom");
+	});
+
+	test("Getting Area DOM Elements", function() {
+		var oArea = oLayout.getAreaById("top");
+		equal(oArea.$().size(), 1, "Area Element Top");
+		ok(oArea.$().hasClass("sapUiBorderLayoutTop"), "Area Element Top");
+
+		oArea = oLayout.getAreaById("begin");
+		equal(oArea.$().size(), 1, "Area Element Begin");
+		ok(oArea.$().hasClass("sapUiBorderLayoutBegin"), "Area Element Begin");
+
+		oArea = oLayout.getAreaById("center");
+		equal(oArea.$().size(), 1, "Area Element Center");
+		ok(oArea.$().hasClass("sapUiBorderLayoutCenter"), "Area Element Center");
+
+		oArea = oLayout.getAreaById("end");
+		equal(oArea.$().size(), 1, "Area Element End");
+		ok(oArea.$().hasClass("sapUiBorderLayoutEnd"), "Area Element End");
+
+		oArea = oLayout.getAreaById("bottom");
+		equal(oArea.$().size(), 1, "Area Element Bottom");
+		ok(oArea.$().hasClass("sapUiBorderLayoutBottom"), "Area Element Bottom");
+	});
+
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.layout.BorderLayout</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<!-- <div style="position:absolute; bottom:0px; height:400px; width:100%; border:2px solid red;" id="uiArea1"></div>-->
+	<div id="uiArea1"></div>
+</body>
+</html>

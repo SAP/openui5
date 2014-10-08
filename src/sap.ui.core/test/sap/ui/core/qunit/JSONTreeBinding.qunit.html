@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+	var oModel;
+	var testData;
+	var bindings;
+
+	function setup(){
+		// reset bindings
+		bindings = new Array();
+		testData = {
+			orgStructure:{
+				 0: {
+					name: "Peter Cliff",
+					gender: "male",
+					0: {
+						name: "Inga Horst",
+						gender: "female",
+						0: {
+							name: "John Wallace",
+							gender: "male"
+						},
+						1: {
+							name: "Frank Wallace",
+							gender: "male"
+						},
+						2: {
+							name: "Gina Rush",
+							gender: "female"
+						}
+					},
+					1: {
+						name: "Tom Bay",
+						gender: "male"
+					},
+					2: {
+						name: "Catherine Platte",
+						gender: "female"
+					}
+				}
+			},
+			orgStructure2: [
+				{
+					name: "Inga Horst",
+					gender: "female",
+					children: [
+						{
+							name: "John Wallace",
+							gender: "male"
+						},
+						{
+							name: "Frank Wallace",
+							gender: "male"
+						},
+						{
+							name: "Gina Rush",
+							gender: "female"
+						}
+					]
+				},
+				{
+					name: "Tom Bay",
+					gender: "male"
+				},
+				{
+					name: "Catherine Platte",
+					gender: "female"
+				}
+			]
+		};
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(testData);
+		sap.ui.getCore().setModel(oModel);
+
+	};
+
+	function createTreeBinding(sPath, oContext, mParameters){
+		// create binding
+		bindings = new Array();
+		bindings[0] = oModel.bindTree(sPath, oContext, [], mParameters);
+	};
+
+	test("TreeBinding getRootContexts getNodeContexts", function(){
+		setup();
+		createTreeBinding("/orgStructure");
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		equal(treeBinding.getPath(), "/orgStructure", "TreeBinding path");
+		equal(treeBinding.getModel(), oModel, "TreeBinding model");
+
+		contexts = treeBinding.getRootContexts();
+		equal(contexts.length, 1, "TreeBinding rootContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Peter Cliff", "TreeBinding root content");
+
+		contexts = treeBinding.getNodeContexts(context);
+		equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding node content");
+
+		context = contexts[2];
+		equal(oModel.getProperty("name", context), "Catherine Platte", "TreeBinding node content");
+
+		equal(treeBinding.getChildCount(contexts[0]), 3, "TreeBinding childcount");
+		contexts = treeBinding.getNodeContexts(contexts[0]);
+		equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
+
+	});
+
+	test("TreeBinding getRootContexts getNodeContexts", function(){
+		setup();
+		createTreeBinding("/orgStructure");
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		ok(treeBinding instanceof sap.ui.model.json.JSONTreeBinding, "treeBinding class check");
+		contexts = treeBinding.getRootContexts();
+		equal(contexts.length, 1, "TreeBinding rootContexts length");
+
+		var newData = {
+			orgStructure:{
+				0: {
+					name: "root1",
+					0: {
+						name: "subnode1", 
+						0: {
+							name: "subsubnode1"
+						}
+					}
+				},
+				1: {
+					name: "root2",
+					0: {
+						name: "subnode2"
+					}
+				}
+			}
+		};
+		oModel.setData(newData);
+		createTreeBinding("/orgStructure");
+		treeBinding = bindings[0];
+
+		contexts = treeBinding.getRootContexts();
+		equal(contexts.length, 2, "TreeBinding rootContexts length");
+		context = contexts[1];
+		contexts = treeBinding.getNodeContexts(context);
+		equal(contexts.length, 1, "TreeBinding nodeContexts length");
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "subnode2", "TreeBinding node content");
+	});
+
+	test("TreeBinding multi filters", function(){
+		setup();
+		createTreeBinding("/orgStructure");
+
+		var treeBinding = bindings[0];
+
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		var oFilter2 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "al");
+		var oMultiFilter1 = new sap.ui.model.Filter([oFilter1, oFilter2], false);
+		var oFilter3 = new sap.ui.model.Filter("gender", sap.ui.model.FilterOperator.EQ, "female");
+		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], true);
+		treeBinding.filter([oMultiFilter2]);
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 2, "TreeBinding nodeContexts length");
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+		equal(oModel.getProperty(nodeContexts1[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
+	});
+
+	test("Display root node", function() {
+		setup();
+		createTreeBinding("/orgStructure/0", null, {
+			displayRootNode: true
+		});
+
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		equal(treeBinding.getPath(), "/orgStructure/0", "TreeBinding path");
+		equal(treeBinding.getModel(), oModel, "TreeBinding model");
+
+		contexts = treeBinding.getRootContexts();
+		equal(contexts.length, 1, "TreeBinding rootContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Peter Cliff", "TreeBinding root content");
+
+		contexts = treeBinding.getNodeContexts(context);
+		equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding node content");
+
+		context = contexts[2];
+		equal(oModel.getProperty("name", context), "Catherine Platte", "TreeBinding node content");
+
+		contexts = treeBinding.getNodeContexts(contexts[0]);
+		equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
+	});
+
+	test("Bind aggregation", function() {
+		setup();
+		createTreeBinding("/orgStructure2", null, {
+			displayRootNode: true
+		});
+
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		equal(treeBinding.getPath(), "/orgStructure2", "TreeBinding path");
+		equal(treeBinding.getModel(), oModel, "TreeBinding model");
+
+		contexts = treeBinding.getRootContexts();
+		equal(contexts.length, 3, "TreeBinding rootContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding root content");
+		
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Tom Bay", "TreeBinding root content");
+		
+		context = contexts[2];
+		equal(oModel.getProperty("name", context), "Catherine Platte", "TreeBinding root content");
+
+		contexts = treeBinding.getNodeContexts(contexts[0]);
+		equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "John Wallace", "TreeBinding node content");
+
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
+
+		context = contexts[2];
+		equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
+	});
+	
+	test("Paging", function() {
+		setup();
+		createTreeBinding("/orgStructure2", {
+			displayRootNode: true
+		});
+
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		equal(treeBinding.getPath(), "/orgStructure2", "TreeBinding path");
+		equal(treeBinding.getModel(), oModel, "TreeBinding model");
+
+		contexts = treeBinding.getRootContexts(0,2);
+		equal(contexts.length, 2, "TreeBinding returned rootContexts length");
+		equal(treeBinding.getChildCount(null), 3, "TreeBinding actual rootContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding root content");
+		
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Tom Bay", "TreeBinding root content");
+
+		context = contexts[0];
+		contexts = treeBinding.getNodeContexts(context, 1, 2);
+		equal(contexts.length, 2, "TreeBinding returned nodeContexts length");
+		equal(treeBinding.getChildCount(context), 3, "TreeBinding actual nodeContexts length");
+
+		context = contexts[0];
+		equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
+		
+		context = contexts[1];
+		equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
+	});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: JSON Tree Binding</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

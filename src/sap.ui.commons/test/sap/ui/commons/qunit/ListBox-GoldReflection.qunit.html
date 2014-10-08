@@ -1,0 +1,836 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ListBox - sap.ui.commons</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+		var bEditable=true,
+				bEnabled=true,
+				bAllowMultiSelect=true,
+				bVisible=true,
+				sWidth="100px",
+				sHeight="200px",
+				sTooltip="fooltip",
+				iScrollTop=0;
+
+		function selectEventHandler() {
+			ok(true, "This text means the select event handler has been executed."); // this test tests by just being counted in the respective test
+		}
+
+		var oCtrl = new sap.ui.commons.ListBox("ListBox1", {
+			editable:bEditable,
+			enabled:bEnabled,
+			allowMultiSelect:bAllowMultiSelect,
+			visible:bVisible,
+			width:sWidth,
+			height:sHeight,
+			tooltip:sTooltip,
+			scrollTop:iScrollTop
+		});
+		oCtrl.attachSelect(selectEventHandler);
+		oCtrl.setHeight(sHeight); // TODO: workaround for "JSON constructor does not invoke setters", which skips the height calculations
+
+		var oItem0 = new sap.ui.core.ListItem("item0",{text:"An Item",additionalText:"abc",key:"key0"});
+		var oItem1 = new sap.ui.core.ListItem("item1",{text:"Second Item",additionalText:"d",key:"key1"});
+		sap.ui.setRoot("uiArea1", oCtrl);
+
+		
+		
+		/**************** TESTS ********************/
+		
+		module("Properties", {
+			setup: function(){
+				oCtrl.removeAllItems();
+				oCtrl.addItem(oItem0);
+				oCtrl.addItem(oItem1);
+				sap.ui.getCore().applyChanges();
+			} //, teardown: function(){}
+		});
+		
+		test("Initial Check", function() {
+  		ok(oCtrl, "ListBox should exist after creating");
+  		
+  		oDomRef = jQuery.sap.domById("ListBox1");
+  		ok(oDomRef, "ListBox root element should exist");
+  	});
+
+
+		/**
+		 * Test width 
+		 */ 
+		test("Width", function() {
+			equal(oCtrl.getWidth(), sWidth, "ListBox width property should have the value that was set");
+
+			// check width in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.offsetWidth, parseInt(sWidth), "actual ListBox width should match the applied setting");
+		});
+		
+		
+		/**
+		 * Test min-width 
+		 */ 
+		test("MinWidth", function() {
+			oCtrl.setMinWidth("400px");
+			sap.ui.getCore().applyChanges();
+
+			// check width in DOM
+			var expectedSetting = (sap.ui.Device.browser.internet_explorer 
+					&& (!document.documentMode || document.documentMode < 9)) ? "398px" : "400px"; // the visual result is 400px in both cases
+			var $DomRef = jQuery.sap.byId("ListBox1");
+			equal($DomRef.css("min-width"), expectedSetting, "min-width should be set in CSS");
+			equal($DomRef[0].offsetWidth, 400, "actual ListBox width should be determined by the min-width");
+			oCtrl.setMinWidth(null);
+		});
+		
+		
+		/**
+		 * Test max-width 
+		 */ 
+		test("MaxWidth", function() {
+			oCtrl.setMaxWidth("50px");
+			sap.ui.getCore().applyChanges();
+			
+			// check width in DOM
+			var expectedSetting = (sap.ui.Device.browser.internet_explorer 
+					&& (!document.documentMode || document.documentMode < 9)) ? "48px" : "50px"; // the visual result is 50px in both cases
+			var $DomRef = jQuery.sap.byId("ListBox1");
+			equal($DomRef.css("max-width"), expectedSetting, "max-width should be set in CSS");
+			equal($DomRef[0].offsetWidth, 50, "actual ListBox width should be determined by the max-width");
+			oCtrl.setMaxWidth(null);
+		});
+		
+		
+		/**
+		 * Tests accessor method for property allowMultiSelect of control ListBox. 
+		 */ 
+		 test("Multi Selection", function() {
+			equal(oCtrl.getAllowMultiSelect(), bAllowMultiSelect);
+
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+			equal(2, oCtrl.getSelectedIndices().length, "number of selected indices with multi-select must be correct");
+
+			oCtrl.setAllowMultiSelect(false);
+			equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing multi-select must be correct");
+			equal(oCtrl.getSelectedIndices()[0], 0, "selected index after removing multi-select is wrong");
+			oCtrl.setAllowMultiSelect(true);
+		});
+
+
+		 /**
+		  * Test height 
+		  */ 
+	  test("Height", function() {
+			equal(oCtrl.getHeight(), sHeight, "ListBox height property must reflect settings");
+
+			// check height in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+
+			if (false && sap.ui.Device.browser.safari) {
+				// We have a problem here... Not doing the test while the problem is being solved
+			} else {
+				equal(oDomRef.offsetHeight, parseInt(sHeight), "actual ListBox height must reflect settings");
+			}
+		});
+
+		 
+	  /**
+		 * Test tooltip 
+		 */ 
+		test ("Tooltip", function() {
+			equal(oCtrl.getTooltip(), sTooltip, "ListBox tooltip property must reflect settings");
+
+			// check tooltip in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.getAttribute("title"), sTooltip, "actual Tooltip must reflect settings");
+		});
+	  
+	 
+		/**
+		 * Test DisplaySecondaryValues + DisplayIcons
+		 */ 
+		test ("DisplaySecondaryValues and DisplayIcons", function() {
+			var oDomRef = jQuery.sap.domById("item0");
+			equal(oDomRef.childNodes.length, 1, "ListItem should only have one child node by default");
+			
+			oCtrl.setDisplaySecondaryValues(true);
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("item0");
+			equal(oDomRef.childNodes.length, 2, "ListItem should have two child nodes if secondary values are displayed");
+			
+			oCtrl.setDisplayIcons(true);
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("item0");
+			equal(oDomRef.childNodes.length, 3, "ListItem should have three child nodes if also icons are displayed");
+			var imgSpan = oDomRef.childNodes[0];
+			equal(imgSpan.firstChild.tagName.toUpperCase(), "IMG", "there should actually be an image in the first column");
+		});
+		
+		/**
+		 * Test text alignment 
+		 */ 
+		test ("Text Alignment", function() {
+			oCtrl.setDisplaySecondaryValues(true);
+			oCtrl.setDisplayIcons(true);
+			sap.ui.getCore().applyChanges();
+			var oDomRef = jQuery.sap.domById("item0");
+			var iconSpan = jQuery(oDomRef.childNodes[0]);
+			var valueSpan = jQuery(oDomRef.childNodes[1]);
+			var secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
+			
+			// default alignments
+			equal(iconSpan.css("text-align"), "center", "icon should be center-aligned by default");
+			equal(valueSpan.css("text-align"), "left", "text should be left-aligned by default");
+			equal(secondaryValueSpan.css("text-align"), "left", "text should be left-aligned by default");
+			
+			// change alignment to end
+			oCtrl.setValueTextAlign(sap.ui.core.TextAlign.End);
+			oCtrl.setSecondaryValueTextAlign(sap.ui.core.TextAlign.End);
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("item0");
+			iconSpan = jQuery(oDomRef.childNodes[0]);
+			valueSpan = jQuery(oDomRef.childNodes[1]);
+			secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
+			
+			// end alignments
+			equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
+			equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
+			
+			// change alignment to right
+			oCtrl.setValueTextAlign(sap.ui.core.TextAlign.Right);
+			oCtrl.setSecondaryValueTextAlign(sap.ui.core.TextAlign.Right);
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("item0");
+			iconSpan = jQuery(oDomRef.childNodes[0]);
+			valueSpan = jQuery(oDomRef.childNodes[1]);
+			secondaryValueSpan = jQuery(oDomRef.childNodes[2]);
+			
+			// right alignments
+			equal(valueSpan.css("text-align"), "right", "text should be right-aligned");
+			equal(secondaryValueSpan.css("text-align"), "right", "text should be right-aligned");
+		});
+		
+		
+		/**
+		 * Tests accessor method for property scrollTop of control ListBox. 
+		 */ 
+		test("ScrollTop", function() {
+			equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct initially");
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct initially");
+
+			// add more items to allow scrolling
+			for (var i = 0; i < 30; i++) {
+				var oItem = new sap.ui.core.ListItem();
+				oItem.setText("item " + i);
+				oCtrl.addItem(oItem);
+			}
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oCtrl.getScrollTop(), iScrollTop, "getScrollTop() must be correct after adding items");
+			equal(oDomRef.scrollTop, iScrollTop, "oDomRef.scrollTop must be correct after adding items");
+
+			// now scroll - no re-rendering should be required
+			oCtrl.setScrollTop(33);
+			oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after changing scrollTop");
+			equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after changing scrollTop");
+
+			// make sure the scroll position remains after re-rendering
+			oCtrl.invalidate();
+			sap.ui.getCore().applyChanges();
+			oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oCtrl.getScrollTop(), 33, "getScrollTop() must be correct after re-rendering");
+			equal(oDomRef.scrollTop, 33, "oDomRef.scrollTop must be correct after re-rendering");
+		});
+
+	 
+		
+		// ================================================== 
+		//    test control methods 
+		//================================================== 
+	
+		module("Selected Indices", {
+			setup: function(){
+				oCtrl.removeAllItems();
+				oCtrl.addItem(oItem0);
+				oCtrl.addItem(oItem1);
+				sap.ui.getCore().applyChanges();
+			} //, teardown: function(){}
+		});
+	
+		/**
+		 * Tests method getSelectedIndex of control ListBox. 
+	 	 */    
+		test("GetSelectedIndex", function() {
+			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() is wrong");
+		});  
+
+		/**
+		 * Tests method setSelectedIndex of control ListBox. 
+		 */       
+		test("SetSelectedIndex", function() {
+			oCtrl.setSelectedIndex(2); // invalid indices may not change the selection
+			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+			oCtrl.setSelectedIndex(-2);
+			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+			oCtrl.setSelectedIndex(999);
+			equal(oCtrl.getSelectedIndex(), -1, "oCtrl.getSelectedIndex() after .setSelectedIndex() with invalid indices is wrong");
+
+			oCtrl.setSelectedIndex(1);
+			equal(oCtrl.getSelectedIndex(), 1, "oCtrl.getSelectedIndex() after .setSelectedIndex(1) is wrong");
+			oCtrl.setSelectedIndex(0);
+			equal(oCtrl.getSelectedIndex(), 0, "oCtrl.getSelectedIndex() after .setSelectedIndex(0) is wrong");
+			oCtrl.setSelectedIndex(-1); // reset for next tests
+		});   
+
+		/**
+		 * Tests method addSelectedIndex of control ListBox. 
+		 */       
+		test("AddSelectedIndex", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(-3);
+			equal(oCtrl.getSelectedIndex(), 1, "selected index after adding first index is wrong");
+			oCtrl.addSelectedIndex(0);
+			equal(oCtrl.getSelectedIndex(), 0, "selected index after adding second index is wrong");
+
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
+			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
+		});   
+
+		/**
+		 * Tests method removeSelectedIndex of control ListBox. 
+		 */       
+		test("RemoveSelectedIndex", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+			oCtrl.addSelectedIndex(-3);
+			oCtrl.addSelectedIndex(99);
+			oCtrl.removeSelectedIndex(0);
+			equal(oCtrl.getSelectedIndex(), 1, "selected index after adding two and removing the first index is wrong");
+			oCtrl.removeSelectedIndex(1);
+			equal(oCtrl.getSelectedIndex(), -1, "selected index after adding two and removing both is wrong");
+		});
+
+		/**
+		 * Tests method getSelectedIndices of control ListBox. 
+		 */       
+		test("GetSelectedIndices", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+			oCtrl.addSelectedIndex(99);
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding second index is wrong");
+			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding second index is wrong");
+		}); 
+
+		/**
+		 * Tests method setSelectedIndices of control ListBox. 
+		 */       
+		test("SetSelectedIndices", function() {
+			var aIndices = [-3,0,1,99];
+			oCtrl.setSelectedIndices(aIndices);
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding second index is wrong");
+			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after setting two valid indices is wrong");
+			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after setting two valid indices is wrong");
+			
+			oCtrl.setSelectedIndices([]);
+			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after setting an empty selection is wrong");
+		}); 
+
+		/**
+		 * Tests method addSelectedIndices of control ListBox. 
+		 */       
+		test("AddSelectedIndices", function() {
+			var aIndices = [-3,0,1,99];
+			oCtrl.addSelectedIndices(aIndices);
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding two valid indices is wrong");
+			equal(oCtrl.getSelectedIndices()[0], 0, "first selected index after adding two valid indices is wrong");
+			equal(oCtrl.getSelectedIndices()[1], 1, "second selected index after adding two valid indices is wrong");
+		}); 
+
+		/**
+		 * Tests method isIndexSelected of control ListBox. 
+		 */       
+		test("IsIndexSelected", function() {
+			oCtrl.setSelectedIndex(1);
+			equal(oCtrl.isIndexSelected(1), true, "oCtrl.isIndexSelected(1) after .setSelectedIndex(1) is wrong");
+			equal(oCtrl.isIndexSelected(0), false, "oCtrl.isIndexSelected(0) after .setSelectedIndex(1) is wrong");
+		}); 
+
+   
+		
+		module("Keys", {
+			setup: function(){
+				oCtrl.removeAllItems();
+				oCtrl.addItem(oItem0);
+				oCtrl.addItem(oItem1);
+				sap.ui.getCore().applyChanges();
+			} //, teardown: function(){}
+		});
+		
+		test("SetSelectedKeys + GetSelectedKeys", function() {
+			var aKeys = [undefined,"key0","","key2"];
+			oCtrl.setSelectedKeys(aKeys);
+			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
+			equal(oCtrl.getSelectedKeys()[0], "key0", "selected key after setting selected keys should be 'key0'");
+		
+			oCtrl.setSelectedKeys(["key0","key1"]);
+			equal(oCtrl.getSelectedKeys().length, 2, "number of selected keys should be 2");
+			equal(oCtrl.getSelectedKeys()[0], "key0", "first selected key after setting selected keys should be 'key0'");
+			equal(oCtrl.getSelectedKeys()[1], "key1", "second selected key after setting selected keys should be 'key1'");
+			
+			oCtrl.setSelectedKeys(["key1"]);
+			equal(oCtrl.getSelectedKeys().length, 1, "number of selected keys should be 1");
+			equal(oCtrl.getSelectedKeys()[0], "key1", "selected key after setting selected keys should be 'key1'");
+			
+			oCtrl.setSelectedKeys([]);
+			equal(oCtrl.getSelectedKeys().length, 0, "number of selected keys should be 0");
+		});
+		
+		
+   
+		module("Items", {
+			setup: function(){
+				oCtrl.removeAllItems();
+				oCtrl.addItem(oItem0);
+				oCtrl.addItem(oItem1);
+				sap.ui.getCore().applyChanges();
+			} //, teardown: function(){}
+		});
+		
+		test("GetSelectedItem", function() {
+			var item = oCtrl.getSelectedItem();
+			ok(item == null, "oCtrl.getSelectedItem() with no selection is wrong");
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+			item = oCtrl.getSelectedItem();
+			ok(item == oItem0, "oCtrl.getSelectedItem() is wrong");
+		});  
+
+		/**
+		 * Tests method getSelectedItems of control ListBox. 
+		 */       
+		test("GetSelectedItems", function() {
+			equal(oCtrl.getSelectedItems().length, 0, "oCtrl.getSelectedItems() with no selection is wrong");
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			equal(oCtrl.getSelectedItems().length, 2, "number of selected items returned by oCtrl.getSelectedItems is wrong");
+			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+		});
+
+
+		test("GetItems", function() {
+			equal(oCtrl.getItems().length, 2, "oCtrl.getItems() with no selection is wrong");
+			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			ok(oCtrl.getItems()[1] == oItem1, "second returned item is wrong");
+		});
+
+		test("AddItem", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			var oItem2 = new sap.ui.core.ListItem();
+			oItem2.setText("Third Item");
+			oCtrl.addItem(oItem2);
+
+			// test the items
+			equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
+			ok(oCtrl.getSelectedItems()[0] == oItem0, "first returned item is wrong");
+			ok(oCtrl.getSelectedItems()[1] == oItem1, "second returned item is wrong");
+			ok(oCtrl.getItems()[2] == oItem2, "third returned item is wrong");
+
+			// test the adoption of the selection
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
+			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			ok(oCtrl.getSelectedIndices()[1] == 1, "second selected index after third item is wrong");
+		});
+
+		test("InsertItem", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			var oItem2 = new sap.ui.core.ListItem();
+			oItem2.setText("Third Item inserted");
+			oCtrl.insertItem(oItem2, 1);
+
+			// test the items
+			equal(oCtrl.getItems().length, 3, "oCtrl.getItems() after adding a third item is wrong");
+			ok(oCtrl.getItems()[0] == oItem0, "first returned item is wrong");
+			ok(oCtrl.getItems()[1] == oItem2, "second returned item is wrong");
+			ok(oCtrl.getItems()[2] == oItem1, "third returned item is wrong");
+
+			// test the adoption of the selection
+			equal(oCtrl.getSelectedIndices().length, 2, "number of selected indices after adding third item is wrong");
+			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after third item is wrong");
+			ok(oCtrl.getSelectedIndices()[1] == 2, "second selected index after third item is wrong");
+		});
+
+		test("RemoveItem", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			oCtrl.removeItem(0);
+
+			// test the items
+			equal(oCtrl.getItems().length, 1, "oCtrl.getItems() after removing an item is wrong");
+			ok(oCtrl.getItems()[0] == oItem1, "first returned item is wrong");
+
+			// test the adoption of the selection
+			equal(oCtrl.getSelectedIndices().length, 1, "number of selected indices after removing an item is wrong");
+			ok(oCtrl.getSelectedIndices()[0] == 0, "first selected index after removing an item is wrong");
+		});
+
+		test("RemoveAllItems", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			oCtrl.removeAllItems();
+
+			// test the items
+			equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after removing all items is wrong");
+
+			// test the adoption of the selection
+			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after removing all items is wrong");
+		});
+
+		test("DestroyItems", function() {
+			oCtrl.addSelectedIndex(1);
+			oCtrl.addSelectedIndex(0);
+
+			oCtrl.destroyItems();
+
+			// test the items
+			equal(oCtrl.getItems().length, 0, "oCtrl.getItems() after destroying all items is wrong");
+
+			// test the adoption of the selection
+			equal(oCtrl.getSelectedIndices().length, 0, "number of selected indices after destroying all items is wrong");
+		});
+
+		 
+		
+		module("Height in Items", {
+			setup: function(){
+				oCtrl.removeAllItems();
+				// add more items to allow scrolling
+				for (var i = 0; i < 20; i++) {
+					var oItem = new sap.ui.core.ListItem();
+					oItem.setText("item " + i);
+					oCtrl.addItem(oItem);
+				}
+				oCtrl.setHeight("100px");
+				sap.ui.getCore().applyChanges();
+			} //, teardown: function(){}
+		});
+		
+		var iTargetHeight = 5*19 + 4; // depending on theme, 5*ItemHeight plus borders, this is the GoldReflection setting
+		
+		/**
+		 * Tests method setVisibleItems of control ListBox. 
+		 */       
+		test("SetVisibleItems called before rendering (empty ListBox)", function() {
+			oCtrl.destroy();
+			
+			oCtrl = new sap.ui.commons.ListBox("ListBox1", {
+				editable:bEditable,
+				enabled:bEnabled,
+				allowMultiSelect:bAllowMultiSelect,
+				visible:bVisible,
+				width:sWidth,
+				height:sHeight,
+				tooltip:sTooltip,
+				scrollTop:iScrollTop
+			});
+			oCtrl.attachSelect(selectEventHandler);
+			oCtrl.setVisibleItems(5);
+			
+			sap.ui.setRoot("uiArea1", oCtrl);
+			sap.ui.getCore().applyChanges(); // render after setting the height
+			
+			// check height in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.offsetHeight, iTargetHeight, "actual ListBox height must equal the height of five items plus the border");
+		});
+		
+		
+		test("SetVisibleItems called before rendering (full ListBox)", function() {
+			oCtrl.destroy();
+			
+			oCtrl = new sap.ui.commons.ListBox("ListBox1", {
+				editable:bEditable,
+				enabled:bEnabled,
+				allowMultiSelect:bAllowMultiSelect,
+				visible:bVisible,
+				width:sWidth,
+				height:sHeight,
+				tooltip:sTooltip,
+				scrollTop:iScrollTop
+			});
+			oCtrl.attachSelect(selectEventHandler);
+			oCtrl.setVisibleItems(5);
+			
+			sap.ui.setRoot("uiArea1", oCtrl);
+			sap.ui.getCore().applyChanges(); // render after setting the height
+			
+			// check height in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.offsetHeight, iTargetHeight, "actual ListBox height must equal height of five items plus the border");
+		}); 
+		
+		test("SetVisibleItems called after rendering (items are there)", function() {
+			oCtrl.setVisibleItems(5); // no re-rendering should be required
+			
+			// check height in DOM
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			equal(oDomRef.offsetHeight, iTargetHeight, "actual ListBox height must equal height of five items plus the border");
+		}); 
+		
+		asyncTest("SetVisibleItems called after rendering (no items there)", function() {
+			expect(1);
+			oCtrl.removeAllItems();
+			sap.ui.getCore().applyChanges(); // make sure all items are removed from HTML
+			oCtrl.setVisibleItems(5);
+			
+ 			setTimeout(function() {
+				// check height in DOM
+				var oDomRef = jQuery.sap.domById("ListBox1");
+				equal(oDomRef.offsetHeight, iTargetHeight, "actual ListBox height must equal height of five items plus the border");
+				start();
+ 			}, 500);
+		}); 
+			
+		
+		// ================================================== 
+	  //          test item navigation
+	  // ================================================== 
+		
+		module("Item Navigation", {
+			setup: function(){
+				
+			} //, teardown: function(){}
+		});
+			
+		
+		asyncTest("Initial Focus", function() {
+			oCtrl.destroyItems();
+			
+			// add items to allow scrolling/paging
+			for (var i = 0; i < 20; i++) {
+				var oItem = new sap.ui.core.ListItem("item_" + i);
+				oItem.setText("item " + i);
+				oCtrl.addItem(oItem);
+			}
+			sap.ui.getCore().applyChanges(); // when doing the lines up to here in setup() and saying removeAllItems() instead of destroyItems(), my computer reboots when or shortly after running the unit tests!!! (maybe related to duplicate IDs and setting focus to elements that may be not the active ones?)
+			
+			ok(document.activeElement.id != "item_0", "first item should not be focused initially");
+			
+			oCtrl.getFocusDomRef().focus();
+			window.setTimeout(function(){
+				equal(document.activeElement.id, "item_0", "item 0 should be focused after the ListBox receives focus (focus was set to element '" + oCtrl.getFocusDomRef().id + "')");
+				start();
+			}, 0); // timeout required for IE9
+			
+		});
+			
+		test("PageDown", function() {
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_5", "item 5 should be focused after pressing PageDown");
+			
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_10", "item 10 should be focused after pressing PageDown again");
+			
+			// TODO: test scrolling
+		});
+		
+		test("ArrowDown", function() {
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_11", "item 11 should be focused after pressing ArrowDown");
+			
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_12", "item 12 should be focused after pressing ArrowDown again");
+			
+			// TODO: test scrolling
+		});
+		
+		test("PageUp", function() {
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+			equal(document.activeElement.id, "item_7", "item 7 should be focused after pressing PageUp");
+			
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+			equal(document.activeElement.id, "item_2", "item 2 should be focused after pressing PageUp again");
+			
+			// TODO: test scrolling
+		});
+		
+		test("ArrowUp", function() {
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			equal(document.activeElement.id, "item_1", "item 1 should be focused after pressing ArrowUp");
+			
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			equal(document.activeElement.id, "item_0", "item 0 should be focused after pressing ArrowUp again");
+			
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			equal(document.activeElement.id, "item_0", "item 0 should still be focused after pressing ArrowUp three times");
+			
+			// TODO: test scrolling
+		});
+		
+		test("PageDown beyond end", function() {
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent("ListBox1-list", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_19", "item 19 should be focused after pressing PageDown more than sufficiently often to reach the end of the ListBox");
+
+			qutils.triggerKeyboardEvent("ListBox1", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+			equal(document.activeElement.id, "item_19", "item 19 should still be focused after pressing PageDown more than sufficiently often to reach the end of the ListBox plus once more");
+			
+			// TODO: test scrolling
+		});
+			
+		
+		// ================================================== 
+	  //          test keyboard interaction
+	  // ================================================== 
+		
+		module("Keyboard Interaction", {
+			setup: function(){
+				
+			} //, teardown: function(){}
+		});
+		
+		test("Select by Space Key", function() {
+			expect(8); // incl. select events
+			equal(oCtrl.getSelectedIndices().length, 0, "no item should be selected initially");
+			equal(oCtrl.getSelectedIndex(), -1, "no item should be selected initially");
+			
+			qutils.triggerKeyboardEvent("item_19", jQuery.sap.KeyCodes.SPACE, false, false, false);
+			equal(oCtrl.getSelectedIndex(), 19, "item 19 should be selected after pressing space");
+			equal(oCtrl.getSelectedIndices().length, 1, "only item 19 should be selected after pressing space");
+			
+			qutils.triggerKeyboardEvent("item_17", jQuery.sap.KeyCodes.SPACE, false, false, false);
+			equal(oCtrl.getSelectedIndex(), 17, "item 17 should be selected after pressing space");
+			equal(oCtrl.getSelectedIndices().length, 1, "only item 17 should be selected after pressing space");
+		});
+		
+		test("Select by SHIFT-Space Key", function() {
+			expect(6); // incl. select events
+			oCtrl.setAllowMultiSelect(false);
+			qutils.triggerKeyboardEvent("item_15", jQuery.sap.KeyCodes.SPACE, true, false, false);
+			equal(oCtrl.getSelectedIndex(), 15, "only item 15 should be selected after pressing SHIFT-space with no-multiselect");
+			equal(oCtrl.getSelectedIndices().length, 1, "only one item should be selected after pressing SHIFT-space with no-multiselect");
+			
+			oCtrl.setAllowMultiSelect(true);
+			qutils.triggerKeyboardEvent("item_13", jQuery.sap.KeyCodes.SPACE, true, false, false);
+			equal(oCtrl.getSelectedIndex(), 13, "item 13 should also be selected after pressing SHIFT-space with multiselect");
+			equal(oCtrl.getSelectedIndices().length, 3, "three items (13-15) should be selected after pressing SHIFT-space with multiselect");
+		});
+		
+		test("Select by CTRL-Space Key", function() {
+			expect(11); // incl. select events
+			oCtrl.setAllowMultiSelect(true);
+			qutils.triggerKeyboardEvent("item_17", jQuery.sap.KeyCodes.SPACE, false, false, true);
+			equal(oCtrl.getSelectedIndex(), 13, "item 13 should still be the first selected after pressing CTRL-space with multiselect");
+			equal(oCtrl.getSelectedIndices().length, 4, "four items (13-15, 17) should be selected after pressing CTRL-space with multiselect");
+			
+			qutils.triggerKeyboardEvent("item_13", jQuery.sap.KeyCodes.SPACE, false, false, true);
+			qutils.triggerKeyboardEvent("item_14", jQuery.sap.KeyCodes.SPACE, false, false, true);
+			qutils.triggerKeyboardEvent("item_15", jQuery.sap.KeyCodes.SPACE, false, false, true);
+			equal(oCtrl.getSelectedIndex(), 17, "only item 17 should be the selected after deleting some selections with multiselect");
+			equal(oCtrl.getSelectedIndices().length, 1, "only one item should be selected after deleting some selections with multiselect");
+			
+			oCtrl.setAllowMultiSelect(false);
+			qutils.triggerKeyboardEvent("item_13", jQuery.sap.KeyCodes.SPACE, false, false, true);
+			equal(oCtrl.getSelectedIndex(), 13, "only item 13 should be selected after pressing CTRL-space with no-multiselect");
+			equal(oCtrl.getSelectedIndices().length, 1, "only one item should be selected after pressing CTRL-space with no-multiselect");
+		});
+		
+		
+		// ================================================== 
+		//          test other methods 
+		// ================================================== 
+	  	
+		module("Other Methods", {
+			setup: function() {
+			} //, teardown: function(){}
+		});
+		
+		test("ScrollToIndex", function() {
+			expect(8);
+			
+			var oDomRef = jQuery.sap.domById("ListBox1");
+			oCtrl.setScrollTop(0);
+			equal(oDomRef.scrollTop, 0, "precondition: successful scrolling to top position");
+			
+			oCtrl.scrollToIndex(42);
+			equal(oDomRef.scrollTop, 0, "scrolling to item beyond the end should not do anything");
+			
+			oCtrl.scrollToIndex(1);
+			equal(oDomRef.scrollTop, 19, "scrolling to first item should result in the correct position");
+			
+			oCtrl.scrollToIndex(8);
+			equal(oDomRef.scrollTop, 152, "scrolling to item in the middle should result in the correct position");
+			
+			// account for browser differences
+			var endPosition = (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.firefox && sap.ui.Device.browser.version >= 12) ? 284 : 285;
+			
+			oCtrl.scrollToIndex(16);
+			equal(oDomRef.scrollTop, endPosition, "scrolling to item on the last 'page' should result in the correct position");
+			
+			oCtrl.scrollToIndex(1);
+			oCtrl.scrollToIndex(19);
+			equal(oDomRef.scrollTop, endPosition, "scrolling to last item should result in the correct position");
+		
+			oCtrl.scrollToIndex(-1);
+			equal(oDomRef.scrollTop, endPosition, "scrolling to item <0 should not do anything");
+			
+			oCtrl.scrollToIndex(0);	
+			equal(oDomRef.scrollTop, 0, "scrolling to first item should scroll to the very top");
+		});
+		
+			
+	  // ================================================== 
+	  //          test event handlers 
+	  // ================================================== 
+		   
+		 module("Events");
+		  
+	  /**
+	   * Tests event handling for event select of control ListBox. 
+	   */
+		test("Select Event", function() {
+			expect(1); // needs to include the test in selectEventHandler !!
+			oCtrl.fireSelect();
+		});
+
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.ui.commons.ListBox</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		
+		<div id="uiArea1"></div>
+	</body>
+</html>

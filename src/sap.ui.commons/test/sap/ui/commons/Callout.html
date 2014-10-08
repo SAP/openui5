@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+
+<head>
+
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<title>Callout - sap.ui.commons</title>
+
+<style>
+	#target1 {
+		width:600px;
+		margin-bottom:200px;
+		text-align:right }
+	.center {
+		text-align: center }
+	.middle {
+		vertical-align: middle }
+	.margin10 {
+		margin: 10px;
+	}
+</style>
+
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript"
+	id="sap-ui-bootstrap"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.core,sap.ui.commons">
+</script>
+<!--script src="../../../../resources/sap-ui-debug.js"></script-->
+
+<script type="text/javascript">
+sap.ui.getCore().attachInitEvent(function () {
+
+	var oButton,
+		oLink,
+		oLink2,
+		oTextView,
+		oLayout,
+		oCallout1Content,
+		oCallout1,
+		oCallout2,
+		oCallout3,
+		oCallout4,
+		oRichTooltip;
+
+	jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+	// [A] - first callout
+	oButton = new sap.ui.commons.Button("button1", {
+		text: "Callout 1",
+		lite: true,
+		tooltip: "this tooltip should not appear"
+	});
+
+	// Event Handlers
+	function onEvent(oEvent){
+		jQuery.sap.log.debug(oEvent.getSource().getId() + ": event \"" + oEvent.getId() + "\" received");
+	}
+	
+	/* To create and attach a Callout:
+	 * 1. Specify a Callout contents (a control, view or an array of controls)
+	 * 2. Instantiate a Callout control
+	 * 3. Set the Callout as a tooltip to a reference control
+	*/
+
+	// 1. Contents
+	oCallout1Content = new sap.ui.commons.layout.MatrixLayout({
+		width: "200px",
+		height: "200px"
+	}).addStyleClass("center");
+
+	function fillCallout1(){
+		if(oCallout1Content.getAggregation("rows").length > 0){
+			return; // do once
+		}
+		for(var i = 1; i < 4; i++){
+			oLink = new sap.ui.commons.Link({
+				text: "Reference " + i,
+				href: ""
+			}).addStyleClass("middle");
+			oCallout1Content.createRow(oLink);
+		}
+		oCallout1Content.createRow(new sap.ui.commons.Button({text:"Close", press:function(){ oCallout1.close();}}));
+		// Callout size may change and it should be correctly repositioned.
+		// Call .adjustPosition to ensure proper placement of the Callout:
+		oCallout1.adjustPosition();
+	}
+
+	function on1Open(oEvent){
+		onEvent(oEvent);
+		// Simulate late content creation inside of an already opened Callout.
+		// The Callout arrives empty and is filled with content later.
+		setTimeout(fillCallout1, 300);
+	}
+
+	// 2. Callout
+	oCallout1 = new sap.ui.commons.Callout( "Callout1", {
+		content: [oCallout1Content],
+		open: on1Open,
+		close: onEvent
+		});
+
+	// 3. Attach the Callout to a reference control
+	oButton.setTooltip(oCallout1);
+	oButton.placeAt("target1");
+
+	// [B] - second callout
+	oButton = new sap.ui.commons.Button("button2", {
+		text: "Callout 2",
+		lite: true,
+		tooltip: "this tooltip should not appear"
+	});
+
+	oLink2 = new sap.ui.commons.Link({
+		text: "Reference",
+		href: ""
+	}).addStyleClass("margin10");
+
+	oCallout2 = new sap.ui.commons.Callout( "Callout2", {
+		content: oLink2,
+		open: onEvent,
+		close: onEvent
+		})
+		// Default at- Position is "begin top". Place Callout to the right of the parent.
+		.setPosition(sap.ui.core.Popup.Dock.BeginCenter, sap.ui.core.Popup.Dock.EndCenter)
+		// Default open and close delays are 200ms each. Test another value:
+		.setOpenDuration(800).setCloseDuration(800);
+
+	oLink2.addDelegate({
+		onAfterRendering:function(){
+			oCallout2.adjustPosition();
+			}
+		});
+
+	oButton.setTooltip(oCallout2);
+	oButton.placeAt("target2");
+
+	// [C] - Callout with a popup control inside
+	oButton = new sap.ui.commons.Button("button3", {
+		text: "Callout with child popups",
+		lite: true,
+		tooltip: "this tooltip should not appear"
+	});
+
+	oLayout = new sap.ui.commons.layout.MatrixLayout({
+		width: "200px",
+		height: "200px"
+	}).addStyleClass("center");
+
+	var oMenuButton = new sap.ui.commons.MenuButton({
+		text: "Menu Button",
+		lite:true
+	});
+	var oButtonMenu = new sap.ui.commons.Menu();
+	oButtonMenu.setAriaDescription("Menu");
+	var oMenuItem;
+	for(var i=1; i<7; i++){
+		oMenuItem = new sap.ui.commons.MenuItem({text:"MenuButton Item "+i});
+		oButtonMenu.addItem(oMenuItem);
+	}
+	oMenuButton.setMenu(oButtonMenu);
+
+	oLayout.createRow(new sap.ui.commons.Button({text:"Button with a tooltip", tooltip:"This is a tooltip", lite:true }));
+	oLayout.createRow(oMenuButton);
+
+	oCallout3 = new sap.ui.commons.Callout( "Callout3", {
+		content: [oLayout],
+		open: onEvent,
+		close: onEvent
+		})
+		.setPosition(sap.ui.core.Popup.Dock.BeginCenter, sap.ui.core.Popup.Dock.EndCenter);
+
+	oButton.setTooltip(oCallout3);
+	oButton.placeAt("target4");
+	
+	// [D] - Application may postpone display of the Callout
+	// Use case: wait until remote request is finished before displaying the Callout
+	oButton = new sap.ui.commons.Button("button4", {
+		text: "Callout with delayed open",
+		lite: true
+	});
+
+	var nAttempts = 0;
+	function onBeforeOpen(oEvent){
+		nAttempts = (nAttempts + 1) % 10;
+		var message = "";
+		if(nAttempts){
+			oEvent.preventDefault();
+			jQuery.sap.log.debug(oEvent.getSource().getId() + ": open has been postponed " + nAttempts + " times");
+			message = "Postpone Callout open. Loading: ";
+			for( var i = 0; i < nAttempts; i++ ){ message = message + ".."; }
+		}
+		jQuery("#messageline").text(message);
+	}
+	oTextView = new sap.ui.commons.TextView({text:"Application decides when to open the Callout"});
+	oTextView.addStyleClass("margin10");
+
+	oCallout4 = new sap.ui.commons.Callout( "Callout4", {
+		content: oTextView,
+		open: onEvent,
+		close: onEvent,
+		beforeOpen: onBeforeOpen
+	});
+
+	oButton.setTooltip(oCallout4);
+	oButton.placeAt("target5");
+
+	//Create a button with a  RichToolTip
+	oButton = new sap.ui.commons.Button("button5", {
+		text: "Rich tooltip",
+		lite: true,
+		tooltip: "this tooltip should not appear"
+	});
+
+	oRichTooltip = new sap.ui.commons.RichTooltip( "Rtt1", {
+		title: "Rich Tooltip",
+		text:"RichTooltip"
+		});
+	oRichTooltip.setOpenDuration(500);
+	oRichTooltip.setCloseDuration(500);
+	oButton.setTooltip(oRichTooltip);
+	oButton.placeAt("target3");
+});
+</script>
+</head>
+
+<body class="sapUiBody" role="application">
+
+<h1>Test Page for Callout</h1>
+<p>
+<div id="target1" title="Callout"></div>
+<div id="target2" title="Callout"></div>
+<div id="target4" title="Callout"></div>
+<div id="target5" title="Callout"></div>
+<div id="target3" title="Rich Tooltip"></div>
+<div id="messageline"></div>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.ComboBox,sap.ui.commons.ListBox,sap.ui.core.ListItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control TextField ComboBox" />
+		<title>ComboBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='ComboBoxSimple'>
+// Create a ComboBox
+var oComboBox1 = new sap.ui.commons.ComboBox("ComboBox1");
+oComboBox1.setTooltip("Country");
+oComboBox1.setEditable(true);
+oComboBox1.setValue("Deutschland");
+oComboBox1.setWidth("200px");
+var oItem = new sap.ui.core.ListItem("Country1");
+oItem.setText("Canada");
+oComboBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country2");
+oItem.setText("Deutschland");
+oComboBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country3");
+oItem.setText("England");
+oComboBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country4");
+oItem.setText("Россия");
+oComboBox1.addItem(oItem);
+
+// Attach the ComboBox to the page
+oComboBox1.placeAt("sample1");
+</script>
+
+<script id='ComboBoxListBox'>
+// Create a ListBox
+var oListBox1 = new sap.ui.commons.ListBox("Cities", {items : [
+			new sap.ui.core.ListItem({id:"City1", text:"Berlin", additionalText:"Germany"}),
+			new sap.ui.core.ListItem({id:"City2", text:"Heidelberg", additionalText:"Germany"}),
+			new sap.ui.core.ListItem({id:"City3", text:"Walldorf", additionalText:"Germany"}),
+			new sap.ui.core.ListItem({id:"City4", text:"London", additionalText:"England"}),
+			new sap.ui.core.ListItem({id:"City5", text:"Dresden", additionalText:"Germany"}),
+			new sap.ui.core.ListItem({id:"City6", text:"New York", additionalText:"USA"}),
+			new sap.ui.core.ListItem({id:"City7", text:"Paris", additionalText:"France"})]
+		});
+
+// Create a ComboBox
+var oComboBox2 = new sap.ui.commons.ComboBox("ComboBox2", {tooltip:"City", displaySecondaryValues:true, value:"Walldorf", "association:listBox" : oListBox1});
+
+// Create a Textfield to visualize the CHANGE event
+var oTextField1 = new sap.ui.commons.TextField("TextField1", {tooltip:"Value of Combobox", editable:false, value:oComboBox2.getValue()});
+oComboBox2.attachChange(function(){oTextField1.setValue(oComboBox2.getValue());});
+
+// Attach the ComboBox to the page
+oComboBox2.placeAt("sample2");
+oTextField1.placeAt("sample2");
+</script>
+
+<script id='ComboBoxDataBinding'>
+// Create JSON data model
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData({
+	hardware:[
+		{device:"PC", enabled:true},
+		{device:"Monitor", enabled:true},
+		{device:"Keyboard", enabled:false},
+		{device:"Mouse", enabled:true},
+		{device:"Speaker", enabled:false},
+		{device:"Printer", enabled:true}],
+	editable: true, 
+	tooltip: "Device"});
+sap.ui.getCore().setModel(oModel);
+
+// Create a ComboBox
+var oComboBox3 = new sap.ui.commons.ComboBox("ComboBox3");
+oComboBox3.bindProperty("tooltip", "/tooltip");
+oComboBox3.bindProperty("editable", "/editable");
+oComboBox3.setModel(oModel);
+var oItemTemplate1 = new sap.ui.core.ListItem();
+oItemTemplate1.bindProperty("text", "device");
+oItemTemplate1.bindProperty("enabled", "enabled");
+oComboBox3.bindItems("/hardware", oItemTemplate1);
+
+// Attach the ComboBox to the page
+oComboBox3.placeAt("sample3");
+</script>
+
+<script id='ComboBoxIdKey'>
+// Create a ComboBox
+var oComboBox4 = new sap.ui.commons.ComboBox("ComboBox4",{
+	tooltip: "Weekday",
+	items: [new sap.ui.core.ListItem("Day1",{text: "Monday", key: "Mo"}),
+	        new sap.ui.core.ListItem("Day2",{text: "Tuesday", key: "Tu"}),
+	        new sap.ui.core.ListItem("Day3",{text: "Wednesday", key: "Mi"}),
+	        new sap.ui.core.ListItem("Day4",{text: "Thursday", key: "Th"}),
+	        new sap.ui.core.ListItem("Day5",{text: "Friday", key: "Fr"}),
+	        new sap.ui.core.ListItem("Day6",{text: "Saturday", key: "Sa"}),
+	        new sap.ui.core.ListItem("Day7",{text: "Sunday", key: "Su"})],
+	change: function(oEvent){
+		sap.ui.getCore().byId("TextFieldKey").setValue(oEvent.oSource.getSelectedKey());
+		sap.ui.getCore().byId("TextFieldId").setValue(oEvent.oSource.getSelectedItemId());
+		}
+	});
+
+var oLabel1 = new sap.ui.commons.Label("LabelCombo",{ text: "Weekday:", labelFor: oComboBox4});
+
+var oTextField2 = new sap.ui.commons.TextField("TextFieldKey", {
+	tooltip:"selectedKey", 
+	value:oComboBox4.getSelectedKey(),
+	change: function(oEvent) {
+		var oCombo = sap.ui.getCore().getControl("ComboBox4");
+		oCombo.setSelectedKey( oEvent.getParameter("newValue") );
+		var oText = sap.ui.getCore().getControl("TextFieldId");
+		oText.setValue(oCombo.getSelectedItemId());
+	}});
+
+var oLabel2 = new sap.ui.commons.Label("LabelKey",{ text: "selectedKey:", labelFor: oTextField2});
+
+var oTextField3 = new sap.ui.commons.TextField("TextFieldId", {
+	tooltip:"selectedItemId", 
+	value:oComboBox4.getSelectedItemId(),
+	change: function(oEvent) {
+		var oCombo = sap.ui.getCore().getControl("ComboBox4");
+		oCombo.setSelectedItemId( oEvent.getParameter("newValue") );
+		var oText = sap.ui.getCore().getControl("TextFieldKey");
+		oText.setValue(oCombo.getSelectedKey());
+	}});
+
+var oLabel3 = new sap.ui.commons.Label("LabelId",{ text: "selectedItemId:", labelFor: oTextField3});
+
+var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
+	layoutFixed: false,
+	columns: 2,
+	rows: [new sap.ui.commons.layout.MatrixLayoutRow("Row1", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell1", {content:oLabel1}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell2", {content:oComboBox4})]}),
+				new sap.ui.commons.layout.MatrixLayoutRow("Row2", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell3", {content:oLabel2}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell4", {content:oTextField2})]}),
+				new sap.ui.commons.layout.MatrixLayoutRow("Row3", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell5", {content:oLabel3}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell6", {content:oTextField3})]})
+				]
+	}).placeAt("sample4");
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Red" icon="images/ctrls/combobox-icon.png">ComboBox</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The ComboBox is used to have a TextField with a list of predefined entries. During typing, a possible value is suggested using auto-completion. Additionally, you can enter values into the text field that are not part of the list.
+	</p>
+
+	<h2>Examples</h2>
+
+	<h3>Basic ComboBox</h3>
+	<p>
+	You add the single items to the ComboBox using the <code>addItem</code> method. The ComboBox has status <font>editable = true</font>.
+	</p>
+	<br>
+	<div code-sample="sample1" script="ComboBoxSimple"></div>
+
+	<h3>A ComboBox Using an Existing ListBox</h3>
+	<p>
+	At first, the items are added to a ListBox control. The ListBox also contains additional texts. The ListBox is assigned to the ComboBox using the <code>setListBox</code> method.
+	Assigning the ListBox to the ComboBox allows a reuse of the same ListBox in multiple ComboBoxes. A typical use case for this is a table where the possible values are the same in every row.
+	In this case, the ListBox must not be rendered somewhere. But if you want to bind the items to a model the ListBox must be part of the control tree. So we suggest to add it as dependent to the view 
+	or the fist uses ComboBox.
+	<br>
+	In the example the <code>change</code> event is assigned to a function that fills the TextField next to the ComboBox. So you can see when the <code>change</code> event is fired.
+	Control creation and property assignment in the example are done using an alternative constructor syntax.
+	</p>
+	<br>
+	<div code-sample="sample2" script="ComboBoxListBox"></div>
+
+	<h3>Data Binding</h3>
+	<p>
+	The items are filled with the corresponding information using data binding. The data is bound to the properties using the <code>bindProperty</code> method.
+	Changes on the data model immediately will change the ComboBox content.
+	</p>
+	<br/>
+	<div code-sample="sample3" script="ComboBoxDataBinding"></div>
+
+	<h3>Using Item Id and Key</h3>
+	<p>
+	The value of a ComboBox can be set from the application using the properties <code>value</code>, <code>selectedKey</code> and
+	<code>selectedItemId</code>. So instead of using the <code>value</code> property the value can be set to an item of the Combobox.
+	Additionally it can be determines which item is currently selected. If the value is set to be different from the assigned items the properties
+	<code>selectedKey</code> and <code>selectedItemId</code> are set to be empty. If the properties <code>selectedKey</code> and
+	<code>selectedItemId</code> are set to an invalid value they will not be changed and still have their old value.
+	<br>
+	In the example you can see how to set and get the ComboBox value using <code>selectedKey</code> and <code>selectedItemId</code>.
+	</p>
+	<br/>
+	<div code-sample="sample4" script="ComboBoxIdKey"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ComboBox.html">API documentation</a>
+	</p>
+</body>
+</html>

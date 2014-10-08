@@ -1,0 +1,440 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<title>Column - sap.m</title>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<!-- QUnit libraries -->
+
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+
+	module("popin");
+
+	test("ShouldSetDemandPopin", function() {
+		var fnTestCase = function(initialValue, valueToSet,bShouldInvalidate, expectedValidateToBeCalled){
+			//SUT
+			var result,
+				originalInvalidate,
+				invalidateWasCalled = false,
+				sut = new sap.m.Column();
+
+			if(bShouldInvalidate){
+				sut.setMinScreenWidth("9001px");
+			}
+
+			originalInvalidate = sut.invalidate;
+			sut.invalidate = function(){
+				originalInvalidate.call(sut);
+				invalidateWasCalled = true;
+			}
+
+			//Act
+			sut.setProperty("demandPopin", initialValue)
+			result = sut.setDemandPopin(valueToSet);
+
+			//Assert
+			strictEqual(sut.getDemandPopin(), valueToSet,"demandPopin was set");
+			strictEqual(sut,result, "should be chainable");
+			if(expectedValidateToBeCalled){
+				equal(bShouldInvalidate, invalidateWasCalled,"invalidate was called")
+			}
+
+			//Cleanup
+			sut.destroy();
+		};
+
+		//Same Value - no invalidate should not be called
+		fnTestCase(true, true, true, false);
+		fnTestCase(true, true, false, false);
+		fnTestCase(false, false, true, false);
+		fnTestCase(false, false, false, false);
+
+		//Different Values invalidate should be called
+		fnTestCase(true, false, true, true);
+		fnTestCase(false, true, true, true);
+
+		//Different Value but invalidate should not be called
+		fnTestCase(true, false, false, false);
+		fnTestCase(false, true, false, false);
+	});
+
+	test("ShouldKnowThatItIsAPopin", function() {
+		var fnTestCase = function(demandsPopin, hasMedia, hasMatchingMedia, expectedResult){
+			//SUT
+			var result,
+				sut = new sap.m.Column();
+
+			if(hasMedia) {
+				sut._media = { matches: hasMatchingMedia };
+			}
+
+			sut.setProperty("demandPopin", demandsPopin);
+
+			//Act
+			result = sut.isPopin();
+
+			//Assert
+			equal(result, expectedResult);
+
+			//Cleanup
+			sut.destroy();
+		};
+
+		//Demands no Popin - should always be false
+		fnTestCase(false, true, true, false);
+		fnTestCase(false, false, true, false);
+		fnTestCase(false, true, false, false);
+		fnTestCase(false, false, false, false);
+
+		//has no media - should always be false
+		fnTestCase(true, false, true, false);
+		fnTestCase(true, false, false, false);
+
+		//has no matching media is a popin but it has media - true
+		fnTestCase(true, true, false, true);
+
+		//has everything - false
+		fnTestCase(true, true, true, false);
+	});
+
+	module("size and visibility")
+
+	test("ShouldKnowIfItIsHidden", function() {
+		var fnTestCase = function( expectedResult, hasMedia, hasMatchingMedia, hasScreen, minWidth){
+			//SUT
+			var result,
+				sut = new sap.m.Column();
+
+			if(hasMedia) {
+				sut._media = { matches: hasMatchingMedia };
+			}
+
+			if(hasScreen){
+				sut._screen = true;
+			}
+
+			sut._minWidth = minWidth;
+
+			//Act
+			result = sut.isHidden();
+
+			//Assert
+			strictEqual(result, expectedResult);
+
+			//Cleanup
+			sut.destroy();
+		};
+
+		//if it has media it should return if media matches
+		fnTestCase(false, true, true);
+		fnTestCase(true, true, false);
+
+		//no media now it depends on screen and width
+
+		//no screen - false
+		fnTestCase(false, false, undefined, false, true);
+
+		//noMinWidth - false
+		fnTestCase(false, false, undefined, true, 0);
+
+		//minWidth is smaller than windows inner width - false
+		fnTestCase(false, false, undefined, true, -1);
+
+		//minWidth is bigger than windows inner width - true
+		fnTestCase(true, false, undefined, true, 10000);
+
+	});
+
+	test("ShouldValidateMinWidth", function() {
+		var fnTestCase = function(width){
+			//SUT
+			var screenSize, result,
+				sut = new sap.m.Column();
+
+
+			//Act
+			sut._validateMinWidth(width);
+
+			//Assert
+			ok(true,"valid minScreenWidth : " + width);
+
+			//Cleanup
+			sut.destroy();
+		};
+
+		//invalid testcases
+		throws(function(){ fnTestCase(1)},/expected string for property "minScreenWidth" of /,"raised error because it expects a string");
+		throws(function(){ fnTestCase("random string")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		throws(function(){ fnTestCase("eightpx")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize")
+		throws(function(){ fnTestCase("5pxa")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+		throws(function(){ fnTestCase("-5px")},/or sap.m.ScreenSize enumeration for property/,"raised error because it expects a valid screenSize");
+
+		//valid ones
+		fnTestCase("8px");
+		fnTestCase("100000em");
+		fnTestCase("0rem");
+
+		for ( var screenSize in sap.m.ScreenSize) {
+			fnTestCase(screenSize);
+		}
+	});
+
+	test("ShouldKnowIfItIsNeverVisibleWithCache", function() {
+		var fnTestCase = function(expectedResult){
+			//SUT
+			var result,
+				sut = new sap.m.Column();
+
+			sut._isNeverVisible = expectedResult;
+
+			//Act
+			result = sut.isNeverVisible(true);
+
+			//Assert
+			strictEqual(result,expectedResult);
+
+			//Cleanup
+			sut.destroy();
+		};
+
+		fnTestCase(true);
+		fnTestCase(false);
+	});
+
+	test("ShouldKnowIfItIsNeverVisibleWithoutMinWidth", function() {
+		//SUT
+		var result,
+			sut = new sap.m.Column();
+
+
+		//Act
+		result = sut.isNeverVisible(false);
+
+		//Assert
+		strictEqual(result, false);
+		strictEqual(sut._isNeverVisible, false);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+
+
+	test("ShouldKnowIfItIsNeverVisibleWithMinWidth", function() {
+		//SUT
+		var result,
+			sut = new sap.m.Column({minScreenWidth: "30px"});
+
+
+		//Act
+		result = sut.isNeverVisible(false);
+
+		//Assert
+		strictEqual(result, false);
+		strictEqual(sut._isNeverVisible, false);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("ShouldKnowIfItIsNeverVisibleWithHugeMinWidth", function() {
+		//SUT
+		var result,
+		sut = new sap.m.Column({minScreenWidth: "300000px"});
+
+
+		//Act
+		result = sut.isNeverVisible(false);
+
+		//Assert
+		strictEqual(result, true);
+		strictEqual(sut._isNeverVisible, true);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("ShouldKnowIfWidthIsPredefined", function() {
+		//SUT
+		var sut = new sap.m.Column({minScreenWidth : "240px"});
+
+
+		//Act
+		strictEqual(sut._screen,"phone");
+		sut._isWidthPredefined("600px");
+
+		//Assert
+		strictEqual(sut._screen,"tablet");
+		strictEqual(sut._minWidth,"600px");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	module("media");
+
+	test("ShouldAddMedia", function() {
+
+		var fnTestCase = function(width,matches) {
+			//SUT
+			var sut = new sap.m.Column({minScreenWidth: width});
+
+			//Act
+			sut._addMedia();
+
+			//Assert
+			ok(sut._media);
+			strictEqual(sut._media.matches, matches);
+
+			//Cleanup
+			sut.destroy();
+		}
+
+		fnTestCase("300000px",false);
+		fnTestCase("100px",true);
+	});
+
+	test("ShouldClearMedia", function() {
+		//SUT
+		var sut = new sap.m.Column({minScreenWidth: "100px"});
+
+
+		//Act
+		sut._addMedia();
+		ok(sut._media);
+		sut._clearMedia();
+
+		//Assert
+		ok(!sut._media);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	module("events");
+
+	asyncTest("ShouldNotifyOnResize", 3, function() {
+		//System under Test + Arrange
+		var cresize,
+			sut = new sap.m.Column({
+				minScreenWidth : "phone",
+			}),
+			parent = new sap.m.Table({
+				columns : sut
+			});
+
+		cresize = parent.onColumnResize;
+
+		parent.onColumnResize = function(column) {
+			cresize.call(parent, column);
+			//Assert
+			strictEqual(sut, column, "Resize was called on the parent");
+			start();
+		};
+
+		sap.ui.base.EventProvider.prototype.attachEvent.call(
+			sut,
+			"media",
+			undefined,
+			function(args) {
+				//Assert
+				strictEqual(args.sId, "media", "the event type is media");
+				strictEqual(sut, this, "the control who fires is column");
+			}, 
+			sut
+		);
+
+		//Act
+		sut.setMinScreenWidth("tablet");
+		sut._notifyResize({});
+	});
+
+
+	module("display and style");
+
+	test("ShouldSetDisplay", function() {
+		//System under Test + Arrange
+		var sut = new sap.m.Column({
+				demandPopin : true,
+				minScreenWidth : "1px"
+			}),
+			parent = new sap.m.Table({
+				columns : sut
+			});
+
+		//Act
+		parent.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		sut.setDisplayViaMedia($("table")[0]);
+
+		//Assert
+		strictEqual(parent.$().find("td").css("display"), "table-cell");
+		strictEqual(parent.$().find("th").css("display"), "table-cell");
+
+		//Act
+		sut.setDisplay($("table")[0], false);
+
+		//Assert
+		strictEqual(parent.$().find("td").css("display"), "none");
+		strictEqual(parent.$().find("th").css("display"), "none");
+
+		//Cleanup
+		parent.destroy();
+	});
+
+	test("ShouldGetTheStyleClass", function() {
+		//Arrange
+		var result,
+			className = "awesomeStyle",
+			media = "phone",
+			//System under Test
+			sut = new sap.m.Column({
+				styleClass : className,
+				minScreenWidth : media
+			});
+
+		//Act
+		result = sut.getStyleClass(true);
+
+		//Assert
+		ok(result.indexOf(className) !== -1, "style class was present in: " + result);
+		ok(result.indexOf(media) !== -1, "media class was present in: " + result);
+	});
+
+	test("ShouldApplyAlign", function() {
+		//Arrange
+		var align = "Center",
+			label = new sap.m.Label(),
+			//System under Test
+			sut = new sap.m.Column();
+
+		//Act
+		label.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		sut.applyAlignTo(label, align);
+
+		//Assert
+		strictEqual(label.getDomRef().style.textAlign, align.toLowerCase());
+
+		//Cleanup
+		label.destroy();
+	});
+
+</script>
+</head>
+
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Opa sample for matchers</title>
+
+		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
+
+		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.test.Opa5");
+				jQuery.sap.require("sap.ui.test.opaQunit");
+				var Opa = sap.ui.test.Opa;
+				var Opa5 = sap.ui.test.Opa5;
+
+				module("Controls by id");
+
+				opaTest("Should find a Button with an id", function(Given, When, Then) {
+
+					// Act
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+					When.waitFor({
+						viewName : "view.Main",
+						id : "navigationButton",
+						success : function (oButton) {
+							oButton.$().trigger("tap");
+						},
+						errorMessage : "Did not find the naviationButton"
+					});
+
+					Then.waitFor({
+						viewName : "view.Main",
+						id : ["firstButtonOnSecondPage", "secondButtonOnSecondPage"],
+						success : function (aButtons) {
+							strictEqual(aButtons.length, 2, "Found both buttons");
+						}
+					});
+					Then.iTeardownMyAppFrame();
+				});
+
+			})();
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">Opa sample for matchers</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

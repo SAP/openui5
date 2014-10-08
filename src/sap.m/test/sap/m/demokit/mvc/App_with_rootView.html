@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>MVC-based Mobile App</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m"
+				>
+		</script>
+
+		<script>
+			// let UI5 know that certain package (the one containing the Views/Controllers) is available locally (next to the HTML file)
+			sap.ui.localResources("sap.m.mvc");
+
+			// define View and place it onto the HTML page
+			sap.ui.xmlview("appView", "sap.m.mvc.App").placeAt("content");
+			// all other initialization will be done by the App controller
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

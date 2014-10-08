@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>sap.m.List with Growing Feature Test</title>
+
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+
+</script>
+
+<script type="text/javascript">
+
+
+	// ================================================================================
+	var app = new sap.m.App("myApp");
+
+	var listOverview = new sap.m.Page("listOverview", {
+		title : "Growing List Testpage",
+		footer : new sap.m.Bar({
+			contentMiddle : [
+			]
+		})
+	});
+
+
+	var sProxyBaseUrl = "../../../proxy/";
+
+	var aServices = [
+			{
+				serviceUrl : sProxyBaseUrl + "http/services.odata.org/(S(k0llwbowwin2l5shlweie0c2))/OData/OData.svc/",
+				products : {
+					collection : "/Products",
+					properties : [ "ID", "Name", "Description", "ReleaseDate", "Price", "Rating" ]
+				}
+			},
+			{
+				serviceUrl : sProxyBaseUrl + "http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/",
+				products : {
+					collection : "/ProductCollection",
+					properties : [ "ProductID", "Name", "Price/Amount", "Price/CurrencyCode" ]
+				}
+			} ];
+
+
+	var oItemTemplate = new sap.m.StandardListItem({
+		title : "{test>ProductID}",
+		description : "{test>Name}",
+		icon : "images/travel_expend.png",
+		activeIcon: "images/travel_expend_grey.png",
+		iconInset : false,
+		type : "Detail",
+		unread: true,
+		counter: {
+			path : "{test>Price/Amount}",
+			formatter : function(value) {
+				return +value;
+			}
+		},
+		selected: false,
+		info: "{test>Price/CurrencyCode}",
+		infoState: "Warning"
+	});
+
+	var oList = new sap.m.List({
+		headerText : "Growing List",
+		inset : false,
+		footerText : "List Footer",
+		growing : true,
+		growingThreshold: {
+			path : "/growingThreshold",
+			formatter : function(value) {
+				return +value;
+			}
+		},
+		growingScrollToLoad : "{/scrollToLoad}",
+		'delete': deleteItem,
+		mode: sap.m.ListMode.Delete,
+		growingTriggerText: "",
+		showNoData: true
+	});
+
+	var oListPropertiesModel = new sap.ui.model.json.JSONModel();
+	oListPropertiesModel.setData({ growingThreshold : 2, scrollToLoad : true });
+	listOverview.setModel(oListPropertiesModel);
+	oList.setModel(oListPropertiesModel);
+
+	function deleteItem(oEvent) {
+		var model = oEvent.mParameters.listItem.getModel();
+		//var data = model.remove(oEvent.mParameters.listItem.oBindingContext.sPath);
+		//model.updateBindings();
+	}
+
+
+	function bindListData(data, itemTemplate, list) {
+		jQuery.sap.require("sap.ui.model.odata.ODataModel");
+		// set the data for the model
+		oModel = new sap.ui.model.odata.ODataModel(aServices[1].serviceUrl, true, "anzeiger", "display");
+		// set the model to the list
+		list.setModel(oModel, "test");
+		//sap.ui.getCore().setModel(oModel);
+
+		// create a CustomData template, set its key to "answer" and bind its value to the answer data
+		var oDataTemplate = new sap.ui.core.CustomData({
+			key : "xyz"
+		});
+		oDataTemplate.bindProperty("value", "press"); // actually not available
+
+		// add the CustomData template to the item template
+		itemTemplate.addCustomData(oDataTemplate);
+
+		// bind Aggregation
+		list.bindItems({
+			path : "test>/ProductCollection",
+			template : itemTemplate
+		});
+	}
+
+
+	bindListData(aServices[1].serviceUrl, oItemTemplate, oList);
+
+	listOverview.addContent(new sap.m.Label({
+		text: "growingThreshold:"
+	}));
+	listOverview.addContent(new sap.m.Input({
+		value: "{/growingThreshold}"
+	}));
+	listOverview.addContent(new sap.m.CheckBox({
+		text : "Set scrollToLoad",
+		selected: "{/scrollToLoad}"
+	}));
+
+	listOverview.addContent(new sap.m.Button({
+		text : "Group",
+		press : function () {
+			var oBinding = oList.getBinding("items");
+			oBinding.sort([
+				new sap.ui.model.Sorter("Category", false, function(oContext) {
+					var sCategory = oContext.getProperty("Category");
+					return {
+						key : sCategory,
+						text : sCategory
+					}
+				})
+			]);
+		}
+	}));
+
+	listOverview.addContent(new sap.m.Button({
+		text : "Ungroup",
+		press : function () {
+			oList.getBinding("items").sort([]);
+		}
+	}));
+
+	listOverview.addContent(oList);
+	app.addPage(listOverview);
+
+	app.placeAt("body");
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

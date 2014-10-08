@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.base.DataType
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+		jQuery.sap.require("sap.ui.base.DataType");
+	</script>
+	
+	<!-- Control initialization -->
+	<script language="javascript">
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+
+		module("Basic");
+
+		test("primitive types exist", function() {
+			var _float = sap.ui.base.DataType.getType("float");
+			var _string = sap.ui.base.DataType.getType("string");
+			ok(!!_float, "type 'float' exists");
+			ok(!!_string, "type 'string' exists");
+		});
+
+		test("array types exist", function() {
+			var _boolean = sap.ui.base.DataType.getType("boolean[]");
+			var _float = sap.ui.base.DataType.getType("float[]");
+			ok(!!_boolean, "type 'boolean[]' exists");
+			ok(!!_float, "type 'float[]' exists");
+		});
+
+		test("type boolean", function() {
+			var _boolean = sap.ui.base.DataType.getType("boolean");
+			ok(!!_boolean, "type 'boolean' exists");
+			ok(_boolean instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(_boolean.getName(), "boolean", "type name");
+			equal(_boolean.getDefaultValue(), false, "default value");
+			equal(_boolean.isValid(false), true, "accepted value 1");
+			equal(_boolean.isValid(true), true, "accepted value 2");
+			equal(_boolean.isValid("yes"), false, "not accepted value 1");
+			equal(_boolean.isValid(0), false, "not accepted value 2");
+		});
+
+		test("type int", function() {
+			var _int = sap.ui.base.DataType.getType("int");
+			ok(!!_int, "type 'int' exists");
+			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(_int.getName(), 'int', "type name");
+			equal(_int.getDefaultValue(), 0, "default value");
+			equal(_int.isValid(0), true, "accepted value 0");
+			equal(_int.isValid(-42), true, "accepted value -42");
+			equal(_int.isValid('0'), false, "int.isValid('0')");
+			equal(_int.isValid(0.5), false, "int.isValid(0.5)");
+		});
+
+		test("type object", function() {
+			var _object = sap.ui.base.DataType.getType("object");
+			ok(!!_object, "type 'object' exists");
+			ok(_object instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(_object.getName(), 'object', "type name");
+			equal(_object.getDefaultValue(), null, "default value");
+			equal(_object.isValid({}), true, "accepted value {}");
+			equal(_object.isValid([]), true, "accepted value []");
+			equal(_object.isValid(function(){}), true, "accepted value function(){}");
+			equal(_object.isValid(String), true, "accepted value String");
+			equal(_object.isValid(document), true, "accepted value document");
+			equal(_object.isValid(null), true, "accepted value null");
+			equal(_object.isValid(new Object()), true, "accepted value new Object()");
+			equal(_object.isValid(undefined), false, "not accepted value undefined");
+			equal(_object.isValid("abc"), false, "not accepted value \"abc\"");
+			equal(_object.isValid(123), false, "not accepted value 123");
+		});
+
+		test("type int[]", function() {
+			var _int = sap.ui.base.DataType.getType("int[]");
+			ok(!!_int, "type 'int[]' exists");
+			ok(_int instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(_int.getName(), 'int[]', "type name");
+			equal(_int.getDefaultValue(), null, "default value");
+			equal(_int.isValid([1,2,3]), true, "accepted value [1,2,3]");
+			equal(_int.isValid([]), true, "accepted value []");
+			equal(_int.isValid([1,2,"3"]), false, "not accepted value [1,2,\"3\"]");
+			equal(_int.isValid([1,0.2,3]), false, "not accepted value [1,0.2,3]");
+			equal(_int.isValid(0), false, "not accepted value 0");
+			equal(_int.isValid("test"), false, "not accepted value \"test\"");
+		});
+
+		test("type string[]", function() {
+			var _string = sap.ui.base.DataType.getType("string[]");
+			ok(!!_string, "type 'string[]' exists");
+			ok(_string instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(_string.getName(), 'string[]', "type name");
+			equal(_string.getDefaultValue(), null, "default value");
+			equal(_string.isValid(["a","b","c"]), true, "accepted value [\"a\",\"b\",\"c\"]");
+			equal(_string.isValid([]), true, "accepted value []");
+			equal(_string.isValid([true,"b","c"]), false, "not accepted value [true,\"b\",\"c\"]");
+			equal(_string.isValid(0), false, "not accepted value 0");
+			equal(_string.isValid("test"), false, "not accepted value \"test\"");
+		});
+
+		test("type ID", function() {
+			var type = sap.ui.base.DataType.getType("sap.ui.core.ID");
+			ok(!!type, "type 'sap.ui.core.ID' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.ID', "type name");
+			equal(type.getDefaultValue(), "", "default value");
+			equal(type.isValid("a"), true, "accepted value a");
+			equal(type.isValid("someid"), true, "accepted value someid");
+			equal(type.isValid("Z0_-:."), true, "accepted value z0_-:.");
+			equal(type.isValid("123"), false, "not accepted 123");
+			equal(type.isValid("#$%^"), false, "not accepted #$%^");
+			equal(type.isValid("-abc"), false, "not accepted -abc");
+			equal(type.isValid("__abc"), true, "accepted __abc");
+			equal(type.isValid(""), false, "not accepted empty string");
+			equal(type.isValid(" id"), false, "a partial match should not be valid");
+			equal(type.isValid("id id"), false, "a partial match should not be valid");
+			equal(type.isValid("id "), false, "a partial match should not be valid");
+		});
+
+		test("type CSSSize", function() {
+			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSize");
+			ok(!!type, "type 'sap.ui.core.CSSSize' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.CSSSize', "type name");
+			equal(type.getDefaultValue(), "", "default value");
+			equal(type.isValid("0"), true, "accepted value 0");
+			equal(type.isValid("10px"), true, "accepted value 10px");
+			equal(type.isValid("-22pt"), true, "accepted value -22pt");
+			equal(type.isValid("1"), false, "value other than 0 without unit must not be accepted");
+			equal(type.isValid(42), false, "number value must not be accepted");
+			equal(type.isValid({}), false, "object value must not be accepted");
+			equal(type.isValid(""), true, "empty string must be valid");
+			equal(type.isValid(" 20px"), false, "a partial match must not be valid");
+			equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
+			equal(type.isValid("100% "), false, "a partial match must not be valid");
+		});
+
+		test("type CSSSize[]", function() {
+			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSize[]");
+			ok(!!type, "type 'sap.ui.core.CSSSize[]' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+			equal(type.getName(), 'sap.ui.core.CSSSize[]', "type name");
+			equal(type.getDefaultValue(), null, "default value");
+			equal(type.isValid(["0"]), true, "accepted value 0");
+			equal(type.isValid(["10px","20px"]), true, "accepted value 10px,20px");
+			equal(type.isValid(["-22pt","10%","50px"]), true, "accepted value -22pt,10%,50px");
+			equal(type.isValid("1"), false, "isValid('1')");
+			equal(type.isValid([42]), false, "isValid([42])");
+		});
+
+		test("type CSSSizeShortHand", function(){
+			var type = sap.ui.base.DataType.getType("sap.ui.core.CSSSizeShortHand");
+			ok(!!type, "type 'sap.ui.core.CSSSizeShortHand' exists");
+			ok(type instanceof sap.ui.base.DataType, "type is a DataType");
+
+			equal(type.isValid("0"), true, "single 0 allowed");
+			equal(type.isValid("0px"), true, "0 with unit allowed");
+			equal(type.isValid("0 1px 1px 1px"), true, "0 1px 1px 1px allowed");
+			equal(type.isValid("1px 0 1px 1px"), true, "1px 0 1px 1px allowed");
+			equal(type.isValid("0 0 0 0"), true, "0 0 0 0 allowed");
+			
+			equal(type.isValid("1px"), true, "1px allowed");
+			equal(type.isValid("1em 1ex"), true, "2 values allowed");
+			equal(type.isValid("1% 1in 1cm"), true, "3 values allowed");
+			equal(type.isValid("1mm 1pt 1pc 1px"), true, "4 values allowed");
+			equal(type.isValid("1px1px"), false, "values without space NOT allowed");
+			
+			equal(type.isValid("auto"), true, "'auto' allowed");
+			equal(type.isValid("auto 1px -1px 1px"), true, "4 values with 'auto' at begin and -1px allowed");
+			equal(type.isValid("-auto 1px -1px 1px"), false, "4 values with '-auto' NOT allowed");
+			equal(type.isValid("1px auto 1px 1px"), true, "4 values with 'auto' in the middle");
+			equal(type.isValid("1px -1px -auto 1px"), false, "4 values with '-auto' in the midle and -1px NOT allowed");
+			equal(type.isValid("auto auto auto auto"), true, "4 times 'auto' allowed");
+			
+			equal(type.isValid("inherit"), true, "inherit allowed");
+			equal(type.isValid("inherit inherit"), false, "inherit only once allowed");
+			equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
+		});
+
+		test("Normalizer", function() {
+			var _uri = sap.ui.base.DataType.getType("sap.ui.core.URI");
+			var _string = sap.ui.base.DataType.getType("string");
+			ok(!!_uri, "type 'URI' exists");
+			ok(!_uri._fnNormalizer, "no normalizer is set");
+			equal(_uri.isValid("http://www.sap.com"), true, "the given url is valid for the URI type");
+			equal(_uri.normalize("http://www.sap.com"), "http://www.sap.com", "the url is not formatted");
+			_uri.setNormalizer(function(sValue) {
+				return "/proxy/http/" + sValue.substr(7);
+			});
+			ok(!!_uri._fnNormalizer, "normalizer is set");
+			equal(_uri.normalize("http://www.sap.com"), "/proxy/http/www.sap.com", "the url is not formatted");
+			equal(_string.normalize("test"), "test", "the formatter is not applied for other types");
+		});
+
+	</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.base.DataType</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

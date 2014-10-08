@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.m.App
+  Author: d046011
+  
+  Not much to test, as the App itself does not much, but inherits most features.
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.App</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+		var landscape = undefined;
+		function oc(evt) {
+			landscape = evt.getParameter("landscape");
+		}
+		
+
+		var app = new sap.m.App("myFirstApp", {
+			initialPage: "page1",
+			homeIcon: "test.png",
+			orientationChange: oc,
+			pages: [ 
+				new sap.m.Page("page1", {
+					title: "Page 1"
+				}),
+				new sap.m.Page("page2", {
+					title: "Page 2"
+				}),
+				new sap.m.Page("page3", {
+					title: "Page 3",
+					showBackButton: true
+				})
+	        ]
+		});
+		app.placeAt("content");
+	  		
+			
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+		
+
+		test("App rendered", function() {
+			ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
+			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		});
+		
+		test("Home Icon Tag", function() {
+			var $hi = jQuery("link").filter("[rel=apple-touch-icon]");
+			equal($hi.length, 4, "There should be 4 link tags with the home icons");
+			equal($hi.attr("href"), "test.png", "link tag should point to the home icon");
+		});
+		
+		test("Viewport Meta Tag", function() {
+			// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+			var $v = jQuery("meta").filter("[name=viewport]");
+			equal($v.length, 1, "There should be a viewport meta tag");
+			equal($v.attr("content"), "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", "The viewport meta tag content should be correct");
+		});
+		
+		// this is deprecated now in favor of sap.ui.Device.orientation... behavior in IE is inconsistent anyway (might fire on startup or not)
+		if (!sap.ui.Device.browser.internet_explorer) {
+			test("orientationChange event", function() {
+				equal(landscape, undefined, "handler for orientationChange should not have been called yet");
+				app._handleOrientationChange();
+				ok(landscape !== undefined, "handler for orientationChange should have been called");
+				
+				var isLandscape = jQuery(window).width() > jQuery(window).height();
+				equal(landscape, isLandscape, "'landscape' parameter should contain the current orientation");
+			});
+		}
+		
+		test("Dimensions", function() {
+			var appDom = jQuery.sap.domById("myFirstApp");
+			var ww = document.body.getBoundingClientRect().width;
+			var wh = document.documentElement.getBoundingClientRect().height;
+			equal(appDom.getBoundingClientRect().width, ww, "width should be the complete window width");
+			equal(appDom.getBoundingClientRect().height, wh, "height should be the complete window height");
+			});
+		
+		test("destroy", function() {
+			app.destroy();
+			equal(jQuery.sap.domById("page1"), undefined, "Page 1 should not exist anymore in the DOM");
+			ok(sap.ui.getCore().byId("page1") === undefined, "Page 1 should not exist anymore as control");
+			equal(jQuery.sap.domById("page2"), undefined, "Page 2 should not exist anymore in the DOM");
+			ok(sap.ui.getCore().byId("page2") === undefined, "Page 2 should not exist anymore as control");
+			equal(jQuery.sap.domById("page3"), undefined, "Page 3 should not exist anymore in the DOM");
+			ok(sap.ui.getCore().byId("page3") === undefined, "Page 3 should not exist anymore as control");
+		});
+
+    </script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.App</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

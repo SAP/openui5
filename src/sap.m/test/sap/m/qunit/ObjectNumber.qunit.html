@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8" />
+	<title>ObjectNumber - sap.m</title>
+	
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	
+	<!-- UI5 Bootstrap -->
+	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+	
+	<!-- QUnit libraries -->
+	
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<script type="text/javascript">
+	
+		test("ShouldRenderObjectNumber", function() {
+			//SUT
+			var sNumber = "5",
+				sNumberUnit ="Euro",
+				sut = new sap.m.ObjectNumber("on1", {
+					number: sNumber,
+					numberUnit : sNumberUnit
+				});
+	
+			//Act
+			sut.placeAt("content");
+			sap.ui.getCore().applyChanges();
+				
+			//Assert
+			equal(jQuery(".sapMObjectNumberText:contains(" + sNumber + ")").length,1,"Number should be there");
+			equal(jQuery(".sapMObjectNumberUnit:contains(" + sNumberUnit + ")").length,1,"Number unit should be there");
+			
+			$ontxt = jQuery("#on1").find(".sapMObjectNumberText");
+			var sFontWeight = $ontxt.css("font-weight");
+			equal((sFontWeight === "bold" || sFontWeight === "700"), true, "font weight should be bold by default"); // IE and FF return "700" while chrome returns "bold"
+
+			//Cleanup
+			sut.destroy();
+		});
+		
+		test("ShouldRenderUnit", function() {
+			//SUT
+			var sUnit = "Dollar";
+			sut = new sap.m.ObjectNumber("unit", {
+			number: "10",
+			unit : sUnit,
+			numberUnit: "Euro"
+			});
+	
+			//Act
+			sut.placeAt("content");
+			sap.ui.getCore().applyChanges();
+	
+			//Assert			
+			equal(jQuery(".sapMObjectNumberUnit:contains(" + sUnit + ")").length,1,"unit should be used instead of numberUnit");				
+
+			//Cleanup
+			sut.destroy();
+		});
+		
+		test("Non-emphasized ObjectNumber", function() {
+			//SUT
+			
+			var sNumber = "5",
+				sNumberUnit ="Euro",
+				sut = new sap.m.ObjectNumber("on2", {
+					number: sNumber,
+					numberUnit : sNumberUnit,
+					emphasized: false
+				});
+	
+			//Act
+			sut.placeAt("content");
+			sap.ui.getCore().applyChanges();
+	
+			//Assert
+			$ontxt = jQuery("#on2").find(".sapMObjectNumberText");
+			var expected = jQuery.browser.webkit ? "normal" : "400";
+			// check if the jQuery version is lower than 1.10 then use "normal" will be set as font-weigt
+			// from jQuery 1.10 jQuery converts the font-weight of "normal" into 400
+			expected = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.10") > 0 ? "400" : expected; 
+			equal($ontxt.css("font-weight"), expected, "font weight of non-emphasized ObjectNumber should be " + expected);
+			
+			//Cleanup
+			sut.destroy();
+		});
+		
+		test("ValueState of ObjectNumber", function() {
+			//SUT
+			
+			var sNumber = "5",
+				sNumberUnit ="Euro",
+				sut = new sap.m.ObjectNumber("on3", {
+					number: sNumber,
+					numberUnit : sNumberUnit
+				});
+	
+			//Act
+			sut.placeAt("content");
+			sap.ui.getCore().applyChanges();
+	
+			//Assert
+			//Check value
+			$ontxt = jQuery("#on3");
+			ok($ontxt.hasClass("sapMObjectNumberStatusNone"), "Object Number should be assigned css class 'sapMObjectNumberStatusNone'" );
+
+			var aValueStates = [ 
+				sap.ui.core.ValueState.Error, 
+				sap.ui.core.ValueState.Warning, 
+				sap.ui.core.ValueState.Success,
+				sap.ui.core.ValueState.None];
+
+			for (var i = 0; i < aValueStates.length; i++) {
+				sut.setState(aValueStates[i]); 
+				sap.ui.getCore().applyChanges();
+				var sStatusClass = "sapMObjectNumberStatus" + aValueStates[i];
+				$ontxt = jQuery("#on3");
+				ok($ontxt.hasClass(sStatusClass), "Object Number should be assigned css class '" + sStatusClass + "'" );
+				if(i > 0) {
+					//Make sure that the old class got removed
+					var sFormerStatusClass = "sapMObjectNumberStatus" + aValueStates[i-1];
+					ok(!$ontxt.hasClass(sFormerStatusClass), "Object Number should not be assigned css class '" + sFormerStatusClass + "' any more." );
+				}
+			};
+			
+			
+			//Cleanup
+			sut.destroy();
+		});
+		
+		
+	</script>
+</head>
+
+<body class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.ObjectNumber</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol></div>
+	<div id="content"></div>	
+</body>
+</html>

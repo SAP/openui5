@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<root>
+	<foo>The quick brown fox jumps over the lazy dog.</foo>
+	<bar>ABCDEFG</bar>
+	<baz>[52, 97]</baz>
+</root>

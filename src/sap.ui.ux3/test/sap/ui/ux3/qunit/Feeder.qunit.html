@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.ux3.Feeder
+  Author: D031513
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.ux3">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+		var sSubmitId = '';
+		var sSubmitText = '';
+		var sTextTest = 'Test';
+		var sPlaceholderText = "Feedback geben...";
+		
+		// XSS Test
+		var bPlaceholderXSSPossible = true;
+		var sPlaceholderTextXSS = '<script>bPlaceholderXSSPossible = false;<\/script><h1>XSS possible!</h1>';
+	
+		function handleSubmit(oEvent){
+			sSubmitId = oEvent.oSource.getId();
+			sSubmitText = oEvent.getParameter('text');
+		}
+
+		//feeders
+		var oFeeder1 = new sap.ui.ux3.Feeder("Feeder1",{
+			thumbnailSrc: "../images/feeder/m_01.png",
+			submit: handleSubmit,
+			placeholderText: sPlaceholderText
+			}).placeAt("uiArea1");
+
+		var oFeeder2 = new sap.ui.ux3.Feeder("Feeder2",{
+			type: sap.ui.ux3.FeederType.Medium,
+			text: sTextTest,
+			submit: handleSubmit,
+			}).placeAt("uiArea2");
+		
+		var oFeeder3 = new sap.ui.ux3.Feeder("Feeder3",{
+			type: sap.ui.ux3.FeederType.Comment,
+			submit: handleSubmit,
+			placeholderText: sPlaceholderTextXSS
+			}).placeAt("uiArea3");
+	
+		module("Appearance");
+
+		test("Feeder styles", function() {
+
+			ok(jQuery.sap.byId("Feeder1").height() > jQuery.sap.byId("Feeder2").height(), "Large feeder higher than medium feeder");
+			ok(jQuery.sap.byId("Feeder2").height() > jQuery.sap.byId("Feeder3").height(), "Medium feeder higher than comment feeder");
+			
+		});
+		
+		test("Output of Attribute", function() {
+			// image must be rendered
+			equal(jQuery.sap.byId("Feeder1-thumb").attr("src"), "../images/feeder/m_01.png", "Image rendered");
+			
+			// no given image - default image?
+			
+			// placeholder text for empty feeder
+			ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "Placeholder rendered");
+			
+			// placeholder text as set in the feeder attribute
+			equal(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0).innerHTML, sPlaceholderText, "Placeholder text rendered");
+			
+			// placeholdertext is escaped
+			equal(bPlaceholderXSSPossible, true, "Placeholder text escaped");
+			
+			// disabled button for empty feeder
+			ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "Send button is disabled if no text entered");
+			
+			// given Text must be rendered - no placeholder
+			equal(jQuery.sap.byId("Feeder2-input").text(), sTextTest, "given text rendered");
+			ok(!jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0), "no text placeholder rendered");
+			
+			// if text is given Buttom must be enabled
+			ok(!jQuery.sap.byId("Feeder2-send").hasClass('sapUiBtnDsbl'), "Send button is enabled if text entered");
+			
+		});
+
+		module("Behaviour");
+
+		asyncTest("Focus handling1", function() {
+			// click in empty text - placeholder must disapear
+			jQuery.sap.domById("Feeder1-input").focus();
+			var delayedCall = function() {
+				ok(!jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After Focus in Input area no text placeholder rendered");
+			start();
+			};
+			setTimeout(delayedCall, 0);
+			
+		});
+
+		asyncTest("Focus handling2", function() {
+			// click in empty text - placeholder must disapear
+			jQuery.sap.domById("Feeder3-input").focus();
+			var delayedCall = function() {
+				ok(jQuery.sap.byId("Feeder1-input").find(".sapUiFeederEmptyText").get(0), "After focus out of Input area no text placeholder rendered");
+			start();
+			};
+			setTimeout(delayedCall, 0);
+			
+		});
+
+		asyncTest("Mouse navigation", function() {
+			// click on button must submit text
+			qutils.triggerMouseEvent("Feeder2-send", "click");
+			var delayedCall = function() {
+				equal(sSubmitId, "Feeder2","Click on Submit button fires submit event.");
+				equal(sSubmitText, sTextTest,"Submit event returns submitted text.");
+				equal(oFeeder2.getText(), "","Text of feeder must be cleared after submit");
+				ok(jQuery.sap.byId("Feeder2-input").find(".sapUiFeederEmptyText").get(0),"Text placeholder rendered after submit");
+				sSubmitId = "";
+				sSubmitText = "";
+				start();
+			};
+			setTimeout(delayedCall, 0);
+
+			// similar test on disabled button not possible because bwrowser fires no click event for disabled buttons
+			// but our qutil event trigger don't cares about this
+				
+		});
+
+		asyncTest("Keyboard Navigation", function() {
+			// by typing text button must be enabled
+			jQuery.sap.domById("Feeder1-input").focus();
+			jQuery.sap.byId("Feeder1-input").text("A");
+			qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.A, true, false, false);
+			ok(!jQuery.sap.byId("Feeder1-send").attr('disabled'), "After text is entered button must be enabled");
+
+			// focus out - set text property
+			jQuery.sap.domById("Feeder2-input").focus();
+			var delayedCall = function() {
+				equal(oFeeder1.getText(), "A", "After focus out the text must be in text-property");
+			
+				// on deleting text button must be disabled
+				jQuery.sap.domById("Feeder1-input").focus();
+				jQuery.sap.byId("Feeder1-input").text("");
+				qutils.triggerKeyup("Feeder1-input", jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
+				var delayedCall2 = function() {
+					ok(jQuery.sap.byId("Feeder1-send").hasClass('sapUiBtnDsbl'), "After text is deleted button must be disabled");
+					start();
+				};
+				setTimeout(delayedCall2, 0);
+			};
+			setTimeout(delayedCall, 0);
+		});
+
+		test('Multiline Text', function() {
+
+			// Helper function which allows to test the multiline text method using different input code per browser/engine
+			function testInput(expected, inputValues) {
+
+				var input = '';
+
+				if (sap.ui.Device.browser.webkit) {
+					input = inputValues.webkit;
+				} else if(sap.ui.Device.browser.internet_explorer) {
+					input = inputValues.internet_explorer;
+				} else if (sap.ui.Device.browser.firefox) {
+					input = inputValues.firefox;
+				}
+
+				oFeeder1.oInput.html(input);
+				equal(oFeeder1.getMultilineText(oFeeder1.oInput), expected, "Expected text: '" + expected + "'. Input: '" + input + "'");
+				oFeeder1.oInput.html('');
+			}
+
+			// Normally typed
+			testInput('Multi\nLine\n\nText', {
+				webkit: 'Multi<div>Line</div><div><br></div><div>Text</div>',
+				firefox: 'Multi<br>Line<br><br>Text<br type="_moz">',
+				internet_explorer: '<P>Multi</P><P>Line</P><P>&nbsp;</P><P>Text</P>',
+			});
+
+			// Copied from Outlook #1
+			testInput('&@$!Ööaaaaâaãāacc', {
+				webkit: '<span>&amp;@$!</span><b><span>Ö</span></b><span>öaaaaâaãāacc</span>',
+				firefox: '<span>&amp;@$!</span><b><span>Ö</span></b><span>öaaaaâaãāacc</span>',
+				internet_explorer: '<SPAN>&amp;@$!</SPAN><B><SPAN>Ö</SPAN></B><SPAN>öaaaaâaãāacc</SPAN>',
+			});
+
+			// Copied from Outlook #2
+			testInput('Formatted Text\nFrom Outlook', {
+				webkit: '<p class="MsoNormal"><b><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">Fo</span></sup></u></b><i><sup><span style="font-size:18.0pt;\n' +
+					'mso-bidi-font-size:11.0pt">rmatte</span></sup></i><b><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">d </span></sup></u></b><b><sup><span style="font-size:18.0pt;\n' +
+					'mso-bidi-font-size:11.0pt">Text<u><o:p></o:p></u></span></sup></b></p><p class="MsoNormal">\n\n' +
+					'</p><p class="MsoNormal"><b><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">' +
+					'From </span></sup></u></b><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">Ou<b>tlook</b>' +
+					'</span></sup></u><b><s><u><sup><span style="font-size:26.0pt;mso-bidi-font-size:11.0pt"><o:p></o:p></span></sup></u></s></b></p>',
+				firefox: '<!--comment\n-->\n\n<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">' +
+					'Fo</span></sup></u></b><i style="mso-bidi-font-style:normal"><sup><span style="font-size:18.0pt;\n' +
+					'mso-bidi-font-size:11.0pt">rmatte</span></sup></i><b style="mso-bidi-font-weight:\n' +
+					'normal"><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">d </span></sup></u></b><b style="mso-bidi-font-weight:normal">' +
+					'<sup><span style="font-size:18.0pt;\nmso-bidi-font-size:11.0pt">Text</span></sup></b></p>\n\n<p class="MsoNormal"><b style="mso-bidi-font-weight:normal">' +
+					'<u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">From </span></sup></u></b><u><sup><span style="font-size:18.0pt;mso-bidi-font-size:11.0pt">' +
+					'Ou<b style="mso-bidi-font-weight:\nnormal">tlook</b></span></sup></u><b style="mso-bidi-font-weight:normal"><s><u><sup><span style="font-size:26.0pt;' +
+					'mso-bidi-font-size:11.0pt"></span></sup></u></s></b></p>\n\n<!--comment-->',
+				internet_explorer: '<P style="MARGIN: 0cm 0cm 0pt" class=MsoNormal><FONT face=Calibri><B style="mso-bidi-font-weight: normal"><U><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">' +
+					'Fo</SPAN></SUP></U></B><I style="mso-bidi-font-style: normal"><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">rmatte</SPAN></SUP></I>' +
+					'<B style="mso-bidi-font-weight: normal"><U><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">d </SPAN></SUP></U></B><B style="mso-bidi-font-weight: ' +
+					'normal"><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">Text<U><?xml:namespace prefix = o ns = "urn:schemas-microsoft-com:office:office" />' +
+					'<o:p></o:p></U></SPAN></SUP></B></FONT></P>\n<P style="MARGIN: 0cm 0cm 0pt" class=MsoNormal><FONT face=Calibri><B style="mso-bidi-font-weight: normal">' +
+					'<U><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">From </SPAN></SUP></U></B><U><SUP><SPAN style="FONT-SIZE: 18pt; mso-bidi-font-size: 11.0pt">' +
+					'Ou<B style="mso-bidi-font-weight: normal">tlook</B></SPAN></SUP></U></FONT><B style="mso-bidi-font-weight: normal"><S><U><SUP><SPAN style="FONT-SIZE: 26pt; ' +
+					'mso-bidi-font-size: 11.0pt"><o:p></o:p></SPAN></SUP></U></S></B></P>'
+			});
+
+			// Copied from Word
+			testInput('Text\nFrom\nWord', {
+				webkit: '<p class="MsoNoSpacing">Text<o:p></o:p></p>\n\n<p class="MsoNoSpacing">From<o:p></o:p></p>\n\n<p class="MsoNoSpacing">Word<o:p></o:p></p>',
+				firefox: '<!--comment-->\n\n<p class="MsoNoSpacing">Text</p>\n\n<p class="MsoNoSpacing">From</p>\n\n<p class="MsoNoSpacing">Word</p>\n\n<!--comment-->',
+				internet_explorer: '<P style="MARGIN: 0cm 0cm 0pt" class=MsoNoSpacing><FONT size=3><FONT face=Calibri>Text<?xml:namespace prefix = o ns = "urn:schemas-microsoft-com:office:office" /><o:p></o:p></FONT></FONT></P>' +
+					'<P style="MARGIN: 0cm 0cm 0pt" class=MsoNoSpacing><FONT size=3><FONT face=Calibri>From<o:p></o:p></FONT></FONT></P>' +
+					'<P style="MARGIN: 0cm 0cm 0pt" class=MsoNoSpacing><FONT size=3><FONT face=Calibri>Word<o:p></o:p></FONT></FONT></P>'
+			});
+
+		});
+
+	</script>
+
+	<title>qunit Test for Feeder</title>
+ 	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Feeder.gif"> 
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.Feeder</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1" style="width:80%;"></div>
+	<br>
+	<div id="uiArea2" style="width:80%;"></div>
+	<br>
+	<div id="uiArea3" style="width:80%;"></div>
+
+</body>
+</html>

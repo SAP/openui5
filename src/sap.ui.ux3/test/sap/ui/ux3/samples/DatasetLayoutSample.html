@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<title>DataSet (Layout Example) - sap.ui.ux3</title>
+
+<script src="../../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+
+<style>
+.MyCardDataset {
+	background-color: transparent;
+}
+</style>
+
+<script>
+//Create a custom Card control used as Dataset Items
+
+sap.ui.core.Control.extend("Card", {
+
+    metadata : {
+		properties: {
+			category: "string",
+			price: "string"
+    	},
+        aggregations : {
+			"link" : {type : "sap.ui.commons.Link", multiple : false},
+			"image" : {type : "sap.ui.commons.Image", multiple : false},
+        }
+    },
+
+	renderer: function(rm, ctrl){
+
+		function startNewDivWithStyle(sStyle, oControl){
+			rm.write("<div");
+			if(oControl){
+				rm.writeControlData(ctrl);
+			}
+			rm.writeAttribute("style", sStyle);
+			rm.write(">");
+		}
+
+		function renderRow(sLabel, sText){
+			rm.write("<tr><td");
+			rm.writeAttribute("style", "border-collapse:collapse;text-align:right;padding-top:3px;width:100px;");
+			rm.write("><label>"+jQuery.sap.encodeHTML(sLabel)+":</label></td><td");
+			rm.writeAttribute("style", "border-collapse:collapse;padding-left:3px;padding-top:3px;text-overflow: ellipsis;overflow: hidden;");
+			rm.write("><span style=\"white-space:nowrap;\">"+jQuery.sap.encodeHTML(sText)+"</span></td></tr>");
+		}
+
+		startNewDivWithStyle("position:relative;min-width:250px;height:100px;", ctrl);
+		startNewDivWithStyle("position:absolute;top:3px;left:3px;right:3px;bottom:3px;background-color:white;border:1px solid #DDDDDD;");
+		startNewDivWithStyle("position:absolute;top:7px;left:7px;");
+		rm.renderControl(ctrl.getImage());
+		rm.write("</div>");
+
+		startNewDivWithStyle("position:absolute;top:16px;left:45px;right:7px;");
+		rm.renderControl(ctrl.getLink());
+		rm.write("</div>");
+
+		startNewDivWithStyle("position:absolute;top:45px;left:7px;right:7px;");
+
+		rm.write("<table cellspacing=\"0\" cellpadding=\"0\" role=\"presentation\"");
+		rm.writeAttribute("style", "border-collapse:collapse;table-layout:fixed;width:100%;");
+		rm.write(">");
+
+		renderRow("Category", ctrl.getCategory());
+		renderRow("Price", ctrl.getPrice());
+
+		rm.write("</table></div></div></div>");
+    }
+});
+
+
+// Initialize the Model
+
+var data = {test:[]};
+for(var i=0; i<50; i++){
+	data.test.push({id: ""+i, title: "SmartTab LT Light Tablet 32GB "+i, category: "SmartTab LT Products", price: 200+(i*5)+"$", imageSrc: "../images/product.png"});
+}
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(data);
+
+
+//Initialize the Dataset
+
+function createCardTemplate(){
+	return new Card({
+		link: new sap.ui.commons.Link({
+			text: "{title}",
+			width: "100%"
+		}),
+		image: new sap.ui.commons.Image({src: "{imageSrc}"}),
+		category: "{category}",
+		price: "{price}"
+	});
+}
+
+var oDataSet = new sap.ui.ux3.DataSet({
+	items: {
+		path: "/test",
+		template: new sap.ui.ux3.DataSetItem({
+			title : "{title}",
+			iconSrc : "{imageSrc}"
+		})
+	},
+	views: [
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, non-responsive Card View",
+			icon: "../images/thumbnails.png",
+			iconHovered: "../images/thumbnails_hover.png",
+			iconSelected: "../images/thumbnails_hover.png",
+			floating: true,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createCardTemplate()
+		}),
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, responsive Card View",
+			icon: "../images/tiles.png",
+			iconHovered: "../images/tiles_hover.png",
+			iconSelected: "../images/tiles_hover.png",
+			floating: true,
+			responsive: true,
+			itemMinWidth: 250,
+			template: createCardTemplate()
+		}),
+		new sap.ui.ux3.DataSetSimpleView({ //Single Row View
+			name: "Single Row Card View",
+			icon: "../images/list.png",
+			iconHovered: "../images/list_hover.png",
+			iconSelected: "../images/list_hover.png",
+			floating: false,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createCardTemplate()
+		})
+	]
+});
+oDataSet.addStyleClass("MyCardDataset");
+oDataSet.setModel(oModel);
+oDataSet.placeAt("content");
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_platinum" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	
+	var sServiceUri = "/MockSrv/";
+	var sServiceUri2 = "/MockSrv2/";
+	var sServiceUri3 = "/DOESNOTEXIST/";
+	var sDataRootPath =  "model/";
+	var oServer;
+	jQuery.sap.require("sap.ui.core.util.MockServer");
+	
+	function initServer(sUrl, sMetaPath, sDataRoot) {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri: sServiceUri
+		});
+		oMockServer.simulate(sMetaPath, sDataRoot);
+		oMockServer.start();
+		return oMockServer;
+	}
+	
+	function initModel(sUri) {
+		return oModel = new sap.ui.model.odata.ODataModel(sUri, true);	
+	}
+	
+	test("init MockServer Flight", function() {
+		oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
+		ok(oServer,"Server initialized");
+	});
+	
+	test("init Model", function() {
+		var oModel = initModel(sServiceUri);
+		ok(oModel,"Model initialized");
+		ok(oModel.getServiceMetadata(),"Metadata loaded");
+	});
+	asyncTest("metadata failed handling", function(){
+		var oModel = initModel(sServiceUri3);
+		oModel.attachMetadataFailed(function(){
+			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
+		});
+		var oSecondModel = initModel(sServiceUri3);
+		oSecondModel.attachMetadataFailed(function(){
+			ok(!oSecondModel.getServiceMetadata(), "Metadata on second model failed correctly after retrying load");
+			start();
+		});
+	});
+	test("get annotation 'sap:label'", function() {
+		var oModel = initModel(sServiceUri);
+		ok(oModel,"Model initialized");
+		equal(oModel.getProperty("/#Flight/FlightConnectionID/@sap:label"),"Flight Number");
+	});
+	test("get attribute 'type'", function() {
+		var oModel = initModel(sServiceUri);
+		ok(oModel,"Model initialized");
+		equal(oModel.getProperty("/#Flight/FlightConnectionID/@type"),"Edm.String");
+		equal(oModel.getProperty("/#Flight/FirstClassOccupiedSeats/@type"),"Edm.Int32");
+	});
+	test("get complexType attribute 'type' (not supported yet)", function() {
+		ok(!oModel.getProperty("/#Flight/FlightDetails/@type"),"only Property attributes could be resolved");
+	});
+	test("get property/entity object (not supported)", function() {
+		var oModel = initModel(sServiceUri);
+		ok(oModel,"Model initialized");
+		ok(!oModel.getProperty("/#Flight/FlightConnectionID"));
+		ok(!oModel.getProperty("/#Flight"));
+	});
+	test("get complexType property attributes", function() {
+		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@type"),"Edm.Time");
+		equal(oModel.getProperty("/#Flight/FlightDetails/DepartureTime/@sap:label"),"Departure");
+		oServer.stop();
+		oServer.destroy();
+	});
+	/*test("init MockServer ValueList", function() {
+		oServer.stop();
+		oServer.destroy();
+		oServer = initServer(sServiceUri2, "model/metadata2.xml", sDataRootPath);
+		ok(oServer,"Server initialized");
+	});
+	test("init Model", function() {
+		var oModel = initModel(sServiceUri2);
+		ok(oModel,"Model initialized");
+	});
+	test("get ValueList annotation", function() {
+		var oModel = initModel(sServiceUri2);
+		ok(oModel,"Model initialized");
+		var oAnnotation = oModel.getProperty("/#Document/CompanyCode/scom.sap.vocabularies.Common.v1.ValueList");
+		ok(typeof oAnnotation === 'object',"Annotation found");
+		equal(oAnnotation.term,"com.sap.vocabularies.Common.v1.ValueList");
+	});*/
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: OData property metadata binding</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

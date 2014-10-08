@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Tree,sap.ui.commons.TreeNode">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Tree - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='Tree'>
+		//create the Tree control
+		var oTree = new sap.ui.commons.Tree("tree");
+		oTree.setTitle("Explorer");
+		oTree.setWidth("100%");
+		oTree.setHeight("auto");
+		oTree.setShowHeaderIcons(true);
+		oTree.setShowHorizontalScrollbar(false);
+
+		//create Tree Nodes
+		var oNode1 = new sap.ui.commons.TreeNode("node1", {text:"Computer", icon:"images/system.gif", expanded: true});
+		var oNode2 = new sap.ui.commons.TreeNode("node2", {text:"OSDisk (C:)", icon:"images/disk.gif", expanded: true});
+		var oNode3 = new sap.ui.commons.TreeNode("node3", {text:"Program Files", icon:"images/folder.gif"});
+		var oNode4 = new sap.ui.commons.TreeNode("node4", {text:"Windows", icon:"images/folder.gif"});
+		var oNode5 = new sap.ui.commons.TreeNode("node5", {text:"Mass Storage (USB)", icon:"images/disk.gif"});
+		var oNode6 = new sap.ui.commons.TreeNode("node6", {text:"Network", icon:"images/network.gif"});
+
+		oNode1.addNode(oNode2);
+		oNode1.addNode(oNode5);
+
+		oNode2.addNode(oNode3);
+		oNode2.addNode(oNode4);
+
+		//add Tree Node root to the Tree
+		oTree.addNode(oNode1);
+		oTree.addNode(oNode6);
+
+		oTree.placeAt("sample1");
+		</script>
+
+		<script id='TransparentTree'>
+		//create the Tree control
+		var oTransTree = new sap.ui.commons.Tree("transTree");
+		oTransTree.setShowHeader(false);
+		oTransTree.setTitle("Explorer");
+		oTransTree.setWidth("100%");
+		oTransTree.setHeight("auto");
+		oTransTree.setShowHeaderIcons(true);
+		oTransTree.setShowHorizontalScrollbar(false);
+
+		//create Tree Nodes
+		var oTransNode1 = new sap.ui.commons.TreeNode("transNode1", {text:"Computer", icon:"images/system.gif", expanded: true});
+		var oTransNode2 = new sap.ui.commons.TreeNode("transNode2", {text:"OSDisk (C:)", icon:"images/disk.gif", expanded: true});
+		var oTransNode3 = new sap.ui.commons.TreeNode("transNode3", {text:"Program Files", icon:"images/folder.gif"});
+		var oTransNode4 = new sap.ui.commons.TreeNode("transNode4", {text:"Windows", icon:"images/folder.gif"});
+		var oTransNode5 = new sap.ui.commons.TreeNode("transNode5", {text:"Mass Storage (USB)", icon:"images/disk.gif"});
+		var oTransNode6 = new sap.ui.commons.TreeNode("transNode6", {text:"Network", icon:"images/network.gif"});
+
+		oTransNode1.addNode(oTransNode2);
+		oTransNode1.addNode(oTransNode5);
+
+		oTransNode2.addNode(oTransNode3);
+		oTransNode2.addNode(oTransNode4);
+
+		//add Tree Node root to the Tree
+		oTransTree.addNode(oTransNode1);
+		oTransTree.addNode(oTransNode6);
+
+		oTransTree.placeAt("sample2");
+		</script>
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/tree-icon.png">Tree</h1>
+
+		<h2>Introduction</h2>
+
+		The Tree control displays items in a hierarchical manner. The control can be used to develop structural views such as Navigators or Explorers. Each displayed item can have some children, and the user can expand and collapse these items. 
+
+		The Tree control comes in two flavors: <code>full</code> and <code>transparent</code> which can be set using the <code>showHeader</code> attribute of type boolean. In its full version, the Tree displays a header with a title and buttons that allow the user to expand or collapse all of the nodes at once (public API methods <code>expandAll()</code> and <code>collapseAll()</code>). In its transparent version, the Tree hides the header, and borders and background are made transparent. 
+
+		For the configuration of the Tree, the attributes of the TreeNode control can be used. A TreeNode can have a text and an icon. It is also possible to decide if a node shall have an expander (<code>hasExpander</code>), and if it shall be expanded or not at the first load (<code>expanded</code>).
+
+		In order to create the data for the Tree, <code>TreeNodes</code> are created nested by using the <code>addNode(TreeNode)</code> method. The same method is used to add the root of the hierarchy.
+
+		<h2>Examples</h2>
+
+		<h3>Basic Tree</h3>
+		<div code-sample="sample1" script="Tree"></div>
+
+		<h3>Transparent Tree</h3>
+		<div code-sample="sample2" script="TransparentTree"></div>
+
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Tree.html" >API documentation</a>
+		</p>
+
+	</body>
+</html>

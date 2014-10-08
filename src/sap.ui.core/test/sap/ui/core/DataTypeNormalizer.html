@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>DataType - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<script type="text/javascript">
+
+		sap.ui.core.URI.setNormalizer(function(sUri) {
+
+			if (sUri === "sap-icon://sys-cancel") {
+				sUri = "sap-icon://sys-enter";
+			}
+
+			return sUri;
+		});
+		
+		var oIcon = new sap.ui.core.Icon({
+			src: "sap-icon://sys-cancel",
+			size: "10rem"
+		});
+
+		oIcon.placeAt("normalized");
+
+		</script>
+
+</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.core.base.DataType</code></h1>
+
+		<h2>DataType Normalizer:</h2>
+		<div id="normalized"></div>
+
+		<br />
+
+		<a href="#" onclick="oIcon.setSrc('sap-icon://sys-cancel');">Change src</a>
+
+	</body>
+</html>

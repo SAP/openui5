@@ -1,0 +1,45 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides control sap.ui.core.VariantLayoutData.
+sap.ui.define(['jquery.sap.global', './LayoutData', './library'],
+	function(jQuery, LayoutData, library) {
+	"use strict";
+
+
+	
+	/**
+	 * Constructor for a new VariantLayoutData.
+	 *
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] initial settings for the new control
+	 *
+	 * @class
+	 * Allows to add multiple LayoutData to one control in case that a easy switch of layouts (e.g. in a Form) is needed.
+	 * @extends sap.ui.core.LayoutData
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @public
+	 * @since 1.9.2
+	 * @name sap.ui.core.VariantLayoutData
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var VariantLayoutData = LayoutData.extend("sap.ui.core.VariantLayoutData", /** @lends sap.ui.core.VariantLayoutData.prototype */ { metadata : {
+	
+		library : "sap.ui.core",
+		aggregations : {
+	
+			/**
+			 * Allows multiple LayoutData.
+			 */
+			multipleLayoutData : {type : "sap.ui.core.LayoutData", multiple : true, singularName : "multipleLayoutData"}
+		}
+	}});
+	
+	
+
+	return VariantLayoutData;
+
+}, /* bExport= */ true);

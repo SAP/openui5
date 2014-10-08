@@ -1,0 +1,9 @@
+/* Arrows in table breadcrumb navigation */
+.sapMTB-Transparent-CTX .sapMLabel.crumbArrow {
+	margin-right: 0;
+}
+
+.sapMTB-Transparent-CTX .sapMText.crumbLast {
+	font-size: 0.875rem;
+	text-shadow: none;
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for Icon control</title>
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			jQuery.sap.require("sap.ui.core.Icon");
+			jQuery.sap.require("sap.ui.core.IconPool");
+			
+			QUnit.config.autostart = false;
+			jQuery(document).ready(function() {
+				QUnit.start();
+			});
+			
+			var oIcon = new sap.ui.core.Icon("icon1", {
+				src: sap.ui.core.IconPool.getIconURI("wrench"),
+				size: "20px",
+				color: "#666666",
+				backgroundColor: "#FFFFFF",
+				activeColor: "#222222",
+				activeBackgroundColor: "#999999",
+				hoverColor: "#444444",
+				hoverBackgroundColor: "#CCCCCC",
+				width: "24px",
+				height: "24px"
+			}), $icon, $dummy;
+			
+			oIcon.placeAt("uiAreaA");
+			
+			module("Icon Control");
+
+			test("Initial Check", function() {
+				ok(jQuery.sap.domById("icon1"), "Icon is rendered");
+				$icon = oIcon.$();
+				$dummy = jQuery.sap.byId("dummy");
+			});
+			
+			asyncTest("Loading font file", function(){
+				setTimeout(function(){
+					notEqual(jQuery.sap.byId("icon1").height(), 0, "Font file is loaded successfully");
+					start();
+				}, 500);
+			});
+			
+			test("Normal state properties", function(){
+				$dummy.css({
+					"color": "#666666",
+					"backgroundColor": "#FFFFFF"
+				});
+				equal(window.parseInt($icon.css("font-size"), 10), 20);
+				equal($icon.width(), 24);
+				equal($icon.height(), 24);
+				equal($icon.css("color"), $dummy.css("color"));
+				equal($icon.css("background-color"), $dummy.css("background-color"));
+			});
+			
+			
+			test("Active color", function(){
+				$dummy.css("color", "#222222");
+				$dummy.css("background-color", "#999999");
+				qutils.triggerEvent(jQuery.support.touch ? "touchstart" : "mousedown", oIcon.getId());
+				equal($icon.css("color"), $dummy.css("color"));
+				equal($icon.css("background-color"), $dummy.css("background-color"));
+				qutils.triggerEvent(jQuery.support.touch ? "touchend" : "mouseup", oIcon.getId());
+			});
+			
+			
+			if(!jQuery.support.touch){
+				test("Hover color", function(){
+					$dummy.css("color", "#444444");
+					$dummy.css("background-color", "#CCCCCC");
+					qutils.triggerEvent("mouseover", oIcon.getId());
+					equal($icon.css("color"), $dummy.css("color"));
+					equal($icon.css("background-color"), $dummy.css("background-color"));
+				});
+			}
+			
+			test("Attach press handler", function(){
+				var fn1 = function(){}, fn2 = function(){};
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("mananger"),
+					press: fn1
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+				equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+				oIcon.attachPress(fn2);
+				equal(oIcon.$().css("cursor"), "pointer", "Icon which has press event handler should show pointer cursor");
+				oIcon.detachPress(fn1);
+				equal(oIcon.$().css("cursor"), "pointer", "Icon which still has press event handler should show pointer cursor");
+				oIcon.detachPress(fn2);
+				equal(oIcon.$().css("cursor"), "default", "Icon which has no press event handler should not show pointer cursor");
+
+				oIcon.destroy();
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for HTML Control</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="dummy" style="display:none"></div>
+		<div id="uiAreaA"></div>
+		<div id="uiAreaB"></div>
+	</body>
+</html>

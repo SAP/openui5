@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ColorPicker - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="true"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+
+		<script type="text/javascript">
+
+			//	create and place a ColorPicker
+				var oColorPicker = new sap.ui.commons.ColorPicker({colorString : "rgba20,30,40,0.3"});
+				oColorPicker.placeAt("target1");
+
+			//	attach eventhandler
+				oColorPicker.attachLiveChange(handleColorPickerLiveChange);
+				oColorPicker.attachChange(handleColorPickerChange);
+
+			//	create a matrix layout
+				var oMatrix = new sap.ui.commons.layout.MatrixLayout({
+						layoutFixed : true,
+						columns : 2,
+						width : "270px",
+						widths : [ "90px", "180px" ]
+					});
+
+			//	HTML-Control containing the liveChange ColorBox
+				var oHtmlLiveChange = new sap.ui.core.HTML({
+					content : "<DIV id='NewColLive' style='margin-top: 4px; width: 176px; height: 20px; border: 1px solid black; background-color: #FFFFFF'</DIV>"
+				});
+
+			//	HTML-Control containing the Change ColorBox
+				var oHtmlChange = new sap.ui.core.HTML({
+						content : "<DIV id='NewCol' style='width: 176px; height: 20px; border: 1px solid black; background-color: #FFFFFF'</DIV>"
+					});
+
+			//	label for liveChange ColorBox
+				var oNewColLiveLabel = new sap.ui.commons.Label();
+				oNewColLiveLabel.setText("LiveChange:");
+				oNewColLiveLabel.setLabelFor(oHtmlLiveChange);
+
+			//	label for Change ColorBox
+				var oNewColLabel = new sap.ui.commons.Label();
+				oNewColLabel.setText("Change:");
+				oNewColLabel.setLabelFor(oHtmlChange);
+
+			//	label & Field for RED (Change Event)
+				var oRCField = new sap.ui.commons.TextField({id: "rC", width:"3em"});
+				oRCField.setEnabled(false);
+				var oRCLabel = new sap.ui.commons.Label();
+				oRCLabel.setText("R:");
+				oRCLabel.setLabelFor(oRCField);
+
+			//	label & Field for RED (LiveChange Event)
+				var oRLCField = new sap.ui.commons.TextField({id: "rLC", width:"3em"});
+				oRLCField.setEnabled(false);
+				var oRLCLabel = new sap.ui.commons.Label();
+				oRLCLabel.setText("R:");
+				oRLCLabel.setLabelFor(oRLCField);
+
+			//	label & Field for GREEN (Change Event)
+				var oGCField = new sap.ui.commons.TextField({id: "gC", width:"3em"});
+				oGCField.setEnabled(false);
+				var oGCLabel = new sap.ui.commons.Label();
+				oGCLabel.setText("G:");
+				oGCLabel.setLabelFor(oGCField);
+
+			//	label & Field for GREEN (LiveChange Event)
+				var oGLCField = new sap.ui.commons.TextField({id: "gLC", width:"3em"});
+				oGLCField.setEnabled(false);
+				var oGLCLabel = new sap.ui.commons.Label();
+				oGLCLabel.setText("G:");
+				oGLCLabel.setLabelFor(oGLCField);
+
+			//	label & Field for BLUE (Change Event)
+				var oBCField = new sap.ui.commons.TextField({id: "bC", width:"3em"});
+				oBCField.setEnabled(false);
+				var oBCLabel = new sap.ui.commons.Label();
+				oBCLabel.setText("B:");
+				oBCLabel.setLabelFor(oBCField);
+
+			//	label & Field for BLUE (LiveChange Event)
+				var oBLCField = new sap.ui.commons.TextField({id: "bLC", width:"3em"});
+				oBLCField.setEnabled(false);
+				var oBLCLabel = new sap.ui.commons.Label();
+				oBLCLabel.setText("B:");
+				oBLCLabel.setLabelFor(oBLCField);
+
+			//	label & Field for HUE (Change Event)
+				var oHCField = new sap.ui.commons.TextField({id: "hC", width:"3em"});
+				oHCField.setEnabled(false);
+				var oHCLabel = new sap.ui.commons.Label();
+				oHCLabel.setText("H:");
+				oHCLabel.setLabelFor(oHCField);
+
+			//	label & Field for HUE (LiveChange Event)
+				var oHLCField = new sap.ui.commons.TextField({id: "hLC", width:"3em"});
+				oHLCField.setEnabled(false);
+				var oHLCLabel = new sap.ui.commons.Label();
+				oHLCLabel.setText("H:");
+				oHLCLabel.setLabelFor(oHLCField);
+
+			//	label & Field for SATURATION (Change Event)
+				var oSCField = new sap.ui.commons.TextField({id: "sC", width:"3em"});
+				oSCField.setEnabled(false);
+				var oSCLabel = new sap.ui.commons.Label();
+				oSCLabel.setText("S:");
+				oHCLabel.setLabelFor(oSCField);
+
+			//	label & Field for SATURATION (LiveChange Event)
+				var oSLCField = new sap.ui.commons.TextField({id: "sLC", width:"3em"});
+				oSLCField.setEnabled(false);
+				var oSLCLabel = new sap.ui.commons.Label();
+				oSLCLabel.setText("S:");
+				oSLCLabel.setLabelFor(oSLCField);
+
+			//	label & Field for VALUE (Change Event)
+				var oVCField = new sap.ui.commons.TextField({id: "vC", width:"3em"});
+				oVCField.setEnabled(false);
+				var oVCLabel = new sap.ui.commons.Label();
+				oVCLabel.setText("V:");
+				oHCLabel.setLabelFor(oVCField);
+
+			//	label & Field for VALUE (LiveChange Event)
+				var oVLCField = new sap.ui.commons.TextField({id: "vLC", width:"3em"});
+				oVLCField.setEnabled(false);
+				var oVLCLabel = new sap.ui.commons.Label();
+				oVLCLabel.setText("V:");
+				oVLCLabel.setLabelFor(oVLCField);
+
+			//	label & Field for ALPHA (Change Event)
+				var oACField = new sap.ui.commons.TextField({id: "aC", width:"3em"});
+				oACField.setEnabled(false);
+				var oACLabel = new sap.ui.commons.Label();
+				oACLabel.setText("A:");
+				oACLabel.setLabelFor(oACField);
+
+			//	label & Field for ALPHA (LiveChange Event)
+				var oALCField = new sap.ui.commons.TextField({id: "aLC", width:"3em"});
+				oALCField.setEnabled(false);
+				var oALCLabel = new sap.ui.commons.Label();
+				oALCLabel.setText("A:");
+				oALCLabel.setLabelFor(oALCField);
+
+			//	label & Field for HEX (Change Event)
+				var oHXCField = new sap.ui.commons.TextField({id: "hxC", width:"7em"});
+				oHXCField.setEnabled(false);
+				var oHXCLabel = new sap.ui.commons.Label();
+				oHXCLabel.setText("HEX:");
+				oHCLabel.setLabelFor(oHXCField);
+
+			//	label & Field for HEX (LiveChange Event)
+				var oHXLCField = new sap.ui.commons.TextField({id: "hxLC", width:"7em"});
+				oHXLCField.setEnabled(false);
+				var oHXLCLabel = new sap.ui.commons.Label();
+				oHXLCLabel.setText("HEX:");
+				oHXLCLabel.setLabelFor(oHXLCField);
+
+			//	Add Rows and place the Matrix
+				oMatrix.createRow(oNewColLiveLabel, oHtmlLiveChange );
+				oMatrix.createRow(oRLCLabel, oRLCField );
+				oMatrix.createRow(oGLCLabel, oGLCField );
+				oMatrix.createRow(oBLCLabel, oBLCField );
+				oMatrix.createRow(oHLCLabel, oHLCField );
+				oMatrix.createRow(oSLCLabel, oSLCField );
+				oMatrix.createRow(oVLCLabel, oVLCField );
+				oMatrix.createRow(oALCLabel, oALCField );
+				oMatrix.createRow(oHXLCLabel, oHXLCField );
+				oMatrix.createRow(oNewColLabel, oHtmlChange );
+				oMatrix.createRow(oRCLabel, oRCField );
+				oMatrix.createRow(oGCLabel, oGCField );
+				oMatrix.createRow(oBCLabel, oBCField );
+				oMatrix.createRow(oHCLabel, oHCField );
+				oMatrix.createRow(oSCLabel, oSCField );
+				oMatrix.createRow(oVCLabel, oVCField );
+				oMatrix.createRow(oACLabel, oACField );
+				oMatrix.createRow(oHXCLabel, oHXCField );
+				oMatrix.placeAt("target2");
+
+			//	Eventhandler for LiveChange Event
+				function handleColorPickerLiveChange(oEvent) {
+					var colors = oEvent.getParameters();
+					var css_color;
+					if(colors.alpha && colors.alpha !== 1){
+						// Transparency
+						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.r + "," + colors.alpha + ")";
+					} else {
+						css_color = colors.hex;
+					}
+					jQuery.sap.byId('NewColLive').css('background-color',css_color);
+					oRLCField.setValue(colors.r);
+					oGLCField.setValue(colors.g);
+					oBLCField.setValue(colors.b);
+					oHLCField.setValue(colors.h);
+					oSLCField.setValue(colors.s);
+					oVLCField.setValue(colors.v);
+					oALCField.setValue(colors.alpha);
+					oHXLCField.setValue(colors.hex);
+				};
+
+			//	Eventhandler for Change Event
+				function handleColorPickerChange(oEvent) {
+					var colors = oEvent.getParameters();
+					var css_color;
+					if(colors.alpha && colors.alpha !== 1){
+						// Transparency
+						css_color = "rgba(" + colors.r + "," + colors.g + "," + colors.r + "," + colors.alpha + ")";
+					} else {
+						css_color = colors.hex;
+					}
+					jQuery.sap.byId('NewCol').css('background-color',css_color);
+					oRCField.setValue(colors.r);
+					oGCField.setValue(colors.g);
+					oBCField.setValue(colors.b);
+					oHCField.setValue(colors.h);
+					oSCField.setValue(colors.s);
+					oVCField.setValue(colors.v);
+					oACField.setValue(colors.alpha);
+					oHXCField.setValue(colors.hex);
+				};
+
+		</script>
+
+	</head>
+
+	<body class="sapUiBody" style="padding: 0; margin: 0;">
+		<div style="margin: 0; padding: 0 10;">
+			<div id="header">
+				<h1>Test Page for <code>sap.ui.commons.ColorPicker</code></h1>
+			</div>
+			<div style="border: 1px solid black; width: 270px; margin-top: 50px; margin-left: 10px" id="target1"></div>
+			<div style="border: 1px solid black; width: 270px; margin-top: 50px; margin-left: 10px" id="target2"></div>
+		</div>
+	</body>
+</html>

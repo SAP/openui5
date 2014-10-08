@@ -1,0 +1,473 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.commons.RadioButtonGroup
+  Author: SAP
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+		// 1. RadioButtonGroup
+		var oRBGroup1 = new sap.ui.commons.RadioButtonGroup("RBG1");
+
+		var oItem = new sap.ui.core.Item("RB1-1");
+		oItem.setText("Option 1");
+		oItem.setTooltip("Tooltip 1");
+		oItem.setKey("Key1");
+		oRBGroup1.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB1-2");
+		oItem.setText("Option 2"); 
+		oItem.setTooltip("Tooltip 2");
+		oItem.setKey("Key2"); 
+		oRBGroup1.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB1-3");
+		oItem.setText("Option 3");
+		oItem.setTooltip("Tooltip 3");
+		oItem.setKey("Key3");
+		oItem.setEnabled(false);
+		oRBGroup1.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB1-4");
+		oItem.setText("Option 4");
+		oItem.setTooltip("Tooltip 4");
+		oItem.setKey("Key4");
+		oRBGroup1.addItem(oItem);
+
+		sap.ui.setRoot("uiArea1", oRBGroup1);
+
+		// 2. RadioButtonGroup (invisible)
+		var oRBGroup2 = new sap.ui.commons.RadioButtonGroup("RBG2");
+		oRBGroup2.setVisible(false);
+
+		oItem = new sap.ui.core.Item("RB2-1");
+		oItem.setText("Option 1");
+		oItem.setTooltip("Tooltip 1");
+		oItem.setKey("Key1");
+		oRBGroup2.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB2-2");
+		oItem.setText("Option 2");
+		oItem.setTooltip("Tooltip 2");
+		oItem.setKey("Key2");
+		oRBGroup2.addItem(oItem);
+
+		sap.ui.setRoot("uiArea2", oRBGroup2);
+
+		// 3. RadioButtonGroup
+		var oRBGroup3 = new sap.ui.commons.RadioButtonGroup("RBG3");
+		oRBGroup3.setColumns(3);
+
+		oItem = new sap.ui.core.Item("RB3-1");
+		oItem.setText("Option 1");
+		oItem.setTooltip("Tooltip 1");
+		oItem.setKey("Key1");
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-2");
+		oItem.setText("Option 2");
+		oItem.setTooltip("Tooltip 2");
+		oItem.setKey("Key2");
+		oItem.setEnabled(false);
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-3");
+		oItem.setText("Option 3");
+		oItem.setTooltip("Tooltip 3");
+		oItem.setKey("Key3");
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-4");
+		oItem.setText("Option 4");
+		oItem.setTooltip("Tooltip 4");
+		oItem.setKey("Key4");
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-5");
+		oItem.setText("Option 5");
+		oItem.setTooltip("Tooltip 5");
+		oItem.setKey("Key5");
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-6");
+		oItem.setText("Option 6");
+		oItem.setTooltip("Tooltip 6");
+		oItem.setKey("Key6");
+		oRBGroup3.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB3-7");
+		oItem.setText("Option 7");
+		oItem.setTooltip("Tooltip 7");
+		oItem.setKey("Key7");
+		oRBGroup3.addItem(oItem);
+
+		sap.ui.setRoot("uiArea3", oRBGroup3);
+
+		// 4. RadioButtonGroup
+		var oRBGroup4 = new sap.ui.commons.RadioButtonGroup("RBG4");
+		oRBGroup4.setColumns(3);
+		oRBGroup4.setEditable(false);
+		oRBGroup4.setValueState(sap.ui.core.ValueState.Error);
+
+		oItem = new sap.ui.core.Item("RB4-1"); 
+		oItem.setText("Option 1");
+		oItem.setTooltip("Tooltip 1");
+		oItem.setKey("Key1"); 
+		oRBGroup4.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB4-2");
+		oItem.setText("Option 2"); 
+		oItem.setTooltip("Tooltip 2");
+		oItem.setKey("Key2"); 
+		oItem.setEnabled(false);
+		oRBGroup4.addItem(oItem);
+
+		oItem = new sap.ui.core.Item("RB4-3");
+		oItem.setText("Option 3"); 
+		oItem.setTooltip("Tooltip 3");
+		oItem.setKey("Key3"); 
+		oRBGroup4.addItem(oItem);
+
+		sap.ui.setRoot("uiArea4", oRBGroup4);
+
+		// TEST functions
+		qutils.delayTestStart();
+
+		module("Properties");
+
+		test("Default Values", function() {
+			equal(oRBGroup1.getEditable(), true, "Editable");
+			equal(oRBGroup1.getColumns(), 1, "Columns");
+			equal(oRBGroup1.getVisible(), true, "Visible");
+			equal(oRBGroup1.getValueState(), sap.ui.core.ValueState.None, "ValueState");
+			equal(oRBGroup1.getWidth(), "", "Width");
+			equal(oRBGroup1.getSelectedIndex(), 0, "Selected Index");
+		});
+
+		test("Properties of Radio Buttons", function() {
+			equal(sap.ui.getCore().getElementById("RBG1-0").getText(), "Option 1", "RadioButton 0 - Text");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getTooltip(), "Tooltip 1", "RadioButton 0 - Tooltip");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getEnabled(), true, "RadioButton 0 - Enabled");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getKey(), "Key1", "RadioButton 0 - Key");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getEditable(), true, "RadioButton 0 - Editable");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getGroupName(), "RBG1", "RadioButton 0 - GroupName");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getValueState(),sap.ui.core.ValueState.None , "RadioButton 0 - ValueState");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getWidth(), "", "RadioButton 0 - Width");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getSelected(), true, "RadioButton 0 - Selected");
+
+			equal(sap.ui.getCore().getElementById("RBG1-1").getSelected(), false, "RadioButton 1 - Selected");
+
+			equal(sap.ui.getCore().getElementById("RBG1-2").getEnabled(), false, "RadioButton 2 - Enabled");
+			equal(sap.ui.getCore().getElementById("RBG1-2").getSelected(), false, "RadioButton 2 - Selected");
+
+			equal(sap.ui.getCore().getElementById("RBG1-3").getSelected(), false, "RadioButton 3 - Selected");
+
+			equal(sap.ui.getCore().getElementById("RBG4-0").getEditable(), false, "Editable on Group = false: RadioButton 0 - Editable");
+			equal(sap.ui.getCore().getElementById("RBG4-1").getEditable(), false, "Editable on Group = false: RadioButton 1 - Editable");
+			equal(sap.ui.getCore().getElementById("RBG4-2").getEditable(), false, "Editable on Group = false: RadioButton 2 - Editable");
+			equal(sap.ui.getCore().getElementById("RBG4-0").getValueState(),sap.ui.core.ValueState.Error , "ValueState.Error on Group: RadioButton 0 - ValueState");
+			equal(sap.ui.getCore().getElementById("RBG4-1").getValueState(),sap.ui.core.ValueState.Error , "ValueState.Error on Group: RadioButton 1 - ValueState");
+			equal(sap.ui.getCore().getElementById("RBG4-2").getValueState(),sap.ui.core.ValueState.Error , "ValueState.Error on Group: RadioButton 2 - ValueState");
+
+		});
+
+		test("Toggle Enabled", function() {
+			oRBGroup1.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			equal(jQuery("#RBG1").attr("tabindex"), -1, "RadioButtonGroup - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-0").getEnabled(), false, "RadioButton 0 - Enabled = false");
+			equal(jQuery("#RBG1-0").attr("tabindex"), -1, "RadioButton 0 - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-1").getEnabled(), false, "RadioButton 1 - Enabled = false");
+			equal(jQuery("#RBG1-1").attr("tabindex"), -1, "RadioButton 1 - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-2").getEnabled(), false, "RadioButton 2 - Enabled = false");
+			equal(jQuery("#RBG1-2").attr("tabindex"), -1, "RadioButton 2 - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-3").getEnabled(), false, "RadioButton 3 - Enabled = false");
+			equal(jQuery("#RBG1-3").attr("tabindex"), -1, "RadioButton 3 - Tabindex = -1");
+
+			oRBGroup1.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			equal(jQuery("#RBG1").attr("tabindex"), -1, "RadioButtonGroup - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-0").getEnabled(), true, "RadioButton 0 - Enabled = true");
+			equal(jQuery("#RBG1-0").attr("tabindex"), 0, "RadioButton 0 - Tabindex = 0");
+			equal(sap.ui.getCore().byId("RBG1-1").getEnabled(), true, "RadioButton 1 - Enabled = true");
+			equal(jQuery("#RBG1-1").attr("tabindex"), -1, "RadioButton 1 - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-2").getEnabled(), false, "RadioButton 2 - Enabled = false");
+			equal(jQuery("#RBG1-2").attr("tabindex"), -1, "RadioButton 2 - Tabindex = -1");
+			equal(sap.ui.getCore().byId("RBG1-3").getEnabled(), true, "RadioButton 3 - Enabled = true");
+			equal(jQuery("#RBG1-3").attr("tabindex"), -1, "RadioButton 3 - Tabindex = -1");
+		});
+
+		module("Appearance");
+
+		test("Visibility", function() {
+			// Visible
+			ok(jQuery("#RBG1").get(0), "Visible, expected defined");
+			equal(jQuery("#RBG2").get(0), undefined, "Invisible");		
+		});
+
+		test("Output of RadioButtons", function() {
+			ok(jQuery("#RBG1-0").get(0), "RadioButton 0, expected defined");
+			ok(jQuery("#RBG1-1").get(0), "RadioButton 1, expected defined");
+			ok(jQuery("#RBG1-2").get(0), "RadioButton 2, expected defined");
+			ok(jQuery("#RBG1-3").get(0), "RadioButton 3, expected defined");
+
+			iOffsetLeft0 = jQuery("#RBG1-0").position().left;
+			iOffsetTop0 = jQuery("#RBG1-0").position().top;
+			iOffsetLeft1 = jQuery("#RBG1-1").position().left;
+			iOffsetTop1 = jQuery("#RBG1-1").position().top;
+			iOffsetLeft3 = jQuery("#RBG1-3").position().left;
+			iOffsetTop3 = jQuery("#RBG1-3").position().top;
+
+			if(iOffsetLeft0 == iOffsetLeft1){
+				var bResult = true;
+			}else{
+				var bResult = false; 
+			}
+			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 1 equal");
+			bResult = undefined; 
+
+			if(iOffsetTop0 < iOffsetTop1){
+				var bResult = true;
+			}else{
+				var bResult = false; 
+			}
+			equal(bResult,true,"Group 1: Top Position Radiobutton 0 less than 1");
+			bResult = undefined; 
+
+			if(iOffsetLeft0 == iOffsetLeft3){
+				var bResult = true;
+			}else{
+				var bResult = false; 
+			}
+			equal(bResult,true,"Group 1: Left Position Radiobutton 0 and 3 equal");
+
+			if(iOffsetTop1 < iOffsetTop3){
+				var bResult = true;
+			}else{
+				var bResult = false; 
+			}
+			equal(bResult,true,"Group 1: Top Position Radiobutton 1 less than 3");
+			bResult = undefined; 
+
+			iOffsetLeft0 = jQuery("#RBG3-0").position().left;
+			iOffsetTop0 = jQuery("#RBG3-0").position().top;
+			iOffsetLeft1 = jQuery("#RBG3-1").position().left;
+			iOffsetTop1 = jQuery("#RBG3-1").position().top;
+			iOffsetLeft3 = jQuery("#RBG3-3").position().left;
+			iOffsetTop3 = jQuery("#RBG3-3").position().top;
+			if(iOffsetLeft0 < iOffsetLeft1){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 3: Left Position Radiobutton 0 less than 1");
+			bResult = undefined; 
+
+			if(iOffsetTop0 == iOffsetTop1){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 3: Top Position Radiobutton 0 equal 1");
+			bResult = undefined; 
+
+			if(iOffsetLeft0 == iOffsetLeft3){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 3: Left Position Radiobutton 0 and 3 equal");
+
+			if(iOffsetTop1 < iOffsetTop3){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 3: Top Position Radiobutton 0 less than 3");
+			bResult = undefined; 
+
+			iOffsetLeft0 = jQuery("#RBG4-0").position().left;
+			iOffsetTop0 = jQuery("#RBG4-0").position().top;
+			iOffsetLeft1 = jQuery("#RBG4-1").position().left;
+			iOffsetTop1 = jQuery("#RBG4-1").position().top;
+
+			if(iOffsetLeft0 < iOffsetLeft1){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 4: Left Position Radiobutton 0 less than 1");
+			bResult = undefined; 
+
+			if(iOffsetTop0 == iOffsetTop1){
+				var bResult = true;
+			}else{
+				var bResult = false;
+			}
+			equal(bResult,true,"Group 4: Top Position Radiobutton 0 equal 1");
+			bResult = undefined;
+
+		});
+
+		test("ARIA", function() {
+			oRBGDom = jQuery.sap.domById('RBG1');
+			equal(jQuery(oRBGDom).attr("role"),"radiogroup","ARIA role");
+			equal(jQuery(oRBGDom).attr("aria-disabled"),"false","ARIA-disabled: for enabled field");
+			equal(jQuery(oRBGDom).attr("aria-invalid"),"false","ARIA-invalid: for normal field");
+
+		});
+
+		module("Behaviour");
+
+		test("Change Selection", function() {
+			// via method - index
+			oRBGroup1.setSelectedIndex(1);
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup1.getSelectedIndex(), 1, "SetSelectedIndex(1): SelectedIndex");
+			equal(oRBGroup1.getSelectedItem().getId(), "RB1-2", "SetSelectedIndex(1): SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG1-0").getSelected(), false, "SetSelectedIndex(1): RadioButton 0 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG1-1").getSelected(), true, "SetSelectedIndex(1): RadioButton 1 - Selected");
+			equal(jQuery('#RBG1-0').attr("tabindex"),"-1","SetSelectedIndex(1): RadioButton 0 - tabindex");
+			equal(jQuery('#RBG1-1').attr("tabindex"),"0","SetSelectedIndex(1): RadioButton 1 - tabindex");
+
+			// via method - item
+			oRBGroup1.setSelectedItem(sap.ui.getCore().getElementById("RB1-4"));
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup1.getSelectedIndex(), 3, "SetSelectedItem(RB1-4): SelectedIndex");
+			equal(oRBGroup1.getSelectedItem().getId(), "RB1-4", "SetSelectedItem(RB1-4): SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG1-1").getSelected(), false, "SetSelectedItem(RB1-4): RadioButton 1 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG1-3").getSelected(), true, "SetSelectedItem(RB1-4): RadioButton 3 - Selected");
+			equal(jQuery('#RBG1-1').attr("tabindex"),"-1","SetSelectedItem(RB1-4): RadioButton 1 - tabindex");
+			equal(jQuery('#RBG1-3').attr("tabindex"),"0","SetSelectedItem(RB1-4): RadioButton 3 - tabindex");
+
+			// via mouse
+			qutils.triggerMouseEvent("RBG1-1", "click");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup1.getSelectedIndex(), 1, "Mouseclick: SelectedIndex");
+			equal(oRBGroup1.getSelectedItem().getId(), "RB1-2", "Mouseclick: SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG1-3").getSelected(), false, "Mouseclick: RadioButton 3 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG1-1").getSelected(), true, "Mouseclick: RadioButton 1 - Selected");
+			equal(jQuery('#RBG1-3').attr("tabindex"),"-1","Mouseclick: RadioButton 3 - tabindex");
+			equal(jQuery('#RBG1-1').attr("tabindex"),"0","Mouseclick: RadioButton 1 - tabindex");
+
+		});
+
+		test("Keyboard Navigation", function() {
+
+			// via keyboard
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 0, "Key-ARROW_RIGHT: SelectedIndex");
+			equal(oRBGroup3.getSelectedItem().getId(), "RB3-1", "Key-ARROW_RIGHT: SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG3-0").getSelected(), true, "Key-ARROW_RIGHT: RadioButton 0 - Selected");		
+			equal(sap.ui.getCore().getElementById("RBG3-1").getSelected(), false, "Key-ARROW_RIGHT: RadioButton 1 - Selected");		
+			equal(jQuery('#RBG3-0').attr("tabindex"),"-1","Key-ARROW_RIGHT: RadioButton 0 - tabindex");
+			equal(jQuery('#RBG3-1').attr("tabindex"),"0","Key-ARROW_RIGHT: RadioButton 0 - tabindex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 6, "Key-ARROW_RIGHT (5 times): SelectedIndex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 0, "Key-ARROW_RIGHT: SelectedIndex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT", false, false, true);
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_RIGHT", false, false, true);
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 0, "Key-ARROW_RIGHT+CTRL: SelectedIndex");
+			equal(oRBGroup3.getSelectedItem().getId(), "RB3-1", "Key-ARROW_RIGHT+CTRL: SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG3-0").getSelected(), true, "Key-ARROW_RIGHT+CTRL: RadioButton 0 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG3-2").getSelected(), false, "Key-ARROW_RIGHT+CTRL: RadioButton 2 - Selected")
+			equal(jQuery('#RBG3-0').attr("tabindex"),"-1","Key-ARROW_RIGHT+CTRL: RadioButton 0 - tabindex");
+			equal(jQuery('#RBG3-2').attr("tabindex"),"0","Key-ARROW_RIGHT+CTRL: RadioButton 2 - tabindex");
+
+			qutils.triggerKeyboardEvent("RBG3-2", "SPACE");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 2, "Key-SPACE: SelectedIndex");
+			equal(oRBGroup3.getSelectedItem().getId(), "RB3-3", "Key-SPACE: SelectedItem(ID)");
+			equal(sap.ui.getCore().getElementById("RBG3-0").getSelected(), false, "Key-SPACE: RadioButton 0 - Selected");
+			equal(sap.ui.getCore().getElementById("RBG3-2").getSelected(), true, "Key-SPACE: RadioButton 2 - Selected");
+			equal(jQuery('#RBG3-0').attr("tabindex"),"-1","Key-SPACE: RadioButton 0 - tabindex");
+			equal(jQuery('#RBG3-2').attr("tabindex"),"0","Key-SPACE: RadioButton 2 - tabindex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_LEFT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_LEFT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_LEFT");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_LEFT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 5, "Key-ARROW_LEFT (4 times): SelectedIndex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_UP");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_UP");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_UP");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_UP");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 6, "Key-ARROW_UP (4 times): SelectedIndex");
+
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("RBG3", "ARROW_DOWN");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup3.getSelectedIndex(), 0, "Key-ARROW_DOWN (5 times): SelectedIndex");
+
+		});
+
+		test("TestCleanUp", function(){
+			ok(!!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must exist");
+			ok(!!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must exist");
+			ok(!!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must exist");
+			ok(!!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must exist");
+			oRBGroup1.destroy();
+			ok(!sap.ui.getCore().byId("RBG1-0"), "RBG1-0 must no longer exist");
+			ok(!sap.ui.getCore().byId("RBG1-1"), "RBG1-1 must no longer exist");
+			ok(!sap.ui.getCore().byId("RBG1-2"), "RBG1-2 must no longer exist");
+			ok(!sap.ui.getCore().byId("RBG1-3"), "RBG1-3 must no longer exist");
+		});
+
+
+	</script>
+
+	<title>qunit Test for RadioButtonGroup</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.RadioButtonGroup.gif">
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.RadioButtonGroup</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<br>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<br>
+	<div id="uiArea4"></div>
+
+</body>
+</html>

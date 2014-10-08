@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<title>TextView -sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextView.gif">
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+	 	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+		<script type="text/javascript">
+
+			function changeText(oControlEvent){
+				oTextView15.setText(oTextField.getValue());
+			}
+			
+			function changeText1(oControlEvent){
+				oTextView18.setText(oTextField1.getValue());
+			}
+
+			var oTextView1 = new sap.ui.commons.TextView("textView1",{text: "Hello SAPUI5", tooltip: "My Tooltip", visible: true, textDirection: sap.ui.core.TextDirection.RTL});
+			var oTextView2 = new sap.ui.commons.TextView("textView2",{text: "Deactivated textview", tooltip: "Toooooooooltip", enabled: false});
+			var oTextView3 = new sap.ui.commons.TextView("textView3",{text: "Error state", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Negative});
+			var oTextView4 = new sap.ui.commons.TextView("textView4",{text: "Warning state", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Critical});
+			var oTextView5 = new sap.ui.commons.TextView("textView5",{text: "Success state", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Positive});
+			var oTextView6 = new sap.ui.commons.TextView("textView6",{text: "Bold text", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Positive, design: sap.ui.commons.TextViewDesign.Bold});
+			var oTextView7 = new sap.ui.commons.TextView("textView7",{text: "Heading One", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Default, design: sap.ui.commons.TextViewDesign.H1});
+			var oTextView8 = new sap.ui.commons.TextView("textView8",{text: "Heading two", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Positive, design: sap.ui.commons.TextViewDesign.H2});
+			var oTextView9 = new sap.ui.commons.TextView("textView9",{text: "Heading three", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Critical, design: sap.ui.commons.TextViewDesign.H3});
+			var oTextView10 = new sap.ui.commons.TextView("textView10",{text: "Heading four", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Negative, design: sap.ui.commons.TextViewDesign.H4});
+			var oTextView22 = new sap.ui.commons.TextView("textView22",{text: "Heading five", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Default, design: sap.ui.commons.TextViewDesign.H5});
+			var oTextView23 = new sap.ui.commons.TextView("textView23",{text: "Heading six", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Default, design: sap.ui.commons.TextViewDesign.H6});
+			var oTextView11 = new sap.ui.commons.TextView("textView11",{text: "Italic text", tooltip: "Toooooooooltip", semanticColor: sap.ui.commons.TextViewColor.Negative, design: sap.ui.commons.TextViewDesign.Italic});
+			var oTextView12 = new sap.ui.commons.TextView("textView12",{text: "small text", tooltip: "This is a TextView styled as small text", visible: true, design: sap.ui.commons.TextViewDesign.Small});
+			var oTextView13 = new sap.ui.commons.TextView("textView13",{text: "Monospace text", tooltip: "Toooooooooltip", enabled: false, semanticColor: sap.ui.commons.TextViewColor.Negative, design: sap.ui.commons.TextViewDesign.Monospace});
+			var oTextView14 = new sap.ui.commons.TextView("textView14",{text: "Underlined Text", tooltip: "This is a underlined TextView", visible: true, design: sap.ui.commons.TextViewDesign.Underline});
+			var oTextView15 = new sap.ui.commons.TextView("textView15",{text: "Text...", tooltip: "Change me!!!"});
+			var oTextField = new sap.ui.commons.TextField("textField1",{value: "New text"});
+			var oButton = new sap.ui.commons.Button("button",{text: "Change text"});
+			oButton.attachPress(changeText);
+			var oLabel1 = new sap.ui.commons.Label("label1",{text: "Label No1"});
+			var oLabel2 = new sap.ui.commons.Label("label2",{text: "Label No2"});
+			var oTextView16 = new sap.ui.commons.TextView("textView16",{text: null, tooltip: "Toooooooooltip", enabled: false, semanticColor: sap.ui.commons.TextViewColor.Negative, design: sap.ui.commons.TextViewDesign.Monospace});
+
+			var oTextView17 = new sap.ui.commons.TextView("textView17");
+			oTextView17.setText("This is a long text. This ist the first line of this long text.\nAnd here is the second line.\nHere you see the third line of this nice text.");
+			oTextView17.setTooltip("Tests for wrapping");
+			oTextView17.setWidth("100%");
+			oTextView17.setEnabled(true);
+			oTextView17.setWrapping(false);
+			oTextView17.setSemanticColor(sap.ui.commons.TextViewColor.Default);
+			oTextView17.setDesign(sap.ui.commons.TextViewDesign.Standard);
+			
+			
+			var oTextView18 = new sap.ui.commons.TextView("textView18",{text: "Text...", tooltip: "Change me!!!"});
+			oTextView18.setTooltip("Tests for wrapping");
+			oTextView18.setWidth("100%");
+			oTextView18.setEnabled(true);
+			oTextView18.setWrapping(false);
+			oTextView18.setSemanticColor(sap.ui.commons.TextViewColor.Default);
+			oTextView18.setDesign(sap.ui.commons.TextViewDesign.Standard);
+			var oTextField1 = new sap.ui.commons.TextField("textField2",{value: "New text"});
+			var oButton1 = new sap.ui.commons.Button("button1",{text: "Change text"});
+			oButton1.attachPress(changeText1);
+			
+			var oTextView20 = new sap.ui.commons.TextView("textView20",{text: "Ñagçyfox", tooltip: "Test for Alignment"});
+
+			var oTextView21 = new sap.ui.commons.TextView("textView21",{text: "Ñagçyfox - without tooltip"});
+
+			var oTextView24 = new sap.ui.commons.TextView("textView24",{text: "Inverted background"});
+
+			var oMatLay = new sap.ui.commons.layout.MatrixLayout({id : "matrix1", layoutFixed : true, width : '200px', columns : 2,	widths : ['100px', '100px'] });
+			var oTextView25 = new sap.ui.commons.TextView("textView25",{text: "This is a long text into cell 1", wrapping: false});
+			var oTextView26 = new sap.ui.commons.TextView("textView26",{text: "This is a long text into cell 2", wrapping: false});
+			oMatLay.createRow( oTextView25, oTextView26 );
+
+		    oTextView1.placeAt("target1");
+			oTextView2.placeAt("target2");
+			oTextView3.placeAt("target3");
+			oTextView4.placeAt("target4");
+			oTextView5.placeAt("target5");
+			oTextView6.placeAt("target6");
+			oTextView7.placeAt("target7");
+			oTextView8.placeAt("target8");
+			oTextView9.placeAt("target9");
+			oTextView10.placeAt("target10");
+			oTextView11.placeAt("target11");
+			oTextView12.placeAt("target12");
+			oTextView13.placeAt("target13");
+			oTextView14.placeAt("target14");
+			oTextView15.placeAt("target15");
+			oTextField.placeAt("target16");
+			oButton.placeAt("target17");
+			oLabel1.placeAt("target18");
+			oLabel2.placeAt("target19");
+			oTextView16.placeAt("target20");
+			oTextView17.placeAt("target21");
+			oTextView20.placeAt("target22");
+			oTextView21.placeAt("target23");
+			oTextView22.placeAt("target24");
+			oTextView23.placeAt("target25");
+			oTextView24.placeAt("target26");
+			oMatLay.placeAt("target27");
+			oTextView18.placeAt("target28");
+			oTextField1.placeAt("target29");
+			oButton1.placeAt("target30");
+			
+
+		</script>
+</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.TextView</h1>
+
+		<div id="target1"></div>
+		<div id="target2"></div>
+		<div id="target3"></div>
+		<div id="target4"></div>
+		<div id="target5"></div>
+		<div id="target6"></div>
+		<div id="target7"></div>
+		<div id="target8"></div>
+		<div id="target9"></div>
+		<div id="target10"></div>
+		<div id="target24"></div>
+		<div id="target25"></div>
+		<div id="target11"></div>
+		<div id="target12"></div>
+		<div id="target13"></div>
+		<div id="target14"></div>
+		<br>
+		<div id="target15"></div>
+		<span id="target16"></span>
+		<span id="target17"></span>
+		<div id="target18"></div>
+		<div id="target19"></div>
+		<div style="border: 1px solid;">
+		This box contains a TextView with text=null. This should not break.<br />
+		<div id="target20"></div></div>
+        <br> Test for Wrapping:
+		<div id="target21" style="width: 200px; border:2px dashed blue;"></div>
+		<br>
+		<div id="target28" style="width: 200px; border:2px dashed blue;"></div>
+		<span id="target29"></span>
+		<span id="target30"></span>
+		<br>
+		<br> Test for Infotip inside Matrix Layout:
+		<div id="target27"></div>
+		<br>
+		<div id="target22" style="width: 8em; background-color: red;"></div>
+		<div id="target23"></div>
+		<br>
+		<div id="target26" style="background-color: black;" class="sapUiInverted-CTX"></div>
+
+	</body>
+</html>

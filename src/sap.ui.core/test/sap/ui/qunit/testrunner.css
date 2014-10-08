@@ -1,0 +1,81 @@
+.testResult.pass > p{
+	padding: 0.5em 0 0.5em 1em;
+	color: #000000;
+	background-color: #a4ec81;
+	font-size: 1em;
+	line-height: 1em;
+	font-weight: bold;
+	cursor: pointer;
+	font-family: "Arial";
+	margin-bottom: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.testResult {
+	margin-bottom: 0px;
+}
+
+.testResult.pass {
+	display: none;
+}
+
+.testResult.fail > p{
+	background-color: #ed866f;
+	color: #000000;
+	padding: 0.5em 0 0.5em 1em;
+	font-size: 1em;
+	line-height: 1em;
+	font-weight: bold;
+	cursor: pointer;
+	font-family: "Arial";
+	margin-bottom: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+h3, li, p, h1, div {
+	font-family: "Arial";
+}
+
+.testResult .fail{
+	background-color: #ed866f;
+}
+
+.testResult .pass{
+	background-color: #a4ec81;
+}
+
+.testResult li{
+	border-bottom: 1px solid #fff;
+	padding: 0.4em 0.5em 0.4em 1.5em;
+	color: #000000;
+	font-size: small;
+}
+
+.testResult ol{
+	list-style-position: inside;
+	margin-top: -5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding: inherit;
+}
+
+li.pass > br:empty {
+	display: none;
+}
+
+li.pass.test > ol {
+	display: none;
+}
+
+li.test > p {
+	cursor: pointer;
+}
+li.check {
+	border: 0px;
+}
+
+.bl-source {
+	font-size: 12px;
+}

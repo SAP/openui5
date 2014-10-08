@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.HorizontalLayout">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+
+		<title>HorizontalLayout - SAPUI5 Demo Kit</title>
+
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<style>
+#myTextField {
+	margin: 0 4px;
+}
+</style>
+
+<script id='SimpleLayout' >
+// create a simple horizontal layout
+var oLabel = new sap.ui.commons.Label({text:"Name:", labelFor: oText});
+var oText = new sap.ui.commons.TextField("myTextField", {value:"Edward"});
+var oButton = new sap.ui.commons.Button({text:"Submit", tooltip:"Submit value"});
+
+var oLayout = new sap.ui.layout.HorizontalLayout("Layout1", {
+	content: [oLabel, oText, oButton]
+});
+
+// attach it to an element in the page
+oLayout.placeAt("sample1");
+</script>
+
+<script id='InVerticalLayout' >
+// create a horizontal layout inside a VerticalLayout
+var oLayout2 = new sap.ui.layout.VerticalLayout("Layout2", {
+	content:[
+		new sap.ui.commons.TextField({value:"test", width: "300px"}),
+		new sap.ui.commons.TextField({value:"test", width: "300px"}),
+		new sap.ui.layout.HorizontalLayout("Layout3", {
+			content:[
+					new sap.ui.commons.TextField({value:"test", width: "200px"}),
+					new sap.ui.commons.Button({text: "Test", width:"100px"})
+					]
+
+		})
+	]
+});
+
+// attach it to an element in the page
+oLayout2.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Green" icon="images/ctrls/horizontallayout-icon.png">HorizontalLayout</h1>
+
+		<h2>Introduction and Overview</h2>
+		<p>The HorizontalLayout offers a simple way to place several controls next to each other.
+		Optionally the HorizontalLayout forces all child controls to be in one line, without wrapping (this is the default behavior).
+		One specific use-case is to use the HorizontalLayout inside a VerticalLayout to put several controls in one row. <br/>
+		To keep the layout slim and light-weight it does not offer sophisticated layout options.
+		</p>
+
+		<p>
+		See also: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout.html">sap.ui.commons.layout</a>
+		</p>
+
+
+		<h2>Examples</h2>
+		<h3>HorizontalLayout</h3>
+		<p>
+		This example shows a simple HorizontalLayout.<br/>
+		Spacing between the items is currently not adjustable in the HorizontalLayout and has in this case been added with the following CSS:
+		<pre>
+#myTextField { margin: 0 4px; }
+		</pre>
+		</p>
+		<div code-sample="sample1" script="SimpleLayout"></div>
+		<br/>
+
+
+		<h3>HorizontalLayout inside a VerticalLayout</h3>
+		<p>
+		This example shows a HorizontalLayout inside a VerticalLayout.
+		</p>
+		<div code-sample="sample2" script="InVerticalLayout"></div>
+		<br/>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.layout.HorizontalLayout.html" >API documentation</a>
+		</p>
+	</body>
+</html>

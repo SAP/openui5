@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Component - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" 
+	data-sap-ui-libs="sap.ui.ux3, sap.ui.commons, sap.ui.table" 
+	data-sap-ui-xx-bindingSyntax="complex">
+
+</script>
+
+<script type="text/javascript">
+	sap.ui.localResources("samples");
+
+	// Sample Data
+	
+// the purpose of this json model is to roughly emulate the data that could be delivered from some backend,
+// dynamically specifying the components that should be displayed.
+	
+	var aData = 
+[{
+	group : "products",
+	text: "Products",
+	items : [ {
+		key : "products_overview",
+		text: "Products Overview", // assuming the text will be delivered by the backend, along with the correct translation
+		component : "samples.components.products.overview"
+	}, {
+		key : "products_details",
+		text: "Products Details",
+		component : "samples.components.products.details"
+	}, {
+		key : "products_supplier",
+		text: "Supplier Details",
+		component : "samples.components.products.supplier"
+	} ]
+}, {
+	group : "orders",
+	text: "Orders",
+	items : [ {
+		key : "orders",
+		text: "Orders",
+		component : "samples.components.orders"
+	} ]
+}];
+	
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({
+		modelData : aData
+	});
+
+	var oComp = sap.ui.component({
+		name : "samples.components.shell",
+		id : "CompShell",
+		settings : {
+			appTitle : "Component Sample Application",
+			model: oModel
+		}
+	});
+	
+	//oComp.setModel(oModel);
+
+	// ToDo: check if ref per id works as object ref
+	var oCompCont = new sap.ui.core.ComponentContainer("ContShell", {
+		component : oComp
+	});
+	oCompCont.placeAt("target");
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>
+		Test Page for
+		<code>sap.ui.core.Component</code>
+	</h1>
+	<br>
+	<h2>Component Container</h2>
+	<div id="target"></div>
+
+</body>
+</html>

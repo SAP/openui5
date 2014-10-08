@@ -1,0 +1,16 @@
+pre {
+	background-color: white;
+	border: 1px solid black; 
+	border-radius: 5px; 
+	margin: 5px;
+	padding: 5px 10px;	
+}
+
+div#content,
+div#contentOther,
+div[data-type] {
+	border: 1px dashed black; 
+	border-radius: 5px; 
+	margin: 5px;
+	padding: 5px 10px;	
+}

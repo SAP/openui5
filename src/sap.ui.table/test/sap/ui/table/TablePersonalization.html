@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>sap.ui.table.Table Personalization Test</title>
+	<script src="../../../../resources/sap-ui-core.js"
+		type="text/javascript"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.commons,sap.ui.table"
+		data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<style type="text/css">
+
+	#table-content {
+		margin-top: 10px;
+	}
+
+	#header {
+		margin-left: 6px;
+	}
+
+	#perso-data {
+		margin: 10px;
+	}
+
+	.dataMargin {
+		margin-left: 10px;
+	}
+
+	</style>
+
+	<script type="text/javascript">
+
+	jQuery(function() {
+
+		jQuery.sap.require("sap.ui.table.TablePersoController");
+
+		var oData = {
+			items: [
+				{ name: "Michelle", color: "orange", number: 3.14 },
+				{ name: "Joseph", color: "blue", number: 1.618 },
+				{ name: "David", color: "green", number: 0 },
+			],
+			cols: ["Name", "Color", "Number"]
+		};
+
+		//make sure table id suffix is set (this is necessary for personalization)
+		var oTable = new sap.ui.table.Table({
+			showColumnVisibilityMenu: true,
+			toolbar: new sap.ui.commons.Toolbar({
+				items: [
+					new sap.ui.commons.Button({
+						text: "Clear and Refresh",
+						icon: "sap-icon://refresh",
+						press: function(oEvent) {
+							oPersoService.delPersData();
+							oTPC.refresh().done(function() {
+								sap.ui.commons.MessageBox.alert("Done!", "INFORMATION", "Refresh");
+							});
+						}
+					}),
+					new sap.ui.commons.Button({
+						text: "Save",
+						icon: "sap-icon://save",
+						press: function(oEvent) {
+							oTPC.savePersonalizations().done(function() {
+								sap.ui.commons.MessageBox.alert("Done!", "INFORMATION", "Save");
+							});
+						}
+					})
+				],
+				rightItems: [
+					new sap.ui.commons.ToggleButton({
+						text: "AutoSave",
+						icon: "sap-icon://save",
+						pressed: true,
+						press: function(oEvent) {
+							oTPC.setAutoSave(this.getPressed());
+						}
+					})
+				]
+			}),
+			columns: jQuery.map(oData.cols, function(sColumn) {
+				return new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({ text: sColumn }),
+					visible: sColumn === "Color" ? false : true, // Color column should be invisible by default
+					template: new sap.ui.commons.Label({
+						text: {
+							path: sColumn.toLowerCase()
+						}
+					}),
+					customData: [new sap.ui.core.CustomData({ // PersoService: customDataKey
+						key: "persoKey",
+						value: sColumn
+					})],
+					sortProperty: sColumn.toLowerCase(),
+					filterProperty: sColumn.toLowerCase()
+				})
+			}),
+			customData: [new sap.ui.core.CustomData({ // PersoService: customDataKey
+				key: "persoKey",
+				value: "PersoTable"
+			})]
+		});
+
+		oTable.setModel(new sap.ui.model.json.JSONModel(oData));
+		oTable.bindRows("/items");
+
+		var printPersoData = function(sJSON) {
+			jQuery("#perso-data").html(sJSON
+				.replace(/\n/g, "<br>")
+				.replace(/\s/g, "&nbsp;")
+				.replace(/(true)/g, "<span style=\"color:green\">$1</span>")
+				.replace(/(false)/g, "<span style=\"color:red\">$1</span>"));
+		};
+
+		var oPersoService = {
+
+			getPersData: function() {
+				var oDeferred = jQuery.Deferred();
+				var sJSON = window.localStorage.getItem("myTablePersonalization") || "{}";
+				printPersoData(sJSON);
+				var oBundle = JSON.parse(sJSON);
+				oDeferred.resolve(oBundle);
+				return oDeferred.promise();
+			},
+
+			setPersData: function(oBundle) {
+				var oDeferred = jQuery.Deferred();
+				var sJSON = JSON.stringify(oBundle, null, 4);
+				window.localStorage.setItem("myTablePersonalization", sJSON);
+				printPersoData(sJSON);
+				oDeferred.resolve();
+				return oDeferred.promise();
+			},
+
+			delPersData: function() {
+				var oDeferred = jQuery.Deferred();
+				window.localStorage.removeItem("myTablePersonalization");
+				printPersoData("");
+				oDeferred.resolve();
+				return oDeferred.promise();
+			}
+
+		};
+
+		var oTPC = new sap.ui.table.TablePersoController({
+			table: oTable,
+			persoService: oPersoService
+		});
+
+		oTable.placeAt("table-content");
+
+	});
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="header">Test Page for <code>sap.ui.table.TablePersoController</code></h1>
+	<div id="table-content"></div>
+	<p class="dataMargin">Local Storage Data</p>
+	<div id="perso-data"></div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>VerticalProgressIndicator - sap.ui.suite</title>
+    
+    <script id="sap-ui-bootstrap" 
+      data-sap-ui-theme="sap_ux"
+      data-sap-ui-trace="true"
+      type="text/javascript"
+      data-sap-ui-libs="sap.ui.commons,sap.ui.suite"
+      src="../../../../resources/sap-ui-core.js"
+      >
+    </script>
+  
+    <script src="../../../../resources/sap-ui-debug.js"></script>
+  
+    <script type="text/javascript">
+
+	  //create a label	
+        var oLabel = new sap.ui.commons.Label("l1"); 
+        oLabel.setText("Enter Percentage:"); 
+        oLabel.placeAt("target1");
+
+      //create a simple Input field; predefined Value = 30
+        var oInput1 = new sap.ui.commons.TextField('input1');
+        oInput1.setValue("30");
+        oInput1.setTooltip("Enter Percentage (0-100)");
+        oInput1.attachChange(function(){oVertProgInd.setPercentage(parseInt(oInput1.getValue()));});
+  	    oInput1.placeAt("target2");
+
+  	  //create a Vertical Progress Indicator; predefined Value = 30
+        var oVertProgInd = new sap.ui.suite.VerticalProgressIndicator({
+            percentage : 30,
+            press : function() {alert('Klick!');}
+            });
+
+      //create a simple matrix layout with given sizes
+        var oLayout = new sap.ui.commons.layout.MatrixLayout({
+    	   id : "matrix2",
+ 	       layoutFixed : true,
+ 	       columns : 2,
+ 	       width : "25%",
+ 	       widths : [ "15%", "85%" ]
+ 	    });	  
+
+        oLayout.createRow({height: "100px"}, oVertProgInd );
+        oLayout.placeAt("target3");	   
+  	  
+  	  
+    </script>
+  
+  </head>
+  <body class="sapUiBody" style="padding: 0; margin: 0;">
+    <div style="margin: 0; padding: 0 10;">
+      <div id="header">
+        <h1>Test Page for <code>sap.ui.suite.VerticalProgressIndicator</code></h1>
+      </div>
+      <span style="padding: 5px" id="target1"></span>
+	  <span style="padding: 5px" id="target2"></span>
+      <div style="margin-left: 104px;">
+	     <span id="target3"></span>
+	  </div>
+    </div>
+  </body>
+</html>

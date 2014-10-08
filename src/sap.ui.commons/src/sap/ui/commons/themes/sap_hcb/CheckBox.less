@@ -1,0 +1,22 @@
+/* =============================================== */
+/* CSS for control sap.ui.commons/CheckBox.control */
+/* SAP-HCB Theme                                   */
+/* =============================================== */
+
+.sapUiCb {
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiCb > label {
+	vertical-align: top;
+}
+
+.sapUiInverted-CTX .sapUiCb {
+	color: @sapUiBaseText;
+}
+
+/* IE10/IE11 bug: it does not show the outline when clicking to focus */
+html[data-sap-ui-browser=ie10] .sapUiCb:focus,
+html[data-sap-ui-browser=ie11] .sapUiCb:focus {
+	outline: 3px solid @sapUiText;
+}

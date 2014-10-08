@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+
+<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+
+<!-- QUnit libraries -->
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+
+	var setup = function(sListItemId, oMetadata) {
+
+		var oList = new sap.m.List({
+			items : [ new sap.m.ActionListItem(sListItemId, oMetadata) ]
+		});
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		return oList;
+	}
+
+	var testSelection = function(data) {
+
+		var sListMode = data.mode;
+		var bIncludeItemInSelection = data.includeItemInSelection;
+		var sKey = data.key;
+
+		var testTitle = "Selection on key=" + sKey + ", includeItemInSelection=" + bIncludeItemInSelection + ", mode=" + sListMode;
+
+		test(testTitle, function() {
+			var oSpy = this.spy();
+			var oList = new sap.m.List("list1", {
+				items : [ new sap.m.ActionListItem("item1", {
+					text : "Action1",
+					press : oSpy
+				}) ],
+				mode : sListMode,
+				includeItemInSelection : bIncludeItemInSelection
+			});
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeyboardEvent("item1", jQuery.sap.KeyCodes.SPACE);
+
+			this.clock.tick(50);
+
+			strictEqual(oSpy.callCount, 1, "Event 'press' should be fired");
+			ok(!oList.getItems()[0].getSelected(), "never selected");
+			oList.destroy();// Clean up
+		});
+	}
+</script>
+
+<script>
+	module("Events");
+
+	test("tap", function(assert) {
+		
+		var oSpy = this.spy();
+
+		var oList = setup("item1", {
+			text : "Action1",
+			press : oSpy
+		});
+
+		$("#item1").trigger('tap');
+
+		this.clock.tick(50);
+
+		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		oList.destroy();// Clean up
+	});
+
+	test("Press event on [ENTER]", function() {
+
+		var oSpy = this.spy();
+		
+		var oList = setup("item1", {
+			text : "Action1",
+			press : oSpy
+		});
+
+		qutils.triggerKeyboardEvent("item1", jQuery.sap.KeyCodes.ENTER);
+
+		this.clock.tick(50);
+
+		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		oList.destroy();// Clean up
+	});
+
+	test("Press event on [SPACE]", function() {
+		
+		var oSpy = this.spy();
+		
+		var oList = setup("item1", {
+			text : "Action1",
+			press : oSpy
+		});
+
+		qutils.triggerKeyboardEvent("item1", jQuery.sap.KeyCodes.SPACE);
+
+		this.clock.tick(50);
+
+		strictEqual(oSpy.callCount, 1, "Event 'press' should have been fired");
+		oList.destroy();// Clean up
+	});
+
+	/* should never be selected */
+	testSelection({
+		mode : "SingleSelectMaster",
+		includeItemInSelection : false,
+		key : jQuery.sap.KeyCodes.ENTER
+	});
+	testSelection({
+		mode : "SingleSelectMaster",
+		includeItemInSelection : false,
+		key : jQuery.sap.KeyCodes.SPACE
+	});
+	testSelection({
+		mode : "MultiSelect",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.ENTER
+	});
+	testSelection({
+		mode : "MultiSelect",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.SPACE
+	});
+	testSelection({
+		mode : "SingleSelect",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.ENTER
+	});
+	testSelection({
+		mode : "SingleSelect",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.SPACE
+	});
+	testSelection({
+		mode : "SingleSelectLeft",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.ENTER
+	});
+	testSelection({
+		mode : "SingleSelectLeft",
+		includeItemInSelection : true,
+		key : jQuery.sap.KeyCodes.SPACE
+	});
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<div id="content"></div>
+</body>
+</html>

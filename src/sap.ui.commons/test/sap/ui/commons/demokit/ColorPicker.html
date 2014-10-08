@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.ColorPicker">
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8"/>
+	<meta name="keywords" content="Control ColorPicker" />
+	<title>ColorPicker - SAPUI5 Demo Kit</title>
+	<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+
+	<script id="sap-ui-bootstrap"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+	</script>
+
+	<script src="../../../../../js/utils.js"></script>
+
+
+	<script id='ColorPickerScript_1'>
+
+		//Create a ColorPicker Control without parameters
+		var oColorPicker1 = new sap.ui.commons.ColorPicker();
+
+		//Place the ColorPicker on the page
+		oColorPicker1.placeAt("sample1");
+
+		//Attach eventhandler for change event
+		oColorPicker1.attachChange(handleColorPickerChange);
+
+		//Create a HTML-Control containing the Change ColorBox
+		//and place it on the page
+		//This HTML-control demonstrates the use of the values passed
+		//from the colorpicker to the application
+		var oHtmlChange = new sap.ui.core.HTML({
+				content : "<BR><DIV id='NewCol' style='width: 176px; height: 20px; border: 1px solid black; background-color: #FFFFFF'</DIV>"
+			});
+		oHtmlChange.placeAt("sample1");
+
+		//Eventhandler for Change Event
+		function handleColorPickerChange(oEvent) {
+			var colors = oEvent.getParameters();
+			//Change the background color of the HTML control according the chosen color
+			//The parameter 'colors' delivers the folowing values:
+			//colors.r = value of RED (0-255)
+			//colors.g = value of GREEN (0-255)
+			//colors.b = value of BLUE (0-255)
+			//colors.h = value of HUE (0-360)
+			//colors.s = value of SATURATION (0-100)
+			//colors.v = value of VALUE (0-100)
+			//colors.hex = hex-value
+			//colors.old = hex-value of the old color value
+			jQuery.sap.byId('NewCol').css('background-color',colors.hex);
+		};
+	</script>
+
+	<script id='ColorPickerScript_2'>
+
+		//Create a ColorPicker Control passing a parameter
+		//Valid values for the parameter are:
+		//	CSS color name: ('aquamarine', 'lightpink'...)
+		//	RGB-value: rgb(255,255,255) or rgb255,255,255
+		//	HSV-value: hsv(360,100,100) or hsv360,100,100
+		//	HEX-value: #aabbcc, aabbcc, #abc, abc
+		var oColorPicker2 = new sap.ui.commons.ColorPicker({colorString : "lime"});
+
+		//Place the ColorPicker on the page
+		oColorPicker2.placeAt("sample2");
+
+		//Attach eventhandler for liveChange event
+		oColorPicker2.attachLiveChange(handleColorPickerLiveChange);
+
+		//Create a HTML-Control containing the LiveChange ColorBox
+		//and place it on the page
+		//This HTML-control demonstrates the use of the values passed
+		//from the colorpicker to the application
+		var oHtmlLiveChange = new sap.ui.core.HTML({
+			content : "<BR><DIV id='NewColLive' style='margin-top: 4px; width: 176px; height: 20px; border: 1px solid black; background-color: #FFFFFF'</DIV>"
+		});
+		oHtmlLiveChange.placeAt("sample2");
+
+		//Eventhandler for LiveChange Event
+		function handleColorPickerLiveChange(oEvent) {
+			var colors = oEvent.getParameters();
+			//Change the background color of the HTML control according the chosen color
+			//The parameter 'colors' delivers the folowing values:
+			//colors.r = value of RED (0-255)
+			//colors.g = value of GREEN (0-255)
+			//colors.b = value of BLUE (0-255)
+			//colors.h = value of HUE (0-360)
+			//colors.s = value of SATURATION (0-100)
+			//colors.v = value of VALUE (0-100)
+			//colors.hex = hex-value
+			//colors.old = hex-value of the old color value
+			jQuery.sap.byId('NewColLive').css('background-color',colors.hex);
+		};
+	</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Blue" icon="images/ctrls/colorpicker-icon.png">ColorPicker</h1>
+
+	<h2>Introduction</h2>
+
+	<p>
+		The ColorPicker control offers the possibility to choose a color and pass its values to the application. It is a composite control and consists of the following parts:
+	<br>
+		On the left side, there is a colorpicker box showing the value and saturation gradients of the selected color. The value and saturation values can be changed using the mouse.
+	<br>
+		On the right side, there are <a class="sapUiDemokitSrcLink" href="../ValueHolders/TextField.html">input fields</a> for RGB, HSV and HEX values.
+	<br>
+		At the bottom, there is a <a class="sapUiDemokitSrcLink" href="../ValueHolders/Slider.html">slider</a> for the hue value.
+	<br>
+		By passing a color value to the parameter <code>colorString</code>, the ColorPicker control starts using this color. Leaving this parameter blank forces the ColorPicker to start
+		 with initial color 'white'. The selected color is passed to the application via the events <code>change</code> and <code>liveChange</code>.
+	</p>
+
+	<h2>Examples</h2>
+
+	<h3>ColorPicker with default values</h3>
+	<p>
+		In this example, the ColorPicker control is created with default values (= color white). The event <code>change</code> is used for evaluating the user choice.
+	<br>
+		As you can see, the background color of the box is only changed after releasing the mouse in the colorpicker box or the slider.
+	</p>
+	<div code-sample="sample1" script="ColorPickerScript_1"></div>
+
+	<h3>ColorPicker with given values</h3>
+	<p>
+		In this example, the ColorPicker control is created with a given value by providing the parameter <code>colorString</code>.
+		The color values passed to this parameter can be a color name like 'darkred', a RGB-value like rgb(100,100,100), a HSV-value like hsv10,10,10 or a HEX value in
+		short or long format (#af1 or #aaff11).
+	<br>
+		The event <code>liveChange</code> is used for evaluating the user choice. The background color of the box is changed during the movement of the mouse in the colorpicker box or the slider.
+	</p>
+	<div code-sample="sample2" script="ColorPickerScript_2"></div>
+
+	<h2>Keyboard Support</h2>
+	<p>
+	It is possible to navigate between the input fields and the slider using <code>Tab</code>.
+	When the slider is focused, the slider value can be changed using <code>RightArrow</code>, <code>LeftArrow</code>, <code>DownArrow</code>, <code>UpArrow</code>,
+	<code>Pos1</code> and <code>End</code>.
+	</p>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ColorPicker.html">API documentation</a>
+	</p>
+</body>
+</html>

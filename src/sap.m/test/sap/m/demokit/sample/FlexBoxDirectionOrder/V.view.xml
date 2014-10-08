@@ -1,0 +1,100 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="panelBoxContainer sapUiFioriObjectPage"
+		width="100%" >
+		<l:content>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Reverse, horizontal" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					direction="RowReverse"
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Top to bottom, vertical" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					direction="Column"
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Bottom to top, reverse vertical" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					direction="ColumnReverse"
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Arbitrary flex item order" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData order="2" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+							<layoutData>
+								<FlexItemData order="3" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+							<layoutData>
+								<FlexItemData order="1" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

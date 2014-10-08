@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>sap.m.List with Growing Feature Test with JSON Model</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	
+</script>
+
+<script type="text/javascript">
+
+
+	// ================================================================================
+
+
+	var app = new sap.m.App("myApp");
+	//alert((app.isLandscape() ? "Landscape" : "Portrait"));
+
+	var listOverview = new sap.m.Page("listOverview", {
+		title : "Growing List Testpage (JSON)",
+		subHeader: new sap.m.Bar({
+			contentLeft: [],
+			contentMiddle:[ new sap.m.Button({text:"Data 1", press: switchData1}),
+							new sap.m.Button({text:"Data 2", press: switchData2}) ],
+			contentRight: []
+		}),
+		footer : new sap.m.Bar({
+			contentMiddle : []
+		})
+	});
+
+
+	var nav = new Array();
+	for ( var i = 0; i < 1000; i++) {
+		nav[i] = {};
+		nav[i].title = "Data 1 No: " + i;
+		nav[i].description = "Description Text";
+		nav[i].type = sap.m.ListType.Detail;
+		nav[i].press = "Content pressed";
+	}
+
+	var dataOverview1 = {
+		navigation : nav
+	}
+
+	var nav2 = new Array();
+	for ( var i = 0; i < 18; i++) {
+		nav2[i] = {};
+		nav2[i].title = "Data 2 No: " + i;
+		nav2[i].description = "Description Text";
+		nav2[i].type = sap.m.ListType.Detail;
+		nav2[i].press = "Content pressed";
+	}
+
+	var dataOverview2 = {
+		navigation : nav2
+	}
+
+	var oItemTemplate = new sap.m.StandardListItem({
+		title : "{test>title}",
+		description : "{test>description}",
+		icon : "images/travel_expend.png",
+		activeIcon : "images/travel_expend_grey.png",
+		iconInset : false,
+		type : "{test>type}",
+		unread : true,
+		counter : 99,
+		selected : false
+	});
+
+
+	var oList = new sap.m.List({
+		growing : true,
+		headerText : "Growing List",
+		inset : false,
+		footerText : "List Footer",
+		growingThreshold : 5,
+		'delete' : deleteItem,
+		mode : sap.m.ListMode.Delete,
+		growingTriggerText : "",
+		showNoData: true,
+		scrollToLoad: false
+	});
+
+
+	function deleteItem(oEvent) {
+		var model = oEvent.mParameters.listItem.getModel("test");
+		if (model) {
+			var deleteId = model.getProperty("", oEvent.mParameters.listItem.getBindingContext("test"));
+			var data = model.getData().navigation;
+			jQuery.each(data,function(iIndex, oEntry){
+				if (oEntry == deleteId) {
+					data.splice(iIndex, 1);
+					return false;
+				}		
+		  });  
+		  model.updateBindings();
+		}
+	}
+
+
+	var oModel = new sap.ui.model.json.JSONModel();
+
+
+	function bindListData1(data, itemTemplate, list) {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(data);
+		// set the model to the list
+		list.setModel(oModel, "test");
+		//sap.ui.getCore().setModel(oModel);
+
+		// create a CustomData template, set its key to "answer" and bind its value to the answer data
+		var oDataTemplate = new sap.ui.core.CustomData({
+			key : "xyz"	
+		});
+		oDataTemplate.bindProperty("value", "press");
+
+		// add the CustomData template to the item template
+		itemTemplate.addCustomData(oDataTemplate);
+
+		// bind Aggregation
+		list.bindAggregation("items", "test>/navigation", itemTemplate);
+	}
+	
+
+	function bindListData2(data, itemTemplate, list) {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		
+		
+		// set the model to the list
+		list.setModel(oModel, "test");
+		//sap.ui.getCore().setModel(oModel);
+
+		// create a CustomData template, set its key to "answer" and bind its value to the answer data
+		var oDataTemplate = new sap.ui.core.CustomData({
+			key : "xyz"	
+		});
+		oDataTemplate.bindProperty("value", "press");
+
+		// add the CustomData template to the item template
+		itemTemplate.addCustomData(oDataTemplate);
+
+		// bind Aggregation
+		list.bindAggregation("items", "test>/navigation", itemTemplate);
+	}
+	//bindListData2(dataOverview2, oItemTemplate, oList);
+
+
+	window.setTimeout(function(){
+		bindListData1(dataOverview1, oItemTemplate, oList);
+		oModel.setData(dataOverview1);
+	}, 3000);
+
+
+	function switchData1() {
+		bindListData1(dataOverview1, oItemTemplate, oList);
+		oModel.setData(dataOverview1);
+	}
+
+
+	function switchData2() {
+		bindListData2(dataOverview2, oItemTemplate, oList);
+		oModel.setData(dataOverview2);
+	}
+
+
+	/*
+	window.setTimeout(function() { 
+		bindListData(dataAgain, oItemTemplate, list);
+		oModel.setData(dataAgain);
+		alert("binding changed")
+	}, 5000);
+	*/
+	
+	listOverview.addContent(oList);
+	app.addPage(listOverview)
+
+	app.placeAt("body");
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

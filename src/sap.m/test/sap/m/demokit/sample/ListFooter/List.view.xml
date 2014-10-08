@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="sap.m.sample.ListFooter.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Products"
+		footerText="This is the footer text"
+		binding="{/ProductCollection/0}" >
+		<StandardListItem
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
+	</List>
+</mvc:View>

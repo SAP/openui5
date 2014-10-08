@@ -1,0 +1,27 @@
+<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:style type="text/css">
+		tr {border:1px solid black;}
+		.tit {color:
+		#007DC0; padding:5px; border-right:1px solid black; width:80px;}
+		.pic
+		{padding:5px; border-right:1px solid black; width:90px;}
+		.pic img {
+		padding:10px;
+		width:192px;
+		height:120px;
+		}
+	</html:style>
+	<l:MatrixLayout width="224px">
+		<l:MatrixLayoutRow>
+			<l:MatrixLayoutCell hAlign="Center" class="pic">
+				<Image src="{imageSrc}"></Image>
+			</l:MatrixLayoutCell>
+		</l:MatrixLayoutRow>
+		<l:MatrixLayoutRow>
+			<l:MatrixLayoutCell hAlign="Center" class="tit">
+				<TextView text="{title}"></TextView>
+			</l:MatrixLayoutCell>
+		</l:MatrixLayoutRow>
+	</l:MatrixLayout>
+</core:View>

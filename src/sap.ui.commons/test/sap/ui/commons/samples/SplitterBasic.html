@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Splitter - sap.ui.commons Basic Splitter</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-trace="true"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.commons"
+				data-sap-ui-areas="uiArea1"
+				data-sap-ui-evt-oninit="createControls()"
+				>
+		</script>
+		<script>
+		var oDialog1;
+    function doSomething1(oControlEvent){
+    	sap.ui.getCore().getControl("myResultTv").setText("waiting for update...");
+	    oDialog1.open();
+    }
+    function closeDialog(oControlEvent){
+	    sap.ui.getCore().getControl("myResultTv").setText(oControlEvent.getSource().getText());
+	    oControlEvent.getSource().getParent().close();
+    }
+
+			function createControls() {
+
+
+				var oSplitterIframe = new sap.ui.commons.Splitter("myIframeSplitter");
+
+				oSplitterIframe.setSplitterOrientation(sap.ui.commons.Orientation.Vertical);
+				oSplitterIframe.setSplitterPosition("50%");
+				oSplitterIframe.setMinSizeFirstPane("20%");
+	      		oSplitterIframe.setMinSizeSecondPane("30%");
+	      		oSplitterIframe.setWidth("100%");
+	      		oSplitterIframe.setHeight("200px");
+
+	      var oLabel1 = new sap.ui.commons.Label({text: "First Pane"});
+	      oSplitterIframe.addFirstPaneContent(oLabel1);
+
+	      var htmlContent = new sap.ui.core.HTML({preferDOM:true,content:"<iframe id='resultFrame' src='test.html'>"});
+	      oSplitterIframe.addSecondPaneContent(htmlContent);
+
+	      oSplitterIframe.placeAt("uiArea4");
+
+
+
+				/****** splitter in BorderLayout ****/
+				var oSplitter3 = new sap.ui.commons.Splitter("mySplitter3");
+				var oSplitter03 = new sap.ui.commons.Splitter("mySplitter03");
+
+				oSplitter3.setSplitterPosition("15%");
+				oSplitter3.setMinSizeFirstPane("10%");
+				oSplitter3.setMinSizeSecondPane("20%");
+				oSplitter03.setMinSizeFirstPane("20%");
+				oSplitter03.setMinSizeSecondPane("20%");
+				oSplitter03.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter03.setSplitterPosition("40%");
+
+
+											var olBtn31 = new sap.ui.commons.Button({text: "Left"});
+											oSplitter3.addFirstPaneContent(olBtn31);
+											var olBtn23 = new sap.ui.commons.Button({text: "Left"});
+											oSplitter3.addFirstPaneContent(olBtn23);
+											var olBtn33 = new sap.ui.commons.Button({text: "Left"});
+											oSplitter3.addFirstPaneContent(olBtn33);
+
+											var orBtn43 = new sap.ui.commons.Button({text: "Bottom"});
+											oSplitter03.addSecondPaneContent(orBtn43);
+											var orBtn53 = new sap.ui.commons.Button({text: "Bottom"});
+											oSplitter03.addSecondPaneContent(orBtn53);
+											var orBtn63 = new sap.ui.commons.Button({text: "Bottom"});
+											oSplitter03.addSecondPaneContent(orBtn63);
+
+											var orBtn73 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter03.addFirstPaneContent(orBtn73);
+											var orBtn83 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter03.addFirstPaneContent(orBtn83);
+											var orBtn93 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter03.addFirstPaneContent(orBtn93);
+											oSplitter3.addSecondPaneContent(oSplitter03);
+
+
+				var oMyLayout = new sap.ui.commons.layout.BorderLayout("myLayout1", {
+					text : "Je suis un Layout",
+					tooltip : "Je suis un Layout splitted"
+				});
+
+				oMyLayout.setRtl(false);	
+
+				//oMyLayout.addSouthControl(oMyImg);
+				oMyLayout.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center,
+						oSplitter3);
+				oMyLayout.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.center, {
+					size : "1000px"
+				});
+				oMyLayout.placeAt("uiArea0");
+
+
+				var oPanel = new sap.ui.commons.Panel("myPanel");
+				oPanel.setText("Panel with width 1500px and height 800px");
+				oPanel.setWidth("1500px");
+				oPanel.setHeight("800px");
+/****** splitter in standalone mode ****/
+				var oSplitter = new sap.ui.commons.Splitter("mySplitter");	
+					oSplitter.setHeight("400px");
+					oSplitter.setWidth("600px");
+				var oSplitter0 = new sap.ui.commons.Splitter("mySplitter0");
+
+				oSplitter.setSplitterPosition("30%");
+				oSplitter.setMinSizeFirstPane("10%");
+				oSplitter.setMinSizeSecondPane("20%");
+				oSplitter0.setMinSizeFirstPane("20%");
+				oSplitter0.setMinSizeSecondPane("20%");
+				oSplitter0.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter0.setSplitterPosition("40%");
+
+
+											var olBtn1 = new sap.ui.commons.Button({
+												text: "Hide vertical Splitter",
+												press : function(oEvent){
+													oSplitter.setSplitterBarVisible(false);
+												}});
+											oSplitter.addFirstPaneContent(olBtn1);	
+											var olBtn2 = new sap.ui.commons.Button({
+												text: "Show vertical Splitter",
+												press : function(oEvent){
+													oSplitter.setSplitterBarVisible(true);
+												}});
+											oSplitter.addFirstPaneContent(olBtn2);
+											var olBtn3 = new sap.ui.commons.Button({text: "Left"});
+											oSplitter.addFirstPaneContent(olBtn3);
+
+											var orBtn4 = new sap.ui.commons.Button({
+												text: "Hide horizontal Splitter",
+												press : function(oEvent){
+													oSplitter0.setSplitterBarVisible(false);
+												}});
+											oSplitter0.addSecondPaneContent(orBtn4);	
+											var orBtn5 = new sap.ui.commons.Button({
+												text: "Show horizontal Splitter",
+												press : function(oEvent){
+													oSplitter0.setSplitterBarVisible(true);
+												}});
+											oSplitter0.addSecondPaneContent(orBtn5);		
+											var orBtn6 = new sap.ui.commons.Button({text: "Bottom"});
+											oSplitter0.addSecondPaneContent(orBtn6);	
+
+											var orBtn7 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter0.addFirstPaneContent(orBtn7);	
+											var orBtn8 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter0.addFirstPaneContent(orBtn8);		
+											var orBtn9 = new sap.ui.commons.Button({text: "Top"});
+											oSplitter0.addFirstPaneContent(orBtn9);	
+											oSplitter.addSecondPaneContent(oSplitter0);
+
+
+											oSplitter.placeAt("uiArea");
+/****** splitter inside a Panel ****/
+											var oSplitter1 = new sap.ui.commons.Splitter("mySplitter1");
+											var oSplitter01 = new sap.ui.commons.Splitter("mySplitter01");
+
+											oSplitter1.setSplitterPosition("15%");
+											oSplitter1.setMinSizeFirstPane("10%");
+											oSplitter1.setMinSizeSecondPane("20%");
+											oSplitter01.setMinSizeFirstPane("20%");
+											oSplitter01.setMinSizeSecondPane("20%");
+											oSplitter01.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+											oSplitter01.setSplitterPosition("40%");
+
+
+																		var olBtn10 = new sap.ui.commons.Button({text: "Left"});
+																		oSplitter1.addFirstPaneContent(olBtn10);
+																		var olBtn11 = new sap.ui.commons.Button({text: "Left"});
+																		oSplitter1.addFirstPaneContent(olBtn11);
+																		var olBtn12 = new sap.ui.commons.Button({text: "Left"});
+																		oSplitter1.addFirstPaneContent(olBtn12);
+
+																		var orBtn13 = new sap.ui.commons.Button({text: "Bottom"});
+																		oSplitter01.addSecondPaneContent(orBtn13);
+																		var orBtn14 = new sap.ui.commons.Button({text: "Bottom"});
+																		oSplitter01.addSecondPaneContent(orBtn14);
+																		var orBtn15 = new sap.ui.commons.Button({text: "Bottom"});
+																		oSplitter01.addSecondPaneContent(orBtn15);
+
+																		var orBtn16 = new sap.ui.commons.Button({text: "Top"});
+																		oSplitter01.addFirstPaneContent(orBtn16);
+																		var orBtn17 = new sap.ui.commons.Button({text: "Top"});
+																		oSplitter01.addFirstPaneContent(orBtn17);
+																		var orBtn18 = new sap.ui.commons.Button({text: "Top"});
+																		oSplitter01.addFirstPaneContent(orBtn18);
+																		oSplitter1.addSecondPaneContent(oSplitter01);
+
+
+																		oPanel.addContent(oSplitter1);
+											oPanel.placeAt("uiArea1");
+/****** splitter inside s popup ****/
+											oDialog1 = new sap.ui.commons.Dialog("myDialog1");
+											oDialog1.setTitle("Hallo! (Size Given)");
+											oDialog1.setWidth("1500px");
+											oDialog1.setHeight("700px");
+											oDialog1.setMinWidth("400px");
+											oDialog1.setMinHeight("400px");
+											oDialog1.setMaxWidth("1600px");
+											oDialog1.setMaxHeight("900px");
+
+
+																		var oSplitter2 = new sap.ui.commons.Splitter("mySplitter2");
+																		var oSplitter02 = new sap.ui.commons.Splitter("mySplitter02");
+
+																		oSplitter2.setSplitterPosition("15%");
+																		oSplitter2.setMinSizeFirstPane("10%");
+																		oSplitter2.setMinSizeSecondPane("20%");
+																		oSplitter02.setMinSizeFirstPane("20%");
+																		oSplitter02.setMinSizeSecondPane("20%");
+																		oSplitter02.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+																		oSplitter02.setSplitterPosition("40%");
+
+																									//left Pane of mySplitter7
+																									var olBtn010 = new sap.ui.commons.Button({text: "Left"});
+																									oSplitter2.addFirstPaneContent(olBtn010);
+																									var olBtn011 = new sap.ui.commons.Button({text: "Left"});
+																									oSplitter2.addFirstPaneContent(olBtn011);
+																									var olBtn012 = new sap.ui.commons.Button({text: "Left"});
+																									oSplitter2.addFirstPaneContent(olBtn012);
+
+																									var orBtn013 = new sap.ui.commons.Button({text: "Bottom"});
+																									oSplitter02.addSecondPaneContent(orBtn013);
+																									var orBtn014 = new sap.ui.commons.Button({text: "Bottom"});
+																									oSplitter02.addSecondPaneContent(orBtn014);
+																									var orBtn015 = new sap.ui.commons.Button({text: "Bottom"});
+																									oSplitter02.addSecondPaneContent(orBtn015);
+
+																									var orBtn016 = new sap.ui.commons.Button({text: "Top"});
+																									oSplitter02.addFirstPaneContent(orBtn016);
+																									var orBtn017 = new sap.ui.commons.Button({text: "Top"});
+																									oSplitter02.addFirstPaneContent(orBtn017);
+																									var orBtn018 = new sap.ui.commons.Button({text: "Top"});
+																									oSplitter02.addFirstPaneContent(orBtn018);
+																									oSplitter2.addSecondPaneContent(oSplitter02);
+
+
+
+											oDialog1.addContent(oSplitter2);
+											var oBtnOk = new sap.ui.commons.Button("myDialog1_Ok", {text: "OK", press:closeDialog});
+											var oBtnCancel = new sap.ui.commons.Button("myDialog1_Cancel", {text: "Cancel", press:closeDialog});
+											oDialog1.addButton(oBtnOk);
+											oDialog1.addButton(oBtnCancel);
+											oDialog1.setDefaultButton(oBtnCancel);
+
+											var oBtn1 = new sap.ui.commons.Button("btn1", {text:"Open Popup with Splitters", press:doSomething1});
+											oBtn1.placeAt("uiArea2");
+											var oResultTxt = new sap.ui.commons.TextView("myResultTv", {text: "waiting for update..."});
+											oResultTxt.placeAt("uiArea3");
+			}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application" style="height: 100%; width:100%;">
+		<h1>Test Page for sap.ui.commons.Splitter</h1>
+		<h2>1- Splitting a page (no wrapper, directly in the body) </h2>
+				<div id="uiArea" style="height: 100%; width:100%;">
+		</div>
+		<h2>2- Splitting a BorderLayout </h2>
+		<div id="uiArea0" style="height: 100%; width:100%;">
+		</div>
+		<h2>3- Splitting a Panel </h2>	
+		<div id="uiArea1" style="height: 100%; width:100%;">
+		</div>	
+		<h2>4- Splitter with Iframe </h2>	
+		<div id="uiArea4" style="height: 100%; width:100%;">
+		</div>		
+		<h2>5- Splitting a Dialog </h2>
+		<div id="uiArea2" style="height: 100%; width:100%;">
+		</div>
+
+		<div id="uiArea3"></div>
+	</body>
+</html>

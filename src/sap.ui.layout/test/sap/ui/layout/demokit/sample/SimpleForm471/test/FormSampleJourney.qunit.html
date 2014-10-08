@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Opa sample for FormSamples</title>
+
+		<script id="sap-ui-bootstrap" src="../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{
+				"samples" : "../../",
+				"view" : "./view"
+			}'></script>
+
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.qunit.qunit-css");
+				jQuery.sap.require("sap.ui.test.Opa5");
+				jQuery.sap.require("sap.ui.test.opaQunit");
+				var Opa = sap.ui.test.Opa;
+
+				 sap.ui.test.Opa5.extendConfig({
+					viewNamespace : "sap.ui.layout.sample.SimpleForm471.",
+					arrangements : new sap.ui.test.Opa5({
+						iStartTheFormSample : function () {
+				
+							return this.iStartMyAppInAFrame("../../../../../../../../../demokit/explored.html#/sample/sap.ui.layout.sample.SimpleForm471/preview");
+				
+						}
+					})
+				});
+
+				jQuery.sap.require("samples.tests.formTests");
+			})();
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">Opa sample for FormSamples</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

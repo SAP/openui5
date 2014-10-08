@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+	Testing Suppression of Deactivation of Controller Code
+	Tested classes: sap.ui.core.Configuration, sap.ui.core.mvc.View
+	Author: d029698
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for Design Mode</title>
+
+ <script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-xx-designMode="true"
+	data-sap-ui-xx-suppressDeactivationOfControllerCode="true"
+	data-sap-ui-resourceroots='{"example.designmode": "testdata/designmode/"}'>
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="AnyView.qunit.js"></script>
+
+<script>
+test("Get Design Mode and Suppression of Deactivation of Controller Code", 2, function() {
+
+	var designMode = sap.ui.getCore().getConfiguration().getDesignMode();
+	equal(designMode, true, "Design Mode is on");
+	
+	var suppressDeactivationOfControllerCode = sap.ui.getCore().getConfiguration().getSuppressDeactivationOfControllerCode();
+	equal(suppressDeactivationOfControllerCode, true, "Suppression of Deactivation of Controller Code is on");
+
+});
+
+test("Create an HTMLView instance and check controller methods are not replaced by empty ones", 6, function(){
+
+	var oView = sap.ui.htmlview("example.designmode.test01");
+	var oController = oView.getController();
+	
+//check lifecycle hooks
+	equal(oController.onInit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	equal(oController.onExit(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	equal(oController.onBeforeRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	equal(oController.onAfterRendering(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+
+//other methods
+	equal(oController.method1(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+	equal(oController.method2(), "aString", "Controller method has a return, i.e. method implementation was not replaced");
+
+	oView.destroy();
+});
+
+test("Create an HTMLView instance and check controller methods from base class(es) were not replaced", 1, function(){
+
+	var oView = sap.ui.htmlview("example.designmode.test01");
+	//equal(designMode, true, "Custom Data set properly");
+	var oController = oView.getController();
+
+	//as example, try "byId"
+	var oButton = oController.byId("Button01");
+	notEqual(typeof oButton, "undefined", "Tested method byId");
+});
+
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for Suppression of Deactivation of Controller Code</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox class="marginBoxContent">
+		<Label text="Date" />
+		<DateTimeInput
+			type="Date"
+			placeholder="Enter Date ..." />
+		<Label text="Time" />
+		<DateTimeInput
+			type="Time"
+			placeholder="Enter Time ..." />
+		<Label text="Date &amp; Time" />
+		<DateTimeInput
+			type="DateTime"
+			placeholder="Enter Date &amp; Time ..." />
+	</VBox>
+</mvc:View>

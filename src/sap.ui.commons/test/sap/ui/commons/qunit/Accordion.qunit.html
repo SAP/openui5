@@ -1,0 +1,140 @@
+<html> 
+   <head> 
+     <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+  
+     <script id="sap-ui-bootstrap"  
+          type="text/javascript" 
+          src="../../../../../resources/sap-ui-core.js" 
+          data-sap-ui-theme="sap_bluecrystal" 
+          data-sap-ui-noConflict="true"
+          data-sap-ui-libs="sap.ui.commons" > 
+     </script> 
+
+     <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" /> 
+     <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script> 
+     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+      
+     <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script> 
+  
+     <script language="javascript">        																						
+									
+			//Accordion 1 --> Constructor and setters to fill properties			
+			var oAccordion1 = new sap.ui.commons.Accordion("accordion1");			
+			oAccordion1.setOpenedSectionsId("1");
+			oAccordion1.setWidth("100px");	
+			
+			//Section 1
+			var oSection1 = new sap.ui.commons.AccordionSection( "section1" );		
+			oSection1.setTitle("My section 1");					
+			for (var i=0 ; i < 5 ; i++){		  
+			  var oButton1 = new sap.ui.commons.Button( "Button1"+i );
+			  oButton1.setText("Button1 "+i);
+			  oSection1.addContent( oButton1);			 
+			}							
+			oAccordion1.addSection( oSection1 );
+			
+			//Section 2
+			var oSection2 = new sap.ui.commons.AccordionSection( "section2");
+			oSection2.setTitle("My section 2");			
+			for (var i=0 ; i < 5 ; i++){		  
+			  var oButton2 = new sap.ui.commons.Button( "Button2"+i );
+			  oButton2.setText("Button2 "+i);
+			  oSection2.addContent( oButton2);
+			}			
+			oAccordion1.addSection( oSection2 );	
+			
+			//Building Section 3
+			var oSection3 = new sap.ui.commons.AccordionSection( "section3");
+			oSection3.setTitle("My section 3");
+			oSection3.setEnabled(false);	
+			var oButton3 = new sap.ui.commons.Button( "Button3" );
+			oSection3.addContent( oButton3);
+			oAccordion1.addSection( oSection3 );	
+			
+			//Building Section 4
+			var oSection4 = new sap.ui.commons.AccordionSection( "section4");
+			oSection4.setTitle("My section 4");			
+			var oButton4 = new sap.ui.commons.Button( "Button4" );
+			oButton4.setWidth("200px");
+			oSection4.addContent( oButton4);						
+			oAccordion1.addSection( oSection4 );
+			
+			sap.ui.setRoot("uiArea1", oAccordion1);
+																							
+       </script> 
+
+	   <script> 
+			
+	   		qutils.delayTestStart();	
+			module("Accordion Properties");
+													
+			//OpenSectionsId property			
+			test("OpenSectionsIdOk", function() {				
+				ok(oAccordion1.getOpenedSectionsId(),"OpenSectionsId for accordion1 is correct using 'ok()'!");
+				equals(oAccordion1.getOpenedSectionsId(),"1","OpenSectionsId for accordion1 is correct using 'equals()'!");							
+			});
+			
+			//Width property			
+			test("WidthOk", function() {				
+				ok(oAccordion1.getWidth() == "100px","Width for accordion1 is correct using 'ok()'!");
+				equals(oAccordion1.getWidth(),"100px","Width for accordion1 is correct using 'equals()'!");								
+			});
+			
+			
+			module("Accordion Open/Close sections");
+			
+			//Some keyboard shortcuts...
+			test("Accordion Open/Close sections", function() {		
+												
+				// Navigation + close/open sections
+				//Open the fourth section				
+				jQuery("section4-minL").focus();	
+				qutils.triggerEvent("click", "section4-minL");							
+				
+				//Check if default section is closed (1) and (4) is now opened
+				var aSections = oAccordion1.getSections();
+				equals(aSections[0].getCollapsed(), true, "Section 1 is now closed : section.isCollapsed()");
+				equals(aSections[1].getCollapsed(), true, "Section 2 is now closed : section.isCollapsed()");
+				equals(aSections[2].getCollapsed(), true, "Section 3 is now closed : section.isCollapsed()");
+				equals(aSections[3].getCollapsed(), false, "Section 4 is now opened : section.isCollapsed()");																												
+				
+			});
+						
+			//module("Accordion Keyboard Shortcuts");
+			
+			//test("Accordion Keyboard Shortcuts", function() {		
+														
+				//jQuery("section1-minL").focus();
+				//qutils.triggerEvent("click", "section1-minL");	
+				//qutils.triggerKeyboardEvent("accordion1", "ARROW_RIGHT");
+				//qutils.triggerKeyboardEvent("accordion1", "SPACE");	
+								
+				//Navigate up by 1, section is disabled, so it will jump top section 2
+				//Section 2 is now opened and section 4 is now collapsed
+				//jQuery("section4-minL").focus();								
+				//qutils.triggerKeyboardEvent("section4-minL", "ARROW_LEFT");
+				//qutils.triggerKeyboardEvent("section2-minL", "SPACE");				
+				//equals(aSections[1].getCollapsed(), false, "Section 2 is now opened");
+				//equals(aSections[3].getCollapsed(), true, "Section 4 is now closed");
+				
+				//Close it and the default section will reopen, in this case, it is section1
+				//qutils.triggerKeyboardEvent("accordion1", "SPACE");
+				//equals(aSections[1].getCollapsed(), true, "Section 2 is now closed");
+				//equals(aSections[0].getCollapsed(), true, "Section 4 is now opened");
+			
+			//});
+								
+		</script>
+
+     </head> 
+
+   <body> 
+     	<h1 id="qunit-header">QUnit Page for sap.ui.commons.Accordion</h1> 
+     	<h2 id="qunit-banner"></h2> 
+     	<h2 id="qunit-userAgent"></h2> 
+     	<ol id="qunit-tests"></ol> 
+     	<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="uiArea1"></div> 	   	 
+   </body> 
+
+ </html> 

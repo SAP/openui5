@@ -1,0 +1,462 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>NotificationBar - sap.ui.ux3</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.ux3">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script language="javascript">
+	function openHandler(oEvent) {
+		var bShow = oEvent.getParameter("show");
+		if (bShow) {
+			oNotiBar.setVisibleStatus("Default");
+		} else {
+			oNotiBar.setVisibleStatus("None");
+		}
+		sap.ui.getCore().applyChanges();
+	};
+
+	function minimize(oNBar, sFrom, sTo) {
+		oNBar.setVisibleStatus(sFrom);
+		sap.ui.getCore().applyChanges();
+
+		var iBefore = oNBar.$().height();
+
+		oNBar.setVisibleStatus(sTo);
+		sap.ui.getCore().applyChanges();
+
+		var iAfter = oNBar.$().height();
+		var sMessage = "Bar minimized from " + sFrom + " to " + sTo;
+		var bTest = (iBefore > iAfter) ? true : false;
+
+		ok(bTest, sMessage);
+	};
+
+	function maximize(oNBar, sFrom, sTo) {
+		oNBar.setVisibleStatus(sFrom);
+		sap.ui.getCore().applyChanges();
+
+		var iBefore = oNBar.$().height();
+
+		oNBar.setVisibleStatus(sTo);
+		sap.ui.getCore().applyChanges();
+
+		var iAfter = oNBar.$().height();
+		var bTest = (iBefore < iAfter) ? true : false;
+		var sMessage = "Bar maximized from " + sFrom + " to " + sTo;
+
+		ok(bTest, sMessage);
+	};
+
+	function toggleVisibility(oNBar, sFrom, sTo) {
+		oNBar.setVisibleStatus(sFrom);
+		sap.ui.getCore().applyChanges();
+
+		var sBefore = oNBar.$().css("display");
+
+		oNBar.setVisibleStatus(sTo);
+		sap.ui.getCore().applyChanges();
+
+		var sAfter = oNBar.$().css("display");
+		var bTest = (sBefore != sAfter) ? true : false;
+		var sMessage = "Bar toggled from " + sFrom + " to " + sTo;
+
+		ok(bTest, sMessage);
+	};
+</script>
+
+
+<script language="javascript">
+	var fx = jQuery.fx.off;
+
+	var oNotiBar = new sap.ui.ux3.NotificationBar("my-very-long-id", {
+		display : openHandler,
+		enableResize : false
+	});
+	oNotiBar.placeAt("uiArea1");
+	var oMN = new sap.ui.ux3.Notifier({
+		title : "Messages"
+	});
+
+	module("Messages", {
+		setup : function() {
+			jQuery.fx.off = true;
+		},
+		teardown : function() {
+			jQuery.fx.off = fx;
+		}
+	});
+	test("Adding/removing messages", function() {
+		expect(9);
+
+		var now = (new Date()).toUTCString();
+		var sText = "Lorem Ipsum";
+		var sUri = "../images/notification_bar/Thumbnail_32.png";
+
+		oNotiBar.setMessageNotifier(oMN);
+		var oMessage = new sap.ui.core.Message("message1", {
+			text : sText,
+			icon : sUri,
+			level : sap.ui.core.MessageType.Error,
+			timestamp : now
+		});
+		oMN.addMessage(oMessage);
+
+		now = (new Date()).toUTCString();
+		oMessage = new sap.ui.core.Message("message2", {
+			text : sText,
+			icon : sUri,
+			level : sap.ui.core.MessageType.Error,
+			timestamp : now
+		});
+		oMN.addMessage(oMessage);
+		sap.ui.getCore().applyChanges();
+
+		ok(oMN.hasItems(), "Message added to Notifier")
+		ok(oNotiBar.hasItems(), "Message reached NotificationBar");
+
+		var bTest = oNotiBar.getVisibleStatus() != "None";
+		ok(bTest, "Visibility correctly changed");
+
+		var sDisplay = oNotiBar.$().css("display");
+		bTest = sDisplay === "block";
+		ok(bTest, "Bar displayed in DOM");
+
+		/*
+		 * Removing messages
+		 */
+		oMN.removeMessage(oMessage);
+		sap.ui.getCore().applyChanges();
+		var iCounter = oNotiBar.getMessageNotifier().getMessages().length;
+		ok(iCounter === 1, "One single message was removed");
+
+		oMN.removeAllMessages();
+		sap.ui.getCore().applyChanges();
+
+		ok(!oMN.hasItems(), "All Messages removed from Notifier");
+
+		ok(!oNotiBar.hasItems(), "Messages removed from bar");
+
+		var bTest = oNotiBar.getVisibleStatus() === "None";
+		ok(bTest, "Visibility status correctly set to None");
+
+		var sDisplay = oNotiBar.$().css("display");
+		bTest = sDisplay === "none";
+		ok(bTest, "Bar invisible in DOM");
+	});
+
+	test("Read-Only Messages", function() {
+		expect(3);
+
+		oNotiBar.setMessageNotifier(oMN);
+
+		// test if common message WITHOUT event listener is selectable
+		now = (new Date()).toUTCString();
+		var oMessage = new sap.ui.core.Message("message2readOnly", {
+			text : "Common message",
+			level : sap.ui.core.MessageType.Error,
+			timestamp : now
+		});
+		oMN.addMessage(oMessage);
+		sap.ui.getCore().applyChanges();
+
+		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
+		ok(!bTest, "Inplace text for common message is not selectable - there is no event listener")
+
+		// test if common message with event listener is selectable
+		oMN.attachMessageSelected(function() {
+		});
+		sap.ui.getCore().applyChanges();
+		$InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
+		ok(bTest, "Inplace text for common message is selectable")
+
+		// test if read only message is selectable (event listener needed of course)
+		now = (new Date()).toUTCString();
+		var oReadOnlyMessage = new sap.ui.core.Message("message1readOnly", {
+			text : "Read only message",
+			level : sap.ui.core.MessageType.Error,
+			timestamp : now,
+			readOnly : true
+		});
+		oMN.addMessage(oReadOnlyMessage);
+		sap.ui.getCore().applyChanges();
+
+		var $InplaceText = jQuery.sap.byId(oNotiBar.getId() + "-inplaceMessage");
+		var bTest = $InplaceText.hasClass("sapUiInPlaceMessageSelectable");
+		ok(!bTest, "Inplace text is not selectable because it's read only")
+	});
+
+	/*
+	 * Testing from None
+	 */
+	module("Resizing", {
+		setup : function() {
+			jQuery.fx.off = true;
+		},
+		teardown : function() {
+			jQuery.fx.off = fx;
+		}
+	});
+	test("From None", function() {
+		expect(3);
+		toggleVisibility(oNotiBar, "None", "Min");
+		toggleVisibility(oNotiBar, "None", "Default");
+		toggleVisibility(oNotiBar, "None", "Max");
+	});
+
+	/*
+	 * Testing from Minimized
+	 */
+	test("From Minimized", function() {
+		expect(2);
+		toggleVisibility(oNotiBar, "Min", "None");
+		maximize(oNotiBar, "Min", "Default");
+	});
+
+	/*
+	 * Testing from Default
+	 */
+	test("From Default", function() {
+		expect(3);
+		toggleVisibility(oNotiBar, "Default", "None");
+		minimize(oNotiBar, "Default", "Min");
+		maximize(oNotiBar, "Default", "Max");
+	});
+
+	/*
+	 * Testing from Maximized
+	 */
+	test("From Maximized", function() {
+		expect(2);
+		toggleVisibility(oNotiBar, "Max", "None");
+		minimize(oNotiBar, "Max", "Default");
+	});
+
+	/*
+	 * Testing whether the resize event is fired
+	 */
+	asyncTest("Resize event", function() {
+		expect(2);
+
+		var bEventFired = false;
+
+		var fnResizeHandler = function() {
+			oNotiBar.detachResize(fnResizeHandler);
+
+			start();
+			ok(true, "Resize event was fired by the NotificationBar");
+		};
+
+		oNotiBar.attachResize(fnResizeHandler);
+
+		minimize(oNotiBar, "Max", "Default");
+	});
+
+	/*
+	 * Testing if a Callout opens and the message is displayed
+	 */
+	module("Open Callouts", {
+		setup : function() {
+			jQuery.fx.off = true;
+		},
+		teardown : function() {
+			jQuery.fx.off = fx;
+		}
+	});
+	asyncTest("Open it", function() {
+		expect(1);
+
+		var oNotifier = new sap.ui.ux3.Notifier({
+			title : "First Notifier",
+		});
+		var oMessage = new sap.ui.core.Message({
+			text : "Lorem Ipsum"
+		});
+		oNotifier.addMessage(oMessage);
+		oNotiBar.addNotifier(oNotifier);
+		sap.ui.getCore().applyChanges();
+
+		var $notifier = jQuery.sap.byId(oNotifier.getId());
+
+		var oEvt = jQuery.Event("mouseover");
+		$notifier.trigger(oEvt);
+
+		oNotifier._oCallout.attachOpened(function() {
+			start();
+			var $message = jQuery(".sapUiNotifierMessage");
+			var $child = jQuery($message.children()[0]);
+
+			var sHtml = $child.html();
+			var bTest = !!(sHtml === "Lorem Ipsum");
+			ok(bTest, "Notifier opened and message displayed");
+		});
+	});
+
+	module("Testing ItemNavigation", {
+		setup : function() {
+			jQuery.fx.off = true;
+		},
+		teardown : function() {
+			jQuery.fx.off = fx;
+
+			oNotiBar.destroyMessageNotifier()
+			oNotiBar.destroyNotifiers();
+			oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.None);
+		}
+	});
+	asyncTest("Navigate through Notifiers (minimized)", function() {
+		expect(2);
+
+		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
+		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var sKeyI = jQuery.sap.KeyCodes.I;
+
+		var oMN = new sap.ui.ux3.Notifier({
+			title : "Message Notifier",
+		});
+		var oMsg2 = new sap.ui.core.Message({
+			text : "Lorem Ipsum"
+		});
+		oMN.addMessage(oMsg2);
+		oNotiBar.setMessageNotifier(oMN);
+		sap.ui.getCore().applyChanges();
+
+		var aNotifiers = oNotiBar.getNotifiers();
+
+		var notifierDomRef = aNotifiers[0].$();
+		var $notifier = jQuery(notifierDomRef);
+		var $MN = jQuery(oMN.$());
+
+		sap.ui.test.qunit.triggerMouseEvent(notifierDomRef, "focusin");
+
+		setTimeout(function() {
+			var before = document.activeElement;
+
+			sap.ui.test.qunit.triggerKeydown(notifierDomRef, sKeyRight);
+
+			var after = document.activeElement;
+
+			var bTest = before.id !== after.id;
+			ok(bTest, "Moved from Notifier to MessageNotifier");
+
+			setTimeout(function() {
+				start();
+
+				sap.ui.test.qunit.triggerKeydown(oMN.$(), sKeyLeft);
+
+				var after = document.activeElement;
+
+				var bTest = before.id === after.id;
+				ok(bTest, "Moved back to Notifier");
+			}, 100);
+		}, 1000);
+	});
+
+	asyncTest("Navigate through messages (maximized)", function() {
+		expect(5);
+
+		var sKeyLeft = jQuery.sap.KeyCodes.ARROW_LEFT;
+		var sKeyRight = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		var sKeyI = jQuery.sap.KeyCodes.I;
+
+		var oMN = new sap.ui.ux3.Notifier("messageNotifier", {
+			title : "Message Notifier",
+		});
+		var oMsg1 = new sap.ui.core.Message("messageMaximized1", {
+			text : "Lorem Ipsum"
+		});
+		var oMsg2 = new sap.ui.core.Message("messageMaximized2", {
+			text : "Lorem Ipsum"
+		});
+		oMN.addMessage(oMsg1);
+		oMN.addMessage(oMsg2);
+		oNotiBar.setMessageNotifier(oMN);
+
+		var oN = new sap.ui.ux3.Notifier("anotherNotifier", {
+			title : "Message Notifier",
+		});
+		var oMsg3 = new sap.ui.core.Message("messageMaximized3", {
+			text : "Lorem Ipsum"
+		});
+		oN.addMessage(oMsg3);
+		oNotiBar.addNotifier(oN);
+
+		oNotiBar.setVisibleStatus(sap.ui.ux3.NotificationBarStatus.Max);
+		sap.ui.getCore().applyChanges();
+
+		// NotificationBar is in maximized-mode
+		var oDomRef = jQuery.sap.domById("messageNotifier-messageNotifierView-messageView-messageMaximized2");
+		jQuery(oDomRef).focus();
+
+		setTimeout(function() {
+			var before = document.activeElement;
+			sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+
+			setTimeout(function() {
+				var after = document.activeElement;
+
+				var bTest = before.id !== after.id;
+				ok(bTest, "Moved from first message to next one");
+
+				bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized1";
+				ok(bTest, "Next message notifier message focused");
+
+				oDomRef = jQuery.sap.domById(after.id);
+				before = after;
+				sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+
+				setTimeout(function() {
+					after = document.activeElement;
+
+					bTest = before.id !== after.id;
+					ok(bTest, "Moved to message of common notifier");
+
+					oDomRef = jQuery.sap.domById(after.id);
+					before = after;
+					sap.ui.test.qunit.triggerKeydown(oDomRef, sKeyRight);
+
+					setTimeout(function() {
+						start();
+						after = document.activeElement;
+
+						bTest = before.id !== after.id;
+						ok(bTest, "Moved to message of common notifier");
+
+						bTest = after.id === "messageNotifier-messageNotifierView-messageView-messageMaximized2";
+						ok(bTest, "Cycled through all messages and first one is focused again");
+					}, 100);
+				}, 100);
+			}, 100);
+		}, 500);
+	});
+</script>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.ui.ux3.NotificationBar</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+
+	<div style="margin-top: 40px;" id="uiArea1"></div>
+</body>
+</html>

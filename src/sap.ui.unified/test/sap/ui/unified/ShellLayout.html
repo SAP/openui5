@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+	<title>Shell - sap.ui.unified</title>
+	<script src="../../../../resources/sap-ui-core.js" 
+	        type="text/javascript" 
+	        id="sap-ui-bootstrap"            
+	        data-sap-ui-libs="sap.ui.unified"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script src="resources/ShellTestPage.js" type="text/javascript"></script>
+	<script>	
+	function createContent(sText){
+		var aContent = [];
+		aContent.push(new sap.ui.commons.TextView({text: sText}));
+		aContent.push(new sap.ui.commons.Button({
+			text: "Pane",
+			press: function(){
+				oShell.setShowPane(!oShell.getShowPane());
+			}
+		}));
+		aContent.push(new sap.ui.commons.Button({
+			text: "CurtainPane",
+			press: function(){
+				oShell.setShowCurtainPane(!oShell.getShowCurtainPane());
+			}
+		}));
+		aContent.push(new sap.ui.commons.Button({
+			text: "HeaderHiding",
+			press: function(){
+				oShell.setHeaderHiding(!oShell.getHeaderHiding());
+			}
+		}));
+		aContent.push(new sap.ui.commons.Button({
+			text: "Curtain",
+			press: function(){
+				oShell.setShowCurtain(!oShell.getShowCurtain());
+			}
+		}));
+		aContent.push(new sap.ui.commons.Button({
+			text: "HeaderVisible",
+			press: function(){
+				oShell.setHeaderVisible(!oShell.getHeaderVisible());
+			}
+		}));
+		return aContent;
+	};
+	
+	jQuery.sap.require("sap.ui.unified.ShellHeader");
+	
+	var oHeader = new sap.ui.unified.ShellHeader();
+	
+	var oShell = new sap.ui.unified.ShellLayout({
+		header: oHeader,
+		content: createContent("Content"),
+		paneContent: createContent("Pane")
+	});
+	oShell.placeAt("content");
+	
+	var aContent = createContent("Curtain");
+	for(var i=0; i<aContent.length; i++){
+		oShell.addCurtainContent(aContent[i]);
+	}
+	aContent = createContent("CurtainPane");
+	for(var i=0; i<aContent.length; i++){
+		oShell.addCurtainPaneContent(aContent[i]);
+	}
+	
+	//*******************
+	
+	function itemPressed(oEvent) {
+		alert("Item pressed");	
+	}
+	
+	var oAddItem = new sap.ui.commons.Button({
+		text: "Add Header Item",
+		press: function(){
+			oHeader.addHeadItem(new sap.ui.unified.ShellHeadItem({
+				icon: oImage.getChecked() ? "../images/icon.gif" : "sap-icon://search",
+				press: itemPressed
+			}));
+		}
+	});
+	
+	var oAddEndItem = new sap.ui.commons.Button({
+		text: "Add Header End Item",
+		press: function(){
+			oHeader.addHeadEndItem(new sap.ui.unified.ShellHeadItem({
+				icon: oImage.getChecked() ? "../images/icon.gif" : "sap-icon://search",
+				press: itemPressed
+			}));
+		}
+	});
+	
+	var oAddUserItem = new sap.ui.commons.Button({
+		text: "Add User Item",
+		press: function(){
+			if(oHeader.getUser()){
+				oHeader.destroyUser();
+			}
+			oHeader.setUser(new sap.ui.unified.ShellHeadUserItem({
+				image: oImage.getChecked() ? "../images/person.jpg" : "sap-icon://person-placeholder",
+				username: oUsername.getValue(),
+				tooltip: "User item tooltip",
+				press: itemPressed
+			}));
+		}
+	});
+	
+	var oSetLogo = new sap.ui.commons.Button({
+		text: "Set Logo",
+		press: function(){
+			oHeader.setLogo("images/testlogo_200x50.png");
+		}
+	});
+	
+	var oSetSearch = new sap.ui.commons.Button({
+		text: "Set Search",
+		press: function(){
+			if(!oHeader.getSearch()){
+				oHeader.setSearch(createTestSearchField("search", function(){alert("Search triggered")}));
+			}
+		}
+	});
+	
+	var oUsername = new sap.ui.commons.TextField({
+		value: "Karl Mustermann",
+		change: function(){
+			if(oHeader.getUser()){
+				oHeader.getUser().setUsername(oUsername.getValue());
+			}
+		}
+	});
+	
+	var oImage = new sap.ui.commons.CheckBox({text: "Use Image"});
+	
+	var oClear = new sap.ui.commons.Button({
+		text: "Clear",
+		press: function(){
+			oHeader.destroyUser();
+			oHeader.destroySearch();
+			oHeader.destroyHeadEndItems();
+			oHeader.destroyHeadItems();
+			oHeader.setLogo("");
+		}
+	});
+	
+	var aAdditionalContent = [new sap.ui.commons.HorizontalDivider(),
+	        		          oAddItem, oAddEndItem, oAddUserItem,
+	        		          new sap.ui.commons.HorizontalDivider(),
+	        		          oSetLogo, oSetSearch,
+	        		          new sap.ui.commons.HorizontalDivider(),
+	        		          oUsername, oImage, oClear];
+	for(var i=0; i<aAdditionalContent.length; i++){
+		oShell.addContent(aAdditionalContent[i]);
+	}
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

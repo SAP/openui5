@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Mobile App in 23 Seconds Example</title>
+
+		<script src="../../../../../resources/sap-ui-core.js" type="text/javascript"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<!-- only load the mobile lib "sap.m" and the "sap_bluecrystal" theme -->
+
+		<script type="text/javascript">
+
+			// create a mobile app
+			// it initializes the HTML page for mobile use and provides animated page handling
+			var app = new sap.m.App("myApp", {initialPage:"page1"}); // page1 should be displayed first
+
+			// create the first page of your application
+			var page1 = new sap.m.Page("page1", {
+					title: "Initial Page",
+					showNavButton: false,
+					content : new sap.m.Button({		// content is just one Button
+							text : "Go to Page 2",
+							press : function() {
+									app.to("page2");	// when tapped, it triggers drilldown to page 2
+							}
+					})
+			});
+
+			// create the second page of your application
+			var page2 = new sap.m.Page("page2", {
+					title: "Page 2",
+					showNavButton: true,				// page 2 should display a back button
+					navButtonPress: function(){ 
+							app.back();					// when tapped, the back button should navigate back to page 1
+					},
+					icon: "http://www.sap.com/global/ui/images/global/sap-logo.png",
+					content : new sap.m.Label({text:"Hello Mobile World!"})
+			});
+
+			app.addPage(page1).addPage(page2);			// add both pages to the App
+
+			app.placeAt("content");						// place the App into the HTML document
+
+		</script>
+
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

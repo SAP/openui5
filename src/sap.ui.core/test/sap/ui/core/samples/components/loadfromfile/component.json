@@ -1,0 +1,10 @@
+{
+	"name": "samples.components.loadfromfile",
+	"includes": [
+		"css/includeme.css",
+		"js/includeme.js"
+	],
+	"properties" : {
+		"prop1" : "string"
+	}
+}

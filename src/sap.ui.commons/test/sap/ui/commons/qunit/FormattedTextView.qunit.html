@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.commons.FormattedTextView
+  Author: D034262
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons">
+	</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Control initialization -->
+<script language="javascript">
+	var oHtmlText = 'If this does not work, please write an email to: <embed data-index=\"0\"><br>';
+	oHtmlText += '&lt;i&gt;Here is an XSS attack that alerts "XSS attack"&lt;/i&gt;<br>';
+	oHtmlText += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr'
+			+ 'ipt&gt;&lt;br&gt;';
+	oHtmlText += '&lt;ul&gt;';
+	oHtmlText += '&lt;li&gt;some list item here&lt;/li&gt;';
+	oHtmlText += '&lt;li&gt;some image in here: <embed data-index=\"1\">&lt;/li&gt;';
+	oHtmlText += '&lt;/ul&gt;<br><embed data-index=\"2\">';
+	var code = oHtmlText.replace(/<br>/g, "");
+	code = oHtmlText.replace(/&lt;/g, "<");
+	code = code.replace(/&gt;/g, ">");
+
+	var oFTV = new sap.ui.commons.FormattedTextView("textView1", {htmlText: code});
+	var oLink = new sap.ui.commons.Link("l1", {
+		text: "Test me",
+		tooltip: "This will send a mail to test.me@sap.com",
+		href: "mailto:test.me@sap.com"
+	});
+	oFTV.addControl(oLink);
+	
+	var oLink2 = new sap.ui.commons.Link("l2", {
+		text: "Test me too",
+		tooltip: "This will send a mail to test.me@sap.com",
+		href: "mailto:test.me@sap.com"
+	});
+	oFTV.addControl(oLink2);
+
+	var oImage = new sap.ui.commons.Image("i1", {
+		src : "http://www.sap.com/global/images/SAPLogo.gif", // sap.ui.core.URI
+		visible : true, // boolean
+		decorative : false, // boolean
+		alt : "SAP", // string
+		tooltip : "SAP Logo" // sap.ui.core.TooltipBase
+	});
+	oFTV.addControl(oImage);
+
+	oFTV.addControl(new sap.ui.commons.Link("l3", {
+		text: "Do not test me",
+		tooltip: "This will not send anything anywhere because it should not appear",
+		href: "mailto:test.me@sap.com"
+		})
+	);
+
+	oFTV.placeAt("uiArea1");
+
+	var oFTV2 = oFTV.clone();
+	oFTV2.placeAt("uiArea2");
+	oFTV2.setVisible(false);
+
+	var oFTV3 = new sap.ui.commons.FormattedTextView("textView3");
+	oFTV3.placeAt("uiArea3");
+
+	module("Appearance");
+	
+	test("Visibility", function() {
+		// Visible
+		ok(jQuery("#textView1").get(0), "Visible, expected defined");
+		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
+	});
+	
+	test("Placeholders", function(){
+		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
+		var oTVDom = jQuery.sap.domById('textView1');
+		var renderedText = jQuery(oTVDom).text();
+		ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
+		
+	});
+	
+	test("Sanitizing", function(){
+		var goodText = 'Within this formatted text view, sanitizing is tested. You should not see anything but empty space between START and END below this sentence.<br>';
+		var evilText = goodText + 'START ' + '<img src="http://www.sap.com/global/images/SAPLogo.gif">'; // <p> is now alloed in FTV + '&lt;p&gt;Here is an XSS attack that alerts "XSS attack"&lt;/p&gt;';
+		evilText  += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr' + 'ipt&gt;' + 'END';
+		evilText = evilText.replace(/&lt;/g, "<");
+		evilText = evilText.replace(/&gt;/g, ">");
+		oFTV3.setHtmlText(evilText);
+		sap.ui.getCore().applyChanges();
+		goodText += 'START ' + 'END';
+		// for the sake of IE8 which capitalizes tags retrieved with innerHTML, we use lowercase for comparison of strings
+		goodText = goodText.toLowerCase();
+		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
+		equal(deliveredText, goodText, "Text has been sanitized");
+	});
+	
+
+	test("Invalid Controls", function(){
+		var controlAdded = true;
+		try {
+			oFTV.addControl(new sap.ui.commons.Button('b1',{ text: 'Button'}));
+		}
+		catch(e){
+			controlAdded = false;
+		}
+		ok(controlAdded, "Button is not an allowed control within FormattedTextView");
+	});
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.FormattedTextView</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Carousel - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			var oCarousel = new sap.ui.commons.Carousel();
+			oCarousel.setHeight("400px");
+			oCarousel.setOrientation("vertical");
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG1", {
+				src : "../images/carousel/img1.jpg",
+				alt : "sample image",
+				width : "200px",
+				height : "150px"
+			}));
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG2", {
+				src : "../images/carousel/img2.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG3", {
+				src : "../images/carousel/img3.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG4", {
+				src : "../images/carousel/img4.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG5", {
+				src : "../images/carousel/img5.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel.addContent(new sap.ui.commons.Image("IMG6", {
+				src : "../images/carousel/img6.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel.placeAt("uiArea1");
+
+			var oCarousel2 = new sap.ui.commons.Carousel();
+			oCarousel2.setWidth("900px");
+
+			oCarousel2.addContent(new sap.ui.commons.Image("IMG8", {
+				src : "../images/carousel/img1.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel2.addContent(new sap.ui.commons.Image("IMG9", {
+				src : "../images/carousel/img2.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel2.addContent(new sap.ui.commons.Image("IMG10", {
+				src : "../images/carousel/img3.jpg",
+				alt : "sample image",
+				width : "100%",
+				height : "100%"
+			}));
+
+			oCarousel2.placeAt("uiArea2");
+
+			module("Control Test - sap.ui.commons.Carousel");
+
+			asyncTest("Navigation Next", function() {
+				oCarousel.showNext();
+				oCarousel2.showNext();
+				setTimeout(
+					function() {
+						equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist')
+							.find('li:first')[0], jQuery.sap.byId(oCarousel
+							.getId()
+							+ '-item-IMG2')[0],
+							"Image 2 should be at first position.");
+						equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist')
+							.find('li:first')[0], jQuery.sap.byId(oCarousel2
+							.getId()
+							+ '-item-IMG9')[0],
+							"Image 9 should be at first position.");
+						start();
+					}, Math.max(oCarousel.getAnimationDuration(), oCarousel2
+							.getAnimationDuration()) + 750);
+			});
+
+			asyncTest("Navigation Previous", function() {
+				oCarousel.showPrevious();
+				oCarousel2.showPrevious();
+				setTimeout(
+					function() {
+						equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist')
+							.find('li:first')[0], jQuery.sap.byId(oCarousel
+							.getId()
+							+ '-item-IMG1')[0],
+							"Image 1 should be at first position.");
+						equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist')
+							.find('li:first')[0], jQuery.sap.byId(oCarousel2
+							.getId()
+							+ '-item-IMG8')[0],
+							"Image 8 should be at first position.");
+						start();
+					}, Math.max(oCarousel.getAnimationDuration(), oCarousel2
+					.getAnimationDuration()) + 750);
+			});
+
+			test("Navigation ByID", function() {
+				oCarousel.showElementWithId('IMG4');
+				equal(jQuery.sap.byId(oCarousel.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(oCarousel.getId() + '-item-IMG4')[0], "Image 4 should be at first position.");
+				oCarousel2.showElementWithId('IMG10');
+				equal(jQuery.sap.byId(oCarousel2.getId() + '-scrolllist').find('li:first')[0], jQuery.sap.byId(oCarousel2.getId() + '-item-IMG10')[0], "Image 10 should be at first position.");
+			});
+
+		</script>
+
+	</head>
+
+	<body class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: sap.ui.commons.Carousel</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+	</body>
+</html>

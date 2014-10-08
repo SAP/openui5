@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Tree - sap.ui.commons</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons,sap.ui.table" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+		var sStandardTreeId 	= "tree1";
+		var sTransparentTreeId 	= "tree2";
+		
+		function createStandardTree () {
+			var oTree1 = new sap.ui.commons.Tree(sStandardTreeId, {title:"Tree with Header", width:"90%",height:"300px",showHearderIcons:true, showHorizontalScrollbar:false});		
+			
+			var oNode11 = new sap.ui.commons.TreeNode("node11", {text:"Root 1",icon:"../images/tree/library.gif"});
+			
+			var oNode13 = new sap.ui.commons.TreeNode("node13", {text:"Node 1.1", expanded:false, isSelected: true});
+			
+			var oNode15 = new sap.ui.commons.TreeNode("node15", {text:"Node 1.1.1", hasExpander:true});
+			oNode15.attachToggleOpenState(function addSubNodes(oEvent){
+				
+				var oNode15Child = new sap.ui.commons.TreeNode({text:"Dyna Node"});
+				oNode15.addNode(oNode15Child);
+				
+			});
+			oNode13.addNode(oNode15);
+			
+			oNode11.addNode(oNode13);
+			
+			var oNode14 = new sap.ui.commons.TreeNode("node14", {text:"Node 1.2",icon:"../images/tree/Image.gif"});
+			
+			var oNode16 = new sap.ui.commons.TreeNode("node16", {text:"Node 1.2.1"});
+			
+			var oNode17 = new sap.ui.commons.TreeNode("node17", {text:"Really long text for Node 1.2.1.1"});
+			oNode16.addNode(oNode17);
+			
+			oNode14.addNode(oNode16);
+			
+			oNode11.addNode(oNode14);
+			
+			oTree1.addNode(oNode11);
+			
+			var oNode12 = new sap.ui.commons.TreeNode("node12", {text:"Root 2"});
+			oTree1.addNode(oNode12);
+		
+		return oTree1;
+  	}
+		
+		
+		function createTransparentTree () {
+			var oTree2 = new sap.ui.commons.Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:false, showHeader:false});		
+			
+			var oNode21 = new sap.ui.commons.TreeNode("node21", {text:"Root 1"});
+			
+			var oNode23 = new sap.ui.commons.TreeNode("node23", {text:"Node 1.1", expanded:false});
+			
+			var oNode25 = new sap.ui.commons.TreeNode("node25", {text:"Node 1.1.1"});
+			oNode23.addNode(oNode25);
+			
+			oNode21.addNode(oNode23);
+			
+			var oNode24 = new sap.ui.commons.TreeNode("node24", {text:"Node 1.2"});
+			
+			var oNode26 = new sap.ui.commons.TreeNode("node26", {text:"Node 1.2.1"});
+			
+			var oNode27 = new sap.ui.commons.TreeNode("node27", {text:"Really long text for Node 1.2.1.1"});
+			oNode26.addNode(oNode27);
+			
+			oNode24.addNode(oNode26);
+			
+			oNode21.addNode(oNode24);
+			
+			oTree2.addNode(oNode21);
+			
+			var oNode22 = new sap.ui.commons.TreeNode("node22", {text:"Root 2"});
+			oTree2.addNode(oNode22);
+		
+		return oTree2;
+  	}		
+		
+		var oStandardTree = createStandardTree();
+		oStandardTree.placeAt("target1");
+		
+		var oTransparentTree = createTransparentTree();
+		oTransparentTree.placeAt("target2");
+
+
+		/******* qUnit Tests *******/
+		module("Tree", {
+		  setup: function() {
+
+			  oStandardTree.focus();
+
+		  },
+		  teardown: function() {
+		  	//this.oStandardTree = null;
+		  }
+		});
+		
+		qutils.delayTestStart();
+		
+		module("Rendering");
+		
+		test("Rendering of Standard tree", function() {
+			
+			notEqual(jQuery.sap.domById(sStandardTreeId), null, "Tree is rendered.");
+			
+			notEqual(jQuery.sap.domById(sStandardTreeId+ "-Header"), null, "Tree header is there.");
+			
+			notEqual(jQuery.sap.domById(sStandardTreeId+ "-TreeCont"), null, "Tree content is there");
+			
+		});
+		
+		test("Rendering of transparent tree", function() {
+			
+			notEqual(jQuery.sap.domById(sTransparentTreeId), null, "Tree is rendered.");
+			
+			equal(jQuery.sap.domById(sTransparentTreeId+ "-Header"), null, "Tree header is not there.");
+			
+			notEqual(jQuery.sap.domById(sTransparentTreeId+ "-TreeCont"), null, "Tree content is there");
+		});
+		
+		module("Nodes public methods");
+		
+		test("Single Collapse and Expand", function() {
+			
+			
+			//Collapse
+			var root1 = sap.ui.getCore().getControl("node11");
+			var tmp1 = oStandardTree.getNodes()[0];
+			
+			ok( root1.getExpanded(), "Root 1 is expanded at first");
+			root1.collapse();
+			ok( !root1.getExpanded(), "Root 1 is now collapsed");
+			
+			//Expand
+			var node13 = sap.ui.getCore().getControl("node13");
+			ok( !node13.getExpanded(), "Node 1.1 is collapsed at first");
+			node13.expand();
+			ok( node13.getExpanded(), "Node 1.1 is now expanded");
+		});
+		
+		test("Node selection", function() {
+			oStandardTree.expandAll();
+			var initialSelection = sap.ui.getCore().getControl("node13");
+			ok( initialSelection.getIsSelected(), "Node 1.1 is selected");
+			
+			var newSelection = sap.ui.getCore().getControl("node14");
+			newSelection.select();
+			ok( newSelection.getIsSelected(), "Node 1.3 is now selected");
+			ok( !initialSelection.getIsSelected(), "Node 1.1 is not selected anymore");
+			
+			
+		});
+		
+		module("Tree public methods");
+		
+		test("Collapse all", function() {
+			
+			oStandardTree.collapseAll();
+			
+			var foundNodeExpanded = false;
+			var aNodes = oStandardTree.getNodes();
+			
+			//TODO: check only 1st level
+			for(var i=0;i<aNodes.length;i++){
+				if(aNodes[i].getExpanded()){
+					foundNodeExpanded = true;
+				}
+			}
+			ok( !foundNodeExpanded, "All nodes are now collapsed");
+		});
+		
+		test("Expand all", function() {
+			
+			oStandardTree.expandAll();
+			
+			var foundNodeCollapsed = false;
+			var aNodes = oStandardTree.getNodes();
+			
+			//TODO: check only 1st level!
+			for(var i=0;i<aNodes.length;i++){
+				if(!aNodes[i].getExpanded()){
+					foundNodeCollapsed = true;
+				}
+			}
+			ok( !foundNodeCollapsed, "All nodes are now expanded");
+		});
+		
+		module("Keyboard support");
+		
+		test("Space/Enter", function() {
+			oStandardTree.expandAll();
+			
+			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ENTER, false, false, false);
+			
+			equal( oStandardTree.getSelection().getId(), "node11",  "New selection is set");
+			
+		});
+		
+		asyncTest("Arrow keys", function() {
+			sap.ui.getCore().getControl("node11").focus();
+			
+			setTimeout(function(){
+				qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+				setTimeout(function(){
+					equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus is down one node");
+					qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+					setTimeout(function(){
+						equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus is up one node");
+						qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+						setTimeout(function(){
+							equal( sap.ui.getCore().getControl("node11").getExpanded(), false,  "Node is collapsed");
+							qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+							setTimeout(function(){
+								equal( sap.ui.getCore().getControl("node11").getExpanded(), true,  "Node is expanded");
+								start();
+							}, 100);
+						}, 100);
+					}, 100);
+				}, 100);
+			}, 100);
+		});
+		
+		test("Plus/Minus", function() {
+			
+			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_MINUS, false, false, false);
+			
+			ok( !sap.ui.getCore().getControl("node11").getExpanded(), "Root is collapsed");
+			
+			qutils.triggerKeyboardEvent("node11", jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
+			
+			ok( sap.ui.getCore().getControl("node11").getExpanded(), "Root is expanded");
+			
+		});
+		
+		test("Asterisk", function() {
+			
+			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
+			
+			var foundNodeExpanded = false;
+			var aNodes = oStandardTree.getNodes();
+			
+			//TODO: check only 1st level
+			for(var i=0;i<aNodes.length;i++){
+				if(aNodes[i].getExpanded()){
+					foundNodeExpanded = true;
+				}
+			}
+			ok( !foundNodeExpanded, "All nodes are now collapsed");
+			
+			qutils.triggerKeyboardEvent(sStandardTreeId, jQuery.sap.KeyCodes.NUMPAD_ASTERISK, false, false, false);
+			
+			var foundNodeCollapsed = false;
+			var aNodes = oStandardTree.getNodes();
+			
+			//TODO: check only 1st level!
+			for(var i=0;i<aNodes.length;i++){
+				if(!aNodes[i].getExpanded()){
+					foundNodeCollapsed = true;
+				}
+			}
+			ok( !foundNodeCollapsed, "All nodes are now expanded");
+			
+		});
+		
+		test("Home/End", function() {
+			
+			sap.ui.getCore().getControl("node13").focus();
+			
+			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, false);
+			
+			equal( jQuery(document.activeElement).first().attr("id"), "node14",  "Focus moved to last sibling");
+			
+			qutils.triggerKeyboardEvent("node14", jQuery.sap.KeyCodes.HOME, false, false, false);
+			
+			equal( jQuery(document.activeElement).first().attr("id"), "node13",  "Focus moved to first sibling");
+			
+	
+			
+		});
+		
+		test("Ctrl+Home/Ctrl+End", function() {
+			
+			sap.ui.getCore().getControl("node13").focus();
+			
+			qutils.triggerKeyboardEvent("node13", jQuery.sap.KeyCodes.END, false, false, true);
+			
+			equal( jQuery(document.activeElement).first().attr("id"), "node12",  "Focus moved to last node");
+			
+			qutils.triggerKeyboardEvent("node12", jQuery.sap.KeyCodes.HOME, false, false, true);
+			
+			equal( jQuery(document.activeElement).first().attr("id"), "node11",  "Focus moved to first node");
+			
+	
+			
+		});
+		
+			
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for Tree Testing</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+		<div id="target1"></div>
+		<div id="target2"></div>
+	</body>
+</html>

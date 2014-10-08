@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>CheckBox - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.CheckBox.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+			var oCore = sap.ui.getCore(); 
+
+			function alertChecked(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var bChecked = oCheckBox.getChecked();
+				var oText = oCheckBox.getText();
+				alert("CheckBox '" + oText + "' is now: " + bChecked);
+			}
+
+			function toggleErrorCheckBox() {
+				var oCheckBox = oCore.getControl("c6");
+				oCheckBox.toggle();
+			}
+
+			function toggleReadonly() {
+				var oCheckBox = oCore.getControl("c1");
+				oCheckBox.setEditable(!oCheckBox.getEditable());
+			}
+
+
+			oCore.attachInitEvent(function () {
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				// a plain checkbox
+        var oCheckBox = new sap.ui.commons.CheckBox("c1"); 
+        oCheckBox.setText("Just a plain vanilla CheckBox"); 
+				oCheckBox.placeAt("target1");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c2");
+        oCheckBox.setText("This one is initially checked and has a tooltip (and toggles the readonly state of the box above)");
+        oCheckBox.setChecked(true);
+        oCheckBox.setTooltip("This is a tooltip");
+        oCheckBox.attachChange(toggleReadonly);
+				oCheckBox.placeAt("target2");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c3");
+        oCheckBox.setText("Disabled CheckBox");
+        oCheckBox.setEnabled(false);
+				oCheckBox.placeAt("target3");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c4");
+        oCheckBox.setText("Readonly CHECKED CheckBox");
+        oCheckBox.setEditable(false);
+        oCheckBox.setChecked(true);
+				oCheckBox.placeAt("target4");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c5"); 
+				oCheckBox.setText("CheckBox with warning state (toggles the error-state checkbox below)");
+				oCheckBox.setValueState(sap.ui.core.ValueState.Warning);
+        oCheckBox.attachChange(toggleErrorCheckBox);
+				oCheckBox.placeAt("target5");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c6"); 
+		    oCheckBox.setText("CHECKED CheckBox with error state");
+		    oCheckBox.setChecked(true); 
+		    oCheckBox.setValueState(sap.ui.core.ValueState.Error);
+				oCheckBox.placeAt("target6");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c7");
+				oCheckBox.setText("CheckBox with event");
+				oCheckBox.attachChange(alertChecked);
+				oCheckBox.placeAt("target7");
+
+
+				// test in matrix layout
+				var oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+				oLayout.setLayoutFixed(false);
+				oLayout.placeAt("target8");
+
+				// first row: a checkbox with separate label
+        var oLabel = new sap.ui.commons.Label("matrixLabel1");
+        oLabel.setText("A CheckBox:");
+        oCheckBox = new sap.ui.commons.CheckBox("c_matrix_1");
+        oLayout.createRow(oLabel, oCheckBox);
+
+	     	// second row: label and textfield
+        oLabel = new sap.ui.commons.Label("matrixLabel2");
+        oLabel.setText("A TextEdit:");
+        var oInput = new sap.ui.commons.TextField("tf1");
+        oCheckBox = new sap.ui.commons.CheckBox({text:"After TextField"});
+        oLayout.createRow(oLabel, oInput, oCheckBox);
+
+		   		// third row: a checkbox with included label
+        var oCell = new sap.ui.commons.layout.MatrixLayoutCell("emptyCell");
+        oCheckBox = new sap.ui.commons.CheckBox("c_matrix_2");
+        oCheckBox.setText("For this CheckBox the text follows after the box")
+        oLayout.createRow(oCell, oCheckBox);
+
+
+        // width test
+        oCheckBox = new sap.ui.commons.CheckBox("c9");
+        oCheckBox.setText("CheckBox (width = 200px)");
+        oCheckBox.setWidth("200px");
+				oCheckBox.placeAt("target9");
+
+				oCheckBox = new sap.ui.commons.CheckBox("c10");
+				oCheckBox.setText("Another CheckBox");
+				oCheckBox.placeAt("target10");
+
+				// invisible CheckBox
+				oCheckBox = new sap.ui.commons.CheckBox("c11"); 
+				oCheckBox.setText("This CheckBox must not be visible");
+				oCheckBox.setVisible(false);
+				oCheckBox.placeAt("target11");
+				}
+			);
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.CheckBox</h1>
+
+		<div id="target1"></div>
+		<div id="target2"></div>
+		<div id="target3"></div>
+		<div id="target4"></div>
+		<div id="target5"></div>
+		<div id="target6"></div>
+		<div id="target7"></div>
+		<br>
+		Testing alignment within matrix layout:
+		<div id="target8" style="border: 1px solid red;" ></div>
+		<br>
+		Width test:<br>
+		<span id="target9"></span><span id="target10"></span><br>
+		<img src="images/test-ruler.png">
+		<br> <br>
+		Invisible CheckBox (there must not be a CheckBox below!):
+		<div id="target11"></div>
+	</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.unified.Calendar
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Calendar - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+
+			jQuery.sap.require("sap.ui.core.LocaleData");
+			jQuery.sap.require("sap.ui.model.type.Date");
+
+			var bSelectFired = false;
+			var oSelectedDate = undefined;
+			var oLocaleUS = new sap.ui.core.Locale("en-US");
+			var oLocaleDE = new sap.ui.core.Locale("de-DE");
+			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
+			var oLocaleDataDE = sap.ui.core.LocaleData.getInstance(oLocaleDE);
+
+			var oCal1 = new sap.ui.unified.Calendar("Cal1",{
+				select: function(oEvent){
+					bSelectFired = true;
+					var oCalendar = oEvent.oSource;
+					var aSelectedDates = oCalendar.getSelectedDates();
+					if (aSelectedDates.length > 0 ) {
+						oSelectedDate = aSelectedDates[0].getStartDate();
+					}
+				}
+			}).placeAt("uiArea1");
+
+			var oCal2 = new sap.ui.unified.Calendar("Cal2",{
+				intervalSelection: true,
+				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2011", "0", "10"), endDate: new Date("2011", "0", "13")})],
+				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "1"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "2"), endDate: new Date("2011", "0", "4"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+			}).placeAt("uiArea1");
+			oCal2.setLocale("de-DE");
+
+			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+
+			qutils.delayTestStart();
+
+			module("Rendering");
+
+			test("Week day orders", function() {
+				var $Cal = sap.ui.getCore().byId("Cal1").$();
+				var aWeekHeaders = $Cal.children(".sapUiCalWH");
+				equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
+				equal(jQuery(aWeekHeaders[0]).text(), "Sun", "Sunday ist first weekday for en-US");
+				var $Cal = sap.ui.getCore().byId("Cal2").$();
+				var aWeekHeaders = $Cal.children(".sapUiCalWH");
+				equal(jQuery(aWeekHeaders[0]).text(), "Mo", "Monday ist first weekday for de-DE");
+			});
+
+			test("rendered month", function() {
+				var oToday = new Date();
+				equal(jQuery("#Cal1-month").text(), oLocaleDataUS.getMonthsStandAlone("wide")[oToday.getMonth()], "curent month shown");
+				equal(jQuery("#Cal1-year").text(), oToday.getFullYear(), "curent year shown");
+				var $FocusedDay = jQuery(jQuery("#Cal1-days").children("[tabindex='0']"));
+				equal($FocusedDay.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "curent date has tabindex 0");
+				var $Today = jQuery(jQuery("#Cal1-days").children(".sapUiCalDayToday"));
+				equal($Today.attr("data-sap-day"), oFormatYyyymmdd.format(oToday), "current date is marked as today");
+				ok(!$Today.hasClass(".sapUiCalDayOtherMonth"), "current date is not in other month");
+
+				equal(jQuery("#Cal2-month").text(), "Januar", "January shown");
+				equal(jQuery("#Cal2-year").text(), "2011", "year 2011 shown");
+				$FocusedDay = jQuery(jQuery("#Cal2-days").children("[tabindex='0']"));
+				equal($FocusedDay.attr("data-sap-day"), "20110110", "day 10 has tabindex 0");
+				var aSelectedDays = jQuery("#Cal2-days").children(".sapUiCalDaySel");
+				equal(aSelectedDays.length, 4, "4 days selected");
+				equal(jQuery(aSelectedDays[0]).attr("data-sap-day"), "20110110", "fist day selecte: 10");
+				ok(jQuery(aSelectedDays[0]).hasClass("sapUiCalDaySelStart"), "first selected day marked as selction start");
+				equal(jQuery(aSelectedDays[3]).attr("data-sap-day"), "20110113", "last day selecte: 13");
+				ok(jQuery(aSelectedDays[3]).hasClass("sapUiCalDaySelEnd"), "last selected day marked as selction end");
+				var aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
+				equal(jQuery(aDays[0]).attr("id"), "Cal2-20101227", "first displayed day has right ID");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+			});
+
+			test("focusDate method", function() {
+				oCal2.focusDate(new Date(2012, 11, 12));
+				equal(jQuery("#Cal2-month").text(), "Dezember", "December shown");
+				equal(jQuery("#Cal2-year").text(), "2012", "year 2012 shown");
+				var aDays = jQuery("#Cal2-days").children();
+				var bFound = false;
+				for(var i=0; i<aDays.length; i++){
+					if(jQuery(aDays[i]).attr("tabindex") == "0"){
+						bFound = true;
+						break;
+					}
+				}
+				ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
+
+				oCal2.focusDate(new Date(2011, 0, 10));
+			});
+
+			test("week number calculation", function() {
+				// en-US
+				oCal1.focusDate(new Date(2011, 0, 10));
+				var aDays = jQuery("#Cal1-days").children();
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 first week for en-US");
+				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2011 second week for en-US");
+				oCal1.focusDate(new Date(2014, 0, 10));
+				aDays = jQuery("#Cal1-days").children();
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2014 first week for en-US");
+				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2014 second week for en-US");
+				oCal1.focusDate(new Date());
+
+				// de-DE
+				aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "52", "week number 2011 first week for de-DE");
+				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 second week for de-DE");
+				oCal2.focusDate(new Date(2014, 0, 10));
+				aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalWeekNum")[0]).text(), "1", "week number 2011 first week for de-DE");
+				equal(jQuery(jQuery(aDays[7]).children(".sapUiCalWeekNum")[0]).text(), "2", "week number 2011 second week for de-DE");
+				oCal2.focusDate(new Date(2011, 0, 10));
+			});
+
+			test("special days", function() {
+				ok(jQuery("#Cal2-20110101").hasClass("sapUiCalDayType01"), "20110101 is special day of Type01");
+				ok(jQuery("#Cal2-20110101").attr("title", "Text"), "20110101 has special days tooltip");
+				ok(jQuery("#Cal2-20110102").hasClass("sapUiCalDayType02"), "20110102 is special day of Type02");
+				ok(jQuery("#Cal2-20110102").attr("title", "Text"), "20110102 has special days tooltip");
+				ok(jQuery("#Cal2-20110103").hasClass("sapUiCalDayType02"), "20110103 is special day of Type02");
+				ok(jQuery("#Cal2-20110103").attr("title", "Text"), "20110103 has special days tooltip");
+				ok(jQuery("#Cal2-20110104").hasClass("sapUiCalDayType02"), "20110104 is special day of Type02");
+				ok(jQuery("#Cal2-20110104").attr("title", "Text"), "20110104 has special days tooltip");
+			});
+
+			module("Interaction");
+
+			test("month switch", function() {
+				qutils.triggerEvent("click", "Cal2-prev");
+				equal(jQuery("#Cal2-month").text(), "Dezember", "December shown");
+				equal(jQuery("#Cal2-year").text(), "2010", "year 2010 shown");
+				var aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101129", "first displayed day");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110102", "last displayed day");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+
+				qutils.triggerEvent("click", "Cal2-next");
+				equal(jQuery("#Cal2-month").text(), "Januar", "january shown again");
+				equal(jQuery("#Cal2-year").text(), "2011", "year 2011 shown again");
+				aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "first displayed day");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110206", "last displayed day");
+				ok(jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is in other month");
+
+				qutils.triggerEvent("click", "Cal2-month");
+				ok(jQuery("#Cal2-months").get(0), "Month picker rendered");
+				var $July = jQuery("#Cal2-m6"); // use keybord to select month to prevent event processing from ItemNavigation
+				$July.focus();
+				qutils.triggerKeyboardEvent($July.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!jQuery("#Cal2-months").get(0), "Month picker removed after selecting month");
+				equal(jQuery("#Cal2-month").text(), "Juli", "July shown");
+				aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20110627", "first displayed day");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20110731", "last displayed day");
+				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is not in other month");
+
+				// go back to january
+				qutils.triggerEvent("click", "Cal2-month");
+				var $January = jQuery("#Cal2-m0"); // use keybord to select month to prevent event processing from ItemNavigation
+				$January.focus();
+				qutils.triggerKeyboardEvent($January.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+			});
+
+			test("year switch", function() {
+				qutils.triggerEvent("click", "Cal2-year");
+				ok(jQuery("#Cal2-years").get(0), "Year picker rendered");
+				var aYears = jQuery("#Cal2-years").children(".sapUiCalYear");
+				equal(aYears.length, 20, "20 jears rendered");
+				equal(jQuery(aYears[0]).text(), "2001", "first rendered year");
+				equal(jQuery(aYears[aYears.length-1]).text(), "2020", "last rendered year");
+
+				qutils.triggerEvent("click", "Cal2-prev");
+				aYears = jQuery("#Cal2-years").children(".sapUiCalYear");
+				equal(jQuery(aYears[0]).text(), "1981", "first rendered year after prev clicked");
+				equal(jQuery(aYears[aYears.length-1]).text(), "2000", "last rendered year after prev clicked");
+
+				var $NewYear = jQuery("#Cal2-y1999"); // use keybord to select month to prevent event processing from ItemNavigation
+				$NewYear.focus();
+				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!jQuery("#Cal2-years").get(0), "Year picker not rendered after selecting year");
+				equal(jQuery("#Cal2-month").text(), "Januar", "January still shown");
+				equal(jQuery("#Cal2-year").text(), "1999", "year 1999 shown");
+				var aDays = jQuery("#Cal2-days").children();
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "19981228", "first displayed day");
+				ok(jQuery(aDays[0]).hasClass("sapUiCalDayOtherMonth"), "first displayed day is in other month");
+				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "19990131", "last displayed day");
+				ok(!jQuery(aDays[aDays.length-1]).hasClass("sapUiCalDayOtherMonth"), "last displayed day is not in other month");
+
+				qutils.triggerEvent("click", "Cal2-year");
+				ok(jQuery("#Cal2-years").get(0), "Year picker rendered");
+				var aYears = jQuery("#Cal2-years").children(".sapUiCalYear");
+				equal(jQuery(aYears[0]).text(), "1989", "first rendered year");
+				equal(jQuery(aYears[aYears.length-1]).text(), "2008", "last rendered year");
+
+				qutils.triggerEvent("click", "Cal2-next");
+				aYears = jQuery("#Cal2-years").children(".sapUiCalYear");
+				equal(jQuery(aYears[0]).text(), "2009", "first rendered year after prev clicked");
+				equal(jQuery(aYears[aYears.length-1]).text(), "2028", "last rendered year after prev clicked");
+
+				$NewYear = jQuery("#Cal2-y2011"); // use keybord to select month to prevent event processing from ItemNavigation
+				$NewYear.focus();
+				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(!jQuery("#Cal2-years").get(0), "Year picker not rendered after selecting year");
+				equal(jQuery("#Cal2-month").text(), "Januar", "January still shown");
+				equal(jQuery("#Cal2-year").text(), "2011", "year 2011 shown again");
+			});
+
+			test("select event", function() {
+				var $Today = jQuery(jQuery("#Cal1-days").children(".sapUiCalDayToday"));
+				var oToday = new Date();
+				bSelectFired = false;
+				oSelectedDate = undefined;
+				$Today.focus();
+				qutils.triggerKeyboardEvent($Today[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(bSelectFired, "Select event fired");
+				equal(oSelectedDate.getDate(), oToday.getDate(), "Today was selected");
+				ok($Today.hasClass("sapUiCalDaySel"), "Today marked as selected");
+			});
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.Calendar</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+	</body>
+</html>

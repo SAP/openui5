@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.MessageBar,sap.ui.commons.Message">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>MessageBar - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='messageBar'>
+			// ********** MESSAGEBAR SECTION **********
+			// create a simple MessageBar
+			var oMessageBar = new sap.ui.commons.MessageBar('messageBar');
+			oMessageBar.setMaxToasted(3);
+			oMessageBar.setMaxListed(7);
+			// attach and position it to some element in the page
+			oMessageBar.setAnchorID("messageBarArea");
+			oMessageBar.setAnchorSnapPoint("begin top");
+
+			// ********** MESSAGEs SECTION **********
+			// Callback function for generating the long-text message Details (HTML-strings)
+		    function getDetails(sId) {
+		    	var details = "";
+		    	if (sId != "error") {
+		    		// Just to prove that the ID is well received
+		    		details = '<B><SPAN style="color:red;">Message ' + sId + ' says:</SPAN></B><BR><BR>';
+		    	}
+		        details += "<B>Diagnosis</B><BR>"
+				        + "The BI system you are trying to call cannot be reached.<BR><BR>"
+				        + "<B>System Response</B><BR>"
+				        + "You cannot see any report from that BI system.<BR><BR>"
+				        + "<B>Procedure</B><BR>"
+				        + "System may be temporarily unavailable. "
+				        + "If the problem persists contact your system administration.<BR><BR>"
+				        + "<B>Procedure for System Administration</B><BR>"
+				        + "Check availability of the RFC destination 66 in transaction SM59. "
+				        + "If the system is available analyze the logon settings. "
+				        + "SAP recommends setting up trust relationship between SAP CRM and "
+				        + "the target BI system so the current CRM user is automatically logged "
+				        + "on to the BI system.";
+				// Wrapping those details into a DIV container for width definition:
+				details = "<DIV style=\"width:312px;\">" + details + "</DIV>";
+				return details;
+		    }
+
+		    // create simple Messages
+		    var error   = new sap.ui.commons.Message("error",   {type:sap.ui.commons.MessageType.Error,   text:"Error short text"});      	  
+		    var warning = new sap.ui.commons.Message("warning", {type:sap.ui.commons.MessageType.Warning, text:"Warning short text"});
+		    var success = new sap.ui.commons.Message("success", {type:sap.ui.commons.MessageType.Success, text:"Success short text"});
+		    error.bindDetails(getDetails);
+		    warning.bindDetails(getDetails);
+		    success.bindDetails(getDetails);
+
+
+		    // ********** BUTTONs SECTION **********
+		    // Grouping the messages into Arrays, for interfacing with the MessageBar APIs:
+		    var aMeliMelos = new Array();
+		    aMeliMelos.push(error);
+		    aMeliMelos.push(warning);
+		    aMeliMelos.push(success);
+		    var aMeliMeloIdsB = new Array();
+		    aMeliMeloIdsB.push("error");
+		    aMeliMeloIdsB.push("warning");
+		    aMeliMeloIdsB.push("success");
+		    
+			// attach them to some buttons in the page
+		  	var addMeliMeloButton = new sap.ui.commons.Button("addMeliMeloButton");
+		  	addMeliMeloButton.setText("Add 3 melimelo");
+		  	addMeliMeloButton.attachPress(
+		  	  function (oControlEvent) {
+		  	  	oMessageBar.addMessages(aMeliMelos);
+		  	  } 
+		  	);							
+		  	addMeliMeloButton.placeAt("addMeliMelo");
+		
+		  	var deleteMeliMeloButton = new sap.ui.commons.Button("deleteMeliMeloButton");
+		  	deleteMeliMeloButton.setText("Delete 3 melimelo");
+		  	deleteMeliMeloButton.attachPress(
+		  	  function (oControlEvent) {
+		  	  	oMessageBar.deleteMessages(aMeliMeloIdsB);
+		  	  } 
+		  	);							
+		  	deleteMeliMeloButton.placeAt("deleteMeliMelo");
+		</script>
+
+	</head>
+	
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/messagebar-icon.png">MessageBar (deprecated)</h1>
+		
+		<h2>Introduction</h2>
+		
+		<p>MessageBar presents the application messages to the user. The control has a set of configurable properties:
+		<ul>
+		<li><code>maxToasted</code>: Maximum number of messages allowed to be raised at once before being announced via a single combined  multi message.</li>
+		<li><code>maxListed</code>: Maximum number of messages that shall be shown at once in the drop down list. In case of a large amount of messages, a vertical scroll bar is provided.</li> 
+		<li><code>anchorId</code>: Element ID upon which the MessageBar is initially positioned.</li>
+		<li><code>anchorSnapPoint</code>:<code>begin top</code> is set by default.</li>
+		</ul>
+		</p>
+		
+		<p>
+		The MessageBar can then be addressed by applications via the following APIs: 
+		<ul>
+		<li><code>addMessages</code>: (Array of) Messages to be raised to the user.</li>
+		<li><code>deleteMessages</code>: (Array of) Message IDs to be dropped by the user.</li>
+		<li><code>deleteAllMessages</code>: To remove all currently raised messages.</li>
+		</ul>
+		</p>
+		
+		<p>
+		To give more examples, the MessageBar control provides also the following features:
+		<ul>
+		<li>The MessageBar is only visible in the case that a message is raised.</li>
+		<li>Incoming messages are displayed with some short text.</li>
+		<li>The total count of messages raised in each priority category is displayed.</li>
+		</ul>
+		</p>
+		
+		<h2>Example</h2>
+		
+		<p>
+		In the example, click twice on the add MeliMelo button to display a message area with an error, a warning, and a success message text.
+		</p>
+	    <table>
+	    <font face=Verdana font size=2>
+	      <tbody>
+	        <tr><td id="addMeliMelo"></td><td id="deleteMeliMelo"></td><td><span>Message Area:</span></td><td><span id="messageBarArea"></span></td></tr>
+	      </tbody>
+	      </font>
+	    </table>
+		<div code-sample="sample1" script="messageBar"></div>
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MessageBar.html" >API documentation</a>
+		</p>
+	</body>
+</html>

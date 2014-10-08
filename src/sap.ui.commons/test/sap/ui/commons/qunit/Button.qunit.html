@@ -1,0 +1,290 @@
+<html>
+<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		
+		
+		<!-- 
+		
+		
+		CAUTION:
+		This test is >>>>>  NOT  <<<<< a good example for qUnit tests!!!
+		It was just one of the first we tried!
+		
+		So if you write your own qUnit test, look at other tests like for
+		sap.ui.core.BusyIndicator, 
+		sap.ui.core.Popup and 
+		sap.ui.commons.ComboBox 
+		(just some examples I know, there might be other good ones as well)
+		
+		A template with all the required header stuff and so on is available in the "core"
+		project: src/test/uilib/sap/ui/core/qunit/template.qunit.html
+		This one should be used for creating your new test.
+		
+		This Button test is bad because:
+		- it almost only checks property setters which are anyway generated
+		- it uses exceptions to check event handlers
+		- ...
+		
+		Only "OffsetWidthOk" tests something non-generated/non-trivial.
+		
+		 -->
+		 
+		 
+
+
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons"	
+		>
+	</script>
+
+  <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+  <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+  
+  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+  <script language="javascript">
+	var b1, b2, b3, msg;
+	
+	var sText = "Hello",
+ 	sTooltip = "abc",
+	sWidth = "111px",
+	sIcon = "../images/help.gif",
+	sHelpId = "12345",
+	sPressMessage = "Button Pressed Event!",
+	bEnabled = false,
+	bVisible = true,
+	bIconFirst = false;
+
+	function pressEventHandler1() {
+		throw sPressMessage + " - Exception"
+	}
+
+	function pressEventHandler2() {
+		msg = sPressMessage
+	}
+	
+	var aEvents = [];
+	function pressEventHandler3(oEvent, oData) {
+		ok(oEvent != null, "event should not be null");
+		ok(oData != null, "additional event data should not be null");
+		aEvents.push({event: oEvent, addData: oData});
+	}
+	var listener = {
+			listen: pressEventHandler3
+		};
+	
+	var oButton1 = new sap.ui.commons.Button("b1");
+	oButton1.setText(sText);
+	oButton1.setWidth(sWidth);
+	oButton1.setEnabled(!bEnabled);
+	oButton1.setVisible(bVisible);
+	oButton1.setTooltip(sTooltip);
+	oButton1.setIconFirst(bIconFirst);
+	oButton1.setIcon(sIcon);
+	oButton1.setHelpId(sHelpId);
+	oButton1.attachPress(pressEventHandler1);
+	sap.ui.setRoot("uiArea1", oButton1);
+	
+	var oButton2 = new sap.ui.commons.Button("b2", {
+		text : sText,
+		width : sWidth,
+		enabled : bEnabled,
+		visible : bVisible,
+		tooltip : sTooltip,
+		iconFirst : !bIconFirst,
+		icon : sIcon,
+		helpId : sHelpId,
+		press : pressEventHandler2
+	});
+	sap.ui.setRoot("uiArea2", oButton2);
+
+	// Due to not having the 'init3rd' option for constructors anymore, this is not relevant!
+	var oButton3 = new sap.ui.commons.Button("b3", pressEventHandler2);
+	sap.ui.setRoot("uiArea3", oButton3);
+	
+	// button for advanced event handler tests
+	var oButton4 = new sap.ui.commons.Button("b4", {text : sText});
+	sap.ui.setRoot("uiArea4", oButton4);
+	
+	// button for advanced event handler tests, using initialization parameters
+	var oButton5 = new sap.ui.commons.Button("b5", {text : sText, press: [{my: "TestdataFromConstructor"}, listener.listen, listener]});
+	sap.ui.setRoot("uiArea5", oButton5);
+
+	qutils.delayTestStart();
+	
+	module("SAPUI5 Button - test property accessor methods", {
+		setup: function() {
+	 		b1 = sap.ui.getCore().getControl("b1");
+	 		b2 = sap.ui.getCore().getControl("b2");
+	 	},
+	 	teardown: function() {
+	 		b1 = null;
+	 		b2 = null;
+	 	}
+	 });
+	 test("TextOk", function() {
+		b1.detachPress(pressEventHandler1);
+		jQuery("#b1").focus().click().mousedown().mouseup().mouseleave().blur();
+		b1.attachPress(pressEventHandler1);
+		jQuery("#b2").focus().click().mousedown().mouseup().mouseleave().blur();
+
+		equals(b1.getText(),sText,"Text for button1 is correct using 'equals()'!");
+		equals(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");		
+	 });
+	 test("WidthOk", function() {
+		equals(b1.getWidth(),sWidth,"Width for button1 is correct using 'equals()'!");
+		equals(b2.getWidth(),sWidth,"Width for button2 is correct using 'equals()'!");		
+	 });
+	 test("EnabledOk", function() {
+			equals(b1.getEnabled(),true,"Enabled state for button1 is correct using 'equals()'!");
+			equals(b2.getEnabled(),false,"Enabled state for button2 is correct using 'equals()'!");		
+		 });
+	  test("VisibleOk", function() {
+		equals(b1.getVisible(),true,"Visible state for button1 is correct using 'equals()'!");
+		equals(b2.getVisible(),true,"Visible state for button2 is correct using 'equals()'!");		
+	 });
+ 	 test("TooltipOk", function() {
+		equals(b1.getTooltip(),sTooltip,"Tooltip state for button1 is correct using 'equals()'!");
+		equals(b2.getTooltip(),sTooltip,"Tooltip state for button2 is correct using 'equals()'!");		
+	 });
+ 	 test("IconFirstOk", function() {
+		equals(b1.getIconFirst(),false,"IconFirst state for button1 is correct using 'equals()'!");
+		equals(b2.getIconFirst(),true,"IconFirst state for button2 is correct using 'equals()'!");		
+	 });
+ 	 test("IconOk", function() {
+		equals(b1.getIcon(),sIcon,"Icon for button1 is correct using 'equals()'!");
+		equals(b2.getIcon(),sIcon,"Icon for button2 is correct using 'equals()'!");		
+	 });
+ 	 test("HelpIdOk", function() {
+		equals(b1.getHelpId(),sHelpId,"HelpId for button1 is correct using 'equals()'!");
+		equals(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");		
+	 });
+
+ 	module("SAPUI5 Button - test event handlers", {
+		setup: function() {
+	 		b1 = sap.ui.getCore().getControl("b1");
+	 		b2 = sap.ui.getCore().getControl("b2");
+	 	},
+	 	teardown: function() {
+	 		b1 = null;
+	 		b2 = null;
+	 	}
+	 }); 	 
+	 test("PressOk", function() {
+		try {
+			b1.firePress();
+			ok(false,"Exception should have been thrown!");
+		} catch (e) {
+			ok(e == sPressMessage + " - Exception","Exception was thrown correctly!");
+			equals(e,sPressMessage + " - Exception","Exception was thrown correctly!")
+		}
+		b2.firePress();
+		ok(msg == sPressMessage,"Event was fired correctly!");
+		equals(msg,sPressMessage,"Event was fired correctly!!")
+	});
+
+	 test("PressDetachOk", function () {
+			b1.detachPress(pressEventHandler1);
+			try {
+				b1.firePress();
+				ok(true,"No event and thus no exception should be triggered!");
+				equals(!sPressMessage,false,"No event and thus no exception should be triggered!")
+			} catch (e) {
+				ok(e != sPressMessage + " - Exception","Exception shouldn't have been thrown!");
+				equals(e,!sPressMessage,"Exception shouldn't have been thrown!")
+			}
+			// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
+			b1.attachPress(pressEventHandler1);
+		});
+
+	 	module("SAPUI5 Button - test methods", {
+			setup: function() {
+		 		b1 = sap.ui.getCore().getControl("b1");
+		 		b2 = sap.ui.getCore().getControl("b2");
+		 	},
+		 	teardown: function() {
+		 		b1 = null;
+		 		b2 = null;
+		 	}
+		 }); 
+	 
+		function isEmpty(oObject) {
+			for(var i in oObject){ return false;}
+			return true;
+		}
+		
+		test("MetadataOk", function() {
+			var oMetadata = b1.getMetadata();
+			ok(oMetadata != null,"b1.getMetadata() should not be null");
+			ok(oMetadata.getParent() != null,"b1.getMetadata().getParent() should not be null");
+			ok(sap.ui.core.Control.getMetadata() == oMetadata.getParent(), "");
+			ok(oMetadata.getProperties()["text"]["type"] == "string" ,"Text type is 'string'!");
+			equals(oMetadata.getProperties()["text"]["type"],"string" ,"Text type is 'string'!");
+			ok(oMetadata.getAggregations().richTooltip != "undefined","Richtooltip is not 'null'");
+			equals(oMetadata.getAggregations().richTooltip ==  "undefined",false,"Richtooltip is not 'null'");
+			var oAssociations = oMetadata.getAssociations();
+			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+		});
+
+		test("OffsetWidthOk", function() {
+			//test the pixel perfect width of the control
+			var oDomRef = window.document.getElementById("b1");
+			ok(parseInt(b1.getWidth()) == oDomRef.offsetWidth,"b1.offsetWidth == parseInt(b1.getWidth())");
+			equals(oDomRef.offsetWidth,parseInt(b1.getWidth()),"b1.offsetWidth == parseInt(b1.getWidth())");
+			b2.setWidth("500px");
+			sap.ui.getCore().applyChanges();
+			oDomRef = window.document.getElementById("b2");
+			ok(parseInt(oDomRef.offsetWidth) == 500,"b2.offsetWidth == 500)");
+			equals(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");	
+		});
+		
+		test("eventWithAdditionalDataOk", function(){
+			var oBtn = sap.ui.getCore().byId("b4");
+			aEvents = [];
+			oBtn.attachPress({my: "Testdata1"}, listener.listen);
+			oBtn.focus();
+			qutils.triggerEvent("click", oBtn.getId());
+			equal(aEvents.length, 1, "there should be one event in the log");
+			oBtn.detachPress(listener.listen);
+			aEvents = [];
+			oBtn.attachPress({my: "Testdata2"}, listener.listen, listener);
+			oBtn.focus();
+			qutils.triggerEvent("click", oBtn.getId());
+			equal(aEvents.length, 1, "there should be one event in the log");
+			oBtn.detachPress(listener.listen, listener);
+		});
+		
+		test("eventWithAdditionalDataInitViaConstructorOk", function(){
+			// and now ensure also the event handler attachment via constructor works
+			var oBtn = sap.ui.getCore().byId("b5");
+			aEvents = [];
+			oBtn.focus();
+			qutils.triggerEvent("click", oBtn.getId());
+			equal(aEvents.length, 1, "there should be one event in the log");
+		});
+  </script>
+  
+</head>
+<body>
+ <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <h2 id="qunit-userAgent"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <ol id="qunit-tests"></ol>
+ <br>
+ <div id="uiArea1"></div>
+ <div id="uiArea2"></div>
+ <div id="uiArea3"></div>
+ <div id="uiArea4"></div>
+ <div id="uiArea5"></div>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+[
+        {
+            "ID": "ID_0",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_0",
+            "Currency_E": 6287.57,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_0')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_1",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_1",
+            "Currency_E": 3878.94,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_1')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_2",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_2",
+            "Currency_E": 1564.68,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_2')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_3",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_3",
+            "Currency_E": 1679.45,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_3')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_4",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_4",
+            "Currency_E": 7789.5,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_4')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_5",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_5",
+            "Currency_E": 7256.65,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_5')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_6",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_6",
+            "Currency_E": 2431.45,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_6')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_7",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_7",
+            "Currency_E": 9816.07,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_7')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_8",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_8",
+            "Currency_E": 8062.24,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_8')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_9",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_9",
+            "Currency_E": 2107.58,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_9')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_10",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_10",
+            "Currency_E": 3398.57,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_10')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_11",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_11",
+            "Currency_E": 236.15,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_11')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_12",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_12",
+            "Currency_E": 4352.59,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_12')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_13",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_13",
+            "Currency_E": 4569.7,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_13')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_14",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_14",
+            "Currency_E": 3381.03,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_14')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_15",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_15",
+            "Currency_E": 275.24,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_15')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_16",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_16",
+            "Currency_E": 8136.87,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_16')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_17",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_17",
+            "Currency_E": 2896.05,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_17')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_18",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_18",
+            "Currency_E": 247.69,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_18')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_19",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_19",
+            "Currency_E": 6118.75,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_19')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_20",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_20",
+            "Currency_E": 5645.65,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_20')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_21",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_21",
+            "Currency_E": 3743.27,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_21')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_22",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_22",
+            "Currency_E": 9853.48,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_22')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_23",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_23",
+            "Currency_E": 1546.42,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_23')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_24",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_24",
+            "Currency_E": 8756.68,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_24')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_25",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_25",
+            "Currency_E": 9075.45,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_25')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_26",
+            "P_SAPClient": 776,
+            "SAPClient": "SAPClient_26",
+            "Currency_E": 5716.02,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_26')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_27",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_27",
+            "Currency_E": 9945.66,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_27')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_28",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_28",
+            "Currency_E": 6192.56,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_28')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_29",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_29",
+            "Currency_E": 7857.2,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_29')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_30",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_30",
+            "Currency_E": 3704.76,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_30')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_31",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_31",
+            "Currency_E": 7833.86,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_31')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_32",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_32",
+            "Currency_E": 9198.77,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_32')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_33",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_33",
+            "Currency_E": 1143.72,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_33')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_34",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_34",
+            "Currency_E": 412.74,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_34')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_35",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_35",
+            "Currency_E": 9715.96,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_35')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_36",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_36",
+            "Currency_E": 8414.76,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_36')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_37",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_37",
+            "Currency_E": 5698.94,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_37')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_38",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_38",
+            "Currency_E": 7478.68,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_38')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_39",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_39",
+            "Currency_E": 8735.54,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_39')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_40",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_40",
+            "Currency_E": 5952.47,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_40')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_41",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_41",
+            "Currency_E": 1620.59,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_41')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_42",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_42",
+            "Currency_E": 2752.94,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_42')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_43",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_43",
+            "Currency_E": 3063.15,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_43')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_44",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_44",
+            "Currency_E": 1867.67,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_44')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_45",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_45",
+            "Currency_E": 8893.58,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_45')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_46",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_46",
+            "Currency_E": 3003.16,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_46')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_47",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_47",
+            "Currency_E": 7802.22,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_47')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_48",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_48",
+            "Currency_E": 9049.67,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_48')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_49",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_49",
+            "Currency_E": 4237.55,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_49')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_50",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_50",
+            "Currency_E": 4695.32,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_50')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_51",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_51",
+            "Currency_E": 8069.22,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_51')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_52",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_52",
+            "Currency_E": 8938.81,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_52')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_53",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_53",
+            "Currency_E": 50.95,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_53')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_54",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_54",
+            "Currency_E": 975.89,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_54')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_55",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_55",
+            "Currency_E": 799.65,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_55')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_56",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_56",
+            "Currency_E": 642.01,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_56')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_57",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_57",
+            "Currency_E": 342.48,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_57')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_58",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_58",
+            "Currency_E": 6986.27,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_58')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_59",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_59",
+            "Currency_E": 9596.25,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_59')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_60",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_60",
+            "Currency_E": 4268.76,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_60')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_61",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_61",
+            "Currency_E": 3648.38,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_61')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_62",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_62",
+            "Currency_E": 7973.47,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_62')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_63",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_63",
+            "Currency_E": 7633.05,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_63')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_64",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_64",
+            "Currency_E": 1067.17,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_64')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_65",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_65",
+            "Currency_E": 280.35,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_65')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_66",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_66",
+            "Currency_E": 2291.85,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_66')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_67",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_67",
+            "Currency_E": 6632.59,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_67')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_68",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_68",
+            "Currency_E": 7002.89,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_68')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_69",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_69",
+            "Currency_E": 5268.24,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_69')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_70",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_70",
+            "Currency_E": 5887.64,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_70')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_71",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_71",
+            "Currency_E": 5652.35,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_71')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_72",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_72",
+            "Currency_E": 6361.34,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_72')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_73",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_73",
+            "Currency_E": 451.89,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_73')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_74",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_74",
+            "Currency_E": 7748.09,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_74')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_75",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_75",
+            "Currency_E": 8513.57,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_75')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_76",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_76",
+            "Currency_E": 9140.53,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_76')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_77",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_77",
+            "Currency_E": 6226.1,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_77')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_78",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_78",
+            "Currency_E": 1045.12,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_78')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_79",
+            "P_SAPClient": 777,
+            "SAPClient": "SAPClient_79",
+            "Currency_E": 8381.73,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_79')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_80",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_80",
+            "Currency_E": 8233.59,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_80')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_81",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_81",
+            "Currency_E": 2899.49,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_81')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_82",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_82",
+            "Currency_E": 4404.2,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_82')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_83",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_83",
+            "Currency_E": 7737.06,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_83')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_84",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_84",
+            "Currency_E": 8862.38,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_84')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_85",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_85",
+            "Currency_E": 3050.7,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_85')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_86",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_86",
+            "Currency_E": 7723.9,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_86')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_87",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_87",
+            "Currency_E": 8696.5,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_87')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_88",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_88",
+            "Currency_E": 2231.85,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_88')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_89",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_89",
+            "Currency_E": 3201.55,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_89')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_90",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_90",
+            "Currency_E": 654.75,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_90')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_91",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_91",
+            "Currency_E": 5224.29,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_91')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_92",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_92",
+            "Currency_E": 1105.01,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_92')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_93",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_93",
+            "Currency_E": 1091.85,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_93')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_94",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_94",
+            "Currency_E": 154.85,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_94')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_95",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_95",
+            "Currency_E": 7578.35,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_95')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_96",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_96",
+            "Currency_E": 7909.4,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_96')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_97",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_97",
+            "Currency_E": 456.9,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_97')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+        {
+            "ID": "ID_98",
+            "P_SAPClient": 778,
+            "SAPClient": "SAPClient_98",
+            "Currency_E": 191.53,
+            "__metadata": {
+                "uri": "/myService/TestQueryResults(ID='ID_98')",
+                "type": "apf-test.TestQueryResultsType"
+            }
+        },
+    {
+        "ID": "ID_99",
+        "P_SAPClient": 778,
+        "SAPClient": "SAPClient_99",
+        "Currency_E": 9366.76,
+        "__metadata": {
+            "uri": "/myService/TestQueryResults(ID='ID_99')",
+            "type": "apf-test.TestQueryResultsType"
+        }
+    }
+    ]

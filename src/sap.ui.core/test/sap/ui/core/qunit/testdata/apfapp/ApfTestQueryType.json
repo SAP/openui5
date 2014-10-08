@@ -1,0 +1,23 @@
+[
+    {
+        "P_SAPClient": "9999",
+        "P_FromDate": "01012014",
+        "P_ToDate": "01062014",
+        "P_DisplayCurrency": "eu",
+        "P_ExchangeRateType": "eu",
+        "P_ExchangeRateDate": "01012014",
+        "P_AgingGridMeasureInDays": 10,
+        "P_NetDueGridMeasureInDays": 10,
+        "P_NetDueArrearsGridMsrInDays": 10,
+        "NavID": "#9999",
+        "__metadata": {
+            "uri": "/ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014',P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014',P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)",
+            "type": "apf-test.ApfTestQueryType"
+        },
+        "Results": {
+            "__deferred": {
+                "uri": "/ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014',P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014',P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)/Results"
+            }
+        }
+    }
+]

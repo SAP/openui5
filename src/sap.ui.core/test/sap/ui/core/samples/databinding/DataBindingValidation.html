@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Data binding validation test page with Two Way data binding, table and JSON Model</title>
+
+<!-- ********************************************************************** -->
+<!-- JavaScript Bootstrap:                                                  -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-trace="true">
+</script>
+
+<script type="text/javascript">
+
+		try {
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		} catch(e) {
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+	    }
+
+		try {
+			sap.ui.getCore().loadLibrary("sap.ui.table");
+		} catch(e){
+			alert("This test page requires the library 'sap.ui.table' which is not available.");
+			throw(e);
+	    }
+
+    	var oCore = sap.ui.getCore();
+    	oCore.attachInitEvent(function() {
+    		var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
+    		if (logger)
+    			logger.style.display = "none";
+
+    		var oHeader = new sap.ui.commons.ApplicationHeader();
+    		oHeader.setLogoSrc("../images/SAPLogo.gif");
+    		oHeader.setLogoText("Testpage with Validation, Two Way Data Binding, Tables and JSON Model");
+    		oHeader.setDisplayLogoff(false).setDisplayWelcome(false);
+    		oHeader.placeAt("header");
+
+    		var mdData = {
+    	    		clients:[
+    		    		        {firstName:"Donald", lastName:"Duck", id: "1", rating : 5, salary : 216.46},
+    		    		        {firstName:"Lucky", lastName:"Luke", id: "2", rating : 2, salary : 622.86},
+    		    		        {firstName:"Micky", lastName:"Mouse", id: "3", rating : 1, salary : 322.03},
+    		    		        {firstName:"Black", lastName:"Spider", id: "4", rating : 3, salary : 522.35},
+    		    		        {firstName:"Judge", lastName:"Dredd", id: "5", rating : 4, salary : 732.57},
+    		    		        {firstName:"Captain", lastName:"Comic", id: "6", rating : 5, salary : 534.47},
+    		    		        {firstName:"Flash", lastName:"Gordon", id: "7" , rating : 0, salary : 334.94}
+    		    		     ]
+    		};
+    		var oModel = new sap.ui.model.json.JSONModel();
+    		oModel.setData(mdData);
+    		sap.ui.getCore().setModel(oModel);
+
+    		var oTable = new sap.ui.table.Table();
+
+    		oTable.addColumn(new sap.ui.table.Column({
+    			label: new sap.ui.commons.Label({text: "Client ID"}),
+    			template: new sap.ui.commons.TextField({value:"{id}"}),
+    			sortProperty: "id",
+    			filterProperty: "id"
+    		}));
+    		
+    		var oStringType = new sap.ui.model.type.String(null, {
+    			minLength : 3,
+    			maxLength : 10
+    		});
+    		
+    		oTable.addColumn(new sap.ui.table.Column({
+    			label: new sap.ui.commons.Label({text: "First Name (minLength: 3, maxLength: 10)"}),
+    			template: new sap.ui.commons.TextField().bindValue({path: "firstName", type: oStringType}),
+    			sortProperty: "firstName",
+    			filterProperty: "firstName"
+    		}));
+    		
+    		oTable.addColumn(new sap.ui.table.Column({
+    			label: new sap.ui.commons.Label({text: "Last Name (minLength: 3, maxLength: 10)"}),
+    			template: new sap.ui.commons.TextField().bindValue({path: "lastName", type: oStringType}),
+    			sortProperty: "lastName",
+    			filterProperty: "lastName"
+    		}));
+
+    		var oFloatType = new sap.ui.model.type.Float({
+    			minFractionDigits : 2,
+    			maxFractionDigits : 2
+    		}, {
+    			maximum : 8000
+    		});
+    		
+    		oTable.addColumn(new sap.ui.table.Column({
+    			label: new sap.ui.commons.Label({text: "Client Salary (minFracDigits: 2, maxFracDigits: 2, max: 8000)"}),
+    			template: new sap.ui.commons.TextField().bindValue({path: "salary", type: oFloatType}),
+    			sortProperty: "salary",
+    			filterProperty: "salary"
+    		}));
+    		
+    		oTable.addColumn(new sap.ui.table.Column({
+    			label: new sap.ui.commons.Label({text: "Rating"}),
+    			template: new sap.ui.commons.RatingIndicator({value:"{rating}"}),
+    			sortProperty: "rating",
+    			filterProperty: "rating"
+    		}));
+    		
+    		// eventing
+    		
+    		// override only for demo purposes to show the bubbling events
+    		sap.ui.base.ManagedObject.prototype.getEventingParent = function() {
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event bubbled to " + this.toString()}));
+    			return this.oParent;
+			};
+    		
+    		var bCancelBubble = true;
+    		
+    		// validation
+    		oTable.attachValidationSuccess(this, function(oEvent){
+    			var oElement = oEvent.getParameter('element');
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationSuccess handled by table for " + oElement.toString()}));
+    			if (bCancelBubble) {
+					oEvent.cancelBubble();	
+    			}
+    		});
+    		
+    		oTable.attachValidationError(this, function(oEvent){
+    			var oElement = oEvent.getParameter('element');
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationError handled by table for " + oElement.toString()}));
+    			if (bCancelBubble) {
+					oEvent.cancelBubble();	
+    			}
+    		});
+    		
+    		oTable.attachParseError(this, function(oEvent){
+    			var oElement = oEvent.getParameter('element');
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ParseError handled by table for " + oElement.toString()}));
+    			if (bCancelBubble) {
+					oEvent.cancelBubble();
+    			}
+    		});
+    		
+    		sap.ui.getCore().attachValidationSuccess(this, function(oEvent) {
+    			var oElement = oEvent.getParameter('element');
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationSuccess handled by core for " + oElement.getId()}));
+			});
+    		
+    		sap.ui.getCore().attachValidationError(this, function(oEvent) {
+    			var oElement = oEvent.getParameter('element');
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ValidationError handled by core for " + oElement.getId()}));
+			});
+    		
+    		sap.ui.getCore().attachParseError(this, function(oEvent) {
+    			var oElement = oEvent.getParameter('element');    			
+    			oSimpleListBox.addItem(new sap.ui.core.ListItem({text: "Event ParseError handled by core for " + oElement.getId()}));
+			});
+    		
+    		oTable.bindRows("/clients");
+
+    		var oSimpleListBox = new sap.ui.commons.ListBox({
+    	 		enabled: false,
+    	 		width: "600px",
+    	 		height: "200px"
+    	 	});
+    		
+    		var oBtn = new sap.ui.commons.Button({text: "Clear", press: function(){
+    			oSimpleListBox.removeAllItems();
+    		}});
+    		
+    		var oCheckBox = new sap.ui.commons.CheckBox(); 
+    		oCheckBox.setText("Cancel Bubbling of events in callback handler of table");
+    		oCheckBox.attachChange(function(oEvent){
+				bCancelBubble = oEvent.getParameter('checked');
+    		});
+    		oCheckBox.setChecked(true);
+    		oCheckBox.fireChange({checked:true});
+    		
+    		var oLayout = new sap.ui.commons.layout.MatrixLayout({
+    			id : "matrix1",
+    			layoutFixed : false
+    		});
+    		oLayout.createRow(oTable);
+    		oLayout.createRow(new sap.ui.commons.Label({text: "Type Validation/Parsing Events"}));
+    		oLayout.createRow(oCheckBox);
+    		oLayout.createRow(oSimpleListBox);
+    		oLayout.createRow(oBtn);
+    		oLayout.placeAt("layoutArea");
+
+    	});
+    </script>
+<style type="text/css">
+
+</style>    
+</head>
+<body class="sapUiBody">
+	<div id="header"></div>
+	<div id="layoutArea"></div>
+</body>
+</html>

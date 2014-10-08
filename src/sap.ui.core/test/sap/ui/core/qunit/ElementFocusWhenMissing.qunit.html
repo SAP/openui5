@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested method: sap.ui.core.Element.focus()
+  Author: d046011
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.Element.focus() when called on missing Elements</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-noConflict="true" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			
+			var iPopupDelay = 10; // delay in ms when opening or closing the popup (meant for opening without delay)
+			var oDialog;
+    	
+    	
+    	/**
+    	 * Opens A Dialog, then opens a BusyIndicator (which remembers the last focused element which is in the Dialog).
+    	 * Then this closes the Dialog again, which removes the focused element.
+    	 * Then closes the BusyIndicator which tries to focus the element in the Dialog again, which is a problem at least in IE8.
+    	 * This effectively tests the fix (checking whether the element is still there) for this issue.
+    	 */
+    	asyncTest("Focus missing element - actual CSN testcase", function() {
+    		expect(1);
+    		
+    		oDialog = new sap.ui.commons.Dialog({
+    			title : "Some Title",
+    			modal: true,
+    			buttons : [new sap.ui.commons.Button({text:"OK"})]
+    		});
+    			
+    		oDialog.open();
+
+				setTimeout(function() {
+					sap.ui.core.BusyIndicator.show(0);
+					oDialog.close();
+					
+					setTimeout(function() {
+						sap.ui.core.BusyIndicator.hide();
+						ok(true, "when this checkpoint is reached, the test is passed")
+    				start();
+					}, 600);
+				}, 600);
+    	});
+
+
+    </script>
+	</head>
+	<body>
+    <h1 id="qunit-header">qUnit Page for sap.ui.core.Element.focus() when called on missing Elements</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+
+	</body>
+</html>

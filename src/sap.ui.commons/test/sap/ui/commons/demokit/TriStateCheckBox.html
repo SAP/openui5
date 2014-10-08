@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.TriStateCheckBox">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  	<meta name="keywords" content="TriStateCheckBox" />
+		<title>TriStateCheckBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script id='TriStateCheckBoxStates'>
+		function registerChildren(allChildren, oParent){
+			var nSelectedChildren = 0;
+	   		for (var i = 0; i < allChildren.length; i++) {
+		   		allChildren[i].attachChange(function(){
+		   				this.getChecked() ? nSelectedChildren+=1 : nSelectedChildren-=1;
+		   				if(nSelectedChildren === 0){
+		   					oParent.toggle("Unchecked");
+		   				}
+		   				else if(nSelectedChildren === allChildren.length){
+		   					oParent.toggle("Checked");
+		   				}
+		   				else{
+		   					oParent.toggle("Mixed");
+		   				}
+		   			}
+		   		);
+	   		}
+	   		oParent.attachChange(function(){
+	     		if (this.getSelectionState() === "Checked"){
+	     			for (var i = 0; i < allChildren.length; i++) {
+	  	     			allChildren[i].setChecked(true);
+	  	     			nSelectedChildren = allChildren.length;
+	     			}
+	     		}
+	     		else {
+	     			for (var i = 0; i < allChildren.length; i++) {
+	     				allChildren[i].setChecked(false);
+		     				nSelectedChildren = 0;
+	   				}
+	   			}
+	     	});
+		};
+
+		var oVLayout = new sap.ui.layout.VerticalLayout("hLayout1");
+		var oTV = new sap.ui.commons.TextView({
+			id : 'TV-Head',
+			text : 'Which language(s) do you speak?',
+			design : sap.ui.commons.TextViewDesign.Bold });
+		oVLayout.addContent(oTV);
+		var oParentCheckBox = new sap.ui.commons.TriStateCheckBox("pcb1", {text: "select / deselect all"});
+		oVLayout.addContent(oParentCheckBox);
+		oVLayout.addContent(new sap.ui.commons.HorizontalDivider({height: sap.ui.commons.HorizontalDividerHeight.Small}));
+		var aChildren = [
+			new sap.ui.commons.CheckBox("ccb1", {text: "Java"}),
+			new sap.ui.commons.CheckBox("ccb2", {text: "ABAP"}),
+			new sap.ui.commons.CheckBox("ccb3", {text: "BASIC"})
+		];	
+		for (i = 0; i < aChildren.length; i++){
+			oVLayout.addContent(aChildren[i]);
+		}		
+		registerChildren(aChildren, oParentCheckBox);
+		oVLayout.placeAt("sample1");
+
+		</script>
+	</head>
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/checkbox-icon.png">TriStateCheckBox</h1>
+		<h2>Introduction</h2>
+		<p>As the name suggests, a TriStateCheckbox can basically adopt three different states: Checked, Unchecked and Mixed.
+		The mixed state, however, cannot be directly reached by user interaction on the TriStateCheckBox. 
+		Instead, it can be set using the <code>toggle</code> function of the control.</p>
+		<p>Whenever the TriStateCheckBox changes its state, the <code>change</code> event is fired. 
+		The control provides the checkbox itself along with a descriptive text attribute which is also used as aria-label.</p>
+		<p>The control can also adopt different states like &quot;error&quot; and &quot;warning&quot;, which are controlled by the <code>valueState</code> property.
+		Additionally, it can be disabled or read-only by setting the corresponding properties(functions <code>setEnabled</code> and <code>setEditable</code>).</p> 
+		<h2>Examples</h2>
+		<p>The main purpose of this control is to reflect the selection states of dependent input fields, as shown in the example below.</p>
+		<p>If all dependent checkboxes are checked, the TriStateCheckbox will adopt the same state (the same applying to the &quot;unchecked&quot; state).
+		<h3>TriStateCheckBox with dependent checkboxes</h3>
+		<div code-sample="sample1" script="TriStateCheckBoxStates"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TriStateCheckBox.html" >API documentation</a>
+		</p>
+	</body>
+</html>

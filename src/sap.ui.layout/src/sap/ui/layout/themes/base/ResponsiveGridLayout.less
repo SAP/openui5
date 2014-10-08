@@ -1,0 +1,97 @@
+/* =============================================================== */
+/* CSS for control sap.ui.layout.form/ResponsiveGridLayout.control */
+/* =============================================================== */
+
+/*.sapUiFormResGrid > .sapUiFormTitle,*/
+.sapUiRGLContainer > .sapUiFormTitle{
+	position: relative;
+	margin-bottom: 1rem;
+}
+
+.sapUiFormResGrid > .sapUiFormTitle > img,
+.sapUiRGLContainer > .sapUiFormTitle > img,
+.sapUiFormResGrid > .sapUiFormTitle > span,
+.sapUiRGLContainer > .sapUiFormTitle > span{
+	margin-right: 0.5rem;
+}
+
+.sapUiRGLContainer > .sapUiFormTitle > button{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.sapUiRGLContainerCont{
+	padding-bottom: 1.5rem;
+}
+
+.sapUiRGLContainerColl > .sapUiRGLContainerCont{
+	display: none;
+}
+
+/* add paddings to content */
+.sapUiFormResGridCont > div{
+	padding: 0 0.25rem 0.5rem 0.25rem;
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+}
+
+.sapUiFormResGridCont > .sapUiFormResGridLbl{
+	min-height: @sapUiLineHeight;
+}
+
+/* ================= */
+/*   SMALL DEVICES   */
+/* ================= */
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanS12{
+	padding-top: 0.375rem;
+}
+
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > div:first-child.sapUiFormResGridLbl.sapUiRespGridSpanS12{
+	padding-top: 0;
+}
+
+.sapUiRespGridMedia-Std-Phone > div > .sapUiRGLContainer > .sapUiRGLContainerCont{
+	padding-bottom: 0.5rem;
+}
+
+/* ================================= */
+/*   SMALL, MEDIUM and LARGE DEVICES */
+/* ================================= */
+/* make labels right aligned if left from fields*/
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12),
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12),
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) {
+	padding-right: 0.5rem;
+}
+
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanS12,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanM12,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl.sapUiRespGridSpanL12{
+	padding-bottom: 0.125rem;
+}
+
+/* on last row no padding-bottom on container content */
+.sapUiRespGridMedia-Std-Phone > .sapUiFormResGridLastRowM:last-child > .sapUiRGLContainer > .sapUiRGLContainerCont,
+.sapUiRespGridMedia-Std-Tablet > .sapUiFormResGridLastRowM > .sapUiRGLContainer > .sapUiRGLContainerCont,
+.sapUiRespGridMedia-Std-Desktop > .sapUiFormResGridLastRowL > .sapUiRGLContainer > .sapUiRGLContainerCont{
+	padding-bottom: 0;
+}
+
+/* ============================ */
+/*   MEDIUM and LARGE DEVICES   */
+/* ============================ */
+/* add paddings between containers */
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridMain > div:not(.sapUiRespGridSpanM12):not(.sapUiFormResGridLastContM),
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridSpanL12):not(.sapUiFormResGridLastContL){
+	padding-right: 0.75rem; /* because fields have 0.25rem padding on left and right */
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+}
+
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridMain > div:not(.sapUiRespGridBreakM):not(.sapUiRespGridSpanM12),
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridMain > div:not(.sapUiRespGridBreakL):not(.sapUiRespGridSpanL12){
+	padding-left: 0.75rem; /* because fields have 0.25rem padding on left and right */
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+}

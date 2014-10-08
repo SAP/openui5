@@ -1,0 +1,88 @@
+/* ============================================= */
+/* CSS for control sap.m/MultiInput.control BlueCrystal theme*/
+/* ============================================= */
+
+.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:focus {
+	background-color: @sapUiBtnBGTransparentHover;
+}
+
+.sapMMultiInput:not(.sapMMultiInputNotEditable)  .sapMInputValHelp > .sapMInputValHelpInner:active {	
+	background-color: @sapUiBtnBGTransparentDown;
+	color: @sapUiBtnTextActive;
+	outline: 1px dotted @sapUiInvertedFocus;
+}
+
+.sapMMultiInputNotEditable .sapMMultiInputBorder{
+	background: transparent;	         
+	border: transparent;
+}
+
+.sapMMultiInputBorder{	
+	border-radius: 0;		
+	background: @sapUiLightestBG;	         
+	border: 1px solid @sapUiInputBaseBorder;	
+	height: 2.5rem;
+	padding-left: 0.75rem;	
+}
+
+.sapUiSizeCompact .sapMMultiInputBorder{
+	height: 1.625rem;
+	padding-left: 0.1875rem;
+}
+
+.sapMMultiInputNotEditable .sapMMultiInputBorder:hover{
+	border-color: transparent;
+}
+
+.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder,
+.sapMMultiInputBorder:hover{
+	border-color: @sapUiInputBaseFocus;
+}
+
+.sapMMultiInputShadowDiv{
+	font-size: 			   @sapMFontMediumSize;
+	font-family: 		   @sapUiInputBaseFont;
+	}
+	
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder{
+	border-width: 2px;
+}
+
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder {
+	border-color: @sapUiInputBaseWarning;
+}
+
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
+	border-color: @sapUiInputBaseError;
+}
+
+.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
+	border-color: @sapUiInputBaseSuccess;
+}
+
+.sapMMultiInputInputContainer > input, .sapMMultiInputShadowDiv{
+	border: 0px transparent;
+	min-width: 2.4rem;
+	background: transparent;
+}
+
+.sapUiSizeCompact .sapMMultiInputInputContainer > input, .sapUiSizeCompact .sapMMultiInputShadowDiv{	
+	min-width: 1.9rem;
+	
+	// we need specific height here since we cannot take that from class sapMInputBaseInner as we do it in the non-compact mode
+	height: 1.5rem;
+}
+
+.sapMMultiInput .sapMInputBaseInner {
+	// we reduce the standard paddimg from sapMInputBaseInner (which is too large for our purposes)
+	padding-left: 0.0rem;
+	padding-right: 0.1rem;
+}
+
+.sapUiSizeCompact  .sapMMultiInput .sapMInputBaseInner {
+	padding-left: 0.0rem;
+	padding-right: 0.1rem;
+} 

@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.table.TreeTable,sap.ui.table.Column">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8"/>
+    <title>TreeTable - SAPUI5 Demo Kit</title>
+    <meta name="keywords" content="Control TreeTable Table" />
+    <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+    <script id="sap-ui-bootstrap"
+        src="../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_bluecrystal"
+        data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table,sap.ui.demokit"
+        >
+    </script>
+    <script src="../../../../../js/utils.js"></script>
+
+<script id='TreeTableExampleScript1'> 
+
+//Define some sample data 
+var oData = {
+		root:{
+			name: "root",
+			description: "root description",
+			checked: false,
+			0: {
+				name: "item1",
+    			description: "item1 description",
+    			checked: true,
+				0: {
+					name: "subitem1-1",
+        			description: "subitem1-1 description",
+        			checked: true,
+					0: {
+						name: "subsubitem1-1-1",
+		        			description: "subsubitem1-1-1 description",
+		        			checked: true
+					},
+					1: {
+						name: "subsubitem1-1-2",
+		        			description: "subsubitem1-1-2 description",
+		        			checked: true
+					}
+				},
+				1: {
+					name: "subitem1-2",
+        			description: "subitem1-2 description",
+		        		checked: true,
+					0: {
+						name: "subsubitem1-2-1",
+		        			description: "subsubitem1-2-1 description",
+		        			checked: true
+					}
+				}
+				
+			},
+			1:{
+				name: "item2",
+    			description: "item2 description",
+    			checked: true,
+				0: {
+					name: "subitem2-1",
+        			description: "subitem2-1 description",
+        			checked: true
+				}
+			},
+			2:{
+				name: "item3",
+    			description: "item3 description",
+    			checked: true
+			}
+			
+		}
+};
+
+for (var i = 0; i < 20; i++) {
+	oData["root"][2][i] = {
+		name: "subitem3-" + i,
+			description: "subitem3-" + i + " description",
+			checked: false
+	};
+}
+
+//Create an instance of the table control
+var oTable = new sap.ui.table.TreeTable({
+	columns: [
+		new sap.ui.table.Column({label: "Name", template: "name"}),
+		new sap.ui.table.Column({label: "Description", template: "description"})
+	],
+	selectionMode: sap.ui.table.SelectionMode.Single,
+	enableColumnReordering: true,
+	expandFirstLevel: true,
+	toggleOpenState: function(oEvent) {
+		var iRowIndex = oEvent.getParameter("rowIndex");
+		var oRowContext = oEvent.getParameter("rowContext");
+		var bExpanded = oEvent.getParameter("expanded");
+		alert("rowIndex: " + iRowIndex + 
+				" - rowContext: " + oRowContext.getPath() + 
+				" - expanded? " + bExpanded);
+	}
+});
+
+//Create a model and bind the table rows to this model
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oData);
+oTable.setModel(oModel);
+oTable.bindRows("/root");
+
+//Button to demonstrate collapse and expand feature
+var oBtn = new sap.ui.commons.Button({text: "Toggle",
+	press: function() {
+		var iSelectedIndex = oTable.getSelectedIndex();
+		if (iSelectedIndex > -1) {
+			if (oTable.isExpanded(iSelectedIndex)) {
+				oTable.collapse(iSelectedIndex);
+			} else {
+				oTable.expand(iSelectedIndex);
+			}
+		}
+	}
+});
+oTable.setToolbar(new sap.ui.commons.Toolbar({items: [oBtn]}));
+
+//Bring the table onto the UI 
+oTable.placeAt("sample1");
+
+</script>
+
+	</head>
+	<body class="sapUiDemokitBody">
+	<h1 color="Blue" icon="images/ctrls/treetable-icon.png">TreeTable</h1>
+	
+	<h2>Introduction</h2>
+	
+	<p>
+	The TreeTable control is based on the <a class="sapUiDemokitSrcLink" href="Table.html">Table</a> control.
+	It provides the same functionality as the Table control and adds the possibility for an hierachical tree view in the first column.
+	</p>
+	
+	<h2>Example</h2>
+	<p>
+	The example demonstrates how the TreeTable control can be used:
+	</p>
+	<div code-sample="sample1" script="TreeTableExampleScript1"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.table.TreeTable.html">TreeTable</a> and <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.table.Column.html">Column</a> API documentation
+	</p>
+
+</body>
+</html>

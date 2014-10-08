@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="ZMYLEAVEREQUEST_SRV" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="LeaveHeader" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="employeeid" />
+					<PropertyRef Name="type" />
+				</Key>
+				<Property Name="employeeid" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="*" sap:sortable="false" sap:filterable="false" />
+				<Property Name="organizationunit" Type="Edm.String"
+					MaxLength="128" sap:label="Text" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="type" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Text" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="entitlement" Type="Edm.String" MaxLength="128"
+					sap:label="Text" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="availablebalance" Type="Edm.String"
+					MaxLength="128" sap:label="Text" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="pendingitems" Type="Edm.String" MaxLength="128"
+					sap:label="Text" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<NavigationProperty Name="Items"
+					Relationship="ZMYLEAVEREQUEST_SRV.Asoc_HeaderItems" FromRole="FromRole_Asoc_HeaderItems"
+					ToRole="ToRole_Asoc_HeaderItems" />
+			</EntityType>
+			<EntityType Name="LeaveItem" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="employeeid" />
+					<PropertyRef Name="itemid" />
+					<PropertyRef Name="type" />
+				</Key>
+				<Property Name="employeeid" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="*" sap:sortable="false" sap:filterable="false" />
+				<Property Name="itemid" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="*" sap:sortable="false" sap:filterable="false" />
+				<Property Name="availablebalance" Type="Edm.String"
+					MaxLength="128" sap:label="Text" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="from" Type="Edm.String" MaxLength="10"
+					sap:label="*" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="to" Type="Edm.String" MaxLength="10"
+					sap:label="*" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="length" Type="Edm.String" MaxLength="128"
+					sap:label="Text" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="state" Type="Edm.String" MaxLength="128"
+					sap:label="Text" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="type" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Text" sap:sortable="false"
+					sap:filterable="false" />
+			</EntityType>
+			<Association Name="Asoc_HeaderItems" sap:content-version="1">
+				<End Type="ZMYLEAVEREQUEST_SRV.LeaveHeader" Multiplicity="1"
+					Role="FromRole_Asoc_HeaderItems" />
+				<End Type="ZMYLEAVEREQUEST_SRV.LeaveItem" Multiplicity="*"
+					Role="ToRole_Asoc_HeaderItems" />
+				<ReferentialConstraint>
+					<Principal Role="FromRole_Asoc_HeaderItems">
+						<PropertyRef Name="type" />
+						<PropertyRef Name="employeeid" />
+					</Principal>
+					<Dependent Role="ToRole_Asoc_HeaderItems">
+						<PropertyRef Name="type" />
+						<PropertyRef Name="employeeid" />
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+			<EntityContainer Name="ZMYLEAVEREQUEST_SRV"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="LeaveHeaderCollection" EntityType="ZMYLEAVEREQUEST_SRV.LeaveHeader"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+				<EntitySet Name="LeaveItemCollection" EntityType="ZMYLEAVEREQUEST_SRV.LeaveItem"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+				<AssociationSet Name="Asoc_HeaderItems_AssocSet"
+					Association="ZMYLEAVEREQUEST_SRV.Asoc_HeaderItems" sap:creatable="false"
+					sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="LeaveHeaderCollection" Role="FromRole_Asoc_HeaderItems" />
+					<End EntitySet="LeaveItemCollection" Role="ToRole_Asoc_HeaderItems" />
+				</AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

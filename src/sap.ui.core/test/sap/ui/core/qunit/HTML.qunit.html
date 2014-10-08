@@ -1,0 +1,500 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.HTML control
+  Author: d020684
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for HTML control</title>
+		<script>
+			window["sap-ui-config"] = {
+				resourceRoots : {
+					"sap.ui.testlib" : "./testdata/uilib/"
+				}
+			};
+		</script>
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core,sap.ui.testlib,sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			(function() {
+
+	            var RX_HEX_COLOR = /#[0-9a-fA-F]+/;
+	            var CSS_COLORS = {
+	                maroon : 'rgb(128,0,0)',
+	                red : 'rgb(255,0,0)',
+	                orange : 'rgb(255,165,0)',
+	                yellow : 'rgb(255,255,0)',
+	                olive : 'rgb(128,128,0)',
+	                purple : 'rgb(128,0,128)',
+	                fuchsia : 'rgb(255,0,255)',
+	                white : 'rgb(255,255,255)',
+	                lime : 'rgb(0,255,0)',
+	                green : 'rgb(0,128,0)',
+	                navy : 'rgb(0,0,128)',
+	                blue : 'rgb(0,0,255)',
+	                aqua : 'rgb(0,255,255)',
+	                teal : 'rgb(0,128,128)',
+	                black : 'rgb(0,0,0)',
+	                silver : 'rgb(192,192,192)',
+	                gray : 'rgb(128,128,128)',
+	                transparent : 'rgba(0,0,0,0)'
+	            };
+
+	            normalize = function(sColor) {
+
+		            if (CSS_COLORS[sColor])
+			            return CSS_COLORS[sColor];
+
+		            if (sColor.match(RX_HEX_COLOR)) {
+			            return "rgb(" + parseInt(sColor.substring(1, 3), 16)
+			                    + "," + parseInt(sColor.substring(3, 5), 16)
+			                    + "," + parseInt(sColor.substring(5, 7), 16)
+			                    + ")";
+		            }
+
+		            return sColor.replace(/ /g, "");
+	            };
+
+            })();
+
+            var FRAGMENT_1 = {
+                content : "<div class='fragment1' style='width:64px;height:64px;background-color:rgb(255,0,0);'></div>",
+                selector : "div.fragment1",
+                check : function($) {
+                	equal($.length, 1, "content must have length 1");
+                	equal($.css("width"), "64px", "fragment width");
+                	equal($.css("height"), "64px", "fragment height");
+                	equal(normalize($.css("background-color")), "rgb(255,0,0)", "fragment bg color");
+	                return $.length === 1
+	                        && $.css("width") === "64px"
+	                        && $.css("height") === "64px"
+	                        && normalize($.css("background-color")) === "rgb(255,0,0)";
+                }
+            };
+
+            var FRAGMENT_2 = {
+                content : "<div class='fragment2' style='width:64px;height:64px;background-color:rgb(0,0,255);'></div>",
+                selector : "div.fragment2",
+                check : function($) {
+                	equal($.length, 1, "content must have length 1");
+                	equal($.css("width"), "64px", "fragment width");
+                	equal($.css("height"), "64px", "fragment height");
+                	equal(normalize($.css("background-color")), "rgb(0,0,255)", "fragment bg color");
+	                return $.length === 1
+	                        && $.css("width") === "64px"
+	                        && $.css("height") === "64px"
+	                        && normalize($.css("background-color")) === "rgb(0,0,255)";
+                }
+            };
+
+            var FRAGMENT_3 = {
+                selector : "div.fragment3",
+                check : function($) {
+	                return $.length === 1
+	                        && $.css("width") === "42px"
+	                        && $.css("height") === "42px"
+	                        && normalize($.css("background-color")) === "rgb(255,0,0)";
+                }
+            };
+
+            var FRAGMENT_4 = {
+                selector : "div.fragment4",
+                check : function($) {
+	                return $.length === 1
+	                        && $.css("width") === "77px"
+	                        && $.css("height") === "77px"
+	                        && normalize($.css("background-color")) === "rgb(255,255,0)";
+                }
+            };
+
+            var oCore = sap.ui.getCore();
+            
+            function okFragment(oFragment, sUIArea, sComment) {
+	            var $ = jQuery(oFragment.selector, jQuery("#" + sUIArea)[0]);
+	            ok($.length > 0, "expected fragment exists");
+	            ok(oFragment.check($), sComment);
+            }
+
+            function afterRerendering(fnTest) {
+	            stop(); // stop processing of QUnit test queue
+	            setTimeout(function() {
+		            fnTest();
+		            start();
+	            }, 200);
+            };
+
+            // =================================================================
+            // TESTS
+            // =================================================================
+
+            module("content property, preferDOM=false", {
+                setup : function() {
+                },
+                tearDown : function() {
+                }
+            });
+
+            test("single root, root control", function() {
+	            new sap.ui.core.HTML("html1", {
+	                content : FRAGMENT_1.content,
+	                preferDOM : false
+	            }).placeAt("uiAreaA");
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("single root, nested control", function() {
+	            new sap.ui.commons.layout.MatrixLayout().createRow(
+	                    new sap.ui.core.HTML("html2", {
+	                        content : FRAGMENT_2.content,
+	                        preferDOM : false
+	                    })).placeAt("uiAreaA");
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("invalidate UIArea", function() {
+	            var oldDomRef = sap.ui.getCore().byId("html2").getDomRef();
+	            sap.ui.getCore().byId("html2").getUIArea().invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
+		            notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
+	            });
+            });
+
+            test("invalidate parent control", function() {
+	            var oldDomRef = sap.ui.getCore().byId("html2").getDomRef();
+	            sap.ui.getCore().byId("html2").getParent().invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
+		            notEqual(sap.ui.getCore().byId("html2").getDomRef(), oldDomRef, "node has changed");
+	            });
+            });
+
+            test("invalidate HTML control", function() {
+	            sap.ui.getCore().byId("html2").invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_2, "uiAreaA", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("setting content", function() {
+	            oCore.byId("html2").setContent("");
+							oCore.applyChanges();
+			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
+
+		          oCore.byId("html2").setContent(FRAGMENT_1.content);
+							oCore.applyChanges();
+              equal(jQuery("#html2").length, 1, "content must have length 1");
+            	equal(jQuery("#html2").css("width"), "64px", "fragment width");
+            	equal(jQuery("#html2").css("height"), "64px", "fragment height");
+            	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+            	
+          		oCore.byId("html2").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
+							oCore.applyChanges();
+						  okFragment(FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
+						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
+						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
+
+						  oCore.byId("html2").setContent(FRAGMENT_1.content);
+							oCore.applyChanges();
+              equal(jQuery("#html2").length, 1, "content must have length 1");
+            	equal(jQuery("#html2").css("width"), "64px", "fragment width");
+            	equal(jQuery("#html2").css("height"), "64px", "fragment height");
+            	equal(normalize(jQuery("#html2").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+			      
+          		oCore.byId("html2").setContent("somePureText");
+							oCore.applyChanges();
+			        equal(jQuery("#html2").size(), 0, "html2 DOM must be empty");
+
+          		oCore.byId("html2").setContent(FRAGMENT_2.content);
+							oCore.applyChanges();
+						  okFragment(FRAGMENT_2, "uiAreaA", "html2 DOM must be equal to FRAGMENT_2");
+            });
+
+            
+            test("destroy", function() {
+            	equal(jQuery("#html1").size(), 1, "html1 DOM should exist");
+            	equal(jQuery("#html2").size(), 1, "html2 DOM should exist");
+            	sap.ui.getCore().byId("html1").destroy();
+            	sap.ui.getCore().byId("html2").destroy();
+            	equal(jQuery("#html1").size(), 0, "html2 DOM should have been deleted");
+            	equal(jQuery("#html2").size(), 0, "html2 DOM should have been deleted");
+            });
+            
+            module("sap.ui.core.HTML, preferDOM=true", {
+                setup : function() {
+                },
+                tearDown : function() {
+                }
+            });
+
+            test("content property + preferDOM, initial rendering", function() {
+	            //Cleanup UIArea because placeAt only adds new control to UIArea
+	            sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
+	            new sap.ui.commons.layout.MatrixLayout().createRow(
+	                    new sap.ui.core.HTML("html3", {
+		                    content : FRAGMENT_1.content
+	                    })).placeAt("uiAreaA");
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("content property + preferDOM, rerendering", function() {
+	            var oldDomRef = sap.ui.getCore().byId("html3").getDomRef();
+
+	            sap.ui.getCore().byId("html3").invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_1, "uiAreaA", "UIArea contains expected HTML fragment");
+		            equal(sap.ui.getCore().byId("html3").getDomRef(), oldDomRef, "node after rendering is the same as before");
+	            });
+            });
+
+            test("setting content", function() {
+	            oCore.byId("html3").setContent("");
+							oCore.applyChanges();
+			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
+
+		          oCore.byId("html3").setContent(FRAGMENT_1.content);
+							oCore.applyChanges();
+              equal(jQuery("#html3").length, 1, "content must have length 1");
+            	equal(jQuery("#html3").css("width"), "64px", "fragment width");
+            	equal(jQuery("#html3").css("height"), "64px", "fragment height");
+            	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+            	
+          		oCore.byId("html3").setContent("someLeadingText" + FRAGMENT_2.content + "someTrailingText");
+							oCore.applyChanges();
+						  okFragment(FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
+						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someLeadingText") < 0, "rendered HTML does not contain leading text");
+						  ok(jQuery("#uiAreaA")[0].innerHTML.indexOf("someTrailingText") < 0, "rendered HTML does not contain trailing text");
+
+						  oCore.byId("html3").setContent(FRAGMENT_1.content);
+							oCore.applyChanges();
+              equal(jQuery("#html3").length, 1, "content must have length 1");
+            	equal(jQuery("#html3").css("width"), "64px", "fragment width");
+            	equal(jQuery("#html3").css("height"), "64px", "fragment height");
+            	equal(normalize(jQuery("#html3").css("background-color")), "rgb(255,0,0)", "fragment bg color");
+			      
+          		oCore.byId("html3").setContent("somePureText");
+							oCore.applyChanges();
+			        equal(jQuery("#html3").size(), 0, "html3 DOM must be empty");
+
+          		oCore.byId("html3").setContent(FRAGMENT_2.content);
+							oCore.applyChanges();
+						  okFragment(FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
+            });
+
+            
+            test("survive removal", function() {
+            	// check preconditions
+            	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
+            	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
+            	var oldDomRef = jQuery("#html3")[0]; 
+            	
+            	// remove from control tree and rerender
+            	sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
+            	sap.ui.getCore().applyChanges();
+
+            	// check that DOM still exists
+            	ok(!sap.ui.getCore().byId("html3").getUIArea(), "html3 must no longer be part of UIArea");
+            	equal(jQuery("#html3").size(), 1, "html3 DOM must still exist");
+            	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM must be the same as before the removal");
+            	ok(sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
+            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+	            	
+            	// add it again to an UIArea and rerender
+            	sap.ui.getCore().byId("html3").placeAt("uiAreaB");
+            	sap.ui.getCore().applyChanges();
+            	ok(sap.ui.getCore().byId("html3").getUIArea(), "html3 must be part of UIArea");
+            	equal(sap.ui.getCore().byId("html3").getUIArea().getId(), "uiAreaB", "html3 must be part of UIArea uiAreaB");
+            	equal(jQuery("#html3").size(), 1, "html3 DOM must exist");
+            	equal(jQuery("#html3")[0], oldDomRef, "html3 DOM still must be the same as before the removal");
+            	ok(!sap.ui.core.RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must no longer be part of preserve area");
+            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+            	
+            });
+            
+            test("destroy", function() {
+            	equal(jQuery("#html3").size(), 1, "html3 DOM should exist");
+            	sap.ui.getCore().byId("html3").destroy();
+            	equal(jQuery("#html3").size(), 0, "html3 DOM should have been deleted");
+            	equal(jQuery("#sap-ui-dummy-html3").size(), 0, "no dummy must exist");
+            });
+            
+            module("sap.ui.core.HTML, predefinedContent", {
+                setup : function() {
+                },
+                tearDown : function() {
+                }
+            });
+
+            test("predefined content, single root, root control", function() {
+	            oPredefinedContent = jQuery("#html4")[0];
+	            new sap.ui.core.HTML("html4").placeAt("uiAreaB");
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
+		            equal(oPredefinedContent, jQuery("#html4")[0], "predefined content has been preserved");
+	            });
+            });
+
+            test("predefined content, invalidate UIArea", function() {
+	            sap.ui.getCore().byId("html4").getUIArea().invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("predefined content, invalidate HTMLControl", function() {
+	            sap.ui.getCore().byId("html4").invalidate();
+
+	            afterRerendering(function() {
+		            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
+	            });
+            });
+
+            test("predefined content, rerender HTMLControl", function() {
+	            sap.ui.getCore().byId("html4").rerender();
+	            // rerender is not async -> check immediately
+	            okFragment(FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
+            });
+
+            test("predefined content, single root, nested controls",
+                    function() {
+	                    new sap.ui.commons.layout.MatrixLayout().createRow(
+	                            new sap.ui.core.HTML("html5")).placeAt("uiAreaC");
+
+	                    afterRerendering(function() {
+		                    okFragment(FRAGMENT_4, "uiAreaC",
+		                            "UIArea contains expected HTML fragment");
+	                    });
+                    });
+
+            // multiple roots test
+
+						test("content property, multiple roots", function() {
+	            //Cleanup UIArea because placeAt only adds new control to UIArea
+	            sap.ui.getCore().getUIArea("uiAreaA").removeAllContent();
+	            new sap.ui.core.HTML("html6", {
+		            content : "<div style='width:200px;height:64px;background-color:rgb(0, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 255, 0);'></div>"
+	            }).placeAt("uiAreaA");
+
+	            afterRerendering(function() {
+		            var uiAreaA = jQuery("#uiAreaA").get(0);
+		            equal(jQuery("div", uiAreaA).length, 3, "3 divs have been rendered in the UIArea");
+		            ok(jQuery("div", uiAreaA).css("width") == "200px", "div has been rendered");
+		            ok(jQuery("div", uiAreaA).css("height") == "64px", "div has been rendered");
+		            ok(normalize(jQuery("div", uiAreaA).css("background-color")) == "rgb(0,0,0)", "div has been rendered");
+	            });
+            });
+
+            test("predefined content, multiple roots, nested controls, initial rendering", function() {
+
+	            var layout = new sap.ui.commons.layout.MatrixLayout("layout7");
+	            var html = new sap.ui.core.HTML("html7");
+	            layout.createRow(html);
+	            layout.placeAt("uiAreaD");
+
+	            afterRerendering(function() {
+		            var uiAreaD = jQuery("#uiAreaD").get(0);
+		            ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
+		            ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
+		            ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
+		            ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+	            });
+            });
+
+            test("predefined content, multiple roots, nested controls, rerendering", function() {
+	            var layout = sap.ui.getCore().byId("layout7");
+	            var oldLayoutDomRef = layout.getDomRef();
+	            ok(oldLayoutDomRef != undefined, "layout has a domref");
+
+	            // note: this results in a HTML.rerender(), not UIArea.rerender()! 
+	            layout.invalidate();
+
+	            afterRerendering(function() {
+		            var uiAreaD = jQuery("#uiAreaD").get(0);
+		            ok(oldLayoutDomRef != layout.getDomRef(), "layout has been rerendered");
+		            ok(jQuery("div", uiAreaD).length == 3, "div has been rendered");
+		            ok(jQuery("div", uiAreaD).css("width") == "256px", "div has been rendered");
+		            ok(jQuery("div", uiAreaD).css("height") == "64px", "div has been rendered");
+		            ok(normalize(jQuery("div", uiAreaD).css("background-color")) == "rgb(0,0,255)", "div has been rendered");
+	            });
+
+            });
+            
+            
+            test("order of controls in UIArea", function() {
+	            var html = new sap.ui.core.HTML({content: FRAGMENT_1.content});
+							html.placeAt("uiAreaE");
+	            var button = new sap.ui.testlib.TestButton({text: "Button"});
+							button.placeAt("uiAreaE");
+							sap.ui.getCore().applyChanges();
+							
+							var $currentDom = jQuery("#uiAreaE").children();
+							equal($currentDom.length, 2, "both controls have been rendered");
+							equal($currentDom[0].tagName, "DIV");
+							equal($currentDom[1].tagName, "BUTTON");
+							
+							html.invalidate();
+							sap.ui.getCore().applyChanges();
+							
+							var $currentDom = jQuery("#uiAreaE").children();
+							equal($currentDom.length, 2, "both controls have been rendered");
+							equal($currentDom[0].tagName, "DIV");
+							equal($currentDom[1].tagName, "BUTTON");
+            });
+            
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for HTML Control</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+
+		<div id="uiAreaA"></div>
+		<div id="uiAreaB">
+			<div id="html4" class="fragment3" style="width:42px;height:42px;background-color:rgb(255,0,0)">
+			</div>
+		</div>
+		<div id="uiAreaC">
+			<div id="html5" class="fragment4" style="width:77px;height:77px;background-color:rgb(255,255,0)">
+			</div>
+		</div>		
+		<div id="uiAreaD">
+			<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(0,0,255)"></div>
+			<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(255,255,255)"></div>
+			<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(255,0,0)"></div>
+		</div>
+		<div id="uiAreaE">
+		</div>
+	</body>
+</html>

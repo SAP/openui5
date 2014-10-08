@@ -1,0 +1,37 @@
+<mvc:View
+	controllerName="sap.m.sample.SelectDialog.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Button
+				text="Show Select Dialog"
+				press="handleSelectDialogPress" />
+			<Button
+				text="Show Select Dialog (Multi)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+				</customData>
+			</Button>
+			<Button
+				text="Show Select Dialog (Remember)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+					<core:CustomData
+						key="remember"
+						value="true" />
+				</customData>
+			</Button>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

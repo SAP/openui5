@@ -1,0 +1,415 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested validation hooks for types
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+
+    var oModel;
+    var oTxt;
+	
+	function setup(sPath, oType){
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({
+			visibleItems : 3,
+			test : "hello",
+			rating : "4"
+		});
+		sap.ui.getCore().setModel(oModel);
+		oTxt = new sap.ui.commons.TextField();
+		oTxt.bindValue(sPath, oType);
+		
+		oTxt.placeAt("target1");
+	};
+	
+	function teardown(){
+		oTxt.destroy();
+	}
+
+	asyncTest("validation error", function(){
+		var oType =  new sap.ui.model.type.String(null, {
+			minLength : 1,
+			maxLength : 5
+		});
+		setup("/test", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachValidationError(handler);
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			bSuccess = true;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			sap.ui.getCore().detachValidationError(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("parse error", function(){
+		var oType =  new sap.ui.model.type.Integer();
+		setup("/visibleItems", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachParseError(handler);
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), 3, "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
+
+			bSuccess = true;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			sap.ui.getCore().detachParseError(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("format error", function(){
+		var oType =  new sap.ui.model.type.String();
+		var oRating = new sap.ui.commons.RatingIndicator();
+		oRating.bindValue("/rating", oType);
+		oRating.placeAt("target2");
+		setup("/rating", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachFormatError(handler);
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), 4, "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
+
+			bSuccess = true;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			sap.ui.getCore().detachFormatError(handler);
+			oRating.destroy();
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("validation success", function(){
+		var oType =  new sap.ui.model.type.String();
+		setup("/test", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachValidationSuccess(handler);
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+
+			bSuccess = true;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "validation was sucessful");
+			sap.ui.getCore().detachValidationSuccess(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("event checks 1", function(){
+		var oType =  new sap.ui.model.type.Integer();
+		setup("/visibleItems", oType);
+		var bSuccess = false;
+		var iEventCount = 0;
+		sap.ui.getCore().attachParseError(handler);
+		sap.ui.getCore().attachValidationError(handler2);
+		sap.ui.getCore().attachFormatError(handler3);
+		sap.ui.getCore().attachValidationSuccess(handler4);
+		function handler(oEvent){
+			bSuccess = true;
+			iEventCount ++;
+		};
+		function handler2(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		function handler3(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		function handler4(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "parse error occurred sucessfully and no other events occurred");
+			ok(iEventCount == 1 , "event count should be 1");
+			sap.ui.getCore().detachParseError(handler);
+			sap.ui.getCore().detachFormatError(handler);
+			sap.ui.getCore().detachValidationError(handler);
+			sap.ui.getCore().detachValidationSuccess(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("event checks 2", function(){
+		var oType =  new sap.ui.model.type.String(null, {
+			minLength : 1,
+			maxLength : 5
+		});
+		setup("/test", oType);
+		var iEventCount = 0;
+		var bSuccess = false;
+		sap.ui.getCore().attachParseError(handler);
+		sap.ui.getCore().attachValidationError(handler2);
+		sap.ui.getCore().attachFormatError(handler3);
+		sap.ui.getCore().attachValidationSuccess(handler4);
+		function handler(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		function handler2(oEvent){
+			bSuccess = true;
+			iEventCount ++;
+		};
+		function handler3(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		function handler4(oEvent){
+			bSuccess = false;
+			iEventCount ++;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "validation error occurred sucessfully and no other events occurred");
+			ok(iEventCount == 1 , "event count should be 1");
+			sap.ui.getCore().detachParseError(handler);
+			sap.ui.getCore().detachFormatError(handler);
+			sap.ui.getCore().detachValidationError(handler);
+			sap.ui.getCore().detachValidationSuccess(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("validation success on core and control --> bubbling", function(){
+		var oType =  new sap.ui.model.type.String();
+		setup("/test", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachValidationSuccess(handler);
+		oTxt.attachValidationSuccess(handler);
+		var iCount = 0;
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			iCount++; 
+			bSuccess = true;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "validation was sucessful");
+			equal(iCount, 2, "validation event count");
+			sap.ui.getCore().detachValidationSuccess(handler);
+			oTxt.detachValidationSuccess(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("validation error on core and control --> bubbling", function(){
+		var oType =  new sap.ui.model.type.String(null, {
+			minLength : 1,
+			maxLength : 5
+		});
+		setup("/test", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachValidationError(handler);
+		oTxt.attachValidationError(handler);
+		var iCount = 0;
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			bSuccess = true;
+			iCount++;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			equal(iCount, 2, "validation event count");
+			sap.ui.getCore().detachValidationError(handler);
+			oTxt.detachValidationError(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("validation error on core and control --> cancel bubbling", function(){
+		var oType =  new sap.ui.model.type.String(null, {
+			minLength : 1,
+			maxLength : 5
+		});
+		setup("/test", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachValidationError(handler);
+		oTxt.attachValidationError(handler);
+		var iCount = 0;
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), "hello", "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ValidateException, "exception instance");
+			equal(oEvent.getParameter("exception").violatedConstraints.length, 1, " violated constraints size");
+			equal(oEvent.getParameter("exception").violatedConstraints[0], "maxLength", "violated constraints check");
+			bSuccess = true;
+			iCount++;
+			oEvent.cancelBubble();
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			equal(iCount, 1, "validation event count");
+			sap.ui.getCore().detachValidationError(handler);
+			oTxt.detachValidationError(handler);
+			teardown(handler);
+			}, 100);
+	});
+	
+	asyncTest("parse error on core and control --> bubbling", function(){
+		var oType =  new sap.ui.model.type.Integer();
+		setup("/visibleItems", oType);
+		var bSuccess = false;
+		oTxt.attachParseError(handler);
+		sap.ui.getCore().attachParseError(handler);
+		var iCount = 0;
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oTxt.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), 3, "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.ParseException, "exception instance");
+			bSuccess = true;
+			iCount++;
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			oTxt.detachParseError(handler);
+			equal(iCount, 2, "validation event count");
+			sap.ui.getCore().detachParseError(handler);
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	asyncTest("format error on core and control --> cancel bubbling", function(){
+		var oType =  new sap.ui.model.type.String();
+		var oRating = new sap.ui.commons.RatingIndicator();
+		oRating.bindValue("/rating", oType);
+		oRating.placeAt("target2");
+		setup("/rating", oType);
+		var bSuccess = false;
+		sap.ui.getCore().attachFormatError(handler);
+		oTxt.attachFormatError(handler);
+		var iCount = 0;
+		function handler(oEvent){
+			equal(oEvent.getParameter("element").getId(), oRating.getId(), "element");
+			equal(oEvent.getParameter('property'), "value", "property");
+			equal(oEvent.getParameter("newValue"), "blubbbbb", "new value");
+			equal(oEvent.getParameter("oldValue"), 4, "old value");
+			equal(oEvent.getParameter("type"), oType, "type");
+			ok(oEvent.getParameter("exception") instanceof sap.ui.model.FormatException, "exception instance");
+
+			bSuccess = true;
+			iCount++;
+			oEvent.cancelBubble();
+		};
+		oTxt.setValue("blubbbbb");
+		setTimeout(function() { // delay the following test
+			start();          // resume normal testing
+			ok(bSuccess, "error occurred sucessfully");
+			sap.ui.getCore().detachFormatError(handler);
+			oTxt.detachFormatError(handler);
+			equal(iCount, 1, "validation event count");
+			oRating.destroy();
+			teardown(handler);
+			}, 100);
+
+	});
+	
+	
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Validation Hooks</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

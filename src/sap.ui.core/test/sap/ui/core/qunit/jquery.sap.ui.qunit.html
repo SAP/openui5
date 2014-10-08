@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+<!-- 
+  JSUNIT: 
+    Tested control/class: [TODO: e.g. sap.ui.commons.XControl]
+    Author: 
+ -->
+		<title>Test Page for jquery.sap.ui</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+		
+		jQuery.sap.declare("sap.jsunittest.Test");
+		sap.jsunittest.Test = function(sID, options) {
+			sap.ui.core.Control.apply(this, arguments);
+		};
+		sap.jsunittest.Test.prototype = jQuery.sap.newObject(sap.ui.core.Control.prototype);
+		sap.ui.core.Element.defineClass("sap.jsunittest.Test", {
+			  publicMethods : [
+			                 // properties 
+			                 "getMarker", "setMarker"
+			                 ],
+			  // ---- object ----
+			  baseType : "sap.ui.core.Control", 
+			  properties : {
+				    marker : {name : "marker", type : "string", group : "Misc", defaultValue : ''}
+			  },
+			  // ---- control specific ----
+			  library : "sap.jsunittest"
+			});
+		sap.jsunittest.Test.prototype.getMarker = function() {
+			return this.getProperty("marker");
+		};  
+		sap.jsunittest.Test.prototype.setMarker = function(sMarker) {
+			this.setProperty("marker", sMarker);
+		};  
+		sap.jsunittest.TestRenderer = {
+			render: function(oRM, oCtrl) {
+				oRM.write("<span");
+				oRM.writeControlData(oCtrl);
+				if(oCtrl.getMarker())
+					oRM.writeAttribute("class", oCtrl.getMarker());
+				oRM.write(">Test Control<span class=\"inner\">Inner Stuff</span></span>");
+			}
+		};
+		</script>
+
+		<script language="javascript">
+
+		/* 
+		 * JSUNIT: 
+	     *     create your test fixture here, e.g. create SAPUI5 control tree and add it to 
+	     *     "uiArea1".  
+		 */
+		 var oTestPlugin = jQuery.sap.newObject({startPlugin: function(oCore){
+				this.oCore = oCore;
+			}, stopPlugin: function(oCore){
+				this.oCore = null;								 
+			}, getNoOfUIAreas: function(){
+				var length = 0;
+				jQuery.each(this.oCore.mUIAreas, function(){length++;});
+				return length;
+			}});
+			
+
+		sap.ui.setRoot("uiAreaPreSetup1", new sap.jsunittest.Test("preSetupCtrl1", {marker: "presetup"}));
+		sap.ui.setRoot("uiAreaPreSetup2", new sap.jsunittest.Test("preSetupCtrl2", {marker: "presetup"}));
+		sap.ui.getCore().applyChanges();
+
+		/**
+		 * Some test function... TODO: implement 
+		 */
+
+		test("OneRootOk", function() {
+			jQuery("#uiArea1").root();
+			
+			var oCore = sap.ui.getCore();
+			var oUIArea = oCore.getUIArea("uiArea1");
+			notStrictEqual(oUIArea, null, "UI Area should have been created.");
+			notStrictEqual(oUIArea, undefined, "UI Area should have been created.");
+		});
+
+		test("MultipleRootOk", function() {
+			jQuery(".test").root();
+
+			var oCore = sap.ui.getCore();
+						
+			var oUIArea = oCore.getUIArea("uiArea2");
+			notStrictEqual(oUIArea, null, "UI Area 2 should have been created.");
+			notStrictEqual(oUIArea, undefined, "UI Area 2 should have been created.");
+
+			oUIArea = oCore.getUIArea("uiArea3");
+			notStrictEqual(oUIArea, null, "UI Area 3 should have been created.");
+			notStrictEqual(oUIArea, undefined, "UI Area 3 should have been created.");
+		});
+
+		test("MultipleRootAndSliceOk", function() {
+			var oCore = sap.ui.getCore();
+			oCore.registerPlugin(oTestPlugin);
+			var iNo1 = oTestPlugin.getNoOfUIAreas();
+
+			jQuery(".test1").root(); 
+			
+			var iNo2 = oTestPlugin.getNoOfUIAreas();
+			strictEqual(iNo2, iNo1 + 3, "Exaclty three UIAreas should have been created.");
+			
+			var oUIArea = oCore.getUIArea("uiArea4");
+			notStrictEqual(oUIArea, null, "UI Area 4 should have been created.");
+			notStrictEqual(oUIArea, undefined, "UI Area 4 should have been created.");
+
+			var iNo3 = oTestPlugin.getNoOfUIAreas();
+			strictEqual(iNo3, iNo2, "No additional UIArea should have been created.");
+			
+			oCore.unregisterPlugin(oTestPlugin);
+		});
+
+		test("RootWithControlOk", function() {
+			jQuery("#uiAreaTarget").root(new sap.jsunittest.Test("testControl"));
+			sap.ui.getCore().applyChanges();
+			notStrictEqual(jQuery("#testControl").length, 0, "There should be something rendered");
+			ok(sap.ui.getCore().byId("testControl") !== null, "Control should be available");
+			ok(jQuery("#testControl").control()[0] !== null, "Control should be available");
+		});
+
+		test("RootReturnsAllRelevantUIAreasOk", function(){
+			var oCore = sap.ui.getCore();
+			oCore.registerPlugin(oTestPlugin);
+			var iNo1 = oTestPlugin.getNoOfUIAreas();
+
+			jQuery(".test2").root();
+
+			var iNo2 = oTestPlugin.getNoOfUIAreas();
+			strictEqual(iNo2, iNo1 + 3, "Exactly three UIArea should have been created.");
+
+			strictEqual(jQuery("[id*=uiArea]").root().length + jQuery("[id*=id-]").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector [id*=uiArea]");
+
+			strictEqual(jQuery("div").root().length, iNo2, "jQuery method should return all relevant roots (i.e. UIArea DOMNodes), selector div");
+
+			oCore.unregisterPlugin(oTestPlugin);			
+		});
+
+		test("ControlOnOutermostDomRefOk", function(){
+			jQuery("#uiAreaTarget2").root(new sap.jsunittest.Test("testControl2"));
+			sap.ui.getCore().applyChanges();
+			
+			var oCheckCtrl = sap.ui.getCore().byId("testControl2");
+			var oCtrl = jQuery("#testControl2").control()[0]; 
+
+			ok(oCheckCtrl === oCtrl, "Created control should be returned");
+		});
+		
+		test("ControlOnInnerDomRefOk", function(){
+			jQuery("#uiAreaTarget3").root(new sap.jsunittest.Test("testControl3"));
+			sap.ui.getCore().applyChanges();
+			
+			var oCheckCtrl = sap.ui.getCore().byId("testControl3");
+			var oCtrl = jQuery("#testControl3 > .inner").control()[0];
+
+			ok(oCheckCtrl === oCtrl, "Created control should be returned when queried for inner node");
+		});
+
+		test("MultipleControlsOk", function(){
+			jQuery("#uiAreaTarget4").root(new sap.jsunittest.Test("testControl4", {marker: "myClass"}));
+			jQuery("#uiAreaTarget5").root(new sap.jsunittest.Test("testControl5", {marker: "myClass"}));
+			jQuery("#uiAreaTarget6").root(new sap.jsunittest.Test("testControl6", {marker: "myClass"}));
+			sap.ui.getCore().applyChanges();
+			
+			var aCtrls = jQuery(".myClass").control();
+
+			strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
+		});
+
+		test("GetUIAreasOk", function() {
+			var oCore = sap.ui.getCore();
+			oCore.registerPlugin(oTestPlugin);
+			var iNo = oTestPlugin.getNoOfUIAreas();
+
+			var aUIAreas = jQuery("div").uiarea();
+
+			strictEqual(aUIAreas.length, iNo, "All UIAreas should be returned");
+
+			jQuery.each(aUIAreas, function(idx, aUIArea){
+				// as we cannot check directly via instanceof (our interface concept prevents that), do it differently
+				ok(sap.ui.getCore().getUIArea(aUIArea.getId()) === aUIArea, "each UIArea returned by jQuery(???).uiarea() must also be accessible by Core's.getUIArea method");
+			});
+		});
+
+		test("GetRootOfControlOk", function() {
+			var oCore = sap.ui.getCore();
+			var aUIAreas = jQuery(".presetup").uiarea();
+			strictEqual(aUIAreas.length, 0, "No UIareas should be returned");
+
+			var aUIRoots = jQuery(".presetup").root();
+			strictEqual(aUIRoots.length, 2, "Two 'UI-roots' of the controls should be returned");
+			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup1"), aUIRoots) >= 0, "pre setup UIArea 1 should be returned");
+			ok(jQuery.inArray(oCore.getUIArea("uiAreaPreSetup2"), aUIRoots) >= 0, "pre setup UIArea 2 should be returned");
+		});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea1"></div>
+		<div id="uiArea2" class="test"></div>
+		<div id="uiArea3" class="test"></div>
+		<div id="uiArea4" class="test1"></div>
+		<div id="" class="test1"></div>
+		<div class="test1"></div>
+		<div id="uiArea5" class="test2"></div>
+		<div id="uiArea6" class="test2"></div>
+		<div id="uiArea7" class="test2"></div>
+
+		<div id="uiAreaTarget" ></div>
+		<div id="uiAreaTarget2" ></div>		
+		<div id="uiAreaTarget3" ></div>		
+		<div id="uiAreaTarget4" ></div>
+		<div id="uiAreaTarget5" ></div>		
+		<div id="uiAreaTarget6" ></div>	
+		
+		
+		<div id="uiAreaPreSetup1" ></div>		
+		<div id="uiAreaPreSetup2" ></div>		
+
+	</body>
+</html>

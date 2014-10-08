@@ -1,0 +1,513 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.layout.MatrixLayout,sap.ui.commons.layout.MatrixLayoutRow,sap.ui.commons.layout.MatrixLayoutCell">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>MatrixLayout - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleMatrix' >
+// create a simple matrix layout
+var oLayout = new sap.ui.commons.layout.MatrixLayout({
+	id : "matrix1",
+	layoutFixed : false
+	});
+
+var oImage1 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+var oImage2 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+oLayout.createRow( oImage1, oImage2 );	
+
+var oImage3 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+var oImage4 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+oLayout.createRow( oImage3, oImage4 );	
+
+// attach it to some element in the page
+oLayout.placeAt("sample1");
+</script>
+
+<script id='FixedLayout'>
+// create a simple matrix layout with given sizes
+var oLayout = new sap.ui.commons.layout.MatrixLayout({
+	id : "matrix2",
+	layoutFixed : true,
+	columns : 2,
+	width : "20%",
+	widths : [ "70%", "30%" ]
+	});
+
+var oImage1 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+var oImage2 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+oLayout.createRow({height: "50px"}, oImage1, oImage2 );
+
+var oImage3 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+var oImage4 = new sap.ui.commons.Image({
+	src : "http://www.sap.com/global/images/SAPLogo.gif",
+	alt : "alternative text for image"
+	});
+
+oLayout.createRow({height: "20px"}, oImage3, oImage4 );
+
+// attach it to some element in the page
+oLayout.placeAt("sample2");
+</script>
+
+<script id='ColRowSpan'>
+// create a MatrixLayout with defined rows and cells
+var oLayout = new sap.ui.commons.layout.MatrixLayout({
+	id : 'matrix3',
+	layoutFixed : true,
+	columns : 3,
+	width : '600px',
+	widths : ['100px', '200px', '300px'] });
+
+// 1.Row
+var oRow = new sap.ui.commons.layout.MatrixLayoutRow({
+	id : 'Row-0',
+	height: '25px' });
+
+oLayout.addRow(oRow);
+
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	id : 'Cell-0-0',
+	backgroundDesign : sap.ui.commons.layout.BackgroundDesign.Fill1,
+	colSpan : 2 });
+
+var oTV = new sap.ui.commons.TextView({
+	text : 'Cell 0.0 - Colspan 2',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oRow.addCell(oCell);
+
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	id : 'Cell-0-2',
+	backgroundDesign : sap.ui.commons.layout.BackgroundDesign.Fill2 });
+
+oTV = new sap.ui.commons.TextView({
+	text : 'Cell 0.2',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oRow.addCell(oCell);
+
+// 2.Row
+oRow = new sap.ui.commons.layout.MatrixLayoutRow({
+	id : 'Row-1',
+	height: '25px' });
+
+oLayout.addRow(oRow);
+
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	id : 'Cell-1-0',
+	backgroundDesign : sap.ui.commons.layout.BackgroundDesign.Fill3,
+	rowSpan : 2 });
+
+oTV = new sap.ui.commons.TextView({
+	text : 'Cell 1.0 - Rowspan 2',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oRow.addCell(oCell);
+
+oRow.addCell(new sap.ui.commons.layout.MatrixLayoutCell("Cell-1-1")); // empty cell
+
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	id : 'Cell-1-2',
+	backgroundDesign : sap.ui.commons.layout.BackgroundDesign.Fill3 });
+
+oTV = new sap.ui.commons.TextView({
+	text : 'Cell 1.2',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oRow.addCell(oCell);
+
+// 3.Row
+oRow = new sap.ui.commons.layout.MatrixLayoutRow({
+	id : 'Row-2',
+	height: '25px' });
+
+oLayout.addRow(oRow);
+
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	id : 'Cell-2-1',
+	backgroundDesign : sap.ui.commons.layout.BackgroundDesign.Fill1,
+	colSpan : 2 });
+
+oTV = new sap.ui.commons.TextView({
+	text : 'Cell 2.1 Colspan 2',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oRow.addCell(oCell);
+
+// attach it to some element in the page
+oLayout.placeAt('sample3');
+</script>
+
+<script id='ContactData'>
+// create a 'real life' example
+var oMatrix = new sap.ui.commons.layout.MatrixLayout({
+	id : 'matrix4',
+	layoutFixed : true,
+	width : '1000px',
+	columns : 5,
+	widths : ['150px', '250px', '200px', '200px', '200px'] });
+
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	colSpan: 5 });
+
+var oTV = new sap.ui.commons.TextView({
+	id : 'TV-Head',
+	text : 'Contact Data',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oMatrix.createRow(oCell);
+
+var oLabel = new sap.ui.commons.Label({
+	id : 'L-Name',
+	text : 'Name' });
+
+var oTF = new sap.ui.commons.TextField({
+	id : 'TF-Name',
+	tooltip : 'Name',
+	editable : false,
+	value : 'Mustermann',
+	width : '200px' });
+
+oLabel.setLabelFor(oTF);
+
+oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+oCell1 = new sap.ui.commons.layout.MatrixLayoutCell({
+	rowSpan : 7 });
+var oImg = new sap.ui.commons.Image({
+	id : 'IMG-Pic',
+	src : 'images/face.png',
+	alt : 'Face',
+	tooltip : 'Picture of Contact',
+	height : '200px' });
+oCell1.addContent(oImg);
+oMatrix.createRow(oLabel, oTF, oCell, oCell1);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-F-Name',
+	text : 'First Name' });
+
+oTF = new sap.ui.commons.TextField({
+	id : 'TF-F-Name',
+	tooltip : 'First Name',
+	editable : false,
+	value : 'Max',
+	width : '200px' });
+oLabel.setLabelFor(oTF);
+oMatrix.createRow(oLabel, oTF);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-Street',
+	text : 'Street, HouseNumber' });
+
+oTF = new sap.ui.commons.TextField({
+	id : 'TF-Street',
+	tooltip : 'Street',
+	editable : false,
+	value : 'Hauptstraße',
+	width : '150px' });
+oLabel.setLabelFor(oTF);
+var oTF2 = new sap.ui.commons.TextField({
+	id : 'TF-HNum',
+	tooltip : 'House Number',
+	editable : false,
+	value : '10',
+	width : '50px',
+	maxLength : 5 });
+	
+//multiple controls within one cell
+oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+oCell.addContent(oTF); 
+oCell.addContent(oTF2); 
+oMatrix.createRow(oLabel, oCell);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-City',
+	text : 'City' });
+
+oTF = new sap.ui.commons.TextField({
+	id : 'TF-City',
+	tooltip : 'City',
+	editable : false,
+	value : 'Musterstadt',
+	width : '200px' });
+oLabel.setLabelFor(oTF);
+oMatrix.createRow(oLabel, oTF);
+	
+oLabel = new sap.ui.commons.Label({
+	id : 'L-Country',
+	text : 'Country' });
+
+oCB = new sap.ui.commons.ComboBox({
+	id : 'TF-Country',
+	tooltip : 'Country',
+	editable : false,
+	value : 'Deutschland',
+	width : '200px' });
+oLabel.setLabelFor(oCB);
+var oItem = new sap.ui.core.ListItem({
+	id : 'LI1',
+	text : 'Canada' });
+oCB.addItem(oItem);
+var oItem = new sap.ui.core.ListItem({
+	id : 'LI2',
+	text : 'Deutschland' });
+oCB.addItem(oItem);
+var oItem = new sap.ui.core.ListItem({
+	id : 'LI3',
+	text : 'England' });
+oCB.addItem(oItem);
+var oItem = new sap.ui.core.ListItem({
+	id : 'LI4',
+	text : 'Россия' });
+oCB.addItem(oItem);
+oMatrix.createRow(oLabel, oCB);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-Date',
+	text : 'Date of birth' });
+oDP = new sap.ui.commons.DatePicker({
+	id : 'DP-Date',
+	tooltip : 'Date of Birth',
+	editable : false,
+	yyyymmdd : 19990909 });
+oLabel.setLabelFor(oDP);
+oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+oLabel2 = new sap.ui.commons.Label({
+	id : 'L-URL',
+	text : 'URL for picture',
+	visible : false });
+oMatrix.createRow(oLabel, oDP, oCell, oLabel2);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-Gender',
+	text : 'Gender' });
+var oRBG = new sap.ui.commons.RadioButtonGroup({
+	id : 'RBG-Gender',
+	tooltip : 'Gender',
+	columns : 2,
+	editable : false });
+var oItem = new sap.ui.core.Item({
+	id : 'RB-Male',
+	text : 'Male',
+	tooltip : 'Gender: male',
+	key : 'male' });
+oRBG.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	id : 'RB-Female',
+	text : 'Female',
+	tooltip : 'Gender: female',
+	key : 'female' });
+oRBG.addItem(oItem);
+oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+
+oTF = new sap.ui.commons.TextField({
+	id : 'TF-URL',
+	tooltip : 'URL for picture',
+	visible : false,
+	value : 'images/face.png',
+	width : '100%',
+	change : function(oEvent){
+		var oCore = sap.ui.getCore();
+		var oTF = oEvent.oSource;
+		var oIMG = oCore.getControl("IMG-Pic");
+		oIMG.setSrc( oTF.getValue() );}
+	});
+oLabel2.setLabelFor(oTF);
+oMatrix.createRow(oLabel, oRBG, oCell, oTF);
+
+oLabel = new sap.ui.commons.Label({
+	id : 'L-Text',
+	text : 'Remarks' });
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	colSpan : 4 });
+oTA = new sap.ui.commons.TextArea({
+	id : 'TA-Text',
+	tooltip : 'Remarks',
+	editable : false,
+	wrapping : sap.ui.core.Wrapping.Off,
+	value : 'Max Mustermann is a very nice guy. He is very well known.\nEverybody loves him.\nYou can be lucky if you meet him.',
+	width : '100%',
+	height : '150px'
+	});
+oLabel.setLabelFor(oTA);
+oCell.addContent(oTA);
+oMatrix.createRow(oLabel, oCell);
+
+var oRtt = new sap.ui.commons.RichTooltip( 
+		'Rtt-Change',
+		{title: 'Change Button',
+		text:"If you like to change this data press this button. If not, don't press it."
+		});
+var oButton1 = new sap.ui.commons.Button({
+	id : 'B-Change',
+	tooltip : oRtt,
+	text : 'Change',
+	width : '10em',
+	press : function(){
+		var oCore = sap.ui.getCore();
+		var oTF = oCore.getControl('TF-Name');
+		oTF.setEditable(!oTF.getEditable());
+		oTF = oCore.getControl('TF-F-Name');
+		oTF.setEditable(!oTF.getEditable());
+		oTF = oCore.getControl('TF-Street');
+		oTF.setEditable(!oTF.getEditable());
+		oTF = oCore.getControl('TF-HNum');
+		oTF.setEditable(!oTF.getEditable());
+		oTF = oCore.getControl('TF-City');
+		oTF.setEditable(!oTF.getEditable());
+		var oCB = oCore.getControl('TF-Country');
+		oCB.setEditable(!oCB.getEditable());
+		var oDP = oCore.getControl('DP-Date');
+		oDP.setEditable(!oDP.getEditable());
+		var oRBG = oCore.getControl('RBG-Gender');
+		oRBG.setEditable(!oRBG.getEditable());
+		var oLabel = oCore.getControl('L-URL');
+		oLabel.setVisible(!oLabel.getVisible());
+		oTF = oCore.getControl('TF-URL');
+		oTF.setVisible(!oTF.getVisible());
+		var oTA = oCore.getControl('TA-Text');
+		oTA.setEditable(!oTA.getEditable());
+		var oButton = oCore.getControl('B-Save');
+		oButton.setEnabled(!oButton.getEnabled());
+		oButton = oCore.getControl('B-Change');
+		var oRtt = oCore.getControl('Rtt-Change');
+		if( oButton.getText() == 'Change'){
+			oButton.setText('Display');
+			oRtt.setText("If you not like to change these data press this button. If you still want to change, don't press it.");
+		} else{
+			oButton.setText('Change');
+			oRtt.setText("If you like to change these data press this button. If not, don't press it.");
+		}
+	}
+	});
+oRtt = new sap.ui.commons.RichTooltip( 
+		'Rtt-Save',
+		{title: 'Save Button',
+		imageSrc: '../images/save-icon.png',
+		imageSrc: 'images/save-icon.gif',
+		text:"Press this button to save the value. But as long as we don't know where to save the data is not really saved."
+		});
+var oButton2 = new sap.ui.commons.Button({
+	id : 'B-Save',
+	tooltip : oRtt,
+	text : 'Save',
+	icon : '../images/save-icon.png',
+	enabled: false,
+	press : function(){alert("Values are saved into Valhall!")}
+	});
+
+oMatrix.createRow(oButton1, oButton2);
+
+// attach it to some element in the page
+oMatrix.placeAt('sample4');
+</script>
+
+	<style>
+		#code-sample4 {
+		width: 1000px;
+		border: 1px solid black;
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		box-shadow: 5px 5px 5px black;
+		-moz-box-shadow: 5px 5px 5px black;
+		-webkit-box-shadow: 5px 5px 5px black;
+		}
+	</style>
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Green" icon="images/ctrls/matrixlayout-icon.png">MatrixLayout</h1>
+
+		<h2>Introduction and Overview</h2>
+		<p>The MatrixLayout can be used to bring multiple controls to one place. There are two different modes how the cell size is determined. If the <code>layoutFixed</code> is <code>false</code>, the cells are sized to fit the content.
+		If the value is <code>true</code>, the cell size must be defined by the caller. For the columns, you can make width settings, for the rows height settings.
+		If you would like to provide scrollbars inside the matrix cells, embed a container inside the cell.
+		For performance reasons it is better to provide the number of columns to the <code>columns</code> property. Otherwise, the
+		number of columns must be calculated by the system. 
+		</p>
+
+		<p>
+		See also: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout">sap.ui.commons.layout</a>
+		</p>
+		<h2>Examples</h2>
+		<h3>MatrixLayout With Variable Cell Size</h3>
+		<p>
+		This example shows a simple MatixLayout with <code>layoutFixed = false</code>.
+		</p>
+		<br><br> 
+		<div code-sample="sample1" script="SimpleMatrix"></div>
+		<br/>
+		<h3>MatrixLayout With Fixed Cell Sizes</h3>
+		<p>
+		This example shows a simple MatrixLayout with <code>layoutFixed = true</code>. If the content of a cell is larger than the size, the cell content is cut off.
+		</p>
+		<br><br> 
+		<div code-sample="sample2" script="FixedLayout"></div>
+
+		<br/>
+		<h3>Cell Concatenation</h3>
+		<p>
+		This example shows the usage of <code>colSpan</code> and <code>rowSpan</code>. If you would like to use the concatenation feature, the MatrixLayout's cells need to
+		be defined as own controls. By doing this, they can have different style options like for example background colors. In the example you also can see that a MatrixLayout
+		can contain empty cells. These are useful if you need placeholders, for example. Depending on the use case, they also can be used for purely visual reasons.
+		</p>
+		<br/><br>
+
+		<div code-sample="sample3" script="ColRowSpan" style="min-width:700px;"></div>
+		<br/>
+
+		<h3>MatrixLayout Used to Create a Form</h3>
+		<br><br>
+
+		<div code-sample="sample4" script="ContactData" style="min-width:1111px;"></div>
+		<br/>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout.MatrixLayout.html" >API documentation</a>
+		</p>
+	</body>
+</html>

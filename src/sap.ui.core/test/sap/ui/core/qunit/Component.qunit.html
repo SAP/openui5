@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+	QUnit.config.autostart = false;
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+	jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
+	var oCompCont1 = new sap.ui.core.ComponentContainer("CompCont1", {
+		name: "samples.components.button",
+		id: "myButton",
+		settings: {
+			text: "Text changed through settings", 
+			componentData: {
+				"foo": "bar"
+			}
+		}
+	});
+	oCompCont1.placeAt("comparea1");
+
+	var oComp = sap.ui.getCore().createComponent({
+		name: "samples.components.verticalLayout",
+		id: "vLayout",
+		componentData: {
+			"foo": "bar"
+		}
+	});
+
+	var oCompCont = new sap.ui.core.ComponentContainer("ContVLayout", {
+		component : oComp
+	});
+	oCompCont.placeAt("comparea2");
+	
+	//******************************************************
+	//Test preparation for custom component configuration
+	jQuery.sap.require("sap.ui.core.Component");
+	sap.ui.core.Component.extend("test.comp1.Component", {
+		metadata: {
+			"properties" : {
+				"test" : "string"
+			},
+			"my.custom.config" : {
+				"property1" : "value1",
+				"property2" : "value2"
+			}
+		}
+	});
+	test.comp1.Component.extend("test.comp2.Component", {
+		metadata: {
+			"my.custom.config" : {
+				"property1" : "value3"
+			}
+		}
+	});
+	//******************************************************
+
+	
+ 	module("Basic Components");
+	
+	test("Simple Component Instance", function(){
+		ok(document.getElementById("CompCont1"));
+		var elem = jQuery.sap.byId("__component0---mybutn");
+		equal(elem.text(), "Text changed through settings", "Settings applied");
+	}); 
+	
+	test("Nested Components", function(){
+		ok(document.getElementById("ContVLayout"));
+		//check for ids of nested elements
+		ok(document.getElementById("vLayout---myLayout"));
+		ok(document.getElementById("vLayout---nB"));
+		ok(document.getElementById("vLayout---myTF"));
+		ok(document.getElementById("vLayout---ContButton"));
+		ok(document.getElementById("vLayout---ContButton-uiarea"));
+		ok(document.getElementById("vLayout---comp_button---mybutn"));
+	});
+
+	test("Components Metadata", function(){
+		var includes = ["css/vlayout.css","/js/includeme.js"];
+		var components =  ["samples.components.styledbutton"];
+		equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
+		deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
+		notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
+		deepEqual(oComp.getMetadata().getComponents(), components, "Child components retrieved");
+		equal(oComp.getMetadata().getUI5Version(), "1.13.0", "UI5 Version retrieved");
+	});
+	
+	test("Components Metadata - Custom Configuration Entry", function(){
+		var oSuccessMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", true);
+		var oSuccessUnMerged = test.comp2.Component.getMetadata().getCustomEntry("my.custom.config", false);
+		var oFail = test.comp2.Component.getMetadata().getCustomEntry("properties");
+		
+		ok(!oFail, "Standard metadata can not be accessed.");
+		equal(oSuccessMerged.property1, "value3", "Property 1 merged and overridden.");
+		equal(oSuccessMerged.property2, "value2", "Property 2 merged and but not overridden.");
+		equal(oSuccessUnMerged.property1, "value3", "Property 1 not merged.");
+		ok(!oSuccessUnMerged.property2, "Property 2 not merged (does not exist).");
+	});
+	
+	test("Components Metadata - Load from file", function(){
+		jQuery.sap.require("samples.components.loadfromfile.Component");
+		var oMetadata = samples.components.loadfromfile.Component.getMetadata();
+		
+		deepEqual(oMetadata.getIncludes(), ["css/includeme.css", "js/includeme.js"], "Includes are available.");
+		ok(oMetadata.hasProperty("prop1"), "Property 'prop1' available.");
+	});
+	
+	test("Components Includes", function(){
+		ok((typeof foo == 'function'), "function foo from included js exists");
+		sFontSize = "12px";
+		foo("comparea2", sFontSize);
+		var sSize = jQuery("#comparea2").css('font-size');
+		equal(sSize, sFontSize, "function from JS include invoked");
+		equal(jQuery.sap.byId("vLayout---myTF").css("font-size"), sFontSize, "CSS from include applied");
+	});
+
+	test("Factory Function", function(){
+		var oComponent = sap.ui.component(oComp.getId());
+		equal(oComponent, oComp, "Factory function returns the same instance!");
+		var oComponent = sap.ui.component({
+			name: "samples.components.verticalLayout",
+			id: "factoryVLayout"
+		});
+		ok(!!oComponent, "Component has been created!");
+		equal(oComponent.getMetadata(), oComp.getMetadata(), "Component is equal!");
+	});
+
+	test("Component Data", function(){
+		ok(!!oComp.getComponentData(), "Component has component data");
+		equal(oComp.getComponentData().foo, "bar", "Component data is correct");
+		var oComponent = sap.ui.getCore().getComponent(oCompCont1.getComponent());
+		ok(!!oComponent.getComponentData(), "Component has component data");
+		equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
+	});
+	
+ 	module("Creation Context");
+	
+	test("Basic Test", function(){
+		// check that the layout has the reference to the component
+		var oLayout = oComp.byId("myLayout");
+		var sRefComponentId = oLayout._sOwnerId /* INTERNAL ONLY! */;
+		equal(oComp.getId(), sRefComponentId, "The nested control has the correct component context");
+		// check the nested component having the ID of the parent component
+		var oNestedComponentContainer = oComp.byId("ContButton");
+		var sNestedComponentId = oNestedComponentContainer.getComponent();
+		var oNestedComponent = sap.ui.component(sNestedComponentId);
+		equal(sRefComponentId, sap.ui.core.Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
+		// check the control in the nested component to have the correct component context
+		var oNestedControl = oNestedComponent.byId("mybutn");
+		equal(sNestedComponentId, oNestedControl._sOwnerId /* INTERNAL ONLY! */, "The nested control has the correct component context");
+	});
+
+	module("Routing");
+
+	test("Should create a custom router class", function() {
+		//Arrange + System under test 
+		var oComponent = sap.ui.getCore().createComponent({
+			name: "samples.components.routing",
+		});
+
+
+		//Act - initialize the component to create the router
+		oComponent.init();
+		var oRouter = oComponent.getRouter();
+
+		//Assert
+		ok(oRouter instanceof samples.components.routing.RouterExtension, "the created router was an extension");
+
+		//Cleanup
+		oComponent.destroy();
+	});
+
+	</script>
+	</head>
+	<body><h1 id="qunit-header">QUnit tests: Components</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="comparea1"></div>
+		<div id="comparea2"></div>
+	</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>DropdownBox - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.DropdownBox.gif">
+
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="false"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../resources/sap-ui-core.js"></script>
+
+		<script type="text/javascript">
+			jQuery.sap.log.setLevel(jQuery.sap.log.LogLevel.WARNING);
+
+			function populateWithEntries(oTarget, iFinalLength, aValues) {
+				var finalLength = typeof(iFinalLength) == "number" ? iFinalLength : 3;
+				var iCnt = 0;
+				var createLevel = function(sPrefix, aChars, oTarget){
+				 	var oItem,
+				 		sCmbId = oTarget.getId();
+					for(var i in aChars){
+						if(sPrefix.length < finalLength-1) {
+							createLevel(sPrefix + aChars[i], aChars, oTarget);
+						} else {
+							oItem = new sap.ui.core.ListItem(sCmbId + "_it_" + iCnt++, {text: sPrefix + aChars[i], tooltip: "Some tooltip", key: "key"+iCnt});
+							oTarget.addItem(oItem);
+						}
+					}
+				};
+				if(!(aValues && aValues.length))
+						aValues = ['a','b'];
+				createLevel('', aValues, oTarget);
+
+				return oTarget;
+			};
+
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("mylyt");
+			oLyt.setLayoutFixed(false);
+			oLyt.setColumns(3);
+			var oDdB = new sap.ui.commons.DropdownBox("ddb1", {change: onChange, tooltip: "Dropdown box with generated items list"});
+			populateWithEntries(oDdB, 3, ["a", "b", "c"]);
+			var iEventCount = 0;
+			var oTextField = new sap.ui.commons.TextField("KeyInput1", {
+				change: function(oEvent) {
+					var oTextField = oEvent.oSource;
+					var oCombo = sap.ui.getCore().getControl("ddb1");
+					oCombo.setSelectedKey( oEvent.getParameter("newValue") );
+				}});
+		  var oLabel = new sap.ui.commons.Label("LabelKey1",{ text: "selectedKey:", labelFor: oTextField});
+		  var oButton = new sap.ui.commons.Button("ButtoKey",{
+			  text: "getSelectedKey",
+			  press: function(oEvent){
+				  sap.ui.getCore().byId("KeyInput1").setValue(sap.ui.getCore().byId("ddb1").getSelectedKey());
+			  }});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "First test Dropdownbox"}), oDdB,
+					new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c5", {content:[oLabel, oTextField, oButton]}));
+
+			oDdB = new sap.ui.commons.DropdownBox("ddb2", {change: onChange,displaySecondaryValues: true});
+			oDdB.setTooltip("This dropdown provides plenty of items.");
+			populateWithEntries(oDdB, 4, ["a", "d", /*"f", */"s", "q"]);
+			oDdB.setSearchHelpEnabled(true);
+			var oSHDlg = new sap.ui.commons.Dialog("shdlg", {
+					modal: true,
+					title: "Search Help (example dialog)",
+					buttons: [new sap.ui.commons.Button("dlgCncl", {
+						text: "Cancel",
+						press: function(oEvent){
+							oEvent.getSource().getParent().close();
+						}})],
+					// this should be shared with the 'enriched' dropdown (etiher on control or on model level)
+					content: [populateWithEntries(new sap.ui.commons.ListBox("shlb", {
+						width:"100%",
+						visibleItems: 10,
+						allowMultiSelect: false,
+						select: function(oEvent){
+							var oSrc = oEvent.getSource();
+							oSrc.getParent().close();
+							var oDdb = sap.ui.getCore().byId("ddb2");
+							oDdb.setValue(oEvent.getParameter("selectedItem").getText());
+							//oDdb.focus();
+						}}), 4, ["a", "d", /*"f", */"s", "q"])],
+					initialFocus: "shlb",
+					closed: function(oEvent){
+						var oDdb = sap.ui.getCore().byId("ddb2");
+						oDdb.focus();	
+					}
+				});
+			oDdB.attachSearchHelp(function(oEvent){
+				//sap.ui.commons.MessageBox.alert("Value for Search Help: '" + oEvent.getParameter("value") + "'", null, "Search Help triggered");
+				var oList = oSHDlg.getContent()[0],
+					aItems = oList.getItems(),
+					oVal = oEvent.getParameter("value");
+				for (var i = 0, l = aItems.length; i < l; i++){
+					if(aItems[i].getText() === oVal) {
+						oList.setSelectedIndex(i);
+						break;
+					}
+				}
+
+				oSHDlg.open();
+			});
+			var oDdB2 = oDdB;
+			var oClearButton = new sap.ui.commons.Button({
+				text : "Clear",
+				press : function(oEvent) {
+					sap.ui.getCore().getControl("ddb2").setValue("");
+				}
+			});
+			var oAddButton = new sap.ui.commons.Button({
+				text : "Add item",
+				press : function(oEvent) {
+					sap.ui.getCore().getControl("ddb2").addItem(new sap.ui.core.ListItem({text:"test"}));
+				}
+			});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Second test dropdown"}), oDdB,
+					new sap.ui.commons.layout.MatrixLayoutCell({content:[oClearButton, oAddButton]}));
+
+			// test item update while popup is open
+// 			function addOpenItem() {
+// 				oDdB = sap.ui.getCore().getControl("ddb2");
+// 				if(oDdB.oPopup && oDdB.oPopup.isOpen()){
+// 					oDdB.addItem(new sap.ui.core.ListItem({text:"XXX"}));
+
+// 				}else{
+// 					window.setTimeout("addOpenItem()",500);
+
+// 				}
+// 			};
+
+// 			window.setTimeout("addOpenItem()",500);
+
+			oDdB = new sap.ui.commons.DropdownBox("ddb3",{
+					displaySecondaryValues: true,
+					items : [
+						new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", enabled: false}),
+						new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)"}),
+						new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)"})
+					],
+					change: onChange,
+					liveChange: function(oEvent){sap.ui.getCore().getControl("TV3").setText(oEvent.getParameter("liveValue"))}
+				});
+			var oTextView = new sap.ui.commons.TextView("TV3",{ text: oDdB.getValue() });
+
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Three item dropdown"}), oDdB, oTextView);
+
+			oDdB = new sap.ui.commons.DropdownBox("ddb4",{
+				items : [
+					new sap.ui.core.ListItem("fi5",{text:"Breakfast"}), 
+					new sap.ui.core.ListItem("si5",{text:"Lunch"}),
+					new sap.ui.core.ListItem("ti5",{text:"Dinner"})
+				],
+				// make sure that the acutal value comes after the list of possible values (i.e. items)
+				value: "Lunch",
+				change: onChange,
+				valueState: sap.ui.core.ValueState.Error
+			});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Meal selection dropdown"}), oDdB);
+
+			// 2 DropdownBoxes 2nd one corresponds to 1 one to test adjustment of history
+			oDdB = new sap.ui.commons.DropdownBox("ddb-gender",{
+				items : [
+					new sap.ui.core.ListItem("g01",{text:"all"}),
+					new sap.ui.core.ListItem("g02",{text:"female"}),
+					new sap.ui.core.ListItem("g03",{text:"male"})
+				],
+				value: "all",
+				change: onChangeGender
+			});
+
+			var oDdB2 = new sap.ui.commons.DropdownBox("ddb-names",{
+
+				items: [
+				  new sap.ui.core.ListItem("m01",{text:"Andreas"}),
+					new sap.ui.core.ListItem("m02",{text:"Jens"}),
+					new sap.ui.core.ListItem("m03",{text:"Tim"}),
+					new sap.ui.core.ListItem("m04",{text:"Frank"}),
+					new sap.ui.core.ListItem("m05",{text:"Malte"}),
+					new sap.ui.core.ListItem("m06",{text:"Peter"}),
+					new sap.ui.core.ListItem("m07",{text:"Johannes"}),
+					new sap.ui.core.ListItem("m08",{text:"Sebastian"}),
+					new sap.ui.core.ListItem("m09",{text:"Michael"}),
+					new sap.ui.core.ListItem("m10",{text:"Otto"}),
+					new sap.ui.core.ListItem("m11",{text:"Klaus"}),
+					new sap.ui.core.ListItem("m12",{text:"Rudolf"}),
+					new sap.ui.core.ListItem("m13",{text:"Udo"}),
+					new sap.ui.core.ListItem("m14",{text:"Hans"}),
+					new sap.ui.core.ListItem("m15",{text:"Fritz"}),
+					new sap.ui.core.ListItem("f01",{text:"Gesine"}),
+					new sap.ui.core.ListItem("f02",{text:"Irina"}),
+					new sap.ui.core.ListItem("f03",{text:"Anja"}),
+					new sap.ui.core.ListItem("f04",{text:"Petra"}),
+					new sap.ui.core.ListItem("f05",{text:"Anke"}),
+					new sap.ui.core.ListItem("f06",{text:"Inge"}),
+					new sap.ui.core.ListItem("f07",{text:"Tanja"}),
+					new sap.ui.core.ListItem("f08",{text:"Sabine"}),
+					new sap.ui.core.ListItem("f09",{text:"Rosa"}),
+					new sap.ui.core.ListItem("f10",{text:"Doris"}),
+					new sap.ui.core.ListItem("f11",{text:"Tina"}),
+					new sap.ui.core.ListItem("f12",{text:"Monika"}),
+					new sap.ui.core.ListItem("f13",{text:"Olga"}),
+					new sap.ui.core.ListItem("f14",{text:"Kerstin"}),
+					new sap.ui.core.ListItem("f15",{text:"Vanessa"})
+				],
+				change: onChange
+			});
+
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Gender selection"}), oDdB, new sap.ui.commons.layout.MatrixLayoutCell({content:[new sap.ui.commons.Label({labelFor: oDdB2, text: "Names"}), oDdB2]}));
+
+			// readOnly
+			oDdB = new sap.ui.commons.DropdownBox("ddb-readonly",{
+				items : [
+					new sap.ui.core.ListItem("ro1",{text:"aaa"}), 
+					new sap.ui.core.ListItem("ro2",{text:"bbb"}),
+					new sap.ui.core.ListItem("ro3",{text:"ccc"})
+				],
+				// make sure that the acutal value comes after the list of possible values (i.e. items)
+				value: "bbb",
+				change: onChange,
+				editable: false
+			});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "ReadOnly"}), oDdB);
+
+			// disabled
+			oDdB = new sap.ui.commons.DropdownBox("ddb-disabled",{
+				items : [
+					new sap.ui.core.ListItem("dis1",{text:"aaa"}), 
+					new sap.ui.core.ListItem("dis2",{text:"bbb"}),
+					new sap.ui.core.ListItem("dis3",{text:"ccc"})
+				],
+				// make sure that the acutal value comes after the list of possible values (i.e. items)
+				value: "bbb",
+				change: onChange,
+				enabled: false
+			});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Disabled"}), oDdB);
+
+			// databinding test
+		 	jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+			var oModel = new sap.ui.model.json.JSONModel({
+				items:[{text: "Item 1", key: "I1"},
+				       {text: "Item 2", key: "I2"},
+				       {text: "Item 3", key: "I3"}],
+				key: "I2"
+				});
+			sap.ui.getCore().setModel(oModel);
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("text", "text").bindProperty("key", "key");
+
+			oDdB = new sap.ui.commons.DropdownBox("ddb-binding",{required: true});
+
+			oDdB.bindProperty("selectedKey", "/key");
+			oDdB.bindAggregation("items", "/items", oItemTemplate);
+
+		  oButton = new sap.ui.commons.Button("BtnUpdModel",{
+			  text: "update model",
+			  press: function(oEvent){
+		   		oModel.setProperty("/key", "IC");
+					oModel.oData.items = [{text: "Item A", key: "IA"},
+					      		            {text: "Item B", key: "IB"},
+					    		              {text: "Item C", key: "IC"}];
+		   		oModel.checkUpdate();
+			  }});
+			oLyt.createRow(new sap.ui.commons.Label({labelFor: oDdB, text: "Databinding test:"}), oDdB, oButton);
+
+			var oText = new sap.ui.commons.TextView("myText", {text:"No output so far!", tooltip: "This TextView that will be updated on DropdownBox changes."});
+			var oLabel = new sap.ui.commons.Label("myLabel", {text:"This TextView that will be updated on comboBox changes:", design:sap.ui.commons.LabelDesign.Bold, labelFor: oText});
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_info", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c1", {content:oLabel}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c2", {content:oText, colSpan:2})
+				]}));
+			oLyt.placeAt("target");
+
+			// Event handler function
+			function onChange(oEvent){
+				sap.ui.getCore().getControl("myText").setText("Event " + ++iEventCount + " Value: " + oEvent.getParameter("newValue") + " SelectedItem: " + oEvent.getParameter("selectedItem").getId());
+			};
+
+			function onChangeGender(oEvent){
+				var oDdB = sap.ui.getCore().getControl("ddb-names");
+				var sValue = oEvent.getParameter("newValue");
+
+				oDdB.removeAllItems();
+				if ( sValue != "all"){
+					oDdB.clearHistory();
+				}
+
+				if (sValue == "all" || sValue == "male"){
+					oDdB.addItem(sap.ui.getCore().getControl("m01"));
+					oDdB.addItem(sap.ui.getCore().getControl("m02"));
+					oDdB.addItem(sap.ui.getCore().getControl("m03"));
+					oDdB.addItem(sap.ui.getCore().getControl("m04"));
+					oDdB.addItem(sap.ui.getCore().getControl("m05"));
+					oDdB.addItem(sap.ui.getCore().getControl("m06"));
+					oDdB.addItem(sap.ui.getCore().getControl("m07"));
+					oDdB.addItem(sap.ui.getCore().getControl("m08"));
+					oDdB.addItem(sap.ui.getCore().getControl("m09"));
+					oDdB.addItem(sap.ui.getCore().getControl("m10"));
+					oDdB.addItem(sap.ui.getCore().getControl("m11"));
+					oDdB.addItem(sap.ui.getCore().getControl("m12"));
+					oDdB.addItem(sap.ui.getCore().getControl("m13"));
+					oDdB.addItem(sap.ui.getCore().getControl("m14"));
+					oDdB.addItem(sap.ui.getCore().getControl("m15"));
+				}
+				if (sValue == "all" || sValue == "female"){
+					oDdB.addItem(sap.ui.getCore().getControl("f01"));
+					oDdB.addItem(sap.ui.getCore().getControl("f02"));
+					oDdB.addItem(sap.ui.getCore().getControl("f03"));
+					oDdB.addItem(sap.ui.getCore().getControl("f04"));
+					oDdB.addItem(sap.ui.getCore().getControl("f05"));
+					oDdB.addItem(sap.ui.getCore().getControl("f06"));
+					oDdB.addItem(sap.ui.getCore().getControl("f07"));
+					oDdB.addItem(sap.ui.getCore().getControl("f08"));
+					oDdB.addItem(sap.ui.getCore().getControl("f09"));
+					oDdB.addItem(sap.ui.getCore().getControl("f10"));
+					oDdB.addItem(sap.ui.getCore().getControl("f11"));
+					oDdB.addItem(sap.ui.getCore().getControl("f12"));
+					oDdB.addItem(sap.ui.getCore().getControl("f13"));
+					oDdB.addItem(sap.ui.getCore().getControl("f14"));
+					oDdB.addItem(sap.ui.getCore().getControl("f15"));
+				}
+			};
+
+			oLabel = new sap.ui.commons.Label({ text: "Double texts with different key: ", labelFor: "ddb-double"});
+			oDdB = new sap.ui.commons.DropdownBox("ddb-double", {
+				tooltip:"name list",
+				displaySecondaryValues: true,
+				items : [
+				  new sap.ui.core.ListItem("N1",{text:"Axel", additionalText: "Rose", key: "A"}),
+					new sap.ui.core.ListItem("N2",{text:"Bob", additionalText: "Marley", key: "B"}),
+					new sap.ui.core.ListItem("N3",{text:"Bob", additionalText: "Dylan", key: "C"}),
+					new sap.ui.core.ListItem("N4",{text:"Jimi", additionalText: "Hendrix", key: "D"}),
+					new sap.ui.core.ListItem("N5",{text:"John", additionalText: "Lennon", key: "E"}),
+					new sap.ui.core.ListItem("N6",{text:"John", additionalText: "Miles", key: "F"})],
+				selectedKey: ("C"),
+				change : function(oEvent) {
+					sap.ui.getCore().getControl("TV11").setText("Event : Change, item:" + oEvent.getSource().getSelectedItemId() + ", key: " + oEvent.getSource().getSelectedKey() + " Value: " + oEvent.getSource().getValue());
+					},
+				liveChange : function(oEvent) {
+					sap.ui.getCore().getControl("TV11").setText("Event : LifeChange, selectedIndex of ListBox:" + oEvent.getSource()._getListBox().getSelectedIndex() + " liveValue: " + oEvent.getParameter("liveValue"));
+					}
+				});
+			oTextView = new sap.ui.commons.TextView("TV11",{ text: "initial: item: N3, key: C, value: Bob" });
+
+			oLyt.createRow(oLabel, oDdB, oTextView);
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.DropdownBox</h1>
+
+		<div id="target"></div>
+	</body>
+</html>

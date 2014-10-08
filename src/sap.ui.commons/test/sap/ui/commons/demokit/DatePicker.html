@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.DatePicker">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>DatePicker - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='simpleSample'>
+// create a simple DatePicker
+var oDatePicker1 = new sap.ui.commons.DatePicker('date1');
+oDatePicker1.setYyyymmdd("20100101");
+oDatePicker1.setLocale("en-US"); // Try with "de" or "fr" instead!
+oDatePicker1.attachChange(
+		function(oEvent){
+			if(oEvent.getParameter("invalidValue")){
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
+			}else{
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
+			}
+		}
+);
+
+// attach it to some element in the page
+oDatePicker1.placeAt("sample1");
+		</script>
+
+		<script id='dataBinding' type="text/javascript">
+// create model
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData({
+	dateValue: new Date(1330470000000)
+});
+sap.ui.getCore().setModel(oModel);
+
+// create DatePickers and bind to model
+(new sap.ui.commons.DatePicker("date2",{
+	width: "10em",
+	value: {
+		path: "/dateValue",
+		type: new sap.ui.model.type.Date({pattern: "yy-MM-dd", strictParsing: true})
+}
+})).placeAt("sample2");
+
+(new sap.ui.commons.DatePicker("date3",{
+	width: "15em",
+	value: {
+		path: "/dateValue",
+		type: new sap.ui.model.type.Date({style: "long", strictParsing: true})
+}
+})).placeAt("sample2");
+
+// validation handling
+sap.ui.getCore().attachParseError(
+	function(oEvent) {
+		var oElement = oEvent.getParameter("element");
+		if (oElement.getId() == "date2" || oElement.getId() == "date3") {
+			oElement.setValueState(sap.ui.core.ValueState.Error);
+		}
+	});
+
+sap.ui.getCore().attachValidationSuccess(
+	function(oEvent) {
+		var oElement = oEvent.getParameter("element");
+		if (oElement.getId() == "date2" || oElement.getId() == "date3") {
+			oElement.setValueState(sap.ui.core.ValueState.Success);
+		}
+	});
+		</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/datepicker-icon.png">DatePicker</h1>
+
+		<h2>Introduction</h2>
+
+		<p>
+		The DatePicker control provides an input field with an assigned calendar which is opened on user action.
+		When the user makes an entry and clicks on the enter key, the calendar shows the corresponding date. When the user makes no entry and triggers the calendar display,
+		the actual date is displayed.
+		Generally, the user enters a date in the format defined by the locale or by binding the <code>value</code> property to a date type (and press F4 or click the Calendar icon next).
+		Alternatively, entering the date in the YYYYMMDD machine format is possible (with enter key afterwards).
+
+		<br><br>
+		The DatePicker control inherits properties from the TextField control (e.g. <code>enabled</code>, <code>required</code>, <code>change</code>).
+		</p>
+
+		<p>Following a summary of the control behavior:
+		<ul>
+			<li>For opening the calendar, <code>F4</code> or <code>Alt+Arrow down</code> is supported (alternatively to the calendar-button-click).</li>
+			<li>The Enter key, the Esc key, and a calendar-button-click closes the control (or clicking anywhere outside the control).</li>
+			<li>For switching between the different components of the calendar popup, use the Tab keys.</li>
+			<li>For moving the cursor within a component of the calendar popup, use the arrow keys.</li>
+			<li>The date selection is done using the Enter key, Space key or on mouse-click.</li>
+		</ul>
+		<p>
+
+		<p>
+		Note: For proper visualization, set <code>rtl</code> as required by the <code>locale</code>.
+		</p>
+
+		<p>
+		If a <code>locale</code> is set on the <code>DatePicker</code> the date will be displayed in the output format of
+		this locale. If no <code>locale</code> is set, the date is displayed in the output format of the system locale SAPUI5
+		uses.
+		<br>
+		But if the <code>value</code> property is bound to a model using a <code>sap.ui.model.type.Date</code> type, the <code>locale</code> property is ignored.
+		In this case the locale and the pattern defined in the data binding are used. The output pattern can then be defined using the <code>pattern</code>
+		or <code>style</code> of this <code>date</code> type while binding.
+		</p>
+
+		<p>
+		If a new value is entered in the <code>DatePicker</code> it is validated using the parser of the <code>date</code> type.
+		The <code>change</code> event returns a parameter <code>invalidValue</code> with <code>true</code> if the entered value is not an valid date.
+		If the <code>value</code> of the <code>DatePicker</code> id filled using data binding and a <code>date</code> type the <code>ParseError</code> and
+		<code>ValidationSuccess</code> events can be used to handle the input validation.
+		</p>
+
+		<p>
+		See also: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextField.html" >TextField</a>
+		</p>
+
+		<h2>Example</h2>
+
+		<p>
+		The example below shows a typical DatePicker. The input validation is done using the <code>change</code> event.
+		</p>
+		<div code-sample="sample1" script="simpleSample"></div>
+		<br/>
+
+		<p>
+		The example below shows two DatePickers using DataBinding. The input validation is done using the <code>ParseError</code> and
+		<code>ValidationSuccess</code> events. In the first DatePicker the output format is defined using <code>pattern</code>.
+		In the second DatePicker the output format is defined using <code>style</code>.
+		</p>
+		<div code-sample="sample2" script="dataBinding"></div>
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.DatePicker.html" >API documentation</a>
+		</p>
+	</body>
+</html>

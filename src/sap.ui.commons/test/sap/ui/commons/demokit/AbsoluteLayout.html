@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.layout.AbsoluteLayout">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control AbsoluteLayout Position Layout" />
+		<title>AbsoluteLayout - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='AbsoluteLayoutScript'>
+//Create a layout instance
+var oBeach = new sap.ui.commons.layout.AbsoluteLayout({width: "700px", height: "438px"});
+
+//Set the beach image, descriptions, ...
+oBeach.addContent(new sap.ui.commons.Image({src: "images/beach.png"}));
+oBeach.addContent(
+		new sap.ui.commons.TextView({text: 'Welcome to Sunny Beach', design: sap.ui.commons.TextViewDesign.H1, textAlign: "Center"}),
+		{left: "0px", right: "0px", top: "5px"}
+);
+oBeach.addContent(
+		new sap.ui.commons.TextView({text: 'Please reserve your canvas\nchair by type in your name\nand clicking the desired loaction. ', textAlign: "Left"}),
+		{left: "20px", top: "20px"}
+);
+var oNameInput = new sap.ui.commons.TextField();
+oBeach.addContent(
+		oNameInput,
+		{left: "17px", top: "90px"}
+);
+oBeach.addContent(
+		new sap.ui.commons.TextView({text: 'WC', design: sap.ui.commons.TextViewDesign.H2}),
+		{right: "21px", bottom: "73px"}
+);
+oBeach.addContent(
+		new sap.ui.commons.TextView({text: 'Restaurant', design: sap.ui.commons.TextViewDesign.H2}),
+		{right: "227px", bottom: "20px"}
+);
+
+//Helper function to create a chair on the beach
+var addChair = function(oPosition, iPrice){
+	var oImage = new sap.ui.commons.Image({src: "images/beach_free.png", decorative: false, tooltip: iPrice+"$ per hour"});
+	var doReservation = function(){
+		if(!oNameInput.getValue()){
+			alert("Please type in your name.");
+			return;
+		}
+		oImage.setSrc("images/beach_occupied.png");
+		alert("Thank you. Chair is reserved for "+oNameInput.getValue());
+		oImage.detachPress(doReservation);
+	};
+	oImage.attachPress(doReservation);
+	oBeach.addContent(oImage, oPosition);
+};
+
+//Add the chairs using the helper function
+addChair({left: "200px", top: "60px"}, 200);
+addChair({left: "330px", top: "45px"}, 200);
+addChair({left: "390px", top: "60px"}, 200);
+addChair({left: "420px", top: "120px"}, 200);
+
+addChair({left: "10px", bottom: "120px"}, 100);
+addChair({left: "70px", bottom: "100px"}, 100);
+addChair({left: "130px", bottom: "125px"}, 100);
+addChair({left: "190px", bottom: "135px"}, 100);
+addChair({left: "250px", bottom: "160px"}, 100);
+addChair({left: "310px", bottom: "145px"}, 100);
+addChair({left: "370px", bottom: "160px"}, 100);
+addChair({left: "430px", bottom: "160px"}, 100);
+addChair({left: "490px", bottom: "145px"}, 100);
+addChair({left: "550px", bottom: "120px"}, 100);
+addChair({left: "610px", bottom: "110px"}, 100);
+
+addChair({left: "30px", bottom: "50px"}, 50);
+addChair({left: "90px", bottom: "50px"}, 50);
+addChair({left: "150px", bottom: "60px"}, 50);
+addChair({left: "210px", bottom: "70px"}, 50);
+addChair({left: "270px", bottom: "80px"}, 50);
+addChair({left: "330px", bottom: "90px"}, 50);
+addChair({left: "390px", bottom: "100px"}, 50);
+addChair({left: "450px", bottom: "90px"}, 50);
+addChair({left: "510px", bottom: "70px"}, 50);
+addChair({left: "570px", bottom: "70px"}, 50);
+
+// Attach the layout to the page
+oBeach.placeAt("sample1");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Green" icon="images/ctrls/absolutelayout-icon.png">AbsoluteLayout</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The AbsoluteLayout control is a layout which positions its child controls using the CSS <i>position: absolute;</i> functionality.
+	It is recommended to use this layout only for areas with a fixed size. Otherwise an overlapping of controls is possible when the area is resized - this depends on the scenario.
+	</p>
+
+	<h2>Example</h2>
+	<p>
+	The following example shows an AbsoluteLayout used to visualize a beach area and allows reservation of canvas chairs. The position of a child can be specified via a JSON like object when the child is added
+	via the function <code>addContent</code>, or afterwards by using the function <code>setPositionOfChild</code>. The default position is <code>top:0px; left:0px;</code>.
+	</p>
+	<div code-sample="sample1" script="AbsoluteLayoutScript"></div>
+
+	<h2>Keyboard and ARIA Support</h2>
+	<p>
+	The AbsoluteLayout control as a layout has no specific implementation for keyboard or ARIA support.
+	</p>
+	<p>	
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout.AbsoluteLayout.html">API documentation</a>
+	</p>
+</body>
+</html>

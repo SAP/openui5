@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>RadioButton - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+			jQuery.sap.initMobile();
+			var radioBtnPage = new sap.m.Page("radioBtnPage", {
+				title : "Radio Button",
+				footer : new sap.m.Bar({
+					contentMiddle : [ new sap.m.Button({
+						text : "Embedded"
+					}) ]
+				})
+			});
+			var oRadioButton1 = new sap.m.RadioButton({groupName:"Gruppe1", layoutData: new sap.m.FlexItemData({growFactor: 0}), select : function(oEvent) {console.log(oEvent.mParameters, '--------')}});
+			var oRadioButton2 = new sap.m.RadioButton({enabled:false, groupName:"Gruppe1", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton3 = new sap.m.RadioButton({groupName:"Gruppe1", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton4 = new sap.m.RadioButton({groupName:"Gruppe2", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton5 = new sap.m.RadioButton({groupName:"Gruppe2", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton6 = new sap.m.RadioButton({groupName:"Gruppe2", selected:true, layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton7 = new sap.m.RadioButton({enabled:false, groupName:"Gruppe3", selected:true, layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton8 = new sap.m.RadioButton({enabled:false, groupName:"Gruppe3", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton9 = new sap.m.RadioButton({enabled:false, groupName:"Gruppe3", layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton10 = new sap.m.RadioButton({enabled:false, groupName:"Gruppe4", text:'Text without setting label-width', layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton11 = new sap.m.RadioButton({groupName:"Gruppe4", text: 'Text and width', width:'50px', layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton12 = new sap.m.RadioButton({groupName:"Gruppe4", text: 'Text RTL', textDirection:"RTL", width:'90px', selected: true, layoutData: new sap.m.FlexItemData({growFactor: 0})});
+			var oRadioButton13 = new sap.m.RadioButton({groupName:"Gruppe4", text: 'Not editable', selected: true, enabled: true, editable: false})
+
+			var randomControl = new sap.m.Label({ text : "A label to rerender the whole page"});
+			var anotherRandomControl = new sap.m.Label({ text : "A second label to rerender the whole page"});
+			
+			oRadioButton11.attachSelect(function(oEvent) {
+				var oControlToAdd = oEvent.getParameter("selected") ? anotherRandomControl : randomControl;
+				var oControlToRemove = oEvent.getParameter("selected") ? randomControl : anotherRandomControl;
+				radioBtnPage.addContent(oControlToAdd);
+				radioBtnPage.removeContent(oControlToRemove);
+			});
+			// Create a flexbox with flex items
+			var hbox1 = new sap.m.HBox("hbox1", {
+				items:[
+					oRadioButton1,
+					oRadioButton2,
+					oRadioButton3
+				]
+			});
+			var hbox2 = new sap.m.HBox("hbox2", {
+				items:[
+					oRadioButton4,
+					oRadioButton5,
+					oRadioButton6
+				]
+			});
+			var hbox3 = new sap.m.HBox("hbox3", {
+				items:[
+					oRadioButton7,
+					oRadioButton8,
+					oRadioButton9
+				]
+			});
+			var hbox4 = new sap.m.HBox("hbox4", {
+				items:[
+					oRadioButton10,
+					oRadioButton11,
+					oRadioButton12,
+					oRadioButton13
+				]
+			});
+			var oFBox2 = new sap.m.FlexBox("flexbox2", {
+				items:[hbox1, hbox2, hbox3, hbox4
+				]
+			});
+			oFBox2.setDirection('Column');
+
+			jQuery.sap.require("sap.ui.model.json.JSONModel");
+			// JSON sample data
+			var data = {
+				navigation : [ {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					icon : "images/travel_expend.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					icon : "images/travel_expense_report.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					icon : "images/travel_request.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					icon : "images/wounds_doc.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					icon : "images/settings.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				} ]
+			};
+
+			var oItemTemplate = new sap.m.InputListItem({
+				label : "{title}",
+				content :  new sap.m.RadioButton({groupName:"Gruppe4"})
+			});
+
+			var oList2 = new sap.m.List({
+				inset : true,
+				headerText : "List with Radio Buttons",
+				footerText : "Example"
+			});
+			
+			function bindListData(data, itemTemplate, list)
+			{
+				var oModel = new sap.ui.model.json.JSONModel();
+				// set the data for the model
+				oModel.setData(data);
+				// set the model to the list
+				list.setModel(oModel);
+				// bind Aggregation
+				list.bindAggregation("items", "/navigation", itemTemplate);
+			}
+
+			var bToolbarAEnabled = true;
+
+			var toolbar = new sap.m.Toolbar("toolbar", {
+				enabled: bToolbarAEnabled,
+				content: [
+					new sap.m.RadioButton({
+						text: "RadioButton",
+						groupName:"group5"
+					}),new sap.m.RadioButton({
+						text: "RadioButton",
+						groupName:"group5"
+					})
+				]
+			});
+
+			bindListData(data, oItemTemplate, oList2);
+			radioBtnPage.addContent(oFBox2);
+			radioBtnPage.addContent(oList2);
+			radioBtnPage.addContent(toolbar);
+			radioBtnPage.addContent(new sap.m.Button({
+				text: "Toggle Enabled",
+				press: function() {
+					bToolbarAEnabled = !bToolbarAEnabled;
+					toolbar.setEnabled(bToolbarAEnabled);
+				}
+			}));
+			radioBtnPage.placeAt('body');
+		</script>
+
+	</head>
+
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

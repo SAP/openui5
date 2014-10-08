@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.VerticalLayout">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>VerticalLayout - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleLayout' >
+// create a simple vertical layout
+var oText = new sap.ui.commons.TextField({value:"Edward"});
+var oLabel = new sap.ui.commons.Label({text:"Name:", labelFor: oText});
+var oButton = new sap.ui.commons.Button({text:"Submit", tooltip:"Submit value"});
+var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
+	content: [oLabel, oText, oButton]
+});
+
+// attach it to some element in the page
+oLayout.placeAt("sample1");
+</script>
+
+<script id='FixedWidth' >
+// create a simple vertical layout with fixed width
+var oLayout2 = new sap.ui.layout.VerticalLayout("Layout2", {
+	width: "200px",
+	content: [new sap.ui.commons.Slider({Value:25, tooltip:"Slider tooltip", width: "300px"}),
+	          new sap.ui.commons.TextArea({value:"This text is longer than the width of the VerticalLayout.\nSo it should be cut. \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "300px", height: "150px"}),
+	          new sap.ui.commons.RatingIndicator({value: 4}),
+	          new sap.ui.commons.CheckBox({text: "Test"})]
+});
+
+// attach it to some element in the page
+oLayout2.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Green" icon="images/ctrls/verticallayout-icon.png">VerticalLayout</h1>
+
+		<h2>Introduction and Overview</h2>
+		<p>The VerticalLayout can be used to bring multiple controls to one column. All controls in the layout are placed one below the other.
+		</p>
+
+		<p>
+		See also: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout.html">sap.ui.commons.layout</a>
+		</p>
+		<h2>Examples</h2>
+		<h3>VerticalLayout</h3>
+		<p>
+		This example shows a simple VerticalLayout. The width is determined by the content. 
+		</p>
+		<br><br> 
+		<div code-sample="sample1" script="SimpleLayout"></div>
+		<br/>
+
+		<h3>VerticalLayout with fixed width</h3>
+		<p>
+		This example shows a simple VerticalLayout with fixed width. If the embedded controls are larger, they are cut. 
+		</p>
+		<br><br> 
+		<div code-sample="sample2" script="FixedWidth"></div>
+		<br/>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.layout.VerticalLayout.html" >API documentation</a>
+		</p>
+	</body>
+</html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+                       m:DataServiceVersion="2.0">
+        <Schema Namespace="apf-test"
+                xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+                xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="ApfTestQueryResultsType" sap:semantics="aggregate">
+                <Key>
+                    <PropertyRef Name="GenID"/>
+                </Key>
+                <Property Name="GenID" Type="Edm.String" Nullable="false" MaxLength="2147483647" sap:filterable="false"/>
+                <Property Name="NavID" Type="Edm.String" Nullable="false" MaxLength="2147483647" sap:filterable="true"/>
+                <Property Name="SAPClient" Type="Edm.String" MaxLength="3" sap:aggregation-role="dimension" sap:label="SAP Client"/>
+                <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:aggregation-role="dimension" sap:label="Company Code" sap:text="CompanyCodeName"/>
+                <Property Name="CompanyCodeName" Type="Edm.String" MaxLength="25" sap:label="Company Code Name"/>
+                <Property Name="DaysSalesOutstanding" Type="Edm.Decimal" Precision="34" sap:filterable="false" sap:aggregation-role="measure" sap:label="Days Sales Outstanding"/>
+            </EntityType>
+            <EntityType Name="ApfTestQueryType" sap:semantics="parameters">
+                <Key>
+                    <PropertyRef Name="P_SAPClient"/>
+                    <PropertyRef Name="P_FromDate"/>
+                    <PropertyRef Name="P_ToDate"/>
+                    <PropertyRef Name="P_DisplayCurrency"/>
+                    <PropertyRef Name="P_ExchangeRateType"/>
+                    <PropertyRef Name="P_ExchangeRateDate"/>
+                    <PropertyRef Name="P_AgingGridMeasureInDays"/>
+                    <PropertyRef Name="P_NetDueGridMeasureInDays"/>
+                    <PropertyRef Name="P_NetDueArrearsGridMsrInDays"/>
+                </Key>
+                <Property Name="NavID" Type="Edm.String" Nullable="false" MaxLength="2147483647" sap:filterable="true" sap:parameter="mandatory"/>
+                <Property Name="P_SAPClient" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="SAP Client" sap:parameter="mandatory"/>
+                <Property Name="P_FromDate" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="From Date" sap:parameter="mandatory"/>
+                <Property Name="P_ToDate" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="To Date" sap:parameter="mandatory"/>
+                <Property Name="P_DisplayCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Display Currency" sap:parameter="mandatory"/>
+                <Property Name="P_ExchangeRateType" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Currency Exchange Rate Type" sap:parameter="mandatory"/>
+                <Property Name="P_ExchangeRateDate" Type="Edm.String" Nullable="false" MaxLength="8" sap:label="Currency Exchange Rate Date" sap:parameter="mandatory"/>
+                <Property Name="P_AgingGridMeasureInDays" Type="Edm.Int32" Nullable="false" sap:label="Width of Aging Interval" sap:parameter="mandatory"/>
+                <Property Name="P_NetDueGridMeasureInDays" Type="Edm.Int32" Nullable="false" sap:label="Width of Net Due Days Interval" sap:parameter="mandatory"/>
+                <Property Name="P_NetDueArrearsGridMsrInDays" Type="Edm.Int32" Nullable="false" sap:label="Width of Days in Arrears Interval" sap:parameter="mandatory"/>
+                <NavigationProperty Name="Results"
+                                    Relationship="apf-test.ApfTestQuery_TestQueryResultsType"
+                                    FromRole="ApfTestQueryPrincipal"
+                                    ToRole="ApfTestQueryResultsDependent"/>
+            </EntityType>
+            <Association Name="ApfTestQuery_TestQueryResultsType">
+                <End Type="apf-test.ApfTestQueryType"
+                     Role="ApfTestQueryPrincipal" Multiplicity="1"/>
+                <End Type="apf-test.ApfTestQueryResultsType"
+                     Role="ApfTestQueryResultsDependent" Multiplicity="*"/>
+                <ReferentialConstraint>
+                    <Principal Role="ApfTestQueryPrincipal">
+                        <PropertyRef Name="NavID" />
+                    </Principal>
+                    <Dependent Role="ApfTestQueryResultsDependent">
+                        <PropertyRef Name="NavID" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="wca" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="ApfTestQueryResults"
+                           EntityType="apf-test.ApfTestQueryResultsType"
+                           sap:addressable="true"/>
+                <EntitySet Name="ApfTestQuery"
+                           EntityType="apf-test.ApfTestQueryType"
+                           sap:addressable="true"/>
+                <AssociationSet Name="ApfTestQuery_TestQueryResults"
+                                Association="apf-test.ApfTestQuery_TestQueryResultsType">
+                    <End Role="ApfTestQueryPrincipal" EntitySet="ApfTestQuery"/>
+                    <End Role="ApfTestQueryResultsDependent" EntitySet="ApfTestQueryResults"/>
+                </AssociationSet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

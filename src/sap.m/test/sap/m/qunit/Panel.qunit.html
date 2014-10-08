@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.Panel</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	
+</script>
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	// create and add app
+	var app = new sap.m.App("myApp");
+	app.placeAt("uiArea1");
+
+	oPanel1 = new sap.m.Panel("testPanel", {
+		headerText : "This is the Panel header",
+		content : [new sap.m.Text({
+			text : "This is a Text control"
+		})],
+		width : "200px",
+		height : "300px"
+	});
+
+	oPanel2 = new sap.m.Panel("testPanelExpandableExpanded", {
+		headerText : "This is the Panel header of expandable Panel",
+		expandable : true,
+		expanded : true,
+		content : [new sap.m.Text({
+			text : "This is a Text control"
+		})]
+	});
+
+	oPanel3 = new sap.m.Panel("testPanelExpandableCollapsed", {
+		headerText : "This is the Panel header of expandable Panel",
+		expandable : true,
+		expanded : false,
+		content : [new sap.m.Text({
+			text : "This is a Text control"
+		})]
+	});
+
+	// create and add a page 
+	var page = new sap.m.Page({
+		title : "Panel",
+		content : [oPanel1, oPanel2, oPanel3]
+	});
+	app.addPage(page);
+
+	oPanel1.setWidth("400px");
+
+	test("Basic checks", function() {
+		var $testPanel = jQuery("#testPanel");
+		ok($testPanel.hasClass("sapMPanel"), "sapMPanel class present");
+		ok(jQuery("div:first-of-type", $testPanel).hasClass("sapMPanelHdr"), "sapMPanelHdr class present");
+	});
+	test("Sizes", function() {
+		var $testPanel = jQuery("#testPanel");
+		equal($testPanel.width(), 400, "Width is 400px");
+		equal($testPanel.height(), 300, "Width is 300px");
+	});
+
+	test("Basic checks for expandable Panel - expanded", function() {
+		var $icon = jQuery("#testPanelExpandableExpanded").find(".sapMPanelExpandableIcon");
+		ok(($icon.length === 1), "sapMPanelExpandableIcon class present once");
+		ok($icon.hasClass("sapMPanelExpandableIconExpanded"), "sapMPanelExpandableIconExpanded class present");
+	});
+
+	test("Basic checks for expandable Panel - collapsed", function() {
+		var $icon = jQuery("#testPanelExpandableCollapsed").find(".sapMPanelExpandableIcon");
+		ok(($icon.length === 1), "sapMPanelExpandableIcon class present once");
+		ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "sapMPanelExpandableIconExpanded class not present");
+	});
+
+	test("toggle/expand", function() {
+		expect(4);
+		var oPanel = new sap.m.Panel({
+			expandable : true,
+			expanded : true,
+			headerText : "headerText",
+			content : new sap.m.Label({
+				text : "label"
+			})
+		});
+		page.addContent(oPanel);
+		sap.ui.getCore().applyChanges();
+		$icon = jQuery.sap.byId(oPanel.getId() + "-CollapsedImg");
+		var $content = oPanel.$().find(".sapMPanelContent");
+		ok($content.css("display") !== "none", "content should be visible");
+		ok($icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should be expanded");
+		sap.ui.test.qunit.triggerEvent("tap", $icon[0]);
+		ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should not be expanded");
+		this.clock.tick(500);
+		ok($content.css("display") === "none", "content should not visible");
+	});
+
+	test("toggle/expand - api", function() {
+		expect(2);
+		var oPanel = new sap.m.Panel({
+			expandable : true,
+			expanded : true,
+			headerText : "headerText",
+			content : new sap.m.Label({
+				text : "label"
+			})
+		});
+		page.addContent(oPanel);
+		sap.ui.getCore().applyChanges();
+		$icon = jQuery.sap.byId(oPanel.getId() + "-CollapsedImg");
+		var $content = oPanel.$().find(".sapMPanelContent");
+
+		oPanel.setExpanded(false);
+		//do it twice !
+		oPanel.setExpanded(false);
+
+		ok(!$icon.hasClass("sapMPanelExpandableIconExpanded"), "icon should not be expanded");
+		this.clock.tick(500);
+		ok($content.css("display") === "none", "content should not visible");
+	});
+
+	test("toggle/expand - event", function() {
+		var that = this;
+		expect(2);
+		var oPanel = new sap.m.Panel({
+			expandable : true,
+			expanded : true,
+			headerText : "headerText",
+			content : new sap.m.Label({
+				text : "label"
+			}),
+			expand : function(eExpand) {
+				if (eExpand.getParameter("expand")) {
+					that.clock.tick(500);
+					ok($content.css("display") !== "none", "event handler: content should be visible");
+				} else {
+					that.clock.tick(500);
+					ok($content.css("display") === "none", "event handler: content should not be visible");
+				}
+			}
+		});
+		page.addContent(oPanel);
+		sap.ui.getCore().applyChanges();
+		var $content = oPanel.$().find(".sapMPanelContent");
+
+		oPanel.setExpanded(false);
+		oPanel.setExpanded(true);
+		//should not trigger event
+		oPanel.setExpanded(true);
+	});
+</script>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit page for sap.m.Panel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+
+	<div id="uiArea1"></div>
+
+</body>
+</html>

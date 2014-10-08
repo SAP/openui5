@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.SegmentedButton">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  	<meta name="keywords" content="Toolbar" />
+		<title>SegmentedButton - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='SBTextExample'>
+			var oSegmentedButton = new sap.ui.commons.SegmentedButton({id:"SBText",buttons:[new sap.ui.commons.Button({id:"ButA",text:"A"}),new sap.ui.commons.Button({text:"B"}),new sap.ui.commons.Button({text:"C"})]});
+			oSegmentedButton.placeAt("SBTextContainer");
+			oSegmentedButton.setSelectedButton("ButA");
+			oSegmentedButton.attachSelect(function(oEvent) {
+				alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+		</script>
+		<script id='SBTextLiteExample'>
+			var oSegmentedButtonLite = new sap.ui.commons.SegmentedButton({id:"SBTextLite",buttons:[new sap.ui.commons.Button({lite:true,text:"A"}),new sap.ui.commons.Button({id:"ButBLite",lite:true,text:"B"}),new sap.ui.commons.Button({lite:true,text:"C"})]});
+			oSegmentedButtonLite.setSelectedButton("ButBLite");
+			oSegmentedButtonLite.placeAt("SBTextLiteContainer");
+			oSegmentedButtonLite.attachSelect(function(oEvent) {
+				alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+		</script>
+		<script id='SBIconExample'>
+		var oSegmentedButtonIcon = new sap.ui.commons.SegmentedButton({id:"SBIcon",buttons:[new sap.ui.commons.Button({icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+		                                                                        new sap.ui.commons.Button({id:"But2Icon",icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+		                                                                        new sap.ui.commons.Button({icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+		                                                                        new sap.ui.commons.Button({icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+		                                                                        new sap.ui.commons.Button({icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+		                                                                        new sap.ui.commons.Button({icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+		                                                                        ]});
+		oSegmentedButtonIcon.setSelectedButton("But2Icon");
+		oSegmentedButtonIcon.placeAt("SBIconContainer");
+		var oButton = new sap.ui.commons.Button({text:"enable/disable",press:function(){oSegmentedButtonIcon.setEnabled(!oSegmentedButtonIcon.getEnabled())}});
+		oButton.placeAt("SBIconContainer");
+		oSegmentedButtonIcon.attachSelect(function(oEvent) {
+			alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+		});
+		</script>
+		<script id='SBIconLiteExample'>
+		var oSegmentedButtonIconLite = new sap.ui.commons.SegmentedButton({id:"SBIconLite",buttons:[new sap.ui.commons.Button({lite:true,icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+			                                                                        new sap.ui.commons.Button({id:"But5IconLite",lite:true,icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+			                                                                        ]});
+		oSegmentedButtonIconLite.setSelectedButton("But5IconLite");
+		oSegmentedButtonIconLite.placeAt("SBIconLiteContainer");
+		oSegmentedButtonIconLite.attachSelect(function(oEvent) {
+			alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+		});
+		</script>
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/segmentedbutton-icon.png">SegmentedButton</h1>
+
+		<h2>Introduction</h2>
+
+		<p>
+		The SegmentedButton control is used to display a group of Buttons. The Buttons behave like ToggleButtons, and only one button can be selected at once. Normally the SegmentedButton is used as a kind of "ViewSwitch" within a ToolBar.
+		</p>
+		<p>
+		A SegmentedButton can be rendered as "normal" or "lite" version depending on the kind of <code>sap.ui.commons.Button</code> buttons that were added. With the <code>enabled</code> property all the buttons can be enabled/disabled. Via the <code>selectedButton</code>code>
+		association one button can be set selected by the application.
+		</p>
+		<h2>Examples</h2>
+		<h3>SegmentedButton (text only)</h3>	
+		<div code-sample="SBTextContainer" script="SBTextExample"></div>
+		<h3>SegmentedButton lite (text only)</h3>	
+		<div code-sample="SBTextLiteContainer" script="SBTextLiteExample"></div>
+		<h3>SegmentedButton (icons only)</h3>	
+		<div code-sample="SBIconContainer" script="SBIconExample"></div>
+		<h3>SegmentedButton lite (icons only)</h3>	
+		<div code-sample="SBIconLiteContainer" script="SBIconLiteExample"></div>
+		
+		<h3>Keyboard Support</h3>
+		<p>
+		It is possible to navigate through the buttons via the <code>Arrow right</code> and <code>Arrow left</code> keys forwards and backwards. The same can be achieved via the <code>Arrow up</code> and <code>Arrow down</code> keys.
+		If you reach the end of the buttons and then select the next button, the display starts from the first button again. 
+		The <code>Space</code> and <code>Enter</code> keys can be used to select a button.
+		</p>
+
+		<h3>ARIA Support</h3>
+		<p>
+		The SegmentedButton has the ARIA role set to <code>radiogroup</code>. ARIA support for the buttons inside the SegmentedButton is depending on the buttons themselves.
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Button.html" >Button</a>
+		The aria-disabled attribute is set accordingly to the status of the enabled property of the SegmentedButton.
+		</p>
+
+		<p>
+		<h2>API Documentation</h2>
+		See	<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.SegmentedButton.html" >API documentation</a>
+		</p>
+	</body>
+</html>

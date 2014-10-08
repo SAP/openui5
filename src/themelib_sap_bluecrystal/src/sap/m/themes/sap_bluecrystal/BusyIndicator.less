@@ -1,0 +1,36 @@
+/* =============================================== */
+/* CSS for control sap.m/BusyIndicator.control     */
+/* BlueCrystal theme                               */
+/* =============================================== */
+
+.sapMIBar-CTX >div > .BusyBar{
+	margin: 0;
+	vertical-align: top;
+	min-width: 3rem;
+	text-align: center;
+}
+
+svg.sapMBusySvg,
+canvas.sapMSpinCanvas{
+	width: 2em;
+	height: 2em;
+	vertical-align: middle;
+}
+
+/* do not animate hidden SVG */
+.sapMBusyIndicator[style^="visibility: hidden"] > .sapMBusySvg{
+	display: none;
+}
+
+canvas.sapMSpinCanvas{
+	color: @sapUiBusy;
+}
+svg.sapMBusySvg{
+	stroke: @sapUiBusy;
+}
+.sapMBusyIndicatorLight>canvas.sapMSpinCanvas{
+	color: @sapUiBusyLight;
+}
+.sapMBusyIndicatorLight>svg.sapMBusySvg{
+	stroke: @sapUiBusyLight;
+}

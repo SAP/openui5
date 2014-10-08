@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<title>ObjectAttribute - sap.m</title>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<!-- QUnit libraries -->
+
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+
+	var eventHandler = function (oEvent) {
+		ok(true, "press event for attribute was fired");
+	}
+
+	var eventHandlerForTableRow = function (oEvent) {
+		ok(true, "press event for table was fired");
+	}
+
+	var oa1 = new sap.m.ObjectAttribute("oa1", {
+		title: "Title",
+		text: "Contract #D1234567890",
+		active: true,
+		press: eventHandler
+		});
+
+	var oa2 = new sap.m.ObjectAttribute("oa2", {
+		text: "Created by John Doe",
+		active: true,
+		press: eventHandler
+		});
+
+	var oa3 = new sap.m.ObjectAttribute("oa3", {
+		text: "Update by Mary Smith",
+		active: true,
+		press: eventHandler
+		});
+
+	var oa4 = new sap.m.ObjectAttribute("oa4", {
+		text : "",
+		press: eventHandler
+		});
+	
+	var oa5 = new sap.m.ObjectAttribute("oa5", {
+		press: eventHandler
+	});
+
+	var oa6 = new sap.m.ObjectAttribute("oa6", {
+		text: "    \n \n \t\n \t   ",
+		press: eventHandler
+		});
+	
+	var oa7 = new sap.m.ObjectAttribute("oa7", {
+		text: "Joe Smith",
+		active: true,
+		press: eventHandler
+		});
+	
+	var oTable = new sap.m.Table("table",{
+					inset : false,
+					showUnread : true,
+					scrollToLoad : true,
+					headerText : "Personal Info",
+					columns : [
+						new sap.m.Column({
+						styleClass : "key",
+						valign : "Center",
+						width : "35%",
+						hAlign : "Right"
+						})
+					],
+					items : [
+						new sap.m.ColumnListItem("table-item", {
+							cells : [ oa7 ],
+							press : eventHandlerForTableRow,
+							type : "Navigation",
+							unread : false
+						})
+					]
+	});
+	
+	oa1.placeAt("objectAttributes");
+	oa2.placeAt("objectAttributes");
+	oa3.placeAt("objectAttributes");
+	oTable.placeAt("objectAttributes");
+	
+	module("Rendering All Fields");
+
+	test("AttributesRendered", function() {
+
+		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
+		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+		notEqual(jQuery.sap.domById("oa3"), null, "Object attribute #3 should be rendered.");
+	});
+
+	module("Attributes Wrapping");
+	
+	asyncTest("Attributes Wrapping in ObjectHeader", function() {
+		
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("oOA1", {text:"ObjectHeader wrapping test"}),
+			oObjectHeader = new sap.m.ObjectHeader("oOH1", {
+				attributes : [oAttr]
+			}),
+			hasNativeLineClamp = (typeof document.documentElement.style.webkitLineClamp != "undefined"); 
+			
+		oObjectHeader.placeAt("objectAtrributesWrap");
+		
+		sap.ui.getCore().applyChanges()
+		
+		// assertions
+		ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextMaxLine"), "sapMTextMaxLine class is present.");
+		if(hasNativeLineClamp) {
+			ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextLineClamp"), "sapMTextLineClamp class is present.");
+			equal(oAttr.mAggregations._textControl.getMaxLines(),2,"Max lines should be 2");
+		}
+		//Cleanup
+		oObjectHeader.destroy(); 
+		
+		setTimeout( function() {
+			start();
+		}, 500);
+	});
+	
+	asyncTest("Attributes Wrapping in Responsive ObjectHeader", function() {
+		
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("oOA2", {text:"Responsive ObjectHeader wrapping test"});
+		var oObjectHeader = new sap.m.ObjectHeader("oOH2", {
+			attributes : [oAttr],
+			responsive : true
+		});
+		oObjectHeader.placeAt("objectAtrributesWrap");
+		
+		sap.ui.getCore().applyChanges()
+		
+		// assertions
+		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
+		if(!sap.ui.Device.browser.internet_explorer) {
+			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
+		}
+		//Cleanup
+		oObjectHeader.destroy(); 
+		
+		setTimeout( function() {
+			start();
+		}, 500);
+	});
+	
+	asyncTest("Attributes Wrapping in ObjectListItem", function() {
+		
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("oOA3", {text:"Responsive ObjectHeader wrapping test"});
+		var oObjectListItem = new sap.m.ObjectListItem("oOL3", {
+			attributes : [oAttr]
+		});
+		oObjectListItem.placeAt("objectAtrributesWrap");
+		
+		sap.ui.getCore().applyChanges()
+		
+		// assertions
+		
+		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
+		if(!sap.ui.Device.browser.internet_explorer) {
+			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
+		}
+		
+		//Cleanup
+		oObjectListItem.destroy(); 
+		
+		setTimeout( function() {
+			start();
+		}, 500);
+	});
+	/******************************************************************/
+
+	module("Internal API");
+
+	test ("TestIsEmpty", function() {
+		
+		ok(!oa1._isEmpty(), "Object attribute #1 is not empty");
+		ok(!oa2._isEmpty(), "Object attribute #2 is not empty");
+		ok(!oa3._isEmpty(), "Object attribute #3 is not empty");
+		ok(oa4._isEmpty(), "Object attribute #4 is empty");
+		ok(oa5._isEmpty(), "Object attribute #5 is empty");
+		ok(oa6._isEmpty(), "Object attribute #6 is empty");
+	});
+
+	/******************************************************************/
+
+	module("Events");
+
+	test("TestTap", function() {
+		expect(3);
+		qutils.triggerEvent("tap", oa1.$().children()[0]); //should fire event
+		qutils.triggerEvent("tap", oa2.$().children()[0]); //should fire event
+		qutils.triggerEvent("tap", oa3.$().children()[0]); //should fire event
+		qutils.triggerEvent("tap", oa4.getId()); //should not fire event
+		qutils.triggerEvent("tap", oa5.getId()); //should not fire event
+		qutils.triggerEvent("tap", oa6.getId()); //should not fire event
+	});
+
+	test("Test table row is not clickable when ObjectAttribute is active", function() {
+		expect(1);
+		qutils.triggerEvent("tap", oa7.$().children()[0]);
+		qutils.triggerEvent("tap", "table-item");
+	});
+
+	asyncTest("Test table row is clickable when ObjectAttribute is not active", function() {
+		expect(3);
+		oa7.setActive(false);
+		qutils.triggerEvent("tap", oa7.$().children()[0]);
+		setTimeout( function() {
+			start();
+		}, 500);
+	});
+
+	
+	
+	
+</script>
+</head>
+
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="objectAttributes"></div>
+	<div id="objectAtrributesWrap"></div>
+</body>
+</html>

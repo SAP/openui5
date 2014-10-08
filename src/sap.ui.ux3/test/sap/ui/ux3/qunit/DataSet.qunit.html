@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested classes: sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView
+  Author: d049080
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem +
+sap.ui.ux3.DataSetSimpleView</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3">
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+	
+	// satisfy some preconditions
+	jQuery.sap.registerModulePath("dataset","../resources/dataset");
+	
+	var oDataSet,oDataSetItem, oDataSetItem2 ,oView, oDataSetSimpleView, oDataSetSimpleView2, oButton,
+	 	oModel = new sap.ui.model.json.JSONModel(),
+	 	data = { test : [] }; 
+	
+	function selection(oEvent) {
+		window.selectionCalled = true;
+		window.oldIndex = oEvent.getParameters().oldLeadSelectedIndex, 
+		window.newIndex = oEvent.getParameters().newLeadSelectedIndex;
+	}
+	
+	function search(oEvent) {
+		window.filterValue = oEvent.getParameters().query;
+		ok(true,"search");
+	}
+	
+	function handleSelection(oEvent) {
+		//window.filterValue = oEvent.getParameters().filterValue;
+		ok(true,"item selection");
+	}
+	 
+	for ( var i = 0; i < 5; i++) {
+		var item = {};
+		item.imageSrc = "../images/dataset/img" + (i + 1)
+				+ ".jpg";
+		item.title = "Image: img" + (i + 1) + ".jpg"
+		item.test = []; 
+		for ( var j = 6; j < 12; j++) {
+			item2 = {};
+			item2.imageSrc = "../images/dataset/img"
+					+ (j + 1) + ".jpg";
+			item2.title = "Image: img" + (j + 1) + ".jpg"
+			item.test.push(item2);
+		}
+		data.test.push(item);
+	}
+	oModel.setData(data);
+
+	oView = sap.ui.view({
+		type : "XML",
+		viewName : "dataset.item"
+	});
+	oDataSetItem = new sap.ui.ux3.DataSetItem();
+	oDataSetItem2 = new sap.ui.ux3.DataSetItem();
+	oDataSetSimpleView = new sap.ui.ux3.DataSetSimpleView("SV1",{
+		template : oView
+	});
+	oDataSet = new sap.ui.ux3.DataSet();
+	oDataSet.setModel(oModel);
+	
+	
+	sap.ui.core.Control.extend("TestItem", {
+		renderer: function(rm, ctrl){
+			rm.write("<div");
+			rm.writeControlData(ctrl);
+			rm.writeAttribute("style", "display:inline-block;min-width:200px;height:20px;padding:5px;position:relative;box-sizing:border-box;-moz-box-sizing:border-box;");
+			rm.write("><div");
+			rm.writeAttribute("style", "background-color:red;height:100%;");
+			rm.write("></div></div>");
+	    }
+	});
+	var oModel2 = new sap.ui.model.json.JSONModel();
+	var data2 = {items: []};
+	for(var i=0; i<10; i++){
+		data2.items.push({key:""+i});
+	}
+	oModel2.setData(data2);
+	var oDataSetLayout = new sap.ui.ux3.DataSetSimpleView({
+		floating: true,
+		responsive: false,
+		itemMinWidth: 0,
+		template: new TestItem()
+	});
+	var oDataSet2 = new sap.ui.ux3.DataSet({
+		items: {
+			path: "/items",
+			template: new sap.ui.ux3.DataSetItem({
+				title : "{key}"
+			})
+		},
+		views: [oDataSetLayout]
+	});
+	oDataSet2.setModel(oModel2);
+	oDataSet2.placeAt("content2");
+	
+	
+	test("InitialCheck", 3, function() {
+		ok(sap.ui.ux3.DataSet, "sap.ui.ux3.DataSet must be defined");
+		ok(sap.ui.ux3.DataSetItem, "sap.ui.ux3.DataSetItem must be defined");
+		ok(sap.ui.ux3.DataSetSimpleView,
+				"sap.ui.ux3.DataSetSimpleView must be defined");
+	});
+
+	module("DataSetItem");
+
+	test("Instantiation", 2, function() {
+		ok(oDataSetItem, "oDataSetItem must exist after creation");
+		ok(oDataSetItem instanceof sap.ui.ux3.DataSetItem,
+				"oDataSetItem must be instance of sap.ui.ux3.DataSetItem");
+	});
+
+	module("DataSetSimpleView");
+
+	test(
+			"Instantiation",
+			2,
+			function() {
+				ok(oDataSetSimpleView,
+						"oDataSetSimpleView must exist after creation");
+				ok(oDataSetSimpleView instanceof sap.ui.ux3.DataSetSimpleView,
+						"oDataSetSimpleView must be instance of sap.ui.ux3.DataSetSimpleView");
+			});
+
+	module("DataSet");
+
+	test("Instantiation", 2, function() {
+		ok(oDataSet, "oDataSet must exist after creation");
+		ok(oDataSet instanceof sap.ui.ux3.DataSet,
+				"oDataSet must be instance of sap.ui.ux3.DataSet");
+	});
+
+	test("AddItems", 2, function() {
+		oDataSet.addItem(oDataSetItem);
+		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
+		oDataSetItem2 = oDataSetItem.clone();
+		oDataSet.addItem(oDataSetItem2);
+		equal(oDataSet.getItems().length, 2, "getItems must return 2 items");
+	});
+
+	test("RemoveItems", 2, function() {
+		oDataSet.removeItem(oDataSetItem2);
+		equal(oDataSet.getItems().length, 1, "getItems must return 1 item");
+		oDataSet.removeItem(oDataSetItem);
+		equal(oDataSet.getItems().length, 0, "getItems must return 0 items");
+	});
+
+	test("LeadSelection", 3,
+			function() {
+				//add some items again
+		 		oDataSet.bindItems("/test",oDataSetItem);
+      
+				equal(oDataSet.getLeadSelection(), -1,
+						"LeadSelection: initial selection");
+				oDataSet.setLeadSelection(1);
+				equal(oDataSet.getLeadSelection(), 1,
+						"LeadSelection: item 1 selected");
+				oDataSet.setLeadSelection(2);
+				equal(oDataSet.getLeadSelection(), 2,
+						"LeadSelection: item 2 selected");
+			});
+
+	test("AddViews", 2, function() {
+		oDataSet.addView(oDataSetSimpleView);
+		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
+		oDataSetSimpleView2 = new sap.ui.ux3.DataSetSimpleView("SV2",{
+			template : oView.clone()
+		});
+		oDataSet.addView(oDataSetSimpleView2);
+		equal(oDataSet.getViews().length, 2, "getViews must return 2 views");
+	});
+
+	test("RemoveViews", 2, function() {
+		oDataSet.removeView(oDataSetSimpleView2);
+		equal(oDataSet.getViews().length, 1, "getView must return 1 view");
+		oDataSet.removeView(oDataSetSimpleView);
+		equal(oDataSet.getViews().length, 0, "getView must return 0 views");
+	});
+
+	test("select view", 2,
+			function() {
+				oDataSet.addView(oDataSetSimpleView);
+				oDataSetSimpleView2 = new sap.ui.ux3.DataSetSimpleView("SV3",{
+					template : oView.clone()
+				});
+				oDataSet.addView(oDataSetSimpleView2);
+				// if no view selected the first view must be selected (0)
+				equal(oDataSet.getSelectedView(), "SV1",
+						"selectedView: default selection");
+				oDataSet.setSelectedView("SV3");
+				equal(oDataSet.getSelectedView(), "SV3",
+						"selectedView: view2 selected");
+			});
+
+	asyncTest("rendering",4, function() {
+		oDataSet.placeAt("content");
+		setTimeout(function() {
+			start();
+			ok(jQuery.sap.domById(oDataSet.getId()),
+					"dataset should exist in the page");
+			ok(jQuery.sap.domById(oDataSet.getId() + "-searchValue"),
+					"filter field should exist in the page");
+			ok(jQuery.sap.domById(oDataSet.getId() + "-view-"+ oDataSet.getViews()[0].getId()),
+					"view button 1 should exist in the page");
+			ok(jQuery.sap.domById(oDataSet.getId() + "-view-"+ oDataSet.getViews()[1].getId()),
+					"view button 2 should exist in the page");
+		}, 1000);
+	});
+
+	test("events", 6, function() {
+		oDataSet.attachSearch(search);
+		oDataSet.attachSelectionChanged(handleSelection);
+		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").focus();
+		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").val("img2");
+		sap.ui.test.qunit.triggerKeydown(jQuery("#" + oDataSet.getId()
+				+ "-searchValue-tf-input"), "ENTER");
+		equal(window.filterValue, "img2", "Search value")
+		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").focus();
+		jQuery("#" + oDataSet.getId() + "-searchValue-tf-input").val("img4");
+		sap.ui.test.qunit.triggerKeydown(jQuery("#" + oDataSet.getId()
+				+ "-searchValue-tf-input"), "ENTER");
+		equal(window.filterValue, "img4", "Search value");
+		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[0].getId()),
+				"click", 1, 1, 1, 1);
+		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[3].getId()),
+				"click", 1, 1, 1, 1);
+	});
+	
+	asyncTest("switch views", 2, function() {
+		ok(oDataSetSimpleView2.getDomRef(),"view 2 must be rendered");
+		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getId() + "-view-"+ oDataSet.getViews()[0].getId()),
+				"click", 1, 1, 1, 1);
+		setTimeout(function() {
+			start();
+			ok(oDataSetSimpleView.getDomRef(),"view 1 must be rendered");	
+		},500);
+	});
+	
+	test("Toolbar", 5, function() {
+		ok(oDataSet.getShowSearchField(),"SearchField enabled")
+		ok(jQuery("#" + oDataSet.getId() + "-searchValue")[0],"SearchField rendered");
+		oDataSet.setShowSearchField(false);
+		ok(!jQuery("#" + oDataSet.getId() + "-searchValue")[0],"SearchField hidden");
+		oDataSet.setShowSearchField(true);
+		oButton = new sap.ui.commons.Button("myBut",{text:"myBut"});
+		oDataSet.addToolbarItem(oButton);
+		ok(jQuery.sap.byId(oButton.getId()),"Custom Toolbaritem rendered");
+		oDataSet.removeToolbarItem(oButton);
+		ok(!jQuery('#'+oButton.getId()).length,"Custom Toolbaritem removed");
+	});
+	
+	module("DataSetSimpleView");
+	
+	test("selection", 4, function() {
+		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 1 is set");
+		qutils.triggerMouseEvent(jQuery.sap.byId(oDataSet.getItems()[1].getId()),
+				"click", 1, 1, 1, 1);
+		ok(jQuery.sap.byId(oDataSet.getItems()[3].getId()).hasClass("sapUiUx3DSSVSelected") === false,"class selected of item 1 removed");
+		ok(jQuery.sap.byId(oDataSet.getItems()[1].getId()).hasClass("sapUiUx3DSSVSelected"),"class selected of item 2 is set");
+	});
+	
+	
+	function getNumberOfItemsPerRow(){
+		var lastOffsetLeft = -1;
+		var count = 0;
+		
+		oDataSetLayout.$().children().each(function() {
+			var offset = jQuery(this)[0].offsetLeft;
+			if(lastOffsetLeft < offset){
+				count++;
+				lastOffsetLeft = offset;
+			}else{
+				return false;
+			}
+		});
+
+		return count;
+	};
+	
+	
+	test("Floating Layout", function() {
+		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVFloating"), "class 'sapUiUx3DSSVFloating' is set");
+		var expectedItems = Math.floor(oDataSetLayout.$().width()/200);
+		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
+		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() - 200 <= 10 /*just some tolerance*/, "item has width of 200px");
+	});
+	
+	test("Responsive Layout", function() {
+		oDataSetLayout.setResponsive(true);
+		oDataSetLayout.setItemMinWidth(200);
+		sap.ui.getCore().applyChanges();
+		
+		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVResponsive"), "class 'sapUiUx3DSSVResponsive' is set");
+		var expectedItems = oDataSetLayout._itemsPerRow;
+		equal(getNumberOfItemsPerRow(), expectedItems, expectedItems + " item(s) per row");
+		ok(jQuery(oDataSetLayout.$().children()[0]).outerWidth() >= 200, "item has at least width of 200px");
+		
+		var $Items = oDataSetLayout.$().children();
+		var iWidth = 0;
+		for(var i=0; i<expectedItems; i++){
+			iWidth += jQuery($Items[i]).outerWidth();
+		}
+		ok(Math.abs(oDataSetLayout.$().width() - iWidth) <= 10 /*just some tolerance*/, "items in a row occupy the whole row");
+	});
+	
+	test("Single Row Layout", function() {
+		oDataSetLayout.setFloating(false);
+		oDataSetLayout.setResponsive(false);
+		oDataSetLayout.setItemMinWidth(0);
+		sap.ui.getCore().applyChanges();
+		
+		ok(oDataSetLayout.$().hasClass("sapUiUx3DSSVSingleRow"), "class 'sapUiUx3DSSVSingleRow' is set");
+		equal(getNumberOfItemsPerRow(), 1, "one item per row");
+		ok(Math.abs(oDataSetLayout.$().width() - jQuery(oDataSetLayout.$().children()[0]).outerWidth()) <= 10 /*just some tolerance*/, "item occupies the whole row");
+	});
+	
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem +
+sap.ui.ux3.DataSetSimpleView</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+<div id="content2"></div>
+</body>
+</html>

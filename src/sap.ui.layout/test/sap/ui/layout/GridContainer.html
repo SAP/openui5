@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<title>Grid - sap.ui.layout</title>
+
+	<script id='sap-ui-bootstrap' type='text/javascript'
+		src='../../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.ui.layout'>
+	</script>
+
+			
+	<script>
+		    
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw(e);
+	}
+			var oGrid = new sap.ui.layout.Grid({
+				hSpacing: 1,	// in rem; default half of the value for gutter, adds to left and right, for corrections
+				vSpacing: 1, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
+				defaultSpan: "L3 M6 S12",
+				containerQuery: true,
+				content: [
+				// headings
+
+				new sap.ui.core.HTML({
+					content: '<b>Grid with 1rem horizontal and vertical spacing</b>',
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12"
+					})
+				}),
+				new sap.ui.commons.Label({
+					text: 'Area spanning over the full width of the grid on all resolutions (L12 M12 S12)',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12"
+					})
+				}),
+
+				// small 
+
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+
+				// medium
+
+				new sap.ui.core.HTML({
+					content: '<p>L4 M6 S12</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L4 M6 S12"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L4 M6 S12</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L4 M6 S12"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L4 M6 S12</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L4 M6 S12"
+					})
+				}),
+
+				new sap.ui.core.HTML({
+					content: '<p>L3 M12 S6</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L3 M12 S6"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L3 M12 S6</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L3 M12 S6"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L3 M12 S6</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L3 M12 S6"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L3 M12 S6</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L3 M12 S6"
+					})
+				}),
+
+				// indents
+
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L1 M1</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L1 M1",
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L8 M8</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L8 M8",
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L2 M2</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L2 M2",
+						linebreakL: true,
+						linebreakM: true,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L6 M6</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L6 M6",
+						visibleOnSmall: false
+
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L3 M3</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L3 M3",
+						linebreakL: true,
+						linebreakM: true,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L4 M4</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L4 M4",
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L4 M4</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L4 M4",
+						linebreakL: true,
+						linebreakM: true,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L1 M1<br />Indent L2 M2</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1",
+						indent: "L2 M2",
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L2 M2<br />Indent L5 M5</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L2 M2",
+						indent: "L5 M5",
+						linebreakL: true,
+						linebreakM: true,
+						visibleOnSmall: false
+					})
+				}),
+
+				new sap.ui.core.HTML({
+					content: '<p>L6 M6 S6<br />Indent L3 M3 S3<br />linebreakL linebreakM linebreakS</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L6 M6 S6",
+						indent: "L3 M3 S3",
+						linebreakL: true,
+						linebreakM: true,
+						linebreakS: true
+					})
+				}),
+
+				// visisble
+
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnLarge visibleOnMedium visibleOnSmall</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleOnLarge: true,
+						visibleOnMedium: true,
+						visibleOnSmall: true
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnLarge</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleOnLarge: true,
+						visibleOnMedium: false,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnMedium</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleOnLarge: false,
+						visibleOnMedium: true,
+						visibleOnSmall: false
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>L12 M12 S12<br />visibleOnSmall</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L12 M12 S12",
+						visibleOnLarge: false,
+						visibleOnMedium: true,
+						visibleOnSmall: true
+					})
+				}),
+
+							// small 
+
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				}),
+				new sap.ui.core.HTML({
+					content: '<p>(L1 M1 S1)</p>',
+					width: "100%",
+					layoutData: new sap.ui.layout.GridData({
+						span: "L1 M1 S1"
+					})
+				})
+			]
+		});
+
+		oGrid.placeAt('content');
+	</script>
+
+	<style>
+	.sapUiRespGrid div {
+		background: silver;
+		color: white;
+	}
+
+	.sapUiRespGrid div p {
+		text-align: center;
+	}
+	</style>
+
+</head>
+<body class='sapUiBody'>
+		  <div id='content'></div>
+</body>
+</html>

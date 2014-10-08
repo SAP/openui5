@@ -1,0 +1,71 @@
+<mvc:View
+	controllerName="sap.m.sample.Table.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table id="idProductsTable"
+		inset="false"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<Toolbar>
+				<Label text="Products"></Label>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column
+				width="12em">
+				<Text text="Product" />
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="Supplier" />
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Right">
+				<Text text="Dimensions" />
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Center">
+				<Text text="Weight" />
+			</Column>
+			<Column
+				hAlign="Right">
+				<Text text="Price" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"
+						class="sapMTableContentMargin" />
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectNumber
+						number="{WeightMeasure}"
+						unit="{WeightUnit}"
+						state="{
+							path: 'WeightMeasure',
+							formatter: 'sap.m.sample.Table.Formatter.weightState'
+						}" />
+					<ObjectNumber
+					number="{Price}"
+					unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

@@ -1,0 +1,24 @@
+<core:View
+	xmlns="sap.ui.commons"
+	xmlns:core="sap.ui.core"
+	xmlns:commons="sap.ui.commons"
+	xmlns:layout="sap.ui.commons.layout"
+	xmlns:mvc="sap.ui.core.mvc" >
+	<layout:VerticalLayout 
+		id="thaPage"
+		layoutFixed="false">
+		<Image
+			src="http://www.sap.com/global/images/SAPLogo.gif"
+			alt="alternative text for image">
+		</Image>
+		<Label
+			id="label"
+			text="Label">
+		</Label>
+		<Button
+			id="button"
+			text="Save">
+		</Button>
+
+	</layout:VerticalLayout>
+</core:View>

@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>MessageBox -sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-modules="sap.ui.commons.MessageBox"
+				>
+		</script>
+
+		<script>
+		    var bReportCallback = false;
+
+		    function fnCallback() {
+				var s="callback called with [" + jQuery.makeArray(arguments).toString() + "]";
+				jQuery.sap.log.info(s);  
+			    if ( bReportCallback ) {
+					alert(s);
+			    }
+			};
+
+		    function doSayHello(){
+			    sap.ui.commons.MessageBox.alert("Hello World!", fnCallback);
+		    };
+
+		    function doSayHelloWithTitle(){
+			    sap.ui.commons.MessageBox.alert("Hello Dr. World!", fnCallback, "A Message 4 You" );
+		    };
+
+		    function doSayHelloNBSP(){
+			    sap.ui.commons.MessageBox.alert("Hello&nbsp;World!", fnCallback);
+		    };
+
+		    function doConfirm(){
+			    sap.ui.commons.MessageBox.confirm("Anybody out there?", fnCallback);
+		    };
+
+		    function doConfirmWithTitle(){
+			    sap.ui.commons.MessageBox.confirm("Is there a doctor in the house?", fnCallback, "A Question 2 You" );
+		    };
+
+		    function mbox(sIcon) {
+			    return function() {
+		    	sap.ui.commons.MessageBox.show("This message box should show a " + sIcon + " Icon.", 
+		    			sIcon,
+		    	        "MessageBox of type " + sIcon,
+		    	        [sap.ui.commons.MessageBox.Action.YES,sap.ui.commons.MessageBox.Action.NO],
+			    	    fnCallback
+			    	);
+			    };
+		    };
+
+		    function doComplexMessageBox(){
+		    	sap.ui.commons.MessageBox.show("Accessing the data in backend 08-15 failed.\nWithout that data creating the report doesn't make much sense.\n\nWhat would you like to do?", 
+	    			sap.ui.commons.MessageBox.Icon.ERROR,
+	    	        "Backend Access Error",
+	    	        [sap.ui.commons.MessageBox.Action.ABORT,sap.ui.commons.MessageBox.Action.RETRY,sap.ui.commons.MessageBox.Action.IGNORE],
+	    	        function(oAction) { 
+	    		  		fnCallback.apply(this, arguments);
+	    		  		if ( oAction === sap.ui.commons.MessageBox.Action.IGNORE ) {
+	    	               	sap.ui.commons.MessageBox.alert("Stupid humans!", fnCallback);
+	    	            }
+	    	        },
+	    	        sap.ui.commons.MessageBox.Action.ABORT
+		    	);
+		    };
+
+		    function onReportCallbackChanged(e) {
+ 				bReportCallback = e.getParameters().checked;
+			};
+
+			function createControls() {
+
+				// jQuery.sap.require("sap.ui.commons.MessageBox");
+
+				function header(s) {
+					if ( typeof s === "string" ) {
+						s = new sap.ui.commons.TextView({text:s});
+					}
+					if ( s instanceof sap.ui.core.Element && !(s instanceof sap.ui.commons.layout.MatrixLayoutCell) ) { 
+						s = new sap.ui.commons.layout.MatrixLayoutCell({colSpan:255, content: s});
+					}
+					oLayout.createRow(s);
+				}
+				function filler() {
+					oLayout.createRow(new sap.ui.commons.TextView({text:" "}));
+				}
+
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+	      oLayout.setLayoutFixed(false);
+				//header("Some variants of the alert() substitute:");
+				oLayout.createRow(
+						new sap.ui.commons.Button("btnAlert1", {text:"Alert!", press: doSayHello}),
+						new sap.ui.commons.Button("btnAlert2", {text:"Alert with Title!", press: doSayHelloWithTitle}),
+						new sap.ui.commons.Button("btnAlert3", {text:"Alert w &amp;nbsp;!", press: doSayHelloNBSP}));
+				//filler();
+				oLayout.placeAt("uiAlert");
+
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+        oLayout.setLayoutFixed(false);
+				//header("Same for the confirm() substitute:");
+				oLayout.createRow(
+						new sap.ui.commons.Button("btnConfirm1", {text:"Confirmation...", press: doConfirm}),
+						new sap.ui.commons.Button("btnConfirm2", {text:"Confirmation with Title!", press: doConfirmWithTitle}));
+				//filler();
+				oLayout.placeAt("uiConfirm");
+
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+        oLayout.setLayoutFixed(false);
+				//header("All available message box types / icons:");
+				oLayout.createRow(
+						new sap.ui.commons.Button("btnIcon1", {text:"NONE", press: mbox("NONE")}),
+						new sap.ui.commons.Button("btnIcon2", {text:"INFORMATION", press: mbox("INFORMATION")}),
+						new sap.ui.commons.Button("btnIcon3", {text:"WARNING", press: mbox("WARNING")}),
+						new sap.ui.commons.Button("btnIcon4", {text:"ERROR", press: mbox("ERROR")}),
+						new sap.ui.commons.Button("btnIcon5", {text:"CRITICAL", press: mbox("CRITICAL")}),
+						new sap.ui.commons.Button("btnIcon6", {text:"SUCCESS", press: mbox("SUCCESS")}),
+						new sap.ui.commons.Button("btnIcon7", {text:"QUESTION", press: mbox("QUESTION")})
+						);
+				//filler();
+				oLayout.placeAt("uiIcons");
+
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+        oLayout.setLayoutFixed(false);
+				//header("A slightly more complex use case:");
+				oLayout.createRow(
+						new sap.ui.commons.Button("btnComplex1", {text:"An Error occurred...", press: doComplexMessageBox}));
+				//filler();
+				oLayout.placeAt("uiComplex");
+
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+        oLayout.setLayoutFixed(false);
+				header(new sap.ui.commons.CheckBox("chkReportCallback", {checked:bReportCallback, text:"Report results from callback via Window.alert()", change:onReportCallbackChanged}));
+				oLayout.placeAt("uiOptions");
+			};
+
+			createControls();
+
+		var oButton = new sap.ui.commons.Button({
+			text : "MessageBox with Layout as Content",
+			press : function() {
+				var oLayout = new sap.ui.layout.VerticalLayout({
+					width: "100%",
+					content: [
+						new sap.ui.commons.TextView({
+							text: "Wanna see the status of the CheckBox in an additional MessageBox?",
+						}),
+						new sap.ui.commons.CheckBox("checkBoxId", {
+							text: "The CheckBox this is me",
+							checked: false
+						})
+					]
+				});
+
+				// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
+				sap.ui.commons.MessageBox.show(oLayout, 
+		    		sap.ui.commons.MessageBox.Icon.WARNING,
+		    	    "Title of first MessageBox",
+		    	    [sap.ui.commons.MessageBox.Action.YES, sap.ui.commons.MessageBox.Action.NO],
+		    	    function(oAction) { 
+						if ( oAction === sap.ui.commons.MessageBox.Action.YES ) {
+							var oCheck = sap.ui.getCore().byId("checkBoxId");
+							var sText = "Checkbox is " + (oCheck.getChecked() ? "" : "not ") + "checked";
+
+							// alert(sMessage, fnCallBack, sTitle)
+							sap.ui.commons.MessageBox.alert(sText, null, "Result of CheckBox");
+						}
+					},
+					sap.ui.commons.MessageBox.Action.NO,
+					"messageBoxId"
+			    );
+			}
+		}).placeAt("uiLayoutContent");
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.MessageBox</h1>
+
+		<span>Some variants of the alert() substitute: </span><br/>
+		<div id="uiAlert"></div><!--  <span id="uiAlert1"></span>&nbsp;<span id="uiAlert2"></span>&nbsp;<span id="uiAlert3"></span>&nbsp;<br/> -->
+		<br/>
+		<div id="uiArea"></div>		
+		<span>Same for the confirm() substitute:</span><br/>
+		<div id="uiConfirm"></div><!--  <span id="uiConfirm1"></span><span id="uiConfirm2"></span><br/> -->
+		<br/>
+		<span>All available message box types / icons:</span><br/>
+		<div id="uiIcons"></div><!-- <span id="uiIcon1"></span><span id="uiIcon2"></span><span id="uiIcon3"></span><span id="uiIcon4"></span><span id="uiIcon5"></span><span id="uiIcon6"></span><br/> -->
+		<br/>
+		<span>A slightly more complex use case: </span><br/>
+		<div id="uiComplex"></div><!-- <span id="uiComplex1"></span><br/> -->
+		<br/>
+		<span>A case with a control as "message": </span><br/>
+		<div id="uiLayoutContent"></div>
+		<br/>
+		<span id="uiOptions"></span><br/>
+		<br/>
+		You might also modify the language (either in the browser settings or by adding the URL parameter sap-ui-language=...).<br/>
+
+	</body>
+</html>

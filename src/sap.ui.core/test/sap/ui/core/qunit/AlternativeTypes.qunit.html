@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tests special cases regarding alternative aggregration types (e.g. Tooltip)
+  Author: d020684
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script>
+	window["sap-ui-config"] = {
+		resourceRoots : {
+			"sap.ui.testlib" : "./testdata/uilib/"
+		}
+	};
+</script>
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.testlib">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	var oModel = new sap.ui.model.json.JSONModel({
+		teamMembers:[
+				{firstName:"Andreas", lastName:"Klark"},
+				{firstName:"Peter", lastName:"Miller"},
+				{firstName:"Gina", lastName:"Rush"},
+				{firstName:"Steave", lastName:"Ander"},
+				{firstName:"Michael", lastName:"Spring"},
+				{firstName:"Marc", lastName:"Green"},
+				{firstName:"Frank", lastName:"Wallace"}
+		]
+ 	});
+	
+	test("clone", function() {
+		var oButton = new sap.ui.testlib.TestButton({
+			text : "a text text",
+			tooltip : "a tooltip text"
+		});
+		var oDolly = oButton.clone("some");
+		ok(oDolly instanceof sap.ui.testlib.TestButton, "clone must return an element");
+		equal(oDolly.getText(), oButton.getText(), "property text must have equal values");
+		equal(oDolly.getTooltip(), oButton.getTooltip(), "property tooltip must have equal values");
+	});
+	
+	test("bind property via settings", function(){
+		var oButton = new sap.ui.testlib.TestButton({
+			text : "{firstName}",
+			tooltip : "{lastName}"
+		});
+		oButton.setModel(oModel);
+		oButton.bindElement("/teamMembers/0");
+		oButton.placeAt("target");
+		equal(oButton.getText(), "Andreas", "binding of text"); 
+		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		oButton.destroy();
+	});
+	
+	test("bind property via bind...", function(){
+		var oButton = new sap.ui.testlib.TestButton({
+		});
+		oButton.setModel(oModel);
+		oButton.bindElement("/teamMembers/0");
+		oButton.bindProperty("text", "firstName");
+		oButton.bindProperty("tooltip", "lastName");
+		oButton.placeAt("target");
+		equal(oButton.getText(), "Andreas", "binding of text"); 
+		equal(oButton.getTooltip(), "Klark", "binding of tooltip"); 
+		oButton.destroy();
+	});
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Alternative Aggregation Types</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target"></div>
+</body>
+</html>

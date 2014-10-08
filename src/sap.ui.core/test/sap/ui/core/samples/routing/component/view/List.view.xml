@@ -1,0 +1,19 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" controllerName="NavigationWithoutMasterDetailPattern.view.List" xmlns:form="sap.ui.commons.form"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="List View" enableScrolling="false">
+		<content>
+			
+			<SplitContainer id="split">
+			
+			        <masterPages>
+						<mvc:XMLView viewName="NavigationWithoutMasterDetailPattern.view.Master" id="Master"></mvc:XMLView>
+			        </masterPages>
+			        <detailPages>
+			       </detailPages>
+			       
+			</SplitContainer>
+			
+		</content>
+	</Page>
+</mvc:View>

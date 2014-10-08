@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.MenuBar,sap.ui.commons.Menu,sap.ui.commons.MenuItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Menu MenuButton MenuBar MenuItem MenuItemBase Popup" />
+		<title>MenuBar - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='MenuBarScript'>
+//Function to handle the select event of the items
+var handleSelect = function(oEvent){
+	alert(oEvent.getParameter("item").getId());
+};
+
+// Create a menu bar instance
+var oMenuBar = new sap.ui.commons.MenuBar("menuBar");
+
+// Create two main menu items for the menubar - for which you define subitems lateron
+var oMenuBarItem1 = new sap.ui.commons.MenuItem("menuBar-item-1",{text:"Project"});
+oMenuBar.addItem(oMenuBarItem1);
+var oMenuBarItem2 = new sap.ui.commons.MenuItem("menuBar-item-2",{text:"Roles", enabled: false});
+oMenuBar.addItem(oMenuBarItem2);
+
+// Create a menu instance for the "Project" menu
+var oMenu1 = new sap.ui.commons.Menu("menu1");
+oMenuBarItem1.setSubmenu(oMenu1);
+
+// Create and add five sub-items for the "Project" menu
+var oMenuItem1 = new sap.ui.commons.MenuItem("item1-1",{text:"Open the project with the highest priority"});
+oMenu1.addItem(oMenuItem1);
+oMenuItem1.attachSelect(handleSelect);
+var oMenuItem2 = new sap.ui.commons.MenuItem("item1-2",{text:"Link to the project with the highest priority ..."});
+oMenu1.addItem(oMenuItem2);
+oMenuItem2.attachSelect(handleSelect);
+var oMenuItem3 = new sap.ui.commons.MenuItem("item1-3",{text:"Save", enabled: false});
+oMenu1.addItem(oMenuItem3);
+var oMenuItem4 = new sap.ui.commons.MenuItem("item1-4",{text:"Show"});
+oMenu1.addItem(oMenuItem4);
+var oMenuItem5 = new sap.ui.commons.MenuItem("item1-5",{text:"Properties"});
+oMenu1.addItem(oMenuItem5);
+oMenuItem5.attachSelect(handleSelect);
+
+//Create a sub menu for item "Show"
+var oMenu2 = new sap.ui.commons.Menu("menu2");
+oMenuItem4.setSubmenu(oMenu2);
+var oMenuItem6 = new sap.ui.commons.MenuItem("item2-1",{text:"Tasks"});
+oMenu2.addItem(oMenuItem6);
+oMenuItem6.attachSelect(handleSelect);
+var oMenuItem7 = new sap.ui.commons.MenuItem("item2-2",{text:"Responsibilities"});
+oMenu2.addItem(oMenuItem7);
+oMenuItem7.attachSelect(handleSelect);
+var oMenuItem8 = new sap.ui.commons.MenuItem("item2-3",{text:"Details"});
+oMenu2.addItem(oMenuItem8);
+oMenuItem8.attachSelect(handleSelect);
+var oMenuItem9 = new sap.ui.commons.MenuItem("item2-4",{text:"Properties"});
+oMenu2.addItem(oMenuItem9);
+oMenuItem9.attachSelect(handleSelect);
+
+// Attach the menubar to the page
+oMenuBar.placeAt("sample1");
+</script>
+</head>
+	
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Blue" icon="images/ctrls/menubar-icon.png">MenuBar</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The MenuBar control represents a user interface area which is the entry point for menus with their menu items. You need menu bars for applications which shall offer a set of actions you would like to provide in a structured way.  
+	</p>
+		
+	<h2>Example</h2>		
+	<div code-sample="sample1" script="MenuBarScript"></div>
+	<p>
+	In this example with use case project management, a menu bar with two menus is shown. The first menu has a sub-menu with several menu items, and one of these items has some sub-items again.
+	<br><br>
+	You can find more details on how to use menus on the corresponding <a class="sapUiDemokitSrcLink" href="Menu.html">Menu</a> demokit page.
+	</p>
+	
+	<h2>Keyboard Support</h2>
+	<p>
+	It is possible to navigate between the entries via the <code>Arrow left</code> and <code>Arrow right</code> keys step by step. Using the <code>Pos 1</code> and <code>End</code> keys, you can directly jump to the first or last entry.
+	With <code>Space</code>, <code>Enter</code>, <code>Arrow down</code> or <code>ALT + Arrow down</code>, the menu of the currently focused entry can be opened. For the keyboard support of the Menu control, refer to <a class="sapUiDemokitSrcLink" href="Menu.html">Menu</a>.
+	</p>
+	
+	<h2>ARIA Support</h2>
+	<p>
+	The MenuBar control implements the the ARIA role <code>menubar</code>. For the ARIA Support of the Menu control refer to the corresponding
+	<a class="sapUiDemokitSrcLink" href="Menu.html">Demo Kit Page</a>.
+	</p>
+	
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuBar.html">API documentation</a>
+	</p>
+</body>
+</html>

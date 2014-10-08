@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test page for sap.m.Page</title>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+		QUnit.config.autostart = false;
+		sap.ui.test.qunit.delayTestStart();
+
+		var cacheAndInitializeDomRefs = function(sId) {
+
+			// global variables
+			oPage = sap.ui.getCore().byId(sId);
+			$Page = oPage.$();
+			$PageHeader = $Page.children("header.sapMBar.sapMHeader-CTX");
+			$PageSubHeader = $Page.children("header.sapMBar.sapMSubHeader-CTX");
+			$PageFooter = $Page.children("footer.sapMBar.sapMFooter-CTX");
+			$PageSection = $Page.children("section");
+			$PageScroll = $PageSection.children();
+		};
+
+		/* =========================================================== */
+		/* API module                                                  */
+		/* =========================================================== */
+
+		module("API");
+
+		test("default values", function() {
+
+			// system under test
+			var oPage = new sap.m.Page();
+
+			// arrange
+			var oApp = new sap.m.App("myApp");
+			oApp.placeAt("page-content");
+			oApp.addPage(oPage);
+			sap.ui.getCore().applyChanges();
+			cacheAndInitializeDomRefs(oPage.getId());
+
+			// assertions
+			strictEqual(oPage.getTitle(), "");
+			strictEqual(oPage.getShowNavButton(), false);
+			strictEqual(oPage.getShowHeader(), true);
+			strictEqual(oPage.getNavButtonText(), "");
+			strictEqual(oPage.getEnableScrolling(), true);
+			strictEqual(oPage.getIcon(), "");
+			strictEqual(oPage.getBackgroundDesign(), "Standard");
+			strictEqual(oPage.getNavButtonType(), "Back");
+
+			// cleanup
+			oApp.destroy();
+		});
+
+		/* =========================================================== */
+		/* HTML module                                                 */
+		/* =========================================================== */
+
+		module("HTML");
+
+		var fnRendererTestCase = function(mOptions) {
+			test("rendering", function() {
+
+				// system under test
+				var oPage = mOptions.page;
+
+				// arrange
+				var oApp = new sap.m.App("myApp"),
+					sTop = "0px",
+					sBottom = "0px";
+
+				oApp.placeAt("page-content");
+				oApp.addPage(oPage);
+				sap.ui.getCore().applyChanges();
+				cacheAndInitializeDomRefs(oPage.getId());
+
+				// assertions
+				ok($Page.length, "The page HTML div element exists");
+				ok($PageSection.length, "The page section HTML element exists");
+				ok($PageScroll.length, "The page scroll HTML div element exists");
+				ok($Page.hasClass("sapMPage"), 'The page HTML Div element "must have" the CSS class "sapMPage"');
+				ok($PageScroll.hasClass("sapMPageScroll"), 'The page scroll HTML Div element "must have" the CSS class "sapMPageScroll"');
+				ok($PageScroll.hasClass("sapMPageScrollEnabled"), 'The page scroll HTML Div element "must have" the CSS class "sapMPageScrollEnabled"');
+				strictEqual($Page.css("position"), "absolute", 'The page HTML Div element is absolute positioned, "position: absolute"');
+
+				if (oPage.getShowHeader()) {
+					ok($PageHeader.length, "The page header HTML element exists");
+					ok($Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithHeader"');
+				} else {
+					ok(!$PageHeader.length, "The page header HTML element do not exists");
+					ok(!$Page.hasClass("sapMPageWithHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithHeader"');
+				}
+
+				if (oPage.getSubHeader()) {
+					ok($PageSubHeader.length, "The page sub-header HTML element exists");
+					ok($Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must have" the CSS class "sapMPageWithSubHeader"');
+				} else {
+					ok(!$PageSubHeader.length, "The page sub-header HTML element do not exists");
+					ok(!$Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithSubHeader"');
+				}
+
+				if (oPage.getFooter()) {
+					ok($PageFooter.length, "The page footer HTML element exists");
+					ok($Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must have" the CSS class "sapMPageWithFooter"');
+				} else {
+					ok(!$PageFooter.length, "The page footer HTML element do not exists");
+					ok(!$Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithFooter"');
+				}
+
+				strictEqual($Page.css("top"), "0px", 'The page HTML Div element is absolute positioned, "top: 0px"');
+				strictEqual($Page.css("left"), "0px", 'The page HTML Div element is absolute positioned, "left: 0px"');
+				strictEqual($Page.css("display"), "block", 'The page HTML Div element is displayed as block, "diplay: block"');
+				strictEqual($PageSection.css("position"), "absolute", 'The page section HTML element is absolute positioned, "position: absolute"');
+
+				strictEqual($PageSection.css("right"), "0px", 'The page section HTML element is absolute positioned, "right: 0px"');
+				strictEqual($PageSection.css("left"), "0px", 'The page section HTML element is absolute positioned, "left: 0px"');
+
+				if (oPage.getShowHeader() || oPage.getSubHeader()) {
+					sTop = "48px";
+				}
+
+				if (oPage.getShowHeader() && oPage.getSubHeader()) {
+					sTop = "96px";
+				}
+
+				if (oPage.getFooter()) {
+					sBottom = "48px";
+				}
+
+				strictEqual($PageSection.css("top"), sTop, 'The page section HTML element is absolute positioned, "top: ' + sTop +'"');
+				strictEqual($PageSection.css("bottom"), sBottom, 'The page section HTML element is absolute positioned, "bottom: ' + sBottom + '"');
+
+				// cleanup
+				oApp.destroy();
+			});
+		};
+
+		// page without footer, header and sub-header
+		fnRendererTestCase({
+			page: new sap.m.Page({
+				showHeader: false
+			})
+		});
+
+		// page with header
+		fnRendererTestCase({
+			page: new sap.m.Page()
+		});
+
+		// page with footer
+		fnRendererTestCase({
+			page: new sap.m.Page({
+				showHeader: false,
+				footer: new sap.m.Bar()
+			})
+		});
+
+		// page with header and sub-header
+		fnRendererTestCase({
+			page: new sap.m.Page({
+				showHeader: true,
+				subHeader: new sap.m.Bar()
+			})
+		});
+
+		// page with header and footer
+		fnRendererTestCase({
+			page: new sap.m.Page({
+				showHeader: true,
+				footer: new sap.m.Bar()
+			})
+		});
+
+		// page with header, sub-header and footer
+		fnRendererTestCase({
+			page: new sap.m.Page({
+				showHeader: true,
+				subHeader: new sap.m.Bar(),
+				footer: new sap.m.Bar()
+			})
+		});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests for sap.m.Page</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="page-content" class="page-content"></div>
+	</body>
+</html>

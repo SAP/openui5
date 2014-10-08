@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+		
+		<title>sap.m.Shell Test</title>
+		
+		<script src="../../../resources/sap-ui-core.js" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m" 
+			data-sap-ui-theme="sap_bluecrystal"></script>
+		
+		<script>
+			var oShell= new sap.m.Shell("myShell", {
+				title: "My Application",
+				logo: "images/SAPUI5.png",
+				showLogout: false
+			});
+			
+			var oApp = new sap.m.SplitApp("myApp", {
+				masterPages: new sap.m.Page("page1", {
+					title: "Some Master"
+				}),
+				detailPages: new sap.m.Page("page2", {
+					title: "Some Detail",
+					content: [
+						new sap.m.HBox({items:[
+							new sap.m.Label({
+								text: "Logo: "
+							}),
+							new sap.m.Button({
+								text: "SAPUI5 Logo",
+								press: function() {
+									oShell.setLogo("images/SAPUI5.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "SAP big",
+								press: function() {
+									oShell.setLogo("images/SAPLogo@2.jpg");
+								}
+							}),
+							new sap.m.Button({
+								text: "SAP small",
+								press: function() {
+									oShell.setLogo("images/SAPLogo.jpg");
+								}
+							}),
+							new sap.m.Button({
+								text: "Wide Logo",
+								press: function() {
+									oShell.setLogo("images/wide-logo.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "Tall Logo",
+								press: function() {
+									oShell.setLogo("images/tall-logo.png");
+								}
+							}),
+							new sap.m.Button({
+								text: "NO Logo",
+								press: function() {
+									oShell.setLogo("");
+								}
+							})
+						]}),
+						new sap.m.HBox({items:[
+							new sap.m.Label({
+								text: "Limit App Width: "
+							}),
+							new sap.m.Switch({
+								state: true,
+								change: function(oEvent) {
+									var bLimit = oEvent.getParameter("state");
+									oShell.setAppWidthLimited(bLimit);
+								}
+							})
+						]})
+					]
+				})
+			});
+			
+			oShell.setApp(oApp);
+			oShell.placeAt("content");
+		</script>
+	
+	
+		<style>
+			html, body, .UShell {
+				width: 100%;
+				height: 100%;
+			}
+			.UShellHeader {
+				width: 100%;
+				height: 3rem;
+				text-align: center;
+				line-height: 3rem;
+				
+				-moz-box-sizing: border-box;
+				box-sizing: border-box;
+				-webkit-box-shadow: inset 0 -0.0625em #dddddd;
+				box-shadow: inset 0 -0.0625em #dddddd;
+				border-top: 0.25rem solid #009de0;
+				
+				background-color: #f2f2f2;
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#f7f7f7, endColorstr=#ededed, GradientType=0);
+				background: -ms-linear-gradient(top, #f7f7f7 0%, #f2f2f2 33%, #f2f2f2 75%, #ededed 100%);
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f7f7f7), color-stop(0.33, #f2f2f2), color-stop(0.75, #f2f2f2), color-stop(1, #ededed));
+				background-image: -webkit-linear-gradient(top, #f7f7f7 0%, #f2f2f2 33%, #f2f2f2 75%, #ededed 100%);
+				background: linear-gradient(top, #f7f7f7 0%, #f2f2f2 33%, #f2f2f2 75%, #ededed 100%);
+			}
+			.UShellContent {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 3rem;
+			}
+		</style>
+	</head>
+	<body class='sapUiBody' role="application">
+		<div class="UShell">
+			<header class="UShellHeader">This is a simulated Unified Shell</header>
+			<div class="UShellContent" id="content">
+			</div>
+		</div>
+	</body>
+</html>

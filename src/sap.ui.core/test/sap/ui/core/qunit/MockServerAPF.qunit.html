@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.util.MockServer Class</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script language="javascript">
+jQuery.sap.require("sap.ui.core.util.MockServer");
+
+module('GIVEN APF model and data in MockServer', {
+    setup: function () {
+        this.rootUri = "/apfService/";
+        this.dataEntitySet = "ApfTestQueryResults";
+        this.paramEntitySet = "ApfTestQuery";
+        this.oMockServer = new sap.ui.core.util.MockServer({
+            rootUri: this.rootUri
+        });
+        var stubMetadata = 'testdata/apfapp/tMockApfMetadata.xml';
+        var stubData = 'testdata/apfapp/';
+        this.oMockServer.simulate(stubMetadata, stubData);
+        this.oMockServer.start();
+        this.log = function (text) {
+            var prevLevel = jQuery.sap.log.getLevel();
+            jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+            jQuery.sap.log.debug("  ##test: " + text);
+            jQuery.sap.log.setLevel(prevLevel);
+        };
+        this.post = function (object, sEntitySetName) {
+            var oSettings = JSON.stringify(object);
+            this.oResponse = jQuery.sap.syncPost(this.rootUri + sEntitySetName, oSettings, "json");
+        };
+        this.postSet = function (aSet, sEntitySetName) {
+            var i = 0;
+            for (i; i < aSet.length; ++i) {
+                this.oResponse = this.post(aSet[i]);
+            }
+        };
+        this.postTable = function (aTable, oTemplate, sEntitySetName) {
+            var row, attr = 0, member;
+            var obj;
+            for (row = 0; row < aTable.length; ++row) {
+                obj = {};
+                attr = 0;
+                for (member in oTemplate) {
+                    if (oTemplate.hasOwnProperty(member)) {
+                        var value = (aTable[row])[attr];
+                        obj["" + member] = value;
+                        ++attr;
+                    }
+                }
+                this.oResponse = jQuery.sap.syncPost(this.rootUri + sEntitySetName, JSON.stringify(obj), "json");
+            }
+        };
+        this.resultTemplate = {
+            "GenID": "ID_9999",
+            "NavID": "#9999",
+            "SAPClient": "999",
+            "CompanyCode": "9999",
+            "CompanyCodeName": "Company 9999",
+            "DaysSalesOutstanding": 9.99
+        };
+        this.parameterTemplate = {
+            "P_SAPClient": "9999",
+            "P_FromDate": "01012014",
+            "P_ToDate": "01062014",
+            "P_DisplayCurrency": "eu",
+            "P_ExchangeRateType": "eu",
+            "P_ExchangeRateDate": "01012014",
+            "P_AgingGridMeasureInDays": 10,
+            "P_NetDueGridMeasureInDays": 10,
+            "P_NetDueArrearsGridMsrInDays": 10,
+            "NavID": "#9999"
+        };
+    },
+    teardown: function () {
+        this.oMockServer.stop();
+        this.oMockServer.destroy();
+    }
+});
+
+test("real initial data", function () {
+    var rowExpr = "(SAPClient eq '999')";
+    var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
+    var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
+    equal(response.statusCode, "200");
+});
+test("ID initial data", function () {
+    var rowExpr = "(GenID eq 'ID_9999')";
+    var wcaQuery = this.dataEntitySet + "?$filter=" + rowExpr;
+    var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
+    equal(response.statusCode, "200");
+});
+test("predicate initial data", function () {
+    var wcaQuery = this.dataEntitySet + "(GenID='ID_9999')";
+    var response = jQuery.sap.sjax({url: this.rootUri + wcaQuery});
+    equal(response.statusCode, "200");
+});
+test("query initial parameter data", function () {
+    var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
+        "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
+        "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)";
+    var response = jQuery.sap.sjax({url: this.rootUri + query});
+    equal(response.statusCode, "200");
+});
+test("navigate from initial param to initial data", function () {
+    var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
+        "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
+        "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
+        "/Results";
+    var response = jQuery.sap.sjax({url: this.rootUri + query});
+    equal(response.statusCode, "200");
+});
+
+
+test("POST table", function () {
+    var aTable = [
+        ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
+        ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
+        ["GID_3", "#111", "777", "c3", "Company 3", 3.33 ],
+        ["GID_4", "#111", "777", "c4", "Company 4", 4.33 ],
+        ["GID_5", "#111", "777", "c3", "Company 3", 5.33 ]
+    ];
+    this.postTable(aTable, this.resultTemplate, this.dataEntitySet);
+
+    var myUrl = this.rootUri + this.dataEntitySet + "?$filter=(SAPClient eq '777')";
+    var response = jQuery.sap.sjax({url: myUrl});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 5, "many");
+});
+
+test("POST table & filter by number", function () {
+    var aTable = [
+        ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
+        ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
+        ["GID_3", "#111", "777", "c3", "Company 3", 3.33 ],
+        ["GID_4", "#111", "777", "c4", "Company 4", 4.33 ],
+        ["GID_5", "#111", "777", "c3", "Company 3", 5.33 ]
+    ];
+    this.postTable(aTable, this.resultTemplate, this.dataEntitySet);
+
+    var myUrl = this.rootUri + this.dataEntitySet + "?$filter=(DaysSalesOutstanding eq 2.22)";
+    var response = jQuery.sap.sjax({url: myUrl});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 1, "one");
+});
+
+
+
+test("POST table GET results on parameter set #9999", function () {
+    var ParameterCombination = [
+        [ "777", "01012014", "01062014", "us", "us", "01012014", 10, 10, 10, "#111"
+        ]
+    ];
+    var aTable = [
+        ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
+        ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
+        ["GID_3", "#111", "777", "c3", "Company 3", 3.33 ],
+        ["GID_4", "#111", "777", "c4", "Company 4", 4.33 ],
+        ["GID_5", "#111", "777", "c3", "Company 3", 5.33 ]
+    ];
+    this.postTable(ParameterCombination, this.parameterTemplate, this.paramEntitySet);
+    this.postTable(aTable, this.resultTemplate, this.dataEntitySet);
+
+    var query = "ApfTestQuery(P_SAPClient='9999',P_FromDate='01012014',P_ToDate='01062014'," +
+        "P_DisplayCurrency='eu',P_ExchangeRateType='eu',P_ExchangeRateDate='01012014'," +
+        "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
+        "/Results";
+    var response = jQuery.sap.sjax({url: this.rootUri + query});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 4, "many");
+});
+
+test("POST table GET results on parameter set #111", function () {
+    var parameter = [
+        [ "777", "01012014", "01062014", "us", "us", "01012014", 10, 10, 10, "#111"
+        ]
+    ];
+    var aTable = [
+        ["GID_1", "#9999", "777", "c1", "Company 1", 1.11 ],
+        ["GID_2", "#9999", "777", "c2", "Company 2", 2.22 ],
+        ["GID_3", "#111", "777", "c3", "Company 3", 3.33 ],
+        ["GID_4", "#111", "777", "c4", "Company 4", 4.33 ],
+        ["GID_5", "#111", "777", "c3", "Company 3", 5.33 ]
+    ];
+    this.postTable(parameter, this.parameterTemplate, this.paramEntitySet);
+    this.postTable(aTable, this.resultTemplate, this.dataEntitySet);
+
+    var query111 = "ApfTestQuery(P_SAPClient='777',P_FromDate='01012014',P_ToDate='01062014'," +
+        "P_DisplayCurrency='us',P_ExchangeRateType='us',P_ExchangeRateDate='01012014'," +
+        "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)";
+    var response111 = jQuery.sap.sjax({url: this.rootUri + query111});
+    equal(response111.statusCode, "200");
+
+    var query = "ApfTestQuery(P_SAPClient='777',P_FromDate='01012014',P_ToDate='01062014'," +
+        "P_DisplayCurrency='us',P_ExchangeRateType='us',P_ExchangeRateDate='01012014'," +
+        "P_AgingGridMeasureInDays=10,P_NetDueGridMeasureInDays=10,P_NetDueArrearsGridMsrInDays=10)" +
+        "/Results";
+    var response = jQuery.sap.sjax({url: this.rootUri + query});
+    equal(response.statusCode, "200");
+    equal(response.data.d.results.length, 3, "many");
+});
+	
+	
+	
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">
+		<title>qUnit Page for sap.ui.core.util.MockServer Class</title>
+	</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<div id="canvas" style="height: 300px; width: 300px"></div>
+	<div id="target1"></div>
+	<div id="target2"></div>
+	<div id="target3"></div>
+</body>
+</html>

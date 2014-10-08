@@ -1,0 +1,409 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.Binding
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" >
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+	sap.ui.core.Control.extend("sap.ui.core.TestControl", {
+		metadata : { 
+		  // ---- control specific ----
+		  library : "sap.ui.core",
+		  properties : {
+			value : {type: "string", group: "Appearance", defaultValue: ""},
+			other : {type: "string", group: "Appearance", defaultValue: ""}
+		  },
+		  aggregations : {
+		  	children : {type : "sap.ui.core.TestControl" }
+		  } 
+		},
+		
+		renderer : function() {}
+			
+	});	
+
+    var oModel1 = new sap.ui.model.json.JSONModel({
+    	value : "1"
+    });
+    var oModel2 = new sap.ui.model.json.JSONModel({
+    	value : "2"
+    }); 
+    var oModel3 = new sap.ui.model.json.JSONModel({
+    	value : "3"
+    }); 
+    var oModel4 = new sap.ui.model.json.JSONModel({
+    	data: ["0","1","2"]
+    });    	
+    var uiArea,ctrl,child;
+	
+	module("Model propagation", {
+		setup : function() {
+			uiArea = sap.ui.getCore().createUIArea("content");
+			//uiArea.setModel(null);
+			sap.ui.getCore().setModel(oModel1);
+			child = new sap.ui.core.TestControl({
+				value : "{/value}"
+			});
+			ctrl = new sap.ui.core.TestControl({
+				value : "{/value}",
+				children : [child]
+			});
+			ctrl.placeAt("content");
+		},
+		
+		teardown : function() {
+			ctrl.destroy();
+			ctrl = null;
+			child = null;
+		}
+	});
+
+	test("Model propagated from Core", function() {
+		equal(uiArea.getModel(), oModel1, "effective model of UIArea should be from Core");
+		equal(ctrl.getModel(), oModel1, "effective model of Root Control should be from Core");
+		equal(child.getModel(), oModel1, "effective model of Nested Control should be from Core");
+		equal(ctrl.getValue(), "1", "value of Root Control should be inherited from Core model");
+		equal(child.getValue(), "1", "value of Nested Control should be inherited from Core model");
+
+		// setting the same model again should have no effect
+		var oCtrlBindingBefore = ctrl.getBinding("value");
+		var oChildBindingBefore = child.getBinding("value");
+		sap.ui.getCore().setModel(oModel1);
+		equal(uiArea.getModel(), oModel1, "effective model of UIArea still should be from Core");
+		equal(ctrl.getModel(), oModel1, "effective model of Root Control still should be from Core");
+		equal(child.getModel(), oModel1, "effective model of Nested Control still should be from Core");
+		equal(ctrl.getValue(), "1", "value of Root Control still should be inherited from Core model");
+		equal(child.getValue(), "1", "value of Nested Control still should be inherited from Core model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+		
+		// model change in Core should be reflected in UIArea and controls
+		sap.ui.getCore().setModel(oModel3);
+		equal(uiArea.getModel(), oModel3, "new model should have been propagated from Core to UIArea");
+		equal(ctrl.getModel(), oModel3, "new model should have been propagated from Core to Root Control");
+		equal(child.getModel(), oModel3, "new model should have been propagated from Core to Nested Control");
+		equal(ctrl.getValue(), "3", "new value should be inherited from Core model");
+		equal(child.getValue(), "3", "new value should be inherited from Core model");
+		ok(oCtrlBindingBefore !== ctrl.getBinding("value"), "binding should have changed");
+		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
+	});
+	
+	test("Model propagated from UIArea", function() {
+		uiArea.setModel(oModel2);
+		equal(ctrl.getModel(), oModel2, "model should be inherited from UIArea model");
+		equal(child.getModel(), oModel2, "model should be inherited from UIArea model");
+		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
+		equal(child.getValue(), "2", "value should be inherited from UIArea model");
+		
+		// setting the same model again should have no effect
+		var oCtrlBindingBefore = ctrl.getBinding("value");
+		var oChildBindingBefore = child.getBinding("value");
+		uiArea.setModel(oModel2);
+		equal(uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
+		equal(child.getValue(), "2", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+		
+		// model change in Core should not be reflected in UIArea and controls
+		sap.ui.getCore().setModel(oModel3);
+		equal(uiArea.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel2, "model should have been propagated from UIArea");
+		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
+		equal(child.getValue(), "2", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+		sap.ui.getCore().setModel(oModel1);
+
+		// model change in UIArea should be reflected in UIArea and controls
+		uiArea.setModel(oModel3);
+		equal(uiArea.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(ctrl.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(ctrl.getValue(), "3", "value should be inherited from UIArea model");
+		equal(child.getValue(), "3", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore !== ctrl.getBinding("value"), "binding should have changed");
+		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
+
+		// after removing the model from the UIArea, Core model should be effective again
+		var oCtrlBindingBefore = ctrl.getBinding("value");
+		var oChildBindingBefore = child.getBinding("value");
+		uiArea.setModel();
+		equal(uiArea.getModel(), oModel1, "model should have been propagated from Core");
+		equal(ctrl.getModel(), oModel1, "model should have been propagated from Core");
+		equal(child.getModel(), oModel1, "model should have been propagated from Core");
+		equal(ctrl.getValue(), "1", "value should be inherited from Core model");
+		equal(child.getValue(), "1", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore !== ctrl.getBinding("value"), "binding should have changed");
+		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
+	});
+	
+	test("Model propagated from parent", function() {
+		ctrl.setModel(oModel2);
+		equal(ctrl.getModel(), oModel2, "model should be inherited from UIArea model");
+		equal(child.getModel(), oModel2, "model should be inherited from UIArea model");
+		equal(ctrl.getValue(), "2", "value should be inherited from UIArea model");
+		equal(child.getValue(), "2", "value should be inherited from UIArea model");
+		
+		// setting the same model again should have no effect
+		var oCtrlBindingBefore = ctrl.getBinding("value");
+		var oChildBindingBefore = child.getBinding("value");
+		ctrl.setModel(oModel2);
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
+		equal(child.getModel(), oModel2, "model should have been propagated from parent");
+		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
+		equal(child.getValue(), "2", "value should be inherited from parent model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+		
+		// model change in UIArea should not be reflected in child
+		uiArea.setModel(oModel3);
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
+		equal(child.getModel(), oModel2, "model should have been propagated from parent");
+		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
+		equal(child.getValue(), "2", "value should be inherited from parent model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+
+		// model change in Core should not be reflected in child
+		sap.ui.getCore().setModel(oModel3);
+		equal(ctrl.getModel(), oModel2, "model should have been propagated from parent");
+		equal(child.getModel(), oModel2, "model should have been propagated from parent");
+		equal(ctrl.getValue(), "2", "value should be inherited from parent model");
+		equal(child.getValue(), "2", "value should be inherited from parent model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+
+		// model change in parent should be reflected in child
+		ctrl.setModel(oModel3);
+		equal(ctrl.getModel(), oModel3, "model should have been propagated from parent");
+		equal(child.getModel(), oModel3, "model should have been propagated from parent");
+		equal(ctrl.getValue(), "3", "value should be inherited from parent model");
+		equal(child.getValue(), "3", "value should be inherited from parent model");
+		ok(oCtrlBindingBefore !== ctrl.getBinding("value"), "binding should have changed");
+		ok(oChildBindingBefore !== child.getBinding("value"), "binding should have changed");
+
+		// after removing the model from the parent, UIArea model should be effective again
+		var oCtrlBindingBefore = ctrl.getBinding("value");
+		var oChildBindingBefore = child.getBinding("value");
+		ctrl.setModel();
+		equal(ctrl.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(child.getModel(), oModel3, "model should have been propagated from UIArea");
+		equal(ctrl.getValue(), "3", "value should be inherited from UIArea model");
+		equal(child.getValue(), "3", "value should be inherited from UIArea model");
+		ok(oCtrlBindingBefore === ctrl.getBinding("value"), "binding should not have changed");
+		ok(oChildBindingBefore === child.getBinding("value"), "binding should not have changed");
+	});
+	
+	test("Model propagated from UIArea", function(){
+		var oBindingBefore = ctrl.getBinding("value");
+		ctrl.setModel(oModel2);
+		var oBindingAfter = ctrl.getBinding("value");
+		equal(ctrl.getValue(), "2", "value should not be inherited from core model ");
+	});
+	
+	test("override core model", function(){
+		ctrl.setModel(oModel2);
+		var oBindingBefore = ctrl.getBinding("value");
+		sap.ui.getCore().setModel(oModel3);
+		var oBindingAfter = ctrl.getBinding("value");
+		equal(ctrl.getValue(), "2", "value still should not be inherited from core model ");
+		ok(oBindingBefore === oBindingAfter, "binding should not change as it is not affected");
+	});
+
+	module("More Complex Updates", {
+		setup : function() {
+			sap.ui.getCore().setModel(oModel1);
+			uiArea = sap.ui.getCore().createUIArea("content");
+			uiArea.setModel(null);
+			child = new sap.ui.core.TestControl({
+				value : { parts : [ "/value", "m2>/value" ], formatter : function(a,b) { return a + ":" + b; } },
+				other : "{m2>/value}"
+			});
+			ctrl = new sap.ui.core.TestControl({
+				value : { parts : [ "m2>/value", "/value" ], formatter : function(a,b) { return a + ":" + b; } },
+				other : "{/value}",
+				children : [child]
+			});
+			ctrl.placeAt("content");
+		},
+		
+		teardown : function() {
+			sap.ui.getCore().setModel(null, "m2");
+			ctrl.destroy();
+			ctrl = null;
+			child = null;
+		}
+	});
+
+	test("incomplete binding context", function(){
+		ok(!!ctrl.getBindingInfo("value"), "control should have binding info for 'value'"); 
+		ok(!ctrl.getBinding("value"), "control must not have a binding for 'value'");
+		ok(!!ctrl.getBindingInfo("other"), "control should have binding info for 'other'"); 
+		ok(!!ctrl.getBinding("other"), "control should have a binding for 'other'");
+		ok(!!child.getBindingInfo("value"), "child should have binding info"); 
+		ok(!child.getBinding("value"), "child must not have a binding for 'value'");
+		ok(!!child.getBindingInfo("other"), "child should have binding info for 'other'"); 
+		ok(!child.getBinding("other"), "child must not have a binding for 'other'");
+		sap.ui.getCore().setModel(oModel2, "m2");
+		ok(!!ctrl.getBinding("value"), "control now should have a binding");
+		ok(!!ctrl.getBinding("other"), "control now should have a binding");
+		ok(!!child.getBinding("value"), "child now should have a binding");
+		ok(!!child.getBinding("other"), "child now should have a binding");
+		sap.ui.getCore().setModel(null);
+		ok(!ctrl.getBinding("value"), "control should no longer have a binding for 'value'");
+		ok(!ctrl.getBinding("other"), "control should no longer have a binding for 'other'");
+		ok(!child.getBinding("value"), "child should no longer have a binding for 'value'");
+		ok(!!child.getBinding("other"), "child still should have a binding for 'other'");
+		ctrl.setModel(oModel1);
+		ok(!!ctrl.getBinding("value"), "control now should have a binding");
+		ok(!!ctrl.getBinding("other"), "control now should have a binding");
+		ok(!!child.getBinding("value"), "child now should have a binding");
+		ok(!!child.getBinding("other"), "child now should have a binding");
+	});
+
+	test("Multiple References to Same Model", function() { 
+		
+		// default model and m2 are set to the same model instance
+		sap.ui.getCore().setModel(oModel1, "m2");
+		// bindings should be complete now
+		ok(!!ctrl.getBindingInfo("value"), "control should have binding info for 'value'"); 
+		ok(!!ctrl.getBinding("value"), "control should have a binding for 'value'");
+		ok(!!ctrl.getBindingInfo("other"), "control should have binding info for 'other'"); 
+		ok(!!ctrl.getBinding("other"), "control should have a binding for 'other'");
+		ok(!!child.getBindingInfo("value"), "child should have binding info for 'value'"); 
+		ok(!!child.getBinding("value"), "child should have a binding for 'value'");
+		ok(!!child.getBindingInfo("other"), "child should have binding info for 'other'"); 
+		ok(!!child.getBinding("other"), "child should have a binding for 'other'");
+		
+		// now remove one instance (the named one)
+		sap.ui.getCore().setModel(null, "m2");
+
+		// only bindings that used m2 must be invalidated
+		ok(!ctrl.getBinding("value"), "control must not have a binding for 'value'");
+		ok(!!ctrl.getBinding("other"), "control still should have a binding for 'other");
+		ok(!child.getBinding("value"), "child must not have a binding for 'value'");
+		ok(!child.getBinding("other"), "child must not have a binding for 'other'");
+	});
+	
+	test("Remove from Parent", function() { 
+		//check preconditions
+		equal(ctrl.getModel(), oModel1, "ctrl should inherit model1 from Core");
+		equal(child.getModel(), oModel1, "child should inherit model1 from ctrl");
+		ok(child.oPropagatedProperties === ctrl.oPropagatedProperties, "child should inherit propagatedProperties 1:1 from ctrl");
+
+		// now remove from parent
+		ctrl.removeChild(child);
+		
+		// check for expected modifications
+		ok(child.getParent() == null, "parent should be null");
+		equal(child.getModel(), null, "child shouldn't have a default model");
+		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+	});
+
+	test("Changing Parent", function() { 
+		var oNewParent = new sap.ui.core.TestControl({
+			value : { parts : [ "m2>/value", "/value" ], formatter : function(a,b) { return a + ":" + b; } },
+			other : "{/value}"
+		});
+		oNewParent.setModel(oModel2);
+
+		//check preconditions
+		equal(ctrl.getModel(), oModel1, "ctrl should inherit model1 from Core");
+		equal(child.getModel(), oModel1, "child should inherit model1 from ctrl");
+		ok(child.oPropagatedProperties === ctrl.oPropagatedProperties, "child should inherit propagatedProperties 1:1 from ctrl");
+
+		// now modify parent
+		oNewParent.addChild(child);
+		
+		// check for expected modifications
+		ok(child.getParent() === oNewParent, "parent should have changed");
+		equal(child.getModel(), oModel2, "child should inherit model1 from newParent");
+		ok(ctrl.getModel() === oModel1, "ctrl still should inherit model from Core");
+		ok(child.oPropagatedProperties !== ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+	});
+	
+	module("Context Binding", {
+		setup : function() {
+			sap.ui.getCore().setModel(oModel4);
+			uiArea = sap.ui.getCore().createUIArea("content");
+			child = new sap.ui.core.TestControl({
+				value : "{}",
+			});
+			ctrl = new sap.ui.core.TestControl({
+				value : "{}",
+				children : [child]
+			});
+			ctrl.placeAt("content");
+		},
+		
+		teardown : function() {
+			sap.ui.getCore().setModel(null);
+			ctrl.destroy();
+			ctrl = null;
+			child = null;
+		}
+	});
+	test("Context binding instance", function() {
+		ctrl.bindElement("/data");
+		ok(ctrl.getElementBinding() instanceof sap.ui.model.ContextBinding, "ContextBinding should exist");
+		ok(child.getBindingContext() === ctrl.getBindingContext(), "Context should be propagated");
+		ok(child.getBindingContext().getPath() === "/data", "Context path should be '/data'");
+		ctrl.unbindElement();
+		ok(!ctrl.getElementBinding(), "ContextBinding should be deleted");
+		ok(!ctrl.getBindingContext(), "No binding context should exist");
+		ok(!child.getBindingContext(), "No binding context should exist");
+		ctrl.bindElement("/nodata");
+		ok(child.getBindingContext().getPath() === "/nodata", "Context path should be '/nodata'");
+		ctrl.bindElement("/data");
+		ok(child.getBindingContext().getPath() === "/data", "Context path should be '/data'");
+	});
+	test("Context binding values", function() {
+		ctrl.bindElement("/data/0/");
+		ok(child.getValue() === "0", "Value should be resolved");
+		ctrl.bindElement("/data/2/");
+		ok(child.getValue() === "2", "Value should be resolved");
+		ctrl.unbindElement();
+		ok(!child.getValue(), "Value should be cleared");
+	});
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding JSON Bindings</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="content"></div>
+</body>
+</html>

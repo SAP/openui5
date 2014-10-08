@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Data binding test page with Two Way data binding, table and JSON Model</title>
+		
+		<!-- ********************************************************************** -->
+		<!-- JavaScript Bootstrap:                                                  -->
+		<!-- Extend the "libs" property if you like to import additional libraries  -->
+		<!-- ********************************************************************** -->
+		<script id="sap-ui-bootstrap" type="text/javascript"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-trace="true">
+		</script>
+		
+		<script type="text/javascript">
+			
+			try {
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			} catch(e) {
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+			
+			try {
+				sap.ui.getCore().loadLibrary("sap.ui.table");
+			} catch(e){
+				alert("This test page requires the library 'sap.ui.table' which is not available.");
+				throw(e);
+			}
+			
+			var oCore = sap.ui.getCore();
+			oCore.attachInitEvent(function() {
+				var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
+				if (logger)
+					logger.style.display = "none";
+				
+				var oHeader = new sap.ui.commons.ApplicationHeader();
+				oHeader.setLogoText("Testpage with Two Way Data Binding, Tables and JSON Model");
+				oHeader.setDisplayLogoff(false).setDisplayWelcome(false);
+				oHeader.placeAt("header");
+				
+				var mdData = {
+					clients:[
+						{firstName:"Donald", lastName:"Duck", id: "1", rating : 5},
+						{firstName:"Lucky", lastName:"Luke", id: "2", rating : 2},
+						{firstName:"Micky", lastName:"Mouse", id: "3", rating : 1},
+						{firstName:"Black", lastName:"Spider", id: "4", rating : 3},
+						{firstName:"Judge", lastName:"Dredd", id: "5", rating : 4},
+						{firstName:"Captain", lastName:"Comic", id: "6", rating : 5},
+						{firstName:"Flash", lastName:"Gordon", id: "7" , rating : 0}
+					]
+				};
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(mdData);
+				sap.ui.getCore().setModel(oModel);
+				
+				var tableArea1 = oCore.createUIArea("tableArea1");
+				var oTable = new sap.ui.table.DataTable({
+					title : "Clients Table1",
+					width : "100%",
+					visibleRowCount : 5,
+					selectionMode : sap.ui.table.SelectionMode.Single,
+					editable : true
+				});
+				
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Client ID"}),
+					template: new sap.ui.commons.TextField({value:"{id}"}),
+					sortProperty: "id",
+					filterProperty: "id"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "First Name"}),
+					template: new sap.ui.commons.TextField({value:"{firstName}"}),
+					sortProperty: "firstName",
+					filterProperty: "firstName"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Last Name with One Way Binding", design : sap.ui.commons.LabelDesign.Bold}),
+					template: new sap.ui.commons.TextField().bindValue("lastName",null, sap.ui.model.BindingMode.OneWay),
+					sortProperty: "lastName",
+					filterProperty: "lastName"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Rating"}),
+					template: new sap.ui.commons.RatingIndicator({value:"{rating}"}),
+					sortProperty: "rating",
+					filterProperty: "rating"
+				}));
+				
+				oTable.bindRows("/clients");
+				tableArea1.setRootControl(oTable);
+				
+				var tableArea2 = oCore.createUIArea("tableArea2");
+				oTable = new sap.ui.table.DataTable({
+					title : "Clients Table2",
+					width : "100%",
+					visibleRowCount : 5,
+					selectionMode : sap.ui.table.SelectionMode.Single,
+					editable : true
+				});
+				
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Client ID with One Way Binding", design : sap.ui.commons.LabelDesign.Bold}),
+					template: new sap.ui.commons.TextField().bindValue("id",null, sap.ui.model.BindingMode.OneWay),
+					sortProperty: "id",
+					filterProperty: "id"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "First Name"}),
+					template: new sap.ui.commons.TextField({value:"{firstName}"}),
+					sortProperty: "firstName",
+					filterProperty: "firstName"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Last Name"}),
+					template: new sap.ui.commons.TextField({value:"{lastName}"}),
+					sortProperty: "lastName",
+					filterProperty: "lastName"
+				}));
+				oTable.addColumn(new sap.ui.table.Column({
+					label: new sap.ui.commons.Label({text: "Rating with One Way Binding", design : sap.ui.commons.LabelDesign.Bold}),
+					template: new sap.ui.commons.RatingIndicator().bindValue("rating",null, sap.ui.model.BindingMode.OneWay),
+					sortProperty: "rating",
+					filterProperty: "rating"
+				}));
+				
+				oTable.bindRows("/clients");
+				tableArea2.setRootControl(oTable);
+				
+			});
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<div id="header"></div>
+		<div id="tableArea1"></div>
+		<p></p>
+		<div id="tableArea2"></div>
+	</body>
+</html>

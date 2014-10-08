@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>ResponsiveFlowLayout - sap.ui.layout</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.layout, sap.ui.commons">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<style type="text/css">
+.sampleButtonBox {
+	border: 1px solid blue;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	margin: 0 10px;
+	padding: 5px;
+}
+</style>
+
+<!-- Define stuff -->
+<script language="javascript">
+	var rfl = sap.ui.layout.ResponsiveFlowLayout;
+	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
+
+	var oRFL = new rfl("rflLayout");
+	oRFL.placeAt("uiArea1");
+
+	var oBtn1 = new sap.ui.commons.Button("button1", {
+		text : "Button1",
+		width : "100%"
+	});
+	oBtn1.setLayoutData(new rflLD());
+
+	var oBtn2 = new sap.ui.commons.Button("button2", {
+		text : "Button2 (lb)",
+		width : "100%"
+	});
+	oBtn2.setLayoutData(new rflLD({
+		weight : 2,
+		linebreak : false
+	}));
+
+	// adding content
+	oRFL.addContent(oBtn1);
+	oRFL.addContent(oBtn2);
+</script>
+
+<!-- Do the tests -->
+<script language="javascript">
+	module("Basics", {
+		setup : function() {
+			oBtn1.getLayoutData().setLinebreak(false);
+			oBtn2.getLayoutData().setLinebreak(false);
+
+			var $layout = jQuery.sap.byId("uiArea1");
+			$layout.css("width", "300px");
+			sap.ui.getCore().applyChanges();
+		}
+	});
+
+	test("Button doubled size?", function() {
+		expect(1);
+		var $btn1 = jQuery.sap.byId("button1-cont0_0");
+		var $btn2 = jQuery.sap.byId("button2-cont0_1");
+		var rangeTolerance = 10;
+
+		var w1 = $btn1.width() * 2;
+		var w2 = $btn2.width();
+
+		/*
+		 * if Button2 is about twice. Due to rounding mistakes it might be that the doubled size isn't exactly twice of Button1
+		 */
+		var bTest = (w1 + rangeTolerance > w2) && (w1 - rangeTolerance < w2);
+
+		ok(bTest, "Button2 is twice of Button2");
+	});
+
+	test("Line break works & LayoutData event catched by Layout", function() {
+		expect(3);
+		oBtn2.getLayoutData().setLinebreak(true);
+		sap.ui.getCore().applyChanges();
+
+		var oBtn1DomRef = jQuery.sap.domById("button1-cont0_0");
+		var oBtn2DomRef = jQuery.sap.domById("button2-cont1_0");
+
+		var bTest = oBtn1DomRef !== null && oBtn2DomRef !== null;
+
+		ok(bTest, "Line break for button");
+		ok(bTest, "LayoutDataChanged event catched by Layout");
+
+		var oRow1DomRef = jQuery.sap.domById("rflLayout-row0");
+		var oRow2DomRef = jQuery.sap.domById("rflLayout-row1");
+
+		bTest = oRow1DomRef !== null && oRow2DomRef !== null;
+
+		ok(bTest, "Buttons put in separate rows with correct IDs");
+	});
+
+	module("Resize", {
+		setup : function() {
+			oBtn1.getLayoutData().setLinebreak(false);
+			oBtn2.getLayoutData().setLinebreak(false);
+
+			var $layout = jQuery.sap.byId("uiArea1");
+			$layout.css("width", "400px");
+			sap.ui.getCore().applyChanges();
+		}
+	});
+	asyncTest("Shrink", function() {
+		expect(2);
+
+		var $layout = jQuery.sap.byId("uiArea1");
+		// this sets the layout to a size where the size falls below the min-width of a button
+		$layout.css("width", "150px");
+		sap.ui.getCore().applyChanges();
+
+		// have to wait more than 300ms until the layout recognized the minimization
+		setTimeout(function() {
+			var $btn1 = jQuery.sap.byId("button1-cont0_0");
+			var $btn2 = jQuery.sap.byId("button2-cont0_1");
+
+			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
+			ok(bTest, "Buttons are logically in one single line");
+
+			if (bTest) {
+				var oBtn1Rect = $btn1.rect();
+				var oBtn2Rect = $btn2.rect();
+
+				bTest = oBtn1Rect.top !== oBtn2Rect.top;
+			}
+			ok(bTest, "Layout wrapped second button");
+
+			start();
+
+		}, 100);
+	});
+
+	asyncTest("Enlarge", function() {
+		expect(1);
+
+		// have to wait more than 300ms until the layout recognized the minimization
+		setTimeout(function() {
+			var $btn1 = jQuery.sap.byId("button1-cont0_0");
+			var $btn2 = jQuery.sap.byId("button2-cont0_1");
+
+			var bTest = ($btn1.length > 0) && ($btn2.length > 0);
+			if (bTest) {
+				var p1 = $btn1.position();
+				var p2 = $btn2.position();
+
+				bTest = !!(p1.top === p2.top);
+			}
+
+			ok(bTest, "Layout wrapped back to one line");
+			start();
+
+		}, 100);
+	});
+
+	/* asyncTest("Check Min-Width", function() {
+		expect(2);
+
+		var $layout = jQuery.sap.byId("uiArea1");
+		$layout.css("width", "141px");
+
+		var oLDBtn1 = oBtn1.getLayoutData();
+		oLDBtn1.setMinWidth(15);
+		oLDBtn1.setWeight(1);
+		oLDBtn1.setMargin(false);
+
+		var oLDBtn2 = oBtn2.getLayoutData();
+		oLDBtn2.setWeight(9);
+		oLDBtn2.setMinWidth(84);
+		oLDBtn2.setMargin(false);
+
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			var $Row2 = jQuery.sap.byId("rflLayout-row1");
+			ok($Row2.length === 0, "Buttons in one row (min-width of button1 almost same as percentage-width)");
+
+			$layout.css("width", "140px");
+			setTimeout(function() {
+				$Row2 = jQuery.sap.byId("rflLayout-row1");
+				ok($Row2.length > 0, "Min-width of button bigger than percantage-width");
+				start();
+			}, 100);
+		}, 100);
+	}); */
+</script>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for
+		sap.ui.layout.ResponsiveFlowLayout</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+
+	<div class="sampleButtonBox" id="uiArea1"></div>
+</body>
+</html>

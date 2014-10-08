@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<!--
+  Tests the bootstrap variant where the script src starts with resources/ (NewDB scenario)
+
+  To be able to test the unusual URL 'resources/sap-ui-core.js', we use a trick.
+  A first script tag (pointing to a non-existent script), bears the sap-ui-bootstrap ID and 
+  the desired configuration. 
+  A second script tag without ID correctly loads the SAPUI5 core. 
+  When the core initializes, it uses the configuration from the first script, so we can test 
+  arbitrary configuration.
+  To make the core work even with the (expected, but nevertheless wrong) resourceRoot value,
+  we redirect anything below sap/ui to the correct path.  
+ 
+  Tricky, but works ;-)
+  
+  @author Frank Weigel    
+  -->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>...</title>
+    		
+		<!-- Initialization -->
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script>
+		    /*
+		     * FireFix 10 throws an exception for failed script loads and newer QUnit versions
+		     * register an onerror handler and report global errors as test failures.
+		     *
+		     * This test intentionally references non-existing files and therefore fails 
+			 * in FireFox 10, when newer QUnit versions are used.   
+		     *  
+		     * As a workarund, a 'Don't care' global event handler is used, which is honored by QUnit.
+		     */
+			window.onerror = function(e) { 
+				return true;
+			};
+		</script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	    <!-- 'broken' script tag that bears the configuration -->
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript" 
+				src="resources/this-script-by-intention-is-missing.js"
+				>
+		</script>
+
+    <!-- configure redirect for "sap.ui.*" resources -->
+    <script>
+    window["sap-ui-config"] = {
+    		resourceRoots : {
+    			"sap.ui" : "../../../../../../resources/sap/ui/"
+    		}
+    }
+    </script>		
+    <!-- correctly load the core -->
+		<script	type="text/javascript" src="../../../../../../resources/sap-ui-core.js"	></script>    
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			test("Check Resource Root", function() {
+				/* check that SAPUI5 has been loaded */
+				ok(!!window.jQuery, "jQuery has been loaded");
+				ok(!!jQuery.sap, "jQuery.sap namespace exists");
+				ok(!!window.sap, "sap namespace exists");
+				ok(!!sap.ui, "sap.ui namespace exists");
+				ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
+				ok(!!sap.ui.getCore(), "sap.ui.getCore() returns a value");
+				equal(jQuery.sap.getModulePath("", "/"), "resources/");
+			});
+
+		</script>
+		
+	</head>
+	
+  <body class="sapUiBody" role="application">
+		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.ui.m.SearchField</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+
+	var sf1, sf2,
+		sPlaceholder = "search for..",
+		sValue = "value",
+		sQuery = "",
+		sLive  = "",
+		aEvents = [];
+
+	function onSearch(oEvent){
+		sQuery = oEvent.getParameter("query");
+		aEvents.push({event: oEvent, query: sQuery});
+	};
+
+	function onLiveChange(oEvent){
+		sLive = oEvent.getParameter("newValue");
+		aEvents.push({event: oEvent, query: sLive});
+	};
+
+	function doTouchStart(sTarget, oParams){
+		var sEventName = "touchstart";
+		var oTarget = jQuery.sap.domById(sTarget);
+		var $Target = jQuery(oTarget);
+		var oEvent = jQuery.Event(sEventName);
+		oEvent.originalEvent = {};
+		oEvent.target = oTarget;
+		oEvent.srcElement = oTarget;
+		if(oParams){
+			for(var x in oParams){
+				oEvent[x] = oParams[x];
+				oEvent.originalEvent[x] = oParams[x];
+			}
+		}
+		var oElement = $Target.control(0);
+		if(oElement && oElement["on"+sEventName]){
+			oElement["on"+sEventName].apply(oElement, [oEvent]);
+		}
+	}
+
+	new sap.m.SearchField("sf1", {
+		placeholder: sPlaceholder,
+		value: sValue,
+		enabled: true,
+		search:onSearch,
+		liveChange: onLiveChange,
+	}).placeAt("content");
+
+	new sap.m.SearchField("sf2", {
+		placeholder: sPlaceholder,
+		value: sValue,
+		enabled: false,
+		showMagnifier: false,
+		search:onSearch,
+		liveChange: onLiveChange,
+	}).placeAt("content");
+
+	new sap.m.SearchField("sf3", {
+		placeholder: sPlaceholder,
+		value: sValue,
+		enabled: false,
+		showMagnifier: false,
+		search:onSearch,
+		liveChange: onLiveChange,
+		visible: false
+	}).placeAt("content");
+
+	qutils.delayTestStart();
+
+	module("Basic", {
+		setup : function() {
+			sf1 = sap.ui.getCore().getControl("sf1");
+			sf2 = sap.ui.getCore().getControl("sf2");
+			sf1Dom = jQuery.sap.domById("sf1-I");
+			sf2Dom = jQuery.sap.domById("sf2-I");
+		},
+		teardown : function() {
+			sf1 = null;
+			sf2 = null;
+			sf1Dom = null;
+			sf2Dom = null;
+			aEvents = null;
+		}
+	});
+
+	// test properties
+	test("Properties", function() {
+		equal(sf1.getValue(), sValue, "Value property, UI5");
+		equal(sf1Dom.value, sValue, "Value property, DOM");
+		equal(sf2.getPlaceholder(), sPlaceholder, "Placeholder property, UI5");
+		equal(sf2Dom.placeholder, sPlaceholder, "Placeholder property, DOM");
+		equal(sf2.getEnabled(), false, "Enabled property, UI5");
+		equal(sf2Dom.disabled, true, "Disabled property, DOM");
+		ok(jQuery(sf2Dom).hasClass("sapMSFIDisabled"),"CSS class name for \"disabled\" is set");
+		ok(!jQuery.sap.domById("sf3"), "Search field 3 should not be rendered");
+	});
+
+	/* test is only valid in MVI theme
+	TODO: remove if MVI theme remains deleted, re-enable otherwise
+	test("Magnifier icon", function() {
+		equal(sf1.getShowMagnifier(), true, "showMagnifier property, UI5");
+		equal(sf1.$().find(".sapMSFMG").size(), 1, "magnifier is present, DOM");
+		equal(sf2.getShowMagnifier(), false, "showMagnifier property, UI5");
+		equal(sf2.$().find(".sapMSFMG").size(), 0, "magnifier is not present, DOM");
+	});
+	*/
+
+	// test the "reset" button
+	asyncTest("ResetButton", function() {
+		ok(true, "Test for reset button started");
+		sQuery = "test";
+		aEvents = [];
+		// touch the reset button
+		doTouchStart("sf1-reset");
+		doTouchStart("sf2-reset");
+
+		setTimeout(function(){
+			ok(sf1.getValue() == "", "Value property should be empty after reset, UI5");
+			ok(sf1Dom.value == "", "Value property should be empty after reset, DOM");
+			ok(sQuery == "", "Search query parameter should be empty after reset, Event");
+			ok(sf2.getValue() == sValue, "Disabled searchField should not react on reset, UI5");
+			ok(sf2Dom.value == sValue, "Disabled searchField should not react on reset, DOM");
+			// check events: both search and liveChange should be fired
+			equal(aEvents.length, 2, "there should be 2 events in the log");
+			aEvents = [];
+			start();
+			}, 200);
+	});
+
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.ui.m.SearchField</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>

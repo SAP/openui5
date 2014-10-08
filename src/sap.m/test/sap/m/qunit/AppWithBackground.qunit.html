@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		
+		<title>qUnit Page for sap.m.App with Background Images</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+		var app = new sap.m.App("myFirstApp", {
+			initialPage: "page1",
+			pages: [ 
+				new sap.m.Page("page1", {
+					title: "Page 1"
+				})
+			],
+			backgroundImage: "../images/demo/nature/huntingLeopard.jpg",
+			backgroundColor: "rgb(255, 0, 0)",
+			backgroundOpacity: 0.6,
+			backgroundRepeat: true
+		});
+		app.placeAt("content");
+
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+
+
+		test("App rendered", function() {
+			ok(jQuery.sap.domById("myFirstApp"), "App should be rendered");
+			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		});
+
+		
+		test("Background Image", function() {
+			if (window.getComputedStyle) {
+				var appStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp"));
+				var bgStyle = window.getComputedStyle(jQuery.sap.domById("myFirstApp-BG"));
+				equal(appStyle.backgroundColor, "rgb(255, 0, 0)", "the custom background color should be set");
+				equal(appStyle.backgroundImage, "none", "no standard background image should be set");
+				ok(bgStyle.backgroundImage.indexOf("images/demo/nature/huntingLeopard.jpg") > -1, "Background image should be a Cheetah");
+				equal(bgStyle.backgroundRepeat, "repeat", "Background-repeat should be set to 'repeat'");
+				equal(Math.round(bgStyle.opacity*10,10)/10, 0.6, "Opacity should be right"); // rounding errors in Chrome...
+			} else {
+				ok(true, "older browsers don't matter");
+			}
+		});
+		
+
+	</script>
+
+	<style>
+		#page1-scroll {
+			padding: 100px;
+			box-sizing: border-box;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.App</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

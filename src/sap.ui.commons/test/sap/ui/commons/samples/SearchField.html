@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>SearchField - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.SearchField.gif">
+	<script src="../../../../../resources/sap-ui-core.js"
+			type="text/javascript" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+	</script>
+
+	<style type="text/css">
+		.MarginLeft {
+			margin-left: 10px;
+		}
+		.MarginTop {
+			margin-top: 5px;
+		}
+		.Output {
+			height: 100px;
+			border: 1px solid gray;
+		}
+	</style>
+
+	<script>
+		var iNextArea = 0;
+
+		var createAppearenceFlagCombinations = function(oBase, aVals, aResult){
+			var oBaseCopy1 = jQuery.extend({}, oBase);
+			var oBaseCopy2 = jQuery.extend({}, oBase);
+			var aValsCopy1 = aVals.concat([]);
+			var aValsCopy2 = aVals.concat([]);
+
+			var sVal = aVals[0];
+			aValsCopy1.shift();
+			aValsCopy2.shift();
+			if(sVal === "enableListSuggest"){ //forget the list expander config
+				aValsCopy1.shift();
+			}
+
+			oBaseCopy1[sVal] = false;
+			oBaseCopy2[sVal] = true;
+
+			if(aValsCopy1.length > 0){
+				createAppearenceFlagCombinations(oBaseCopy1, aValsCopy1, aResult);
+				createAppearenceFlagCombinations(oBaseCopy2, aValsCopy2, aResult);
+			}else{
+				aResult.push(oBaseCopy1);
+				aResult.push(oBaseCopy2);
+			}
+		};
+
+		var oPrefixes = {};
+
+		var createSuggestFunction = function(oSearchControl, fCallback){
+			return function(oEvent){
+				fCallback(oEvent, oSearchControl);
+			};
+		};
+
+		var createSearchField = function(sDesc, oParams, fSuggest){
+			if(!sDesc){
+				var aBuffer = [];
+				for(var x in oParams){
+					aBuffer.push(x, "=", oParams[x], ", ");
+				}
+				var sDesc = aBuffer.join("");
+				if(sDesc.length > 0){
+					sDesc = sDesc.substring(0, sDesc.length-2);
+				}
+				sDesc = "Search Field with {"+sDesc+"}";
+			}
+
+			var iTarget = iNextArea;
+			iNextArea++;
+			oParams.search = function(oEvent){
+				alert("Search triggered: " + oEvent.getParameter("query"));
+			};
+
+			oParams.width = "200px";
+
+			var oSearch = new sap.ui.commons.SearchField("control"+iTarget, oParams);
+			if(fSuggest) {
+				oSearch.attachSuggest(createSuggestFunction(oSearch, fSuggest));
+			}
+			var oLabel = new sap.ui.commons.Label({text: sDesc, labelFor: oSearch});
+			oLabel.addStyleClass("MarginLeft");
+			oSearch.placeAt("area"+iTarget);
+			oLabel.placeAt("area"+iTarget);
+			return oSearch;
+		};
+
+		var basicSuggest = function(oEvent, oSearchControl){
+			var sVal = oEvent.getParameter("value");
+			var aSuggestions = [];
+			var aVal = ["a", "b", "c"];
+			for(var i=0; i<aVal.length; i++){
+				for(var j=0; j<aVal.length; j++){
+					for(var k=0; k<aVal.length; k++){
+						aSuggestions.push(sVal+"_"+aVal[i]+aVal[j]+aVal[k]);
+					}
+				}
+			}
+			setTimeout(function(){oSearchControl.suggest(sVal, aSuggestions);}, 50);
+		};
+
+		var basicSuggest2 = function(oEvent, oSearchControl){
+			var sVal = oEvent.getParameter("value");
+			var aSuggestions = [];
+			var aVal = ["a", "b", "c"];
+			for(var i=0; i<aVal.length; i++){
+				for(var j=0; j<aVal.length; j++){
+					for(var k=0; k<aVal.length; k++){
+						aSuggestions.push(aVal[i]+aVal[j]+aVal[k]+"_"+sVal);
+					}
+				}
+			}
+			setTimeout(function(){oSearchControl.suggest(sVal, aSuggestions);}, 50);
+		};
+
+
+		jQuery(function(){
+			var aAppearenceFlags = ["enableListSuggest", "showListExpander", "enableClear", "editable", "enabled", "showExternalButton", "enableFilterMode"];
+			var iAreas = Math.pow(2, aAppearenceFlags.length-1) + Math.pow(2, aAppearenceFlags.length-2) + 7;
+
+			for(var i=0; i<iAreas; i++){
+				jQuery("body").append("<div id=\"area"+i+"\" class=\"MarginTop\"></div>");
+			}
+			jQuery("body").append("<div id=\"output\" class=\"MarginTop Output\"></div>");
+
+			var aResult = [];
+			createAppearenceFlagCombinations({}, aAppearenceFlags, aResult);
+
+			for(var i=0; i<aResult.length; i++){
+				createSearchField(null, aResult[i], aResult[i].enableListSuggest ? basicSuggest : null);
+			}
+
+			createSearchField(null, {enableListSuggest: true, editable: true, enabled: true, showExternalButton: false, visibleItemCount: 10}, basicSuggest);
+			createSearchField(null, {enableListSuggest: true, editable: true, enabled: true, showExternalButton: false, maxSuggestionItems: 5}, basicSuggest);
+
+			createSearchField("Search field with suggestion list with Non-Prefix Suggest (for Exact)", {visibleItemCount: 10, maxSuggestionItems: 5}, basicSuggest2);
+
+			createSearchField("Search field without list suggest but with 'live search'", {
+				enableListSuggest: false,
+				suggest: function(oEvent){
+					jQuery("#output").html("<b>Suggestion requested:</b><br>" + oEvent.getParameter("value"));
+				}
+			});
+
+			var oSearch = createSearchField("Search field with suggestion list from Wikipedia (JSON)", {enableListSuggest: true, editable: true, enabled: true, showExternalButton: false, visibleItemCount: 10, showListExpander: false});
+			oSearch.setSearchProvider(new sap.ui.core.search.OpenSearchProvider({icon: "http://en.wikipedia.org/favicon.ico", suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}", suggestType: "json"}));
+			oSearch = createSearchField("Search field with suggestion list from Wikipedia (JSON, disabled)", {enableListSuggest: true, editable: true, enabled: false, showExternalButton: false, visibleItemCount: 10, showListExpander: false});
+			oSearch.setSearchProvider(new sap.ui.core.search.OpenSearchProvider({icon: "http://en.wikipedia.org/favicon.ico", suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}", suggestType: "json"}));
+			oSearch = createSearchField("Search field with suggestion list from Wikipedia (XML)", {enableListSuggest: true, editable: true, enabled: true, showExternalButton: false, visibleItemCount: 10, showListExpander: false});
+			oSearch.setSearchProvider(new sap.ui.core.search.OpenSearchProvider({suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&format=xml&search={searchTerms}", suggestType: "xml"}));
+		});
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<h3>This is a technical test page. More examples for the search field can be found <a href="../SearchField.html">here</a>.</h3>
+</body>
+</html>

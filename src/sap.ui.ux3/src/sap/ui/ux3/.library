@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.ux3</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+  
+  <documentation>Controls that implement the SAP User Experience (UX) Guidelines 3.0</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.commons</libraryName>
+    </dependency>
+  </dependencies>
+  
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.ux3" />
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.ux3.js." />
+    </jscoverage>
+  </appData>
+
+</library>

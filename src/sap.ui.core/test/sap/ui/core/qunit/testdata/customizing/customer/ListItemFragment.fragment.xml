@@ -1,0 +1,1 @@
+<ListItem xmlns="sap.ui.core" text="(Customer's replacement ListItem)" additionalText="{name}" />

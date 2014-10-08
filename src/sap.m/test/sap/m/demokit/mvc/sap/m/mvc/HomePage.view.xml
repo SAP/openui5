@@ -1,0 +1,14 @@
+<mvc:View controllerName="sap.m.mvc.HomePage" 
+    xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	
+    <Page id="homePage" title="Countries">
+        <List items="{/countries}">
+            <StandardListItem title="{name}" description="{short}" type="Active" press="listItemTriggered">
+                <customData>  <!-- this is an OPTIONAL way to bind additional data to each list item; when the item is tapped, this data is read in the Controller -->
+                    <core:CustomData key="id" value="{short}" />
+                </customData>
+            </StandardListItem>
+        </List>
+    </Page>
+
+</mvc:View>

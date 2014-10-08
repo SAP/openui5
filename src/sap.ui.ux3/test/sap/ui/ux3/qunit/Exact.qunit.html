@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.ux3.Exact
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Exact - sap.ui.ux3</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.Exact.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+		data-sap-ui-language=en>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<script src="../resources/ExactData.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+		var oExact1 = new sap.ui.ux3.Exact("exact1", {tooltip: "Some text"});
+		oExact1.setSettingsMenu(new sap.ui.commons.Menu("menu"));
+		oExact1.placeAt("uiArea1");
+		var oExact2 = new sap.ui.ux3.Exact("exact2", {resultText: "Some result text"});
+
+		//Remember the internal controls
+		var oSearchTextField = oExact1._search_input;
+		var oBrowser = oExact1._browser;
+		var oResultArea = oExact1._resultArea;
+		var oResultText = oExact1._resultText;
+
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+	
+		qutils.delayTestStart();
+		
+		module("API");
+
+		test("Default Values", function() {
+			equals(oExact1.getResultText(), "", "Default 'resultText':");
+			equals(oExact2.getSettingsMenu(), null, "Default 'settingsMenu':");
+			equals(oExact2.getTooltip(), null, "Default 'tooltip':");
+			equals(oExact1.getResultArea().getId(), oResultArea.getId(), "Default 'resultArea':");
+		 });
+
+		test("Custom Values", function() {
+			equals(oExact2.getResultText(), "Some result text", "Custom 'resultText':");
+			equals(oExact1.getSettingsMenu().getId(), "menu", "Custom 'settingsMenu':");
+			equals(oExact1.getTooltip(), "Some text", "Custom 'tooltip':");
+		});
+
+		test("Aggregation 'attributes'", function() {
+			equals(oExact2.getAttributes().length, 0, "Initial number of attributes");
+			oExact2.addAttribute(new sap.ui.ux3.ExactAttribute("aggtest1"));
+			equals(oExact2.getAttributes().length, 1, "Number of attributes after add");
+			oExact2.insertAttribute(new sap.ui.ux3.ExactAttribute("aggtest2"), 0);
+			equals(oExact2.getAttributes().length, 2, "Number of attributes after insert");
+			equals(oExact2.getAttributes()[0].getId(), "aggtest2", "First Attribute");
+			equals(oExact2.getAttributes()[1].getId(), "aggtest1", "Second Attribute");
+			oExact2.removeAttribute(0);
+			equals(oExact2.getAttributes().length, 1, "Number of attributes after remove");
+			equals(oExact2.getAttributes()[0].getId(), "aggtest1", "First Attribute");
+			oExact2.removeAllAttributes();
+			equals(oExact2.getAttributes().length, 0, "Number of attributes after removeAll");
+		});
+
+		
+		module("Interaction Flow");
+	
+		test("Initial State", function() {
+			equals(oSearchTextField.getValue(), "", "Initial text State of Search TextField:");
+			ok(oSearchTextField.getDomRef(), "Initial visibility State of Search TextField:");
+			ok(!oBrowser.getDomRef(), undefined, "Initial visibility State of Browse Area:");
+			ok(!oResultText.getDomRef(), undefined, "Initial visibility State of Result Text:");
+			ok(!oResultArea.getDomRef(), undefined, "Initial visibility State of Result Area:");
+		});
+
+		asyncTest("Trigger Search", function() {
+			oSearchTextField.setValue("Some search query");
+			var handler = function(oControlEvent){
+				start();
+				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search event:");
+				oExact1.detachSearch(handler);
+
+				//Fill the Exact control with some attributes
+				oExact1.setResultText("Some result text");
+				exactTestData.initAttributesForQUnit(oExact1);
+			};
+			oExact1.attachSearch(handler);
+			oSearchTextField.getDomRef().focus();
+			qutils.triggerKeyboardEvent(oSearchTextField.getFocusDomRef(), "ENTER");
+		});
+
+		asyncTest("State after Search", function() {
+			setTimeout(function(){
+				start();
+				equals(oSearchTextField.getValue(), "Some search query", "Text State of Search TextField:");
+				ok(oSearchTextField.getDomRef(), "Visibility State of Search TextField:");
+				ok(oBrowser.getDomRef(), "Visibility State of Browse Area:");
+				ok(oResultText.getDomRef(), "Visibility State of Result Text:");
+				ok(oResultArea.getDomRef(), "Visibility State of Result Area:");
+	
+				equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
+				var aSubLists = oBrowser._rootList.getSubLists();
+				equals(aSubLists.length, 2, "Number of visible 1st level lists:");
+				equals(aSubLists[0].getData(), "att1", "List at position 0:");
+				equals(aSubLists[1].getData(), "att2", "List at position 1:");
+				for(var i=0; i<aSubLists.length; i++){
+					var aSubSubLists = aSubLists[i].getSubLists();
+					if(i==0){
+						ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+						equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
+					}else{
+						ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+					}
+				}
+			}, 1000);
+		});
+
+		asyncTest("Check Refine Search", function() {
+			var handler = function(oControlEvent){
+				equals(oControlEvent.getParameter("query"), "Some search query", "Value of query parameter of search refine event:");
+				equals(oControlEvent.getParameter("changedAttribute").getId(), "att3", "Id of selected attribute:");
+				equals(oControlEvent.getParameter("changedAttribute").getSelected(), true, "Selection state of selected attribute:");
+				equals(oControlEvent.getParameter("allSelectedAttributes").length, 4, "Number of selected attributes:");
+
+				setTimeout(function(){
+					start();
+					equals(oBrowser.getAttributes().length, 4, "Number of top level attributes:");
+					var aSubLists = oBrowser._rootList.getSubLists();
+					equals(aSubLists.length, 3, "Number of visible 1st level lists:");
+					equals(aSubLists[0].getData(), "att1", "List at position 0:");
+					equals(aSubLists[1].getData(), "att2", "List at position 1:");
+					equals(aSubLists[2].getData(), "att3", "List at position 2:");
+					for(var i=0; i<aSubLists.length; i++){
+						var aSubSubLists = aSubLists[i].getSubLists();
+						if(i==0){
+							ok(aSubSubLists.length == 1, "List " +aSubLists[i].getData()+ " contains 1 sub list.");
+							equals(aSubSubLists[0].getData(), "att1-1", "Sub-List at position 0:");
+						}else{
+							ok(aSubSubLists.length == 0, "List " +aSubLists[i].getData()+ " contains no sub lists.");
+						}
+					}
+				}, 1000);
+				
+				oExact1.detachRefineSearch(handler);
+			};
+			oExact1.attachRefineSearch(handler);
+
+			qutils.triggerMouseEvent(jQuery(jQuery("#"+oBrowser._rootList._lb.getId()).children()[0]).children()[2], "click");
+		});
+	
+	</script>
+  
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.Exact</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+</body>
+</html>

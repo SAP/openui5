@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.Dialog</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		
+
+		<script language="javascript">
+			sinon.config.useFakeTimers = false;
+
+			sap.ui.test.qunit.delayTestStart();
+
+			var core = sap.ui.getCore();
+
+			var oButton = new sap.m.Button({
+				text : "ResponsivePopover",
+				press : function() {
+				}
+			});
+
+			var page = new sap.m.Page("myFirstPage", {
+				title : "ResponsivePopover Test",
+				showNavButton : true,
+				enableScrolling : true,
+				content : oButton
+			});
+
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
+
+			//create the list
+			var oList = new sap.m.List({
+			});
+
+			var data = {
+				navigation : [ {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					icon : "images/travel_expend.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					icon : "images/travel_expense_report.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					icon : "images/travel_request.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					icon : "images/wounds_doc.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					icon : "images/settings.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}]
+			};
+
+			var oItemTemplate1 = new sap.m.StandardListItem({
+				title : "{title}",
+				description : "{description}",
+				icon : "{icon}",
+				iconInset : "{iconInset}",
+				type : "{type}"
+			});
+
+			function bindListData(data, itemTemplate, list) {
+				var oModel = new sap.ui.model.json.JSONModel();
+				// set the data for the model
+				oModel.setData(data);
+				// set the model to the list
+				list.setModel(oModel);
+
+				// bind Aggregation
+				list.bindAggregation("items", "/navigation", itemTemplate);
+			}
+
+			bindListData(data, oItemTemplate1, oList)
+//end of the list creation
+
+			var oBeginButton = new sap.m.Button({
+				text: "Action1",
+				type: sap.m.ButtonType.Reject,
+				press: function(){
+					
+				}
+			});
+
+			var oEndButton = new sap.m.Button({
+				text: "Action2",
+				type: sap.m.ButtonType.Accept,
+				press: function(){
+				}
+			});
+
+			app.addPage(page).placeAt("content");
+
+			var placement = sap.m.PlacementType.Bottom,
+				showHeader = false,
+				title = "Adaptive now",
+				icon = "sap-icon://manager",
+				modal = true,
+				offsetX = 10,
+				offsetY = 20,
+				contentWidth = "100px",
+				contentHeight = "200px",
+				horScroll = false,
+				verScroll = false,
+				showCloseButton = true;
+
+			test("Desktop and tablet mode", function() {
+				this.stub(sap.ui.Device, "system", {desktop: true});
+
+				var oResponsivePopover = new sap.m.ResponsivePopover({
+					placement: placement,
+					title: title,
+					showHeader: showHeader,
+					icon: icon,
+					modal: modal,
+					offsetX: offsetX,
+					offsetY: offsetY,
+					contentWidth: contentWidth,
+					contentHeight: contentHeight,
+					horizontalScrolling: horScroll,
+					verticalScrolling: verScroll,
+					showCloseButton: showCloseButton,
+					beginButton: oBeginButton,
+					endButton: oEndButton,
+					initialFocus: oList,
+					beforeOpen: function(oEvent){
+						jQuery.sap.log.info("before popover opens!!!");
+					},
+					afterOpen: function(oEvent){
+						jQuery.sap.log.info("popover is opened finally!!!");
+					},
+					beforeClose: function(oEvent){
+						jQuery.sap.log.info("before popover closes!!!");
+					},
+					afterClose: function(oEvent){
+						jQuery.sap.log.info("popover is closed properly!!!");
+					},
+					content: [
+						oList
+					]
+				});
+
+				ok(oResponsivePopover._oControl instanceof sap.m.Popover, "ResponsivePopover should contain a popover inside");
+				equal(oResponsivePopover._oControl.getPlacement(), placement, "Placement should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getTitle(), title, "Title should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getShowHeader(), showHeader, "ShowHeader should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getModal(), modal, "Modal should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getOffsetX(), offsetX, "OffsetX should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getOffsetY(), offsetY, "OffsetY should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getContentWidth(), contentWidth, "ContentWidth should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getContentHeight(), contentHeight, "ContentHeight should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getHorizontalScrolling(), horScroll, "HorizontalScrolling should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getVerticalScrolling(), verScroll, "VerticalScrolling should be passed to inner popover");
+				equal(oResponsivePopover._oControl.getInitialFocus(), oList.getId(), "InitialFocus should be passed to the inner popover");
+				strictEqual(oResponsivePopover._oControl.getFooter().getContent()[1], oBeginButton, "BeginButton should be passed to inner popover");
+				strictEqual(oResponsivePopover._oControl.getFooter().getContent()[2], oEndButton, "EndButton should be passed to inner popover");
+
+				oResponsivePopover.destroy();
+			});
+
+			asyncTest("Phone mode", function(){
+				this.stub(sap.ui.Device, "system", {phone: true});
+
+				var oBeginButton = new sap.m.Button();
+				var oEndButton = new sap.m.Button();
+				var oInput = new sap.m.Input();
+
+				var oResponsivePopover = new sap.m.ResponsivePopover({
+					placement: placement,
+					title: title,
+					showHeader: true,
+					icon: icon,
+					modal: modal,
+					offsetX: offsetX,
+					offsetY: offsetY,
+					contentWidth: contentWidth,
+					contentHeight: contentHeight,
+					horizontalScrolling: horScroll,
+					verticalScrolling: verScroll,
+					showCloseButton: showCloseButton,
+					initialFocus: oInput,
+					beginButton: oBeginButton,
+					endButton: oEndButton,
+					beforeOpen: function(oEvent){
+						jQuery.sap.log.info("before popover opens!!!");
+					},
+					afterOpen: function(oEvent){
+						jQuery.sap.log.info("popover is opened finally!!!");
+					},
+					beforeClose: function(oEvent){
+						jQuery.sap.log.info("before popover closes!!!");
+					},
+					afterClose: function(oEvent){
+						jQuery.sap.log.info("popover is closed properly!!!");
+					},
+					content: [
+						oInput
+					]
+				});
+				ok(oResponsivePopover._oControl instanceof sap.m.Dialog, "ResponsivePopover should be a dialog now");
+				equal(oResponsivePopover._oControl.getStretch(), true, "Dialog should have stretch enabled");
+				equal(oResponsivePopover._oControl.getTitle(), title, "Title should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getIcon(), icon, "Icon should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getShowHeader(), true, "ShowHeader should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getContentWidth(), contentWidth, "ContentWidth should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getContentHeight(), contentHeight, "ContentHeight should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getHorizontalScrolling(), horScroll, "HorizontalScrolling should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getVerticalScrolling(), verScroll, "VerticalScrolling should be passed to inner dialog");
+				equal(oResponsivePopover._oControl.getInitialFocus(), oInput.getId(), "InitialFocus should be passed to the inner dialog");
+				strictEqual(oResponsivePopover._oControl.getBeginButton(), oBeginButton, "BeginButton should be passed to inner dialog");
+				strictEqual(oResponsivePopover._oControl.getEndButton(), oEndButton, "EndButton should be passed to inner dialog");
+				oResponsivePopover.openBy(oButton);
+
+				setTimeout(function(){
+					ok(jQuery.sap.byId(oResponsivePopover.getId() + "-closeButton").closest("header")[0], "CloseButton should be rendered");
+					oResponsivePopover.close();
+					oResponsivePopover.destroy();
+					start();
+				}, 100);
+			});
+
+			asyncTest("Phone mode with NavContainer content", function(){
+				this.stub(sap.ui.Device, "system", {phone: true});
+				var oNavContainer = new sap.m.NavContainer({
+					pages: [
+								new sap.m.Page("page1", {
+									title: "page1"
+								}),
+								new sap.m.Page("page2", {
+									title: "page2"
+								})
+							]
+				});
+
+				var oBeginButton = new sap.m.Button();
+				var oEndButton = new sap.m.Button();
+
+				var oResponsivePopover = new sap.m.ResponsivePopover({
+					placement: placement,
+					title: title,
+					showHeader: false,
+					icon: icon,
+					modal: modal,
+					offsetX: offsetX,
+					offsetY: offsetY,
+					contentWidth: contentWidth,
+					contentHeight: contentHeight,
+					horizontalScrolling: horScroll,
+					verticalScrolling: verScroll,
+					showCloseButton: showCloseButton,
+					beginButton: oBeginButton,
+					endButton: oEndButton,
+					beforeOpen: function(oEvent){
+						jQuery.sap.log.info("before popover opens!!!");
+					},
+					afterOpen: function(oEvent){
+						jQuery.sap.log.info("popover is opened finally!!!");
+					},
+					beforeClose: function(oEvent){
+						jQuery.sap.log.info("before popover closes!!!");
+					},
+					afterClose: function(oEvent){
+						jQuery.sap.log.info("popover is closed properly!!!");
+					},
+					content: [
+						oNavContainer
+					]
+				});
+
+				oResponsivePopover.openBy(oButton);
+				setTimeout(function(){
+					ok(jQuery.sap.byId(oResponsivePopover.getId() + "-closeButton").closest("#page1-intHeader")[0], "CloseButton should be rendered in page1");
+					oNavContainer.to("page2");
+					setTimeout(function(){
+						ok(jQuery.sap.byId(oResponsivePopover.getId() + "-closeButton").closest("#page2-intHeader")[0], "CloseButton should be rendered in page2");
+						oResponsivePopover.close();
+						oResponsivePopover.destroy();
+						start();
+					}, 1000);
+				}, 100);
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.ResponsivePopover</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

@@ -1,0 +1,36 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified">
+		<u:Menu  
+			itemSelect="handleMenuItemPress">
+			<u:MenuItem 
+				text="My 1st Item" 
+				icon="sap-icon://save"/>
+			<u:MenuItem 
+				text="My 2nd Item" />
+			<u:MenuItem 
+				text="My 3rd Item">
+				<u:Menu>
+					<u:MenuItem 
+						text="1st Sub Item" />
+					<u:MenuItem 
+						text="2nd Sub Item" />
+					<u:MenuItem 
+						text="3rd Sub Item but inactive" 
+						enabled="false" />	
+				</u:Menu>
+			</u:MenuItem>
+			
+			<u:MenuItem 
+				text="My 4th Item" 
+				startsSection="true" />
+			<u:MenuItem 
+				text="My 5th Item" />
+			<u:MenuTextFieldItem 
+				label="Find" 
+				enabled="true" 
+				startsSection="true" 
+				icon="sap-icon://filter"/>
+		</u:Menu>
+</core:FragmentDefinition>

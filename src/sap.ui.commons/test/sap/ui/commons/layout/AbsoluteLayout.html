@@ -1,0 +1,294 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>AbsoluteLayout - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.layout.AbsoluteLayout.gif"></link>
+		<script src="../../../../../resources/sap-ui-core.js"
+			type="text/javascript" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			#layoutUIArea, #cloneUIArea {
+				height: 500px;
+				position: relative;
+				overflow: auto;
+				border: 1px solid black;
+			}
+
+			.custPad {
+				padding-left: 5px;
+			}
+		</style>
+
+		<script type="text/javascript">
+			//Helper Functions
+
+			var counter = 0;
+
+			var addForm = function(oMatrixLyt, sId, sLabel, sText, aAddCtrls){
+				var tf = new sap.ui.commons.TextField(sId, {width:"100%"});
+				var l = new sap.ui.commons.Label(sId+"_label", {text: (sLabel ? sLabel : sId)+":", design: "Bold"});
+				if(sText) tf.setValue(sText);
+				var args = [null,l, tf];
+				if(aAddCtrls) args = args.concat(aAddCtrls);
+				sap.ui.commons.layout.MatrixLayout.prototype.createRow.apply(oMatrixLyt, args);
+			};
+
+			var addTitle = function(oMatrixLyt, sId, sText){
+				if(sText){
+					var titleCell = new sap.ui.commons.layout.MatrixLayoutCell(sId+"Cell1", {colSpan: 4});
+					titleCell.addContent(new sap.ui.commons.TextView(sId+"_Txt", {text: sText, design:"H3"}));
+					oMatrixLyt.createRow(titleCell);
+				}
+				var sepCell = new sap.ui.commons.layout.MatrixLayoutCell(sId+"Cell2", {colSpan: 4});
+				sepCell.addContent(new sap.ui.commons.HorizontalDivider(sId+"_Sep"));
+				oMatrixLyt.createRow(sepCell);
+			};
+
+			var val = function(sId){
+				var oControl = sap.ui.getCore().getControl(sId);
+				if(oControl.getValue){
+					var value = oControl.getValue();
+					return value ? value : null;
+				}
+				return null;
+			};
+
+			var addNewChild = function(sControl, sTop, sLeft, sRight, sBottom, sWidth, sHeight, bAlert, oLayout){
+				var fConstructor = jQuery.sap.getObject(sControl);
+				if(!fConstructor){
+					if(bAlert) alert("Control '"+sControl+"' not found.");
+					return;
+				}
+				var oControl = new fConstructor("control_"+counter++);
+
+				switch(sControl){
+					case "sap.ui.commons.Button":
+					case "sap.ui.commons.Label":
+					case "sap.ui.commons.Link":
+					case "sap.ui.commons.CheckBox":
+					case "sap.ui.commons.RadioButton":
+					case "sap.ui.commons.TextView":
+						oControl.setText(sControl.substring(sControl.lastIndexOf(".")+1));
+						break;
+					case "sap.ui.commons.Image":
+						oControl.setSrc("../images/SAPLogo.gif");
+						break;
+					case "sap.ui.commons.ComboBox":
+					case "sap.ui.commons.ListBox":
+					case "sap.ui.commons.DropdownBox":
+						for(var i=0; i<5; i++){
+							var oItem = new sap.ui.core.ListItem();
+					    	oItem.setText("Item "+i);
+					    	oControl.addItem(oItem);
+						}
+						break;
+					case "sap.ui.commons.TabStrip":
+						for(var i=0; i<3; i++){
+							oControl.createTab("Tab "+i, new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));
+						}
+						break;
+					case "sap.ui.commons.MenuBar":
+						for(var i=0; i<3; i++){
+							var oItem = new sap.ui.commons.MenuItem();
+					    	oItem.setText("Item "+i);
+					    	oControl.addItem(oItem);
+						}
+						break;
+					case "sap.ui.commons.Panel":
+						oControl.setText("Panel");
+						oControl.addContent(new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));
+						break;
+					case "sap.ui.commons.ProgressIndicator":
+						oControl.setPercentValue(30);
+						oControl.setDisplayValue("30%");
+						break;
+					case "sap.ui.commons.RoadMap":
+						for(var i=0; i<3; i++){
+							var oStep = new sap.ui.commons.RoadMapStep("control_"+counter++);
+							oStep.setLabel("Step "+i);
+					    	oControl.addStep(oStep);
+						}
+						break;
+					case "sap.ui.commons.Toolbar":
+						for(var i=0; i<3; i++){
+					    	oControl.addItem(new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));
+						}
+						break;
+					case "sap.ui.commons.Accordion":
+						for(var i=0; i<3; i++){
+							var oSection = new sap.ui.commons.AccordionSection("control_"+counter++);
+							oSection.setTitle("Section "+i);
+							oSection.addContent(new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));
+							oControl.addSection(oSection);
+						}
+						break;
+					case "sap.ui.commons.Splitter":
+						oControl.addFirstPaneControl(new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));	
+						oControl.addSecondPaneControl(new sap.ui.commons.Button("control_"+counter++, {text:"Button"}));
+						oControl.setSplitterPosition("25%");
+						break;
+				}
+
+				var args = {};
+				if(sTop && sTop != "center") args.top = sTop;
+				if(sLeft && sLeft != "center") args.left = sLeft;
+				if(sRight && sRight != "center") args.right = sRight;
+				if(sBottom && sBottom != "center") args.bottom = sBottom;
+				if(sTop == "center") args.centerVertically = true;
+				if(sLeft == "center") args.centerHorizontally = true;
+				oLayout.addContent(oControl, args);
+
+				var message = "Control '"+sControl+"' does not have the following properties,\nso it is not possible to set them:\n";
+				var bMessageChanged = false;
+				if(sWidth){
+					if(oControl.setWidth){
+						oControl.setWidth(sWidth);
+					}else{
+						message = message + "  * width\n";
+						bMessageChanged = true;
+					}
+				}
+				if(sHeight){
+					if(oControl.setHeight){
+						oControl.setHeight(sHeight);
+					}else{
+						message = message + "  * height\n";
+						bMessageChanged = true;
+					}
+				}
+				if(bAlert && bMessageChanged) alert(message);
+				return oControl;
+			};
+
+			var addDefaultContent = function(oLayout){
+				addNewChild("sap.ui.commons.Button", "10px", null, "5px", null, null, null, false, oLayout);
+				addNewChild("sap.ui.commons.Button", null, null, null, null, null, null, false, oLayout);
+				addNewChild("sap.ui.commons.Button", null, null, "50px", null, null, null, false, oLayout);
+				addNewChild("sap.ui.commons.Button", "40px", "10px", null, null, null, null, false, oLayout);
+				var b1 = addNewChild("sap.ui.commons.Button", "150px", "10px", "10px", null, "auto", null, false, oLayout);
+				b1.attachPress(function(){b1.setText(b1.getText().substring(0, b1.getText().length-1));});
+				var b2 = addNewChild("sap.ui.commons.Button", "175px", "10px", "10px", null, "200px", null, false, oLayout);
+				b2.attachPress(function(){b2.setText(b2.getText().substring(0, b2.getText().length-1));});
+				addNewChild("sap.ui.commons.RatingIndicator", "100px", "0px", "0px", null, null, null, false, oLayout);
+				addNewChild("sap.ui.commons.Slider", "200px", "0px", "0px", null, "200px", null, false, oLayout);
+				addNewChild("sap.ui.commons.Slider", "250px", "0px", "0px", null, "auto", null, false, oLayout);
+				addNewChild("sap.ui.commons.Slider", "300px", "0px", "0px", null, null, null, false, oLayout);
+				addNewChild("sap.ui.commons.Image", "50px", "40%", "40%", null, null, "40px", false, oLayout);
+			};
+
+			//Create Layout and add some defaults
+
+			var layout = new sap.ui.commons.layout.AbsoluteLayout("layout");
+			layout.placeAt("layoutUIArea");
+			addDefaultContent(layout);
+
+			//Configuration Area
+
+			var oPanel = new sap.ui.commons.Panel("configPanel");
+			oPanel.setText("Configuration");
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("configLyt", {width: "360px", columns: 3});
+			oPanel.addContent(oLyt);
+			oPanel.placeAt("configChildUIArea");
+			oLyt.setWidths("70px", "90px", "200px");
+			oLyt.createRow();
+			addTitle(oLyt, "configHeader", "Modify Child Controls");
+			addForm(oLyt, "control", "Control", "sap.ui.commons.Button");
+			addForm(oLyt, "width");
+			addForm(oLyt, "height");
+			addTitle(oLyt, "configDiv1");
+			addForm(oLyt, "left");
+			addForm(oLyt, "right");
+			addForm(oLyt, "top");
+			addForm(oLyt, "bottom");
+			addTitle(oLyt, "configDiv2");
+			var addButton = new sap.ui.commons.Button("addchild", {text: "Add"});
+			var removeButton = new sap.ui.commons.Button("removechildren", {text: "Remove All"});
+			var changeButton = new sap.ui.commons.Button("changeChild", {text: "Change"});
+			oLyt.createRow(addButton, changeButton, removeButton);
+			changeButton.attachPress(function(){
+				var sId = val("control");
+				var oControl = sap.ui.getCore().byId(sId);
+				if(oControl && oControl.getParent() instanceof sap.ui.commons.layout.PositionContainer && oControl.getParent().getParent()){
+					var oLayout = oControl.getParent().getParent();
+					var args = {};
+					var sTop = val("top");
+					if(sTop) args.top = sTop;
+					var sLeft = val("left");
+					if(sLeft) args.left = sLeft;
+					var sRight = val("right");
+					if(sRight) args.right = sRight;
+					var sBottom = val("bottom");
+					if(sBottom) args.bottom = sBottom;
+					oLayout.setPositionOfChild(oControl, args);
+				}
+			});
+			addButton.attachPress(function(){
+				addNewChild(val("control"),
+						val("top"),
+						val("left"),
+						val("right"),
+						val("bottom"),
+						val("width"),
+						val("height"),
+						true,
+						layout);
+				addNewChild(val("control"),
+						val("top"),
+						val("left"),
+						val("right"),
+						val("bottom"),
+						val("width"),
+						val("height"),
+						false,
+						layout2);
+				addNewChild(val("control"),
+						val("top"),
+						val("left"),
+						val("right"),
+						val("bottom"),
+						val("width"),
+						val("height"),
+						false,
+						layout3);
+			});
+			removeButton.attachPress(function(){
+				layout.destroyContent();
+				layout2.destroyContent();
+				layout3.destroyContent();
+			});
+
+			//Embedding Area
+
+			var layout2 = new sap.ui.commons.layout.AbsoluteLayout("layout2");
+			addDefaultContent(layout2);
+
+			var oContainer = new sap.ui.commons.Panel("container", {width:"500px", height:"400px"});
+			oContainer.addContent(layout2);
+
+			oContainer.placeAt("embeddingUIArea");
+
+			//Clone Area
+			var layout3 = layout.clone("Suffix");
+			layout3.placeAt("cloneUIArea");
+		</script>
+	</head>
+
+	<body class="sapUiBody">
+		<h1 class="custPad">Testpage for <code>sap.ui.commons.layout.AbsoluteLayout</code></h1>
+		<div class="custPad" id="configChildUIArea"></div>
+		<br>
+		<div id="layoutUIArea"></div>
+		<br>
+		<div id="embeddingUIArea"></div>
+		<div id="cloneUIArea"></div>
+	</body>
+</html>

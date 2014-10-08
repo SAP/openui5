@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.ExactBrowser,sap.ui.ux3.ExactAttribute">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="Control ExactBrowser" />
+		<title>ExactBrowser - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+				data-sap-ui-language="en"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='samplescript1'>
+//Create some test data
+var oTestData = {attributes: [
+	{name: "Country", selected: true, attributes: [
+		{name: "Germany", width: 210, attributes: [{name: "Baden-Württemberg"}, {name: "Bayern"}, {name: "Berlin"}, {name: "Brandenburg"}, {name: "Bremen"},
+		                                              {name: "Hamburg"}, {name: "Hessen"}, {name: "Mecklenburg-Vorpommern"}, {name: "Niedersachsen"},
+		                                              {name: "Nordrhein-Westfalen"}, {name: "Rheinland-Pfalz"}, {name: "Saarland"}, {name: "Sachsen"},
+		                                              {name: "Sachsen-Anhalt"}, {name: "Schleswig-Holstein"}, {name: "Thüringen"}]},
+		{name: "USA", attributes: [{name: "Alabama"}, {name: "Alaska"}, {name: "Arizona"}, {name: "Arkansas"}, {name: "California"},
+		                                          {name: "Colorado"}, {name: "Connecticut"}, {name: "Delaware"}, {name: "Florida"}, {name: "Georgia"},
+		                                          {name: "Hawaii"}, {name: "Idaho"}, {name: "Illinois"}, {name: "Indiana"}, {name: "Iowa"},
+		                                          {name: "Kansas"}, {name: "Kentucky"}, {name: "Louisiana"}, {name: "Maine"}, {name: "Maryland"},
+		                                          {name: "Massachusetts"}, {name: "Michigan"}, {name: "Minnesota"}, {name: "Mississippi"}, {name: "Missouri"},
+		                                          {name: "Montana"}, {name: "Nebraska"}, {name: "Nevada"}, {name: "New Hampshire"}, {name: "New Jersey"},
+		                                          {name: "New Mexico"}, {name: "New York"}, {name: "North Carolina"}, {name: "North Dakota"}, {name: "Ohio"},
+		                                          {name: "Oklahoma"}, {name: "Oregon"}, {name: "Pennsylvania"}, {name: "Rhode Island"}, {name: "South Carolina"},
+		                                          {name: "South Dakota"}, {name: "Tennessee"}, {name: "Texas"}, {name: "Utah"}, {name: "Vermont"},
+		                                          {name: "Virginia/DC"}, {name: "Washington"}, {name: "West Virginia"}, {name: "Wisconsin"}, {name: "Wyoming"}]},
+		{name: "France", selected: true}, {name: "Italy"}, {name: "Sweden"}, {name: "Spain"}, {name: "Canada"}, {name: "India"}, {name: "Japan"}, {name: "Russia"},
+		{name: "Australia"}, {name: "Austria"}, {name: "Switzerland"}]
+	},
+	{name: "Year", attributes: []},
+	{name: "Sales Orders", attributes: []}
+]};
+     		
+for(var i=0; i<100; i++){
+	oTestData.attributes[1].attributes.push({name: ""+(1950+i), subVals: false});
+	if(i<20){
+		oTestData.attributes[2].attributes.push({name: "SO-003530"+i, subVals: false});
+	}
+}
+
+//helper function to create ExactAttributes 
+function createAttributes(oAttData, oParent){
+	var oAtt = new sap.ui.ux3.ExactAttribute({text: oAttData.name, selected: !!oAttData.selected, showSubAttributesIndicator: !!oAttData.subVals});
+	if(oAttData.width){
+		oAtt.setWidth(oAttData.width);
+	}
+	oParent.addAttribute(oAtt);
+	if(!oAttData.attributes) {
+		return;
+	}
+	for(var idx in oAttData.attributes){
+		createAttributes(oAttData.attributes[idx], oAtt);
+	}
+};
+
+
+function getSelectionMessage(oEvent){
+	var aSelectedAttributes = oEvent.getParameter("allAttributes");
+	var sText;
+	if(aSelectedAttributes.length == 0) {
+		sText = "No selected attributes";
+	}else{
+		sText = "The following attributes are selected: ";
+		if(aSelectedAttributes.length > 1) {
+			for(var idx=0; idx<aSelectedAttributes.length-1; idx++){
+				sText = sText + aSelectedAttributes[idx].getText() + ", ";
+			}
+		}
+		sText = sText + aSelectedAttributes[aSelectedAttributes.length-1].getText();
+	}
+	return sText;
+};
+
+var oOutput1 = new sap.ui.commons.TextView();
+		
+var oExactBrowser1 = new sap.ui.ux3.ExactBrowser({
+	showHeader: true,
+	optionsMenu : new sap.ui.commons.Menu({
+		ariaDescription: "Menu",
+		items:[
+			new sap.ui.commons.MenuItem({text:"Help", tooltip: "Help"}),
+			new sap.ui.commons.MenuItem({text:"Refresh", tooltip: "Refresh"})
+		]
+	}),
+	attributeSelected: function(oEvent) {
+		oOutput1.setText(getSelectionMessage(oEvent));
+	}
+});
+for(var i=0; i<oTestData.attributes.length; i++){
+	createAttributes(oTestData.attributes[i], oExactBrowser1);
+}
+
+oExactBrowser1.placeAt("sample1");
+oOutput1.placeAt("sample1");
+</script>
+
+<script id='samplescript2'>
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oTestData);
+		
+var oOutput2 = new sap.ui.commons.TextView();
+var oExactBrowser2 = new sap.ui.ux3.ExactBrowser({
+	attributeSelected: function(oEvent) {
+		oOutput2.setText(getSelectionMessage(oEvent));
+	}
+});
+oExactBrowser2.setModel(oModel);
+
+var oAttrTemplate = new sap.ui.ux3.ExactAttribute();
+oAttrTemplate.bindProperty("text", "name");
+oAttrTemplate.bindProperty("showSubAttributesIndicator", "subVals");
+oAttrTemplate.bindProperty("selected", "selected");
+oAttrTemplate.attachSupplyAttributes(function(oEvent){
+	oEvent.getParameter("attribute").bindAggregation("attributes", "attributes", oAttrTemplate);
+});
+
+oExactBrowser2.bindAggregation("attributes", "/attributes", oAttrTemplate);
+
+
+oExactBrowser2.placeAt("sample2");
+oOutput2.placeAt("sample2");
+</script>
+
+<script id='samplescript3'>
+var oOutput3 = new sap.ui.commons.TextView();
+
+var oExactBrowser3 = new sap.ui.ux3.ExactBrowser({
+	showTopList: false,
+	attributeSelected: function(oEvent) {
+		oOutput1.setText(getSelectionMessage(oEvent));
+	}
+});
+for(var i=0; i<oTestData.attributes.length; i++){
+	createAttributes(oTestData.attributes[i], oExactBrowser3);
+}
+
+oExactBrowser3.placeAt("sample3");
+oOutput3.placeAt("sample3");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/exactbrowser-icon.png">ExactBrowser</h1>
+		<h2>Introduction</h2>
+
+		<p>ExAct is a navigation tool which combines searching, facetted browsing combined with exploratory analytics and actions of the business objects instances.
+		This represents a good part of a typical navigation chain into an application.<br><br>
+		<b>ExAct</b> stands for <b>Explore and Act</b>: <b><i>Explore</i></b> - find and understand information/data, 
+		<b><i>Act</i></b>  -do whatever your business task requires you to do with this data.<br><br>
+		The ExAct layout is separated into three areas: a search area, where a simple search field (see <a class="sapUiDemokitSrcLink" href="../ValueHolders/SearchField.html">SearchField</a> control) 
+		can be used to take the query; a browse area to define further filters; and the view area, where the visualization of the result as charts, maps, data sets including the actions are located.<br><br>
+		The ExcatBrowser control represents the browse section where the lists of filter attributes (left-most) and the attribute-value lists of the selected attributes are displayed.
+		In the browse area the user sets the filters that then determine the resulting data set.</p>
+		<br/>
+
+		<h2>Basic Example</h2>
+		
+		<p>The aggregation <code>attributes</code> allows to define the tree-like attributes structure used in the ExactBrowser control. For this purpose the element 
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ExactAttribute.html" >sap.ui.ux3.ExactAttribute</a> must be used. The first level 
+		of attributes defines the content of the left-most attribute list, the second level defines the attribute values of these attributes, and so on.<br><br>
+		The event <code>supplyAttributes</code> of the ExactAttribute is fired when the control tries to access the sub-attributes of the attribute for the first time 
+		(property <code>supplyActive</code> must be <code>true</code>). So the handler of this event can be used as supply function for the sub values. The idea is 
+		that a supply function is called only once when the data is requested. It is possible to add the next level of attributes there or define the next binding 
+		level (see data binding example). After firing the event, the property <code>supplyActive</code> is automatically set to <code>false</code>.<br>
+		The sub-attributes indicator which is a little arrow beside an attribute in the list is normally computed automatically. But in the case that a supply function is 
+		attached, and the <code>supplyActive</code> attribute has value <code>true</code>, then the ExactAttribute needs a hint if sub attributes are available. The property 
+		<code>showSubAttributesIndicator</code> is used for this purpose.<br><br>
+		Beside the <code>attributes</code> aggregation the ExactBrowser control provides several properties to define dimensions, titles and visual appearance of the control.
+		It is also possible to attach a <a class="sapUiDemokitSrcLink" href="../Complex/Menu.html">Menu</a> to the header of the first attribute list (aggregation <code>optionsMenu</code>).
+		The event <code>attributeSelected</code> of the ExactBrowser is fired each time the user selects or deselects an attribute.<br><br>
+		The following example shows a simple usecase with programmatically created attributes.</p>
+		<div code-sample="sample1" script="samplescript1"></div>
+		<p>The following example is similar to the first one but with a hidden top list. In this mode the option menu and the top list is hidden. Because the user cannot select any attributes
+		in the top list the application has to take care that the necessary attributes are pre-selected.</p>
+		<div code-sample="sample3" script="samplescript3"></div>
+		<br/><br/>
+
+		<h2>Databinding Example</h2>
+		<p>The following example is similar to the first one. The only difference is that a <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.model.json.JSONModel.html">JSON Model</a> 
+		is used to generate the attributes (Please refer to sample one to see the data). It is also shown how the "lazy loading" mechanismn of the attributes can be used.</p>
+		<div code-sample="sample2" script="samplescript2"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ExactBrowser.html" >API documentation</a>
+		</p>
+	</body>
+</html>

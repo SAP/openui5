@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+	
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+		<script language="javascript">
+			//Create the Application header control
+			var oAppHeader = new sap.ui.commons.ApplicationHeader("appHeader");
+			oAppHeader.setLogoText("This is the title");
+			sap.ui.setRoot("uiArea1", oAppHeader);
+		</script> 
+	
+		<script> 
+			/****************************************************
+			* TESTING PROPERTIES OF THE APPLICATIONHEADER
+			*****************************************************/
+			qutils.delayTestStart();
+			module("Application Header");
+	
+			//Check all properties
+			test("Application header properties", function() {
+				equals(oAppHeader.getLogoSrc(),"","Logo src is empty as expected");
+				oAppHeader.setLogoSrc("http://www.sap.com/global/images/SAPLogo.gif");
+				equals(oAppHeader.getLogoSrc(),"http://www.sap.com/global/images/SAPLogo.gif","Logo src was set with url provided");
+				equals(oAppHeader.getLogoText(),"This is the title","Logo text was correctly set to THIS IS THE TITLE");
+	
+				oAppHeader.setDisplayLogoff(false);
+				equals(oAppHeader.getDisplayLogoff(),false,"Application removed the logout area successfully");
+				
+				oAppHeader.setDisplayLogoff(true);
+				equals(oAppHeader.getDisplayLogoff(),true,"Display logout is defaulted to true correctly");
+	
+				oAppHeader.setUserName("");
+				equals(oAppHeader.getUserName(),"","User name is removed and not available as expected");
+				oAppHeader.setUserName("Mike McPhee");
+				equals(oAppHeader.getUserName(),"Mike McPhee","User name is correctly set to Mike McPhee");
+			});
+		</script>
+	
+	</head>
+	<body> 
+		<h1 id="qunit-header">QUnit Page for sap.ui.commons.ApplicationHeader</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="uiArea1"></div>
+	</body>
+ </html>

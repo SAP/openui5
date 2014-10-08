@@ -1,0 +1,69 @@
+<mvc:View
+	controllerName="sap.ui.demo.tdg.view.Detail"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<Page
+		showNavButton="{device>/isPhone}"
+		navButtonPress="onNavBack"
+		class="sapUiFioriObjectPage"
+		title="{i18n>detailTitle}">
+		<content>
+			<ObjectHeader
+				title="{Name}"
+				number="{
+					path: 'Price',
+					formatter: 'sap.ui.demo.tdg.util.Formatter.currencyValue'
+				}"
+				numberUnit="USD">
+				<attributes>
+					<ObjectAttribute text="{i18n>detailFromDate} {
+						path: 'ReleaseDate',
+						type: 'sap.ui.model.type.Date'
+						}" />
+					<ObjectAttribute text="{Description}" />
+				</attributes>
+				<firstStatus>
+					<ObjectStatus
+						text="{
+							path: 'DiscontinuedDate',
+							formatter: 'sap.ui.demo.tdg.util.Formatter.discontinuedStatusValue'
+						}"
+						state="{
+							path: 'DiscontinuedDate',
+							formatter: 'sap.ui.demo.tdg.util.Formatter.discontinuedStatusState'
+						}" />
+				</firstStatus>
+			</ObjectHeader>
+			<IconTabBar
+				select="onDetailSelect"
+				expandable="false"
+				id="idIconTabBar">
+				<items>
+					<IconTabFilter
+						binding="{Supplier}"
+						key="supplier"
+						text="{i18n>iconTabFilterSupplier}"
+						icon="sap-icon://supplier">
+						<content>
+							<core:Fragment fragmentName="sap.ui.demo.tdg.view.SupplierAddressForm" type="XML" />
+						</content>
+					</IconTabFilter>
+					<IconTabFilter
+						binding="{Category}"
+						key="category"
+						text="{i18n>iconTabFilterCategory}"
+						icon="sap-icon://hint">
+						<content>
+							<core:Fragment fragmentName="sap.ui.demo.tdg.view.CategoryInfoForm" type="XML" />
+						</content>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

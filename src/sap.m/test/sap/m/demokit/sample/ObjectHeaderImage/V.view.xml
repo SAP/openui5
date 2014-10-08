@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectHeaderImage.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<ObjectHeader
+		binding="{/ProductCollection/5}"
+		icon="{ProductPicUrl}"
+		iconDensityAware="false"
+		title="{Name}"
+		number="{Price}"
+		numberUnit="{CurrencyCode}" >
+		<statuses>
+			<ObjectStatus
+				text="In Stock"
+				state="Success" />
+		</statuses>
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<ObjectAttribute text="{Description}" />
+		</attributes>
+	</ObjectHeader>
+</mvc:View>

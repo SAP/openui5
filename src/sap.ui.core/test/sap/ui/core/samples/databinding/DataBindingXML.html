@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+		 try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+    	jQuery.sap.require("sap.ui.model.xml.XMLModel");
+    	sap.ui.getCore().attachInitEvent(doIt);
+
+    	var oModel = new sap.ui.model.xml.XMLModel();
+    	oModel.setXML("<data>" + 
+    		"<firstName>John</firstName>" + 
+    		"<lastName>Doe</lastName>" +
+    		"<birthday day=\"1\" month=\"4\" year=\"1970\" />" +
+    		"<address city=\"Walldorf\" />" + 
+    		"<enabled>true</enabled>" +
+    		"</data>"
+    	);
+    	sap.ui.getCore().setModel(oModel);
+    	
+    	function doIt(){
+    		
+    		
+			var oText = new sap.ui.commons.TextField("source",{change:update});			
+			oText.placeAt("target1");
+			var oBtn = new sap.ui.commons.Button({
+				id: "btn", 
+				text: "Trigger Change",
+				press: update
+			});			
+			oBtn.placeAt("target2");
+
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("TextField:");			
+			oText.placeAt("target3");
+    		var oText = new sap.ui.commons.TextField("txt");
+			oText.bindValue("/firstName");			
+			oText.placeAt("target4");
+			
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("TextView:");			
+			oText.placeAt("target5");
+    		var oText = new sap.ui.commons.TextView();
+			oText.bindText("/firstName");			
+			oText.placeAt("target6");
+						
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("ComboBox:");		
+			oText.placeAt("target7");
+    		var oCombo = new sap.ui.commons.ComboBox();
+            oCombo.addItem(new sap.ui.core.ListItem("i1",{text:"first item", additionalText: "(1)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i2",{text:"second item", additionalText: "(2)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i3",{text:"third item", additionalText: "(3)"}));
+            oCombo.bindValue("/firstName");			
+            oCombo.placeAt("target8");
+			
+			var oChkBx = new sap.ui.commons.CheckBox({id:"box", change:handleCheckBoxChange});
+			oChkBx.bindChecked("/enabled", function(value) {return value == "true"});
+			oChkBx.placeAt("target9");
+			
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+
+			var oTxt = new sap.ui.commons.TextField("firstName");
+			var oLbl = new sap.ui.commons.Label({text:"First Name", labelFor:"firstName"});
+			oML.createRow(oLbl, oTxt);
+			oTxt.bindValue("/firstName");
+			oTxt.bindProperty("enabled", "/enabled", function(value) {return value == "true"});
+
+			oTxt = new sap.ui.commons.TextField("lastName");
+			oLbl = new sap.ui.commons.Label({text:"Last Name", labelFor:"lastName"});
+			oML.createRow(oLbl,	oTxt);
+			oTxt.bindValue("/lastName");
+			oTxt.bindProperty("enabled", "/enabled", function(value) {return value == "true"});
+
+			oML.placeAt("target10");
+			
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("TextField (Attribute):");			
+			oText.placeAt("target11");
+    		var oText = new sap.ui.commons.TextField("txt2");
+			oText.bindValue("/address/@city");			
+			oText.placeAt("target12");
+
+			
+    	};
+    	
+    	function update(){
+			oModel.setProperty("/firstName", sap.ui.getCore().byId("source").getValue());
+			oModel.setProperty("/address/@city", "Mannheim");
+    	};
+    	
+    	function handleCheckBoxChange(oEvent){
+    		var bEnabled = oEvent.getParameter("checked");
+    		oModel.setProperty("/enabled", "" + bEnabled);
+    	};
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>Data binding test page</h1>
+      </div>
+      <div id="target1"></div>
+      <div id="target2"></div>
+      <hr/>
+      <div id="target3"></div>
+      <div id="target4"></div>
+      <hr/>
+      <div id="target5"></div>
+      <div id="target6"></div>
+      <hr/>
+      <div id="target7"></div>
+      <div id="target8"></div>
+      <hr/>
+      <div id="target9"></div>
+      <div id="target10"></div>
+      <hr/>
+      <div id="target11"></div>
+      <div id="target12"></div>
+    </div>
+
+  </body>
+
+</html>

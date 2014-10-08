@@ -1,0 +1,435 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls"
+	data-sap-ui-dk-controls="sap.ui.ux3.ToolPopup">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<meta name="keywords" content="Control NotificationBar" />
+<title>ToolPopup - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css"
+	href="../../../../../theme/default.css"></link>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+	data-sap-ui-language="en">
+	
+</script>
+<script>
+	sap.ui.demokit._supportedThemes = [ "sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];
+	jQuery.sap.require("sap.ui.ux3.ToolPopup");
+</script>
+<script src="../../../../../js/utils.js"></script>
+
+<style type="text/css">
+.myButtonLeft {
+	left: 150px;
+	position: relative;
+}
+
+iframe {
+	width: 500px;
+	height: 250px;
+}
+
+.largePopup {
+	height: 80px;
+}
+</style>
+
+<script>
+	var fixPosition = function() {
+		var my = oDropMyHorizontal.getSelectedKey();
+		my += " " + oDropMyVertical.getSelectedKey();
+
+		var at = oDropAtHorizontal.getSelectedKey();
+		at += " " + oDropAtVertical.getSelectedKey();
+
+		var offset = oTextOffset.getValue();
+		var collision = oDropCollision.getSelectedKey();
+
+		var winLTR = jQuery("#Positioning")[0].contentWindow;
+		winLTR.position(my, at, offset, collision);
+
+		var winRTL = jQuery("#PositioningRTL")[0].contentWindow;
+		winRTL.position(my, at, offset, collision);
+	};
+</script>
+
+<script>
+	var oListBoxHorizontal = new sap.ui.commons.ListBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'Left',
+			key : 'left'
+		}), new sap.ui.core.ListItem({
+			text : 'Begin',
+			key : 'begin'
+		}), new sap.ui.core.ListItem({
+			text : 'Center',
+			key : 'center'
+		}), new sap.ui.core.ListItem({
+			text : 'Right',
+			key : 'right'
+		}), new sap.ui.core.ListItem({
+			text : 'End',
+			key : 'end'
+		}) ]
+	});
+
+	var oListBoxVertical = new sap.ui.commons.ListBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'Top',
+			key : 'top'
+		}), new sap.ui.core.ListItem({
+			text : 'Center',
+			key : 'center'
+		}), new sap.ui.core.ListItem({
+			text : 'Bottom',
+			key : 'bottom'
+		}) ]
+	});
+
+	//Create a DropdownBox
+	var oDropMyHorizontal = new sap.ui.commons.DropdownBox("myHorizontal", {
+		change : fixPosition
+	});
+	oDropMyHorizontal.setListBox(oListBoxHorizontal);
+	oDropMyHorizontal.placeAt("my_horizontal");
+
+	var oDropMyVertical = new sap.ui.commons.DropdownBox("myVertical", {
+		change : fixPosition
+	});
+	oDropMyVertical.setListBox(oListBoxVertical);
+	oDropMyVertical.placeAt("my_vertical");
+
+	var oDropAtHorizontal = new sap.ui.commons.DropdownBox("atHorizontal", {
+		change : fixPosition
+	});
+	oDropAtHorizontal.setListBox(oListBoxHorizontal);
+	oDropAtHorizontal.placeAt("at_horizontal");
+
+	var oDropAtVertical = new sap.ui.commons.DropdownBox("atVertical", {
+		change : fixPosition
+	});
+	oDropAtVertical.setListBox(oListBoxVertical);
+	oDropAtVertical.placeAt("at_vertical");
+
+	var oTextOffset = new sap.ui.commons.TextField("offset", {
+		value : "13 0",
+		change : fixPosition
+	}).placeAt("offset_input");
+
+	var oDropCollision = new sap.ui.commons.DropdownBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'None',
+			key : 'none'
+		}), new sap.ui.core.ListItem({
+			text : 'Flip',
+			key : 'flip'
+		}), new sap.ui.core.ListItem({
+			text : 'Fit',
+			key : 'fit'
+		}), new sap.ui.core.ListItem({
+			text : 'FlipFit',
+			key : 'flipfit'
+		}) ]
+	}).placeAt("collision_box");
+</script>
+
+<script id='samplescript1'>
+	var btn1 = new sap.ui.commons.Button({
+		text : "Open default",
+		press : function() {
+			if (tp1.isOpen()) {
+				tp1.close();
+			} else {
+				tp1.open();
+			}
+		}
+	}).placeAt("sample1");
+
+	var tp1 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn1
+	});
+</script>
+
+<script id='samplescript2'>
+	var btn2 = new sap.ui.commons.Button({
+		text : "Open right, vertically centered",
+		press : function() {
+			if (tp2.isOpen()) {
+				tp2.close();
+			} else {
+				tp2.open(sap.ui.core.Popup.Dock.BeginCenter, sap.ui.core.Popup.Dock.EndCenter);
+			}
+		}
+	}).placeAt("sample2");
+
+	var tp2 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn2
+	}).addStyleClass('largePopup');
+</script>
+
+<script id='samplescript3'>
+	var btn3 = new sap.ui.commons.Button({
+		text : "Open below",
+		press : function() {
+			if (tp3.isOpen()) {
+				tp3.close();
+			} else {
+				tp3.open(sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom);
+			}
+		}
+	}).placeAt("sample3");
+
+	var tp3 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn3
+	});
+</script>
+
+<script id='samplescript4'>
+	var btn4 = new sap.ui.commons.Button({
+		text : "Open left",
+		press : function() {
+			if (tp4.isOpen()) {
+				tp4.close();
+			} else {
+				tp4.open(sap.ui.core.Popup.Dock.EndTop, sap.ui.core.Popup.Dock.BeginTop);
+			}
+		}
+	}).placeAt("sample4");
+	btn4.addStyleClass("myButtonLeft");
+
+	var tp4 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn4
+	});
+</script>
+
+<script id='samplescript5'>
+	var btn5 = new sap.ui.commons.Button({
+		text : "Open above",
+		press : function() {
+			if (tp5.isOpen()) {
+				tp5.close();
+			} else {
+				tp5.open(sap.ui.core.Popup.Dock.BeginBottom, sap.ui.core.Popup.Dock.BeginTop);
+			}
+		}
+	}).placeAt("sample5");
+
+	var tp5 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn5
+	});
+</script>
+
+<script id='samplescript6'>
+	var btn6 = new sap.ui.commons.Button({
+		text : "Open above, shift left",
+		press : function() {
+			if (tp6.isOpen()) {
+				tp6.close();
+			} else {
+				tp6.open(sap.ui.core.Popup.Dock.RightBottom, sap.ui.core.Popup.Dock.CenterTop);
+			}
+		}
+	}).placeAt("sample6");
+
+	var tp6 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button({
+			text : "button"
+		}) ],
+		opener : btn6
+	});
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Red" icon="images/ctrls/toolpopup-icon.png">ToolPopup</h1>
+	<h2>Introduction</h2>
+	<p>
+		Since version 1.9.2 the ToolPopup can be used without the Shell. The
+		corresponding properties are documented in the API whether they are
+		needed for a Shell-use or for the stand-alone-use.<br /> This control
+		can be used with e.g. a Button that opens the ToolPopup on the
+		button's press event. To do this, the ToolPopup needs to know which
+		other control is the corresponding opener that also indicates the
+		ToolPopup's position. Without an opener the ToolPopup can't be
+		positioned.<br /> Since version 1.18.6 the Toolpopup will close
+		itself if the opener of the ToolPopup? is removed instead of trying to
+		position itself relatively to the non-existing opener element.
+	</p>
+	<p>
+		Detailed information about properties etc. can be found in the <a
+			class="sapUiDemokitSrcLink"
+			href="../../../../../docs/api/symbols/sap.ui.ux3.ToolPopup.html">API
+			documentation</a>
+	</p>
+	<h2>Positioning the ToolPopup</h2>
+	<p>The open ToolPopup can be placed at different positions around
+		any possible control. It can be positioned left, right, above and
+		below the opening control. There are two ways to set the ToolPopup's
+		position (Corresponding examples can be found below):</p>
+	<ul>
+		<li>Using the 'opener' association of the ToolPopup: Here, the
+			corresponding docking parameters can be passed to the ToolPopup when
+			its 'open'-method is called. In this case the <a
+			href="../../../../../docs/api/symbols/sap.ui.core.Popup.Dock.html">docking
+				parameters of the Popup</a> are used. If no parameters are given the
+			ToolPopup will open per default to the right of the opener. If there
+			is no opener set in stand-alone-mode the default position of the
+			Popup is used: CenterCenter. <br />If there is no space at the
+			corresponding position use a collision value for the
+			position-function. Per default the ToolPopup will flip to the other
+			side.
+		</li>
+		<li>Using the 'setPosition' method of the ToolPopup that works
+			the same like in the Popup. See <a
+			href="../../../../../docs/api/symbols/sap.ui.core.Popup.html#setPosition">Popup.setPostion()</a>
+			for detailed information. <strong>Note:</strong> This way needs every
+			possible parameter of 'setPosition' since the ToolPopup checks and
+			sets its offset.
+		</li>
+	</ul>
+	<p>
+		Each control has 9 docking points. Each point can be accessed via a
+		combined parameter. Possible values are: left, begin, center, right,
+		end, top and bottom. So a single docking point is for instance called
+		'TopLeft'. <img src="images/dockingpoints.png"><br /> A list of
+		all possible parameters can be found under <a
+			href="../../../../../docs/api/symbols/sap.ui.core.Popup.Dock.html">Popup.Dock</a>.
+		The main difference between 'Left' and 'Begin' is that 'Begin' is
+		RTL-mode save. The same applies to 'Right' and 'End'.
+	</p>
+	<p>The 'open'-method of the ToolPopup requires two of these
+		parameters. There are two possible parameters to set the ToolPopup in
+		relation to the opener's position. One is the so called 'my'-parameter
+		and the other is called 'at'-parameter. 'My' specifies which docking
+		point of the opening ToolPopup should be used to calculate its
+		position. 'At' defines which docking point should be used where the
+		ToolPopup should be added to.</p>
+	<p>
+		To set the position correctly it has to be considered which docking
+		point of 'my' is set to which point of 'at'. The following example is
+		taken from jQueryUI (<a href="http://jqueryui.com/position/">jQueryUI
+			position</a>)that shows how these combinations work. SAPUI5 introduced
+		additionally 'end' and 'begin' as possible parameters. These ensure
+		that the corresponding docking points are RTL-mode save. This means
+		that e.g. 'begin top' accords to 'left top'. In RTL-mode this accords
+		to 'right top'. This ensures that a once set ToolPopup stays at the
+		corresponding docking point. Any combination with 'left' or 'right'
+		will look strangely in RTL-mode.
+	</p>
+	<p>
+		<strong>Since version 1.13.1</strong> the arrow will always point to
+		the middle of the opener. That holds true for the direction of the
+		arrow as well as (for larger ToolPopup) for the position on the
+		ToolPopup border. In <a href="#example1">example 1</a> you can see the
+		default position for the arrow, <a href="#example2">example 2</a>
+		shows for instance what happens if you use the 'my'-parameter with a
+		combination of begin and center.
+	</p>
+	<p>
+		<strong>Since version 1.13.1</strong> the ToolPopup is able to react
+		on any collisions that might occur. Therefore the ToolPopup was
+		enabled to react on this feature and repositions its arrow according
+		to the set collision type (that was maybe set via 'setPosition()').
+	</p>
+	<table>
+		<tr>
+			<td rowspan="2">
+				<div id="mySettings">
+					position...
+					<div style="padding-bottom: 20px;">
+						<b>my:</b>
+						<div id="my_horizontal"></div>
+						<div id="my_vertical"></div>
+					</div>
+					<div style="padding-bottom: 20px;">
+						<b>at:</b>
+						<div id="at_horizontal"></div>
+						<div id="at_vertical"></div>
+					</div>
+					<div style="padding-bottom: 20px;">
+						<b>offset:</b>
+						<div id="offset_input"></div>
+					</div>
+					<div style="padding-bottom: 20px;">
+						<b>collision:</b>
+						<div id="collision_box"></div>
+					</div>
+				</div>
+			</td>
+			<td><iframe id="Positioning" src="PopupPositioning.html"
+					name="PositioningExample"></iframe>
+			<td>
+		</tr>
+		<tr>
+			<td><iframe id="PositioningRTL"
+					src="PopupPositioning.html?sap-ui-rtl=true"
+					name="PositioningExampleRTL"></iframe></td>
+		</tr>
+	</table>
+	<h2>Example 1</h2>
+	<a href="#example1" style="visibility: hidden;"></a>
+	<p>This example shows a ToolPopup that uses the ToolPopup's way to
+		set the default position</p>
+	<div id="sample1check"></div>
+	<div code-sample="sample1" script="samplescript1"
+		style="left: 30px; right: 50px;"></div>
+
+	<h2>Example 2</h2>
+	<a href="#example2" style="visibility: hidden;"></a>
+	<p>This example shows a ToolPopup that uses my = end center, at =
+		begin center</p>
+	<div id="sample2check"></div>
+	<div code-sample="sample2" script="samplescript2"
+		style="left: 30px; right: 50px;"></div>
+
+	<h2>Example 3</h2>
+	<p>This example shows a ToolPopup below the button</p>
+	<div id="sample3check"></div>
+	<div code-sample="sample3" script="samplescript3"
+		style="left: 30px; right: 50px;"></div>
+
+	<h2>Example 4</h2>
+	<p>This example shows a ToolPopup left of the button</p>
+	<div id="sample4check"></div>
+	<div code-sample="sample4" script="samplescript4"
+		style="left: 30px; right: 50px"></div>
+
+	<h2>Example 5</h2>
+	<p>This example shows a ToolPopup above the button</p>
+	<div id="sample5check"></div>
+	<div code-sample="sample5" script="samplescript5"
+		style="left: 30px; right: 50px;"></div>
+
+	<h2>Example 6</h2>
+	<p>This example shows a ToolPopup above the button with my = right
+		bottom, at = center top</p>
+	<div id="sample6check"></div>
+	<div code-sample="sample6" script="samplescript6"
+		style="left: 30px; right: 50px;"></div>
+	<p>
+	<h2>API Documentation</h2>
+	See
+	<a class="sapUiDemokitSrcLink"
+		href="../../../../../docs/api/symbols/sap.ui.ux3.ToolPopup.html">API
+		documentation</a>
+	</p>
+</body>
+</html>

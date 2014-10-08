@@ -1,0 +1,227 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.DataSet,sap.ui.ux3.DataSetItem,sap.ui.ux3.DataSetSimpleView">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="Control ExactBrowser" />
+		<title>ExactBrowser - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<link rel="stylesheet" type="text/css" href="images/DataSetItemLayout.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+				data-sap-ui-language="en"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='samplescript1'>
+//Create a custom control as template for the Dataset items 
+sap.ui.core.Control.extend("ItemLayout", {
+    metadata : {
+        aggregations : {
+			"link" : {type : "sap.ui.commons.Link", multiple : false},
+			"image" : {type : "sap.ui.commons.Image", multiple : false},
+			"form" : {type : "sap.ui.commons.form.Form", multiple : false},
+        }
+    },
+
+	renderer: function(rm, ctrl){
+		rm.write("<div");
+		rm.writeControlData(ctrl);
+		rm.writeAttribute("class", "CustomItemLayout");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutInner");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutTitle");
+		rm.write(">");
+		rm.renderControl(ctrl.getImage());
+		rm.write("<div>");
+		rm.renderControl(ctrl.getLink());
+		rm.write("</div></div><div");
+		rm.writeAttribute("class", "CustomItemLayoutCntnt");
+		rm.write(">");
+		rm.renderControl(ctrl.getForm());
+		rm.write("</div></div></div>");
+    },
+    
+    onBeforeRendering : function(){
+    	if(this.resizeTimer){
+    		clearTimeout(this.resizeTimer);
+    		this.resizeTimer = null;
+    	}
+    },
+    
+    onAfterRendering : function(){
+    	var $This = this.$();
+    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+    		this._resize();
+    	}else{
+    		$This.addClass("CustomItemLayoutSmall");
+    	}
+    },
+    
+    _resize: function(){
+    	if(!this.getDomRef()){
+    		return;
+    	}
+    	var $This = this.$();
+    	if($This.outerWidth() >= 440){
+    		$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
+    	}else{
+    		$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
+    	}
+    	setTimeout(jQuery.proxy(this._resize, this), 300);
+    }
+});
+
+//Initialize the example data and the model
+var data = {products:[]};
+var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
+for(var i=0; i<aTitles.length; i++){
+	var sTitle = aTitles[i];
+	var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
+			title: sTitle, rating: Math.floor((Math.random()*5))+1};
+	if(sTitle.indexOf("Notebook") >= 0){
+		oProduct.category = "Notebook";
+	}else if(sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0){
+		oProduct.category = "Mobile";
+	}
+	oProduct.image = "images/"+oProduct.category+".png";
+	data.products.push(oProduct);
+}
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(data);
+
+//Initialize the Dataset and the layouts
+function createTemplate(){
+	var c = sap.ui.commons;
+	return new ItemLayout({
+		link: new c.Link({text: "{title}"}),
+		image: new c.Image({src: "{image}"}),
+		form: new c.form.Form({
+			width: "100%",
+			layout: new c.form.GridLayout(),
+			formContainers: [
+				new c.form.FormContainer({
+					formElements: [
+						new c.form.FormElement({
+							label: new c.Label({text: "Category", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{category}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Price", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{price}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Rating", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.RatingIndicator({value: "{rating}", editable: false})]
+						})
+					]
+				})
+			]
+		})
+	});
+}
+
+var oDataSet = new sap.ui.ux3.DataSet({
+	items: {
+		path: "/products",
+		template: new sap.ui.ux3.DataSetItem({
+			title : "{title}",
+			iconSrc : "{image}"
+		})
+	},
+	views: [
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, non-responsive View",
+			icon: "images/tiles.png",
+			iconHovered: "images/tiles2_hover.png",
+			iconSelected: "images/tiles2_hover.png",
+			floating: true,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createTemplate()
+		}),
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, responsive View",
+			icon: "images/tiles.png",
+			iconHovered: "images/tiles_hover.png",
+			iconSelected: "images/tiles_hover.png",
+			floating: true,
+			responsive: true,
+			itemMinWidth: 200,
+			template: createTemplate()
+		}),
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Single Row View",
+			icon: "images/list.png",
+			iconHovered: "images/list_hover.png",
+			iconSelected: "images/list_hover.png",
+			floating: false,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createTemplate()
+		})
+	],
+	search: function search(oEvent) {
+		var sQuery = oEvent.getParameter("query");
+		var oBinding = oDataSet.getBinding("items");
+		oBinding.filter(!sQuery ? [] : [new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sQuery)]);
+		oDataSet.setLeadSelection(-1);
+	},
+	selectionChanged: function search(oEvent) {
+		var idx = oEvent.getParameter("newLeadSelectedIndex");
+		alert("Product '"+oDataSet.getItems()[idx].getTitle()+"' selected.'");
+	}
+});
+oDataSet.setModel(oModel);
+oDataSet.placeAt("sample1");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/dataset-icon.png">DataSet</h1>
+		<h2>Introduction</h2>
+		
+		<p>The Dataset is a control to represent collections of items. Traditionally, this would have been covered by the table or hierarchy.
+		However, tabular or hierarchical views of collections are nothing but views on the actual data.
+		<br/>
+		To allow more flexibility to the user, data sets allow switching the view (layout) on the data at runtime. This behavior is most likely already known 
+		from today's operating systems' file explorers. There views for files as list, detailed list, icons, thumbnails, etc. can be choosen.
+		<br/><br/>
+		The Dataset provides a toolbar on top where the the user finds the view switches in the leftmost position. Next to the view switches additional 
+		toolbar items can be added. On the rightmost end there a filter field can be displayed.</p>
+		
+		<h2>DataSetSimpleView Layout</h2>
+		<p>The DataSetSimpleView control is a basic layout for the DataSet control. Depending how the attributes of the DataSetSimpleView are set
+		different target layouts can be achieved:<br/><br/>
+		If the attribute <code>floating</code> is set to <code>false</code> each item of the Dataset is rendered into a separate row.<br/>
+		Setting the attribute <code>floating</code> to <code>true</code> and the attribute <code>responsive</code> to <code>false</code> results in 
+		a floating layout where as many items as fit (based on their actual width) are rendered within a row.<br/>
+		If both attributes <code>floating</code> and <code>responsive</code> are set to <code>true</code> also a floating layout is created. In this
+		case as many items as fit (based on a specified minimum width (attribute <code>itemMinWidth</code>)) are rendered within a row. The items are
+		stretched to fill the available space of each row.</p>
+		
+		<h2>Dataset Example</h2>
+		<p>The following example gives an overview how the Dataset and the DataSetSimpleView layout can be used. In the example a custom control is used as
+		template for the Dataset items, but also other controls or SAPUI5 views are possible. The CSS declarations used for the custom control can be found 
+		<a class="sapUiDemokitSrcLink" href="images/DataSetItemLayout.css">here</a>.</p>
+		<div code-sample="sample1" script="samplescript1"></div>
+		<br/><br/>
+		
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.DataSet.html">DataSet API documentation</a><br/>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.DataSetSimpleView.html">DataSetSimpleView API documentation</a>
+		</p>
+	</body>
+</html>

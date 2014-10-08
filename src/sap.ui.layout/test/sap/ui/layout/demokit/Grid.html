@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.Grid">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Grid - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.ui.layout,sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<style>
+			.sapUiRespGrid div {
+				background: #CCC;
+			}
+
+			#sample2 .sapUiRespGrid div {
+				background: transparent;
+			}
+
+			#sample4 .sapUiRespGrid div {
+				background: #DDD;
+				height: 100px;
+			}
+
+			#sample4 .sapUiRespGrid .wideTile {
+				background-color: #0078BB;
+				color: white;
+				padding-top: 45px;
+				text-align: center;
+			}
+			
+			#sample4 .sapUiRespGrid div p {
+				text-align: center;
+				margin-top: 45px;
+			}
+		</style>
+
+		<script id='sample1'>
+			var oGrid1 = new sap.ui.layout.Grid({
+					hSpacing: 1,
+					vSpacing: 1, 	
+					content: [
+						new sap.ui.commons.TextView({
+							text : 'Text spanned over 4 cols on large, 6 cols on medium, and 12 cols on small screens.',
+							layoutData : new sap.ui.layout.GridData({
+								span : "L4 M6 S12"
+							})
+						}),
+						new sap.ui.commons.TextView({
+							text : 'Text spanned over 4 cols on large, 6 cols on medium, and 12 cols on small screens.',
+							layoutData : new sap.ui.layout.GridData({
+								span : "L4 M6 S12"
+							})
+						}),
+						new sap.ui.commons.TextView({
+							text : 'Text spanned over 4 cols on large, 6 cols on medium, and 12 cols on small screens.',
+							layoutData : new sap.ui.layout.GridData({
+								span : "L4 M6 S12"
+							})
+						})
+					]
+				});
+
+				var oGrid2 = new sap.ui.layout.Grid({
+					hSpacing: 0,
+					vSpacing: 0, 	
+					content: [
+						new sap.ui.commons.TextView({
+							text : 'Text spanned over 9 cols on large, 7 cols on medium, and 12 cols on small screens.',
+							layoutData : new sap.ui.layout.GridData({
+								span : "L9 M7 S12"
+							})
+						}),
+						new sap.ui.commons.TextView({
+							text : 'Text spanned over 3 cols on large, 5 cols on medium, and 12 cols on small screens.',
+							layoutData : new sap.ui.layout.GridData({
+								span : "L3 M5 S12"
+							})
+						})
+					]
+				});
+
+				oGrid1.placeAt("sample1");
+				oGrid2.placeAt("sample1");
+			</script>
+
+			<script id='sample2'>
+			var oGridForm = new sap.ui.layout.Grid({
+				hSpacing: 1,
+				vSpacing: 1, 	
+				content: [
+					new sap.ui.commons.Label({
+						text: 'Firstname',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L3 M3 S12"
+						})
+					}),
+					new sap.ui.commons.TextField({
+						width: "100%",
+						layoutData : new sap.ui.layout.GridData({
+							span: "L7 M9 S12"
+						})
+					}),
+					new sap.ui.commons.Label({
+						text: 'Lastname',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L3 M3 S12",
+							linebreakL: true,
+							linebreakM: true,
+							linebreakS: true
+						})
+					}),
+					new sap.ui.commons.TextField({
+						width: "100%",
+						layoutData : new sap.ui.layout.GridData({
+							span: "L7 M9 S12"
+						})
+					}),
+					new sap.ui.commons.Label({
+						text: "ZIP / City",
+						layoutData : new sap.ui.layout.GridData({
+							span: "L3 M3 S12",
+							linebreakL: true,
+							linebreakM: true,
+							linebreakS: true
+						})
+					}),
+					new sap.ui.commons.TextField({
+						width: "100%",
+						layoutData : new sap.ui.layout.GridData({
+							span: "L1 M1 S12"
+						})
+					}),
+					new sap.ui.commons.TextField({
+						width: "100%",
+						layoutData : new sap.ui.layout.GridData({
+							span: "L6 M8 S12"
+						})
+					}),
+					new sap.ui.commons.Button({
+						text: 'Submit',
+						width: "100%",
+						layoutData : new sap.ui.layout.GridData({
+							indent: "L3 M3",
+							span: "L3 M3 S12"
+						})
+					})
+				]
+			});
+			
+			oGridForm.placeAt("sample2");
+			</script>
+
+			<script id="sample3">
+			var oGridIndent = new sap.ui.layout.Grid({
+				hSpacing: 2,
+				vSpacing: 2, 	
+				content: [
+					new sap.ui.commons.TextView({
+						text: 'Indent by 3 columns on large, 2 columns on medium, and 1 column on small screens.',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L2 M2 S2",
+							indent: "L3 M2 S1"
+						})
+					}),
+					new sap.ui.commons.TextView({
+						text: 'Indent by 1 column on large, 2 columns on medium, and 3 column on small screens.',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L2 M2 S2",
+							indent: "L1 M2 S3"
+						})
+					})
+				]
+			});
+
+			var oGridOrder = new sap.ui.layout.Grid({
+				hSpacing: 2,
+				vSpacing: 2, 	
+				content: [
+					new sap.ui.commons.TextView({
+						text: 'Left on large and medium screens. Right on small screens.',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L6 M6 S6",
+							moveFwd: "S6" //??
+						})
+					}),
+					new sap.ui.commons.TextView({
+						text: 'Right on large and medium screens. Left on small screens.',
+						layoutData : new sap.ui.layout.GridData({
+							span: "L6 M6 S6",
+							moveBwd: "S6" //??
+						})
+					})
+				]
+			});
+			
+			oGridIndent.placeAt("sample3");
+			oGridOrder.placeAt("sample3");
+			</script>
+
+			<script id="sample4">
+
+			var wideTile = new sap.ui.core.HTML({
+				content: '<div class="wideTile">Special Tile</div>',
+				width: "100%",
+				layoutData: new sap.ui.layout.GridData({
+					span: "L6 M12 S12"
+				})
+			});
+
+			var oGridTiles = new sap.ui.layout.Grid({
+				hSpacing: 1,
+				vSpacing: 1, 	
+				content: [
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Normal Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M4 S6"
+						})
+					}),
+					
+					wideTile,
+					
+					new sap.ui.core.HTML({
+						content: '<p>Secondary Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M6 S3"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Secondary Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M6 S3"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Secondary Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M6 S3"
+						})
+					}),
+					new sap.ui.core.HTML({
+						content: '<p>Secondary Tile</p>',
+						width: "100%",
+						layoutData: new sap.ui.layout.GridData({
+							span: "L3 M6 S3"
+						})
+					}),
+				]
+			});
+			
+			oGridTiles.placeAt("sample4");
+			</script>
+		</head>
+
+<body class="sapUiDemokitBody" role="application">
+		<h1 color="Yellow" icon="images/ctrls/grid-icon.png">Grid</h1>
+
+		<h2>Introduction</h2>
+
+		<p>The Grid control is a layout which positions its child controls in a 12 column flow layout. Its children can be specified to take on a variable amount of columns depending on available screen size. With this control it is possible to achieve flexible layouts and line-breaks for large-, medium- and small-sized screens, such as desktop, tablet, and mobile.
+		The Grid control's width can be percentage- or pixel-based and the spacing between its columns can be set to various pre-defined values.</p>
+
+		<h2>Examples (Resize to see changes)</h2>
+
+		<h3>Example with various widths and margins on different devices</h3>
+		<p>Several containers change their sizes according to the available screen width. In this example, containers are laid out in a flexible fashion on large and medium screen resolutions. On small resolutions they stack on top of each other. The first grid in this example has a spacing of 0 between its columns while the second one has 1rem.
+		<div code-sample="sample1" script="sample1"></div>
+
+		<h3>Form-like example</h3>
+		<p>Typical form layout that adapts according to the available screen width. The Grid provides control over line-breaks. Additional CSS styling like text-alignment and vertical spacing can be added.</p>
+		<div code-sample="sample2" script="sample2"></div>
+
+		<h3>Example for indents and order changes</h3>
+		<p>By means of the Grid it is possible to indent containers and to place spacing between them. It is also possible to change the order of containers in one row (without changing the DOM). This behavior again can be set differently for large, medium and small screen resolutions.</p>
+		<div code-sample="sample3" script="sample3"></div>
+
+		<h3>Example with flexible tiles</h3>
+		<p>By means of the Grid it is possible to design tile-based layouts. Varying tile sizes and layout behavious can be specified depending on available screen real estates.</p>
+		<div code-sample="sample4" script="sample4"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.layout.Grid.html">API documentation</a>
+      </p>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">	
+	<title>Splitter - sap.ui.layout</title>
+	<script src="../../../../../resources/sap-ui-core.js" 
+	        type="text/javascript" 
+	        id="sap-ui-bootstrap"            
+	        data-sap-ui-libs="sap.ui.core,sap.ui.layout,sap.ui.commons"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<style>
+		#content {
+			display: block;
+			position: absolute;
+			left: -1000px;
+			width: 500px;
+			height: 500px;
+		}
+		
+	</style>
+	<script>
+	// The following tests are not meant to be executed on IE < 9, as it is not supported!
+	var bSupportedBrowser = 
+		!sap.ui.Device.browser.internet_explorer || 
+		(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version > 8);
+	
+	if (bSupportedBrowser) {
+		function createExampleContent(sSize) {
+			if (createExampleContent.called === undefined) {
+				createExampleContent.called = 0;
+			}
+			++createExampleContent.called;
+			
+			
+			var oLd = new sap.ui.layout.SplitterLayoutData({
+				resizable : true,
+				size      : Math.random() > 0.5 ? "auto" : 50 + Math.floor(Math.random() * 300) + "px",
+				maxSize   : Math.random() > 0.5 ? "0" : Math.floor(Math.random() * 100) + "px"
+			});
+			
+			if (sSize !== undefined) {
+				oLd.setSize(sSize);
+			}
+			
+			var oContent = new sap.ui.commons.Button({
+				width: "100%",
+				height: "100%",
+				text : "Content!",
+				layoutData: oLd
+			});
+			
+			return oContent;
+		}
+		
+		
+		var oSplitter = new sap.ui.layout.Splitter("mySplitter0", {
+			contentAreas: [ createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px") ]
+		});
+		
+		
+		var iResizes = 0;
+		var fnResize = function(oEvent) { ++iResizes; };
+		oSplitter.attachResize(fnResize);
+		var iRenderings = 0;
+		oSplitter.addDelegate({
+			onAfterRendering: function() {
+				++iRenderings;
+			}
+		});
+		
+		
+		oSplitter.placeAt("content");
+		
+		sap.ui.getCore().applyChanges();
+		
+		module("Absolute Area Sizes");
+		
+		test("Absolute Horizontal sizing", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					ok(aSizes[0] === 100, "Content size #1 is correct.");
+					ok(aSizes[1] === 200, "Content size #2 is correct.");
+					ok(aSizes[2] === 300, "Content size #3 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			};
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		test("Absolute vertical sizing", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("200px");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("300px");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					ok(aSizes[0] === 100, "Content size #1 is correct.");
+					ok(aSizes[1] === 200, "Content size #2 is correct.");
+					ok(aSizes[2] === 300, "Content size #3 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			};
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		
+		module("Automatic Area Sizes");
+		
+		test("Automatic horizontal sizing ", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					// Sizes should be about the same (rounding errors should be within 1px)
+					ok(aSizes[0] >= aSizes[1] - 1 && aSizes[0] <= aSizes[1] + 1, "Content size #1 is correct.");
+					ok(aSizes[1] >= aSizes[2] - 1 && aSizes[1] <= aSizes[2] + 1, "Content size #2 is correct.");
+					ok(aSizes[2] >= aSizes[0] - 1 && aSizes[2] <= aSizes[0] + 1, "Content size #3 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			};
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		test("Automatic vertical sizing ", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("auto");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					// Sizes should be about the same (rounding errors should be within 1px)
+					ok(aSizes[0] >= aSizes[1] - 1 && aSizes[0] <= aSizes[1] + 1, "Content size #1 is correct.");
+					ok(aSizes[1] >= aSizes[2] - 1 && aSizes[1] <= aSizes[2] + 1, "Content size #2 is correct.");
+					ok(aSizes[2] >= aSizes[0] - 1 && aSizes[2] <= aSizes[0] + 1, "Content size #3 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			}
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		
+		module("Mixed Area Sizes");
+		
+		test("Mixed horizontal sizing", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Horizontal);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					// Fixed sizes should be exact
+					ok(aSizes[0] === 10, "Content size #1 is correct.");
+					ok(aSizes[2] === 10, "Content size #3 is correct.");
+					
+					// Auto size should be content size, minus fixed sizes, minus resize bars
+					var iBarSize = jQuery("#" + oSplitter.getId() + "-splitbar-0").width();
+					var iAutoSize = 500 - 20 - (2 * iBarSize)
+					ok(aSizes[1] >= iAutoSize - 1 && aSizes[1] <= iAutoSize + 1, "Content size #2 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			};
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		test("Mixed vertical sizing", function() {
+			oSplitter.setOrientation(sap.ui.core.Orientation.Vertical);
+			oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
+			oSplitter.getContentAreas()[1].getLayoutData().setSize("auto");
+			oSplitter.getContentAreas()[2].getLayoutData().setSize("10px");
+			var oDelegate = {
+				onAfterRendering : function() {
+					var aAreas = oSplitter.getContentAreas();
+					var aSizes = oSplitter.getCalculatedSizes();
+					
+					// Fixed sizes should be exact
+					ok(aSizes[0] === 10, "Content size #1 is correct.");
+					ok(aSizes[2] === 10, "Content size #3 is correct.");
+					
+					// Auto size should be content size, minus fixed sizes, minus resize bars
+					var iBarSize = jQuery("#" + oSplitter.getId() + "-splitbar-0").height();
+					var iAutoSize = 500 - 20 - (2 * iBarSize)
+					ok(aSizes[1] >= iAutoSize - 1 && aSizes[1] <= iAutoSize + 1, "Content size #2 is correct.");
+					
+					oSplitter.removeDelegate(oDelegate);
+				}
+			};
+			oSplitter.addDelegate(oDelegate);
+			oSplitter.rerender();
+		});
+		
+		
+		module("General tests");
+		test("Events and Rerendering", function() {
+			ok(iResizes === 3, "Number of resize-events fired (" + iResizes + ") is correct.");
+			ok(iRenderings === 7, "Number of rerenderings (" + iRenderings + ") is correct.");
+		});
+	}
+	else{
+		jQuery.sap.log.warning("Splitter control is not supported for Internet Explorer 8!");
+	};
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">qUnit Page for sap.ui.layout.Splitter</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<div id="content"></div>
+</body>
+<script type="text/javascript">
+/*
+jQuery(document).on("touchmove", function(oEv) {
+	debug.innerHTML = oEv.changedTouches[0].pageX + ", " + oEv.changedTouches[0].pageY + "&nbsp; | &nbsp;"+ debug.innerHTML;
+});
+/**/
+</script>
+</html>

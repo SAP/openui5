@@ -1,0 +1,5 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.ui.core.samples.routing.mobile.Master" xmlns:html="http://www.w3.org/1999/xhtml">
+	<List id="masterList" items="{/}" mode="SingleSelectMaster" select="select">
+		<StandardListItem title="{name}" type="Active"/>
+	</List>
+</mvc:View>

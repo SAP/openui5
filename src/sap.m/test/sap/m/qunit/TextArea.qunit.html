@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.TextArea</title>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+(function ($, core, undefined) {
+
+	test("Should render TextArea correctly", function() {
+		var sut = new sap.m.TextArea();
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// check rendered
+		var $container = $("div.sapMTextArea");
+		strictEqual($container.length, 1, "Textarea container is rendered");
+
+		var $textarea = $("textarea.sapMTextAreaInner");
+		strictEqual($textarea.length, 1, "Textarea is rendered");
+
+		// check assigned and focus
+		strictEqual(sut._$input[0], $textarea[0], "Textarea set correctly");
+		strictEqual(sut._$input[0], sut.getFocusDomRef(), "Textarea is the focus object");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should inherit from InputBase", function() {
+		var sut = new sap.m.TextArea();
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// check input base classes are assigned
+		var $container = $("div.sapMInputBase");
+		strictEqual($container.length, 1, "Container has InputBase class");
+
+		var $textarea = $("textarea.sapMInputBaseInner");
+		strictEqual($textarea.length, 1, "TextArea has InputBase class");
+
+		// check assigned
+		ok(sut instanceof sap.m.InputBase, "TextArea inherited from InputBase");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should configure control and set properties correctly", function() {
+		var config = {
+				rows : 10,
+				cols : 50,
+				width : "100px",
+				height : "100px",
+				maxLength : 100,
+				value : "~!@#$%^&*()_+{}:\"|<>?\'\">\n\n<script>alert('xss')<\/script>\n\n"
+			},
+			setters = {
+				rows : 5,
+				cols : 20,
+				width : "200px",
+				height : "200px",
+				maxLength : 40,
+				value : "\n\n<script>alert('xss')<\/script>\n\n~!@#$%^&*()_+{}:\"|<>?\'\">"
+			},
+			testprops = function (props) {
+				var $outer = sut.$();
+				var $textarea = $("textarea");
+				
+				equal($textarea.attr("rows"), props.rows, "TextArea has correct max rows : " + props.rows);
+				equal($textarea.attr("cols"), props.cols, "TextArea has correct max cols : " + props.cols);
+				equal($textarea.attr("maxLength"), props.maxLength, "TextArea has correct max length : " + props.maxLength);
+				strictEqual($outer.outerWidth(), parseInt(props.width, 10), "TextArea has correct width : " + props.width);
+				strictEqual($outer.outerHeight(), parseInt(props.height, 10), "TextArea has correct height : " + props.height);
+				strictEqual($textarea.val(), sut.getValue(), "TextArea has correct value");
+			},
+			applySetters = function(setters) {
+				Object.getOwnPropertyNames(setters).forEach(function(key) {
+					sut["set" + $.sap.charToUpperCase(key)](setters[key]);
+					core.applyChanges();
+				});
+				
+				ok(true, "Setters called corretly");
+			},
+			sut = new sap.m.TextArea(config);
+
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// check assigned properties
+		testprops(config);
+
+		// check setter functions
+		applySetters(setters);
+		testprops(setters);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should Have/Fire LiveChange Event", function() {
+		expect(2);
+		var val = "test",
+			maxlen = 1,
+			sut = new sap.m.TextArea(),
+			event = $.Event("input"),
+			spy = this.spy(sut, "fireLiveChange");
+
+		// set listener and maxlength
+		sut.setMaxLength(maxlen);
+		sut.attachLiveChange(function(oEvent) {
+			strictEqual(oEvent.getParameter("newValue"), val.substring(0, maxlen), "TextArea input event is catched");
+		});
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		// should have input event
+		var $textarea = $("textarea");
+
+		// trigger input event manually
+		$textarea.val(val);
+		$textarea.trigger(event);
+
+		// trigger input again
+		$textarea.val(val);
+		$textarea.trigger(event);
+		ok(spy.calledOnce, "Maxlength is reached should not fire liveChange event");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should react on touchstart/move for INSIDE_SCROLLABLE_WITHOUT_FOCUS behaviour", function() {
+		// turn on touch support during this test
+		this.stub(sap.ui.Device.support, "touch", true);
+
+		// generate events
+		var longText = new Array(1000).join("text "),
+			sut = new sap.m.TextArea({
+				value : longText
+			}),
+			tsEvent = $.Event("touchstart", {
+				touches : [{
+					pageX: 0,
+					pageY : 0
+				}]
+			}),
+			tmEvent = $.Event("touchmove", {
+				touches : [{
+					pageX : 0,
+					pageY : 0
+				}]
+			});
+
+		// stub the behaviour
+		this.stub(sap.m.TextArea.prototype, "_behaviour", {
+			"INSIDE_SCROLLABLE_WITHOUT_FOCUS" : true
+		});
+
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+		var $textarea = $("textarea");
+
+		// check touchstart 
+		sut._onTouchStart(tsEvent);
+		ok(tsEvent.isMarked("swipestartHandled"), "Touch start event is marked for swipe handling in case of scrolling");
+		
+		// scroll down in text area
+		$textarea[0].scrollTop = 1;
+		
+		// vertical scrolling : move finger up (scroll down) 
+		tmEvent.touches[0].pageY -= 1;
+		sut._onTouchMove(tmEvent);
+		ok(tmEvent.isMarked(), "Touch move event is marked for vertical scrolling");
+		
+		// scroll to inital position
+		$textarea[0].scrollTop = 0;
+		
+		// horizontal scrolling : move finger left (scroll right)
+		tmEvent = $.Event("touchmove", {
+			touches : [{
+				pageX : -1,
+				pageY : 0
+			}]
+		});
+		sut._onTouchMove(tmEvent);
+		ok(tmEvent.isMarked(), "Touch move event is marked for horizontal scrolling");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should not call Tochstart for PAGE_NON_SCROLLABLE_AFTER_FOCUS Behaviour", function() {
+		// turn on touch support during this test
+		this.stub(sap.ui.Device.support, "touch", true);
+
+		var sut = new sap.m.TextArea(),
+			tsEvent = $.Event("touchstart");
+
+		this.stub(sap.m.TextArea.prototype, "_behaviour", {
+			"PAGE_NON_SCROLLABLE_AFTER_FOCUS" : true
+		});
+
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		var $textarea = $("textarea");
+		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
+			ok($textarea.data("events").touchmove, "Textarea has touchmove event");
+		} else {
+			ok($textarea._sapTest_dataEvents().touchmove, "Textarea has touchmove event");
+		}
+
+		var spy = this.spy(sut, "_onTouchStart");
+		$textarea.trigger(tsEvent);
+		strictEqual(spy.called, false, "TouchStart event never called as expected");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should not have Touch events for default behaviour", function() {
+		// turn on touch support during this test
+		this.stub(sap.ui.Device.support, "touch", true);
+		var sut = new sap.m.TextArea();
+		this.stub(sap.m.TextArea.prototype, "_behaviour", {});
+
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		var $textarea = $("textarea");
+		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
+			strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
+		} else {
+			strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
+		}
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("Should not have touch events in Desktop Mode", function() {
+		// turn off touch support during this test
+		this.stub(sap.ui.Device.support, "touch", false);
+
+		var sut = new sap.m.TextArea();
+		sut.placeAt("qunit-fixture");
+		core.applyChanges();
+
+		var $textarea = $("textarea");
+
+		// desktop mode: browser should handle scroll no event required
+		if (jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0) {
+			strictEqual($textarea.data("events"), undefined, "Textarea does not bind dom events");
+		} else {
+			strictEqual($textarea._sapTest_dataEvents(), undefined, "Textarea does not bind dom events");
+		}
+
+		//Cleanup
+		sut.destroy();
+	});
+	
+	
+	test("change event should be fired when last known and dom value are not same", function() {
+		// system under test
+		var sInitValue = "Test";
+		var oTA = new sap.m.TextArea({
+			text : sInitValue
+		});
+
+		// arrange
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var oTADomRef = oTA.getFocusDomRef();
+		var fnFireChangeSpy = this.spy(oTA, "fireChange");
+
+		// act
+		oTADomRef.focus();
+		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
+		
+		// assertion
+		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
+		
+		// change dom and cursor pos
+		sap.ui.test.qunit.triggerCharacterInput(oTADomRef, "a");
+		
+		// act
+		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ENTER");
+		
+		// assertion
+		strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because enter is not a valid event to fire change event for textarea") 
+	
+		// reset spy
+		fnFireChangeSpy.reset();
+		
+		// retest after change event is fired
+		oTADomRef.blur();
+		
+		// assertion
+		strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
+		
+		// cleanup
+		oTA.destroy();
+	});
+
+})(jQuery, sap.ui.getCore());
+
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.m.TextArea</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>

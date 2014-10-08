@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>IntervalTrigger - sap.ui.core</title>
+
+<style type="text/css">
+.sampleListener {
+	background-color: red;
+	width: 200px;
+	text-align: center;
+	color: white;
+	border: 1px solid black;
+	padding: 10px 0;
+}
+</style>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection">
+	
+</script>
+
+<script type="text/javascript">
+	try {
+		jQuery.sap.require("sap.ui.core.IntervalTrigger");
+		jQuery.sap.require("sap.ui.commons.ButtonRenderer");
+
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	} catch (e) {
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw (e);
+	}
+
+	var triggerCounter = 0;
+
+	sap.ui.core.Control.extend("mySampleListener", {
+		metadata : {
+			properties : {
+				"index" : "int"
+			}
+		},
+
+		renderer : function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sampleListener");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.write("Lorem Ipsum")
+
+			oRm.write("</div>");
+		},
+
+		onclick : function(oEvent) {
+			this.trigger();
+		},
+
+		trigger : function() {
+			triggerCounter += 1;
+			oLbl.setText("Call back calls: " + triggerCounter);
+
+			var oThis = this;
+			oThis.$().css("background-color", "green");
+
+			setTimeout(function() {
+				oThis.$().css("background-color", "red");
+			}, 500);
+		}
+	});
+
+	var oLbl = new sap.ui.commons.Label({
+		text : "Call back calls: " + triggerCounter
+	}).placeAt("counter");
+
+	function removeListener(oTriggerBtn) {
+		var index = oTriggerBtn.getIndex();
+		oTrigger.removeListener(aListeners[index].trigger, aListeners[index]);
+	}
+
+	var oTrigger = new sap.ui.core.IntervalTrigger();
+
+	sap.ui.commons.Button.extend("myTriggerButton", {
+		metadata : {
+			properties : {
+				"index" : "int",
+			}
+		},
+
+		renderer : sap.ui.commons.ButtonRenderer.render
+	});
+
+	var aListeners = [];
+	var oBtn = {};
+	var oLayout = new sap.ui.commons.layout.MatrixLayout().placeAt("triggers");
+
+	for ( var i = 0; i < 10; i++) {
+		aListeners[i] = new mySampleListener();
+		oBtn = new myTriggerButton({
+			text : "Remove from trigger",
+			index : i,
+			press : function() {
+				removeListener(this);
+			}
+		});
+
+		oLayout.createRow(aListeners[i], oBtn);
+		oTrigger.addListener(aListeners[i].trigger, aListeners[i]);
+	}
+
+	var oAttachIntervalBtn = new sap.ui.commons.Button({
+		text : "Start trigger",
+		press : function() {
+			oTrigger.setInterval(1000);
+		}
+	}).placeAt("attachIntervalBtn");
+</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for sap.ui.core.IntervalTrigger</h1>
+
+	<div id="attachIntervalBtn"></div>
+	<div id="counter"></div>
+	<br />
+
+	<div id="triggers"></div>
+</body>
+</html>

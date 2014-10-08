@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>DatePicker - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.DatePicker.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+			var iEvents = 0;
+
+			/* ComboBox setting the "locale" of the DatePicker: */
+			function setMyLocale(oEvent) {
+				var sLocale = oEvent.mParameters.newValue;
+				oPicker.setLocale(sLocale);
+			}
+
+			//Event handler for DatePicker change
+			function handleChange(oEvent){
+				var oText = oCore.getControl("TextView1");
+				if(oEvent.getParameter("invalidValue")){
+					oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
+					oText.setSemanticColor(sap.ui.commons.TextViewColor.Negative);
+				}else{
+					oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
+					oText.setSemanticColor(sap.ui.commons.TextViewColor.Positive);
+				}
+				iEvents++;
+				oText.setText( "Eventcounter: " + iEvents + ". New value: "+oEvent.getParameter("newValue")+" new YYYYMMDD: "+oEvent.getParameter("newYyyymmdd") );
+			}
+
+			var oCombo = new sap.ui.commons.ComboBox({
+				items : [new sap.ui.core.ListItem("",     {text:"",      additionalText: "(default)"}), 
+				         new sap.ui.core.ListItem("de",   {text:"de",    additionalText: "(German)"}),
+				         new sap.ui.core.ListItem("en-XX",{text:"en-XX", additionalText: "(unknown-country)"}),
+				         new sap.ui.core.ListItem("fr",   {text:"fr",    additionalText: "(French)"}),
+				         new sap.ui.core.ListItem("he",   {text:"he",    additionalText: "(Hebrew)"}),
+				         new sap.ui.core.ListItem("xx",   {text:"xx",    additionalText: "(unknown-language)"})],
+				change : setMyLocale,
+				tooltip: "Tooltip"
+				});
+			oLabel = new sap.ui.commons.Label("Label1",{ text: "Switch Locales:", labelFor: oCombo});
+			oLabel.placeAt("locale");
+			oCombo.placeAt("locale");
+
+			// Instantiating a datePicker with an ID and "yyyymmdd" attribute:
+			var oPicker = new sap.ui.commons.DatePicker("myDatePicker", {yyyymmdd:"20100101",tooltip:"tooltip", change:handleChange});
+			oLabel = new sap.ui.commons.Label("Label2",{ text: "UI5 DatePicker:", labelFor: oPicker});
+			oLabel.placeAt("sandbox");
+			oPicker.placeAt("sandbox");
+
+			/* Button to display the current DatePicker attributes: */
+			var oButton = new sap.ui.commons.Button("revealAttributes");
+			oButton.setText("Display current attributes");
+			oButton.attachPress( function (oControlEvent) {
+				var oControl   = sap.ui.getCore().getControl("myDatePicker");
+				var msg = "value=\"" + oControl.getValue() +
+									"\", yyyymmdd=\"" + oControl.getYyyymmdd() +
+									"\", locale=\"" + oControl.getLocale() + "\"";
+				var report = jQuery.sap.domById("reportMsg");
+				report.innerHTML = msg;
+			});
+			oButton.placeAt("reportButton");
+
+			/* Instantiating DatePickers with different locales */
+			var oGerman = new sap.ui.commons.DatePicker({yyyymmdd:"19901003", locale:"de",tooltip:"tooltip", change:handleChange});
+			oLabel = new sap.ui.commons.Label("Label3",{ text: "German datePicker:", labelFor: oGerman});
+			oLabel.placeAt("german-label");
+			oGerman.placeAt("german");
+			var oFrench = new sap.ui.commons.DatePicker({yyyymmdd:"17890714", locale:"fr",tooltip: "tooltip", change:handleChange});
+			oLabel = new sap.ui.commons.Label("Label4",{ text: "French datePicker:", labelFor: oFrench});
+			oLabel.placeAt("french-label");
+			oFrench.placeAt("french");
+			var oHebrew = new sap.ui.commons.DatePicker({yyyymmdd:"19480514", locale:"he", change:handleChange});
+			oLabel = new sap.ui.commons.Label("Label5",{ text: "Hebrew datePicker:", labelFor: oHebrew});
+			oLabel.placeAt("hebrew-label");
+			oHebrew.placeAt("hebrew");
+
+			var oDate = new Date();
+			var sToday = String(oDate.getFullYear());
+			if(oDate.getMonth()<9){
+				sToday = sToday+"0";
+			}
+			sToday = sToday+String(oDate.getMonth()+1);
+			if(oDate.getDate()<9){
+				sToday = sToday+"0";
+			}
+			sToday = sToday+String(oDate.getDate());
+			var oDisabled = new sap.ui.commons.DatePicker("DP-Disabled",{yyyymmdd: sToday, locale:"de", enabled: false, width: "10em", change:handleChange});
+			oDisabled.placeAt("disabled");
+
+			var oReadOnly = new sap.ui.commons.DatePicker("DP-ReadOnly",{yyyymmdd: sToday, locale:"de", editable: false, width: "10em", change:handleChange});
+			oReadOnly.placeAt("readonly");
+
+			// Datepicker in Popup
+			var oLyt = new sap.ui.commons.layout.MatrixLayout();
+			oLyt.createRow(new sap.ui.commons.DatePicker("DP_Popup"));
+			oLyt.createRow(new sap.ui.commons.ComboBox("CP_Popup", {
+				items : [new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)"}),
+							new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)"}),
+							new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)"})]
+			}));
+
+			var oDialog = new sap.ui.commons.Dialog("myDialog", {
+				modal: true,
+				title: "Test DatePicker",
+				height: "200px",
+				width: "200px",
+				contentBorderDesign: sap.ui.commons.enums.BorderDesign.Box,
+				content: [oLyt],
+				buttons: [new sap.ui.commons.Button("myDialog_Cancel", {
+										text: "Cancel",
+										press: function(oEvent){ oDialog.close(); }})]
+				});
+			var oButton = new sap.ui.commons.Button("btn-popup", {
+				text: "Open Sample Dialog", 
+				press: function(oEvent){ oDialog.open();}
+				}).placeAt("popup");
+
+			var oFixed = new sap.ui.commons.DatePicker("DP-Fixed",{yyyymmdd: sToday, locale:"de", editable: true, width: "10em", change:handleChange});
+			oFixed.placeAt("fixed");
+
+			// Datepicher with different patterns using Databinding
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				dateValue: new Date(1330470000000)
+			});
+			sap.ui.getCore().setModel(oModel);
+
+			(new sap.ui.commons.DatePicker({
+				width: "10em",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({strictParsing: true})
+						},
+				tooltip: "tooltip"
+			})).placeAt("databinding");
+
+			(new sap.ui.commons.DatePicker({
+				width: "10em",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({pattern: "yy-MM-dd", strictParsing: true})
+			}
+			})).placeAt("databinding");
+
+			(new sap.ui.commons.DatePicker({
+				width: "15em",
+				value: {
+					path: "/dateValue",
+					type: new sap.ui.model.type.Date({style: "long", strictParsing: true})
+			}
+			})).placeAt("databinding");
+
+			sap.ui.getCore().attachParseError(
+					function(oEvent) {
+						var oElement = oEvent.getParameter("element");
+						var sProperty = oEvent.getParameter('property');
+						var oValue = oEvent.getParameter('newValue');
+						var oType = oEvent.getParameter('type');
+						var oOldValue = oEvent.getParameter('oldValue');
+
+						var oText = oCore.getControl("TextView1");
+						oText.setText( "ParseError: Entered value: "+oValue);
+						oText.setSemanticColor(sap.ui.commons.TextViewColor.Negative);
+
+						if (oElement.setValueState) {
+							oElement.setValueState(sap.ui.core.ValueState.Error);
+						}
+					});
+
+			sap.ui.getCore().attachValidationSuccess(
+					function(oEvent) {
+						var oElement = oEvent.getParameter("element");
+						var sProperty = oEvent.getParameter('property');
+						var oValue = oEvent.getParameter('newValue');
+						var oType = oEvent.getParameter('type');
+						var oOldValue = oEvent.getParameter('oldValue');
+
+						var oText = oCore.getControl("TextView1");
+						oText.setText( "ValidationSuccess: Entered value: "+oValue);
+						oText.setSemanticColor(sap.ui.commons.TextViewColor.Positive);
+
+						if (oElement.setValueState) {
+							oElement.setValueState(sap.ui.core.ValueState.Success);
+						}
+					});
+
+			// DatePicker with Placeholder
+			oLabel = new sap.ui.commons.Label({ text: "DatePicker with placeholder:", labelFor: "D_Place"}).placeAt("placeholder");
+			var oD_Place = new sap.ui.commons.DatePicker("D_Place", {
+				tooltip: "tooltip",
+				placeholder: "20140120",
+				change: handleChange
+			}).placeAt("placeholder");
+
+			/********************* Running qUnit-alike tests STARTS ****************************/
+			var errorCount = 0;
+			var result = oPicker.getLocale();
+			if (result != "") {
+				jQuery.sap.log.debug("DATEPICKER ERROR: locale=" + result + " after locale:\"\"");
+				errorCount += 1;
+			}
+			oPicker.setLocale("en-US");
+			result = oPicker.getLocale();
+			if (result != "en-US") {
+				jQuery.sap.log.debug("DATEPICKER ERROR: locale=" + result + " after setLocale(\"en-US\")");
+				errorCount += 1;
+			}
+
+			result = oPicker.getYyyymmdd();
+			if (result != "20100101") {
+				jQuery.sap.log.debug("DATEPICKER ERROR: yyyymmdd=" + result + " after yyyymmdd:\"20100101\"");
+				errorCount += 1;
+			}
+
+			oPicker.setYyyymmdd("20101010");
+			result = oPicker.getYyyymmdd();
+			if (result != "20101010") {
+				jQuery.sap.log.debug("DATEPICKER ERROR: yyyymmdd=" + result + " after setYyyymmdd(\"20101010\")");
+				errorCount += 1;
+			}
+
+			oPicker.setValue("Dec 25, 2010");
+			result = oPicker.getValue();
+			if (result != "Dec 25, 2010") {
+				jQuery.sap.log.debug("DATEPICKER ERROR: value=" + result + " after setValue(\"Dec 25, 2010\")");
+				errorCount += 1;
+			}
+
+			jQuery.sap.log.debug("\"" + errorCount + " errors\"" + " encountered during local DatePicker \"qUnit\" tests.");
+			/********************* Running qUnit-alike tests ENDS ****************************/
+
+			var oTextView = new sap.ui.commons.TextView("TextView1",{text: "initial", tooltip: "Result of the Change event", semanticColor: sap.ui.commons.TextViewColor.Positive, design: sap.ui.commons.TextViewDesign.Bold});
+				oLabel = new sap.ui.commons.Label("Label6",{ text: "Change event content: ", labelFor: oTextView});
+				oLabel.placeAt("event");
+			oTextView.placeAt("event");
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.commons.DatePicker</code></h1>
+		<p>Use the following control(s) to interact with the UI5 DatePicker:</p>
+		<br><div id="locale"></div>
+		<br>Note:
+		<br>This control attribute will be used, if supplied and supported.
+		<br>Otherwise the application one (on the URL) will be used if supplied and supported.
+		<br>Otherwise the navigator one will be used if configured and supported.
+		<br>A locale is supported if translations exist for its "language+COUNTRY" or its "language-only".
+		<br>Otherwise the default SAP "en" texts are used.
+		<br>Setting a locale do not work if the <code>value</code> property of the DatePicker is bound to a model. In this case the locale is ignored.
+		<br>
+		<br><span id="sandbox"></span>
+		<span id="reportButton"></span><span id="reportMsg" style="color:blue;"></span>
+		<br>
+		<br>
+		<br>Various DatePicker instances:
+		<table><tbody>
+			<tr>
+				<td id="german-label"></td>
+				<td id="german"></td>
+			</tr>
+			<tr>
+				<td id="french-label"></td>
+				<td id="french"></td>
+			</tr>
+			<tr>
+				<td id="hebrew-label"></td> 
+				<td id="hebrew"></td>
+				<td>Note: For true Hebrew, select RTL mode!</td>
+			</tr>
+		</tbody></table>
+		<br>
+		<br><div id="event"></div>
+		<br>
+		<br>JAWS testing: Please do not forget to change cursor modes, as by default, JAWS
+		<br>uses some keys for its own usage, e.g. RightArrow = "SayNextCharacter".
+		<br>INSERT-Z will toggle you in and out of normal arrow keyboard navigation mode.
+		<br>Arrow navigation can be used within the Calendar part of the DatePicker.
+		<br>Otherwise one can still use Alt-LeftArrow and Alt-RightArrow for navigation.
+		<br><br>
+		<table><tbody>
+			<tr>
+				<td><label for="DP-Disabled-input">Disabled DatePicker</label></td>
+				<td id="disabled"></td>
+			</tr>
+			<tr>
+				<td><label for="DP-ReadOnly-input">Readonly DatePicker</label></td>
+				<td id="readonly"></td>
+			</tr>
+		</tbody></table>
+		<br> This are some DatePickers with DataBinding and different patterns using DataBinding
+		<div id="databinding"></div>
+		<br>
+		<div id="placeholder"></div>
+		<br>
+		<div id="popup"></div>
+		<br> Test if the DatePicker is somewhere in a <code>fixed</code> area 
+		and the screen is scrolled. To test it just make the browser window small and scroll to the bottom.
+		Then open the DatePicker in the blue box. It should open above.
+		<!-- fixed DIV near bottom to check if datepicker opens inside the screen -->
+		<div style="position: fixed; left: 500px; bottom: 25px; border: 3px solid blue; padding: 5px; z-index: 1; background-color: lightBlue;">
+				<label for="DP-Fixed-input">DatePicker in fixed area</label>
+				<div id="fixed"></div>
+		</div>
+
+	</body>
+</html>

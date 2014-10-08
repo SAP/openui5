@@ -1,0 +1,35 @@
+/* ============================================= */
+/* CSS for control sap.m/Tokenizer.control */
+/* ============================================= */
+
+.sapMTokenizer{  
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.sapMTokenizer .sapMToken{	
+	margin-top: 0.5rem;
+    margin-right: 0.25rem;
+	line-height: initial;
+	
+	// need this for truncation
+	display: inline-block;
+}
+
+.sapUiSizeCompact .sapMTokenizer .sapMToken{	
+	margin-top: 0.2rem;
+	margin-right: 0.1rem;
+}
+
+.sapMTokenizer:focus{
+	outline: none;
+}
+
+.sapMTokenizerScrollContainer{
+	display: inline-block;    
+}
+
+.sapMTokenizer.sapMTokenizerWin8 {
+    overflow: auto;
+}

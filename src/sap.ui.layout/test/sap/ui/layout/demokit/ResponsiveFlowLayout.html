@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.layout.ResponsiveFlowLayout,sap.ui.layout.ResponsiveFlowLayoutData">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+<meta name="keywords" content="Control NotificationBar" />
+<title>ResponsiveFlowLayout - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.layout,sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+	data-sap-ui-language="en">
+	
+</script>
+<script>
+	sap.ui.demokit._supportedThemes = [ "sap_goldreflection", "sap_hcb" ];
+</script>
+<script src="../../../../../js/utils.js"></script>
+
+<style type="text/css">
+.sapUiNotificationBarDemokit { /*top: 40px;*/
+	bottom: 0;
+	left: 20px;
+	right: 40px;
+	position: fixed;
+	z-index: 1;
+}
+
+h2 {
+	margin-top: 2em;
+}
+</style>
+
+<script>
+	
+</script>
+
+<script id='samplescript1'>
+	// just add some shortcuts to save this long names
+	var rfl = sap.ui.layout.ResponsiveFlowLayout;
+	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
+
+	var oRFL = new rfl();
+	oRFL.placeAt("sample1");
+
+	var oLbl1 = new sap.ui.commons.Label({
+		text : "First name",
+		width : "100%"
+	});
+	var oTF1 = new sap.ui.commons.TextField({
+		width : "100%"
+	});
+	oTF1.setLayoutData(new rflLD({
+		weight : 2
+	}))
+
+	var oLbl2 = new sap.ui.commons.Label({
+		text : "Last name",
+		width : "100%"
+	});
+	var oTF2 = new sap.ui.commons.TextField({
+		width : "100%"
+	});
+	oTF2.setLayoutData(new rflLD({
+		weight : 2
+	}))
+
+	// add all contols to the layout
+	oRFL.addContent(oLbl1);
+	oRFL.addContent(oTF1);
+	oRFL.addContent(oLbl2);
+	oRFL.addContent(oTF2);
+</script>
+
+<script id='samplescript2'>
+	// just add some shortcuts to save this long names
+	var rfl = sap.ui.layout.ResponsiveFlowLayout;
+	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
+
+	var oRFL2 = new rfl();
+	oRFL2.placeAt("sample2");
+
+	var oLbl1_2 = new sap.ui.commons.Label({
+		text : "First name",
+	});
+	var oTF1_2 = new sap.ui.commons.TextField({});
+	oTF1_2.setLayoutData(new rflLD({
+		weight : 2
+	}))
+
+	var oLbl2_2 = new sap.ui.commons.Label({
+		text : "Last name",
+	});
+	var oTF2_2 = new sap.ui.commons.TextField({});
+	oTF2_2.setLayoutData(new rflLD({
+		weight : 2
+	}))
+
+	var oTitle = new sap.ui.commons.Title({
+		text : "Form"
+	});
+	var oPanel = new sap.ui.commons.Panel({
+		title : oTitle,
+		width : "100%"
+	});
+	oPanel.addContent(oLbl1_2);
+	oPanel.addContent(oTF1_2);
+	oPanel.addContent(oLbl2_2);
+	oPanel.addContent(oTF2_2);
+
+	// add all contols to the layout
+	oRFL2.addContent(oPanel);
+</script>
+
+<script id='samplescript3'>
+	//just add some shortcuts to save this long names
+	var rfl = sap.ui.layout.ResponsiveFlowLayout;
+	var rflLD = sap.ui.layout.ResponsiveFlowLayoutData;
+
+	/*
+	 * Inner layout for first name
+	 */
+	var oInnerFirst = new rfl();
+	oInnerFirst.setLayoutData(new rflLD({
+		minWidth : 250
+	}));
+
+	var oLblFirst = new sap.ui.commons.Label({
+		text : "First name",
+		width : "100%"
+	});
+	var oTFFirst = new sap.ui.commons.TextField({
+		width : "100%"
+	});
+	oTFFirst.setLayoutData(new rflLD({
+		weight : 2,
+	}));
+	oInnerFirst.addContent(oLblFirst);
+	oInnerFirst.addContent(oTFFirst);
+
+	/*
+	 * inner layout for last name name
+	 */
+	var oInnerLast = new rfl();
+	oInnerLast.setLayoutData(new rflLD({
+		minWidth : 250
+	}));
+
+	var oLblLast = new sap.ui.commons.Label({
+		text : "Last name",
+		width : "100%"
+	});
+	var oTFLast = new sap.ui.commons.TextField({
+		width : "100%"
+	});
+	oTFLast.setLayoutData(new rflLD({
+		weight : 2,
+	}));
+	oInnerLast.addContent(oLblLast);
+	oInnerLast.addContent(oTFLast);
+
+	// outer layout for the form stuff
+	var oRFL3 = new rfl();
+	oRFL3.placeAt("sample3");
+
+	oRFL3.addContent(oInnerFirst);
+	oRFL3.addContent(oInnerLast);
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Red" icon="images/ctrls/responsiveflowlayout-icon.png">ResponsiveFlowLayout</h1>
+	<h2>Introduction</h2>
+	<p>
+		With this layout added content can be expanded to the full width of a
+		row.<br /> The default HTML behavior is that all items are positioned
+		right next to each other. If the space within the parent container
+		becomes too small, the browser wraps the corresponding item to the
+		next line. In this case the space within a line isn't used.<br />
+		With this layout each added content can be shrinked to a set
+		min-width. So the layout shinks it until this set value and warps it
+		if necessary. Each content within a line will be maximized to fit the
+		whole line. Each content item can have a weight corresponding to other
+		items within a line. If one item has the weight of '2' and all others
+		have '1' so this single item will always be twice of all others. These
+		properties can be set via
+		<code>sap.ui.layout.ResponsiveFlowLayoutData</code>
+		.
+	</p>
+	<p>
+		Detailed information of properties etc. can be found in the <a
+			class="sapUiDemokitSrcLink"
+			href="../../../../../docs/api/symbols/sap.ui.layout.ResponsiveFlowLayout.html">API
+			documentation</a>
+	</p>
+
+
+	<h2>LayoutData</h2>
+	<p>
+		A LayoutData instance can be added to a control that should be used
+		within the ResponsiveFlowLayout. With this instance other values than
+		the default values can be used.<br /> Default values are:
+	</p>
+	<ul>
+		<li>min-width: 100 &rarr; that means that the min-width is used
+			as "100px"</li>
+		<li>weight: 1 &rarr; the weight of the added content item. A
+			value smaller than 1 is not valid</li>
+		<li>linebreak: false &rarr; this content item won't be at the
+			first position of a row. Otherwise this item will always be first in
+			a line</li>
+	</ul>
+	<p>IMPORTANT: To ensure that a content is enlarged is has to be
+		sized to 100%!</p>
+	<p>
+		For detailed information about the LayoutData please see the <a
+			class="sapUiDemokitSrcLink"
+			href="../../../../../docs/api/symbols/sap.ui.layout.ResponsiveFlowLayoutData.html">API
+			documentation</a>
+	</p>
+
+	<br />
+	<h2>Example1 - A layout with 4 content items</h2>
+	<p>These items are just added as they are. The TextField have the
+		weight of '2'. All content items are set to '100%' to ensure that they
+		are enlarged on resize.</p>
+	<div code-sample="sample1" script="samplescript1" id="sapUiRFL"
+		style="left: 30px; right: 50px; padding-top: 2px;"></div>
+
+	<br />
+	<h2>Example2 - A layout with the items from above but in a Panel</h2>
+	<p>In this case the Panel is the content item the layout takes care
+		of. The layout doesn't know what's inside of the Panel. So the Panel
+		is responsible for the positioning of the Labels and TextFields.</p>
+	<div code-sample="sample2" script="samplescript2" id="sapUiRFL2"
+		style="left: 30px; right: 50px;"></div>
+
+	<br />
+	<h2>Example3 - A little responsive form</h2>
+	<p>In this case the Label and the TextField belong together. If the
+		space becomes too less the TextField is wrapped below the Label. If
+		the space is continuing shrinking, the part of the 'Last name' is
+		wrapped below the 'First name' stuff.</p>
+	<div code-sample="sample3" script="samplescript3" id="sapUiRFL3"
+		style="left: 30px; right: 50px; padding-top: 2px;"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.layout.ResponsiveFlowLayout.html">API documentation</a>
+	</p>
+</body>
+</html>

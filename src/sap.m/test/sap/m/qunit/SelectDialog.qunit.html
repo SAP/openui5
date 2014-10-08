@@ -1,0 +1,770 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.SelectDialog</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+		jQuery.sap.require("sap.ui.model.FilterOperator");
+
+		// helper variables
+		var iItemCount = 0,
+			data1 = { // 0 items
+				items : []
+			},
+			data3 = { // 3 items
+				items : [ {
+					Title : "Title1",
+					Description: "Description1"
+				}, {
+					Title : "Title2",
+					Description: "Description2"
+				}, {
+					Title : "Title3",
+					Description: "Description3"
+				} ]
+			},
+			data10 = { // 10 items
+				items : [
+					{
+						Title : "Title1",
+						Description: "Description1",
+						Selected: false
+					}, {
+						Title : "Title2",
+						Description: "Description2",
+						Selected: true
+					}, {
+						Title : "Title3",
+						Description: "Description3",
+						Selected: true
+					}, {
+						Title : "Title4",
+						Description: "Description4",
+						Selected: true
+					}, {
+						Title : "Title5",
+						Description: "Description5",
+						Selected: false
+					}, {
+						Title : "Title6",
+						Description: "Description6",
+						Selected: false
+					}, {
+						Title : "Title7",
+						Description: "Description7",
+						Selected: false
+					}, {
+						Title : "Title8",
+						Description: "Description8",
+						Selected: true
+					}, {
+						Title : "Title9",
+						Description: "Description9",
+						Selected: false
+					}, {
+						Title : "Title10",
+						Description: "Description10",
+						Selected: false
+					}
+				]
+			};
+
+		// create a static list item
+		function createListItem() {
+			iItemCount ++;
+			return new sap.m.StandardListItem({
+				title : "Title" + iItemCount,
+				description: "Description" + iItemCount
+			});
+		};
+
+		// create a bindable list item
+		function createTemplateListItem() {
+			return new sap.m.StandardListItem({
+				title: "{Title}",
+				description: "{Description}",
+				selected: "{Selected}"
+			});
+		};
+
+		// bind list with JSON data
+		function bindItems(oControl, oData, sPath, oTemplate, aFilters) {
+			var oModel = new sap.ui.model.json.JSONModel(),
+				oBindingConfiguration = {};
+
+			// set the data for the model
+			oModel.setData(oData);
+			// set JSON model to one way binding (growing list does not support two way binding)
+			oModel.setDefaultBindingMode("OneWay");
+			// set the model to the list
+			oControl.setModel(oModel);
+			// bind Aggregation
+			oBindingConfiguration.path = sPath;
+			oBindingConfiguration.template = oTemplate;
+			if (aFilters) {
+				oBindingConfiguration.filters = aFilters;	
+			}
+			oControl.bindAggregation("items", oBindingConfiguration);
+		};
+
+		// filter function to align the binding with the search term
+		function createPrefilter(sSearchValue) {
+			var aFilters = [];
+
+			// create the local filter to apply
+			if(sSearchValue !== undefined) {
+				aFilters.push(new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , sSearchValue));
+			}
+			return aFilters;
+		};
+
+		// app
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oApp = new sap.m.App("myApp", { initialPage: "myFirstPage" }),
+			oPage = new sap.m.Page("myFirstPage", {
+				title : "SelectDialog Test Page"
+			});
+
+		// init app
+		oApp.addPage(oPage).placeAt("content");
+
+		/********************************************************************************/
+		module("Basic Control API checks");
+		/********************************************************************************/
+
+		asyncTest("Initialization", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available",
+				growingThreshold: 50
+			});
+
+			ok(!jQuery.sap.domById("selectDialog"), "Dialog is not rendered before it's ever opened.");
+			strictEqual(oSelectDialog.getTitle(), "my SelectDialog", 'The title should be "my SelectDialog"');
+			strictEqual(oSelectDialog.getNoDataText(), "Sorry, no data is available", '"Sorry, no data is available" should be displayed when no data is there');
+			strictEqual(oSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
+
+			oSelectDialog.destroy();
+			start();
+		});	
+
+		asyncTest("Open with string and filter", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true,
+			});
+
+			// reset selection model
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem(), createPrefilter("Title1"));
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				strictEqual(oSelectDialog._oSearchField.getValue(), "Chuck", 'The search field value is "Title1" after passing "Title1" to the open method');
+				strictEqual(oSelectDialog._oList.getItems().length, 2, 'There are 2 items filtered and displayed in the list ');
+				strictEqual(oSelectDialog._oList.getItems()[0].getTitle(), "Title1", 'The first item in the list is "Title1"');
+				strictEqual(oSelectDialog._oList.getItems()[1].getTitle(), "Title10", 'The second item in the list is "Title10"');
+	
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open("Chuck");
+		});	
+
+		/********************************************************************************/
+		module("Rendering");
+		/********************************************************************************/
+
+		asyncTest("Open SelectDialog without a parent (should be added to static area)", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true,
+			});
+
+			strictEqual(oSelectDialog.getParent(), null, "Dialog has no parent before opening");
+			strictEqual(oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
+				ok(oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
+				strictEqual(oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+	
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		});	
+
+		asyncTest("Open SelectDialog that is defined within an XML view without parent (has no UI area, temporary fix: will be added to static area)", function () {
+			var oSelectDialog;
+
+			var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">'
+				+ '      <SelectDialog id="xmlSelectDialog"></SelectDialog>'
+				+ '    </mvc:View>';
+
+			var oXmlView = sap.ui.xmlview({viewContent:xml});
+			oSelectDialog = oXmlView.byId("xmlSelectDialog");
+
+			ok(oSelectDialog.getParent() instanceof sap.ui.core.mvc.XMLView, "Dialog's parent is an XML view");
+			strictEqual(oSelectDialog.getParent().getParent(), null, "The XML view has no parent");
+			strictEqual(oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				ok(jQuery.sap.domById(oXmlView.createId("xmlSelectDialog-dialog")), "Dialog is opened");
+				ok(oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
+				strictEqual(oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					oXmlView.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Open SelectDialog that is defined within a fragment", function () {
+			var oSelectDialog;
+
+			var fragmentText = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+				+ '      <SelectDialog id="fragmentSelectDialog"></SelectDialog>'
+				+ '    </core:FragmentDefinition>';
+
+			var fragment = sap.ui.xmlfragment({fragmentContent: fragmentText});
+			oSelectDialog = sap.ui.getCore().byId("fragmentSelectDialog");
+
+			strictEqual(oSelectDialog.getParent(), null, "Dialog's parent is null");
+			strictEqual(oSelectDialog.getUIArea(), null, "Dialog has no ui area before opening");
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				ok(jQuery.sap.domById("fragmentSelectDialog-dialog"), "Dialog is opened");
+				ok(oSelectDialog.getParent() instanceof sap.ui.core.UIArea, "Dialog is now a direct child of the UI Area");
+				strictEqual(oSelectDialog.getParent().getRootNode().attributes.getNamedItem("id").value, "sap-ui-static", "Dialog's UI area is the static UI Area");
+	
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					fragment.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		});
+
+		/********************************************************************************/
+		module("Multiselection");
+		/********************************************************************************/
+
+		asyncTest("Open Dialog", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true,
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available",
+				growingThreshold: 50
+			});
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
+				ok(jQuery.sap.domById("selectDialog-dialog-title"), "Dialog title should be rendered");
+				ok(jQuery.sap.domById("selectDialog-searchField"), "Dialog should have a searchfield");
+				ok(jQuery.sap.domById("selectDialog-list"), "Dialog should have a list");
+				ok(jQuery.sap.domById("selectDialog-ok"), "Dialog should have an ok button");
+
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Remember Selections false mode", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true,
+				rememberSelections: false,
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available",
+				growingThreshold: 50
+			});
+
+			// reset selection model
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected initially');
+			// TODO: this could be done more realistically
+			oSelectDialog._oDialog.close();
+			oSelectDialog._fireConfirmAndUpdateSelection();
+
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 0, '0 items are selected after opening the dialog the second time');
+			// TODO: this could be done more realistically
+			oSelectDialog._oDialog.close();
+			oSelectDialog._fireConfirmAndUpdateSelection();
+
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 0, '0 items are selected after opening the dialog the third time');
+
+			// cleanup
+			oSelectDialog._oDialog.attachAfterClose(function (oEvent) {
+				oSelectDialog.destroy();
+				start();
+			});
+			oSelectDialog._oDialog.close();
+		});
+
+		asyncTest("Remember Selections true mode", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true,
+				rememberSelections: true,
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available",
+				growingThreshold: 50
+			});
+
+			// reset selection model
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected initially');
+
+			oSelectDialog.open();
+			oSelectDialog._oDialog.close();
+			
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected after opening the dialog the second time');
+			oSelectDialog._oDialog.close();
+
+			oSelectDialog.open();
+			strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected after opening the dialog the third time');
+
+			// cleanup
+			oSelectDialog._oDialog.attachAfterClose(function (oEvent) {
+				oSelectDialog.destroy();
+				start();
+			});
+			oSelectDialog._oDialog.close();
+		});
+
+		/********************************************************************************/
+		module("Open and Close");
+		/********************************************************************************/
+
+		asyncTest("Open Dialog", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available",
+				growingThreshold: 50
+			});
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				ok(jQuery.sap.domById("selectDialog-dialog"), "Dialog is opened");
+				ok(jQuery.sap.domById("selectDialog-dialog-title"), "Dialog title should be rendered");
+				ok(jQuery.sap.domById("selectDialog-searchField"), "Dialog should have a searchfield");
+				ok(jQuery.sap.domById("selectDialog-list"), "Dialog should have a list");
+				ok(!jQuery.sap.domById("selectDialog-ok"), "Dialog should not have an ok button");
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		});
+
+		/********************************************************************************/
+		module("Events");
+		/********************************************************************************/
+
+		// TODO: search event
+		// TODO: liveChange event
+
+		asyncTest("Confirm Event", function () {
+			expect(11);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true
+			});
+
+			// reset selection model
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+			oSelectDialog.attachConfirm(function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("selectedItem"),
+					aSelectedItems = oEvent.getParameter("selectedItems"),
+					aSelectedContexts = oEvent.getParameter("selectedContexts");
+
+				// items 2,3,4,8 are selected in the model
+				// TODO: check why item 2 is not returned by list as selectedItems
+				ok(true, 'The event "confirm" has been fired');
+				strictEqual(oSelectedItem.getTitle(), oSelectDialog.getItems()[1].getTitle(), 'The selected item property of the event should be "Title2"');
+				strictEqual(aSelectedItems.length, 4, '4 items where selected');
+				strictEqual(aSelectedItems[0].getTitle(), oSelectDialog.getItems()[1].getTitle(), 'The first selectedItems entry should be "Title2"');
+				strictEqual(aSelectedItems[1].getTitle(), oSelectDialog.getItems()[2].getTitle(), 'The second selectedItems entry should be "Title3"');
+				strictEqual(aSelectedItems[2].getTitle(), oSelectDialog.getItems()[3].getTitle(), 'The third selectedItems entry should be "Title4"');
+				strictEqual(aSelectedItems[3].getTitle(), oSelectDialog.getItems()[7].getTitle(), 'The fourth selectedItems entry should be "Title8"');
+				strictEqual(aSelectedContexts[0].getObject().Title, "Title2", 'The first selectedContexts entry should be "Title2"');
+				strictEqual(aSelectedContexts[1].getObject().Title, "Title3", 'The second selectedContexts entry should be "Title3"');
+				strictEqual(aSelectedContexts[2].getObject().Title, "Title4", 'The third selectedContexts entry should be "Title4"');
+				strictEqual(aSelectedContexts[3].getObject().Title, "Title8", 'The fourth selectedContexts entry should be "Title8"');
+
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+
+			oSelectDialog._oDialog.attachAfterOpen(function () {
+				oSelectDialog._getOkButton().firePress();
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Cancel Event with unfiltered selection", function () {
+			expect(3);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true
+			});
+
+			// reset selection model & bind items
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			oSelectDialog.attachCancel(function (oEvent) {
+				ok(true, 'The event "cancel" has been fired');
+
+				// the selection is reset immediately ater the cancel event so we do it with setTimeout
+				setTimeout(function () {
+					strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, 'After cancelling there should be 4 items selected again');
+					// cleanup
+					setTimeout(function () {
+						oSelectDialog.destroy();
+						start();
+					}, 0);
+				}, 0);
+			});
+
+			// simulate open and close
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// make a change to the selection
+				oSelectDialog._oList.getItems()[1].setSelected(false);
+				oSelectDialog._oList.getItems()[3].setSelected(false);
+				strictEqual(oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
+				oSelectDialog._getCancelButton().firePress();
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Cancel Event with pre-filtered selection", function () {
+			expect(5);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true
+			});
+
+			// reset selection model & bind items
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem(), createPrefilter("Title4"));
+
+			oSelectDialog.attachCancel(function (oEvent) {
+				ok(true, 'The event "cancel" has been fired');
+
+				// the selection is reset immediately ater the cancel event so we do it with setTimeout
+				setTimeout(function () {
+					strictEqual(oSelectDialog._oList.getSelectedItems().length, 1, 'After cancelling there should be 1 visible item selected again');
+					strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 1, 'After cancelling there should be 4 invisible item selected again (prefiltered items are not added to the contexts initially)');
+					// cleanup
+					setTimeout(function () {
+						oSelectDialog.destroy();
+						start();
+					}, 0);
+				}, 0);
+			});
+
+			// simulate open and close
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// make a change to the selection (uncheck "Title4" item)
+				oSelectDialog._oList.getItems()[0].setSelected(false);
+				strictEqual(oSelectDialog._oList.getSelectedItems().length, 0, 'Before cancelling there should be 0 visible items selected');
+				strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 0, 'Before cancelling there should be 0 invisible contexts selected (prefiltered items are not added to the contexts initially)');
+				oSelectDialog._getCancelButton().firePress();
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Cancel Event with user-filtered selection", function () {
+			expect(5);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true
+			});
+
+			// reset selection model & bind items
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			oSelectDialog.attachCancel(function (oEvent) {
+				ok(true, 'The event "cancel" has been fired');
+
+				// the selection is reset immediately ater the cancel event so we do it with setTimeout
+				setTimeout(function () {
+					strictEqual(oSelectDialog._oList.getSelectedItems().length, 1, 'After cancelling there should be 1 visible items selected again');
+					strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 4, 'After cancelling there should be 4 invisible items selected again');
+					// cleanup
+					setTimeout(function () {
+						oSelectDialog.destroy();
+						start();
+					}, 0);
+				}, 0);
+			});
+
+			// simulate open and close
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// make a change to the selection
+				oSelectDialog._oList.getItems()[1].setSelected(false);
+				oSelectDialog._oList.getItems()[3].setSelected(false);
+				oSelectDialog._oList.getBinding("items").filter(createPrefilter("Title4"));
+				strictEqual(oSelectDialog._oList.getSelectedItems().length, 0, 'Before cancelling there should be 0 visible items selected');
+				strictEqual(oSelectDialog._oList.getSelectedContexts(true).length, 2, 'Before cancelling there should be 2 invisible items selected');
+				oSelectDialog._getCancelButton().firePress();
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Cancel on key ESCAPE event", function () {
+			expect(3);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+					multiSelect: true
+				}),
+				oChecksDef = new jQuery.Deferred(),
+				oAfterOpenDef = new jQuery.Deferred(),
+				fnChecks = function () {
+					ok(true, "Event cancel was fired");
+					// the selection is reset immediately ater the cancel event so we do it with setTimeout
+					setTimeout(function () {
+						strictEqual(oSelectDialog._oList.getSelectedItems().length, 4, 'After cancelling there should be 4 items selected again');
+						oChecksDef.resolve();
+					}, 0);
+				},
+				fnCleanup = function () {
+					oSelectDialog.destroy();
+					start();
+				};
+
+			// reset selection model & bind items
+			data10.items[1].Selected = true;
+			data10.items[2].Selected = true;
+			data10.items[3].Selected = true;
+			data10.items[7].Selected = true;
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			// attach dialog cancel event 
+			oSelectDialog.attachCancel(fnChecks);
+
+			//wait for both checks then do the cleanup
+			jQuery.when(oChecksDef, oAfterOpenDef).then(fnCleanup);
+			
+			// simulate open and close
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				// make a change to the selection
+				oSelectDialog._oList.getItems()[1].setSelected(false);
+				oSelectDialog._oList.getItems()[3].setSelected(false);
+				strictEqual(oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
+
+				sap.ui.test.qunit.triggerKeydown(oSelectDialog._oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				oAfterOpenDef.resolve();
+			});
+			oSelectDialog.open();
+		});
+
+		/********************************************************************************/
+		module("Destroy");
+		/********************************************************************************/
+
+		asyncTest("Destroy SelectDialog", function () {
+			expect(24);
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				multiSelect: true
+			});
+
+			// init list
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+
+			// attach dialog close event
+			oSelectDialog._oDialog.attachAfterClose(function () {
+				// store poiners to internal controls
+				var olist = oSelectDialog._oList,
+					oSearchField= oSelectDialog._oSearchField,
+					sSubHeader= oSelectDialog._oSubHeader,
+					oBusyIndicator= oSelectDialog._oBusyIndicator,
+					oDialog= oSelectDialog._oDialog,
+					oOkButton = oSelectDialog._oOkButton;
+
+				oSelectDialog.destroy();
+
+				// check if internal controls are destroyed correctly (when initialized they must be destroyed)
+				strictEqual(oSelectDialog.$().length, 0, "There is no Domref for the SelectDialog");
+
+				// check if all internal controls are destroyed successfully
+				strictEqual(olist.bIsDestroyed, true, "internal property _olist is destroyed successfully");
+				strictEqual(oSearchField.bIsDestroyed, true, "internal property _oSearchField is destroyed successfully");
+				strictEqual(sSubHeader.bIsDestroyed, true, "internal property _sSubHeader is destroyed successfully");
+				strictEqual(oBusyIndicator.bIsDestroyed, true, "internal property _oBusyIndicator is destroyed successfully");
+				strictEqual(oDialog.bIsDestroyed, true, "internal property _oDialog is destroyed successfully");
+				strictEqual(oOkButton.bIsDestroyed, true, "internal property _oOkButton is destroyed successfully");
+
+				// check if all controls are set to null correctly
+				strictEqual(oSelectDialog._oList, null, "internal property _olist is null");
+				strictEqual(oSelectDialog._oSearchField, null, "internal property _oSearchField is null");
+				strictEqual(oSelectDialog._oSubHeader, null, "internal property _oSubHeader is null");
+				strictEqual(oSelectDialog._oBusyIndicator, null, "internal property _oBusyIndicator is null");
+				strictEqual(oSelectDialog._sSearchFieldValue, null, "internal property _sSearchFieldValue is null");
+				strictEqual(oSelectDialog._oDialog, null, "internal property _oDialog is null");
+				strictEqual(oSelectDialog._oOkButton, null, "internal property _oOkButton is null");
+				strictEqual(oSelectDialog._oSelectedItem, null, "internal property _oSelectedItem is null");
+				strictEqual(oSelectDialog._aSelectedItems, null, "internal property _aSelectedItems is null");
+				strictEqual(oSelectDialog._aInitiallySelectedItems, null, "internal property _aInitiallySelectedItems is null");
+
+				// simple types
+				strictEqual(oSelectDialog._iListUpdateRequested, 0, "internal parameter _iListUpdateRequested is reset correctly");
+				strictEqual(oSelectDialog._bFirstRequest, false, "internal parameter _bFirstRequest is reset correctly");
+				strictEqual(oSelectDialog._bInitBusy, false, "internal parameter _bInitBusy is reset correctly");
+				strictEqual(oSelectDialog._bFirstRender, false, "internal parameter _bFirstRender is reset correctly");
+
+				// compatibility pointers (these were renamed in release 1.20)
+				strictEqual(oSelectDialog._list, null, "internal compatibility parameter _list is null");
+				strictEqual(oSelectDialog._searchField, null, "internal compatibility parameter _searchField is null");
+				strictEqual(oSelectDialog._dialog, null, "internal compatibility parameter _dialog is null");
+
+				start();
+			});
+
+			// simulate open and close
+			oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
+				oSelectDialog._oDialog.close();
+			});
+			oSelectDialog.open();
+		});
+
+		asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog"),	
+				sCustomStyleClass = "myStyleClass";
+
+			// add + has
+			oSelectDialog.addStyleClass(sCustomStyleClass);
+			oSelectDialog.open();
+			ok(oSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
+			ok(oSelectDialog.hasStyleClass(sCustomStyleClass), 'The SelectDialog now has style class "' + sCustomStyleClass + '"');
+
+			// remove
+			oSelectDialog.removeStyleClass(sCustomStyleClass);
+			ok(!oSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
+			ok(!oSelectDialog.hasStyleClass(sCustomStyleClass), 'The SelectDialog does not have style class "' + sCustomStyleClass + '" after remove');
+
+			// toggle
+			oSelectDialog.toggleStyleClass(sCustomStyleClass);
+			ok(oSelectDialog._oDialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
+			ok(oSelectDialog.hasStyleClass(sCustomStyleClass), 'The SelectDialog has style class "' + sCustomStyleClass + '" after toggle');
+
+			// cleanup
+			oSelectDialog._oDialog.attachAfterClose(function (oEvent) {
+				oSelectDialog.destroy();
+				start();
+			});
+			oSelectDialog._oDialog.close();
+		});
+
+		asyncTest("Check $ and getDomRef methods", function () {
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog");
+
+			oSelectDialog.open();
+
+			// $ method
+			ok(oSelectDialog.$() instanceof jQuery && oSelectDialog.$().length === 1, "The inner dialogs jQuery object is returned");
+
+			// getDomRef
+			ok(oSelectDialog.getDomRef() instanceof Element && oSelectDialog.getDomRef().id === oSelectDialog.getId()+"-dialog", "The inner dialogs DOM reference is returned");
+
+			// cleanup
+			oSelectDialog._oDialog.attachAfterClose(function (oEvent) {
+				oSelectDialog.destroy();
+				start();
+			});
+			oSelectDialog._oDialog.close();
+		});
+
+		asyncTest("Check height of content", function(){
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				contentHeight: "150px"
+			});
+
+			oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
+				
+				strictEqual(jQuery.sap.domById("selectDialog-dialog-cont").style.height, "150px", "content in Dialog should have height of 150px.");
+
+				oSelectDialog.setContentHeight("286px");
+				sap.ui.getCore().applyChanges();
+				strictEqual(jQuery.sap.domById("selectDialog-dialog-cont").style.height, "286px", "content in Dialog should have height of 286px.");
+				
+				// cleanup
+				setTimeout(function () {
+					oSelectDialog.destroy();
+					start();
+				}, 0);
+			});
+			oSelectDialog.open();
+		})
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.SelectDialog</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

@@ -1,0 +1,245 @@
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference
+		Uri="http://testservice:8080/sap/opu/odata/IWFND/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Measures.V1" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="http://testservice:8080/sap/opu/odata/IWFND/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="Org.OData.Core.V1" />
+	</edmx:Reference>
+	<edmx:Reference
+		Uri="http://testservice:8080/sap/opu/odata/IWFND/catalogservice;v=2/Vocabularies(TechnicalName='ZRHA_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+		xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1_1" />
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="com.sap.GL.zrha" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Account" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="GL_Account" />
+					<PropertyRef Name="Bukrs" />
+				</Key>
+				<Property Name="GL_Account" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="G/L Account" />
+				<Property Name="Bukrs" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Company Code" />
+				<Property Name="AccountText" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:label="Long Text" />
+			</EntityType>
+			<EntityType Name="Company" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CompanyCode" />
+				</Key>
+				<Property Name="CompanyCode" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Company Code" />
+				<Property Name="CompanyName" Type="Edm.String" MaxLength="25"
+					sap:label="Company Name" />
+				<Property Name="City" Type="Edm.String" MaxLength="25"
+					sap:label="City" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5"
+					sap:label="Currency" sap:semantics="currency-code" />
+			</EntityType>
+			<EntityType Name="Document" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CompanyCode" />
+					<PropertyRef Name="DocumentNumber" />
+					<PropertyRef Name="FiscalYear" />
+				</Key>
+				<Property Name="DocumentDate" Type="Edm.DateTime"
+					Precision="7" sap:label="Document Date" />
+				<Property Name="PostingDate" Type="Edm.DateTime" Precision="7"
+					sap:label="Posting Date" />
+				<Property Name="DocumentHeaderText" Type="Edm.String"
+					MaxLength="25" sap:label="Doc.Header Text" />
+				<Property Name="DocumentType" Type="Edm.String" MaxLength="2"
+					sap:label="Document Type" />
+				<Property Name="CompanyCode" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Company Code" />
+				<Property Name="ExchangeRate" Type="Edm.Decimal" Precision="9"
+					Scale="5" sap:label="Exchange rate" />
+				<Property Name="CurrencyCode" Type="Edm.String" MaxLength="5"
+					sap:label="Currency" sap:semantics="currency-code" />
+				<Property Name="CurrencyConversionDate" Type="Edm.DateTime"
+					Precision="7" sap:label="Translatn Date" />
+				<Property Name="LedgerGroup" Type="Edm.String" MaxLength="4"
+					sap:label="Ledger Group" />
+				<Property Name="DocumentNumber" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Document Number" />
+				<Property Name="Month" Type="Edm.String" MaxLength="2"
+					sap:label="Period" />
+				<Property Name="DocumentTypeText" Type="Edm.String"
+					MaxLength="40" sap:label="Long Text" />
+				<Property Name="CompanyName" Type="Edm.String" MaxLength="54" />
+				<Property Name="Currency" Type="Edm.String" MaxLength="16" />
+				<Property Name="FiscalYear" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Fiscal Year" />
+				<Property Name="DebitTotal" Type="Edm.Decimal" Precision="17"
+					Scale="2" sap:unit="CurrencyCode" sap:label="Debit total" />
+				<Property Name="CreditTotal" Type="Edm.Decimal" Precision="17"
+					Scale="2" sap:unit="CurrencyCode" sap:label="Credit total" />
+				<NavigationProperty Name="Items"
+					Relationship="com.sap.GL.zrha.DOC_ITEMS" FromRole="FromRole_DOC_ITEMS"
+					ToRole="ToRole_DOC_ITEMS" />
+			</EntityType>
+			<EntityType Name="DocumentItem" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CompanyCode" />
+					<PropertyRef Name="DocumentNumber" />
+					<PropertyRef Name="FiscalYear" />
+					<PropertyRef Name="LineItem" />
+				</Key>
+				<Property Name="ProfitSegment" Type="Edm.String" MaxLength="10"
+					sap:label="Profit. segment" />
+				<Property Name="ProfitCenter" Type="Edm.String" MaxLength="10"
+					sap:label="Profit Center" />
+				<Property Name="Account" Type="Edm.String" MaxLength="10"
+					sap:label="G/L" />
+				<Property Name="SalesOrderItem" Type="Edm.String"
+					MaxLength="6" sap:label="Item" />
+				<Property Name="SalesOrder" Type="Edm.String" MaxLength="10"
+					sap:label="Sales Document" />
+				<Property Name="Amount" Type="Edm.Decimal" Precision="13"
+					Scale="2" sap:label="Amount" />
+				<Property Name="CompanyCode" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Company Code" />
+				<Property Name="DebitCredit" Type="Edm.String" MaxLength="1"
+					sap:label="Debit/Credit" />
+				<Property Name="DocumentNumber" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Document Number" />
+				<Property Name="FiscalYear" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Fiscal Year" />
+				<Property Name="LineItem" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Line item" />
+				<NavigationProperty Name="Document"
+					Relationship="com.sap.GL.zrha.DOC_ITEMS" FromRole="ToRole_DOC_ITEMS"
+					ToRole="FromRole_DOC_ITEMS" />
+			</EntityType>
+			<EntityContainer Name="com.sap.GL.zrha_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Accounts" EntityType="com.sap.GL.zrha.Account"
+					sap:content-version="1" />
+				<EntitySet Name="Companies" EntityType="com.sap.GL.zrha.Company"
+					sap:content-version="1" />
+				<EntitySet Name="Documents" EntityType="com.sap.GL.zrha.Document"
+					sap:content-version="1" />
+			</EntityContainer>
+			<Annotations Target="com.sap.GL.zrha.Document/CompanyCode"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="Companies" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="CompanyCode" />
+									<PropertyValue Property="ValueListProperty"
+										String="CompanyCode" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="CompanyName" />
+									<PropertyValue Property="ValueListProperty"
+										String="CompanyName" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="City" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="CurrencyCode" />
+									<PropertyValue Property="ValueListProperty"
+										String="CurrencyCode" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.Document/DocumentType"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="DocumentTypes" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="DocumentType" />
+									<PropertyValue Property="ValueListProperty"
+										String="Blart" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="DocumentTypeText" />
+									<PropertyValue Property="ValueListProperty"
+										String="Ltext" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.DocumentItem/Account"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="Accounts" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Account" />
+									<PropertyValue Property="ValueListProperty"
+										String="GL_Account" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="CompanyCode" />
+									<PropertyValue Property="ValueListProperty"
+										String="Bukrs" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.DocumentItem/DebitCredit"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="Domains('SHKZG')/Values" />
+						<PropertyValue Property="CollectionRoot"
+							String="../../sap/ZRHA_GL_DOC_2_SVC/" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="DebitCredit" />
+									<PropertyValue Property="ValueListProperty"
+										String="Code" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<atom:link rel="self"
+				href="http://testservice:8080/sap/opu/odata/sap/ZRHA_GL_DOC_SRV/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version"
+				href="http://testservice:8080/sap/opu/odata/sap/ZRHA_GL_DOC_SRV/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

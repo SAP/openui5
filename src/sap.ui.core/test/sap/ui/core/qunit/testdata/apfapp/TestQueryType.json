@@ -1,0 +1,41 @@
+[
+    {
+        "ID": 679,
+        "P_SAPClient": 776,
+        "__metadata": {
+            "uri": "/myService/TestQuery(P_SAPClient=776)",
+            "type": "apf-test.TestQueryType"
+        },
+        "Results": {
+            "__deferred": {
+                "uri": "/myService/TestQuery(P_SAPClient=776)/Results"
+            }
+        }
+    },
+    {
+        "ID": 4659,
+        "P_SAPClient": 777,
+        "__metadata": {
+            "uri": "/myService/TestQuery(P_SAPClient=777)",
+            "type": "apf-test.TestQueryType"
+        },
+        "Results": {
+            "__deferred": {
+                "uri": "/myService/TestQuery(P_SAPClient=777)/Results"
+            }
+        }
+    },
+    {
+        "ID": 1841,
+        "P_SAPClient": 778,
+        "__metadata": {
+            "uri": "/myService/TestQuery(P_SAPClient=778)",
+            "type": "apf-test.TestQueryType"
+        },
+        "Results": {
+            "__deferred": {
+                "uri": "/myService/TestQuery(P_SAPClient=778)/Results"
+            }
+        }
+    }
+]

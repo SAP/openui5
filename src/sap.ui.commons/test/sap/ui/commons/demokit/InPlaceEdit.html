@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.InPlaceEdit">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>InPlaceEdit - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='TextField'>
+var oTextField1 = new sap.ui.commons.TextField("TF1", {
+	value: "Hello world!",
+	tooltip: "edit me",
+	width: "200px"
+});
+
+var oIPE1 = new sap.ui.commons.InPlaceEdit("IPE1",{
+	content: oTextField1
+}).placeAt("sample1");
+</script>
+
+<script id='ComboBox'>
+var oComboBox1 = new sap.ui.commons.ComboBox("CB1", {
+	value: "Hello world!",
+	tooltip: "edit me",
+	width: "200px",
+	items: [new sap.ui.core.ListItem("I1",{text: "error", key: "err"}),
+		        new sap.ui.core.ListItem("I2",{text: "warning", key: "warn"}),
+		        new sap.ui.core.ListItem("I3",{text: "success", key: "succ"})],
+	change: function(oEvent){
+		if (oEvent.getParameter('newValue') == "success"){
+			oEvent.oSource.setValueState(sap.ui.core.ValueState.Success);
+			// remove value state after some seconds
+			jQuery.sap.delayedCall(6000, oEvent.oSource, function(){this.setValueState(sap.ui.core.ValueState.None);})
+		}else if (oEvent.getParameter('newValue') == "warning"){
+			oEvent.oSource.setValueState(sap.ui.core.ValueState.Warning);
+		}else if (oEvent.getParameter('newValue') == "error"){
+			oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
+		}else{
+			oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
+		}
+	}
+});
+
+var oIPE2 = new sap.ui.commons.InPlaceEdit("IPE2",{
+	content: oComboBox1
+}).placeAt("sample2");
+</script>
+
+<script id='Link'>
+var oLink1 = new sap.ui.commons.Link("Link1", {
+	text: "SAP",
+	tooltip: "edit me",
+	href: "http://www.sap.com",
+	width: "200px"
+});
+
+var oIPE3 = new sap.ui.commons.InPlaceEdit("IPE3",{
+	content: oLink1
+}).placeAt("sample3");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/inplaceedit-icon.png">InPlaceEdit</h1>
+
+		<h2>Overview</h2>
+		<p>The <code>InPlaceEdit</code> is a control to show text and edit it when focus it. Initially the text is just displayed.
+		But if the control gets the focus it switched in to edit mode. Then the text can be edited. Depending on the type this can
+		be just simple typing or values can be chosen via a DropdownBox.
+		The text is assigned to the InPlaceEdit via the <code>content</code> aggregation. So the properties of the text are directly
+		maintained on the content control. The content control can be a <code>TextField</code>, a <code>ComboBox</code>, a <code>DropdownBox</code> or a <code>Link</code>.
+		In case of the Link the InPlaceEdit do not switch directly to the edit mode if its focused to allow the link-click. The edit mode
+		is triggered by the edit button or the F2 key.
+		<br>
+		If some text is changed an revert button appears. Using this button or the Esc key reverts the text change to the original one.
+		Using function <code>clearOldText</code> the original text can be cleared, so the changed text is now the current text.
+		So applications can decide when reverting the text should be possible or not.
+		<br/>
+		If the content control has a <code>valueState</code> property this can be directly maintained on the content control. The valueState property
+		of the InPlaceEdit control is just mapped to the one of the content control in this case. If the content control has no <code>setValueState</code>
+		property, the <code>valueState</code> is maintained directly on the InPlaceEdit.
+		<br>
+		The <code>tooltip</code> property is also just mapped to the one of the content control.
+		<br>
+		If the content control has a <code>change</code> event the one of the <code>InPlaceEdit</code> is just mapped to it.
+		</p>
+
+		<h2>Examples</h2>
+		<h3>inPlaceEdit with TextField</h3>
+		<p>The first example shows a simple InPlaceEdit to modify simple text.
+		</p>
+		<br>
+		<div code-sample="sample1" script="TextField"></div>
+		<br/>
+		<h3>inPlaceEdit with ComboBox</h3>
+		<p>This example shows a ComboBox as content. On the <code>change</code> event there is a handler to set the <code>valueState</code>.
+		<br>
+		Hint: In applications be sure to set the <code>valueState</code> back after some time (especially for success) to prevent confusing output.
+		</p>
+		<br>
+		<div code-sample="sample2" script="ComboBox"></div>
+		<br/>
+		<h3>inPlaceEdit with Link</h3>
+		<p>This example shows a Link as content. To enable the link click functionality it must manually switched into edit mode
+		<br>
+		On the <code>Link</code> only the <code>Text</code> property is changed by the <code>InPlaceEdit</code>. On the <code>change</code> event
+		the application can change the <code>href</code> property according to the text.
+		</p>
+		<br>
+		<div code-sample="sample3" script="Link"></div>
+		<br/>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.InPlaceEdit.html" >API documentation</a>
+		</p>
+	</body>
+</html>

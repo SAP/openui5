@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Dialog - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+
+		<script>
+		    function handleClosed(oControlEvent){
+			    var iWidth = oControlEvent.getParameter("width");
+			    var iHeight = oControlEvent.getParameter("height");
+			    oControlEvent.getSource().setWidth(iWidth + "px");
+			    oControlEvent.getSource().setHeight(iHeight + "px");
+		    }
+
+			var oBtn = new sap.ui.commons.Button({
+				text:"Open Dialog involving automatic re-rendering",
+				press: function() { oDialog.open(); } 
+			}).placeAt("uiArea1");
+
+			var oDialog = new sap.ui.commons.Dialog({
+				title : "Standard Controls in the Context of a Dialog",
+				modal : true,
+				closed : function() {
+					oDialog.destroy();
+				}
+			});
+			var oLayout = new sap.ui.commons.layout.MatrixLayout({layoutFixed:false});
+			oDialog.addContent(oLayout);
+			oLayout.createRow(
+				new sap.ui.commons.CheckBox({
+					id : "checkbox",
+					text : "Some boolean flag",
+					checked : true
+				})
+			);
+			oLayout.createRow(
+					new sap.ui.commons.Button({text : "Add", press : function() { createTableRow(oLayout); } }),
+					new sap.ui.commons.Button({text : "Invalidate UIArea", press : function(e) { 
+							e.getSource().getUIArea() && e.getSource().getUIArea().invalidate();
+							e.getSource().setProperty("text", e.getSource().getText() + "+");	
+							for(var i=0; i<oLayout.getRows().length; i++) {
+								var oTF = sap.ui.getCore().byId("textfield"+i);
+								if ( oTF ) {
+									oTF.setProperty("value", oTF.getValue() + "+", true);
+								}
+							}
+						}
+					}),
+					new sap.ui.commons.Button({text : "Invalidate Dialog", press : function(e) { 
+							oDialog.invalidate();
+						}
+					})
+
+			);
+			createTableRow(oLayout);
+			createTableRow(oLayout);
+			createTableRow(oLayout);
+			oBtnOk = new sap.ui.commons.Button({text: "OK", press: function() { alert("Ok"); }});
+			oBtnCancel = new sap.ui.commons.Button({text: "Cancel", press: function() { oDialog.close(); }});
+			oDialog.addButton(oBtnOk);
+			oDialog.addButton(oBtnCancel);
+			oDialog.setDefaultButton(oBtnCancel);
+
+			function createTableRow(oLayout) {
+				var i = oLayout.getRows().length;
+				oLayout.createRow(
+						new sap.ui.commons.Image({src : '../images/open.png'}),
+						new sap.ui.commons.TextField("textfield" + i, {
+							maxLength:10, 
+							value:'text',
+							change: validateText
+						}),
+						new sap.ui.commons.TextView({design:'H4', text:'Some text'}),
+						new sap.ui.commons.DropdownBox({ 
+							items : [
+       						     new sap.ui.core.ListItem({
+       								text: 'text1', 
+       								tooltip: "Some tooltip"
+       							 }),
+      						     new sap.ui.core.ListItem({
+      								text: 'text2', 
+      								tooltip: "Some tooltip"
+    							 })
+							],
+							change : function(e) {
+								alert(e.getParameters()["newValue"]);
+							}
+						})
+				);
+			}
+
+			function validateText(e) {
+				var v = e.getSource().getValue();
+				var ok = "|fine|super|good|ok|okay|1|SAPUI5|".indexOf("|" + v.replace(/\|/g,"") + "|") >= 0;
+				e.getSource().setValueState( ok ? "Success" : "Error");
+				e.getSource().setTooltip( ok ? "" : "You must enter a 'good' value");
+			}
+
+			jQuery(function() {
+				oDialog.open();
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for Standard Controls in a Dialog</h1>
+
+		<div id="uiArea1"></div>
+		<br/>
+		<hr/>
+	</body>
+</html>

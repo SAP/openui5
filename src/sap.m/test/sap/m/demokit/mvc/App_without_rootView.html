@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>MVC-based Mobile App</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.m"
+				>
+		</script>
+
+		<script>
+
+			// let UI5 know that certain package (the one containing the Views/Controllers) is available locally (next to the HTML file)
+			sap.ui.localResources("sap.m.mvc");
+
+			// define App and place it onto the HTML page
+			var detailView;
+			var app = new sap.m.App({
+				pages : [
+					sap.ui.xmlview("homePageView", "sap.m.mvc.HomePage"),
+					sap.ui.jsview("detailPageView", "sap.m.mvc.DetailPage")
+				],
+				homeIcon : {
+					'phone' : 'img/57_iPhone_Desktop_Launch.png',
+					'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
+					'tablet' : 'img/72_iPad_Desktop_Launch.png',
+					'tablet@2' : 'img/144_iPad_Retina_Web_Clip.png',
+					'favicon' : 'img/favicon.ico',
+					'precomposed': false
+				}
+			}).placeAt("content");
+			
+			// subscribe to event bus
+			var bus = sap.ui.getCore().getEventBus();
+			bus.subscribe("nav", "to", function(channelId, eventId, data) {
+				if (data && data.id) {
+					// lazy load view
+					if (this.app.getPage(data.id) === null) {
+						jQuery.sap.log.info("now loading page '" + data.id + "'");
+						this.app.addPage(sap.ui.jsview(data.id, "sap.m.mvc." + data.id));
+					}
+					// Navigate to given page (include bindingContext)
+					this.app.to(data.id, data.data.context);
+				} else {
+					jQuery.sap.log.error("nav-to event cannot be processed. Invalid data: " + data);
+				}
+			}, this);
+			bus.subscribe("nav", "back", function(){app.back();}, this);
+
+			// Data is fetched here and asynchronously set for the entire application
+			var that = this;
+			jQuery.ajax("Data.json", {   // load the data from a relative URL (the Data.json file in the same directory)
+				dataType: "json",
+				success: function(data){
+					var oModel = new sap.ui.model.json.JSONModel(data);
+					app.setModel(oModel);
+				}
+			});
+			
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

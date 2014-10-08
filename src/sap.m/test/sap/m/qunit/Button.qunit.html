@@ -1,0 +1,413 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.Button</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<style type="text/css">
+.ButtonSpace { 
+	margin-top: 10px;
+}
+</style>
+
+<script type="text/javascript">
+
+	var b1, b2, b4, b5, b6, b7, b8, b9, b10, msg;
+	
+	var sText = "Button Text", 
+		sButtonTypeDefault = sap.m.ButtonType.Default, 
+		sButtonTypeBack = sap.m.ButtonType.Back, 
+		sButtonTypeAccept = sap.m.ButtonType.Accept, 
+		sButtonTypeReject = sap.m.ButtonType.Reject, 
+		sButtonTypeTransparent = sap.m.ButtonType.Transparent, 
+		sButtonTypeUp = sap.m.ButtonType.Up, 
+		sButtonTypeUnstyled = sap.m.ButtonType.Unstyled, 
+		sWidth = "200px",
+		bEnabled = true, 
+		bDisabled = false,
+		sIcon = "../images/analytics_64.png",
+		sPressMessage = "Button Tapped Event!";
+
+	function tabEventHandler1() {
+		throw sPressMessage + " - Exception"
+	}
+
+	function tabEventHandler2() {
+		msg = sPressMessage
+	}
+
+	// Default Button
+	var oBtnDefault = new sap.m.Button("b1");
+	oBtnDefault.setText(sText);
+	oBtnDefault.setType(sButtonTypeDefault);
+	oBtnDefault.setEnabled(bEnabled);
+	oBtnDefault.attachPress(tabEventHandler1);
+	oBtnDefault.placeAt("contentBtnDefault");
+
+	// Back Button
+	var oBtnBack = new sap.m.Button("b2");
+	oBtnBack.setText("Back Button");
+	oBtnBack.setType(sButtonTypeBack);
+	oBtnBack.setEnabled(bEnabled);
+	oBtnBack.attachPress(tabEventHandler2);
+	oBtnBack.placeAt("contentBtnBack");
+
+	// Accept Button
+	var oBtnAccept = new sap.m.Button("b4");
+	oBtnAccept.setText("Accept Button");
+	oBtnAccept.setType(sButtonTypeAccept);
+	oBtnAccept.setEnabled(bEnabled);
+	oBtnAccept.attachPress(tabEventHandler2);
+	oBtnAccept.placeAt("contentBtnAccept");
+
+	// Reject Button
+	var oBtnReject = new sap.m.Button("b5");
+	oBtnReject.setText("Reject Button");
+	oBtnReject.setType(sButtonTypeReject);
+	oBtnReject.setEnabled(bEnabled);
+	oBtnReject.attachPress(tabEventHandler2);
+	oBtnReject.placeAt("contentBtnReject");
+
+	// Transparent Button
+	var oBtnTransparent = new sap.m.Button("b6");
+	oBtnTransparent.setText("Transparent Button");
+	oBtnTransparent.setType(sButtonTypeTransparent);
+	oBtnTransparent.setEnabled(bEnabled);
+	oBtnTransparent.attachPress(tabEventHandler2);
+	oBtnTransparent.placeAt("contentBtnTransparent");
+
+	// Button Width
+	var oBtnWidth = new sap.m.Button("b7");
+	oBtnWidth.setText("Button with 200 pixel");
+	oBtnWidth.setType(sButtonTypeDefault);
+	oBtnWidth.setEnabled(bEnabled);
+	oBtnWidth.setWidth(sWidth);		
+	oBtnWidth.attachPress(tabEventHandler2);
+	oBtnWidth.placeAt("contentBtnWidth");
+
+	// Disabled Button
+	var oBtnDisabled = new sap.m.Button("b8");
+	oBtnDisabled.setText("Disabled Button");
+	oBtnDisabled.setType(sButtonTypeDefault);
+	oBtnDisabled.setEnabled(bDisabled);
+	oBtnDisabled.setWidth(sWidth);		
+	oBtnDisabled.attachPress(tabEventHandler2);
+	oBtnDisabled.placeAt("contentBtnDisabled");
+
+	// Icon Button
+	var oBtnIcon = new sap.m.Button("b9");
+	oBtnIcon.setText("Icon Button");
+	oBtnIcon.setType(sButtonTypeDefault);
+	oBtnIcon.setEnabled(bEnabled);
+	oBtnIcon.setIcon(sIcon);
+	oBtnIcon.attachPress(tabEventHandler2);
+	oBtnIcon.placeAt("contentBtnIcon");
+
+	// Up Button
+	var oBtnUp = new sap.m.Button("b10");
+	oBtnUp.setText("Up Button");
+	oBtnUp.setType(sButtonTypeUp);
+	oBtnUp.setEnabled(bEnabled);
+	oBtnUp.attachPress(tabEventHandler2);
+	oBtnUp.placeAt("contentBtnUp");
+
+	// Unstyled Button
+	var oBtnUp = new sap.m.Button("b11");
+	oBtnUp.setText("Unstyled Button");
+	oBtnUp.setType(sButtonTypeUnstyled);
+	oBtnUp.setEnabled(bEnabled);
+	oBtnUp.attachPress(tabEventHandler2);
+	oBtnUp.placeAt("contentBtnUnstyled");
+
+	// Invisible Button
+	var oBtnUp = new sap.m.Button("b12");
+	oBtnUp.setText("Invisible Button");
+	oBtnUp.setVisible(false);
+	oBtnUp.placeAt("contentBtnInvisible");
+
+	qutils.delayTestStart();
+
+	module("Basic", {
+		setup : function() {
+			b1 = sap.ui.getCore().getControl("b1");
+			b2 = sap.ui.getCore().getControl("b2");
+			b4 = sap.ui.getCore().getControl("b4");
+			b5 = sap.ui.getCore().getControl("b5");
+			b6 = sap.ui.getCore().getControl("b6");
+			b7 = sap.ui.getCore().getControl("b7");
+			b8 = sap.ui.getCore().getControl("b8");
+			b9 = sap.ui.getCore().getControl("b9");
+			b10 = sap.ui.getCore().getControl("b10");
+			b11 = sap.ui.getCore().getControl("b11");
+			b12 = sap.ui.getCore().getControl("b12");
+		},
+		teardown : function() {
+			b1 = null;
+			b2 = null;
+			b4 = null;
+			b5 = null;
+			b6 = null;
+			b7 = null;
+			b8 = null;
+			b9 = null;
+			b10 = null;
+			b11 = null;
+			b12 = null;
+		}
+	});
+
+
+	// test property accessor methods 
+	test("TextOk", function() {
+		equals(b1.getText(), sText, "Text - button1 is correct using 'equals()'!");
+	});
+
+	test("TypeOk", function() {
+		equals(b1.getType(), sButtonTypeDefault, "Button Type: Default - button1 is correct using 'equals()'!");
+		equals(b2.getType(), sButtonTypeBack, "Button Type: Back - button2 is correct using 'equals()'!");
+		equals(b4.getType(), sButtonTypeAccept, "Button Type: Accept - button4 is correct using 'equals()'!");
+		equals(b5.getType(), sButtonTypeReject, "Button Type: Reject - button5 is correct using 'equals()'!");
+		equals(b6.getType(), sButtonTypeTransparent, "Button Type: Transparent - button6 is correct using 'equals()'!");
+		equals(b10.getType(), sButtonTypeUp, "Button Type: Up - button10 is correct using 'equals()'!");
+		equals(b11.getType(), sButtonTypeUnstyled, "Button Type: Uunstyle - button11 is correct using 'equals()'!");
+	});
+
+	test("ButtonEnabledOk", function() {
+		equals(b1.getEnabled(), bEnabled, "Button is enabled - button1 is correct using 'equals()'!");
+		equals(b2.getEnabled(), bEnabled, "Button is enabled - button2 is correct using 'equals()'!");
+		equals(b4.getEnabled(), bEnabled, "Button is enabled - button4 is correct using 'equals()'!");
+		equals(b5.getEnabled(), bEnabled, "Button is enabled - button5 is correct using 'equals()'!");
+		equals(b6.getEnabled(), bEnabled, "Button is enabled - button6 is correct using 'equals()'!");
+		equals(b7.getEnabled(), bEnabled, "Button is enabled - button7 is correct using 'equals()'!");
+		equals(b8.getEnabled(), bDisabled, "Button is disabled - button8 is correct using 'equals()'!");
+		equals(b9.getEnabled(), bEnabled, "Button is enabled - button9 is correct using 'equals()'!");
+		equals(b10.getEnabled(), bEnabled, "Button is enabled - button10 is correct using 'equals()'!");
+	});	
+
+	test("ButtonWidthOk", function() {
+		equals(b7.getWidth(), sWidth, "Button width - button7 is correct using 'equals()'!");
+	});	
+
+	test("IconOk", function() {
+		equals(b9.getIcon(), sIcon, "Icon for button9 is correct using 'equals()'!");
+	});
+	 
+	test("PressOk", function() {
+		try {
+			b1.firePress();
+			ok(false,"Exception should have been thrown!");
+		} catch (e) {
+			ok(e == sPressMessage + " - Exception","Button1 - Exception was thrown correctly!");
+			equals(e,sPressMessage + " - Exception","Button1 - Exception was thrown correctly!")
+		}
+		b2.firePress();
+		ok(msg == sPressMessage, "Button2 - Event was fired correctly!");
+		equals(msg, sPressMessage, "Button2 - Event was fired correctly!!")
+		b4.firePress();
+		ok(msg == sPressMessage, "Button4 - Event was fired correctly!");
+		equals(msg, sPressMessage, "Button4 - Event was fired correctly!!")
+		b5.firePress();
+		ok(msg == sPressMessage, "Button5 - Event was fired correctly!");
+		equals(msg, sPressMessage, "Button5 - Event was fired correctly!!")
+		b6.firePress();
+		ok(msg == sPressMessage, "Button6 - Event was fired correctly!");
+		equals(msg, sPressMessage, "Button6 - Event was fired correctly!!")
+		b7.firePress();
+		ok(msg == sPressMessage, "Button7 - Event was fired correctly!");
+		equals(msg, sPressMessage, "Button7 - Event was fired correctly!!")
+	});	
+
+	test("Visibility", function(){
+		ok(!jQuery.sap.domById("b12"), "Button12 should not be rendered");
+	});
+
+	function hoverableTestCase (oTestDescription) {
+		this.stub(sap.ui.Device, "system", { desktop : oTestDescription.desktop });
+
+		// System under Test
+		var oButton = new sap.m.Button({
+			enabled : oTestDescription.enabled,
+		});
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		var bHoverable = oButton._isHoverable();
+
+		// Assert
+		strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
+		strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
+	}
+
+	test("Should be hoverable if the button is enabled and in desktop", function() {
+		hoverableTestCase.call(this, {
+			enabled : true,
+			desktop : true,
+			shouldBeHoverable : true,
+			shouldHaveCssClass : true
+		});
+	});
+
+	test("Should not be hoverable if the button is disabled and in desktop", function() {
+		hoverableTestCase.call(this, {
+			enabled : false,
+			desktop : true,
+			shouldBeHoverable : false,
+			shouldHaveCssClass : false
+		});
+	});
+
+	test("Should not be hoverable if the button is enabled and not desktop", function() {
+		hoverableTestCase.call(this, {
+			enabled : true,
+			desktop : false,
+			shouldBeHoverable : false,
+			shouldHaveCssClass : false
+		});
+	});
+
+	test("Should not be hoverable if the button is disabled and not desktop", function() {
+		hoverableTestCase.call(this, {
+			enabled : false,
+			desktop : false,
+			shouldBeHoverable : false,
+			shouldHaveCssClass : false
+		});
+	});
+
+	test("Should not rerender the button if the text is changed", function() {
+		// Arrange
+		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
+			oRenderSpy,
+			oResult
+			oConstructor = { text : "No empty text"};
+
+		// System under Test
+		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oButton, "invalidate");
+
+		// Act
+		oResult = oButton.setText(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oButton, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		ok(!/.*<script>.*/.test(oButton.$("content").html()), "Did not contain a unescaped script tag");
+		strictEqual(oButton.getText(), sTextToSet, "Did set the non encoded string as value");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
+	test("Check type conversation if text property is changed (non-string value)", function() {
+		// Arrange
+		var oRenderSpy,
+			oResult
+			oConstructor = { text : "Check type conversation (text)", enabled : true};
+
+		// System under Test
+		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oButton, "invalidate");
+
+		// Act
+		oResult = oButton.setText(2);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 0, "No conversation error");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
+	test("Should not rerender the button if icon property is changed", function() {
+		// Arrange
+		var oRenderSpy,
+			oResult
+			oConstructor = { text : "Rerender Check (icon)", enabled : true, icon : sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
+
+		// System under Test
+		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oButton, "invalidate");
+
+		// Act
+		oResult = oButton.setIcon(sap.ui.core.IconPool.getIconURI("notes"));
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+
+		// Cleanup
+		oButton.destroy();
+	}); 
+
+
+	test("Should not rerender the button if iconFirst property is changed", function() {
+		// Arrange
+		var oRenderSpy,
+			oResult
+			oConstructor = { text : "Rerender Check (iconFirst)", enabled : true, icon: sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
+
+		// System under Test
+		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oButton, "invalidate");
+
+		// Act
+		oResult = oButton.setIconFirst(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.m.Button</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="contentBtnDefault" class="ButtonSpace"></div>
+	<div id="contentBtnBack" class="ButtonSpace"></div>
+	<div id="contentBtnAccept" class="ButtonSpace"></div>
+	<div id="contentBtnReject" class="ButtonSpace"></div>
+	<div id="contentBtnTransparent" class="ButtonSpace"></div>
+	<div id="contentBtnWidth" class="ButtonSpace"></div>
+	<div id="contentBtnDisabled" class="ButtonSpace"></div>
+	<div id="contentBtnIcon" class="ButtonSpace"></div>
+	<div id="contentBtnUp" class="ButtonSpace"></div>
+	<div id="contentBtnUnstyled" class="ButtonSpace"></div>
+	<div id="contentBtnInvisible" class="ButtonSpace"></div>
+</body>
+</html>

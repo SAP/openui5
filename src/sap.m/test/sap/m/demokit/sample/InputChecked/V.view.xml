@@ -1,0 +1,41 @@
+<mvc:View
+	controllerName="sap.m.sample.InputChecked.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+
+			<Label text="Name" />
+			<Input
+				id="nameInput"
+				type="Text"
+				placeholder="Enter Name ..."
+				valueStateText="Name must not be empty. Maximum 10 characters."
+				value="{
+					path : '/name',
+					type : 'sap.ui.model.type.String',
+					constraints : {
+						minLength: 1,
+						maxLength: 10
+					}
+				}" />
+
+			<Label text="EMail" />
+			<Input
+				id="emailInput"
+				type="Email"
+				placeholder="Enter EMail ..."
+				valueStateText="EMail must be a valid email address."
+				value="{
+					path : '/email',
+					type : '.typeEMail'
+				}" />
+
+			<Button
+				text="Continue"
+				press="handleContinue" />
+		</items>
+	</VBox>
+</mvc:View>

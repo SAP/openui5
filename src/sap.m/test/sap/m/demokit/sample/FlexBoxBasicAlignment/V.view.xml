@@ -1,0 +1,183 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="panelBoxContainer sapUiFioriObjectPage"
+		width="100%" >
+		<l:content>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Upper left" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start"
+					justifyContent="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Upper center" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start"
+					justifyContent="Center">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Upper right" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start"
+					justifyContent="End">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Middle left" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Center"
+					justifyContent="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Middle center" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Center"
+					justifyContent="Center">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Middle right" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Center"
+					justifyContent="End">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Lower left" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="End"
+					justifyContent="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Lower center" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="End"
+					justifyContent="Center">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel>
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Lower right" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="End"
+					justifyContent="End">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" />
+					</items>
+				</FlexBox>
+
+			</Panel>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

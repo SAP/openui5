@@ -1,0 +1,72 @@
+<mvc:View controllerName="view.Category"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:control="control"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+	<Page
+		id="page"
+		title="{CategoryName}"
+		showNavButton="true"
+		navButtonPress="handleNavButtonPress"
+		showFooter="{device>/isNoPhone}" >
+		<headerContent>
+			<Button
+				icon="sap-icon://cart"
+				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
+				press="handleCartButtonPress">
+			</Button>
+		</headerContent>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+		<content>
+			<List
+				id="productList"
+				mode="{device>/listMode}"
+				select="handleProductListSelect"
+				noDataText="{i18n>CATEGORY_NO_DATA}"
+				busyIndicatorDelay="0"
+				items="{
+					path : '/Products',
+					sorter : {
+						path : 'Name',
+						descending : false
+					}
+				}">
+				<items>
+					<ObjectListItem
+						type="{device>/listItemType}"
+						icon="{
+							path : 'PictureUrl',
+							formatter: 'util.Formatter.pictureUrl'
+						}"
+						title="{Name}"
+						number="{
+							path : 'Price',
+							formatter : 'util.Formatter.price'
+						}"
+						numberUnit="EUR"
+						press="handleProductListItemPress"
+						iconDensityAware="false" >
+						<attributes>
+							<ObjectAttribute text="{SupplierName}"/>
+						</attributes>
+						<firstStatus>
+							<ObjectStatus
+								text="{
+									path : 'status',
+									formatter : 'util.Formatter.statusText' 
+								}" 
+								state="{
+									path : 'status',
+									formatter : 'util.Formatter.statusState'
+								}" />
+						</firstStatus>
+					</ObjectListItem>
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

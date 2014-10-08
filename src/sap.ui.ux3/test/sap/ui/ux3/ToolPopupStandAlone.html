@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>ToolPopup - sap.ui.ux3</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
+	
+</script>
+
+<script>
+	var oPosition = {
+		my : "left top",
+		at : "right top",
+		offset : "13 0",
+		collision : "none"
+	};
+
+	var fixPosition = function() {
+		var my = oDropMyHorizontal.getSelectedKey();
+		my += " " + oDropMyVertical.getSelectedKey();
+		oPosition.my = my;
+
+		var at = oDropAtHorizontal.getSelectedKey();
+		at += " " + oDropAtVertical.getSelectedKey();
+		oPosition.at = at;
+
+		if (oCBOffset.getChecked()) {
+			var aOffset = oTextOffset.getValue().split(" ");
+			var aSign = [ parseInt(aOffset[0]) < 0 ? "" : "+", parseInt(aOffset[1]) < 0 ? "" : "+" ]; // no "-" sign because already in numer of offset
+			oPosition.my = oDropMyHorizontal.getSelectedKey() + aSign[0] + aOffset[0] + " " + oDropMyVertical.getSelectedKey() + aSign[1] + aOffset[1];
+			oPosition.offset = undefined;
+		} else {
+			oPosition.offset = oTextOffset.getValue();
+		}
+		oPosition.collision = oDropCollision.getSelectedKey();
+	};
+</script>
+
+<script>
+	var oListBoxHorizontal = new sap.ui.commons.ListBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'Left',
+			key : 'left'
+		}), new sap.ui.core.ListItem({
+			text : 'Begin',
+			key : 'begin'
+		}), new sap.ui.core.ListItem({
+			text : 'Center',
+			key : 'center'
+		}), new sap.ui.core.ListItem({
+			text : 'Right',
+			key : 'right'
+		}), new sap.ui.core.ListItem({
+			text : 'End',
+			key : 'end'
+		}) ]
+	});
+
+	var oListBoxVertical = new sap.ui.commons.ListBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'Top',
+			key : 'top'
+		}), new sap.ui.core.ListItem({
+			text : 'Center',
+			key : 'center'
+		}), new sap.ui.core.ListItem({
+			text : 'Bottom',
+			key : 'bottom'
+		}) ]
+	});
+
+	//Create a DropdownBox
+	var oDropMyHorizontal = new sap.ui.commons.DropdownBox("myHorizontal", {
+		change : fixPosition
+	});
+	oDropMyHorizontal.setListBox(oListBoxHorizontal);
+	oDropMyHorizontal.placeAt("my_horizontal");
+
+	var oDropMyVertical = new sap.ui.commons.DropdownBox("myVertical", {
+		change : fixPosition
+	});
+	oDropMyVertical.setListBox(oListBoxVertical);
+	oDropMyVertical.placeAt("my_vertical");
+
+	var oDropAtHorizontal = new sap.ui.commons.DropdownBox("atHorizontal", {
+		change : fixPosition
+	});
+	oDropAtHorizontal.setListBox(oListBoxHorizontal);
+	oDropAtHorizontal.setValue("Right");
+	oDropAtHorizontal.placeAt("at_horizontal");
+
+	var oDropAtVertical = new sap.ui.commons.DropdownBox("atVertical", {
+		change : fixPosition
+	});
+	oDropAtVertical.setListBox(oListBoxVertical);
+	oDropAtVertical.placeAt("at_vertical");
+
+	var oTextOffset = new sap.ui.commons.TextField("offset", {
+		value : "13 -11",
+		enabled : false,
+		change : fixPosition
+	}).placeAt("offset_input");
+
+	var oCBOffset = new sap.ui.commons.CheckBox("CB_newOffset", {
+		text : "use new jQuery UI logic (offset inside my)",
+		enabled : false,
+		change : fixPosition
+	}).placeAt("offset_input");
+
+	var oDropCollision = new sap.ui.commons.DropdownBox({
+		items : [ new sap.ui.core.ListItem({
+			text : 'None',
+			key : 'none'
+		}), new sap.ui.core.ListItem({
+			text : 'Flip',
+			key : 'flip'
+		}), new sap.ui.core.ListItem({
+			text : 'Fit',
+			key : 'fit'
+		}), new sap.ui.core.ListItem({
+			text : 'FlipFit',
+			key : 'flipfit'
+		}) ],
+		enabled : false,
+		change : fixPosition
+	}).placeAt("collision_box");
+</script>
+
+<script language="javascript">
+	jQuery.sap.require("sap.ui.core.Popup");
+	jQuery.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-core");
+	jQuery.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-effect")
+	jQuery.sap.require("sap.ui.thirdparty.jqueryui.jquery-ui-effect-scale")
+
+	// open ToolPopup below button
+	var oButton = new sap.ui.commons.Button("openerButton", {
+		text : "Open ToolPopup",
+		press : function() {
+			if (oToolPopup.isOpen()) {
+				oToolPopup.close();
+			} else {
+				if (oCheck.getChecked()) {
+					// my, at, of, offset, collision
+					oToolPopup.setPosition(oPosition.my, oPosition.at, oButton, oPosition.offset, oPosition.collision);
+					oToolPopup.open();
+				} else {
+					oToolPopup.open(oPosition.my, oPosition.at);
+				}
+			}
+		}
+	}).placeAt("opener");
+
+	var oToolPopup = new sap.ui.ux3.ToolPopup("toolPopup1", {
+		content : [ new sap.ui.commons.TextArea({
+			rows : 10
+		}), new sap.ui.commons.Button({
+			text : "Press to close",
+			press : function() {
+				oToolPopup.close();
+			}
+		}) ],
+		opener : oButton,
+		opened : function() {
+			this.oPopup.setFollowOf(true);
+		}
+	});
+
+	var oCheck = new sap.ui.commons.CheckBox({
+		text : "Use 'setPosition'",
+		change : function() {
+			var bChecked = this.getChecked();
+
+			oTextOffset.setEnabled(bChecked);
+			oCBOffset.setEnabled(bChecked);
+			oDropCollision.setEnabled(bChecked);
+		}
+	}).placeAt("checkDefault");
+
+	var sParam = "sapUiUx3ToolPopupInverted";
+	var bInverted = sap.ui.core.theming.Parameters.get(sParam) === "true";
+
+	var oCheck2 = new sap.ui.commons.CheckBox({
+		text : "Set ToolPopup Inverted",
+		checked : bInverted,
+		change : function() {
+			oToolPopup.setInverted(this.getChecked());
+		}
+	}).placeAt("checkInvert");
+
+	var oCheck3 = new sap.ui.commons.CheckBox({
+		text : "Move Opener Button",
+		checked : false,
+		change : function() {
+			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
+				alert("Use a modern browser damnit :-)");
+			} else {
+				if (this.getChecked()) {
+					oButton.addStyleClass("animate");
+					oButtonOpenToolPopFollowOf.setEnabled(true);
+				} else {
+					oButton.removeStyleClass("animate");
+					oButtonOpenToolPopFollowOf.setEnabled(false);
+				}
+			}
+		}
+	}).placeAt("checkFollowOf");
+	var oButtonOpenToolPopFollowOf = new sap.ui.commons.Button({
+		text : "Open the ToolPopup with 'FollowOf'",
+		enabled : false,
+		press : function() {
+			if (oToolPopup.isOpen()) {
+				oToolPopup.close();
+			} else {
+				oToolPopup.open();
+			}
+		}
+	}).addStyleClass("followOfButton").placeAt("checkFollowOf");
+
+	var oButtonInvalidateOpener = new sap.ui.commons.Button({
+		text : "Set Text for Opener Button",
+		press : function() {
+			oButton.setText(oTextField.getValue());
+		}
+	}).addStyleClass("followOfButton").placeAt("checkFollowOf");
+	var oTextField = new sap.ui.commons.TextField({
+		change : function() {
+			oButton.setText(this.getValue());
+		}
+	}).placeAt("checkFollowOf");
+
+	var scale = 100;
+
+	function scaleAll() {
+		oToolPopup.$().effect("scale", {
+			percent : scale,
+			direction : "both"
+		});
+	}
+
+	var oBtnScale = new sap.ui.commons.Button({
+		text : "Scale +",
+		press : function() {
+			scale += 20;
+			scaleAll();
+		}
+	}).placeAt("btnScale+");
+
+	var oBtnScale = new sap.ui.commons.Button({
+		text : "Scale -",
+		press : function() {
+			scale -= 20;
+			scaleAll();
+		}
+	}).placeAt("btnScale-");
+
+	var oBtnScale = new sap.ui.commons.Button({
+		text : "Scale reset",
+		press : function() {
+			scale = Math.abs(100 / scale);
+			scaleAll();
+
+			scale = 100;
+		}
+	}).placeAt("btnScale0");
+</script>
+<style>
+.opener {
+	position: fixed;
+	left: 200px;
+	bottom: 50px;
+	margin: 50px;
+}
+
+.followOfButton {
+	margin-left: 10px;
+}
+
+.animate {
+	-webkit-animation-duration: 3s;
+	animation-duration: 3s;
+	animation-name: changePos;
+	-webkit-animation-name: changePos;
+	animation-iteration-count: infinite;
+	-webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes changePos {
+	from { 
+		left:0px;
+	}
+
+	50% {
+		margin : 200px;
+	}
+
+	to {
+		margin: 0px;
+	}
+}
+
+@keyframes changePos {
+	from { 
+		left:0px;
+	}
+
+	50% {
+		margin : 200px;
+	}
+
+	to {
+		margin: 0px;
+	}
+}
+
+html[dir='rtl'] .opener {
+	left: 50px;
+}
+</style>
+</head>
+<body class="sapUiBody" style="overflow-x: hidden;">
+	<h1>Test Page for sap.ui.ux3.ToolPopup</h1>
+	<!-- <div class="uiArea" id="uiBelow"></div>
+	<div class="uiArea" id="uiLeft"></div>
+	<div class="uiArea" id="uiLeft1"></div>
+	<div class="uiArea" id="uiLeft2"></div>
+	<div class="uiArea" id="uiUp"></div>
+	<div class="uiArea" id="uiUp1"></div>
+	<div class="uiArea" id="uiUp2"></div>
+	<div class="uiArea" id="uiRight"></div> -->
+
+	<div id="opener" class="opener"></div>
+	<br />
+	<div id="btnScale+"></div>
+	<div id="btnScale-"></div>
+	<div id="btnScale0"></div>
+
+	<div id="checkInvert"></div>
+	<div id="checkDefault"></div>
+	<div id="checkFollowOf"></div>
+	<div style="padding-bottom: 20px;">
+		<b>my:</b>
+		<div id="my_horizontal"></div>
+		<div id="my_vertical"></div>
+	</div>
+	<div style="padding-bottom: 20px;">
+		<b>at:</b>
+		<div id="at_horizontal"></div>
+		<div id="at_vertical"></div>
+	</div>
+	<div style="padding-bottom: 20px;">
+		<b>offset:</b>
+		<div id="offset_input"></div>
+	</div>
+	<div style="padding-bottom: 20px;">
+		<b>collision:</b>
+		<div id="collision_box"></div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+			<Input
+				value="10"
+				description="PC"
+				width="100px"
+				fieldWidth="60%" />
+			<Input
+				value="220"
+				description="EUR / 5 pieces"
+				width="200px"
+				fieldWidth="60px" />
+			<Input
+				value="220.000"
+				description="EUR"
+				width="250px"
+				fieldWidth="80%" />
+			<Input 
+				value="007"
+				description="Bastian Schweinsteiger"
+				width="300px"
+				fieldWidth="50px" />
+			<Input
+				value="EDP_LAPTOP"
+				description="IT Laptops"
+				width="300px"
+				fieldWidth="75%" />
+		</items>
+	</VBox>  
+</mvc:View>

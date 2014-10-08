@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.odata.ODataModel
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	//TODO currently we rely on northwind odata service for tests...
+	//TODO tests depends on server response time and northwind content...so tests may be unstable
+	
+	// time to wait for server responses
+	var oModel, oBinding, fnChange ;
+	var timeout = 3000;
+	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+
+	function initModel(sURI, bJSON){
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
+		return oModel;
+	};
+
+	function initBinding(oModel) {
+		return oModel.bindList("/Orders"); 
+	};
+	
+	function init() {
+		oModel = initModel(sURI, true);
+		oBinding = initBinding(oModel);
+	};
+	
+	init();
+	
+	module("Model thresholding");
+	
+	asyncTest("test threshold 100; get data from 0..10", function(){
+		fnChange = function() {
+			aContexts = oBinding.getContexts(0,10,100);
+			equal(aContexts.length,10, "we should have 10 contexts");
+			equal(oBinding.aKeys.length,110, "we should have 110 keys");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);	
+		var aContexts = oBinding.getContexts(0,10,100);
+	});
+	
+	asyncTest("test threshold 100; simulate paging", function(){
+		fnChange = function() {
+			aContexts = oBinding.getContexts(120,10,100);
+			equal(aContexts.length,10, "we should have 10 contexts");
+			equal(oBinding.aKeys.length,210, "we should have 210 keys");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);	
+		var aContexts = oBinding.getContexts(0,10,100);
+		equal(oBinding.getContexts(10,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(20,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(30,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(40,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(50,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(60,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(70,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(80,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(90,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(100,10,100).length,10, "we should have 10 contexts");
+	});
+	
+	asyncTest("test threshold 100; get next page", function(){
+		fnChange = function() {
+			aContexts = oBinding.getContexts(120,10,100);
+			equal(aContexts.length,10, "we should have 10 contexts");
+			equal(oBinding.aKeys.length,310, "we should have 310 keys");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);
+		equal(oBinding.getContexts(110,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(120,10,100).length,10, "we should have 10 contexts");
+	});
+	
+	asyncTest("test threshold 100; jumpt to 751", function(){
+		fnChange = function() {
+			aContexts = oBinding.getContexts(751,10,100);
+			equal(aContexts.length,10, "we should have 10 contexts");
+			equal(oBinding.aKeys.length,830, "we should have 830 keys");
+			equal(oBinding.sRangeParams,"$skip=651&$top=179", "we should read 179 entries");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);
+		equal(oBinding.getContexts(751,10,100).length,0, "contexts not loaded yet");
+	});
+	
+	asyncTest("test threshold 100; page/scroll back", function(){
+		fnChange = function() {
+			equal(oBinding.sRangeParams,"$skip=551&$top=100", "we should read next 100 entries");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);
+		equal(oBinding.getContexts(741,10,100).length,10, "we should have 10 contexts");
+	});
+	asyncTest("test threshold 100; page/scroll back", function(){
+		fnChange = function() {
+			equal(oBinding.sRangeParams,"$skip=451&$top=100", "we should read next 100 entries");
+			equal(oBinding.getContexts(541,10,100).length,10, "we should have 10 contexts");
+			oBinding.oModel.detachRequestCompleted(fnChange);
+			start();
+		}
+		oBinding.oModel.attachRequestCompleted(fnChange);
+		equal(oBinding.getContexts(731,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(721,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(711,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(701,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(691,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(681,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(671,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(661,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(651,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(641,10,100).length,10, "we should have 10 contexts");
+		equal(oBinding.getContexts(541,10,100).length,0, "not yet loaded");
+	});
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding OData Model</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

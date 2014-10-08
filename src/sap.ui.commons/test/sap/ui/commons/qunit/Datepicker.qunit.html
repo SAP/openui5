@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-language="en-US"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			if (sap.ui.Device.browser.mobile) {
+				var bMobile = true;
+			}
+
+			try{
+				var ctrlId   = "myDatePicker";
+				var inputId  = ctrlId + "-input";
+				var iconId   = ctrlId + "-icon";
+				var sChangeValue = "";
+				var sChangeYyyymmdd = "";
+				var bChangeInvalid = true;
+
+				var fHandleChange = function(oEvent){
+					sChangeValue = oEvent.getParameter("newValue");
+					sChangeYyyymmdd = oEvent.getParameter("newYyyymmdd");
+					bChangeInvalid = oEvent.getParameter("invalidValue");
+				}
+
+				// With attributes defined at initialization:
+				var oPicker  = new sap.ui.commons.DatePicker(ctrlId, {yyyymmdd:"20101010",locale:"en-XX", change: fHandleChange});
+				// With attributes defined at initialization, but to be overwritten after initialization:
+				var oPicker2 = new sap.ui.commons.DatePicker("myDatePicker2", {yyyymmdd:"20101010",locale:"en-XX"});
+				// With attributes to be defined after initialization:
+				var oPicker3 = new sap.ui.commons.DatePicker("myDatePicker3");
+
+				oPicker.placeAt("uiArea");
+				oPicker2.placeAt("uiArea2");
+				oPicker3.placeAt("uiArea3");
+
+				// Defining "locale" then "value":
+				oPicker2.setLocale("de");
+				oPicker2.setValue("25.12.2010");
+				// Defining "yyyymmdd" then "locale":
+				// Beware: Use a supported locale since we do not want to revert to the machine's locale,
+				//         as English machines would say VALUE = "12/02/2010" while German ones "12.02.2010".
+				oPicker3.setYyyymmdd("20100212");
+				oPicker3.setLocale("en");
+
+				var baseDate = new Date(1330473600000);
+				var oModel = new sap.ui.model.json.JSONModel();
+					oModel.setData({
+						dateValue: new Date(baseDate.getTime())
+					});
+					sap.ui.getCore().setModel(oModel);
+
+					(new sap.ui.commons.DatePicker("myDatePicker4", {width: "10em", 
+						value: {
+							path: "/dateValue",
+							type: new sap.ui.model.type.Date()}
+					})).placeAt("uiArea4");
+
+					(new sap.ui.commons.DatePicker("myDatePicker5", {width: "10em",
+						value: {
+							path: "/dateValue",
+							type: new sap.ui.model.type.Date({pattern: "yy-MM-dd"})}
+					})).placeAt("uiArea4");
+
+					(new sap.ui.commons.DatePicker("myDatePicker6", {width: "15em",
+						value: {
+							path: "/dateValue",
+							type: new sap.ui.model.type.Date({style: "long"})}
+					})).placeAt("uiArea4");
+
+					var oPicker7 = new sap.ui.commons.DatePicker("myDatePicker7", {locale:"de",placeholder:"20140120"}).placeAt("uiArea5");
+
+			}catch(err){
+				// This should allow us to recognize environment context errors!
+				alert(err);
+			}
+
+			qutils.delayTestStart();
+			module("Date Picker");
+			test("DomRef test", function() {
+				equal( oPicker.getFocusDomRef().id, inputId, "FocusDomRef on input tag" );
+				equal( oPicker.getInputDomRef().id, inputId, "InputDomRef on input tag" );
+				equal( oPicker.getIdForLabel(), inputId, "Label points to input tag" );
+			});
+
+			test("Setter-getter tests", function() {
+				equal( oPicker.getLocale(),    "en-XX",      "Testing instance with locale:en-XX" );
+				equal( oPicker.getYyyymmdd(),  "20101010",   "Testing instance with yyyymmdd:20101010" );
+				equal( oPicker2.getLocale(),   "de",         "Testing setLocale(de)" );
+				equal( oPicker2.getValue(),    "25.12.2010", "Testing setValue(25.12.2010)" );
+				equal( oPicker3.getLocale(),   "en",         "Testing setLocale(en)" );
+				equal( oPicker3.getYyyymmdd(), "20100212",   "Testing setYyyymmdd(20100212)" );
+			});
+
+			test("YYYYMMDD <-> VALUE conversion tests", function() {
+				// WARNING: YYYYMMDD <-> VALUE conversions will only work if the Pickers are rendered!
+				equal( oPicker.getValue(),     "Oct 10, 2010", "Testing instance with yyyymmdd:20101010" );
+				equal( oPicker2.getYyyymmdd(), "20101225",   "Testing setValue(25.12.2010)" );
+				equal( oPicker3.getValue(),    "Feb 12, 2010", "Testing setYyyymmdd(20100212)" );
+			});
+
+			test("initialize - blank value", function() {
+				oPicker3.setValue("");
+				equal( oPicker3.getValue(), "", "Testing setValue(\"\")" );
+				equal( oPicker3.getYyyymmdd(), "",   "Testing setValue(\"\")" );
+				oPicker3.setYyyymmdd("20100212");
+				oPicker3.setYyyymmdd("");
+				equal( oPicker3.getValue(), "", "Testing setYyyymmdd(\"\")" );
+				equal( oPicker3.getYyyymmdd(), "",   "Testing setYyyymmdd(\"\")" );
+			});
+
+			// The DatePicker always appear ":visible" - test for class !!!
+			test("TestOpenViaMouseClick", function(){
+				if (!bMobile){
+					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "calendar not exists before 1st click");
+					qutils.triggerMouseEvent("myDatePicker-icon", "click");
+					ok(jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be visible after 1st click");
+					qutils.triggerMouseEvent("myDatePicker-icon", "click");
+					ok(!jQuery.sap.byId(ctrlId+"-cal").is(":visible"), "Should be hidden after 2nd click");
+				}else{
+					// on mobile device no jQuery DatePicker must open
+					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "no jQuery-DatePicker rendered on mobile devices");
+					qutils.triggerMouseEvent("myDatePicker-icon", "click");
+					ok(!jQuery.sap.byId(ctrlId+"-cal").get(0), "still no jQuery-DatePicker rendered on mobile devices after click");
+				}
+			});
+
+			if (!bMobile){
+				// on mobile devices no keyboard support
+				test("Keyboard navigation on input field", function() {
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, false, false, false);
+					equal(jQuery("#myDatePicker2-input").val(), "26.12.2010", "Date increases by 1 day pressing 'PAGE_UP'");
+					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing 'PAGE_UP'");
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+					equal(jQuery("#myDatePicker2-input").val(), "26.01.2011", "Date increases by 1 month pressing shift+'PAGE_UP'");
+					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing shift+'PAGE_UP'");
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+					equal(jQuery("#myDatePicker2-input").val(), "26.01.2012", "Date increases by 1 year pressing ctrl+shift+'PAGE_UP'");
+					equal(oPicker2.getValue(), "25.12.2010", "Value not changed by pressing ctrl+shift+'PAGE_UP'");
+					qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker2.getValue(), "26.01.2012", "Value changed by pressing ENTER");
+
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+					equal(jQuery("#myDatePicker2-input").val(), "25.01.2012", "Date decreases by 1 day pressing 'PAGE_DOWN'");
+					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing 'PAGE_DOWN'");
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+					equal(jQuery("#myDatePicker2-input").val(), "25.12.2011", "Date decreases by 1 month pressing shift+'PAGE_DOWN'");
+					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing shift+'PAGE_DOWN'");
+					qutils.triggerKeydown("myDatePicker2-input", jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
+					equal(jQuery("#myDatePicker2-input").val(), "25.12.2010", "Date decreases by 1 year pressing ctrl+shift+'PAGE_DOWN'");
+					equal(oPicker2.getValue(), "26.01.2012", "Value not changed by pressing ctrl+shift+'PAGE_DOWN'");
+					qutils.triggerKeyboardEvent("myDatePicker2-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker2.getValue(), "25.12.2010", "Value changed by pressing ENTER");
+				});
+
+				test("Input vailidation", function() {
+					var oInput = jQuery("#myDatePicker-input");
+					oInput.val("Dec 6, 2012");
+					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker.getValue(), "Dec 6, 2012", "Value after input of Dec 6, 2012")
+					equal(oPicker.getYyyymmdd(), "20121206", "Yyyymmdd after input of Dec 6, 2012")
+					equal(sChangeValue, "Dec 6, 2012", "Value of Change event after input of Dec 6, 2012")
+					equal(sChangeYyyymmdd, "20121206", "Yyymmm of Change event after input of Dec 6, 2012")
+					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of Dec 6, 2012")
+
+					oInput.val("11/30/12");
+					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker.getValue(), "Nov 30, 2012", "Value after input of 11/30/12")
+					equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of 11/30/12")
+					equal(sChangeValue, "Nov 30, 2012", "Value of Change event after input of 11/30/12")
+					equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of 11/30/12")
+					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of 11/30/12")
+
+					oInput.val("abc");
+					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker.getValue(), "abc", "Value after input of abc")
+					equal(oPicker.getYyyymmdd(), "20121130", "Yyyymmdd after input of abc")
+					equal(sChangeValue, "abc", "Value of Change event after input of abc")
+					equal(sChangeYyyymmdd, "20121130", "Yyymmm of Change event after input of abc")
+					equal(bChangeInvalid, true, "InvalidEntry of Change event after input of abc")
+
+					oInput.val("");
+					qutils.triggerKeyboardEvent("myDatePicker-input", jQuery.sap.KeyCodes.ENTER, false, false, false);
+					equal(oPicker.getValue(), "", "Value after input of \"\"")
+					equal(oPicker.getYyyymmdd(), "", "Yyyymmdd after input of \"\"")
+					equal(sChangeValue, "", "Value of Change event after input of \"\"")
+					equal(sChangeYyyymmdd, "", "Yyymmm of Change event after input of \"\"")
+					equal(bChangeInvalid, false, "InvalidEntry of Change event after input of \"\"")
+				});
+			}
+
+			test("DataBindingTest", function() {
+				equal(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString(), "en-US", "locale of page")
+				if (sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString() == "en-US"){
+					// test makes no sense if locale is wrong
+					oDatePicker = sap.ui.getCore().byId("myDatePicker4");
+					equal( oDatePicker.getValue(), "Feb 29, 2012", "Value with default pattern" );
+					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with default pattern" );
+					if (!bMobile){
+						equal( jQuery("#myDatePicker4-input").val(), "Feb 29, 2012", "Displayed value with default pattern" );
+					}else{
+						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+					}
+
+					oDatePicker = sap.ui.getCore().byId("myDatePicker5");
+					equal( oDatePicker.getValue(), "12-02-29", "Value with defined pattern" );
+					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
+					if (!bMobile){
+						equal( jQuery("#myDatePicker5-input").val(), "12-02-29", "Displayed value with defined pattern" );
+					}else{
+						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+					}
+
+					oDatePicker = sap.ui.getCore().byId("myDatePicker6");
+					equal( oDatePicker.getValue(), "February 29, 2012", "Value with defined pattern" );
+					equal( oDatePicker.getYyyymmdd(), "20120229", "YYYYMMDD with defined pattern" );
+					if (!bMobile){
+						equal( jQuery("#myDatePicker6-input").val(), "February 29, 2012", "Displayed value with defined pattern" );
+					}else{
+						equal( jQuery("#myDatePicker4-input").val(), "2012-02-29", "Displayed value in mobile device format" );
+					}
+				}
+			});
+
+			test("Placeholder", function() {
+				equal(oPicker7.getPlaceholder(), "20140120", "Testing attribut value");
+				if (sap.ui.Device.support.input.placeholder) {
+					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "20.01.2014", "Test attribut formatting");
+				} else {
+					equal( jQuery("#myDatePicker7-input").val(), "20.01.2014", "Test attribut formatting");
+				}
+
+				oPicker7.setPlaceholder("20101230");
+				sap.ui.getCore().applyChanges();
+				equal( oPicker7.getPlaceholder(), "20101230", "Testing setValue(30.12.2010)" );
+
+				oPicker7.setPlaceholder("Date");
+				sap.ui.getCore().applyChanges();
+				equal( oPicker7.getPlaceholder(), "Date", "Testing setValue(Date)" );
+				if (sap.ui.Device.support.input.placeholder) {
+					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
+				} else {
+					equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set");
+				}
+
+				jQuery("#myDatePicker7-icon").focus();
+				qutils.triggerMouseEvent("myDatePicker7-icon", "click");
+				if (sap.ui.Device.support.input.placeholder) {
+					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder still set after opened");
+				} else {
+					ok( !jQuery("#myDatePicker7-input").val(), "Placeholder value removed after opened");
+				}
+
+				qutils.triggerMouseEvent("myDatePicker7-icon", "click");
+				oPicker2.focus();
+				if (sap.ui.Device.support.input.placeholder) {
+					equal( jQuery("#myDatePicker7-input").attr("placeholder"), "Date", "Placeholder set");
+				} else {
+					equal( jQuery("#myDatePicker7-input").val(), "Date", "Placeholder set again after closing and focusing other element");
+				}
+			});
+
+		</script>
+		<title>qUnit Test for DatePicker</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.DatePicker.gif">
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.ui.commons.Datepicker</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="uiArea"></div>
+		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>
+		<div id="uiArea4"></div>
+		<div id="uiArea5"></div>
+	</body>
+</html>

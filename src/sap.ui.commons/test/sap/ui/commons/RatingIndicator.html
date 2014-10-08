@@ -1,0 +1,133 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>RatingIndicator - sap.ui.commons</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RatingIndicator.gif">
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+    </script>
+    <style>
+    	#oRatingLabel {
+    		margin-right: 5px;
+    	}
+    </style>
+<script>
+
+    var oStarRating = new sap.ui.commons.RatingIndicator("oStarRating");
+    oStarRating.setValue(3.7);
+
+    var oInputSymbols = new sap.ui.commons.TextField("oInputSymbols", {value : "" + oStarRating.getMaxValue()});
+    var oInputValue = new sap.ui.commons.TextField("oInputValue", {value : "" + oStarRating.getValue()});
+    var oInputAlternateSymbols = new sap.ui.commons.CheckBox("oInputAlternateSymbols");
+    var oInputHalfSymbols = new sap.ui.commons.ListBox("oInputHalfSymbols");
+    var oItem = new sap.ui.core.ListItem();
+    oItem.setText("Full");
+    oInputHalfSymbols.addItem(oItem);
+    oItem = new sap.ui.core.ListItem();
+    oItem.setText("Half");
+    oInputHalfSymbols.addItem(oItem);
+    oItem = new sap.ui.core.ListItem();
+    oItem.setText("Continuous");
+    oInputHalfSymbols.addItem(oItem);
+    oInputHalfSymbols.setSelectedIndex(1);
+    var oInputReadOnly = new sap.ui.commons.CheckBox("oInputReadOnly");
+    var oInputTooltip = new sap.ui.commons.CheckBox("oInputTooltip");
+
+    var olabelNoSymbols = new sap.ui.commons.Label("olabelNoSymbols");
+    olabelNoSymbols.setText("Number of rating symbols: ");
+    olabelNoSymbols.setLabelFor(oInputSymbols);
+    var olabelValue = new sap.ui.commons.Label("olabelValue");
+    olabelValue.setText("Value: ");
+    olabelValue.setLabelFor(oInputValue);
+    var olabelAlternateSymbols = new sap.ui.commons.Label("olabelAlternateSymbols");
+    olabelAlternateSymbols.setText("Alternate symbol icons: ");
+    olabelAlternateSymbols.setLabelFor(oInputAlternateSymbols);
+    var olabelHalfSymbols = new sap.ui.commons.Label("olabelHalfSymbols");
+    olabelHalfSymbols.setText("Visualization Mode: ");
+    olabelHalfSymbols.setLabelFor(oInputHalfSymbols);
+    var olabelReadOnly = new sap.ui.commons.Label("olabelReadOnly");
+    olabelReadOnly.setText("Readonly: ");
+    olabelReadOnly.setLabelFor(oInputReadOnly);
+
+    var olabelTooltip = new sap.ui.commons.Label("olabelTooltip");
+    olabelTooltip.setText("With custom tooltip: ");
+    olabelTooltip.setLabelFor(oInputTooltip);
+
+    var oRatingLabel = new sap.ui.commons.Label("oRatingLabel", {text: "Rating:", labelFor: "oStarRating"});
+
+    var oButton = new sap.ui.commons.Button("oButton");
+    oButton.setText("Apply");
+    oButton.attachPress(
+    		function (oControlEvent) {
+					var maxValue = parseInt(oInputSymbols.getValue());
+					oStarRating.setMaxValue(maxValue); 
+					oStarRating.setValue(parseFloat(oInputValue.getValue()));
+					oStarRating.setVisualMode(oInputHalfSymbols.getSelectedItem().getText());
+					oStarRating.setEditable(!oInputReadOnly.getChecked());
+					oStarRating.setTooltip(oInputTooltip.getChecked() ? "Some custom tooltip" : null);
+
+					if (oInputAlternateSymbols.getChecked() == true){
+						 //set to set1
+						oStarRating.setIconSelected("images/rating/star_selected.png");
+						oStarRating.setIconUnselected("images/rating/star_unselected.png");
+						oStarRating.setIconHovered("images/rating/star_hover.png");
+					}else
+					{// set to other set
+						oStarRating.setIconSelected(null);
+						oStarRating.setIconUnselected(null);
+						oStarRating.setIconHovered(null);
+					}
+
+				}
+    );
+
+    oStarRating.attachChange(setRating);
+
+    var oTextInLine = new sap.ui.commons.TextView("textInLineContr",{text:"Ñagçyfox (Some text to check alignment)"});
+
+
+		olabelNoSymbols.placeAt("symbolslabel");
+		oInputSymbols.placeAt("symbolsinput");
+		olabelValue.placeAt("valuelabel");
+		oInputValue.placeAt("valueinput");
+		oButton.placeAt("applybutton");
+		olabelAlternateSymbols.placeAt("alternatesymbolslabel");
+		oInputAlternateSymbols.placeAt("alternatesymbolscheckbox");
+		olabelHalfSymbols.placeAt("halfsymbolslabel");
+		oInputHalfSymbols.placeAt("halfsymbolscheckbox");
+		olabelReadOnly.placeAt("readonlylabel");
+		oInputReadOnly.placeAt("readonlycheckbox");
+		olabelTooltip.placeAt("tooltiplabel");
+		oInputTooltip.placeAt("tooltipcheckbox");
+		oTextInLine.placeAt("textInLine");
+    oRatingLabel.placeAt("symbolsrating");
+    oStarRating.placeAt("symbolsrating");
+
+  	function setRating(oControlEvent){
+  		document.getElementById("rating").innerHTML = "Rating: " + oControlEvent.getParameter("value");
+  	}
+
+  </script>
+</head>
+<body class="sapUiBody" role="application">
+
+<h1 id="header">Test Page for <code>sap.ui.commons.RatingIndicator</code></h1>
+
+<div><span id="symbolslabel"></span><span id="symbolsinput"></span><br></br>
+<div><span id="valuelabel"></span><span id="valueinput"></span><br></br>
+<span id="alternatesymbolslabel"></span><span id="alternatesymbolscheckbox"></span><br></br>
+<span id="halfsymbolslabel"></span><span id="halfsymbolscheckbox"></span><br></br>
+<span id="readonlylabel"></span><span id="readonlycheckbox"></span><br></br>
+<span id="tooltiplabel"></span><span id="tooltipcheckbox"></span><br></br>
+<span id="applybutton"></span><br></br><br></br>
+<span id="symbolsrating"></span><span id="textInLine" style="padding-left: 3px;"></span><br></br><br></br>
+<span id="rating">Rating: </span></div>
+</div>
+
+</body>
+</html>

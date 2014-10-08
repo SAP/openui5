@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>IntervalTrigger - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<style type="text/css">
+.sampleListener {
+	background-color: red;
+	width: 200px;
+	text-align: center;
+	color: white;
+	border: 1px solid black;
+	padding: 10px 0;
+}
+</style>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.IntervalTrigger");
+	jQuery.sap.require("sap.ui.commons.Button");
+	jQuery.sap.require("sap.ui.commons.ButtonRenderer");
+
+	var iListeners = 10;
+
+	sap.ui.core.Control.extend("mySampleListener", {
+		init : function() {
+			this._bGreenBG = false;
+		},
+
+		metadata : {
+			properties : {
+				"index" : "int"
+			}
+		},
+
+		renderer : function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sampleListener");
+			oRm.writeClasses();
+			oRm.write(">");
+
+			oRm.write("Lorem Ipsum")
+
+			oRm.write("</div>");
+		},
+
+		onclick : function(oEvent) {
+			this.trigger();
+		},
+
+		trigger : function() {
+			this._bGreenBG = !this._bGreenBG;
+
+			if (this._bGreenBG) {
+				this.$().css("background-color", "green");
+			} else {
+				this.$().css("background-color", "red");
+			}
+		}
+	});
+
+	function removeListener(oTriggerBtn) {
+		var index = oTriggerBtn.getIndex();
+		oTrigger.removeListener(aListeners[index].trigger, aListeners[index]);
+	}
+
+	var oTrigger = new sap.ui.core.IntervalTrigger();
+
+	sap.ui.commons.Button.extend("myTriggerButton", {
+		metadata : {
+			properties : {
+				"index" : "int",
+			}
+		},
+
+		renderer : sap.ui.commons.ButtonRenderer.render
+	});
+
+	var aListeners = [];
+	var oBtn = {};
+	var oLayout = new sap.ui.commons.layout.MatrixLayout().placeAt("triggers");
+
+	for ( var i = 0; i < iListeners; i++) {
+		aListeners[i] = new mySampleListener();
+		oBtn = new myTriggerButton({
+			text : "Remove from trigger",
+			index : i,
+			press : function() {
+				removeListener(this);
+			}
+		});
+
+		oLayout.createRow(aListeners[i], oBtn);
+		oTrigger.addListener(aListeners[i].trigger, aListeners[i]);
+	}
+</script>
+
+<script type="text/javascript">
+	module("Basics");
+	test("All listeners registered", function() {
+		expect(1);
+
+		var id = "sapUiIntervalTrigger-event";
+		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
+		var bTest = aList.length === iListeners ? true : false;
+
+		ok(bTest, "All " + iListeners + " listeners successfully registered within EventProvider");
+	});
+
+	asyncTest("Test triggering", function() {
+		expect(2);
+		var oldColorIsGreen = aListeners[0]._bGreenBG;
+		var newColorIsGreen = false;
+		var stillIsGreen = false;
+
+		// start triggering
+		oTrigger.setInterval(500);
+
+		setTimeout(function() {
+			newColorIsGreen = aListeners[0]._bGreenBG;
+
+			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
+			ok(bTest, "Triggering occured");
+
+			// stop triggering
+			oTrigger.setInterval(0);
+
+			setTimeout(function() {
+				start();
+				stillIsGreen = aListeners[0]._bGreenBG;
+
+				bTest = newColorIsGreen === stillIsGreen ? true : false;
+
+				ok(bTest, "Triggering stopped but listeners still registered");
+			}, 500);
+		}, 250);
+	});
+
+	test("Remove listeners", function() {
+		expect(1);
+		oTrigger.removeListener(aListeners[0].trigger, aListeners[0]);
+		oTrigger.removeListener(aListeners[1].trigger, aListeners[1]);
+
+		var id = "sapUiIntervalTrigger-event";
+		var aList = oTrigger._oEventBus._defaultChannel.mEventRegistry[id];
+		var bTest = aList.length === (iListeners - 2) ? true : false;
+
+		ok(bTest, "2 listeners successfully removed from EventProvider");
+	});
+
+	asyncTest("Removed listeners don't trigger", function() {
+		expect(2);
+		var oldColorIsGreen = aListeners[0]._bGreenBG;
+		var newColorIsGreen = false;
+
+		var iOtherIndex = 3;
+		var otherOldColorIsGreen = aListeners[iOtherIndex]._bGreenBG;
+		var otherNewColorIsGreen = false;
+
+		// start triggering
+		oTrigger.setInterval(500);
+
+		setTimeout(function() {
+			newColorIsGreen = aListeners[0]._bGreenBG;
+
+			bTest = oldColorIsGreen === newColorIsGreen ? true : false;
+			ok(bTest, "Triggering didn't occure for removed listener");
+
+			// stop triggering
+			oTrigger.setInterval(0);
+
+			setTimeout(function() {
+				start();
+				otherNewColorIsGreen = aListeners[iOtherIndex]._bGreenBG;
+
+				bTest = otherOldColorIsGreen !== otherNewColorIsGreen ? true : false;
+
+				ok(bTest, "Triggering occured for other listeners");
+			}, 500);
+		}, 250);
+	});
+
+	asyncTest("Test if trigger stops when all listeners removed", function() {
+		expect(2);
+		var oldColorIsGreen = aListeners[3]._bGreenBG;
+		var newColorIsGreen = false;
+
+		// start trigger
+		oTrigger.setInterval(500);
+
+		setTimeout(function() {
+			newColorIsGreen = aListeners[3]._bGreenBG;
+
+			bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
+			ok(bTest, "Trigger is running");
+
+			// remove all listeners
+			for ( var i = 0; i < iListeners; i++) {
+				oTrigger.removeListener(aListeners[i].trigger, aListeners[i]);
+			}
+
+			setTimeout(function() {
+				start();
+				newColorIsGreen = aListeners[3]._bGreenBG;
+
+				bTest = oldColorIsGreen !== newColorIsGreen ? true : false;
+				ok(bTest, "Trigger stopped due to no listeners available");
+
+			}, 250);
+		}, 250);
+	});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.IntervalTrigger</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+
+	<div style="margin-top: 40px;" id="triggers"></div>
+</body>
+</html>

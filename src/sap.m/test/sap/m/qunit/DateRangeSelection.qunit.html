@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.m.DateRangeSelection
+-->
+
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>DateRangeSelection - sap.m</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.m.DateRangeSelection.gif">
+    <script id="sap-ui-bootstrap"
+      type="text/javascript"
+      src="../../../../resources/sap-ui-core.js"
+      data-sap-ui-theme="sap_bluecrystal"
+      data-sap-ui-noConflict="true"
+      data-sap-ui-libs="sap.m"
+      data-sap-ui-language="en-US">
+    </script>
+    <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+    <!-- Test functions -->
+    <script language="javascript">
+      //Preparing input UTC dates for testing purposes:
+      //From: April 1, 2014 0:00 UTC
+      var dateFrom = new Date(Date.UTC(2014, 3, 1, 0, 0, 0))
+
+      //To: April 10, 2014 0:00 UTC
+      var dateTo1 = new Date(Date.UTC(2014, 3, 10, 0, 0, 0))
+
+      //To: April 3, 2014 0:00 UTC
+      var dateTo2 = new Date(Date.UTC(2014, 3, 3, 0, 0, 0))
+
+      var oDRS1 = new sap.m.DateRangeSelection("DRS1", {
+        delimiter: "-",
+        displayFormat: "dd.MM.yyyy"
+        }).placeAt("uiArea1");
+
+      var oDRS2 = new sap.m.DateRangeSelection("DRS2", {
+        width: "250px",
+        delimiter: "-",
+        displayFormat: "dd+MM+yyyy",
+        from: dateFrom,
+        to: dateTo1
+        }).placeAt("uiArea2");
+
+      var oDRS3 = new sap.m.DateRangeSelection("DRS3", {
+        delimiter: "-",
+        displayFormat: "long",
+        dateValue: dateFrom,
+        secondDateValue: dateTo2
+        }).placeAt("uiArea3");
+
+      qutils.delayTestStart();
+
+      module("initialization");
+
+      test("Date formatter", function() {
+        ok(!oDRS1.getValue(), "DRS1: no value");
+        ok(!oDRS1.getDateValue(), "DRS1: no DateValue");
+        equal(oDRS2.getDateValue().getTime(), dateFrom.getTime(), "DRS2: DateValue set");
+        equal(oDRS2.getSecondDateValue().getTime(), dateTo1.getTime(), "DRS2: SecondDateValue set");
+        equal(oDRS3.getDateValue().getTime(), dateFrom.getTime(), "DRS3: DateValue set");
+        equal(oDRS3.getSecondDateValue().getTime(), dateTo2.getTime(), "DRS3: SecondDateValue set");
+      });
+
+      test("Calendar and popup", function() {
+        ok(!sap.ui.unified || !sap.ui.unified.Calendar, "sap.ui.unified.Calendar not loaded");
+        ok(!sap.ui.getCore().byId("DRS1-cal"), "DRS1: no calender exists");
+        ok(!oDRS1._oPopup, "DRS1: no popup exists");
+      });
+
+      module("Rendering");
+
+      test("Styling", function() {
+        equal(jQuery("#DRS1").css("width"), jQuery("body").css("width"), "Default width is 100%");
+        equal(jQuery("#DRS2").css("width"), "250px", "given width used");
+        ok(jQuery("#DRS1-icon")[0], "Calendar icon rendered");
+        ok(!jQuery("#DRS3-cal")[0], "no calendar rendered");
+      });
+
+      test("Date format", function() {
+        ok(!jQuery("#DRS1").children("input").val(), "DRS1 : empty date");
+        equal(jQuery("#DRS2").children("input").val(), "01+04+2014 - 10+04+2014", "DRS2: defined output format used");
+        equal(jQuery("#DRS3").children("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
+      });
+
+      test("Control destroy", function() {
+        strictEqual(oDRS1.$().length+oDRS2.$().length+oDRS3.$().length, 3, "Before destroy DateRangeSelection is available");
+      oDRS1.destroy();
+      oDRS2.destroy();
+      oDRS3.destroy();
+        strictEqual(oDRS1.$().length+oDRS2.$().length+oDRS3.$().length, 0, "DateRangeSelection is destroyed");
+      });
+    </script>
+
+  </head>
+  <body class="sapUiBody" role="application">
+    <h1 id="qunit-header">QUnit tests: sap.m.DateRangeSelection</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <ol id="qunit-tests"></ol>
+    <br>
+    <div id="uiArea1"></div>
+    <br>
+    <div id="uiArea2"></div>
+    <br>
+    <div id="uiArea3"></div>
+  </body>
+</html>

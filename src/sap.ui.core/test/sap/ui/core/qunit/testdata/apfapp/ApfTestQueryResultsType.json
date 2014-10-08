@@ -1,0 +1,27 @@
+[
+    {
+        "GenID": "ID_9999",
+        "NavID": "#9999",
+        "SAPClient": "999",
+        "CompanyCode": "9999",
+        "CompanyCodeName": "Company 9999",
+        "DaysSalesOutstanding": 9.99,
+        "__metadata": {
+            "uri": "ApfTestQueryResults(GenID='ID_9999')",
+            "type": "apf-test.ApfTestQueryResultsType"
+        }
+    },
+    {
+        "GenID": "ID_9998",
+        "NavID": "#9999",
+        "SAPClient": "999",
+        "CompanyCode": "9998",
+        "CompanyCodeName": "Company 9998",
+        "DaysSalesOutstanding": 8.88,
+        "__metadata": {
+            "uri": "ApfTestQueryResults(GenID='ID_9998')",
+            "type": "apf-test.ApfTestQueryResultsType"
+        }
+    }
+
+]

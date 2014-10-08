@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+	var oModel;
+	var testData;
+	var bindings;
+
+	function setup(){
+		// reset bindings
+		bindings = new Array();
+		testData = "<root>"+
+				"<teamMembers>" + 
+					"<member firstName=\"Andreas\" lastName=\"Klark\" gender=\"male\">1</member>" +
+					"<member firstName=\"Peter\" lastName=\"Miller\" gender=\"male\">2</member>" +
+					"<member firstName=\"Gina\" lastName=\"Rush\" gender=\"female\">3</member>" +
+					"<member firstName=\"Steave\" lastName=\"Ander\" gender=\"male\">4</member>" +
+					"<member firstName=\"Michael\" lastName=\"Spring\" gender=\"male\">5</member>" +
+					"<member firstName=\"Marc\" lastName=\"Green\" gender=\"male\">6</member>" +
+					"<member firstName=\"Frank\" lastName=\"Wallace\" gender=\"male\">7</member>" +
+				"</teamMembers>" +
+			"</root>";
+
+		oModel = new sap.ui.model.xml.XMLModel();
+		oModel.setXML(testData);
+		sap.ui.getCore().setModel(oModel);
+
+	};
+
+	function createPropertyBindings(sPath, sProperty, oContext){
+		// create bindings
+		for (var i = 0; i < 7; i++){
+			if (typeof sPath === "object") {
+				bindings[i] = oModel.bindList(sPath.path, sPath.context, sPath.sorters, sPath.filters, sPath.parameters, sPath.events);
+			} else {
+				bindings[i] = oModel.bindProperty(sPath + "/" + i + "/" + sProperty, oContext);
+			}
+		};
+
+	};
+	
+	var attach = false;
+	var detach = true;
+
+	function callBackOnChange(){
+		attach = true;
+		detach = false;
+	};
+
+	test("Binding getPath", function(){
+		setup();
+		createPropertyBindings("/teamMembers/member", "@firstName");
+
+		equal(bindings.length, 7, "amount of bindings");
+		jQuery(bindings).each(function (i, binding){
+			equal(binding.getPath(), "/teamMembers/member/" + i + "/@firstName", "Binding path");
+		});
+
+	});
+
+	test("Binding getModel", function(){
+		setup();
+		createPropertyBindings("/teamMembers/member", "@lastName");
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			equal(binding.getModel(), oModel, "Binding model");
+		});
+
+	});
+
+	test("Binding set/getContext", function(){
+		setup();
+		createPropertyBindings("/teamMembers/member", "@lastName", "context");
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			equal(binding.getContext(), "context", "Binding context");
+			binding.setContext("newContext");
+			equal(binding.getContext(), "newContext", "Binding context");
+		});
+	});
+
+	test("Binding changeEvent", function(){
+		setup();
+		createPropertyBindings("/teamMembers/member", "@firstName");
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			binding.attachChange(callBackOnChange);
+
+			// model stores the binding first when attach change was called
+			equal(oModel.aBindings.length, 1, "model bindings")
+
+			// fire change event
+			binding._fireChange();
+			ok(attach, "call back method was attached");
+			ok(!detach, "call back method was not detached");
+
+			binding.detachChange(callBackOnChange);
+			attach = false;
+			detach = true;
+			//refire change event
+			binding._fireChange();
+			ok(!attach, "call back method was not attached");
+			ok(detach, "call back method was detached");
+			attach = false;
+			detach = true;
+			
+			equal(oModel.aBindings.length, 0, "model bindings")
+		});
+	});
+	
+
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding XML Bindings</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

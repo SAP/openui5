@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test Page for sap.m.PullToRefresh</title>
+<script id="sap-ui-bootstrap" 
+	type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+
+	function addItems(list, nItems){
+		var n = list.getItems().length + 1;
+		for(var i = 0; i < nItems; i++){
+			list.addItem(
+				new sap.m.StandardListItem({
+					title: "List item " + (n + i),
+					type: sap.m.ListType.Navigation
+				})
+			);
+		}
+	}
+
+	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oApp = new sap.m.App("p2RApp", {initialPage:"page1"});
+	
+	var sPullDwn = oRb.getText("PULL2REFRESH_PULLDOWN"),
+		sRelease = oRb.getText("PULL2REFRESH_RELEASE"),
+		sRefresh = "refreshing",
+		sLoading = oRb.getText("PULL2REFRESH_LOADING");
+	var sDescription = "pull to refresh";
+
+	var oList =  new sap.m.List("oList", {inset : false});
+	addItems(oList, 15);
+
+	var oP2R = new sap.m.PullToRefresh({
+		description: sDescription,
+		refresh: function(){
+			oP2R.setDescription(sRefresh);
+			ok(true, "Refresh event has been fired.");
+		}
+	});
+
+	var oPage1 = new sap.m.Page("page1", {
+		title: "PullToRefresh Control",
+		enableScrolling: true,
+		content : [ oP2R, oList ]
+	});
+
+	oApp.addPage(oPage1);
+	oApp.placeAt("content");
+
+	// TEST functions
+	qutils.delayTestStart(2000);
+
+	module("Properties");
+	test("Default values", 3, function() {
+		strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
+		strictEqual(oP2R.getDescription(), sDescription, "Description value");
+		ok(!oP2R.getCustomIcon(), "Custom icon is not set");
+	});
+
+	module("Check HTML");
+	test("HTML", function() {
+		var $P2R = oP2R.$();
+		var iScroller = oPage1.getScrollDelegate()._scroller;
+		if (iScroller) { // this is executed when iScroll is used
+			expect(8);
+			ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
+		} else {
+			expect(7);
+		}
+		ok($P2R.length > 0, "Pull down control is rendered");
+		ok($P2R.children(".sapMPullDownCI").length == 0, "No custom logo is rendered initially");
+		ok(!$P2R.hasClass("sapMPullDownLogo"), "Standard logo is not shown");
+		strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
+		strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
+		ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
+		ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
+	});
+
+// Test pull to refresh functionality
+	module("Behavior");
+
+	asyncTest("Pull Down", function() {
+		var iScroller = oPage1.getScrollDelegate()._scroller;
+		
+		if (iScroller) { // this is executed when iScroll is used
+			expect(14); // 13 + event
+			var iTop = oList.$().offset().top + 20;
+			var iLeft = 10;
+			iScroller._start({
+				type: "touchstart",
+				touches : [{ pageX: iLeft, pageY: iTop, length: 1 }],
+				pageX: iLeft,
+				pageY: iTop
+			});
+	
+			iTop = iTop + 250;
+	
+			iScroller._move({ // Pull down
+				type: "touchmove",
+				touches : [{ pageX: iLeft, pageY: iTop, length: 1 }],
+				pageX: iLeft,
+				pageY: iTop
+			});
+	
+			// Check HTML
+			strictEqual(oP2R._iState, 1, "New state after pull should be 1 - release to refresh");
+			var $P2R = oP2R.$();
+			ok($P2R.children(".sapMPullDownText").text() == sRelease, "Release text is set correctly");
+			ok($P2R.position().top >= 0, "Control is visible");
+			ok($P2R.hasClass("sapMFlip"), "Arrow is rotated");
+	
+			setTimeout(function() {
+				iScroller._end({ // Release
+					type: "touchend",
+					touches : [{ pageX: iLeft, pageY: iTop, length: 1 }],
+					pageX: iLeft,
+					pageY: iTop
+				});
+	
+				// 
+				setTimeout(function() {
+					strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
+					ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
+					strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");
+					ok($P2R.hasClass("sapMLoading"), "Loading css is set");
+					oP2R.hide(); // Close
+					oP2R.setDescription(sDescription);
+	
+					setTimeout(function() {
+						strictEqual(oP2R._iState, 0, "New state after hide should be 0 - initial");
+						strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Initial text is restored");
+						strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Initial description is restored");
+						ok($P2R.position().top + $P2R.height() - jQuery("#page1-intHeader").height() <= 0, "Control is hidden over the top of the parent container");
+						ok(!($P2R.hasClass("sapMFlip")), "Arrow is not rotated");
+						start();
+					}, 1000);
+				}, 1000);
+			}, 1000);
+			
+		} else { // this is executed when iScroll is not used (= in mouse environments)  TODO: implement test once control is implemented
+			expect(0);
+			start();
+		}
+	});
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.PullToRefresh</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="content"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

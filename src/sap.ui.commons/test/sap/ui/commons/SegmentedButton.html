@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>SegmentedButton - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Label.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			var oSegmentedButton = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({id:"mySel",text:"A"}),new sap.ui.commons.Button({text:"B"}),new sap.ui.commons.Button({text:"C"})]});
+			oSegmentedButton.setSelectedButton("mySel");
+			oSegmentedButton.placeAt("SegmentedButton");
+			var oSegmentedButtonLite = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({lite:true,text:"A"}),new sap.ui.commons.Button({id:"mySel2",lite:true,text:"B"}),new sap.ui.commons.Button({lite:true,text:"C"})]});
+			oSegmentedButtonLite.setSelectedButton("mySel2");
+			oSegmentedButtonLite.placeAt("SegmentedButtonLite");
+			var oSegmentedButtonIcon = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+			                                                                        new sap.ui.commons.Button({id:"mySel3",icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+			                                                                        new sap.ui.commons.Button({icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+			                                                                        new sap.ui.commons.Button({icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+			                                                                        new sap.ui.commons.Button({icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+			                                                                        new sap.ui.commons.Button({icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+			                                                                        ]});
+			oSegmentedButtonIcon.setSelectedButton("mySel3");
+			oSegmentedButtonIcon.placeAt("SegmentedButtonIcon");
+			var oSegmentedButtonIconLite = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({lite:true,icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+			                                                                        new sap.ui.commons.Button({id:"mySel4",lite:true,icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+			                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+			                                                                        ]});
+			oSegmentedButtonIconLite.setSelectedButton("mySel4");
+			oSegmentedButtonIconLite.placeAt("SegmentedButtonIconLite");
+			var oSegmentedButtonIconEnable = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+				                                                                        new sap.ui.commons.Button({icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+				                                                                        new sap.ui.commons.Button({icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+				                                                                        new sap.ui.commons.Button({id:"mySel5",icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+				                                                                        new sap.ui.commons.Button({icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+				                                                                        new sap.ui.commons.Button({icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+				                                                                        ]});
+			oSegmentedButtonIconEnable.setSelectedButton("mySel5");
+			oSegmentedButtonIconEnable.setEnabled(false);
+			oSegmentedButtonIconEnable.placeAt("SegmentedButtonIconEnable");
+			var oSegmentedButtonIconLiteEnable = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({lite:true,icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+					                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+					                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+					                                                                        new sap.ui.commons.Button({lite:true,id:"mySel6",icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+					                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+					                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+					                                                                        ]});
+			oSegmentedButtonIconLiteEnable.setSelectedButton("mySel6");
+			oSegmentedButtonIconLiteEnable.setEnabled(false);
+			oSegmentedButtonIconLiteEnable.placeAt("SegmentedButtonIconEnable");
+			var oButton = new sap.ui.commons.Button({text:"enable/disable",press:function(){oSegmentedButtonIconLiteEnable.setEnabled(!oSegmentedButtonIconLiteEnable.getEnabled()); oSegmentedButtonIconEnable.setEnabled(!oSegmentedButtonIconEnable.getEnabled())}});
+			oButton.placeAt("SegmentedButtonIconEnable");
+			var oButton = new sap.ui.commons.Button({text:"show/hide",press:function(){oSegmentedButtonIconLiteEnable.setVisible(!oSegmentedButtonIconLiteEnable.getVisible()); oSegmentedButtonIconEnable.setVisible(!oSegmentedButtonIconEnable.getVisible())}});
+			oButton.placeAt("SegmentedButtonIconEnable");
+			var oSegmentedButtonIconLiteTB = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({lite:true,icon:"images/sb/list.png",iconHovered:"images/sb/list_hover.png",iconSelected:"images/sb/list_hover.png"}),
+						                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/card.png",iconHovered:"images/sb/card_hover.png",iconSelected:"images/sb/card_hover.png"}),
+						                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/tiles.png",iconHovered:"images/sb/tiles_hover.png",iconSelected:"images/sb/tiles_hover.png"}),
+						                                                                        new sap.ui.commons.Button({lite:true,id:"mySel7",icon:"images/sb/thumbnails.png",iconHovered:"images/sb/thumbnails_hover.png",iconSelected:"images/sb/thumbnails_hover.png"}),
+						                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/map.png",iconHovered:"images/sb/map_hover.png",iconSelected:"images/sb/map_hover.png"}),
+						                                                                        new sap.ui.commons.Button({lite:true,icon:"images/sb/cloud.png",iconHovered:"images/sb/cloud_hover.png",iconSelected:"images/sb/cloud_hover.png"})
+						                                                                        ]});
+			oSegmentedButtonIconLiteTB.setSelectedButton("mySel7");
+			var oToolBar = new sap.ui.commons.Toolbar();
+			oToolBar.addItem(oSegmentedButtonIconLiteTB);
+			oToolBar.placeAt("SegmentedButtonIconLiteTB");
+			var oSegmentedButtonIconFont = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({icon:"sap-icon://lead"}),
+			                                                                        	new sap.ui.commons.Button({icon:"sap-icon://contacts"}),
+			                                                                        	new sap.ui.commons.Button({id:"mySel8",icon:"sap-icon://settings"}),
+			                                                                        	new sap.ui.commons.Button({icon:"sap-icon://lead"}),
+			                                                                        	new sap.ui.commons.Button({icon:"sap-icon://contacts"}),
+			                                                                        	new sap.ui.commons.Button({icon:"sap-icon://settings"})
+			                                                                        	]});
+			oSegmentedButtonIconFont.setSelectedButton("mySel8");
+			oSegmentedButtonIconFont.placeAt("SegmentedButtonIconFont");
+			var oSegmentedButtonIconFontLite = new sap.ui.commons.SegmentedButton({buttons:[new sap.ui.commons.Button({lite:true,icon:"sap-icon://lead"}),
+			                                                               		         	new sap.ui.commons.Button({lite:true,icon:"sap-icon://contacts"}),
+			                                                                    	    	new sap.ui.commons.Button({lite:true,icon:"sap-icon://settings"}),
+			                                                                        		new sap.ui.commons.Button({lite:true,icon:"sap-icon://lead"}),
+			                                                                        		new sap.ui.commons.Button({id:"mySel9",lite:true,icon:"sap-icon://contacts"}),
+			                                                                        		new sap.ui.commons.Button({lite:true,icon:"sap-icon://settings"})
+			                                                                        	]});
+			oSegmentedButtonIconFontLite.setSelectedButton("mySel9");
+			oSegmentedButtonIconFontLite.placeAt("SegmentedButtonIconFontLite");
+			oSegmentedButton.attachSelect(function(oEvent) {
+				//alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+			oSegmentedButtonLite.attachSelect(function(oEvent) {
+				//alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+			oSegmentedButtonIcon.attachSelect(function(oEvent) {
+				//alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+			oSegmentedButtonIconLite.attachSelect(function(oEvent) {
+				//alert("Selected button id: "+oEvent.getParameters().selectedButtonId);
+			});
+			
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.SegmentedButton</h1>
+		<h2>SegmentedButton (text)</h2>
+		<div id="SegmentedButton"></div>
+		<h2>SegmentedButton lite (text)</h2>
+		<div id="SegmentedButtonLite"></div>
+		<h2>SegmentedButton (icons)</h2>
+		<div id="SegmentedButtonIcon"></div>
+		<h2>SegmentedButton lite (icons)</h2>
+		<div id="SegmentedButtonIconLite"></div>
+		<h2>SegmentedButton enable/disable</h2>
+		<div id="SegmentedButtonIconEnable"></div>
+		<h2>SegmentedButton in Toolbar</h2>
+		<div id="SegmentedButtonIconLiteTB"></div>
+		<h2>SegmentedButton (icon font)</h2>
+		<div id="SegmentedButtonIconFont"></div>
+		<h2>SegmentedButton lite (icon font)</h2>
+		<div id="SegmentedButtonIconFontLite"></div>
+	</body>
+</html>

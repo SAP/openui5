@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>OverlayContainer - sap.ui.ux3</title>
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		<script src="resources/ShellSettings.js" type="text/javascript"></script>
+		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css"/>
+		
+		<script>
+		var olcounter = 0;
+		
+		function getShellOptions(){
+			var oButton = new c.Button({
+					text: "Open new OverlayContainer",
+					press: function(){
+						var oNewOl = window.oOverlayContainer.clone();
+						oNewOl.addContent(new c.TextView({text: window.olcounter++}));
+						oNewOl.open();
+			}});
+			return getShellOptionsPanel(oShell, [oButton]);
+		};
+		
+			var c = sap.ui.commons; /* shorthand */
+			
+			var aContent = {};
+			//Shell
+			var oShell = new sap.ui.ux3.Shell("myShell", {
+				appTitle : "SAPUI5 Gold Reflection Shell",
+				logout : function() {
+					alert("Logout Button has been clicked.");
+					oShell.forceInvalidation();
+					oShell.destroy();
+					oOverlayContainer.destroy();
+					oOverlayContainer = null;
+					sap.ui.getCore().applyChanges();
+
+				},
+				notificationBar: new sap.ui.ux3.NotificationBar({messageNotifier: new sap.ui.ux3.Notifier({
+					title : "Messages"
+				})}),
+				search : function(oEvent) {
+					alert("Search triggered: " + oEvent.getParameter("text"));
+				},
+				feedSubmit : function(oEvent) {
+					alert("Feed entry submitted: " + oEvent.getParameter("text"));
+				}
+			});
+
+			var WI = sap.ui.ux3.NavigationItem;
+			oShell.addWorksetItem(new WI("wi_home", {
+				key : "wi_home",
+				text : "Home",
+				subItems : [ new WI("wi_home_overview", {
+					key : "wi_home_overview",
+					text : "Overview"
+				}),
+				new WI("wi_home_options", {
+					key : "wi_home_options",
+					text : "Options"
+				})]
+			}));
+			oShell.addWorksetItem(new WI({
+				key : "wi_a",
+				text : "Accounts",
+				subItems : [ new WI({
+					key : "wi_a_overview",
+					text : "Overview"
+				}) ]
+			}));
+
+			// first application-level ToolPopup ("New Contact") - UI content is completely pre-populated
+			var layout = new c.layout.MatrixLayout({
+				width : "auto"
+			});
+			layout.createRow(new c.Label({
+				text : "Title:"
+			}), new c.TextField("titleTextField"));
+			layout.createRow(new c.Label({
+				text : "Name:"
+			}), new c.TextField("nameTextField"));
+			layout.createRow(new c.Label({
+				text : "Address:"
+			}), new c.TextField("addressTextField"));
+			layout.createRow(new c.Label({
+				text : "City:"
+			}), new c.TextField("cityTextField"));
+			layout.createRow(new c.Label({
+				text : "Country:"
+			}), new c.TextField("countryTextField"));
+			layout.createRow(new c.Label({
+				text : "E-Mail:"
+			}), new c.TextField("emailTextField"));
+			var oContactTool = new sap.ui.ux3.ToolPopup("contactTool", {
+				title : "New Contact",
+				icon : "images/Contact_regular.png",
+				iconHover : "images/Contact_hover.png",
+				content : [ layout ],
+				buttons : [ new c.Button("saveContactButton", {
+					text : "Save",
+					press : function() {
+						oContactTool.close();
+						c.MessageBox.show("New contact saved successfully.", sap.ui.commons.MessageBox.Icon.SUCCESS, "Contact Saved", sap.ui.commons.MessageBox.Action.OK);
+					}
+				}), new c.Button("cancelContactButton", {
+					text : "Cancel",
+					press : function() {
+						oContactTool.close();
+					}
+				}) ]
+			});
+			oContactTool.attachEnter(function(oEvent) {
+				var text = "Application receives 'Enter' event from ContactTool.\n";
+				if (oEvent.getParameter("originalSrcControl")) {
+					text += "Enter was pressed on the control: '" + oEvent.getParameter("originalSrcControl").getId() + "'.\n";
+				}
+				text += "The application can now read the entered data and save or cancel and could close the popup.";
+				alert(text);
+			});
+			oShell.addToolPopup(oContactTool);
+
+			// second application-level ToolPopup ("New Appointment") - UI content is created on-demand and could be thrown away/destroyed after closing (but is not)
+			jQuery.sap.require("sap.ui.commons.MessageBox"); // for success message when closing the tool
+			var oAppointmentTool = new sap.ui.ux3.ToolPopup("appointmentTool", {
+				title : "New Appointment",
+				icon : "images/Appointment_regular.png",
+				iconHover : "images/Appointment_hover.png"
+			});
+			oShell.addToolPopup(oAppointmentTool);
+			var appointmentPopupInitialized = false;
+			oAppointmentTool.attachOpen(function() {
+				if (!appointmentPopupInitialized) {
+					var layout = new c.layout.MatrixLayout({
+						width : "auto"
+					});
+					layout.createRow(new c.Label({
+						text : "Subject:"
+					}), new c.TextField("subjectTextField"));
+					layout.createRow(new c.Label({
+						text : "Location:"
+					}), new c.TextField("locationTextField"));
+					layout.createRow(new c.Label({
+						text : "Start Time:"
+					}), new c.TextField("startTimeTextField"));
+					layout.createRow(new c.Label({
+						text : "Duration:"
+					}), new c.TextField("durationTextField"));
+					layout.createRow(null, new c.CheckBox("privateCheckBox", {
+						text : "Private"
+					}));
+					oAppointmentTool.addContent(layout);
+					oAppointmentTool.addButton(new c.Button("saveAppointmentButton", {
+						text : "Save",
+						press : function() {
+							oAppointmentTool.close();
+							c.MessageBox.show("Appointment saved successfully.", sap.ui.commons.MessageBox.Icon.SUCCESS, "Appointment Saved", sap.ui.commons.MessageBox.Action.OK);
+						}
+					}));
+					oAppointmentTool.addButton(new c.Button("cancelAppointmentButton", {
+						text : "Cancel",
+						press : function() {
+							oAppointmentTool.close();
+						}
+					}));
+					appointmentPopupInitialized = true;
+				}
+			});
+			oAppointmentTool.attachEnter(function(oEvent) {
+				var text = "Application receives 'Enter' event from AppointmentTool.\n";
+				if (oEvent.getParameter("originalSrcControl")) {
+					text += "Enter was pressed on the control: '" + oEvent.getParameter("originalSrcControl").getId() + "'.\n";
+				}
+				text += "The application can now read the entered data and save or cancel and could close the popup.";
+				alert(text);
+			});
+
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_feed", {
+				text : "Feed"
+			}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_people", {
+				text : "People"
+			}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_news", {
+				text : "News"
+			}));
+			oShell.attachPaneBarItemSelected(function(oEvent) {
+				var paneId = oEvent.mParameters.id;
+				oShell.setPaneContent(getPaneContent(paneId));
+			});
+
+			oShell.attachWorksetItemSelected(function(oEvent) {
+				var itemKey = oEvent.getParameter("key");
+				oShell.setContent(getContent(itemKey));
+			});
+
+			oShell.setContent(getContent("wi_home_overview"));
+
+			oShell.placeAt("shellArea");
+
+			// content generation and buffering
+			function getContent(id) {
+				if (!aContent[id]) {
+					if (id == "wi_home_overview") {
+						var oOverlayContainerButton = new c.Button({
+							text : "open OverlayContainer"
+						});
+						oOverlayContainerButton.attachPress(function(oControlEvent) {
+							oOverlayContainer.open();
+						});
+						aContent[id] = oOverlayContainerButton;
+					}else if (id == "wi_home_options") {
+						aContent[id] = getShellOptions();
+					}
+				}
+				return aContent[id];
+			}
+ 
+			// Pane content generation and buffering
+			function getPaneContent(id) {
+				if (!aContent[id]) {
+					if (id == "pane_feed") {
+						aContent[id] = new c.Button({
+							text : id
+						});
+					} else if (id == "pane_people") {
+						aContent[id] = new c.Button({
+							text : id
+						});
+					} else if (id == "pane_news") {
+						aContent[id] = new c.Button({
+							text : id
+						});
+					}
+				}
+				return aContent[id];
+			}
+
+			// helper function to create a row with label and text for the content of the ThingInspector
+			function createLMatrixLayoutRowRow(sLabel, sText) {
+				var oLabel = new c.Label({
+					text : sLabel + ":"
+				});
+				var oTextView = new c.TextView({
+					text : sText
+				});
+
+				var oMLCell1 = new c.layout.MatrixLayoutCell({
+					hAlign : c.layout.HAlign.End,
+					vAlign : c.layout.VAlign.Top,
+					content : [ oLabel ]
+				});
+				var oMLCell2 = new c.layout.MatrixLayoutCell({
+					hAlign : c.layout.HAlign.Begin,
+					vAlign : c.layout.VAlign.Top,
+					content : [ oTextView ]
+				});
+
+				return new c.layout.MatrixLayoutRow({
+					cells : [ oMLCell1, oMLCell2 ]
+				});
+			}
+
+			
+		    var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
+		    //some content
+			var oLayout = new c.layout.MatrixLayout();
+			oLayout.addRow(createLMatrixLayoutRowRow("Status", "active"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Owner", "Erwin M."));
+			oLayout.addRow(createLMatrixLayoutRowRow("Territory", "a Contact"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Prim. Contact", "Hugo")); 
+			oLayout.addRow(createLMatrixLayoutRowRow("Web Site", "link!!!"));
+			oLayout.addRow(createLMatrixLayoutRowRow("Classification", "a classification"));
+			
+			var oPanel = getShellOptions();
+			oPanel.setCollapsed(true);
+			
+			oOverlayContainer.addContent(oLayout);
+			oOverlayContainer.addContent(oPanel);
+			
+		    oOverlayContainer.attachClose(function(oControlEvent) { 
+		    	var id = oControlEvent.getParameters().id;
+		    	alert("Thing \""+ id+ "\"closed");
+		    });
+		    oOverlayContainer.attachOpen(function(oControlEvent) {
+				var id = oControlEvent.getParameters().id;
+				alert("Thing \"" + id + "\"open triggered");
+			});
+		    oOverlayContainer.attachOpenNew(function(oControlEvent) {
+				var id = oControlEvent.getParameters().id;
+				alert("Thing \"" + id + "\"openNew triggered");
+			});
+		    // helper fucntion to create a row with label and text
+	        function createLMatrixLayoutRowRow(sLabel, sText) {
+	            var oLabel = new c.Label({text : sLabel + ":"});
+	            var oTextView = new c.TextView({text : sText});
+	            
+	            var oMLCell1 = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.End, vAlign : c.layout.VAlign.Top,  content:[oLabel]});
+	            var oMLCell2 = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.Begin, vAlign : c.layout.VAlign.Top, content:[oTextView]});
+	            
+	            return new c.layout.MatrixLayoutRow({cells:[oMLCell1, oMLCell2]});
+	        }
+		</script>
+		
+	</head>
+	<body  class="sapUiBody">
+		<div id="shellArea"></div>
+	</body>
+</html>

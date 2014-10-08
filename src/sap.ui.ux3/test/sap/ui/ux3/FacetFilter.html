@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>FacetFilter - sap.ui.ux3</title>
+		<!-- link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Exact.gif" -->
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+
+		<script>
+		
+			var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
+
+			var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
+				title:"Car Brand",
+				multiSelect: true,
+				selectedKeys : [ "2", "3" ],
+				displaySecondaryValues: true,
+				items : [
+					new sap.ui.core.ListItem({text:"bmw", key:"2", additionalText: "(100)"}),
+					new sap.ui.core.ListItem({text:"audi", key:"3", additionalText: "(200)"}),
+					new sap.ui.core.ListItem({text:"volvo", key:"4", additionalText: "(300)"}),
+					new sap.ui.core.ListItem({text:"skoda", key:"5", additionalText: "(400)"}),
+					new sap.ui.core.ListItem({text:"opel", key:"6", additionalText: "(500)"})
+				]
+			});
+ 			oFFL1.attachSelect(function(oEvent) {
+ 				var aId = oEvent.getParameter("id");
+	 			jQuery("#result1").html("Id: " +aId);
+	 			
+	 			var bAll = oEvent.getParameter("all");
+	 			if(bAll){
+	 				jQuery("#result4").html("");
+	 				jQuery("#result7").html("Selected items:<br>  'ALL'");
+		 			jQuery("#result10").html("");
+		 			return;
+	 			}
+	 			
+ 				var aSelectedIndices = oEvent.getParameter("selectedIndices");
+  				var aSelectedIndiceNames = [];
+   				for(var i=0; i<aSelectedIndices.length; i++){
+  					aSelectedIndiceNames.push(aSelectedIndices[i]);
+  				}
+	 			jQuery("#result4").html("Selected indices:<br>  * " + aSelectedIndiceNames.join("<br>  * "));
+ 				var aSelectedItems = oEvent.getParameter("selectedItems");
+  				var aSelectedItemNames = [];
+  				var aSelectedFilterTexts = [];
+   				for(var i=0; i<aSelectedItems.length; i++){
+  					aSelectedItemNames.push(aSelectedItems[i]);
+  					var sFilterText = oEvent.getParameter('selectedItems')[i].getText();
+  					aSelectedFilterTexts.push(sFilterText);
+  				}
+	 			jQuery("#result7").html("Selected items:<br>  * " + aSelectedItemNames.join("<br>  * "));
+	 			jQuery("#result10").html("Selected filters:<br>  * " + aSelectedFilterTexts.join("<br>  * "));
+ 			});			
+			oFacetFilter.addList(oFFL1);
+
+			var oFFL2 = new sap.ui.ux3.FacetFilterList("ffl2", {
+				title:"Car Model",
+				multiSelect: false,
+				items : [
+				    new sap.ui.core.ListItem({text:"A1"}),
+					new sap.ui.core.ListItem({text:"A3", key:"2"}),
+					new sap.ui.core.ListItem({text:"A5", key:"3"}),
+					new sap.ui.core.ListItem({text:"A4"}),
+					new sap.ui.core.ListItem({text:"A6"}),
+					new sap.ui.core.ListItem({text:"Q3"}),
+					new sap.ui.core.ListItem({text:"Q5"})
+				]
+			});
+			oFFL2.setSelectedKeys([ "2", "3" ]);
+ 			oFFL2.attachSelect(function(oEvent) {
+ 				var aId = oEvent.getParameter("id");
+ 				jQuery("#result2").html("Id: " +aId);
+ 				
+ 				var bAll = oEvent.getParameter("all");
+	 			if(bAll){
+	 				jQuery("#result5").html("");
+	 				jQuery("#result8").html("Selected items:<br>  'ALL'");
+		 			jQuery("#result11").html("");
+		 			return;
+	 			}
+ 				
+ 				var aSelectedIndices = oEvent.getParameter("selectedIndices");
+  				var aSelectedIndiceNames = [];
+   				for(var i=0; i<aSelectedIndices.length; i++){
+  					aSelectedIndiceNames.push(aSelectedIndices[i]);
+  				}
+	 			jQuery("#result5").html("Selected indices:<br>  * " + aSelectedIndiceNames.join("<br>  * "));
+ 				var aSelectedItems = oEvent.getParameter("selectedItems");
+  				var aSelectedItemNames = [];
+  				var aSelectedFilterTexts = [];
+   				for(var i=0; i<aSelectedItems.length; i++){
+  					aSelectedItemNames.push(aSelectedItems[i]);
+  					var sFilterText = oEvent.getParameter('selectedItems')[i].getText();
+  					aSelectedFilterTexts.push(sFilterText);
+  				}
+	 			jQuery("#result8").html("Selected items:<br>  * " + aSelectedItemNames.join("<br>  * "));
+	 			jQuery("#result11").html("Selected filters:<br>  * " + aSelectedFilterTexts.join("<br>  * "));
+ 			});
+			oFacetFilter.addList(oFFL2);
+
+			var oFFL3 = new sap.ui.ux3.FacetFilterList("ffl3", {
+				title:"Type",
+				items : [
+					new sap.ui.core.ListItem({text:"A4 Avant"}),
+					new sap.ui.core.ListItem({text:"A4 Limousine"})
+				]
+			});
+ 			oFFL3.attachSelect(function(oEvent) {
+ 				var aId = oEvent.getParameter("id");
+ 				jQuery("#result3").html("Id: " +aId);
+ 				
+ 				var bAll = oEvent.getParameter("all");
+	 			if(bAll){
+	 				jQuery("#result6").html("");
+	 				jQuery("#result9").html("Selected items:<br>  'ALL'");
+		 			jQuery("#result12").html("");
+		 			return;
+	 			}
+ 				
+ 				var aSelectedIndices = oEvent.getParameter("selectedIndices");
+  				var aSelectedIndiceNames = [];
+   				for(var i=0; i<aSelectedIndices.length; i++){
+  					aSelectedIndiceNames.push(aSelectedIndices[i]);
+  				}
+	 			jQuery("#result6").html("Selected indices:<br>  * " + aSelectedIndiceNames.join("<br>  * "));
+ 				var aSelectedItems = oEvent.getParameter("selectedItems");
+  				var aSelectedItemNames = [];
+  				var aSelectedFilterTexts = [];
+   				for(var i=0; i<aSelectedItems.length; i++){
+  					aSelectedItemNames.push(aSelectedItems[i]);
+  					var sFilterText = oEvent.getParameter('selectedItems')[i].getText();
+  					aSelectedFilterTexts.push(sFilterText);
+  				}
+	 			jQuery("#result9").html("Selected items:<br>  * " + aSelectedItemNames.join("<br>  * "));
+	 			jQuery("#result12").html("Selected filters:<br>  * " + aSelectedFilterTexts.join("<br>  * "));
+ 			});
+			oFacetFilter.addList(oFFL3);
+
+			oFacetFilter.placeAt("uiArea1");
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="uiArea1"></div>
+		<table width = 100%>
+			<tr>
+				<td valign=top width = 33,33%>
+					<div id="result1"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result2"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result3"></div>
+				</td>
+			</tr>
+			<tr>
+			 	<td valign=top width = 33,33%>
+					<div id="result4"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result5"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result6"></div>
+				</td>
+			</tr>
+			<tr>
+			 	<td valign=top width = 33,33%>
+					<div id="result7"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result8"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result9"></div>
+				</td>
+			</tr>
+			<tr>
+			 	<td valign=top width = 33,33%>
+					<div id="result10"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result11"></div>
+				</td>
+				<td valign=top width = 33,33%>
+					<div id="result12"></div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
+
+
+

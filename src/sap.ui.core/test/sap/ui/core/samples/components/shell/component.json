@@ -1,0 +1,11 @@
+{
+	"name": "samples.components.shell",
+	"version": "0.1.0",
+	"description": "Sample shell components",
+	"keywords": [
+		"shell",
+		"example" 
+	],
+	"dependencies": {
+	}
+}

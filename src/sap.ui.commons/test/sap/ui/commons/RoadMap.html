@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>RoadMap - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RoadMap.gif">
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons">
+		</script>
+
+		<script>
+			(new sap.ui.commons.Label({text: "Value:"})).placeAt("uiArea1");
+			var oStepIdTF = new sap.ui.commons.TextField();
+			oStepIdTF.placeAt("uiArea1");
+
+			var createStepTestButton = function(sText, fActionOnPress, bIsRoadMapAction){
+				var b = new sap.ui.commons.Button({text: sText});
+				b.placeAt("uiArea3");
+				b.attachPress(function(oEvent){
+					if(bIsRoadMapAction){
+						fActionOnPress(oRoadMap);
+						return;
+					}
+					var sId = oStepIdTF.getValue();
+					if(sId){
+						var oStep = sap.ui.getCore().byId(sId);
+						if(oStep && oStep.getParent() && (oStep.getParent() === oRoadMap || oStep.getParent().getParent() === oRoadMap))
+							fActionOnPress(oStep);
+					}
+				});
+			};
+
+			createStepTestButton("Set Step Label", function(oStep){
+				oStep.setLabel("Hallo");
+			});
+			createStepTestButton("Enable Step", function(oStep){
+				oStep.setEnabled(true);
+			});
+			createStepTestButton("Disable Step", function(oStep){
+				oStep.setEnabled(false);
+			});
+			createStepTestButton("Expand Step", function(oStep){
+				oStep.setExpanded(true);
+			});
+			createStepTestButton("Collapse Step", function(oStep){
+				oStep.setExpanded(false);
+			});
+			createStepTestButton("Hide Step", function(oStep){
+				oStep.setVisible(false);
+			});
+			createStepTestButton("Show Step", function(oStep){
+				oStep.setVisible(true);
+			});
+
+			createStepTestButton("Select Step", function(oRoadMap){
+				oRoadMap.setSelectedStep(oStepIdTF.getValue()); 
+			}, true);
+			createStepTestButton("Deselect Step", function(oRoadMap){
+				oRoadMap.setSelectedStep(""); 
+			}, true);
+			createStepTestButton("Change #Visible Steps", function(oRoadMap){
+				var iNumber = parseInt(oStepIdTF.getValue());
+				oRoadMap.setNumberOfVisibleSteps(iNumber); 
+			}, true);
+			createStepTestButton("Change First Visible Step", function(oRoadMap){
+				oRoadMap.setFirstVisibleStep(oStepIdTF.getValue()); 
+			}, true);
+			createStepTestButton("Change Width", function(oRoadMap){
+				oRoadMap.setWidth(oStepIdTF.getValue()); 
+			}, true);
+
+
+
+			var oRoadMap = new sap.ui.commons.RoadMap({numberOfVisibleSteps: 5});
+			oRoadMap.addStep(new sap.ui.commons.RoadMapStep("s1", {label: "Step1 - Some very looong test", tooltip: "This is a custom tooltip of step 1.", enabled: true}));
+			oRoadMap.addStep(new sap.ui.commons.RoadMapStep("s2", {enabled: false}));
+			var step = new sap.ui.commons.RoadMapStep("s3", {label: "Step3 with a very long label text which does not fit into 2 lines.", enabled: true});
+			oRoadMap.addStep(step);
+			step.addSubStep(new sap.ui.commons.RoadMapStep("s3a", {label: "Step3aSomeverylooongtest Step3aSomeverylooongtest", enabled: true}));
+			step.addSubStep(new sap.ui.commons.RoadMapStep("s3b", {enabled: true}));
+			step.addSubStep(new sap.ui.commons.RoadMapStep("s3c", {label: "Step3c", visible: false}));
+			oRoadMap.addStep(new sap.ui.commons.RoadMapStep("s4", {label: "Step4", enabled: true}));
+			step = new sap.ui.commons.RoadMapStep("s5", {label: "Step5", enabled: true, expanded: true});
+			oRoadMap.addStep(step);
+			step.addSubStep(new sap.ui.commons.RoadMapStep("s5a", {label: "Step5a - Some very looong test", enabled: true}));
+			step.addSubStep(new sap.ui.commons.RoadMapStep("s5b", {label: "Step5b", enabled: false}));
+			oRoadMap.addStep(new sap.ui.commons.RoadMapStep("s6", {label: "Step6 - Some very looong test", visible: false}));
+			oRoadMap.addStep(new sap.ui.commons.RoadMapStep("s7", {label: "Step7", enabled: false}));
+			oRoadMap.setSelectedStep("s4");
+			//oRoadMap.setFirstVisibleStep("s2");
+			oRoadMap.placeAt("uiArea2");
+			oRoadMap.attachStepSelected(function(oEvent){
+				jQuery("#uiArea4").html("Step with ID "+oEvent.getParameter("stepId")+" selected.");
+			});
+			oRoadMap.attachStepExpanded(function(oEvent){
+				var oStep = sap.ui.getCore().byId(oEvent.getParameter("stepId"))
+				jQuery("#uiArea5").html("Expand state of step with ID "+oStep.getId()+" changed (Expanded="+oStep.getExpanded()+").");
+			});
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		
+		<h1 id="header">Test Page for <code>sap.ui.commons.RoadMap</code></h1>	
+	
+		<div id="uiArea1"></div>	
+		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>	
+		<div id="uiArea4"></div>
+		<div id="uiArea5"></div>
+		<div>Please type a step Id in the 'Value' text field for the step related actions (all ids named like 's3a' or 's1'), 
+		to select a step or to set the first visible step. For the '# visible Steps' RoadMap property use a number and for the 'width' RoadMap property a CSS size.</div>
+	</body>
+</html>

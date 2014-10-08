@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<BusyDialog
+		title="Loading Data"
+		text="... now loading the data from a far away server"
+		showCancelButton="true"
+		close="onDialogClosed" />
+</core:FragmentDefinition>

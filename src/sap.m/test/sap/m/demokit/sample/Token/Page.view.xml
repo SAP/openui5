@@ -1,0 +1,5 @@
+<mvc:View height="100%" controllerName="sap.m.sample.Token.Page"
+       xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+       xmlns="sap.m">       
+       	<Token text="Test Token"/>        
+</mvc:View>

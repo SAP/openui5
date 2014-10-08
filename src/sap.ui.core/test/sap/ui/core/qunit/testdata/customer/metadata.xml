@@ -1,0 +1,53 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+<edmx:DataServices m:DataServiceVersion="2.0">
+<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="CUAN_COMMON_SRV" xml:lang="en">
+<EntityType Name="Customer" sap:label="Account" sap:content-version="1">
+<Key>
+<PropertyRef Name="CustomerId"/>
+</Key>
+<Property Name="Search" Type="CUAN_COMMON_SRV.SearchParameterCT" Nullable="false"/>
+<Property Name="IndustryDescription" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Industry" sap:creatable="false" sap:updatable="false"/>
+<Property Name="IndustryKeyDescription" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Industry Key" sap:creatable="false" sap:updatable="false"/>
+<Property Name="WebSite" Type="Edm.String" sap:label="Web Site"/>
+<Property Name="CustomerOwnerName" Type="Edm.String" MaxLength="80" sap:label="Owner"/>
+<Property Name="City" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="City" sap:sortable="false" sap:filterable="false"/>
+<Property Name="CountryCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Country Code" sap:sortable="false" sap:filterable="false"/>
+<Property Name="CountryDescription" Type="Edm.String" Nullable="false" MaxLength="15" sap:label="Country" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<Property Name="FirstLineName" Type="Edm.String" Nullable="false" MaxLength="40" m:FC_TargetPath="SyndicationTitle" m:FC_KeepInContent="true" sap:label="Name" sap:sortable="false" sap:filterable="false"/>
+<Property Name="HouseNumber" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="House Number" sap:sortable="false" sap:filterable="false"/>
+<Property Name="PostalCode" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Postal Code" sap:sortable="false" sap:filterable="false"/>
+<Property Name="RegionCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Region Code" sap:sortable="false" sap:filterable="false"/>
+<Property Name="RegionDescription" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Region" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<Property Name="Street" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Street" sap:sortable="false" sap:filterable="false"/>
+<Property Name="EMailAddress" Type="Edm.String" Nullable="false" MaxLength="241" sap:label="Email" sap:sortable="false" sap:filterable="false"/>
+<Property Name="FacsimileNumber" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Fax" sap:sortable="false" sap:filterable="false"/>
+<Property Name="MobilePhoneNumber" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Mobile" sap:sortable="false" sap:filterable="false"/>
+<Property Name="PhoneNumber" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Phone" sap:sortable="false" sap:filterable="false"/>
+<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="20" Scale="10" sap:unit="UnitCode" sap:label="Latitude" sap:sortable="false" sap:filterable="false"/>
+<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="20" Scale="10" sap:unit="UnitCode" sap:label="Longitude" sap:sortable="false" sap:filterable="false"/>
+<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Unit Code" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
+<Property Name="UnitDescription" Type="Edm.String" Nullable="false" MaxLength="30" sap:label="Unit" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<Property Name="CustomerId" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Account ID (internal)" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerClassificationCode" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Customer Classification" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerOwnerId" Type="Edm.String" MaxLength="12" sap:label="Owner ID"/>
+<Property Name="MainContactPersonId" Type="Edm.String" MaxLength="32" sap:label="Contact ID"/>
+<Property Name="IndustryCode" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Industry Code" sap:creatable="false" sap:updatable="false"/>
+<Property Name="IndustryKeyCode" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Industry Key Code" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerIdExt" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="ID" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerLifetimeValue" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="14" sap:unit="CustomerLifetimeValueCurrencyCode" sap:label="Customer Lifetime Value" sap:creatable="false" sap:updatable="false"/>
+<Property Name="ChurnProbability" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" sap:label="Churn Probability" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerClassification" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Customer Classification" sap:creatable="false" sap:updatable="false"/>
+<Property Name="ImageUrl" Type="Edm.String" Nullable="false" sap:label="Image" sap:creatable="false" sap:updatable="false"/>
+<Property Name="CustomerLifetimeValueCurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Customer Lifetime Value Currency" sap:creatable="false" sap:updatable="false" sap:semantics="currency-code"/>
+</EntityType>
+<ComplexType Name="SearchParameterCT">
+<Property Name="TileFilterCategory" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Filter Category" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<Property Name="SearchTerm" Type="Edm.String" Nullable="false" sap:label="Search" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<Property Name="AssignedToMe" Type="Edm.Boolean" Nullable="false" sap:label="Assigned To Me" sap:creatable="false" sap:updatable="false"/>
+</ComplexType>
+<EntityContainer Name="CUAN_COMMON_SRV_Entities" m:IsDefaultEntityContainer="true">
+<EntitySet Name="Customers" EntityType="CUAN_COMMON_SRV.Customer" sap:label="Accounts" sap:deletable="false" sap:searchable="true" sap:requires-filter="true" sap:content-version="1"/>
+</EntityContainer>
+</Schema>
+</edmx:DataServices>
+</edmx:Edmx>

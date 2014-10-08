@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test Page for sap.m.RatingIndicator</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<style>
+.sapMRI { /* formatter to display each rating in a single line */
+	display: block; 
+	margin-bottom: 1rem;
+}
+</style>
+<script>
+	var oApp = new sap.m.App("myApp", {initialPage:"page1"});
+	var idPrefix = "__indicator";
+
+	// default rating with no properties
+	var oRating0 = new sap.m.RatingIndicator({
+	});
+	
+	// default rating with value 1
+	var oRating1 = new sap.m.RatingIndicator({
+		value: 1,
+	});
+
+	// 10 / 10 (Full)
+	var oRating2 = new sap.m.RatingIndicator({
+		maxValue: 10,
+		value: 10,
+		visualMode: sap.m.RatingIndicatorVisualMode.Full
+	});
+
+	// 2.5 / 9 (Half)
+	var oRating3 = new sap.m.RatingIndicator({
+		value: 2.5,
+		maxValue: 9,
+		visualMode: sap.m.RatingIndicatorVisualMode.Half
+	});
+
+	// 3.33333 / 8 (Half) with hover state enabled
+	var oRating4 = new sap.m.RatingIndicator({
+		value: 3.33333,
+		maxValue: 8,
+		visualMode: sap.m.RatingIndicatorVisualMode.Half
+	});
+
+	// 2 / 7 (Half) with customized icons
+	var oRating5 = new sap.m.RatingIndicator({
+		value: 2,
+		maxValue: 7,
+		iconSelected: sap.ui.core.IconPool.getIconURI("wounds-doc"),
+		iconUnselected: sap.ui.core.IconPool.getIconURI("tree"),
+		iconHovered: sap.ui.core.IconPool.getIconURI("e-care")
+	});
+
+	// 1 / 6 (Half) with image icons
+	var oRating6 = new sap.m.RatingIndicator({
+		value: 1,
+		maxValue: 6,
+		iconSelected: "../images/candy_v_46x46.png",
+		iconUnselected: "../images/candy_x_46x46.png",
+		iconHovered: "../images/candy_star_46x46.png"
+	});
+
+	// 5/5 (Half) with large icons
+	var oRating7 = new sap.m.RatingIndicator({
+		value: 5,
+		maxValue: 5,
+		iconSize: "3rem"
+	});
+	
+	// invisible rating
+	var oRating8 = new sap.m.RatingIndicator({
+		visible: false
+	});
+
+	// value has to be rounded to 3
+	var oRating9 = new sap.m.RatingIndicator({
+		value: 3.33333,
+		visualMode: sap.m.RatingIndicatorVisualMode.Full
+	});
+
+	// readonly rating
+	var oRating10 = new sap.m.RatingIndicator({
+		enabled: false,
+		value: 1
+	});
+	
+	// default rating for icon test
+	var oRatingTemp = new sap.m.RatingIndicator({
+	});
+	
+	var	aRatings = [oRating0, oRating1, oRating2, oRating3, oRating4, oRating5, oRating6, oRating7, oRating8, oRating9, oRating10, oRatingTemp];
+
+	var oPage1 = new sap.m.Page("page1", {
+		title: "Mobile Rating Control",
+		content : aRatings
+	});
+
+	oApp.addPage(oPage1);
+
+	oApp.placeAt("content");
+
+	QUnit.config.autostart = false;
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+
+	var init = function(sId) {
+		// global variables
+		oRating = sap.ui.getCore().byId(sId);
+		if(!oRating.getVisible()) {
+			return;
+		}
+		$RatingContainer = oRating.$();
+				
+		// save a global reference on all needed DOM elements
+		$SelectedDiv = oRating.$("sel");
+		$UnselectedDiv = oRating.$("unsel");
+		$UnselectedContainerDiv = oRating.$("unsel-wrapper");
+		$SelectorDiv = oRating.$("selector");
+		$HoveredDiv = oRating.$("hov");
+	};
+
+	module("Properties");
+
+	// check all properties
+	test("default Values", function() {
+		strictEqual(oRating0.getVisible(), true, "By default the rating is visible on " + oRating0);
+		strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
+		strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
+		strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
+		strictEqual(oRating0._iPxIconSize, 22, "By default the rating size is 22 px on " + oRating0);
+		strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
+		strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
+		strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
+		strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
+	});
+
+	module("HTML");
+
+	// check existence of all rendered divs
+	test("rendering", function() {
+		var i = 0;
+
+		// check HTML divs
+		for (; i < aRatings.length; i++) {
+			init(aRatings[i].getId());
+			if (oRating.getVisible()) {			
+				ok($SelectedDiv.length, "The selected HTML DIV element exist on " + oRating);
+				ok($UnselectedDiv.length, "The unselected HTML DIV element exist on " + oRating);
+				ok($UnselectedContainerDiv.length, "The unselected container HTML DIV element exist on " + oRating);
+				if (oRating.getEnabled()) {
+					ok($SelectorDiv.length, "The selector HTML DIV element exist on " + oRating);
+					ok($HoveredDiv.length, "The hovered HTML DIV element exist on " + oRating);
+				}
+			}
+		}
+	});
+
+	module("CSS and DOM");
+
+	test("css class and attributes", function() {
+		var i = 0;
+
+		// check css classes
+		for (; i < aRatings.length; i++) {
+			init(aRatings[i].getId());
+			if (oRating.getVisible()) {
+				ok($RatingContainer.hasClass("sapMRI"), 'The rating root HTML Div element "must have" the CSS class "sapMRI" on ' + oRating);
+				ok($SelectedDiv.hasClass("sapMRISel"), 'The rating selected HTML Div element "must have" the CSS class "sapMRISel" on ' + oRating);
+				ok($UnselectedDiv.hasClass("sapMRIUnsel"), 'The rating unselectedHTML Div element "must have" the CSS class "sapMRIUnsel" on ' + oRating);
+				if (oRating.getEnabled()) {
+					ok($SelectorDiv.hasClass("sapMRISelector"), 'The selector HTML DIV element "must have" the CSS class "sapMRISelector" on ' + oRating);
+					ok($HoveredDiv.hasClass("sapMRIHov"), 'The rating hovered HTML Div element "must have" the CSS class "sapMRIHov" on ' + oRating);
+				}
+			}
+		}
+
+		// check selected width
+		strictEqual(oRating0.$().children(".sapMRISel").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "0%" on ' + oRating0);
+		strictEqual(oRating1.$().children(".sapMRISel").css("width"), "22px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "20%" on ' + oRating1);
+		strictEqual(oRating2.$().children(".sapMRISel").css("width"), "256px", 'Check if the style attribute for items with css class ".sapMRISel" has the value of "100%" on ' + oRating2);
+		
+		// check unselected width
+		strictEqual(oRating0.$().children(".sapMRIUnselWrapper").css("width"), "126px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "100%" on ' + oRating0);
+		strictEqual(oRating1.$().children(".sapMRIUnselWrapper").css("width"), "104px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "80%" on ' + oRating1);
+		strictEqual(oRating2.$().children(".sapMRIUnselWrapper").css("width"), "0px", 'Check if the style attribute for items with css class ".sapMRIUnselWrapper" has the value of "0%" on ' + oRating2);
+
+		// check visibility false = no rendering
+		strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
+	});
+
+
+	module("Methods");
+
+	test("getter / setter", function() {
+		sap.ui.getCore().applyChanges();
+
+		// 0
+		strictEqual(oRating0.getValue(), 0, "The rating value is 0 on " + oRating0);
+		strictEqual(oRating0.getMaxValue(), 5, "The max rating value is 5 on " + oRating0);
+
+		// 1
+		strictEqual(oRating1.getValue(), 1, "The rating value is 1 on " + oRating1);
+		strictEqual(oRating1.getMaxValue(), 5, "The max rating value is 5 on " + oRating1);
+
+		// 2
+		strictEqual(oRating2.getValue(), 10, "The rating value is 10 on " + oRating2);
+		strictEqual(oRating2.getMaxValue(), 10, "The max rating value is 10 on " + oRating2);
+
+		// 3
+		strictEqual(oRating3.getValue(), 2.5, "The rating value is 2.5 on " + oRating3);
+		strictEqual(oRating3.getMaxValue(), 9, "The max rating value is 10 on " + oRating3);
+
+		// 4
+		strictEqual(oRating4.getValue(), 3.5, "The rating value is 3.5 on " + oRating4);
+		strictEqual(oRating4.getMaxValue(), 8, "The max rating value is 10 on " + oRating4);
+
+		// check that acutal value is not rounded even though display is showing the rounded value
+		strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
+		strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
+
+		// check exceeding value change 
+		oRating0.setValue(-99); // too small
+		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+		oRating0.setValue(99); // too large
+		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+		oRating0.setValue("Querstromzerspaner"); // NaN
+		strictEqual(oRating0.getValue(), 0, 'Check if getValue() is still 0 on ' + oRating0);
+
+		// change icons
+		oRating0.setIconSelected(sap.ui.core.IconPool.getIconURI("umbrella"));
+		oRating0.setIconUnselected(sap.ui.core.IconPool.getIconURI("nutrition-activity"));
+		oRating0.setIconHovered(sap.ui.core.IconPool.getIconURI("media-play"));
+
+		strictEqual(oRating0.getIconSelected(), sap.ui.core.IconPool.getIconURI("umbrella"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+		strictEqual(oRating0.getIconUnselected(), sap.ui.core.IconPool.getIconURI("nutrition-activity"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+		strictEqual(oRating0.getIconHovered(), sap.ui.core.IconPool.getIconURI("media-play"), 'Check if getIconSelected() returns the newly set icon on ' + oRating0);
+
+		// change size
+		oRating0.setIconSize("50px");
+		strictEqual(oRating0.getIconSize(), "50px", 'Check if the icon size is 50x on ' + oRating0);
+		oRating0.setIconSize("20pt");
+		strictEqual(oRating0.getIconSize(), "20pt", 'Check if the icon size is 20pt on ' + oRating0);
+		oRating0.setIconSize("10%");
+		strictEqual(oRating0.getIconSize(), "10%", 'Check if the icon size is 10% on ' + oRating0);
+	});
+
+	module("Events");
+
+	test("Firing events", function() {
+		expect(12);
+		var touches = {
+				0: {
+						pageX: 150,
+						length: 1
+				}
+			},
+
+			oEventTap = jQuery.Event("tap", {
+				target: oRating4.$(),
+				touches: touches,
+				pageX: 150,
+				targetTouches: touches,
+				originalEvent: {
+					touches: touches
+				}
+			}),
+			oEventTouchStart = jQuery.Event("touchstart", {
+				target: oRating4.$(),
+				touches: touches,
+				targetTouches: touches,
+				originalEvent: {
+					touches: touches
+				}
+			}),
+			oEventTouchMove = jQuery.Event("touchmove", {
+				target: oRating4.$(),
+				touches: touches,
+				targetTouches: touches,
+				originalEvent: {
+					touches: touches
+				}
+			}),
+			oEventTouchEnd = jQuery.Event("touchend", {
+				targetTouches: touches
+			}),
+			j,
+			i,
+			fSelectedWidth = parseFloat(oRating4.$().children(".sapMRatingSelected").css("width")),
+			iRemainder,
+			iValue;
+
+		// check touch start
+		oRating4.ontouchstart(oEventTouchStart);
+		strictEqual(oRating4.$("hov").css("display"), "block", 'On touchstart event the rating hover div must be visible on control ' + oRating4);
+
+		// check touch end
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.$().children(".sapMRIHov").css("display"), "none", 'On touchend event the rating hover div must be invisible on control ' + oRating4);
+
+		var setEventValue = function (x) {
+			// set event to x
+			oEventTouchStart.targetTouches["0"].pageX = x;
+			oEventTap.pageX = x;
+		};
+
+		var roundRatingValue = function(fValue) {
+			if (fValue < 0.25) { // to be able to also select 0 stars
+				fValue = 0;
+			} else if (fValue < 4.75) {
+				fValue += 0.25;
+			}
+			return Math.round(fValue); 
+		};
+
+		var calculateRatingValue = function() {
+			// calculate the selected value based on the percentage value of the event position
+			var percentageWidth = (touches[0].pageX - oRating4.$().offset().left - parseFloat(oRating4.$().css("padding-left"))) / oRating4.$().width();
+			selectedValue = percentageWidth * oRating4.getMaxValue();
+			var result = roundRatingValue(selectedValue);
+			return ( result > oRating4.getMaxValue() ? oRating4.getMaxValue() : result );
+		};
+
+		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px the rating value is " + calculateRatingValue() + " on control " + oRating4);
+
+		setEventValue(180);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
+
+		setEventValue(20);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
+
+		// special case (first 1/4 of first icon returns 0 to allow selection of 0 stars)
+		setEventValue(5);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
+
+		setEventValue(202);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), calculateRatingValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is " + calculateRatingValue() + " on control " + oRating4);
+
+		// change event test
+		oRating4.attachChange(function onChangeHandler(oEvent) {
+			strictEqual(oEvent.getParameter("value"), calculateRatingValue(), "On change event at " + oEventTap.pageX + "px  the rating value is " + oEvent.getParameter("value") + " on control " + oRating4);
+		}, oRating4);
+
+		setEventValue(120);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+
+		var tempValue = oRating4.getValue();
+		
+		// change event with invalid values
+		setEventValue(9999);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), oRating4.getMaxValue(), "On touch start/end at " + oEventTap.pageX + "px  the rating value is the maximum on control " + oRating4);
+		
+		// change event with invalid values
+		setEventValue(-9999);
+		oRating4.ontouchstart(oEventTouchStart);
+		oRating4._ontouchmove(oEventTouchStart);
+		oRating4._ontouchend(oEventTouchEnd);
+		strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
+	});
+
+	test("Keyboard navigation", function() {
+		expect(5);
+		// default rating with no properties
+		var oRating = new sap.m.RatingIndicator({ visualMode: sap.m.RatingIndicatorVisualMode.Full }),
+			check0function = function (evt) {
+				strictEqual(evt.getParameter("value"), 0, "The keyboard event has set the rating value to 0");
+				oRating.detachLiveChange(check0function);
+			},
+			check1function = function (evt) {
+				strictEqual(evt.getParameter("value"), 1, "The keyboard event has set the rating value to 1");
+				oRating.detachLiveChange(check1function);
+				oRating.detachChange(check1function);
+			},
+			check2function = function (evt) {
+				strictEqual(evt.getParameter("value"), 2, "The keyboard event has set the rating value to 2");
+				oRating.detachLiveChange(check2function);
+				oRating.detachChange(check2function);
+			},
+			check3function = function (evt) {
+				strictEqual(evt.getParameter("value"), 3, "The keyboard event has set the rating value to 3");
+				oRating.detachLiveChange(check3function);
+				oRating.detachChange(check3function);
+			},
+			check4function = function (evt) {
+				strictEqual(evt.getParameter("value"), 4, "The keyboard event has set the rating value to 4");
+				oRating.detachLiveChange(check4function);
+				oRating.detachChange(check4function);
+			},
+			check5function = function (evt) {
+				strictEqual(evt.getParameter("value"), 5, "The keyboard event has set the rating value to 5");
+				oRating.detachLiveChange(check5function);
+				oRating.detachChange(check5function);
+			};
+
+		oRating.focus();
+
+		// check increase
+		oRating.attachLiveChange(check1function);
+		oRating.onsapincrease();
+
+		// check decrease
+		oRating.setValue(4);
+		oRating.attachLiveChange(check3function);
+		oRating.onsapdecrease();
+
+		// check home
+		oRating.attachLiveChange(check0function);
+		oRating.onsaphome();
+
+		// check end
+		oRating.attachLiveChange(check5function);
+		oRating.onsapend();
+
+		// check select
+		oRating.setValue(3);
+		oRating.onsapincrease();
+		oRating.attachChange(check5function);
+		oRating.onsapselect();
+
+		// check focusout
+		oRating.setValue(3);
+		oRating.onsapdecrease();
+	});
+
+	
+	test("NUMBER keys", function() {
+
+		//Arrange
+		var oRating = new sap.m.RatingIndicator({maxValue:6});
+
+		// System under Test
+		oRating.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRating.$().focus(); // set focus on RatingIndicator
+
+		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_1); // trigger number 1 on RatingIndicator
+		strictEqual(oRating.getValue(), 1, "Number 1 is pressed, RatingIndicator has value 1");
+
+		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_3); // trigger number 3 on RatingIndicator
+		strictEqual(oRating.getValue(), 3, "Number 3 from the numpad is pressed, RatingIndicator has value 3");
+
+		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_5); // trigger number 5 on RatingIndicator
+		strictEqual(oRating.getValue(), 5, "Number 5 is pressed, RatingIndicator has value 5");
+
+		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.DIGIT_0); // trigger number 0 on RatingIndicator
+		strictEqual(oRating.getValue(), 0, "Number 0 is pressed, RatingIndicator has value 0");
+
+		sap.ui.test.qunit.triggerKeyup(oRating.$(), jQuery.sap.KeyCodes.NUMPAD_7); // trigger number 7 on RatingIndicator
+		strictEqual(oRating.getValue(), 6, "Number 7 from the numpad is pressed, RatingIndicator has value 6 (default maxValue is 6)");
+
+		// Clean up
+		oRating.destroy();
+	});
+	
+	test("Icon Handling & Destroying", function() {
+		var destroyTest = function(oControl) {
+			var oFirstSelectedIcon = oControl.getAggregation("_iconsSelected")[0],
+				oFirstUnselectedIcon = oControl.getAggregation("_iconsUnselected")[0],
+				oFirstHoveredIcon = (oControl.getEnabled() ? oControl.getAggregation("_iconsHovered")[0] : null),
+				sFirstSelectedIconId = oFirstSelectedIcon.getId(),
+				sFirstUnselectedIconId = oFirstUnselectedIcon.getId(),
+				sFirstHoveredIconId = (oControl.getEnabled() ? oFirstHoveredIcon.getId() : "");
+
+			strictEqual(sFirstSelectedIconId.substr(sFirstSelectedIconId.length - 5), "icon0", "The id of the selected icon with id \"" + sFirstSelectedIconId + "\" ends with  icon0 on " + oControl);
+			strictEqual(sFirstUnselectedIconId.substr(sFirstUnselectedIconId.length - (5 + oControl.getMaxValue().toString().length - 1)), "icon" + oControl.getMaxValue(), "The id of the unselected icon with id \"" + sFirstUnselectedIconId + "\" ends with  icon5 on " + oControl);
+			if(oControl.getEnabled()) {
+				strictEqual(sFirstHoveredIconId.substr(sFirstHoveredIconId.length - (5 + (2 * oControl.getMaxValue()).toString().length - 1)), "icon" + (2 * oControl.getMaxValue()), "The id of the hovered icon with id \"" + sFirstHoveredIconId + "\" ends with  icon10 on " + oControl);
+			}
+
+			oControl.destroy();
+
+			strictEqual(oFirstSelectedIcon.bIsDestroyed, true, "The selected icon with id \"" + sFirstSelectedIconId + "\" was successfully destroyed on " + oControl);
+			strictEqual(oFirstUnselectedIcon.bIsDestroyed, true, "The unselected icon with id \"" + sFirstUnselectedIconId + "\" was successfully destroyed on " + oControl);
+			if(oControl.getEnabled()) {
+				strictEqual(oFirstHoveredIcon.bIsDestroyed, true, "The hovered icon with id \"" + sFirstHoveredIconId + "\" was successfully destroyed on " + oControl);
+			}
+			strictEqual(oControl.bIsDestroyed, true, "The rating control was successfully destroyed on " + oControl);
+		},
+		i = 0;
+
+		for (; i < aRatings.length; i++) {
+			if(aRatings[i].getVisible()) {
+				destroyTest(aRatings[i]);
+			} else {
+				aRatings[i].destroy();
+				strictEqual(aRatings[i].bIsDestroyed, true, "The rating control was successfully destroyed on " + aRatings[i]);
+			}
+		}
+	});
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.RatingIndicator</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

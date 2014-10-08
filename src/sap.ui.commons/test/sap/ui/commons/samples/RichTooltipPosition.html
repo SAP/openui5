@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>sap.ui.commons.RichTooltip Position Test Page</title>
+
+    <!-- ********************************************************************** -->
+	<!-- SAPUI5 Bootstrap:                                                     -->
+	<!-- Extend the "libs" property if you like to import additional libraries  -->
+	<!-- ********************************************************************** -->
+	<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+			oCore.attachInitEvent(function () {
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				var oButton = new sap.ui.commons.Button("b1");
+				oButton.setText("Show the full blown RichTooltip");
+				oButton.setTooltip("this tooltip must be gone");
+				var oRtt = new sap.ui.commons.RichTooltip( "TextRtt1", {title: "Rich Tooltip", imageSrc: "../images/SAPLogo.gif", text:"This is the full blown RichTooltip that has all it can show at the moment:a title, an image and a text"});
+ 				oRtt.setMyPosition("center bottom");
+ 				oRtt.setAtPosition("end bottom");
+ 				oRtt.setOpenDuration(1200);
+ 				oRtt.setCloseDuration(1800);
+				oButton.setTooltip(oRtt);
+				oButton.placeAt("target1");
+
+				oButton = new sap.ui.commons.Button("b2");
+				oButton.setText("Show RichTooltip with text only");
+				oButton.setTooltip("This tooltip should not be here");
+				var oRtt2 = new sap.ui.commons.RichTooltip( "TextRtt2", {text:"This is a smaller RichTooltip that has only the Text"});
+				oButton.setTooltip(oRtt2);
+				oButton.placeAt("target2");
+				}
+			);
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.RichTooltip</h1>
+
+		<p>
+			<div id="target1" title="Tooltip of the surrounding &lt;div&gt; tag. This should not be displayed when hovering the button."></div>
+		</p>
+		<p>
+			<div id="target2"></div>
+		</p>
+
+	</body>
+</html>

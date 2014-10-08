@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Element Delegates - sap.ui.core</title>
+	
+	<script id="sap-ui-bootstrap" 
+			type="text/javascript" 
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" 
+			data-sap-ui-noConflict="true">
+	</script>
+	
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<script>
+
+		var element;
+		var lastThisId = undefined;
+		var counter = 0;
+
+		var testObject = { id: "testObject" };
+		
+		var testFunction = function() {
+			ok(true, "this test only checks whether the function is executed");
+			counter++;
+			lastThisId = this.id ? this.id : this.getId(); // the simple ID for the delegate and testObject, but the real element ID when the Element is the this context 
+		}
+
+		var del1 = {
+			id: "del1",
+			onSomeEvent: testFunction
+		};
+		
+		var del2 = {
+			id: "del2",
+			onSomeEvent: testFunction
+		};
+
+		test("Adding Delegates", function() {
+			element = new sap.ui.core.Element();
+			
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			equal(element.aDelegates.length, 0, "Element should have no after delegates");
+			
+			element.addDelegate(del1);
+			
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+			
+			element.addDelegate(del2, true);
+			
+			equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
+			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+		});
+		
+		test("Triggering Delegates", function() {
+			expect(4);
+			counter = 0;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(counter, 2, "event handler method should be called twice");
+			equal(lastThisId, "del1"); // del2 should be called earlier, the this context should be the delegate itself
+		});
+		
+		test("Removing Delegates", function() {
+			element.removeDelegate(del1);
+			
+			equal(element.aBeforeDelegates.length, 1, "Element should have one before delegate");
+			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+			
+			counter = 0;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(counter, 1, "event handler method should be called once");
+			
+			element.removeDelegate(del2);
+			
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegate");
+			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+		});
+		
+		test("Other 'this' context", function() {
+			element.addDelegate(del1, testObject);
+			lastThisId = undefined;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(lastThisId, "testObject", "the test object should have been the this context");
+		});
+		
+		test("Cloning", function() {
+			element.addDelegate(del2, false, true);
+			lastThisId = undefined;
+			counter = 0;
+			
+			var clone = element.clone();
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			clone._handleEvent(oEvent);
+			
+			equal(counter, 1, "only one handler should be cloned and executed");
+			equal(lastThisId, "del2", "the second delegate is the one which should be executed");
+			
+			equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
+			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
+		});
+		
+		test("Cloned 'this' context", function() {
+			element.destroy();
+			element = new sap.ui.core.Element();
+			var originalId = element.getId();
+			
+			element.addDelegate(del2, false, element, true); // this delegate has the element itself as context
+			lastThisId = undefined;
+			counter = 0;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(counter, 1, "one handler should be cloned and executed");
+			equal(lastThisId, originalId, "the original element should be the this context");
+			
+			var clone = element.clone();
+			var cloneId = clone.getId();
+			lastThisId = undefined;
+			counter = 0;
+			
+			oEvent = jQuery.Event("SomeEvent");
+			clone._handleEvent(oEvent);
+			
+			equal(counter, 1, "one handler should be cloned and executed");
+			equal(lastThisId, cloneId, "the clone should be the this context");
+		});
+		
+		test("addEventDelegate method", function() {
+			element.destroy();
+			element = new sap.ui.core.Element();
+			
+			element.addEventDelegate(del1, testObject);
+			
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			equal(element.aDelegates.length, 1, "Element should have one after delegate");
+			
+			lastThisId = undefined;
+			counter = 0;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(counter, 1, "the handler should be executed");
+			equal(lastThisId, "testObject", "the this context should be set correctly");
+			
+			var clone = element.clone();
+			lastThisId = undefined;
+			counter = 0;
+			
+			oEvent = jQuery.Event("SomeEvent");
+			clone._handleEvent(oEvent);
+			
+			equal(counter, 1, "the handler should be cloned and executed");
+			equal(lastThisId, "testObject", "the this context should be set correctly");
+			
+			equal(clone.aBeforeDelegates.length, 0, "Clone should have no before delegates");
+			equal(clone.aDelegates.length, 1, "Clone should have one after delegate");
+		});
+		
+		test("removeEventDelegate method", function() {
+			element.removeEventDelegate(del1);
+			
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			equal(element.aDelegates.length, 0, "Element should have no after delegate");
+
+			counter = 0;
+			
+			var oEvent = jQuery.Event("SomeEvent");
+			element._handleEvent(oEvent);
+			
+			equal(counter, 0, "the handler should not be executed");
+		});
+
+		test("removeDelegate from within delegate", function() {
+			// BUG: Removing the delegate while it is called modifies the array of delegates, 
+			//      the second delegate is not called
+			//      Fixed in 1.20.7
+			// CSS: 0120061532 0001150709 2014
+			
+			var oDelegate1 = {
+		        onAfterRendering:function() {
+		            ok(true, "Invoke onAfterRendering on delegate #1");
+					element.removeEventDelegate(oDelegate1);
+		        }
+		    };
+			
+			var oDelegate2 = {
+		        onAfterRendering:function() {
+		            ok(true, "Invoke onAfterRendering on delegate #2");
+					element.removeEventDelegate(oDelegate2);
+					
+					equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+					equal(element.aDelegates.length, 0, "Element should have no after delegates");
+		        }
+		    };
+							
+		    element.addEventDelegate(oDelegate1);
+			element.addEventDelegate(oDelegate2);
+
+			equal(element.aBeforeDelegates.length, 0, "Element should have no before delegates");
+			equal(element.aDelegates.length, 2, "Element should have two after delegates");
+			
+			var oEvent = jQuery.Event("AfterRendering");
+			element._handleEvent(oEvent);
+		});
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.Element Delegate functionality</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

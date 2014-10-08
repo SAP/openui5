@@ -1,0 +1,9 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+		controllerName="NavigationWithoutMasterDetailPattern.view.View1" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="View1">
+		<content>
+		     <Label text="on View 2" id="text"></Label>
+	       <Button text="toView2" press="handleBtn1Press"></Button>
+		</content>
+	</Page>
+</mvc:View>

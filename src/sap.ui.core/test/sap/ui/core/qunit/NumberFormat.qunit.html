@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.format.NumberFormat
+  Author: d040216
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-language="en-US"
+	data-sap-ui-originInfo="true">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	jQuery.sap.require("sap.ui.core.format.NumberFormat");
+	var oDefaultInteger = sap.ui.core.format.NumberFormat.getIntegerInstance(),
+		oDefaultFloat = sap.ui.core.format.NumberFormat.getFloatInstance(),
+		oCustomInteger = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			maxIntegerDigits: 4,
+			minIntegerDigits: 2,
+			groupingEnabled: true,
+			groupingSeparator: "."
+		}),
+		oCustomFloat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxIntegerDigits: 4,
+			minIntegerDigits: 2,
+			maxFractionDigits: 4,
+			minFractionDigits: 2,
+			groupingEnabled: false,
+			groupingSeparator: ".",
+			decimalSeparator: ","
+		});
+
+	test("integer default format", function(){
+		equal(oDefaultInteger.format(1), "1", "1");
+		equal(oDefaultInteger.format(123), "123", "123");
+		equal(oDefaultInteger.format(123.23), "123", "123.23");
+		equal(oDefaultInteger.format(1234), "1234", "1234");
+		equal(oDefaultInteger.format(12345), "12345", "12345");
+		equal(oDefaultInteger.format(-123), "-123", "-123");
+	});
+
+	test("integer format for a specific locale", function(){
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		var oIntegerFormat = sap.ui.core.format.NumberFormat.getIntegerInstance(oLocale);
+		equal(oIntegerFormat.format(1), "1", "1");
+		equal(oIntegerFormat.format(123), "123", "123");
+		equal(oIntegerFormat.format(123.23), "123", "123.23");
+		equal(oIntegerFormat.format(1234), "1234", "1234");
+		equal(oIntegerFormat.format(12345), "12345", "12345");
+		equal(oIntegerFormat.format(-123), "-123", "-123");
+	});
+
+	test("integer custom format", function(){
+		equal(oCustomInteger.format(1), "01", "1");
+		equal(oCustomInteger.format(123), "123", "123");
+		equal(oCustomInteger.format(123.23), "123", "123.23");
+		equal(oCustomInteger.format(1234), "1.234", "1234");
+		equal(oCustomInteger.format(12345), "?.???", "12345");
+		equal(oCustomInteger.format(-123), "-123", "-123");
+	});
+
+	test("integer short style", function(){
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "short"}, oLocale);
+
+		equal(oFormat.format(1), "1", "1 formatted");
+		equal(oFormat.parse("1"), 1, "\"1\" parsed");
+		equal(oFormat.format(12), "12", "12 formatted");
+		equal(oFormat.parse("12"), 12, "\"12\" parsed");
+		equal(oFormat.format(123), "123", "123 formatted");
+		equal(oFormat.parse("123"), 123, "\"123\" parsed");
+		equal(oFormat.format(1234), "1" + String.fromCharCode(160) + "Tsd", "1234 formatted");
+		equal(oFormat.parse("1 Tsd"), 1000, "\"1 Tsd\" parsed");
+		equal(oFormat.format(12345), "12" + String.fromCharCode(160) + "Tsd", "12345 formatted");
+		equal(oFormat.parse("10 Tsd"), 10000, "\"10 Tsd\" parsed");
+		equal(oFormat.format(123456), "123" + String.fromCharCode(160) + "Tsd", "123456 formatted");
+		equal(oFormat.parse("100 Tsd"), 100000, "\"100 Tsd\" parsed");
+		equal(oFormat.parse("1000 Tsd"), 1000000, "\"1000 Tsd\" parsed");
+		equal(oFormat.format(1234567), "1" + String.fromCharCode(160) + "Mio", "1234567 formatted");
+		equal(oFormat.parse("1 Mio"), 1000000, "\"1 Mio\" parsed");
+		equal(oFormat.format(12345678), "12" + String.fromCharCode(160) + "Mio", "12345678 formatted");
+		equal(oFormat.parse("10 Mio"), 10000000, "\"10 Mio\" parsed");
+		equal(oFormat.format(123456789), "123" + String.fromCharCode(160) + "Mio", "123456789 formatted");
+		equal(oFormat.parse("100 Mio"), 100000000, "\"100 Mio\" parsed");
+		equal(oFormat.format(1234567890), "1" + String.fromCharCode(160) + "Mrd", "1234567890 formatted");
+		equal(oFormat.parse("1 Mrd"), 1000000000, "\"1 Mrd\" parsed");
+		equal(oFormat.format(12345678901), "12" + String.fromCharCode(160) + "Mrd", "12345678901 formatted");
+		equal(oFormat.parse("10 Mrd"), 10000000000, "\"10 Mrd\" parsed");
+		equal(oFormat.format(123456789012), "123" + String.fromCharCode(160) + "Mrd", "123456789012 formatted");
+		equal(oFormat.parse("100 Mrd"), 100000000000, "\"100 Mrd\" parsed");
+		equal(oFormat.format(1234567890123), "1" + String.fromCharCode(160) + "Bio", "1234567890123 formatted");
+		equal(oFormat.parse("1 Bio"), 1000000000000, "\"1 Bio\" parsed");
+	});
+
+	test("float default format", function(){
+		equal(oDefaultFloat.format(.1), "0.1", ".1");
+		equal(oDefaultFloat.format(0.123), "0.123", "0.123");
+		equal(oDefaultFloat.format(123), "123", "123");
+		equal(oDefaultFloat.format(123.23), "123.23", "123.23");
+		equal(oDefaultFloat.format(1234), "1,234", "1234");
+		equal(oDefaultFloat.format(12345), "12,345", "12345");
+		equal(oDefaultFloat.format(12345.123), "12,345.123", "12345.123");
+		equal(oDefaultFloat.format(12345.12345), "12,345.12345", "12345.12345");
+		equal(oDefaultFloat.format(1234567890), "1,234,567,890", "1234567890");
+		equal(oDefaultFloat.format(-123.23), "-123.23", "-123.23");
+		equal(oDefaultFloat.format("1.23e+9"), "1,230,000,000", "1.23e+9");
+		equal(oDefaultFloat.format("1.23e-9"), "0.00000000123", "1.23e-9");
+		equal(oDefaultFloat.format("-1.23e+9"), "-1,230,000,000", "-1.23e+9");
+		equal(oDefaultFloat.format("-1.23e-9"), "-0.00000000123", "-1.23e-9");
+		equal(oDefaultFloat.format("1.2345e+2"), "123.45", "1.2345e+2");
+		equal(oDefaultFloat.format("12345e-2"), "123.45", "12345e-2");
+		equal(oDefaultFloat.format("-1.2345e+2"), "-123.45", "-1.2345e+2");
+		equal(oDefaultFloat.format("-12345e-2"), "-123.45", "-12345e-2");
+		equal(oDefaultFloat.format("123.45e+2"), "12,345", "123.45e+2");
+		equal(oDefaultFloat.format("12.345e-2"), "0.12345", "12.345e-2");
+		equal(oDefaultFloat.format("-123.45e+2"), "-12,345", "-123.45e+2");
+		equal(oDefaultFloat.format("-12.345e-2"), "-0.12345", "-12.345e-2");
+		equal(oDefaultFloat.format("123456.789e+2"), "12,345,678.9", "123456.789e+2");
+		equal(oDefaultFloat.format("123.456789e-2"), "1.23456789", "123.456789e-2");
+		equal(oDefaultFloat.format("-123456.789e+2"), "-12,345,678.9", "-123456.789e+2");
+		equal(oDefaultFloat.format("-123.456789e-2"), "-1.23456789", "-123.456789e-2");
+	});
+
+	test("float format for a specific locale", function(){
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oLocale);
+		equal(oFloatFormat.format(.1), "0,1", ".1");
+		equal(oFloatFormat.format(0.123), "0,123", "0.123");
+		equal(oFloatFormat.format(123), "123", "123");
+		equal(oFloatFormat.format(123.23), "123,23", "123.23");
+		equal(oFloatFormat.format(1234), "1.234", "1234");
+		equal(oFloatFormat.format(12345), "12.345", "12345");
+		equal(oFloatFormat.format(12345.123), "12.345,123", "12345.123");
+		equal(oFloatFormat.format(12345.12345), "12.345,12345", "12345.12345");
+		equal(oFloatFormat.format(1234567890), "1.234.567.890", "1234567890");
+		equal(oFloatFormat.format(-123.23), "-123,23", "-123.23");
+	});
+
+
+	test("float custom format", function(){
+		equal(oCustomFloat.format(.1), "00,10", ".1");
+		equal(oCustomFloat.format(0.123), "00,123", "0.123");
+		equal(oCustomFloat.format(123), "123,00", "123");
+		equal(oCustomFloat.format(123.23), "123,23", "123.23");
+		equal(oCustomFloat.format(1234), "1234,00", "1234");
+		equal(oCustomFloat.format(12345), "????,00", "12345");
+		equal(oCustomFloat.format(12345.123), "????,123", "12345.123");
+		equal(oCustomFloat.format(12345.12345), "????,1234", "12345.12345");
+		equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
+	});
+
+	test("parse default format", function(){
+		equal(oDefaultInteger.parse("123"), 123, "123");
+		equal(oDefaultInteger.parse("123,123"), 123123, "123,123");
+		equal(oDefaultInteger.parse("123,123,1234"), 1231231234, "123,123,1234");
+		equal(isNaN(oDefaultInteger.parse("123.00")), true, "123.00");
+		equal(isNaN(oDefaultInteger.parse("5e+3")), true, "5e+3");
+		equal(isNaN(oDefaultInteger.parse("a1b2c3")), true, "a1b2c3");
+
+		equal(oDefaultFloat.parse("123.23"), 123.23, "123.23");
+		equal(oDefaultFloat.parse("123,123,123.23"), 123123123.23, "123,123,123.23");
+		equal(oDefaultFloat.parse(".23"), 0.23, ".23");
+		equal(oDefaultFloat.parse("-123.23"), -123.23, "-123.23");
+		equal(oDefaultFloat.parse("+6.5"), 6.5, "+6.5");
+		equal(oDefaultFloat.parse("5e+3"), 5000, "5e+3");
+		equal(oDefaultFloat.parse("1E+4"), 10000, "1E+4");
+		equal(oDefaultFloat.parse("5e-3"), 0.005, "5e-3");
+		equal(oDefaultFloat.parse(".5e-3"), 5e-4, ".5e-3");
+		equal(isNaN(oDefaultFloat.parse("123.x5")), true, "123.x5");
+	});
+
+	test("parse custom format", function(){
+		equal(oCustomInteger.parse("123"), 123, "123");
+		equal(oCustomInteger.parse("123.123"), 123123, "123.123");
+		equal(oCustomInteger.parse("123.123.1234"), 1231231234, "123.123.1234");
+		equal(isNaN(oCustomInteger.parse("123,00")), true, "123,00");
+		equal(isNaN(oCustomInteger.parse("5e+3")), true, "5e+3");
+		equal(isNaN(oCustomInteger.parse("a1b2c3")), true, "a1b2c3");
+
+		equal(oCustomFloat.parse("0,23"), 0.23, "0.23");
+		equal(oCustomFloat.parse("1.234,23"), 1234.23, "1.234,23");
+		equal(oCustomFloat.parse("123.123.123,23"), 123123123.23, "123.123.123,23");
+		equal(oCustomFloat.parse(",23"), 0.23, ",23");
+		equal(oCustomFloat.parse("-123,23"), -123.23, "-123,23");
+		equal(oCustomFloat.parse("5e+3"), 5000, "5e+3");
+		equal(oCustomFloat.parse("1E+4"), 10000, "1E+4");
+		equal(oCustomFloat.parse("5e-3"), 0.005, "5e-3");
+		equal(oCustomFloat.parse(",5e-3"), 5e-4, ",5e-3");
+		equal(isNaN(oCustomFloat.parse("123,x5")), true, "123,x5");
+
+	});
+
+	test("float long style", function(){
+		var oLocale = new sap.ui.core.Locale("de-DE");
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "long"}, oLocale);
+
+		equal(oFormat.format(1.2), "1,2", "1.2 formatted");
+		equal(oFormat.parse("1,2"), 1.2, "\"1,2\" parsed");
+		equal(oFormat.format(1234.5), "1 Tausend", "1234.5 formatted");
+		equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
+		equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
+		// other test similar to integer -> skip
+	});
+
+	test("origin info", function(){
+		sap.ui.getCore().getConfiguration().originInfo = true;
+		var oOriginNumber = sap.ui.core.format.NumberFormat.getIntegerInstance(),
+			sValue = oOriginNumber.format(123),
+			oInfo = sValue.originInfo;
+		equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
+		equal(oInfo.locale, "en-US", "Origin Info: locale")
+	});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: NumberFormat</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

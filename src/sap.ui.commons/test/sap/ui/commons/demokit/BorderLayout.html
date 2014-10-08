@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.layout.BorderLayout,sap.ui.commons.layout.BorderLayoutArea">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Menu MenuButton BorderLayout MenuItem MenuItemBase Popup" />
+		<title>BorderLayout - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<style>
+ /* styles to color the areas*/
+[id="BorderLayout1"] .sapUi-layoutUilib-BLyTop{
+	background-color: red;
+}
+[id="BorderLayout1"] .sapUi-layoutUilib-BLyBottom{
+	background-color: blue;
+}
+[id="BorderLayout1"] .sapUi-layoutUilib-BLyLeft{
+	background-color: green;
+}
+[id="BorderLayout1"] .sapUi-layoutUilib-BLyRight{
+	background-color: yellow;
+}
+</style>
+
+<script id='BorderLayoutSimple'>
+// Create a BorderLayout instance
+var oBorderLayout1 = new sap.ui.commons.layout.BorderLayout("BorderLayout1", {width: "500px", height: "200px", 
+	top: new sap.ui.commons.layout.BorderLayoutArea({
+		size: "20%",
+		contentAlign: "center",
+		visible: true, 
+		content: [new sap.ui.commons.TextView({text: 'Top Area', design: sap.ui.commons.TextViewDesign.Bold })]
+		}),
+	bottom: new sap.ui.commons.layout.BorderLayoutArea({
+		size: "20%",
+		contentAlign: "center",
+		visible: true, 
+		content: [new sap.ui.commons.TextView({text: 'Bottom Area', design: sap.ui.commons.TextViewDesign.Bold })]
+		}),
+	begin: new sap.ui.commons.layout.BorderLayoutArea({
+		size: "20%",
+		contentAlign: "center",
+		visible: true, 
+		content: [new sap.ui.commons.TextView({text: 'Begin Area', design: sap.ui.commons.TextViewDesign.Bold })]
+		}),
+	center: new sap.ui.commons.layout.BorderLayoutArea({
+		contentAlign: "center",
+		visible: true, 
+		content: [new sap.ui.commons.TextView({text: 'Center Area', design: sap.ui.commons.TextViewDesign.Bold })]
+		}),
+	end: new sap.ui.commons.layout.BorderLayoutArea({
+		size: "20%",
+		contentAlign: "center",
+		visible: true, 
+		content: [new sap.ui.commons.TextView({text: 'End Area', design: sap.ui.commons.TextViewDesign.Bold })]
+		})
+	});
+
+// Attach the BorderLayout to the page
+oBorderLayout1.placeAt("sample1");
+</script>
+
+<script id='BorderLayoutMethods'>
+// Create a BorderLayout instance
+var oBorderLayout2 = new sap.ui.commons.layout.BorderLayout("BorderLayout2", {width: "500px", height: "200px"});
+
+var oTV = new sap.ui.commons.TextView({text: 'Top Area', design: sap.ui.commons.TextViewDesign.H1 });
+oBorderLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.top, oTV);
+oBorderLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.top, {
+	size : "20%",
+	contentAlign : "center",
+	visible : true
+});
+
+oTV = new sap.ui.commons.TextView({text: 'Bottom Area', design: sap.ui.commons.TextViewDesign.H1 });
+oBorderLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom, oTV);
+oBorderLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom, {
+	size : "20%",
+	contentAlign : "center",
+	visible : true
+});
+
+oTV = new sap.ui.commons.TextView({text: 'Begin Area', design: sap.ui.commons.TextViewDesign.H1 });
+oBorderLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.begin, oTV);
+oBorderLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.begin, {
+	size : "20%",
+	contentAlign : "center",
+	visible : true
+});
+
+oTV = new sap.ui.commons.TextView({text: 'End Area', design: sap.ui.commons.TextViewDesign.H1 });
+oBorderLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.end, oTV);
+oBorderLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.end, {
+	size : "20%",
+	contentAlign : "center",
+	visible : true
+});
+
+oTV = new sap.ui.commons.TextView({text: 'Center Area', design: sap.ui.commons.TextViewDesign.H1 });
+oBorderLayout2.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center, oTV);
+oBorderLayout2.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.center, {
+	contentAlign : "center",
+	visible : true
+});
+
+// Attach the BorderLayout to the page
+oBorderLayout2.placeAt("sample2");
+</script>
+
+<script id='BorderLayoutInteraction'>
+// Create a BorderLayout instance
+var oBorderLayout3 = new sap.ui.commons.layout.BorderLayout("BorderLayout3", {width: "500px", height: "200px"});
+var iCount = 0;
+
+// Create Buttons to modify center area
+var oButtonTop = new sap.ui.commons.Button({
+	text: 'add content', 
+	press: function(){oBorderLayout3.addContent(sap.ui.commons.layout.BorderLayoutAreaTypes.center, 
+			              new sap.ui.commons.TextView({text: "Text-" + iCount + " "})); iCount++;}
+	});
+var oButtonBottom = new sap.ui.commons.Button({
+	text: 'remove content', 
+	press: function(){oBorderLayout3.removeContent(sap.ui.commons.layout.BorderLayoutAreaTypes.center,0);}
+	});
+var oButtonBegin = new sap.ui.commons.Button({
+	text: 'insert content',
+	press: function(){oBorderLayout3.insertContent(sap.ui.commons.layout.BorderLayoutAreaTypes.center,0, 
+            new sap.ui.commons.TextView({text: "Text-" + iCount + " "})); iCount++;}
+	});
+var oButtonEnd = new sap.ui.commons.Button({
+	text: 'remove all content',
+	press: function(){oBorderLayout3.removeAllContent(sap.ui.commons.layout.BorderLayoutAreaTypes.center);}
+	});
+
+// Create areas of BorderLayout
+oBorderLayout3.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.top, oButtonTop);
+oBorderLayout3.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.top, {
+	size : "15%",
+	contentAlign : "center",
+	visible : true
+	});
+
+oBorderLayout3.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom, oButtonBottom);
+oBorderLayout3.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.bottom, {
+	size : "15%",
+	contentAlign : "center",
+	visible : true
+	});
+
+oBorderLayout3.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.begin, oButtonBegin);
+oBorderLayout3.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.begin, {
+	size : "30%",
+	contentAlign : "left",
+	visible : true
+	});
+
+oBorderLayout3.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.end, oButtonEnd);
+oBorderLayout3.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.end, {
+	size : "30%",
+	contentAlign : "right",
+	visible : true
+	});
+
+oBorderLayout3.createArea(sap.ui.commons.layout.BorderLayoutAreaTypes.center);
+oBorderLayout3.setAreaData(sap.ui.commons.layout.BorderLayoutAreaTypes.center, {
+	contentAlign : "center",
+	visible : true
+	});
+
+// Attach the BorderLayout to the page
+oBorderLayout3.placeAt("sample3");
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Green" icon="images/ctrls/borderlayout-icon.png">BorderLayout</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The BorderLayout devides a screen area into five sub-areas: One area at the top and one at the bottom; an area on the left-hand and an area on the right-hand side; and one area in the center. 
+	Into all areas, library controls can be embedded.
+	</p>
+
+
+	<h2>Examples</h2>
+
+	<h3>The Area Alignment</h3>		
+	<div code-sample="sample1" script="BorderLayoutSimple"></div>
+	<p>
+	The first example shows the five areas. Each area contains an instance of the <code>sap.ui.commons.layout.BorderLayoutArea</code> element.
+	The areas are colored to visualize the sizes and to show that custom styles can be used in the HTML file. By default, the areas have no background color.
+	</p>
+
+	<h3>BorderLayout Methods</h3>		
+	<div code-sample="sample2" script="BorderLayoutMethods"></div>
+	<p>
+	The areas are created using the <code>createArea</code> and <code>setAreaData</code> methods. This means that no external instance of BorderLayoutArea is required.  
+	</p>
+
+	<h3>BorderLayout Interaction</h3>		
+	<div code-sample="sample3" script="BorderLayoutInteraction"></div>
+	<p>
+	There are buttons integrated into the border layout areas where for each button a different event has been implemented. The button in the top area adds a text to the center area using the <code>addContent</code> method. 
+	The button in the bottom area removes the first text of the center area using the <code>removeContent</code> method. The button in the begin area inserts a text to the center area using the <code>insertContent</code> method. 
+	And the button in the end area removes all texts of the center area using the <code>removeAllContent</code> method. 
+	</p>
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.layout.BorderLayout.html">API documentation</a>
+	</p>
+</body>
+</html>

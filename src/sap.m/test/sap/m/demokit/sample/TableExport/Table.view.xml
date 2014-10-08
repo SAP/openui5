@@ -1,0 +1,79 @@
+<mvc:View
+	controllerName="sap.m.sample.TableExport.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:model="sap.ui.model"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table id="idProductsTable"
+		inset="false"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<Toolbar>
+				<Label text="Products"></Label>
+				<ToolbarSpacer></ToolbarSpacer>
+				<Button	icon="sap-icon://download" press="onDataExport" />
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column
+				id="productCol"
+				width="12em">
+				<Text text="Product" />
+			</Column>
+			<Column
+				id="supplierCol"
+				minScreenWidth="Tablet"
+				demandPopin="true">
+				<Text text="Supplier" />
+			</Column>
+			<Column
+				id="dimensionsCol"
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="End">
+				<Text text="Dimensions" />
+			</Column>
+			<Column
+				id="weightCol"
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Center">
+				<Text text="Weight" />
+			</Column>
+			<Column
+				id="priceCol"
+				hAlign="End">
+				<Text text="Price" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<ObjectIdentifier
+						title="{Name}"
+						text="{ProductId}"
+						class="sapMTableContentMargin"  />
+					<Text
+						text="{SupplierName}" />
+					<Text
+						text="{Width} x {Depth} x {Height} {DimUnit}" />
+					<ObjectNumber
+						number="{WeightMeasure}"
+						unit="{WeightUnit}"
+						state="{
+							path: 'WeightMeasure',
+							formatter: 'sap.m.sample.TableExport.Formatter.weightState'
+						}" />
+					<ObjectNumber
+					number="{Price}"
+					unit="{CurrencyCode}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

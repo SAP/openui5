@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Exact - sap.ui.ux3</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Exact.gif">
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		<script src="resources/ExactData.js"></script>
+		
+		<script>
+			var oExact = new sap.ui.ux3.Exact("myExact");
+			oExact.placeAt("uiArea1");
+			oExact.attachSearch(function(oEvent) {
+				var sQuery = oEvent.getParameter("query");
+				oExact.setResultText("1503 Search Results: \""+sQuery+"\"");
+				exactTestData.initAttributes(oExact); //attributes defined in ExactData.js
+			});
+			oExact.attachRefineSearch(function(oEvent) {
+				var aSelectedAttributes = oEvent.getParameter("allSelectedAttributes");
+				var aSelectedAttributeNames = [];
+				for(var idx in aSelectedAttributes){
+					aSelectedAttributeNames.push(aSelectedAttributes[idx].getAdditionalData().data);
+				}
+				oSelectionText.setText("Selected attributes:\n  * " + aSelectedAttributeNames.join("\n  * "));
+			});
+			/*oExact.setSettingsMenu(
+					new sap.ui.commons.Menu("myExactMenu", {
+		  				items : [new sap.ui.commons.MenuItem("i1", {text: "This menu comes from"}),
+		  		         		 new sap.ui.commons.MenuItem("i2", {text: "the application."})]})
+		    );*/
+
+
+			var oResultArea = oExact.getResultArea();
+			var oSelectionText = new sap.ui.commons.TextView();
+			oResultArea.addContent(oSelectionText);
+		</script>
+		
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="uiArea1"></div>
+	</body>
+</html>

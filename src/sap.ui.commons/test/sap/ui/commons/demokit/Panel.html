@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.Panel">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Panel Layout" />
+		<title>Panel - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='PanelScript1'>
+//Create a panel instance
+var oPanel = new sap.ui.commons.Panel();
+//Add something to the panel's content area
+oPanel.addContent(new sap.ui.commons.TextView({text: "Here comes the content ..."}));
+//Attach the panel to the page
+oPanel.placeAt("sample1");
+</script>
+
+<script id='PanelScript2'>
+//Create a panel instance
+var oPanel = new sap.ui.commons.Panel({width: "350px"});
+
+//Set the title of the panel
+oPanel.setTitle(new sap.ui.core.Title({text: "Contact Data", icon: "images/SAPLogo.gif"}));
+//As alternative if no icon is desired also the following shortcut might be possible:
+//oPanel.setText("Contact Data");
+
+//Create a matrix layout with 2 columns
+var oMatrix = new sap.ui.commons.layout.MatrixLayout({layoutFixed: true, width: '300px', columns: 2});
+oMatrix.setWidths('100px', '200px');
+
+//Create a simple form within the layout
+var oLabel = new sap.ui.commons.Label({text: 'Name'});
+var oInput = new sap.ui.commons.TextField({value: 'Mustermann', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+oLabel = new sap.ui.commons.Label({text: 'First Name'});
+oInput = new sap.ui.commons.TextField({value: 'Max', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+//Add the form to the panels content area
+oPanel.addContent(oMatrix);
+
+//Add some buttons to the panel header
+oPanel.addButton(new sap.ui.commons.Button({text: 'Save'}));
+oPanel.addButton(new sap.ui.commons.Button({text: 'Cancel'}));
+
+//Attach the panel to the page
+oPanel.placeAt("sample2");
+</script>
+
+<script id='PanelScript3'>
+//Create a panel instance
+var oPanel = new sap.ui.commons.Panel({width: "350px", showCollapseIcon: false});
+oPanel.setAreaDesign(sap.ui.commons.enums.AreaDesign.Plain);
+oPanel.setBorderDesign(sap.ui.commons.enums.BorderDesign.None);
+
+//Set the title of the panel
+oPanel.setTitle(new sap.ui.core.Title({text: "Contact Data", icon: "images/SAPLogo.gif"}));
+//As alternative if no icon is desired also the following shortcut might be possible:
+//oPanel.setText("Contact Data");
+
+//Create a matrix layout with 2 columns
+var oMatrix = new sap.ui.commons.layout.MatrixLayout({layoutFixed: true, width: '300px', columns: 2});
+oMatrix.setWidths('100px', '200px');
+
+//Create a simple form within the layout
+var oLabel = new sap.ui.commons.Label({text: 'Name'});
+var oInput = new sap.ui.commons.TextField({value: 'Mustermann', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+oLabel = new sap.ui.commons.Label({text: 'First Name'});
+oInput = new sap.ui.commons.TextField({value: 'Max', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+//Add the form to the panels content area
+oPanel.addContent(oMatrix);
+
+//Add some buttons to the panel header
+oPanel.addButton(new sap.ui.commons.Button({text: 'Save'}));
+oPanel.addButton(new sap.ui.commons.Button({text: 'Cancel'}));
+
+//Attach the panel to the page
+oPanel.placeAt("sample3");
+</script>
+
+<script id='PanelScript4'>
+//Create a panel instance without content padding
+var oPanel1 = new sap.ui.commons.Panel({applyContentPadding: false, width: "202px"});
+//Add something to the panel's content area
+oPanel1.addContent(new sap.ui.commons.Image({src: "images/Picture.jpg"}));
+//Attach the panel to the page
+oPanel1.placeAt("sample4");
+
+//Create a similar panel instance with content padding (default)
+var oPanel2 = new sap.ui.commons.Panel({width: "202px"});
+//Add soemthing to the panels content area
+oPanel2.addContent(new sap.ui.commons.Image({src: "images/Picture.jpg"}));
+//Attach the panel to the page
+oPanel2.placeAt("sample4");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Green" icon="images/ctrls/panel-icon.png">Panel</h1>
+
+		<h2>Introduction</h2>
+		<p>
+		The Panel is a container control which consists of the main content area and a header. The content area can contain an arbitrary set of controls.
+		The header can contain a title with some text and icons, buttons, and a collapse icon which allows to show or hide the content area.
+		</p>
+
+		<h2>Examples</h2>
+
+		<h3>Panel With Default Settings</h3>
+		<p>
+		The first example shows a panel instance with some content definition.
+		</p>
+		<br>
+		<div code-sample="sample1" script="PanelScript1"></div>
+
+		<h3>Basic Panel With Settings for the Header</h3>
+		<p>
+		The second example also shows a simple Panel control which is used with its default settings. The Panel contains some title definition - plus an icon -, 
+		some buttons in the header area, and a fixed width.
+		</p>
+		<br>
+		<div code-sample="sample2" script="PanelScript2"></div>
+
+		<h3>Panel With Changed Design Settings</h3>
+		<p>
+		The next example is similar to the previous one but changes the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.enums.BorderDesign.html">border design</a>
+		and <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.enums.AreaDesign.html">area design</a>. How these designs behave, depends on the selected theme.
+		Additionally, the collapse icon is not shown, therefore it is not possible to hide the content area.
+		</p>
+		<br>
+		<div code-sample="sample3" script="PanelScript3"></div>
+
+		<h3>Content Padding</h3>
+		<p>
+		This example shows the usage of the control property <code>applyContentPadding</code>.
+		</p>
+		<br>
+		<div code-sample="sample4" script="PanelScript4"></div>
+
+		<h2>Keyboard and ARIA Support</h2>
+		<p>
+		The Panel control implements the ARIA role <i>region</i> and is labeled by the title. The buttons in the header as well as the collapse icon implement ARIA
+		role <i>button</i> and are included in the <i>TAB</i> chain.
+		</p>
+
+		<br/><br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Panel.html">API documentation</a>
+		</p>
+	</body>
+</html>

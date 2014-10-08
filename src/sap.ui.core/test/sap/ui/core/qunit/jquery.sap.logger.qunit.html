@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+<!-- 
+  QUNIT: 
+    Tested control/class: jquery.sap.logger.js
+    Author: Andreas Kunz, Frank Weigel
+ -->
+		<title>Test Page for jquery.sap.logger</title>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-language="de"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-logLevel = "WARNING"
+				>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+		
+		var iListenedMessages;
+		var oLastEntry;
+		module("Test", {
+			setup : function() {
+				iListenedMessages = 0;
+				oLastEntry = null;
+			}
+		});
+
+		/**
+		 * IMPORTANT !!!
+		 * 
+		 * If you get an error saying:  expected: ';'
+		 * then likely one of the comments is the cause. The JSUnit parser seems to misinterpret certain
+		 * variants/positions of the word "test" even in a comment as the beginning of a function to test!
+		 */
+
+
+		test("GetLog", function () {
+			var aLog = jQuery.sap.log.getLogEntries();
+			notStrictEqual(aLog, null, "jQuery.sap.log.getLogEntries() may not be null");
+		});
+
+		test("Configuration", function() {
+			strictEqual(jQuery.sap.log.getLevel(), jQuery.sap.log.Level.WARNING, "configuration is evaluated");
+		});
+		
+		test("Debug", function () {
+			// set log level and count messages
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			var aLog1 = jQuery.sap.log.getLogEntries();
+			var iLogCount1 = aLog1.length;
+
+			// log one message
+			var myLogMessage = "This is a debug message";
+			var myDetails = "These are the details";
+			var myComponent = "jquery.sap.logger.jsunit";
+			jQuery.sap.log.debug(myLogMessage, myDetails, myComponent);
+			var aLog2 = jQuery.sap.log.getLogEntries();
+			var iLogCount2 = aLog2.length;
+			var oMyLogEntry = aLog2[aLog2.length-1];
+
+			// compare results
+			strictEqual(iLogCount2, iLogCount1+1, "number of log entries should have been inceased by one");
+			strictEqual(oMyLogEntry.message, myLogMessage, "log message is wrong");
+			strictEqual(oMyLogEntry.details, myDetails, "log details are wrong");
+			strictEqual(oMyLogEntry.component, myComponent, "log component is wrong");
+			strictEqual(oMyLogEntry.level, jQuery.sap.log.Level.DEBUG, "log level is wrong");
+		});
+
+		test("ChangeLogLevel", 0, function () {
+			// set log level and count messages
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			var aLog1 = jQuery.sap.log.getLogEntries();
+			var iLogCount1 = aLog1.length;
+
+			// change log level
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+			var aLog2 = jQuery.sap.log.getLogEntries();
+			var iLogCount2 = aLog2.length;
+			var oMyLogEntry = aLog2[aLog2.length-1];
+
+			// check results
+			//assertEquals("number of log entries should have increased by one", iLogCount1+1, iLogCount2);
+			//assertEquals("log message is wrong", "Changing level to WARNING", oMyLogEntry.message);
+		});
+
+		test("ChangeLogLevelEffects", function () {
+			// set log level and count messages
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			var aLog1 = jQuery.sap.log.getLogEntries();
+			var iLogCount1 = aLog1.length;
+
+			// log two messages
+			var myLogMessageDebug = "This is a debug message";
+			var myLogMessageWarning = "This is a warning message";
+			jQuery.sap.log.debug(myLogMessageDebug);
+			jQuery.sap.log.debug(myLogMessageWarning);
+			var aLog2 = jQuery.sap.log.getLogEntries();
+			var iLogCount2 = aLog2.length;
+			var oMyLogEntryDebug = aLog2[aLog2.length-2];
+			var oMyLogEntryWarning = aLog2[aLog2.length-1];
+
+			// compare results
+			strictEqual(iLogCount2, iLogCount1+2, "number of log entries should have inceased by two");
+			strictEqual(oMyLogEntryDebug.message, myLogMessageDebug, "log message is wrong");
+			strictEqual(oMyLogEntryWarning.message, myLogMessageWarning, "log message is wrong");
+
+			// change log level
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING);
+			jQuery.sap.log.debug(myLogMessageDebug);
+			jQuery.sap.log.warning(myLogMessageWarning);
+			var aLog3 = jQuery.sap.log.getLogEntries();
+			var iLogCount3 = aLog3.length;
+			var oMyLogEntryWarningOld = aLog3[aLog3.length-2]; // -2 is the level switching message
+			var oMyLogEntryWarningNew = aLog3[aLog3.length-1];
+
+			// compare results
+			strictEqual(iLogCount3, iLogCount2+1, "number of log entries should have inceased by one"); // warning message + level switching message
+			strictEqual(oMyLogEntryWarningOld.message, myLogMessageWarning, "log message is wrong");
+			strictEqual(oMyLogEntryWarningNew.message, myLogMessageWarning, "log message is wrong");
+		});
+
+		var oLogListener = {};
+		oLogListener.onLogEntry = function(oLogEntry) {
+			iListenedMessages++;
+			oLastEntry = oLogEntry;
+		};
+		
+		test("LogListener", function () {
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+			strictEqual(iListenedMessages, 0, "listened messages should initially be empty");
+			strictEqual(oLastEntry, null, "listened messages should initially be empty");
+
+			jQuery.sap.log.addLogListener(oLogListener);
+			strictEqual(iListenedMessages, 0, "listened messages should initially be empty");
+			strictEqual(oLastEntry, null, "listened messages should initially be empty");
+
+			var myLogMessageDebug = "This is a debug message";
+			jQuery.sap.log.debug(myLogMessageDebug);
+			strictEqual(iListenedMessages, 1, "listened messages should be 1");
+			notStrictEqual(oLastEntry, null, "listened message should there");
+			strictEqual(oLastEntry.message, myLogMessageDebug, "listened message should have the correct text");
+			
+			jQuery.sap.log.removeLogListener(oLogListener);
+			
+			jQuery.sap.log.debug(myLogMessageDebug);
+			strictEqual(iListenedMessages, 1, "listened messages should still be 1");
+		});
+
+		test("MethodChaining", function (){
+			var log = jQuery.sap.log.setLevel(jQuery.sap.log.Level.INFO);
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
+			log = log.error("Error message");
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
+			log = log.warning("Warning message");
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
+			log = log.info("Info message");
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
+			log = log.debug("Debug message");
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned");
+			log = log.trace("Trace message");
+			strictEqual(log, jQuery.sap.log, "The log instance should always be returned"); 
+		});
+
+		module("ComponentLoggers");
+		
+		test("Basic Methods", function () {
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
+			var mylog = jQuery.sap.log.getLogger("mylog");
+			jQuery.each(["fatal", "error", "warning", "info", "debug", "trace"], function(i,v) {
+				var aLogBefore = jQuery.sap.log.getLogEntries().slice();
+				mylog[v](v + " message");
+				var aLogAfter = jQuery.sap.log.getLogEntries().slice();
+				strictEqual(aLogAfter.length, aLogBefore.length+1, "number of log entries should have increased by one");
+				strictEqual(aLogAfter[aLogAfter.length-1].message, v + " message", "check message of last log entry");
+				strictEqual(aLogAfter[aLogAfter.length-1].component, "mylog", "check component of last log entry");
+			});
+		});
+			
+		test("Individual Log Levels", function () {
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ALL);
+			jQuery.sap.log.setLevel(jQuery.sap.log.Level.WARNING, "mylog");
+			var mylog = jQuery.sap.log.getLogger("mylog");
+			var aLogBefore = jQuery.sap.log.getLogEntries().slice();
+			jQuery.each(["fatal", "error", "warning", "info", "debug", "trace"], function(i,v) {
+				jQuery.sap.log[v](v + " message1");
+				jQuery.sap.log[v](v + " message2", null, "mylog");
+				mylog[v](v + " message3");
+			});
+			var aLogAfter = jQuery.sap.log.getLogEntries().slice();
+			strictEqual(aLogAfter.length - aLogBefore.length, 12, "check number of newly created log entries");
+			strictEqual(aLogAfter[aLogAfter.length-1].message, "trace message1", "check message of last log entry");
+			strictEqual(aLogAfter[aLogAfter.length-4].message, "warning message3", "check message of log entry");
+			strictEqual(aLogAfter[aLogAfter.length-5].message, "warning message2", "check message of log entry");
+			strictEqual(aLogAfter[aLogAfter.length-6].message, "warning message1", "check message of log entry");
+			strictEqual(aLogAfter[aLogAfter.length-7].message, "error message3", "check message of log entry");
+			strictEqual(aLogAfter[aLogAfter.length-8].message, "error message2", "check message of log entry");
+			strictEqual(aLogAfter[aLogAfter.length-9].message, "error message1", "check message of log entry");
+			
+		});
+			
+		test("Method Chaining", function (){
+			var mylog0, mylog;
+			mylog = mylog0 = jQuery.sap.log.getLogger("mylog");
+			mylog = mylog.error("Error message");
+			strictEqual(mylog, mylog0, "The log instance should always be returned");
+			mylog = mylog.warning("Warning message");
+			strictEqual(mylog, mylog0, "The log instance should always be returned");
+			mylog = mylog.info("Info message");
+			strictEqual(mylog, mylog0, "The log instance should always be returned");
+			mylog = mylog.debug("Debug message");
+			strictEqual(mylog, mylog0, "The log instance should always be returned");
+			mylog = mylog.trace("Trace message");
+			strictEqual(mylog, mylog0, "The log instance should always be returned"); 
+		});
+			
+		
+		</script>
+		</head>
+		
+		<body>
+			<h1 id="qunit-header">QUnit page for jquery.sap.logger</h1>
+			<h2 id="qunit-banner"></h2>
+		 	<h2 id="qunit-userAgent"></h2>
+			<div id="qunit-testrunner-toolbar"></div>
+			<ol id="qunit-tests"></ol>
+		</body>
+</html>
+			

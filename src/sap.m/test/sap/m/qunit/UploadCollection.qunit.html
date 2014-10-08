@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.m.UploadCollection</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	
+</script>
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+
+	/* --------------------------------------- */
+	/* Test properties                         */
+	/* --------------------------------------- */
+	module("Basic tests", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+
+	test("Rendering", function() {
+		ok(this.oUploadCollection, "UploadCollection instantiated")
+		ok(jQuery.sap.domById("__collection0-list"), "Item list is rendered");
+		ok(jQuery.sap.domById("__collection0-toolbar"), "Toolbar of the item list is rendered");
+		ok(jQuery.sap.domById("__collection0-numberOfAttachmentsLabel"), "Label Number of attachments label is rendered");
+		ok(jQuery.sap.domById("__uploader0"), "FileUploader is rendered");
+	});
+
+	test("Default values of properties", function() {
+		var	sFileType,
+			sMaximumFilenameLength = 0,
+			nMaximumFileSize = 0,
+			sMimeType,
+			bMultiple = false,
+			sName = "",
+			bDeleteEnabled = true,
+			bRenameEnabled = true,
+			bSameFilenameAllowed = false,
+			bUploadEnabled = true,
+			bUploadOnChange = true,
+			sUploadUrl = "../../../upload",
+			sValue = "";
+
+		strictEqual(this.oUploadCollection.getProperty("fileType"), sFileType, "Property 'fileType': default value is '" + sFileType + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFilenameLength"), sMaximumFilenameLength, "Property 'maximumFilenameLength': default value is '" + sMaximumFilenameLength + "'");
+		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
+		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
+		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadOnChange"), bUploadOnChange, "Property 'uploadOnChange': default value is '" + bUploadOnChange + "'");
+		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
+		});
+
+	/* --------------------------------------- */
+	/* Test methods                            */
+	/* --------------------------------------- */
+	module("API Methods", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection();
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+
+	test("Get number of attachments label", function() {
+		equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
+		equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), 'Attachments (999)', "Correct label for number of attachments returned");
+	});
+
+	test("Determine MIME type from file name", function() {
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.avi"), 'video/avi', "Correct MIME type for .avi determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.bmp"), 'image/bmp', "Correct MIME type for .bmp determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.csv"), 'text/csv', "Correct MIME type for .csv determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.doc"), 'application/msword', "Correct MIME type for .doc determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.docm"), 'application/vnd.ms-word.document.macroEnabled.12', "Correct MIME type for .docm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.docx"), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', "Correct MIME type for .docx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.dotm"), 'application/vnd.ms-word.template.macroEnabled.12', "Correct MIME type for .dotm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.dotx"), 'application/vnd.openxmlformats-officedocument.wordprocessingml.template', "Correct MIME type for .dotx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.gif"), 'image/gif', "Correct MIME type for .gif determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.gzip"), 'application/gzip', "Correct MIME type for .gzip determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.html"), 'text/html', "Correct MIME type for .html determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.jpeg"), 'image/jpeg', "Correct MIME type for .jpeg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.jpeg"), 'image/jpeg', "Correct MIME type for .jpeg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.jpg"), 'image/jpeg', "Correct MIME type for .jpg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.mp3"), 'audio/mpeg3', "Correct MIME type for .mp3 determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.mp4"), 'video/mp4', "Correct MIME type for .mp4 determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.mpeg"), 'video/mpeg', "Correct MIME type for .mpeg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.one"), 'application/msonenote', "Correct MIME type for .one determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.onepkg"), 'application/msonenote', "Correct MIME type for .onepkg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.onetmp"), 'application/msonenote', "Correct MIME type for .onetmp determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.onetoc2"), 'application/msonenote', "Correct MIME type for .onetoc2 determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.pdf"), 'application/pdf', "Correct MIME type for .pdf determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.pjpeg"), 'image/pjpeg', "Correct MIME type for .pjpeg determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.png"), 'image/png', "Correct MIME type for .png determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.potm"), 'application/vnd.ms-powerpoint.template.macroEnabled.12', "Correct MIME type for .potm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.potx"), 'application/vnd.openxmlformats-officedocument.presentationml.template', "Correct MIME type for .potx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.ppam"), 'application/vnd.ms-powerpoint.addin.macroEnabled.12', "Correct MIME type for .ppam determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.ppsm"), 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', "Correct MIME type for .ppsm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.ppsx"), 'application/vnd.openxmlformats-officedocument.presentationml.slideshow', "Correct MIME type for .ppsx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.ppt"), 'application/vnd.ms-powerpoint', "Correct MIME type for .ppt determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.pptm"), 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', "Correct MIME type for .pptm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.pptx"), 'application/vnd.openxmlformats-officedocument.presentationml.presentation', "Correct MIME type for .pptx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.sldm"), 'application/vnd.ms-powerpoint.slide.macroEnabled.12', "Correct MIME type for .sldm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.sldx"), 'application/vnd.openxmlformats-officedocument.presentationml.slide', "Correct MIME type for .sldx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.thmx"), 'application/vnd.ms-officetheme', "Correct MIME type for .thmx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.tif"), 'image/tiff', "Correct MIME type for .tif determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.tiff"), 'image/tiff', "Correct MIME type for .tiff determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.txt"), 'text/plain', "Correct MIME type for .txt determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.wmv"), 'audio/x-ms-wmv', "Correct MIME type for .wmv determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xhtml"), 'application/xhtml+xml', "Correct MIME type for .xhtml determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xlam"), 'application/vnd.ms-excel.addin.macroEnabled.12', "Correct MIME type for .xlam determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xls"), 'application/vnd.ms-excel', "Correct MIME type for .xls determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xlsb"), 'application/vnd.ms-excel.sheet.binary.macroEnabled.12', "Correct MIME type for .xlsb determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xlsm"), 'application/vnd.ms-excel.sheet.macroEnabled.12', "Correct MIME type for .xlsm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xlsx"), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', "Correct MIME type for .xlsx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xltm"), 'application/vnd.ms-excel.template.macroEnabled.12', "Correct MIME type for .xltm determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xltx"), 'application/vnd.openxmlformats-officedocument.spreadsheetml.template', "Correct MIME type for .xltx determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.xml"), 'text/xml', "Correct MIME type for .xml determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.zip"), 'application/zip', "Correct MIME type for .zip determined");
+		equal(this.oUploadCollection._getMimeTypeFromFilename("fileName.nonexistingExtension"), 'application/octet-stream', "Correct MIME default type determined");
+	});
+
+	test("Determine icon from filename", function() {
+		equal(this.oUploadCollection._getIconFromFilename("fileName.pdf"), 'sap-icon://pdf-attachment', "Correct icon for file type .pdf determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("fileName.jpg"), 'sap-icon://attachment-photo', "Correct icon for file type .jpg determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.png"), 'sap-icon://attachment-photo', "Correct icon for file type .png determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.bmp"), 'sap-icon://attachment-photo', "Correct icon for file type .bmp determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("fileName.txt"), 'sap-icon://document-text', "Correct icon for file type .txt determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("fileName.doc"), 'sap-icon://doc-attachment', "Correct icon for file type .doc determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.docx"), 'sap-icon://doc-attachment', "Correct icon for file type .docx determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.odt"), 'sap-icon://doc-attachment', "Correct icon for file type .odt determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("fileName.xls"), 'sap-icon://excel-attachment', "Correct icon for file type .xls determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.csv"), 'sap-icon://excel-attachment', "Correct icon for file type .csv determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("fileName.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type .ppt determined");
+		equal(this.oUploadCollection._getIconFromFilename("fileName.pptx"), 'sap-icon://ppt-attachment', "Correct icon for file type .pptx determined");
+
+		equal(this.oUploadCollection._getIconFromFilename("complexFileName.123.pdf.jpg.png.bmp.ppt"), 'sap-icon://ppt-attachment', "Correct icon for file type determined");
+	});
+
+	test("Determine thumbnail of an item", function() {
+		var sThumbnailUrl = "anyFolder/myThumbnailFile.jpg";
+		var sFilename = "complexFileName.123.pdf.jpg.png.bmp.ppt";
+		this.oUploadCollection._getIconFromFilename = function() {
+			return "_getIconFromFilename called";
+		};
+
+		// determine by thumbnail
+		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "anyFolder/myThumbnailFile.jpg", "Correct thumbnail determined by thumbnail url");
+
+		// determine by file name
+		sThumbnailUrl = "";
+		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url not provided");
+		sThumbnailUrl = null;
+		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, thumbnail Url is null");
+		sFilename = "";
+		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name not provided");
+		sFilename = null;
+		equal(this.oUploadCollection._getThumbnail(sThumbnailUrl, sFilename), "_getIconFromFilename called", "Correct thumbnail determined by file name, file name is null");
+	});
+	
+	/* --------------------------------------- */
+	/* Test events                             */
+	/* --------------------------------------- */
+
+</script>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit page for sap.m.UploadCollection</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="uiArea"></div>
+</body>
+</html>

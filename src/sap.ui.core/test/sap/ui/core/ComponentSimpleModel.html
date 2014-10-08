@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Component - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" data-sap-ui-libs="sap.ui.commons">
+
+</script>
+
+<script type="text/javascript">
+	sap.ui.localResources("samples");
+
+	var oComp = sap.ui.component({
+		name: "samples.components.styledbutton",
+		id: "Comp1", 
+		settings: {
+			text: "Hello World 1"
+		}
+	});
+
+	var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
+		component: oComp
+	});
+	oCompCont.placeAt("target1");
+
+	var oComp2 = sap.ui.component({
+		name: "samples.components.styledbutton", 
+		url: "samples/components/styledbutton", 
+		id: "Comp2", 
+		settings: {
+			text: "Hello World 2"
+		}
+	});
+	var oCompCont2 = new sap.ui.core.ComponentContainer("CompCont2", {
+		component: oComp2
+	});
+	oCompCont2.placeAt("target2");
+
+	var oCompCont3 = new sap.ui.core.ComponentContainer("CompCont3", {
+		name: "samples.components.styledbutton",
+		settings: {
+			text: "Hello World 3"
+		}
+	});
+	oCompCont3.placeAt("target3");
+
+	var oCompCont4 = new sap.ui.core.ComponentContainer("CompCont4", {
+		name: "samples.components.styledbutton",
+		url: "samples/components/styledbutton",
+		settings: {
+			text: "Hello World 4"
+		}
+	});
+	oCompCont4.placeAt("target4");
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>
+		Test Page for
+		<code>sap.ui.core.Component</code>
+	</h1>
+	<br>
+	<h2>Component Container</h2>
+	<div id="target1"></div>
+	<div id="target2"></div>
+	<div id="target3"></div>
+	<div id="target4"></div>
+</body>
+</html>

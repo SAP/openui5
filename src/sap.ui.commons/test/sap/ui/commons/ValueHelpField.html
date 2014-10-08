@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ValueHelpField Test Page</title>
+		<script 
+			src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="true" >
+		</script>
+
+ 		<script src="../../../../resources/sap-ui-debug.js"></script>	
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+
+			var oHelper = {
+				alert: function (sMsg) {
+			   		jQuery.sap.domById("outputTarget").innerHTML = "Value Help pressed: '" + sMsg + "'";
+			   	}
+			};
+
+			// ValueHelpField with Label
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF1",{tooltip: "additional tooltip"});
+		  oLabel = new sap.ui.commons.Label("Label1",{ text: "UI5 ValueHelpField:", labelFor: oValueHelpField});
+		  oValueHelpField.attachValueHelpRequest(function() {
+				oHelper.alert(oCore.getControl("Label1").getText());
+				alert("Value Help was pressed");
+			});
+		  oLabel.placeAt("target1");
+		  oValueHelpField.placeAt("target1");
+
+			// disabled ValueHelpField with Label 
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF2",{enabled: false});
+		  oLabel = new sap.ui.commons.Label("Label2",{ text: "UI5 disabled ValueHelpField:", labelFor: oValueHelpField});
+		  oLabel.placeAt("target2");
+		  oValueHelpField.placeAt("target2");
+
+			// read-only ValueHelpField with Label 
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF3",{editable: false});
+		  oLabel = new sap.ui.commons.Label("Label3",{ text: "UI5 read-only ValueHelpField:", labelFor: oValueHelpField});
+		  oLabel.placeAt("target3");
+		  oValueHelpField.placeAt("target3");
+
+			// ValueHelpField with Label and customized icon
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF4",{iconURL: "images/help.gif"});
+	    oLabel = new sap.ui.commons.Label("Label4",{ text: "UI5 ValueHelpField with customized icon:", labelFor: oValueHelpField});
+		  oValueHelpField.attachValueHelpRequest(function() {
+				oHelper.alert(oCore.getControl("Label4").getText());
+				alert("Value Help was pressed");
+			});
+		  oLabel.placeAt("target4");
+		  oValueHelpField.placeAt("target4");
+
+			// ValueHelpField with Label and customized icon also for hover
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF5",{iconURL: "images/help.gif", iconHoverURL: "images/close.gif"});
+			oLabel = new sap.ui.commons.Label("Label5",{ text: "UI5 ValueHelpField with customized icon also for hover:", labelFor: oValueHelpField});
+		  oValueHelpField.attachValueHelpRequest(function() {
+				oHelper.alert(oCore.getControl("Label5").getText());
+				alert("Value Help was pressed");
+			});
+		  oLabel.placeAt("target5");
+		  oValueHelpField.placeAt("target5");
+
+			// ValueHelpField with icon font
+			var oValueHelpField = new sap.ui.commons.ValueHelpField("VHF6",{iconURL: "sap-icon://question-mark"});
+			oLabel = new sap.ui.commons.Label("Label6",{ text: "UI5 ValueHelpField using icon font:", labelFor: oValueHelpField});
+		  oValueHelpField.attachValueHelpRequest(function() {
+				oHelper.alert(oCore.getControl("Label6").getText());
+				alert("Value Help was pressed");
+			});
+		  oLabel.placeAt("target6");
+		  oValueHelpField.placeAt("target6");
+
+		  </script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.commons.ValueHelpField</code></h1>
+		<br>
+			<div id="target1"></div>
+		<br>
+			<div id="target2"></div>
+		<br>
+			<div id="target3"></div>
+		<br>
+			<div id="target4"></div>
+		<br>
+			<div id="target5"></div>
+		<br>
+			<div id="target6"></div>
+		<p>
+			<span id="outputTarget"></span>
+		</p>
+
+	</body>
+</html>

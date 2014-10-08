@@ -1,0 +1,13 @@
+<template data-controller-name="sap.ui.core.mvctest.Test">
+	<div id="htmlRoot">THIS IS A TEST</div>
+
+	<div>
+		<div id="htmlNested">NESTED WORKS AS WELL</div>
+		<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">
+			<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>
+			<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="sap.ui.core.mvctest.Test2"></div>
+		</div>
+	</div>
+
+</template>

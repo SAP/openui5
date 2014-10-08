@@ -1,0 +1,383 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.QuickView">
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+
+<title>QuickView - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<style>
+	td.pad { padding: 15px; }
+	#target1 { 
+		width:600px;
+		margin-bottom:200px;
+		text-align:right }
+	#QuickViewDS .quickViewDS {
+		border-bottom: 2px solid #e5e5e5;
+		background-color: white;
+		padding: 4px 4px 4px 6px;
+	}
+	.quickViewDS>span, .quickViewDS>a {
+		max-width: 120px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	td.qvlabel {
+		padding: 0px 6px 0px 0px;
+	}
+	td.qvlabel>span {
+		max-width: 100px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	td.qvvalue>span, td.qvvalue>a {
+		max-width: 140px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0px;
+	}
+</style>
+
+<script id="sap-ui-bootstrap" 
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.ux3,sap.ui.demokit"
+></script>
+<script src="../../../../../js/utils.js"></script>
+
+<script id="sample1-script">
+//Create a JSON data model with sample data:
+var oData = { 
+	"items": [{ 
+		"type": "Account", "name": "Moonlight", "href": "#",
+		"description":  "The Sunny corp.", "icon": "images/Employee.png",
+		"accountData": [ 
+			{ "label": "Opportunity ID", "text": "4102346" },
+			{ "label": "Description", "text": "Delivery postponed" },
+			{ "label": "Priority", "text": "High" },
+			{ "label": "Name", "text": "This is a link", "href": "http://www.google.com" },
+			{ "label": "Status", "text": "Open" },
+			{ "label": "Sales Unit", "text": "New York Office" },
+			{ "label": "Item Total Value", "text": "$1,000.00" }
+			]},
+		{ "type": "Account", "name": "Saturn",
+		"description": "The Funny corp.", "icon": "images/Employee.png", 
+		"accountData": [
+			{ "label": "Opportunity ID", "text": "4102378" },
+			{ "label": "Description", "text": "Due delivery" },
+			{ "label": "Priority", "text": "Medium" },
+			{ "label": "Name", "text": "Christmas Balls" },
+			{ "label": "Status", "text": "Open" },
+			{ "label": "Sales Unit", "text": "Atlanta Office" },
+			{ "label": "Item Total Value", "text": "$1,500.00" }
+		]}
+]};
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oData);
+sap.ui.getCore().setModel(oModel);
+
+
+// create the form-like content for the QuickView
+function createQuickViewContent(){
+	// In form of "label: value", the value can be either a link or a text view
+	// Both (link and text view are created but only one is shown depending on the contents)
+	var oLabel = new sap.ui.commons.TextView()
+		.bindProperty("text", "label", function( label ){ return label ? label + ":" : ""; });
+	var oTextView = new sap.ui.commons.TextView({text : "{text}"})
+		.bindProperty("visible", "href", function( href ){ return !href; });
+	var oLink = new sap.ui.commons.Link({text : "{text}", href: "{href}"})
+		.bindProperty("visible", "href", function( href ){ return !!href; });
+
+	var c = sap.ui.commons.layout;
+	var oLeftCell = new c.MatrixLayoutCell({hAlign : c.HAlign.End, vAlign : c.VAlign.Top, content:[oLabel]});
+	oLeftCell.addStyleClass("qvlabel");
+	var oRightCell = new c.MatrixLayoutCell({hAlign : c.HAlign.Begin, vAlign : c.VAlign.Top, content:[oTextView, oLink]});
+	oRightCell.addStyleClass("qvvalue");
+
+	var oRow = new c.MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
+
+	var oContent = new c.MatrixLayout({layoutFixed:true, widths: ["45%", "140px"]});
+	oContent.bindAggregation("rows", "accountData", oRow);
+
+	oContent.addDelegate({onAfterRendering:jQuery.proxy(setKeyboardNavigation,oContent)});
+
+	return oContent;
+}
+
+// Keyboard navigation with arrow keys over cells in a matrix layout
+function setKeyboardNavigation(){
+
+	// "this" is expected to be a matrix layout
+	var oFocusRef = this.getDomRef(),
+		aCells = oFocusRef.getElementsByTagName("TD"),
+		aDomRefs = [];
+
+	jQuery.sap.require("sap.ui.core.delegate.ItemNavigation");
+	for (var i=0;i<aCells.length;i++) {
+		aDomRefs.push(aCells[i].firstChild);
+	}
+	if (!this.QVItemNavigation) {
+		this.QVItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+		this.addDelegate(this.QVItemNavigation);
+	}
+	this.QVItemNavigation.setRootDomRef(oFocusRef);
+	this.QVItemNavigation.setItemDomRefs(aDomRefs);
+	this.QVItemNavigation.setCycling(false);
+	this.QVItemNavigation.setSelectedIndex(0);
+	this.QVItemNavigation.setPageSize(aDomRefs.length);
+}
+
+function onNavigate(event){
+	alert("Navigate event with the reference to: " + event.getParameter("href"));
+	// Supress link navigation from a QuickView
+	event.preventDefault();
+	// Close the QuickView after a click on a link
+	event.getSource().close();
+}
+
+// Create a parent control
+var oTextField = new sap.ui.commons.TextField({value:"A text with a QuickView"});
+// Create a QuickView control
+var oQuickView = new sap.ui.ux3.QuickView( "QuickView1", {
+	type:			"{type}",
+	firstTitle:		"{name}",
+	firstTitleHref:	"{href}",
+	secondTitle:	"{description}",
+	icon:			"{icon}",
+	content:		createQuickViewContent(),
+	navigate:		onNavigate
+})
+	.bindContext("/items/0"); // select the first item in the "items" array
+
+oTextField.setTooltip(oQuickView);
+oTextField.placeAt("sample1");
+</script>
+
+<script id="sample2-script">
+// Template for all QuickViews in a feed
+var oQuickViewTemplate = new sap.ui.ux3.QuickView({
+	type:			"{type}",
+	firstTitle:		"{name}",
+	firstTitleHref:	"{href}",
+	secondTitle:	"{description}",
+	icon:			"{icon}",
+	content:		createQuickViewContent(),
+	navigate:		onNavigate,
+	open:			onOpen
+});
+// Arrange navigation with arrow keys over the QuickView content
+function onOpen(event){
+	var oQuickViewContent = event.getSource().getContent()[0];
+	// Data is loaded and content is rendered at this point of time, 
+	// so call the setKeyboardNavigation function directly
+	setKeyboardNavigation.call(oQuickViewContent);
+}
+
+// Attach the QuickView to a reference control
+var oButton = new sap.ui.commons.Button( {text:"{name}", lite:true});
+oButton.setTooltip(oQuickViewTemplate);
+
+// Create a feed-like list with data items
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({ content : oButton });
+oCell.addStyleClass("pad");
+
+var oRow = new sap.ui.commons.layout.MatrixLayoutRow();
+oRow.addCell(oCell);
+
+var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
+//One could bind a single QuickView to a row number 0 of the "items" array 
+//of the DataModel like this: oQuickViewThing.bindContext("/items/0");
+// Instead, we clone the items using the just created row as a template
+oMatrixLayout.bindAggregation("rows", "/items", oRow);
+oMatrixLayout.placeAt("sample2");
+</script>
+
+<script id="sample3-script">
+// Create the table like content for the QuickView.
+// Use rows of of supplied data for table rows.
+function createQuickViewDSContent(){
+	var oDescription = new sap.ui.commons.TextView({text : "{description}"});
+	var oTextView = new sap.ui.commons.TextView({text : "{name}"})
+		.bindProperty("visible", "href", function( href ){ return !href; });
+	var oLink = new sap.ui.commons.Link({text : "{name}", href: "{href}"})
+		.bindProperty("visible", "href", function( href ){ return !!href; });
+
+	var c = sap.ui.commons;
+	var oLeftCell = new c.layout.MatrixLayoutCell({content:[oTextView, oLink]});
+	var oRightCell = new c.layout.MatrixLayoutCell({content:[oDescription]});
+
+	oLeftCell.addStyleClass("quickViewDS");
+	oRightCell.addStyleClass("quickViewDS");
+
+	var oRow = new c.layout.MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
+
+	var oContent = new c.layout.MatrixLayout();
+	oContent.bindAggregation("rows", "/items", oRow);
+
+	oContent.addDelegate({onAfterRendering:jQuery.proxy(setKeyboardNavigation,oContent)});
+
+	return oContent;
+}
+
+// Create a QuickView control
+var oContent = createQuickViewDSContent();
+var oQuickViewDS = new sap.ui.ux3.QuickView( "QuickViewDS", {
+	type:		"CONTACTS",
+	content:	oContent,
+	navigate:	onNavigate,
+	showActionBar: false
+});
+
+// Create a parent control and attach the QuickView to it
+oTextField = new sap.ui.commons.TextField({value:"QuickView with a Data Set"});
+oTextField.setTooltip(oQuickViewDS);
+oTextField.placeAt("sample3");
+</script>
+
+<script id="sample4-script">
+
+function onActionSelected(event){
+	var param = event.getParameters();
+	alert("Action from " + event.getSource().getId() + ":: id:" + param.id + 
+			", action:(" + param.action + "), state:" + param.state);
+}
+
+//Specify custom actions "create", "delete" and "duplicate"
+var oCreateAction = new sap.ui.ux3.ThingAction({id : "create",text : "Create Survey"});
+var oDeleteAction =  new sap.ui.ux3.ThingAction({id : "delete", text : "Delete Reference"});
+var oDuplicateAction = new sap.ui.ux3.ThingAction({id : "duplicate", text : "Duplicate Reference"});
+
+// Create a parent control
+oTextField = new sap.ui.commons.TextField({value:"QuickView Actions"});
+// Create a QuickView control
+var oQuickViewActions = new sap.ui.ux3.QuickView({
+	type:			"{type}",
+	firstTitle:		"{name}",
+	firstTitleHref:	"{href}",
+	secondTitle:	"{description}",
+	icon:			"{icon}",
+	content:		createQuickViewContent(),
+	navigate:		onNavigate,
+	actionSelected:	onActionSelected,
+	actions:		[oCreateAction, oDeleteAction, oDuplicateAction]
+})
+	.bindContext("/items/0") // select the first item in the "items" array
+	.setShowActionBar(true) // default
+	.setFollowState(sap.ui.ux3.FollowActionState.Follow)
+	.setFlagState(true)
+	.setFavoriteState(true)
+	.setOpenActionEnabled(false);
+
+oTextField.setTooltip(oQuickViewActions);
+oTextField.placeAt("sample4");
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Pink" icon="images/ctrls/quickview-icon.png">QuickView</h1>
+
+	<h2>Introduction</h2>
+	<p>The QuickView is a basis control for displaying a Thing overview. The QuickView appears as a
+	small popup window with a short description of the related/referenced entity. The referenced entity is 
+	usually represented as a link but can be any control.
+	<p>A QuickView can be attached to any SAPUI5 control as a tooltip.
+
+	<p>The QuickView control has the following properties and aggregations:
+	<ul>
+		<li><code>type</code> (mandatory) - Title of the QuickView that describes
+		the type of a Thing. Examples: Account, Employee, Material, Plant etc.</li>
+		<li><code>firstTitle</code> - Name of the link to this particular Thing. The name text must distinguish
+		it from other Things with the same type.</li>
+		<li><code>firstTitleHref</code> - Link to this particular Thing. It should open a extended view of
+		this Thing, normally in a Thing Inspector.</li>
+		<li><code>icon</code> - Link to the Thing icon.</li>
+		<li><code>secondTitle</code> - A short line of text that describes the particular Thing.</li>
+		<li><code>content</code> (aggregation) - The content of the QuickView body must be provided 
+		by the application.</li>
+	</ul>
+
+	<p>There is also a set of toolbar-related properties and aggregations:
+	<ul>
+		<li><code>showActionBar</code> - set to false to hide the toolbar</li>
+		<li><code>followState, flagState, favoriteState</code> - State of the corresponding toolbar button.</li>
+		<li><code>*Enabled</code> - Set any of these properties to false, if you need to disable a specific toolbar button.</li>
+		<li><code>actionSelected</code> (event) - Event is fired when a toolbar button is pressed.</li>
+		<li><code>feedSubmit</code> (event) - User has entered some text in the feed editor.</li>
+		<li><code>actions</code> (aggregation) - Additional application-specific actions.</li>
+	</ul>
+
+	<p><em>Note: do not attach a QuickView to a control inside of another Callout, QuickView, Menu, or a DropDownBox.
+	This is not user-friendly, may lead to unpredictable results and is not supported.</em>
+
+	<h2>Basic example</h2>
+
+	<p>The simplest way to create a QuickView is to instantiate a new <code>sap.ui.ux3.QuickView</code> control
+	and set it as a tooltip to a reference control like in the code sample below. Application must
+	fill corresponding properties and provide content for the QuickView:
+
+	<div code-sample="sample1" script="sample1-script"></div>
+
+	<h2>Data binding</h2>
+
+	<p>Usually, properties of a QuickView are not assigned directly but are bound to a DataModel.
+	The following example creates a template button with an attached QuickView and binds corresponding
+	fields of DataModel to control properties. The template is then used to 
+	display all rows of the provided data array in a rows list of a matrix layout:
+
+	<div code-sample="sample2" script="sample2-script"></div>
+	
+	<h2>Data Collection QuickView</h2>
+
+	<p>One of possible uses of a QuickView can be a list of entities/links that are related to
+	the referenced Thing. It could be provided in a table-like form like in the sample below.
+	Coding is essentially the same as in case of normal QuickViews:
+
+	<div code-sample="sample3" script="sample3-script"></div>
+
+	<h2>Toolbar</h2>
+
+	<p>The Toolbar offers a set of the predefined actions (update, follow, favorite, flag, and open). Though the actions
+	have predefined semantics (for example, the "open" action means opening a Thing Inspector window), application
+	must implement corresponding actions handlers for the <code>actionSelected</code> and <code>feedSubmit</code> events.
+	Application may also add own custom actions
+	(see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingAction.html">sap.ui.ux3.ThingAction</a>)
+	that are displayed in a drop-down menu at the right side of the toolbar.
+
+	<div code-sample="sample4" script="sample4-script"></div>
+
+	<p>If the toolbar is not required and should be hidden, set the <code>showActionBar</code> property of the QuickView control to false,
+	as in the example for DataCollection QuickView above.
+
+	<h2>Navigation events</h2>
+
+	<p>Normally, the browser opens a new page when a user clicks on a link inside of a QuickView. Application may subscribe to the
+	<code>navigate</code> event and override the browser navigation by calling <code>event.preventDefault()</code>.
+
+	<h2>Keyboard and ARIA support</h2>
+
+	<p>QuickView provides accessibility support in its header area. However, the application should provide
+	the keyboard navigation functionality and corresponding ARIA roles in the custom content of the QuickView.
+	The above samples provide example code in the form of <code>setKeyboardNavigation()</code> function for
+	keyboard navigation in lists.
+
+	<h2>Size of the QuickView window</h2>
+
+	<p>Width of a QuickView window is 270 pixel by default.
+	You may set another value in the <code>width</code> property prior to opening a QuickView.
+	It is also possible to override the <code>.sapUiUx3QV</code> CSS class by a custom value.
+
+	<p>Height of a QuickView window is defined by content. Though the QuickView window
+	tries to find a position so that it is completely visible on the screen, it is not
+	guaranteed in case of very big QuickViews. Do not provide content that is more
+	than 7-10 lines of text in height.
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.QuickView.html" >API documentation</a>
+	</p>
+</body>
+</html>

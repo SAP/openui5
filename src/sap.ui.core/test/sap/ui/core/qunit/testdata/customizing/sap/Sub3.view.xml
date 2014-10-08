@@ -1,0 +1,7 @@
+<mvc:View xmlns="sap.ui.commons" xmlns:mvc="sap.ui.core.mvc">
+
+	<TextView text="SAP View 'Sub3' - the text after this one is hidden by customizing: "></TextView>
+
+	<TextView id="customizableText" text="This text is made invisible by customization"></TextView>
+	
+</mvc:View>

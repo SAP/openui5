@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<ActionSheet
+		title="Menu"
+		showCancelButton="true"
+		placement="Top">
+		<buttons>
+			<Button text="Mark as Favorite" icon="sap-icon://favorite" press="onPress" visible="{range>/isPhone}"/>
+
+			<Button text="Send Email" icon="sap-icon://email" press="onPress" visible="{range>/isPhone}"/>
+
+			<Button text="Share" icon="sap-icon://share-2" press="onPress" visible="{range>/isPhone}"/>
+
+			<Button text="Print" icon="sap-icon://print" press="onPress" visible="{range>/isPhone}"/>
+
+			<Button text="Export as Excel" icon="sap-icon://excel-attachment" press="onPress" visible="{range>/isPhoneOrTablet}"/>
+		</buttons>
+	</ActionSheet>
+</core:FragmentDefinition>

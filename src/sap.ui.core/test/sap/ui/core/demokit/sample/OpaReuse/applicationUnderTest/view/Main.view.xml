@@ -1,0 +1,21 @@
+<mvc:View controllerName="view.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App id="app">
+		<Page id="intro">
+			<headerContent>
+				<Button id="navToOverview" press="onNavToOverview" text="Navigate to Overview"/>
+			</headerContent>
+		</Page>
+		<Page id="overview">
+			<Button id="navToPage1" press="onNavToPage1" text="Navigate to Page 1"/>
+			<Button id="navToPage2" press="onNavToPage2" text="Navigate to Page 2"/>
+		</Page>
+		<Page id="page1">
+			<Text id="text1" text="This is Page 1"/>
+		</Page>
+		<Page id="page2">
+			<Text id="text2" text="This is Page 2"/>
+		</Page>
+	</App>
+</mvc:View>

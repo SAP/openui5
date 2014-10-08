@@ -1,0 +1,8 @@
+<mvc:View resourceBundleName="testdata.text"
+		   resourceBundleAlias="i18n"
+		   controllerName="testdata.test"
+		   xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Panel id="aPanel">
+		<Button id="Button1" text="{i18n>TEXT_CLOSE}" press="doIt"></Button>
+	</Panel>
+</mvc:View>

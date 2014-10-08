@@ -1,0 +1,58 @@
+<mvc:View
+	controllerName="sap.m.sample.InputAssistedTabularSuggestions.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+			<Label text="Product" />
+			<Input
+				id="productInput"
+				type="Text"
+				placeholder="Enter Product ..."
+				showSuggestion="true"
+				suggestionRows="{/ProductCollection}">
+				<suggestionColumns>
+					<Column
+						hAlign="Begin"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Name"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="true"
+						minScreenWidth="Tablet">
+						<Label text="Product ID"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="false"
+						minScreenWidth="Tablet">
+						<Label text="Supplier Name"/>
+					</Column>
+					<Column
+						hAlign="End"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Price"/>
+					</Column>
+				</suggestionColumns>
+				<suggestionRows>
+					<ColumnListItem>
+					<cells>
+						<Label text="{Name}"/>
+						<Label text="{ProductId}"/>
+						<Label text="{SupplierName}"/>
+						<Label text="{Price} {CurrencyCode}"/>
+					</cells>
+					</ColumnListItem>
+				</suggestionRows>
+			</Input>
+		</items>
+	</VBox>
+</mvc:View>

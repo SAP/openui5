@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Menu,sap.ui.commons.MenuItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Menu MenuButton MenuBar MenuItem MenuItemBase Popup" />
+		<title>Menu - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='MenuScript1'>
+//Function to handle the select event of the items
+var handleSelect = function(oEvent){
+	alert(oEvent.getParameter("item").getId());
+};
+
+// Create the menu
+var oMenu11 = new sap.ui.commons.Menu("menu1-1", {ariaDescription: "File Menu", tooltip: "Menu containing file related actions"});
+//Create the items and add them to the menu
+var oMenuItem11 = new sap.ui.commons.MenuItem("item1-1-1",{text: "New", icon: "images/new.gif"}); //Icon must be not larger than 16x16 px
+oMenu11.addItem(oMenuItem11);
+var oMenuItem12 = new sap.ui.commons.MenuItem("item1-1-2",{text: "Delete"});
+oMenuItem12.attachSelect(handleSelect);
+oMenu11.addItem(oMenuItem12);
+var oMenuItem13 = new sap.ui.commons.MenuItem("item1-1-3",{text: "Properties", enabled: false});
+oMenu11.addItem(oMenuItem13);
+
+//Create a sub menu for item 1
+var oMenu12 = new sap.ui.commons.Menu("menu1-2", {ariaDescription: "New File Menu"});
+oMenuItem11.setSubmenu(oMenu12);
+//Create the items and add them to the sub menu
+var oMenuItem14 = new sap.ui.commons.MenuItem("item1-2-1",{text: "New TXT file", tooltip: "Creates a new TXT file."});
+oMenuItem14.attachSelect(handleSelect);
+oMenu12.addItem(oMenuItem14);
+var oMenuItem15 = new sap.ui.commons.MenuItem("item1-2-2",{text: "New RAR file", tooltip: "Creates a new RAR file."});
+oMenuItem15.attachSelect(handleSelect);
+oMenu12.addItem(oMenuItem15);
+
+// Create a Link which opens the menu on click
+var oLink1 = new sap.ui.commons.Link("link1", {text: "Click me"});
+oLink1.attachPress(function(){
+	var eDock = sap.ui.core.Popup.Dock;
+	oMenu11.open(
+			false /*First item already highlighted*/,
+			oLink1.getFocusDomRef() /*Dom reference which gets the focus back when the menu is closed*/,
+			eDock.BeginTop, /*"Edge" of the menu (see sap.ui.core.Popup)*/
+			eDock.BeginBottom, /*"Edge" of the related opener position (see sap.ui.core.Popup)*/
+			oLink1.getDomRef() /*Related opener position (see sap.ui.core.Popup)*/
+	);
+});
+
+// Attach the link to the page
+oLink1.placeAt("sample1");
+</script>
+
+<script id='MenuScript2'>
+// Create the menu
+var oMenu21 = new sap.ui.commons.Menu("menu2-1", {ariaDescription: "File Menu", tooltip: "Menu containing file related actions"});
+
+//Register one single event handler on the root menu to listen to selections
+oMenu21.attachItemSelect(function(oEvent){
+	alert(oEvent.getParameter("item").getId());
+});
+
+//Create the items and add them to the menu
+var oMenuItem21 = new sap.ui.commons.MenuItem("item2-1-1",{text: "New", icon: "images/new.gif"}); //Icon must be not larger than 16x16 px
+oMenu21.addItem(oMenuItem21);
+var oMenuItem22 = new sap.ui.commons.MenuItem("item2-1-2",{text: "Delete"});
+oMenu21.addItem(oMenuItem22);
+var oMenuItem23 = new sap.ui.commons.MenuItem("item2-1-3",{text: "Properties", enabled: false});
+oMenu21.addItem(oMenuItem23);
+
+//Create a sub menu for item 1
+var oMenu22 = new sap.ui.commons.Menu("menu2-2", {ariaDescription: "New File Menu"});
+oMenuItem21.setSubmenu(oMenu22);
+//Create the items and add them to the sub menu
+var oMenuItem24 = new sap.ui.commons.MenuItem("item2-2-1",{text: "New TXT file", tooltip: "Creates a new TXT file."});
+oMenu22.addItem(oMenuItem24);
+var oMenuItem25 = new sap.ui.commons.MenuItem("item2-2-2",{text: "New RAR file", tooltip: "Creates a new RAR file."});
+oMenu22.addItem(oMenuItem25);
+
+// Create a Link which opens the menu on click
+var oLink2 = new sap.ui.commons.Link("link2", {text: "Click me"});
+oLink2.attachPress(function(){
+	var eDock = sap.ui.core.Popup.Dock;
+	oMenu21.open(
+			false /*First item already highlighted*/,
+			oLink2.getFocusDomRef() /*Dom reference which gets the focus back when the menu is closed*/,
+			eDock.BeginTop, /*"Edge" of the menu (see sap.ui.core.Popup)*/
+			eDock.BeginBottom, /*"Edge" of the related opener position (see sap.ui.core.Popup)*/
+			oLink2.getDomRef() /*Related opener position (see sap.ui.core.Popup)*/
+	);
+});
+
+// Attach the link to the page
+oLink2.placeAt("sample2");
+</script>
+</head>
+	
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Blue" icon="images/ctrls/menu-icon.png">Menu</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The Menu control represents a popup menu. A popup menu opens in front of the application and 
+	allows the user to select one of the shown actions which are implemented in the form of menu items.
+	</p>
+		
+	<h2>Example</h2>
+	<div code-sample="sample1" script="MenuScript1"></div>
+	<p>
+	The example shows a two-level menu which can be opened by clicking a link. To position the menu, the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.html">sap.ui.core.Popup</a> 
+	functionality is used. The Menu can either be used stand alone like in this example, or as part of other controls like <a class="sapUiDemokitSrcLink" href="MenuBar.html">MenuBar</a> or <a class="sapUiDemokitSrcLink" href="MenuButton.html">MenuButton</a>.
+	A menu accepts items of type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItemBase.html">sap.ui.commons.MenuItemBase</a> which is the base type of all menu items. Current 
+	implementation: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuItem.html">sap.ui.commons.MenuItem</a>. 
+	<br><br>
+	Alternatively to registering an event handler on every menu item, it is also possible to use a single event handler which is attached to the <code>itemSelect</code> event of the root menu; this is shown in the next example. 
+	</p>
+	<div code-sample="sample2" script="MenuScript2"></div>
+	
+	<h2>Keyboard Support</h2>
+	<p>
+	It is possible to navigate through the items of a menu using the <code>Arrow up</code> and <code>Arrow down</code> keys step by step; 
+	using the keys <code>Pos1</code> and <code>End</code>, you can directly jump to the first or the last item.
+	The <code>Arrow left</code> and <code>Arrow right</code> keys are available for opening and closing sub-menus, if they exist.
+	<code>Escape</code> closes the current menu. Using the <code>Space</code> or <code>Enter</code> key, items can be selected.
+	</p>
+	
+	<h2>ARIA Support</h2>
+	<p>
+	The Menu control supports ARIA. The necessary ARIA properties are generated automatically according to the structure of the menu.
+	Via the control property <code>ariaDescription</code> it is additionally possible to define a descriptive label for a menu. 
+	</p>
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Menu.html">API documentation</a>
+	</p>
+</body>
+</html>

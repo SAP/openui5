@@ -1,0 +1,108 @@
+/* =========================================================== */
+/* CSS for control sap.ui.layout.form/ResponsiveLayout.control */
+/* BlueCrystal                                                 */
+/* =========================================================== */
+
+.sapUiFormResLayout > div {
+	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
+	padding: 16px;
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+}
+
+.sapUiFormResLayout .sapUiFormTitle > img,
+.sapUiFormResLayout .sapUiFormTitle > span{
+	margin-right: 3px;
+}
+
+.sapUiRLContainer > .sapUiFormTitle > button{
+	bottom: 5px;
+}
+
+.sapUiFormM .sapUiRFLPaddingClass,
+.sapUiFormM .sapUiRFLMultiContent.sapUiRFLPaddingClass {
+	padding: 0 0 0 8px;
+}
+
+.sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer{
+	padding-right: 8px;
+}
+
+.sapUiRLContainerCont > .sapUiRFL >.sapUiRFLRow >.sapUiRFLContainer:last-child{
+	padding-right: 0;
+}
+
+.sapUiRLElementWithLabel > .sapUiRFLCompleteRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent.sapUiRFLPaddingClass{
+	padding-bottom: 0;
+}
+
+.sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 16px;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 15px;
+}
+
+.sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 8px;
+}
+
+html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent,
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM .sapUiRLElementWithLabel > .sapUiRFLRow:not(.sapUiRFLCompleteRow) > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent{
+	padding-top: 7px;
+}
+
+.sapUiFormResLayout .sapUiRFLRow > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
+	padding-bottom: 10px;
+}
+.sapUiFormResLayout .sapUiRFLRow:last-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElement > .sapUiRFLRow:last-child > .sapUiRFLFullLength:last-child{
+	/* last element in row has no padding bottom */
+	padding-bottom: 0;
+}
+
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child{
+	padding-left: 8px;
+}
+.sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLMultiContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child,
+.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapUiRLElementFields > .sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent.sapUiRFLPaddingClass:first-child > .sapUiRFLMultiContent.sapUiRFLPaddingClass:first-child{
+	padding-left: 0;
+}
+
+.sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	/* space between 2 containers, devide it to previous and next container to have the same size for all*/
+	padding-left: 8px;
+	padding-right: 16px;
+}
+.sapUiRFLRow > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-left: 0;
+}
+.sapUiRFLRow > .sapUiRFLContainer:last-child > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-right: 0;
+}
+
+/* Title */
+.sapUiFormResLayout > .sapUiFormTitle{
+	height: 48px;
+	line-height: 48px;
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+	padding: 0 16px 0 16px;
+	text-shadow: 0em 0.0625em 0em fade(@sapUiTextInverted, 100%);
+}
+
+.sapUiRLContainer > .sapUiFormTitle{
+	border: none;
+	margin-bottom: 16px;
+}
+
+/* vertical spacing between containers */
+.sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-top: 16px;
+}
+
+.sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer{
+	padding-top: 0;
+}

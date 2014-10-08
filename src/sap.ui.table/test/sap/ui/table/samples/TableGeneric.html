@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Table - Generic Columns - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.table.Table.gif">
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" 
+	type="text/javascript"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
+	data-sap-ui-theme="sap_goldreflection"
+    src="../../../../../resources/sap-ui-core.js"></script>
+
+<script type="text/javascript">	
+	
+	
+	var aCols = [
+            {"label": "Column 1", "template": "field1", "width": "100px"},
+            {"label": "Column 2", "template": "field2"},
+            {"label": "Column 3", "template": "field3"},
+            {"label": "Column 4", "template": "field4"}
+	];
+	
+	var aRows = [
+   		{"field1": "value1-1", "field2": "value1-2", "field3": "value1-3", "field4": true},
+   		{"field1": "value2-1", "field2": "value2-2", "field3": "value2-3", "field4": true},
+   		{"field1": "value3-1", "field2": "value3-2", "field3": "value3-3", "field4": false},
+   		{"field1": "value4-1", "field2": "value4-2", "field3": "value4-3", "field4": true}
+   	];
+	
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({cols: aCols, rows: aRows});
+	
+	var oTable = new sap.ui.table.Table();
+	oTable.setModel(oModel);
+
+ 	oTable.bindAggregation("columns", "/cols", function(sId, oContext) {
+		return new sap.ui.table.Column(sId, {
+			label: "{label}",
+			template: new sap.ui.commons.TextField().bindValue(oContext.getProperty("template")),
+			width: "{width}"
+		});
+ 	});
+ 
+	oTable.bindRows("/rows");
+	
+	oTable.placeAt("target1");
+	
+</script>
+
+</head>
+
+<body class="sapUiBody" role="application">
+
+<h1>Test Page for sap.ui.table.Table</h1>
+
+<p>
+<div id="target1"></div>
+</body>
+</html></html>

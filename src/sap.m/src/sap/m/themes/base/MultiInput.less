@@ -1,0 +1,53 @@
+
+/* ============================================= */
+/* CSS for control sap.m/MultiInput.control */
+/* ============================================= */
+
+.sapMMultiInput * {
+	box-sizing: border-box;
+}
+
+.sapMMultiInputBorder {
+	position: relative;
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+// on the desktop we hide the overflow
+.sap-desktop .sapMMultiInputBorder{	
+	overflow: hidden;
+}
+
+.sapMMultiInput .sapMInputValHelp {
+	display: inline-block;
+	position: static;
+}
+
+// we need this selector to avoid being overwritten by the input.css
+.sapUiSizeCompact .sapMMultiInput .sapMInputValHelp {
+	display: inline-block;
+	position: static;
+}
+
+.sapMMultiInputTextInput :not(.sapMMultiInputNotEditable){	
+	border-radius: 0;	
+}
+
+.sapMMultiInputInputContainer {
+	position: absolute;
+	top: 0rem;
+	right: 0rem;
+}
+
+.sapMMultiInputNotEditable .sapMMultiInputInputContainer{	
+	visibility: collapse;
+}
+
+.sapMMultiInputShadowDiv{
+	display: inline;
+	visibility: collapse;
+	position: absolute;
+	top: 0rem;
+	left: 0rem;	
+}

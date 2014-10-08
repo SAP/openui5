@@ -1,0 +1,393 @@
+* {
+	font-family: Arial;
+}
+
+HTML,BODY {
+	border-style: none;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+BODY {
+	font: 14px Arial, Helvetica;
+	background-color: white;
+}
+
+BODY.banner {
+	color:#666;
+	border-bottom:5px solid #009de0;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	font-weight:bold;
+
+	/* Blue Crystal header style */
+	background-color: #f2f2f2;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#f7f7f7,endColorstr=#ededed,GradientType=0);
+	background: -ms-linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
+	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,#f7f7f7),color-stop(0.33,#f2f2f2),color-stop(0.75,#f2f2f2),color-stop(1,#ededed));
+	background-image: -webkit-linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
+	background: linear-gradient(top,#f7f7f7 0,#f2f2f2 33%,#f2f2f2 75%,#ededed 100%);
+}
+
+BODY.banner > img.btn {
+	position:absolute;
+	cursor:pointer;
+	width:20px;
+	height:20px;
+	top: 6px;
+}
+
+BODY>#sap-ui-ide-less-mode {
+	display: none;
+}
+
+.border { /*font: 14px Arial, Helvetica;*/
+	/*background-color:blue;*/
+	border: 0px solid buttonshadow;
+	padding: 0px;
+	margin: 0px;
+	/*height:auto;*/
+}
+
+.border.left {
+	margin-left: 4px;
+	margin-right: 4px;
+	/*border-left-width: 1px !important;*/
+}
+
+.border.bottom {
+	margin-bottom: 2px;
+	/*border-bottom-width: 1px !important;*/
+}
+
+.border.top {
+	margin-top: 2px;
+	/*border-bottom-width: 1px !important;*/
+}
+
+.border.right {
+	margin-left: 4px;
+	margin-right: 4px;
+	/*border-left-width: 1px !important;*/
+}
+
+h1 {
+	font-size: 1.6em;
+	padding: 5px 5px 5px 0;
+	line-height: 125%;
+	color: rgb(100, 110, 120);
+}
+
+h2 {
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: 5px 5px 5px 5px;
+	/* line-height: 125%;*/
+	color: rgb(100, 110, 120);
+}
+
+h2 div {
+	background-color: rgb(230, 240, 250);
+	/* width:100%;*/
+	vertical-align: middle;
+	padding-left: 10px
+}
+
+button {
+	border: gray 1px solid;
+	font-size: 8pt;
+	background-color: #d0d0d0;
+	height: 20px;
+	margin-top: 2px;
+	vertical-align: top;
+	display: inline-block;
+}
+
+BODY.welcome {
+	background-color: rgb(253, 253, 253);
+	background-image: none !important;
+	width: 98% !important;
+	height: 95% !important;
+	margin-top: 5px;
+	margin-left: 5px;
+	padding-bottom: 20px;
+	text-align: left;
+	color: black;
+}
+
+/*
+ * FOOTER STYLES
+ */
+#footer-wrapper {
+	clear: both;
+	margin: 0;
+	height: 29px;
+	width: 100%;
+	border-top: 3px solid #009de0;
+}
+
+#footer-left,#footer-right {
+	margin: 0;
+	font-size: 85%;
+	padding: 1em;
+	height: 29px;
+}
+
+#footer-left {
+	text-align: left;
+	position: relative;
+	left: 0;
+	float: left;
+}
+
+#footer-right {
+	text-align: right;
+	position: relative;
+	right: 0;
+	float: right;
+}
+
+#header {
+	padding: 0;
+	background: url(../images/header-stretch.png) repeat-x;
+	height: 23px;
+	position: relative;
+	margin: 8px 0 0 0;
+}
+
+#header-left {
+	background-image: url(../images/header-stretch.png);
+	background-repeat: no-repeat;
+	background-position: top left;
+	font-size: 93%;
+	line-height: normal;
+	padding: 0 0 0 8px;
+	height: 23px;
+	position: relative;
+	float: left;
+}
+
+#header-right {
+	background-image: url(../images/header-stretch.png);
+	background-repeat: no-repeat;
+	background-position: top right;
+	font-size: 93%;
+	line-height: normal;
+	padding: 0 8px 0 0;
+	height: 23px;
+	position: relative;
+	float: right;
+}
+
+.title {
+	display: block;
+	background-color: transparent;
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: 5px 5px 5px 5px;
+	color: #444444;
+}
+
+.section {
+	background-color: #e5e5e5;
+	vertical-align: middle;
+	padding-left: 10px;
+	margin: 5px;
+	padding: 3px 5px;
+	font-weight: bold;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.scrollpanel {
+	background-color: transparent;
+	overflow: auto;
+	/* height:100%; */
+}
+
+.tabstrip {
+	margin: 4px 0px 0px;
+	padding: 0px 2px;
+	height: 21px;
+	border-bottom: 1px solid buttonshadow;
+}
+
+.tab {
+	margin: 0px 1px;
+	padding: 3px 5px;
+	border: 1px solid buttonshadow;
+	float: left;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.tab.selected {
+	background-color: buttonface !important;
+	color: #646E78;
+	font-weight: bold;
+	border-bottom-color: buttonface !important;
+}
+
+.tab.deselected { /* background-color: rgb(240,240,240); */
+	color: rgb(60, 60, 60);
+}
+
+.tab.disabled {
+	background-color: rgb(245, 245, 245);
+	color: rgb(180, 180, 180);
+}
+
+.toolbar {
+	border-style: solid none solid none;
+	border-width: 1px;
+	border-color: transparent;
+	background-color: transparent;
+	padding: 2px;
+}
+
+.toolbar * {
+	font-size: 8pt;
+}
+
+.toolbar BUTTON {
+	margin-right: 4px;
+}
+
+.clickable {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.expander {
+	position: absolute;
+	right: 0px;
+	top: 2px;
+	width: 12px;
+	height: 12px;
+	padding: 1px;
+	border-style: none;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	cursor: hand;
+	z-index
+	=2;
+}
+
+.expander.more {
+	background-image: url('../images/more.gif');
+}
+
+.expander.less {
+	background-image: url('../images/less.gif');
+}
+
+.logviewer {
+	font-size: 8pt;
+	background-color: transparent;
+	line-height: 1.3em;
+}
+
+.logviewer div {
+	font-family: Arial monospaced for SAP, monospace;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.3em;
+	/* width : 100%;*/
+	white-space: nowrap;
+	color: black;
+}
+
+.logviewer .lvl0 { /* FATAL */
+	background-color: #f06;
+	color: #ff8 !important;
+}
+
+.logviewer .lvl1 { /* ERROR */
+	background-color: #f66;
+}
+
+.logviewer .lvl2 { /* WARNING */
+	background-color: #ff6;
+}
+
+.logviewer .lvl3 { /* INFO */
+	background-color: transparent;
+}
+
+.logviewer .lvl4 { /* DEBUG */
+	background-color: transparent;
+	color: #888 !important;
+}
+
+.logviewer .lvl5 { /* FINE */
+	background-color: transparent;
+	color: #aaa !important;
+}
+
+.dummy {
+	color: rgb(26, 71, 83); /* SAPUI5 letters in banner */
+	color: rgb(0, 90, 116); /* upper left corner of welcome banner */
+	color: rgb(0, 64, 82); /* lower left corner of welcome banner */
+	color: rgb(200, 220, 231); /* background color on left hand side of SAPUI5 banner */
+	color: rgb(244, 248, 250); /* background color on bottom of rhs of SAPUI5 banner */
+	color: rgb(110, 144, 156);
+}
+
+#samples .node,#samples .leaf {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	margin: 2px 0px;
+}
+
+#samples .node.section {
+	margin: 5px;
+}
+
+#samples .node.library {
+	margin-top: 10px !important;
+	font-weight: bold;
+	cursor: pointer;
+	cursor: hand;
+}
+
+#samples .node.folder {
+	font-size: 10pt;
+	font-style: italic;
+	cursor: pointer;
+	cursor: hand;
+}
+
+#samples .leaf A {
+	color: black;
+	font-size: 10pt;
+	text-decoration: none;
+	cursor: pointer;
+	cursor: hand;
+}
+
+#samples SPAN.matches {
+	padding-left: 5px;
+	font-color: red;
+	font-weight: bold;
+	font-style: italic;
+	/* color: yellow; */
+}
+
+.showdiv {
+	visibility: visible;
+	display: block;
+}
+
+.hidediv {
+	visibility: hidden;
+	display: none;
+}
+
+#weinreLink {
+	background-color: rgba(255,255,255,0.7);
+}

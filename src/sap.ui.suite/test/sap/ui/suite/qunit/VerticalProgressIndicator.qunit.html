@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.ui.suite.VerticalProgressIndicator
+  Author: D030758
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for VerticalProgressIndicator - sap.ui.suite </title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons, sap.ui.suite">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Control initialization -->
+		<script language="javascript">
+			/****************************************************
+			* PREPARATIONS
+			*****************************************************/
+			//declare variables
+			var sPressMessage = "Control 1: press event OK!",
+				sTooltip      = "Control 4: tooltip OK!";
+
+			//simulate event
+			function pressEventHandler() {
+				throw sPressMessage;
+			}
+
+
+			/****************************************************
+			* CREATION OF CONTROLS
+			*****************************************************/
+			// Prefix for Control ID
+			var sCtrlId   = "VertProgInd";
+
+			// Control 1 = Default values
+			var oVPIndicator1 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "1");
+			oVPIndicator1.attachPress(pressEventHandler);
+			oVPIndicator1.placeAt("uiArea1");
+
+			// Control 2 = Set Value to 30 percent
+			var oVPIndicator2 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "2");
+			oVPIndicator2.setProperty('percentage', 30);
+			oVPIndicator2.placeAt("uiArea2");
+
+			// Control 3 = Set Value to 0 percent
+			var oVPIndicator3 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "3");
+			oVPIndicator3.setProperty('percentage', 0);
+			oVPIndicator3.placeAt("uiArea3");
+
+			// Control 4 = Set Value to 100 percent
+			var oVPIndicator4 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "4");
+			oVPIndicator4.setProperty('percentage', 100);
+			oVPIndicator4.setTooltip(sTooltip);
+			oVPIndicator4.placeAt("uiArea4");
+
+			// Control 5 = Set Value to <0
+			var oVPIndicator5 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "5");
+			oVPIndicator5.setProperty('percentage', -30);
+			oVPIndicator5.placeAt("uiArea5");
+
+			// Control 6 = Set Value to >100
+			var oVPIndicator6 =  new sap.ui.suite.VerticalProgressIndicator(sCtrlId + "6");
+			oVPIndicator6.setProperty('percentage', 111);
+			oVPIndicator6.placeAt("uiArea6");
+	
+		</script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+			/****************************************************
+			* QUINIT TESTS - PREPARATIONS
+			*****************************************************/
+			qutils.delayTestStart();
+
+			//Helper-functions to determine the correct Pixels & ARIA values
+			//This is needed because no values <0 and >100 are allowed
+
+			//Calculate the height of inner <DIV>
+			function determineHeight(iPercentage){
+				return Math.round(determineAria(iPercentage) * 58 / 100);
+			}
+
+			//Calculate the top position (relative) if the inner <DIV>
+			function determineTop(iPercentage){
+				return (58 - determineHeight(iPercentage));
+			}
+            
+			//determine ARIA-value
+			function determineAria(iPercentage){
+				if (iPercentage < 0) iPercentage = 0;
+				if (iPercentage > 100) iPercentage = 100;
+				return iPercentage;
+			}
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'PROPERTIES'
+			*****************************************************/
+			// Set a Test Module for module "Properties"
+			module("Properties");
+
+			//Testcase 1: Default values
+			test("Default Values [Control 1]: ", function() {
+				expect(4);
+				percentage = 0;
+				this.oBar = jQuery.sap.domById(sCtrlId + "1-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator1.getPercentage(), percentage, "Default Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Default height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Default width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Default top position of inner <DIV>: ");
+			});
+
+
+			//Testcase 2: Percentage set to 30 percent
+			test("Percentage set to 30 percent [Control 2]: ", function() {
+				expect(4);
+				percentage = 30;
+				this.oBar = jQuery.sap.domById(sCtrlId + "2-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator2.getPercentage(), percentage, "Current Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+			});
+
+
+			//Testcase 3: Percentage set to 0 percent
+			test("Percentage set to 0 percent [Control 3]: ", function() {
+				expect(4);
+				percentage = 0;
+				this.oBar = jQuery.sap.domById(sCtrlId + "3-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator3.getPercentage(), percentage, "Current Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+			});
+
+
+			//Testcase 4: Percentage set to 100 percent
+			test("Percentage set to 100 percent [Control 4]: ", function() {
+				expect(4);
+				percentage = 100;
+				this.oBar = jQuery.sap.domById(sCtrlId + "4-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator4.getPercentage(), percentage, "Current Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+			});
+
+
+			//Testcase 5: Percentage set to -30 percent
+			test("Percentage set to -30 percent [Control 5]: ", function() {
+				expect(4);
+				percentage = -30;
+				this.oBar = jQuery.sap.domById(sCtrlId + "5-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator5.getPercentage(), percentage, "Current Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+			});
+
+
+			//Testcase 6: Percentage set to 111 percent
+			test("Percentage set to 111 percent [Control 6]: ", function() {
+				expect(4);
+				percentage = 111;
+				this.oBar = jQuery.sap.domById(sCtrlId + "6-bar");
+				BarHeight = jQuery(this.oBar).css("height");
+				BarTop    = jQuery(this.oBar).css("top");
+				BarWidth  = jQuery(this.oBar).css("width");
+				equals(oVPIndicator6.getPercentage(), percentage, "Current Percentage: ");
+				equals(BarHeight, determineHeight(percentage)+"px",  "Current height of inner <DIV>: ");
+				equals(BarWidth,  '31px', "Current width of inner <DIV>: ");
+				equals(BarTop,    determineTop(percentage)+"px", "Current top position of inner <DIV>: ");
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'EVENTS'
+			*****************************************************/
+			// Set a Test Module for module "Events"
+			module("Events");
+
+			//Testcase 7: Press Event
+			test("Press Event [Control 1]: ", function() {
+				expect(1);
+				try {
+					oVPIndicator1.firePress();
+					fail("exception should have been thrown!");
+				} catch (e) {
+					equals(sPressMessage, e, "Press Event triggered");
+				}
+				});
+
+			//Testcase 8: DetachPress Event
+			test("Detach Press Eventhandler [Control 1]: ", function() {
+				expect(1);
+				oVPIndicator1.detachPress(pressEventHandler);
+				try {
+					oVPIndicator1.firePress();
+					ok(true, "No event and thus no exception should be triggered!");
+				} catch (e) {
+	 				fail("should not occur");
+				}
+				// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
+				oVPIndicator1.attachPress(pressEventHandler);
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'TOOLTIPS'
+			*****************************************************/
+			// Set a Test Module for module "Tooltips"
+			module("Tooltips");
+
+			//Testcase 9: Manually set Tooltip
+			test("Manual Tooltip [Control 4]: ", function() {
+				expect(1);
+				equals(sTooltip, oVPIndicator4.getTooltip(), "Manual Tooltip");
+			});
+
+			//Testcase 10: Automatic Tooltip
+			test("Automatic Tooltip [Control 2]: ", function() {
+				expect(1);
+				if(!this.oThis){
+								this.oThis = jQuery.sap.byId(sCtrlId + "2");
+								}
+				AriaValue = this.oThis.attr('aria-valuenow');
+				Tooltip   = this.oThis.attr('title');
+				equals(AriaValue, Tooltip + "%", "Automatic Tooltip");
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'ARIA'
+			*****************************************************/
+			// Set a Test Module for module "ARIA"
+			module("ARIA");
+
+			//Testcase 11: Default ARIA-Value
+			test("Default ARIA-Values [Control 1]: ", function() {
+				expect(3);
+				percentage = 0;
+				if(!this.oThis){
+						this.oThis = jQuery.sap.byId(sCtrlId + "1");
+						}
+		      	ValueNow = this.oThis.attr('aria-valuenow');
+		      	ValueMax = this.oThis.attr('aria-valuemax');
+		      	ValueMin = this.oThis.attr('aria-valuemin');
+		      	equals(ValueNow, determineAria(percentage)+"%",   "Default ARIA-value: ");
+		      	equals(ValueMax, "100%",   "Maximum ARIA-value: ");
+		      	equals(ValueMin, "0%",     "Minimum ARIA-value: ");
+			});
+
+			//Testcase 12: ARIA-Value for Percentage in Range (0-100)
+			test("ARIA-Value for Percentage in Range [Controls 2,3,4]: ", function() {
+				expect(3);
+				this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
+				this.oThis3 = jQuery.sap.byId(sCtrlId + "3");
+				this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
+		      	ValueNow2   = this.oThis2.attr('aria-valuenow');
+		      	ValueNow3   = this.oThis3.attr('aria-valuenow');
+		      	ValueNow4   = this.oThis4.attr('aria-valuenow');
+		      	equals(ValueNow2, determineAria(30)+"%",   "ARIA-value for 30%: ");
+		      	equals(ValueNow3, determineAria(0)+"%",   "ARIA-value for 0%: ");
+		      	equals(ValueNow4, determineAria(100)+"%",   "ARIA-value for 100%: ");
+			});
+
+
+			//Testcase 13: ARIA-Value for Percentage out of Range (<0 or >100)
+			test("ARIA-Value for Percentage out of Range [Controls 5,6]: ", function() {
+				expect(2);
+				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
+				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
+		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
+		      	ValueNow6   = this.oThis6.attr('aria-valuenow');
+		      	equals(ValueNow5, determineAria(-30)+"%",   "ARIA-value for -30%: ");
+		      	equals(ValueNow6, determineAria(111)+"%",   "ARIA-value for 111%: ");
+			});
+
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.suite.VerticalProgressIndicator</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<br>
+		<div id="uiArea1">1</div>
+		<div style="position:relative; top:-13px; margin-left:40px"  id="uiArea2">2</div>
+		<div style="position:relative; top:-26px; margin-left:80px"  id="uiArea3">3</div>
+		<div style="position:relative; top:-39px; margin-left:120px" id="uiArea4">4</div>
+		<div style="position:relative; top:-52px; margin-left:160px" id="uiArea5">5</div>
+		<div style="position:relative; top:-65px; margin-left:200px" id="uiArea6">6</div>
+	</body>
+</html>

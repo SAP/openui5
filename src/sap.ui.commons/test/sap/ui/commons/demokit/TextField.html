@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.TextField">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>TextField - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleInput'>
+// create a simple Input field
+var oInput1 = new sap.ui.commons.TextField('input1');
+oInput1.setValue("Some Text");
+oInput1.setTooltip("This is a tooltip");
+oInput1.attachChange(function(){alert('Text changed to :'+ oInput1.getValue());});
+
+// attach it to some element in the page
+oInput1.placeAt("sample1");
+</script>
+
+<script id='HelloWorld'>
+// create a simple Input field
+var oInput2 = new sap.ui.commons.TextField({
+	id: 'input2',
+	value : 'Hello World!',
+	tooltip : 'Change the Text',
+	width : '10em',
+	change : function(){
+		oInput2.setValueState( 
+			oInput2.getValue() != 'Hello World!' ? sap.ui.core.ValueState.Error : sap.ui.core.ValueState.None
+		);
+	}
+});
+
+//attach it to some element in the page
+oInput2.placeAt("sample2");
+</script>
+
+<script id='LiveChange'>
+//create a simple Input field
+var oInput3 = new sap.ui.commons.TextField({
+	id: 'input3',
+	value : 'TextField',
+	tooltip : 'Change the Text',
+	width : '15em',
+	liveChange : function(oEvent){
+		sap.ui.getCore().getControl("TextView").setText(oEvent.getParameter("liveValue"));
+	}
+}).placeAt("sample3");
+
+var oTextView = new sap.ui.commons.TextView("TextView",{ text: oInput3.getValue() }).placeAt("sample3");
+
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/textfield-icon.png">TextField</h1>
+
+		<h2>Overview</h2>
+		<p>The TextField is used for single-row text input. If the configured text value contains HTML or script tags, those will be escaped.
+		A maximal length for the field can be set using the <code>maxLength</code> property.
+		<br/>
+		The TextField can have the modes editable or read-only (property <code>editable</code>); and it can have status enabled or disabled (property <code>enabled)</code>.
+		To visualize some semantic states such as "error" or "warning", the <code>valueState</code> property is provided. When the user makes some changes on the text, the <code>change</code> event is fired. So it is possible to react on any text change.
+		</p>
+
+		<h2>Examples</h2>
+		<h3>TextField With Text Updates</h3>
+		The first example shows a simple TextField that shows an alert pop-up when the text has been changed.
+		</p>
+		<br>
+		<div code-sample="sample1" script="SimpleInput"></div>
+		<br/>
+
+		<h3>TextField With Status Check</h3>
+		<p>
+		The second example shows how to set a TextField to state <code>error</code> if the text is not equal "Hello World!".
+		Therefore, the text is checked on the <code>change</code> event, and the <code>valueState</code> property is set accordingly.
+		Note that the visualization of the different states depends on the used theme.  
+		</p>
+		<br>
+		<div code-sample="sample2" script="HelloWorld"></div>
+		<br/>
+
+		<h3>TextField With live Change</h3>
+		<p>
+		In this example the <code>liveChange</code> event is used to update a <code>TextView</code> control live while typing into the
+		<code>TextField</code> control.
+		</p>
+		<br>
+		<div code-sample="sample3" script="LiveChange"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextField.html" >API documentation</a>
+		</p>  
+	</body>
+</html>

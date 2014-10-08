@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Declarative Programming Model - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js",
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-modules="sap.ui.core.plugin.DeclarativeSupport"
+			>
+	</script>
+
+	<script>
+		try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+	
+		function handlePress() {
+			alert("PRESS");
+		}
+
+		function handleChange(oEvent) {
+			alert(oEvent.getSource().getValue());
+		}
+
+		test = {
+
+				handleEvent: function() {
+					alert("EVENT");
+				}
+
+		}
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1>Declarative Programming Model - Test Page</h1>
+
+	<div data-sap-ui-type="sap.ui.core.UIArea">
+
+		<div data-sap-ui-type="sap.ui.commons.ApplicationHeader" data-logo-text="Declarative Sample" data-display-logoff="false" data-display-welcome="false"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.TextView" data-design="H1" data-text="Declarative Sample"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayout" data-layout-fixed="false">
+			<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.Button" data-text="Hello World" data-press="handlePress"></div>
+				</div>
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextField" data-value="Hello World"></div>
+				</div>
+			</div>
+			<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutRow">
+				<div data-sap-ui-type="sap.ui.commons.layout.MatrixLayoutCell">
+					<div data-sap-ui-type="sap.ui.commons.TextArea" data-value="Hello World"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div data-sap-ui-type="sap.ui.core.UIArea">
+
+		<div data-sap-ui-type="sap.ui.commons.Button" data-text="Hello World" data-enabled="true" data-press="test.handleEvent"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.TextField" data-value="A SAPUI5 TextField" data-change="handleChange"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.Label" data-text="Password:" data-label-for="pwd"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.PasswordField" id="pwd"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.CheckBox" data-checked="true"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.ComboBox" data-value="Item 1">
+			<div data-sap-ui-type="sap.ui.core.ListItem" data-text="Item 1"></div>
+			<div data-sap-ui-type="sap.ui.core.ListItem" data-text="Item 2"></div>
+			<div data-sap-ui-type="sap.ui.core.ListItem" data-text="Item 3"></div>
+			<div data-sap-ui-type="sap.ui.core.ListItem" data-text="Item 4"></div>
+			<div data-sap-ui-type="sap.ui.core.ListItem" data-text="Item 5"></div>
+		</div>
+
+	</div>
+
+	<div data-sap-ui-type="sap.ui.core.UIArea">
+		<div data-sap-ui-type="sap.ui.commons.Panel">
+			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="My Panel"></div>
+			<div data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+		</div>
+	
+		<div data-sap-ui-type="sap.ui.commons.Panel">
+		
+			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
+	
+			<table>
+				<tr><td>1</td></tr>
+				<tr><td>2</td></tr>
+				<tr><td><button onclick="handlePress()">Click Me!</button></td></tr>
+				<tr><td>4</td></tr>
+				<tr><td>5</td></tr>
+				<tr><td><div data-sap-ui-type="sap.ui.commons.Button" data-text="Click me!"></div></td></tr>
+				<tr><td>
+	
+				<div data-sap-ui-type="sap.ui.commons.Panel">
+					<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+					<a href="http://www.sap.com" target="_blank">www.sap.com</a>
+				</div>
+	
+				</td></tr>
+			</table>
+		</div>
+	
+		<div data-sap-ui-type="sap.ui.commons.Panel"  data-sap-ui-default-aggregation="title">
+			<div data-sap-ui-type="sap.ui.core.Title" data-text="Other Panel"></div>
+			<div data-sap-ui-aggregation="content">
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

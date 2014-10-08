@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	<title>Feed Input Test Page</title>
+	<script
+		id='sap-ui-bootstrap'
+		type='text/javascript'
+		src='../../../resources/sap-ui-core.js'
+		data-sap-ui-theme='sap_bluecrystal'
+		data-sap-ui-libs='sap.m'
+		data-sap-ui-xx-bindingSyntax="complex"
+		data-sap-ui-resourceroots='{ "sap.m.test" : "./" }' >
+	</script>
+	<style type="text/css">
+		.caption {
+			font-weight: bold;
+			font-size: 1rem;
+			margin-top: 0.25rem;
+		}
+		.container {
+			margin: 0 1rem 1rem 1rem;
+		}
+	</style>
+	<script>
+		var app = new sap.m.App("myApp");
+		var page = new sap.m.Page();
+		page.addContent(sap.ui.xmlview('FeedInputView', 'sap.m.test.FeedInput'));
+		app.addPage(page);
+		app.placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>

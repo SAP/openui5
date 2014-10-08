@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>RadioButton - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.RadioButton.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+			var oCore = sap.ui.getCore(); 
+
+			function alertSelected(oEvent) {
+				var oRadioButton = oEvent.oSource;
+				var bSelected = oRadioButton.getSelected();
+				var oText = oRadioButton.getText();
+				alert("RadioButton '" + oText + "' selection state is now: " + bSelected);
+			}
+
+			function toggleReadonly() {
+				var oRadioButton = oCore.getControl("c1");
+				oRadioButton.setEditable(!oRadioButton.getEditable());
+			}
+
+
+			oCore.attachInitEvent(function () {
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				      // a plain RadioButton
+				var oRadioButton = new sap.ui.commons.RadioButton("c1"); 
+				oRadioButton.setText("Just a plain vanilla RadioButton"); 
+				oRadioButton.setGroupName("group1");
+				oRadioButton.placeAt("target1");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c2"); 
+				oRadioButton.setText("This one is initially selected and has a tooltip (and toggles the readonly state of the box above when changing from unselected to selected)");
+				oRadioButton.setSelected(true);
+				oRadioButton.setGroupName("group1");
+				oRadioButton.setTooltip("This is a tooltip");
+				oRadioButton.attachSelect(toggleReadonly);
+				oRadioButton.placeAt("target2");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c3"); 
+				oRadioButton.setText("Disabled RadioButton"); 
+				oRadioButton.setGroupName("group1");
+				oRadioButton.setEnabled(false);
+				oRadioButton.placeAt("target3");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c4"); 
+				oRadioButton.setText("Readonly SELECTED RadioButton"); 
+				oRadioButton.setGroupName("group2");
+				oRadioButton.setEditable(false);
+				oRadioButton.setSelected(true);
+				oRadioButton.placeAt("target4");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c5"); 
+				oRadioButton.setText("RadioButton with warning state");
+				oRadioButton.setGroupName("group2");
+				oRadioButton.setValueState(sap.ui.core.ValueState.Warning);
+				oRadioButton.placeAt("target5");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c6"); 
+				oRadioButton.setText("RadioButton with error state");
+				oRadioButton.setGroupName("group2");
+				oRadioButton.setValueState(sap.ui.core.ValueState.Error);
+				oRadioButton.placeAt("target6");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c7"); 
+				oRadioButton.setText("RadioButton with event"); 
+				oRadioButton.setGroupName("group2");
+				oRadioButton.attachSelect(alertSelected);
+				oRadioButton.placeAt("target7");
+
+				// test in matrix layout
+				var oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+				oLayout.setLayoutFixed(false);
+				oLayout.placeAt("target8");
+
+				// first row: a RadioButton with separate label
+				var oLabel = new sap.ui.commons.Label("matrixLabel");
+				oLabel.setText("A RadioButton:");
+				oRadioButton = new sap.ui.commons.RadioButton("c_matrix_1");
+				oRadioButton.setGroupName("group3");
+				oLabel.setLabelFor(oRadioButton);
+				oLayout.createRow(oLabel, oRadioButton);
+
+				// second row: label and textfield
+				oLabel = new sap.ui.commons.Label("matrixLabel2");
+				oLabel.setText("A TextEdit:");
+				var oInput = new sap.ui.commons.TextField("tf1");
+				oLabel.setLabelFor(oInput);
+				oLayout.createRow(oLabel, oInput);
+
+				// third row: a RadioButton with included label
+				var oCell = new sap.ui.commons.layout.MatrixLayoutCell("emptyCell");
+				oRadioButton = new sap.ui.commons.RadioButton("c_matrix_2");
+				oRadioButton.setGroupName("group3");
+				oRadioButton.setText("For this RadioButton the text follows after the box")
+				oLayout.createRow(oCell, oRadioButton);
+
+				// width test
+				oRadioButton = new sap.ui.commons.RadioButton("c9"); 
+				oRadioButton.setText("RadioButton (width = 200px)");
+				oRadioButton.setGroupName("group4");
+				oRadioButton.setWidth("200px");
+				oRadioButton.placeAt("target9");
+
+				oRadioButton = new sap.ui.commons.RadioButton("c10"); 
+				oRadioButton.setText("Another RadioButton"); 
+				oRadioButton.setGroupName("group4");
+				oRadioButton.placeAt("target10");
+
+				// invisible RadioButton
+				oRadioButton = new sap.ui.commons.RadioButton("c11"); 
+				oRadioButton.setText("This RadioButton must not be visible");
+				oRadioButton.setGroupName("group5");
+				oRadioButton.setVisible(false);
+				oRadioButton.placeAt("target11");
+				}
+			);
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.RadioButton</h1>
+
+		<div id="target1"></div>
+		<div id="target2"></div>
+		<div id="target3"></div>
+		<hr>
+		<div id="target4"></div>
+		<div id="target5"></div>
+		<div id="target6"></div>
+		<div id="target7"></div>
+		<br>
+		Testing alignment within matrix layout:
+		<div id="target8" style="border: 1px solid red;" ></div>
+		<br>
+		Width test:<br>
+		<span id="target9"></span><span id="target10"></span><br>
+		<img src="images/test-ruler.png">
+		<br> <br>
+		Invisible RadioButton (there must not be a RadioButton below!):
+		<div id="target11"></div>
+	</body>
+</html>

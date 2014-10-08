@@ -1,0 +1,73 @@
+{
+	"countries" : [ {
+		"name" : "Greece",
+		"short" : "GR",
+		"detailInfo": {
+			"capital": "Athens",
+			"population": 10787690,
+			"area": 131990,
+			"currency": "Euro",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Greece.svg/200px-Flag_of_Greece.svg.png"
+		}
+	}, {
+		"name" : "United States",
+		"short" : "US",
+		"detailInfo": {
+			"capital": "Washington, D.C.",
+			"population": 314362000,
+			"area": 9826675,
+			"currency": "United States Dollar",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Flag_of_the_United_States_%28Pantone%29.svg/200px-Flag_of_the_United_States_%28Pantone%29.svg.png"
+		}
+	}, {
+		"name" : "Hungary",
+		"short" : "HU",
+		"detailInfo": {
+			"capital": "Budapest",
+			"population": 9942000,
+			"area": 93030,
+			"currency": "Forint",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Flag_of_Hungary.svg/200px-Flag_of_Hungary.svg.png"
+		}
+	}, {
+		"name" : "France",
+		"short" : "FR",
+		"detailInfo": {
+			"capital": "Paris",
+			"population": 65350000,
+			"area": 674843,
+			"currency": "Euro",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/200px-Flag_of_France.svg.png"
+		}
+	}, {
+		"name" : "Germany",
+		"short" : "DE",
+		"detailInfo": {
+			"capital": "Berlin",
+			"population": 81799600,
+			"area": 357021,
+			"currency": "Euro",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/200px-Flag_of_Germany.svg.png"
+		}
+	}, {
+		"name" : "Iceland",
+		"short" : "IS",
+		"detailInfo": {
+			"capital": "Reykjavík",
+			"population": 320060,
+			"area": 103001,
+			"currency": "Icelandic Króna",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Iceland.svg/200px-Flag_of_Iceland.svg.png"
+		}
+	}, {
+		"name" : "Switzerland",
+		"short" : "CH",
+		"detailInfo": {
+			"capital": "Bern",
+			"population": 8000000,
+			"area": 41285,
+			"currency": "Swiss Franc",
+			"flagUrl": "http://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Flag_of_Switzerland_%28Pantone%29.svg/200px-Flag_of_Switzerland_%28Pantone%29.svg.png"
+		}
+	} ]
+}

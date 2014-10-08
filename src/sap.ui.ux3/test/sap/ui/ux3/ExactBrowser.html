@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>ExactBrowser - sap.ui.ux3</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Exact.gif">
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		<script src="resources/ExactData.js"></script>
+		<style>
+			.Area {
+				margin-bottom: 3px;
+				margin-top: 3px;
+			}
+			
+			.Result {
+				height: 100px;
+				overflow: auto;
+				display: inline-block;
+				white-space: nowrap;
+				width: 400px;
+				border: 1px solid black;
+			}
+		</style>
+		
+		<script>
+		
+			function createBrowserTest(oSettings, iExactBrowserNo, bInitAttributes) {
+				var oExactBrowser = new sap.ui.ux3.ExactBrowser("EB"+iExactBrowserNo, oSettings);
+				if(bInitAttributes){
+					exactTestData.initAttributes(oExactBrowser); //attributes defined in ExactData.js
+				}
+				
+				var iExactBrowserUIAreaNo = 3*iExactBrowserNo - 2;
+				
+				var oInput = new sap.ui.commons.TextField();
+				oInput.placeAt("uiArea"+(iExactBrowserUIAreaNo-1));
+				oInput = new sap.ui.commons.TextField();
+				oInput.placeAt("uiArea"+(iExactBrowserUIAreaNo+1));
+				
+				oExactBrowser.setFollowUpControl(oInput);
+				oExactBrowser.placeAt("uiArea"+iExactBrowserUIAreaNo);
+				oExactBrowser.attachAttributeSelected(function(oEvent) {
+					var aSelectedAttributes = oEvent.getParameter("allAttributes");
+					var aSelectedAttributeNames = [];
+					for(var idx=0; idx<aSelectedAttributes.length; idx++){
+						var sName = aSelectedAttributes[idx].getText()+" (ID: "+aSelectedAttributes[idx].getId()+")";
+						aSelectedAttributeNames.push(sName);
+					}
+					jQuery("#result"+iExactBrowserNo).html("Selected attributes:<br>  * " + aSelectedAttributeNames.join("<br>  * "));
+				});
+				
+				return oExactBrowser;
+			}
+		
+			//*******************		
+		
+			var oExactBrowser = createBrowserTest({showHeader: true, enableSave: true/*, enableListClose: true*/}, 1, true);
+			oExactBrowser.setOptionsMenu(
+					new sap.ui.commons.Menu({
+		  				items : [new sap.ui.commons.MenuItem("i1", {text: "This menu comes from"}),
+		  		         		 new sap.ui.commons.MenuItem("i2", {text: "the application."})]})
+		    );
+			oExactBrowser.attachSave(function(){alert("Saved!");});
+			
+			//*******************
+			
+			oExactBrowser = createBrowserTest({showHeader: true, enableListClose: true, topListOrder: sap.ui.ux3.ExactOrder.Fixed}, 2, true);
+			
+			function setFixedListOrder(oAttribute){
+				oAttribute.setListOrder(sap.ui.ux3.ExactOrder.Fixed);
+				var aAttributes = oAttribute.getAttributes();
+				for(var i=0; i<aAttributes.length; i++){
+					setFixedListOrder(aAttributes[i]);
+				}
+			}
+			setFixedListOrder(oExactBrowser.getAttributes()[0]);
+			
+			//********************
+			
+			oExactBrowser = createBrowserTest({showTopList: false}, 3, true);
+			var aAttributes = oExactBrowser.getAttributes();
+			for(var i=0; i<aAttributes.length; i++){
+				if(i!=3){
+					aAttributes[i].setSelected(true);
+				}
+				if(i==1){ 
+					aAttributes[i].scrollTo(aAttributes[i].getAttributes()[30]);
+				}
+			}
+			
+			//********************
+			
+			var bSyncCalls = false;
+			
+			var oAttrTemplate = new sap.ui.ux3.ExactAttribute();
+			oAttrTemplate.bindProperty("text", "name");
+			oAttrTemplate.bindProperty("showSubAttributesIndicator", "subVals");
+			oAttrTemplate.bindProperty("selected", "selected");
+			oAttrTemplate.bindProperty("additionalData", "followup", function(txt){
+				return {followup: txt};
+			});
+			oAttrTemplate.attachSupplyAttributes(function(oEvent){
+				var oAttribute = oEvent.getParameter("attribute");
+				var sFollowup = oAttribute.getAdditionalData() ? oAttribute.getAdditionalData().followup : null;
+				if(sFollowup){
+					jQuery.ajax({
+						  url: "resources/exactdata/"+sFollowup,
+						  async: !bSyncCalls,
+						  dataType: 'json',
+						  type: "GET",
+						  success: function(oData) {
+							  oAttribute.getModel().setProperty("atts", oData, oAttribute.getBindingContext());
+						  },
+						  error: function(XMLHttpRequest, textStatus, errorThrown){
+								jQuery.sap.log.fatal("The following problem occurred: " + textStatus, XMLHttpRequest.responseText + ","
+										+ XMLHttpRequest.status + "," + XMLHttpRequest.statusText);
+						  }
+					});
+				}
+				oAttribute.bindAggregation("attributes", "atts", oAttrTemplate);
+			});
+			
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.loadData("resources/exactdata/lazy", null, !bSyncCalls);
+			
+			oExactBrowser = createBrowserTest({title: "My Attributes", enableListClose: true}, 4);
+			oExactBrowser.bindAggregation("attributes", "/atts", oAttrTemplate);
+			oExactBrowser.setModel(oModel);
+			
+			//********************
+			
+			//Test for CSN 1026756 2013
+			/*var oAttrTemplate2 = new sap.ui.ux3.ExactAttribute();
+			oAttrTemplate2.bindProperty("text", "name");
+			oAttrTemplate2.bindProperty("selected", "selected");
+			oAttrTemplate2.bindAggregation("attributes", "atts", oAttrTemplate2);
+			
+			var oData = {"atts":[
+				{"name":"Year","selected":true, "atts":[]}
+			]};
+			for(var i=0; i<100; i++){
+				oData.atts[0].atts.push({"name": ""+(1900+i)});
+			}
+			
+			
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(oData);
+			
+			oExactBrowser = createBrowserTest({title: "My Attributes", enableListClose: true}, 5);
+			oExactBrowser.bindAggregation("attributes", "/atts", oAttrTemplate2);
+			oExactBrowser.setModel(oModel);
+			var iCount = 1;
+			oExactBrowser.attachAttributeSelected(function(oEvent) {
+				var aSelectedAttributes = oEvent.getParameter("allAttributes");
+				if(iCount == 2 && aSelectedAttributes.length == 1){
+					oData.atts[0].atts = [];
+					oModel.setData(oData);
+					for(var i=0; i<100; i++){
+						oData.atts[0].atts.push({"name": ""+(1900+i)});
+					}
+					oModel.setData(oData);
+				}
+				iCount = aSelectedAttributes.length;
+			});*/
+			
+		</script>
+		
+	</head>
+	<body class="sapUiBody" role="application">
+		<h3>Default ExactBrowser with header and menu</h3>
+		<div id="uiArea0" class="Area"></div><br>
+		<div id="uiArea1"></div>
+		<div id="uiArea2" class="Area"></div><br>
+		<div id="result1" class="Area Result"></div>
+		<h3>ExactBrowser with header, enabled list closing and fixed list order on top level attributes and all Country attributes</h3>
+		<div id="uiArea3" class="Area"></div><br>
+		<div id="uiArea4"></div>
+		<div id="uiArea5" class="Area"></div><br>
+		<div id="result2" class="Area Result"></div>
+		<h3>ExactBrowser without header and hidden top list</h3>
+		<div id="uiArea6" class="Area"></div><br>
+		<div id="uiArea7"></div>
+		<div id="uiArea8" class="Area"></div><br>
+		<div id="result3" class="Area Result"></div>
+		<h3>ExactBrowser with binding and enabled list closing and without header</h3>
+		<div id="uiArea9" class="Area"></div><br>
+		<div id="uiArea10"></div>
+		<div id="uiArea11" class="Area"></div><br>
+		<div id="result4" class="Area Result"></div>
+	</body>
+</html>

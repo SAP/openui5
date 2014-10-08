@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.Slider">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Slider - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleSlider'>
+// create a simple slider
+var oSlider1 = new sap.ui.commons.Slider({
+	id : 'Slider1',
+	tooltip: 'Slider1',
+	width: '400px'
+	});
+
+// attach it to some element in the page
+oSlider1.placeAt("sample1");
+</script>
+
+<script id='WithTicks'>
+// create a simple slider with ticks
+var oSlider2 = new sap.ui.commons.Slider({
+	id : 'Slider2',
+	tooltip: 'Slider2',
+	width: '30%',
+	smallStepWidth: 5,
+	totalUnits: 5
+	});
+
+// attach it to some element in the page
+oSlider2.placeAt("sample2");
+</script>
+
+<script id='WithLabels'>
+// create a simple slider with ticks
+var oSlider3 = new sap.ui.commons.Slider({
+	id : 'Slider3',
+	tooltip: 'Slider3',
+	width: '30%',
+	min: 100,
+	max: 300,
+	value: 200,
+	totalUnits: 5,
+	smallStepWidth: 5,
+	stepLabels : true
+	});
+
+// attach it to some element in the page
+oSlider3.placeAt("sample3");
+</script>
+
+<script id='TestInteraction'>
+// create a simple slider with ticks
+var oLayout = new sap.ui.commons.layout.MatrixLayout({
+	id : 'matrix1',
+	layoutFixed : false,
+	columns : 2
+	});
+
+var oSlider4 = new sap.ui.commons.Slider({
+	id : 'Slider4',
+	tooltip: 'Slider4',
+	width: '300px',
+	min: 0,
+	max: 100,
+	value: 25,
+	totalUnits: 5,
+	smallStepWidth: 1,
+	stepLabels : true,
+	change : function(){oInput.setValue(oSlider4.getValue());}
+	});
+
+var oInput = new sap.ui.commons.TextField({
+	id : 'input1',
+	value : oSlider4.getValue(),
+	tooltip: 'Value of the slider',
+	width: '3em',
+	change : function(){oSlider4.setValue(parseInt(oInput.getValue(),10));}
+	});
+
+oLayout.createRow(oSlider4, oInput);
+
+	// attach it to some element in the page
+oLayout.placeAt("sample4");
+</script>
+
+<script id='VerticalWithLabels'>
+// create a simple slider with ticks
+var oSlider5 = new sap.ui.commons.Slider({
+	id : 'Slider5',
+	tooltip: 'Slider5',
+	height: '300px',
+	min: 100,
+	max: 300,
+	value: 200,
+	totalUnits: 5,
+	smallStepWidth: 5,
+	stepLabels : true,
+	vertical: true
+	});
+
+// attach it to some element in the page
+oSlider5.placeAt("sample5");
+</script>
+
+<script id='HorizontalWithLabels'>
+// create a simple slider with ticks
+var oSlider6 = new sap.ui.commons.Slider({
+	id : 'Slider6',
+	tooltip: 'Slider6',
+	height: '300px',
+	min: 1,
+	max: 3,
+	value: 2,
+	totalUnits: 3,
+	smallStepWidth: 1,
+	stepLabels : true,
+	labels: ["Low", "Medium", "High"]
+	});
+
+// attach it to some element in the page
+oSlider6.placeAt("sample6");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/slider-icon.png">Slider</h1>
+
+		<h2>Introduction</h2>
+		<p>
+		A classical use case for the graphical Slider control is offering the user an interactive scenario - coupled with
+		a graphical chart such as a pie - to check various size settings in a comfortable way.
+		</p>
+		<p>You use the Slider control to let the user slide on a bar to make a setting on a certain value where the value set
+		is predefined. The slider can contain steps, or not; if steps are available, the Slider control can have ticks
+		(<code>totalUnits</code> property). For the single units, labels can be displayed using <code>stepLabels</code>.
+		The values are numerically; generally at least the first value (minimum) and the last value (maximum) are defined to
+		lead the user regarding slider usage.
+		<br><br>
+		The slider can be controlled via mouse or keyboard. As soon as the Slider is moved on client-side,
+		the <code>change</code> event is fired. A reaction on this change, for example an alert with a confirmation on
+		the change, can be implemented.
+		</p>
+
+		<h2>Example</h2>
+		<h3>Basic Slider Example</h3>
+
+		<br>
+		<div code-sample="sample1" script="SimpleSlider"></div>
+		<br/>
+
+		<h3>Slider With Ticks</h3>
+		<br>
+		<div code-sample="sample2" script="WithTicks"></div>
+		<br/>
+
+		<h3>Slider With Labels</h3>
+		<br>
+		<div code-sample="sample3" script="WithLabels"></div>
+		<br/>
+
+		<h3>Slider With TextField Displaying Detail Information</h3>
+		<p>
+		The fourth example is a bit more complex than the first ones. It shows how to synchronize a Slider control and a TextField
+		control. Therefore the <code>change</code> events are implemented to update each other using the <code>setValue</code> methods.
+		The <code>change</code> event is fired only once for each change. The event is fired when the mouse button is released.
+		</p>
+		<br>
+		<div code-sample="sample4" script="TestInteraction"></div>
+		<br/>
+		
+		<h3>Vertical Slider With Steps</h3>
+		<br>
+		<div code-sample="sample5" script="VerticalWithLabels"></div>
+		<br/>
+
+		<h3>Horizontal Slider With Labels</h3>
+		<br>
+		<div code-sample="sample6" script="HorizontalWithLabels"></div>
+		
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Slider.html" >API documentation</a>
+		</p>
+	</body>
+</html>

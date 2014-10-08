@@ -1,0 +1,15 @@
+<mvc:View 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	height="100%">
+
+	<l:FixFlex class="fixFlexVertical">
+		<l:fixContent>
+			<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+		</l:fixContent>
+		<l:flexContent>
+			<Text class="column1" text="This container is flexible and it will adapts its size to fill the remaining size in the FixFlex contol"></Text>
+		</l:flexContent>
+	</l:FixFlex>
+</mvc:View>

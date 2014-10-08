@@ -1,0 +1,1087 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: jquery.sap.promise
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script>
+		//Ensure that custom API is populated to global namespace for testimng purposes
+		window.sap = {__ui5PublishPromisePolyfill : true};
+	</script>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+	
+	function doOnNativeSupport(fDoWhenNativeSupport, fDoWhenNotNativeSupport){
+		if(sap.ui.Device.browser.firefox && sap.ui.Device.browser.version > 28 || sap.ui.Device.browser.chrome && sap.ui.Device.browser.version > 32){
+			if(fDoWhenNativeSupport){
+				return fDoWhenNativeSupport();
+			}
+		}else{
+			if(fDoWhenNotNativeSupport){
+				return fDoWhenNotNativeSupport();
+			}
+		}
+		return null;
+	};
+	
+	var bNative = doOnNativeSupport(function(){
+		jQuery.sap.require("jquery.sap.script");
+		return jQuery.sap.getUriParameters().get("native") == "x";
+	}, function(){
+		return false;
+	});
+	
+	var P = bNative ? window.Promise : window._UI5Promise;
+	
+	
+	function asyncAction(bFail, oObj, iDelay, bStart){
+		return new P(function(fResolve, fReject) {
+			var f = bFail ? fReject : fResolve;
+			setTimeout(function(){
+				f(oObj);
+				if(bStart){
+					start();
+				}
+			}, iDelay || 10);
+		});
+	};
+	
+	function asyncAction_Deferred(bFail, oObj, iDelay, bStart){
+		var d = new jQuery.Deferred();
+		(function(fResolve, fReject) {
+			var f = bFail ? fReject : fResolve;
+			setTimeout(function(){
+				f(oObj);
+				if(bStart){
+					start();
+				}
+			}, iDelay || 10);
+		})(function(o){d.resolve(o);}, function(o){d.reject(o);});
+		return d.promise();
+	};
+	
+	function createLog(){
+		var aLog = [];
+		return function(txt, flush){
+			aLog.push(txt);
+			if(flush){
+				var s = aLog.join(" -> ");
+				return s;
+			}
+		};
+	};
+	
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+
+		module("Basics");
+		
+		test((bNative ? "Native" : "Custom") +" API tested", function() {
+			var p = new P(function(res, rej){rej();});
+			ok(!p._deferred && bNative || p._deferred && !bNative , (bNative ? "Native" : "Custom") + " Promise implementation active.");
+		});
+		
+		test("Native Support", function() {
+			doOnNativeSupport(function(){
+				ok(window.Promise != window._UI5Promise, "Firefox and Chrome support Promises natively.");
+			}, function(){
+				ok(window.Promise == window._UI5Promise, "Browsers other than Firefox and Chrome does not support Promises natively.");
+			});	
+		});
+		
+		
+		module("promise.then");
+	
+		test("API available", function() {
+			var p = new P(function(res, rej){rej();});
+			ok(typeof(p.then) == "function", "promise.then is a function");
+		});
+		
+		asyncTest("promise.then", function() {
+			var p1 = asyncAction(false, "X", 10, false);
+			p1.then(function(oVal){
+				equal(oVal, "X", "Success Case - promise.then");
+			}, function(oVal){
+				ok(false, "Success Case - promise.then, Fail should not be called");
+			});
+			
+			var p2 = asyncAction(true, "Y", 10, false);
+			p2.then(function(oVal){
+				ok(false, "Fail Case - promise.then, Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Fail Case - Promise.then");
+				start();
+			});
+		});
+		
+		asyncTest("promise.then after resolve/reject", function() {
+			var p1 = asyncAction(false, "X", 10, false);
+			setTimeout(function(){
+				p1.then(function(oVal){
+					equal(oVal, "X", "Success Case - promise.then");
+				}, function(oVal){
+					ok(false, "Success Case - promise.then, Fail should not be called");
+				});
+			}, 30);
+			
+			var p2 = asyncAction(true, "Y", 10, false);
+			setTimeout(function(){
+				p2.then(function(oVal){
+					ok(false, "Fail Case - promise.then, Success should not be called");
+					start();
+				}, function(oVal){
+					equal(oVal, "Y", "Fail Case - Promise.then");
+					start();
+				});
+			}, 40);
+		});
+		
+		
+		module("promise.catch");
+		
+		test("API available", function() {
+			var p = new P(function(res, rej){rej();});
+			ok(typeof(p["catch"]) == "function", "promise.catch is a function");
+		});
+		
+		asyncTest("promise.catch", function() {
+			var p1 = asyncAction(false, "X", 10, false);
+			p1["catch"](function(oVal){
+				ok(false, "Success Case - promise.catch, Fail should not be called");
+			});
+			
+			var p2 = asyncAction(true, "Y", 10, false);
+			p2["catch"](function(oVal){
+				equal(oVal, "Y", "Fail Case - Promise.catch");
+				start();
+			});
+		});
+		
+		asyncTest("promise.catch after resolve/reject", function() {
+			var p1 = asyncAction(false, "X", 10, false);
+			setTimeout(function(){
+				p1["catch"](function(oVal){
+					ok(false, "Success Case - promise.catch, Fail should not be called");
+				});
+			}, 30);
+			
+			var p2 = asyncAction(true, "Y", 10, false);
+			setTimeout(function(){
+				p2["catch"](function(oVal){
+					equal(oVal, "Y", "Fail Case - Promise.catch");
+					start();
+				});
+			}, 40);
+		});
+		
+		
+		module("Promise.resolve");
+		
+		test("API available", function() {
+			ok(typeof(P.resolve) == "function", "Promise.resolve is a function");
+		});
+		
+		asyncTest("Promise.resolve(promise)", function() {
+			var p1 = asyncAction(false, "X", 10, true);
+			var p2 = P.resolve(p1);
+			ok(p1 == p2, "Promise.resolve(promise) == promise");
+		});
+		
+		asyncTest("Promise.resolve(thenable)", function() {
+			var d1 = asyncAction_Deferred(false, "X", 10, false);
+			var p1 = P.resolve(d1);
+			p1.then(function(oVal){
+				equal(oVal, "X", "Success Case - Promise.resolve(Thenable)");
+			}, function(oVal){
+				ok(false, "Success Case - Promise.resolve(Thenable), Fail should not be called");
+			});
+			
+			var d2 = asyncAction_Deferred(true, "Y", 10, false);
+			var p2 = P.resolve(d2);
+			p2.then(function(oVal){
+				ok(false, "Fail Case - Promise.resolve(Thenable), Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Fail Case - Promise.resolve(Thenable)");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.resolve(obj)", function() {
+			function check(oValue, bStart){
+				var p = P.resolve(oValue);
+				p.then(function(oVal){
+					equal(oVal, oValue, "Success Case - Promise.resolve("+oValue+")");
+					if(bStart){
+						start();
+					}
+				}, function(oVal){
+					ok(false, "Promise.resolve("+oValue+"), Fail should not be called");
+					if(bStart){
+						start();
+					}
+				});
+			}
+			
+			check("");
+			check("Hello");
+			check(null);
+			check(undefined);
+			check(5);
+			check(function(){});
+			check(new Error());
+			check({}, true);
+		});
+		
+		asyncTest("then: resolve/reject called multiple times - 1", function(){
+			var oError = new Error("error"),
+				iSuccessCount = 0,
+				iFailCount = 0,
+				thenable = {
+					then: function(resolve, reject){
+						resolve("X");
+						reject(oError);
+					}
+            	};
+
+            P.resolve(thenable).then(function(oVal){
+				equal(oVal, "X", "Success with correct value");
+				iSuccessCount++;
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				iFailCount++;
+			});
+            
+            setTimeout(function(){
+            	equal(iSuccessCount, 1, "Success only called once");
+            	equal(iFailCount, 0, "Fail must not be called");
+            	start();
+            }, 10);
+		});
+		
+		asyncTest("then: resolve/reject called multiple times - 2", function(){
+			var iSuccessCount = 0,
+				iFailCount = 0,
+				thenable = {
+					then: function(resolve, reject){
+						resolve("X");
+						resolve("Y");
+					}
+            	};
+
+            P.resolve(thenable).then(function(oVal){
+				equal(oVal, "X", "Success with correct value");
+				iSuccessCount++;
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				iFailCount++;
+			});
+            
+            setTimeout(function(){
+            	equal(iSuccessCount, 1, "Success only called once");
+            	equal(iFailCount, 0, "Fail must not be called");
+            	start();
+            }, 10);
+		});
+		
+		asyncTest("then: resolve/reject called multiple times - 3", function(){
+			var oError = new Error("error"),
+				iSuccessCount = 0,
+				iFailCount = 0,
+				thenable = {
+					then: function(resolve, reject){
+						reject(oError);
+						resolve("X");
+					}
+            	};
+
+            P.resolve(thenable).then(function(oVal){
+            	ok(false, "Success should not be called");
+				iSuccessCount++;
+			}, function(oVal){
+				ok(oVal === oError, "Failed with the correct error");
+				iFailCount++;
+			});
+            
+            setTimeout(function(){
+            	equal(iSuccessCount, 0, "Success must not be called");
+            	equal(iFailCount, 1, "Fail only called once");
+            	start();
+            }, 10);
+		});
+		
+		asyncTest("then: resolve/reject called multiple times - 4", function(){
+			var oError = new Error("error"),
+				iSuccessCount = 0,
+				iFailCount = 0,
+				thenable = {
+					then: function(resolve, reject){
+						reject(oError);
+						reject(new Error("error2"));
+					}
+            	};
+
+            P.resolve(thenable).then(function(oVal){
+            	ok(false, "Success should not be called");
+				iSuccessCount++;
+			}, function(oVal){
+				ok(oVal === oError, "Failed with the correct error");
+				iFailCount++;
+			});
+            
+            setTimeout(function(){
+            	equal(iSuccessCount, 0, "Success must not be called");
+            	equal(iFailCount, 1, "Fail only called once");
+            	start();
+            }, 10);
+		});
+		
+		
+		module("Promise.reject");
+		
+		test("API available", function() {
+			ok(typeof(P.reject) == "function", "Promise.reject is a function");
+		});
+		
+		asyncTest("Promise.reject(obj)", function() {
+			function check(oValue, bStart){
+				var p = P.reject(oValue);
+				p.then(function(oVal){
+					ok(false, "Promise.resolve("+oValue+"), Success should not be called");
+					if(bStart){
+						start();
+					}
+				}, function(oVal){
+					equal(oVal, oValue, "Promise.resolve("+oValue+"), Success Case");
+					if(bStart){
+						start();
+					}
+				});
+			}
+			
+			check("");
+			check("Hello");
+			check(null);
+			check(undefined);
+			check(5);
+			check(function(){});
+			check(new Error());
+			check(asyncAction(false, "X", 10, false));
+			check(asyncAction_Deferred(false, "X", 10, false));
+			check({}, true);
+		});
+		
+		
+		module("Promise.all");
+		
+		test("API available", function() {
+			ok(typeof(P.all) == "function", "Promise.all is a function");
+		});
+		
+		asyncTest("Promise.all - Success Case", function() {
+			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(jQuery.isArray(oVal), "Result is array");
+				equal(oVal.length, 2, "Result has length 2");
+				equal(oVal[0], "X", "Result[0] is 'X'");
+				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.all - Fail Case 1", function() {
+			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(false, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "X", "Result is 'X'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.all - Fail Case 2", function() {
+			var p = P.all([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Result is 'Y'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.all - Fail Case 3", function() {
+			var p = P.all([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "X", "Result is 'X'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.all - empty array", function () {
+	        var p = P.all([]);
+	        ok(p instanceof P);
+
+	        p.then(function(val) {
+	            deepEqual([], val);
+	            start();
+	        }, function(val) {
+	        	ok(false, "Fail should not be called");
+				start();
+	        });
+	    });
+		
+		asyncTest("Promise.all - no array parameter", function(){
+			P.all({}).then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				ok(jQuery.isEmptyObject(oVal), "Fail should be called with value {}");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.all - non-promise array content", function(){
+			P.all(["X", new P(function(resolve, reject){resolve("Y");})]).then(function(oVal){
+				ok(jQuery.isArray(oVal), "Result is array");
+				equal(oVal.length, 2, "Result has length 2");
+				equal(oVal[0], "X", "Result[0] is 'X'");
+				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+
+		
+		module("Promise.race");
+		
+		test("API available", function() {
+			ok(typeof(P.race) == "function", "Promise.race is a function");
+		});
+		
+		asyncTest("Promise.race - Fail Case 1", function() {
+			var p = P.race([asyncAction(true, "X", 10, false), asyncAction(true, "Y", 20, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "X", "Result is 'X'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Fail Case 2", function() {
+			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(true, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Result is 'Y'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Fail Case 3", function() {
+			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(true, "Y", 10, false)]);
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				equal(oVal, "Y", "Result is 'Y'");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Success Case 1", function() {
+			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(false, "Y", 20, false)]);
+			p.then(function(oVal){
+				equal(oVal, "X", "Result is 'X'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Success Case 2", function() {
+			var p = P.race([asyncAction(false, "X", 20, false), asyncAction(false, "Y", 10, false)]);
+			p.then(function(oVal){
+				equal(oVal, "Y", "Result is 'Y'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Success Case 3", function() {
+			var p = P.race([asyncAction(false, "X", 10, false), asyncAction(true, "Y", 20, false)]);
+			p.then(function(oVal){
+				equal(oVal, "X", "Result is 'X'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - Success Case 4", function() {
+			var p = P.race([asyncAction(true, "X", 20, false), asyncAction(false, "Y", 10, false)]);
+			p.then(function(oVal){
+				equal(oVal, "Y", "Result is 'Y'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - empty array", function(){
+			P.race([]).then(function(oVal){
+				sCallbackCalled = "Success";
+			}, function(oVal){
+				sCallbackCalled = "Fail";
+			});
+			
+			var sCallbackCalled = null;
+			
+			setTimeout(function(){
+				ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
+				start();
+			}, 30);
+		});
+		
+		asyncTest("Promise.race - no array parameter", function(){
+			P.race({}).then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				ok(jQuery.isEmptyObject(oVal), "Fail should be called with value {}");
+				start();
+			});
+		});
+		
+		asyncTest("Promise.race - non-promise array content", function(){
+			var p = P.race(["X", new P(function(resolve, reject){
+					setTimeout(function(){reject("Y");}, 10);
+				})]);
+			p.then(function(oVal){
+					equal(oVal, "X", "Success Result is 'X'");
+					start();
+			}, function(oVal){
+				ok(false, "Fail should not be called "+oVal);
+				start();
+			});
+		});
+		
+		
+		module("then chaining");
+		
+		asyncTest("Chain Test 1", function() {
+			var log = createLog();
+			asyncAction(false, "1", 10, false).then(function(oVal){
+				log("A: "+oVal);
+				return "X";
+			}).then(function(oVal){
+				log("B: "+oVal);
+				return asyncAction(false, "2", 10, false);
+			}).then(function(oVal){
+				var sRes = log("C: "+oVal, true);
+				equal(sRes, "A: 1 -> B: X -> C: 2", "Result is: " + sRes);
+				start();
+			});
+		});
+		
+		
+		/*
+		see http://www.html5rocks.com/en/tutorials/es6/promises/
+		
+		       [1]---------+
+			    |ok        |
+			   [2]-----------[4]------[6]--[FAIL]
+			    |ok		   |  |        |      |
+			   [3]---------+  |        |      |
+			    |ok			  |ok      |      |
+		[FAIL]-[5]------------+        |ok    |
+		  |     |ok                    |      |
+		  +-[SUCCESS]------------------+------+
+		
+		*/
+		function checkChain(aResults, fSuccessCallback, fFailCallback, bExpectFail){
+			var log = createLog();
+			asyncAction(aResults[0], "1", 10, false).then(function(oVal) {
+				log("A: "+oVal);
+				return asyncAction(aResults[1], "2", 10, false);
+			}).then(function(oVal) {
+				log("B: "+oVal);
+				return asyncAction(aResults[2], "3", 10, false);
+			})["catch"](function(oVal) {
+				log("C: "+oVal);
+				return asyncAction(aResults[3], "4", 10, false);
+			}).then(function(oVal) {
+				log("D: "+oVal);
+				return asyncAction(aResults[4], "5", 10, false);
+			}, function(oVal) {
+				log("E: "+oVal);
+				return asyncAction(aResults[5], "6", 10, false);
+			})["catch"](function(oVal) {
+				var sRes = log("FAIL: "+oVal, true);
+				fFailCallback(sRes);
+				if(!bExpectFail){
+					start();
+				}
+			}).then(function(oVal) {
+				var sRes = log("SUCCESS: "+oVal, true);
+				fSuccessCallback(sRes);
+				start();
+			});
+		};
+		
+		asyncTest("Chain Test 2", function() {
+			checkChain([false, false, false, false, false, false], function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> SUCCESS: 5", "Result is: " + sResult);
+			}, function(sResult){
+				ok(false, "Fail should not be called");
+			});
+		});
+		
+		asyncTest("Chain Test 3", function() {
+			checkChain([true, false, false, false, false, false], function(sResult){
+				equal(sResult, "C: 1 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+			}, function(sResult){
+				ok(false, "Fail should not be called");
+			});
+		});
+		
+		asyncTest("Chain Test 4", function() {
+			checkChain([false, true, false, false, false, false], function(sResult){
+				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+			}, function(sResult){
+				ok(false, "Fail should not be called");
+			});
+		});
+		
+		asyncTest("Chain Test 5", function() {
+			checkChain([false, false, true, false, false, false], function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> D: 4 -> SUCCESS: 5", "Result is: " + sResult);
+			}, function(sResult){
+				ok(false, "Fail should not be called");
+			});
+		});
+		
+		asyncTest("Chain Test 6", function() {
+			checkChain([false, false, true, true, false, false], function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> SUCCESS: 6", "Result is: " + sResult);
+			}, function(sResult){
+				ok(false, "Fail should not be called");
+			});
+		});
+		
+		asyncTest("Chain Test 7", function() {
+			checkChain([false, false, true, true, false, true], function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+			}, function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> C: 3 -> E: 4 -> FAIL: 6", "Fail-Result is: " + sResult);
+			}, true);
+		});
+		
+		asyncTest("Chain Test 8", function() {
+			checkChain([false, false, false, false, true, false], function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+			}, function(sResult){
+				equal(sResult, "A: 1 -> B: 2 -> D: 3 -> FAIL: 5", "Fail-Result is: " + sResult);
+			}, true);
+		});
+		
+		asyncTest("Chain Test 9", function() {
+			checkChain([false, true, false, false, true, false], function(sResult){
+				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5 -> SUCCESS: undefined", "Success-Result is: " + sResult);
+			}, function(sResult){
+				equal(sResult, "A: 1 -> C: 2 -> D: 4 -> FAIL: 5", "Fail-Result is: " + sResult);
+			}, true);
+		});
+		
+		asyncTest("Chain Test 10", function (){
+	        var resolveP1, rejectP2;
+	        var log = createLog();
+
+	        var p1 = new P(function(resolve, reject){
+	            resolveP1 = resolve;
+	        });
+	        var p2 = new P(function(resolve, reject){
+	            rejectP2 = reject;
+	        });
+
+	        rejectP2("B");
+	        resolveP1("A");
+
+	        setTimeout(function(){
+	            p1.then(function(val) {
+	            	log(val);
+	            });
+
+	            p2["catch"](function(val){
+	            	log(val);
+	            }).then(function(){
+	            	var res = log("C", true);
+	                equal(res, "A -> B -> C", "Chaining is: "+res);
+	            }).then(function(){
+					start();
+				})["catch"](function(){
+					start();
+				});
+	        }, 0);
+	    });
+		
+		
+		module("error handling");
+		
+		asyncTest("throw error in promise.then", function() {
+			var p = asyncAction(false, "1", 10, false);
+			p.then(function(oVal){
+				throw new Error("error");
+			}).then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				ok(oVal instanceof Error, "Fail-Result is an error");
+				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				start();
+			});
+		});
+		
+		asyncTest("throw error in promise.catch", function() {
+			var p = asyncAction(true, "1", 10, false);
+			p["catch"](function(oVal){
+				throw new Error("error");
+			}).then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				ok(oVal instanceof Error, "Fail-Result is an error");
+				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				start();
+			});
+		});
+		
+		asyncTest("throw error in action (sync)", function() {
+			var log = createLog();
+			log("A");
+			
+			var p = new P(function(fResolve, fReject) {
+				log("B");
+				throw new Error("error");
+			});
+
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				var res = log("D", true);
+				ok(oVal instanceof Error, "Fail-Result is an error");
+				equal(oVal.message, "error", "Fail-Result message is: " + oVal.message);
+				equal(res, "A -> B -> C -> D", "Success-Result is: " + res);
+				start();
+			});
+			
+			log("C");
+		});
+		
+		asyncTest("throw error in action (async)", function() {
+			var log = createLog();
+			log("A");
+			
+			var p = new P(function(fResolve, fReject) {
+				log("B");
+				setTimeout(function () {
+					log("D");
+					//throw new Error("error"),
+					//fResolve();
+				}, 10);
+			});
+			
+			var sCallbackCalled = null;
+
+			p.then(function(oVal){
+				sCallbackCalled = "Success";
+			}, function(oVal){
+				sCallbackCalled = "Fail";
+			});
+			
+			log("C");
+			
+			setTimeout(function(){
+				var res = log("E", true);
+				ok(!sCallbackCalled, "No callback should not be called: "+sCallbackCalled);
+				equal(res, "A -> B -> C -> D -> E", "Result is: " + res);
+				start();
+			}, 30);
+		});
+		
+		test("Wrong argument in constructor", function(){
+			throws(function(){
+	            new P("not callable");
+	        }, Error);
+		});
+		
+		asyncTest("Error in then: resolve/reject already called", function(){
+            var thenable = {
+				then: function(resolve, reject){
+					resolve("X");
+					throw new Error("error");
+				}
+            };
+
+            P.resolve(thenable).then(function(oVal){
+				equal(oVal, "X", "Success with correct value");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("Error in then: resolve/reject not yet called", function(){
+			var oError = new Error("error");
+            var thenable = {
+				then: function(resolve, reject){
+					throw oError;
+				}
+            };
+
+            P.resolve(thenable).then(function(oVal){
+            	ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				ok(oVal === oError, "Failed with the correct error");
+				start();
+			});
+		});
+		
+		
+		module("snyc");
+		
+		asyncTest("sync resolve", function() {
+			var log = createLog();
+			log("A");
+			
+			var p = new P(function(fResolve, fReject) {
+				log("B");
+				fResolve("X");
+			});
+
+			p.then(function(oVal){
+				var res = log("D "+oVal, true);
+				equal(res, "A -> B -> C -> D X", "Success-Result is: " + res);
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+			
+			log("C");
+		});
+		
+		asyncTest("sync reject", function() {
+			var log = createLog();
+			log("A");
+			
+			var p = new P(function(fResolve, fReject) {
+				log("B");
+				fReject("X");
+			});
+
+			p.then(function(oVal){
+				ok(false, "Success should not be called");
+				start();
+			}, function(oVal){
+				var res = log("D "+oVal, true);
+				equal(res, "A -> B -> C -> D X", "Fail-Result is: " + res);
+				start();
+			});
+			
+			log("C");
+		});
+		
+		
+		module("Assimilation");
+		
+		asyncTest("resolve called with a successful promise", function() {
+	        var p1 = asyncAction(false, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+
+	        p2.then(function(oVal) {
+				equal(oVal, "X", "Success called with the correct value");
+				start();
+	        }, function(oVal) {
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("resolve called with a rejected promise", function() {
+	        var p1 = asyncAction(true, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+
+	        p2.then(function(oVal) {
+	        	ok(false, "Success should not be called");
+	        	start();
+	        }, function(oVal) {
+	        	equal(oVal, "X", "Fail called with the correct value");
+	        	start();
+			});
+		});
+		
+		asyncTest("resolve called with a successful thenable", function() {
+	        var p1 = asyncAction_Deferred(false, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+
+	        p2.then(function(oVal) {
+				equal(oVal, "X", "Success called with the correct value");
+				start();
+	        }, function(oVal) {
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("resolve called with a rejected thenable", function() {
+	        var p1 = asyncAction_Deferred(true, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+
+	        p2.then(function(oVal) {
+	        	ok(false, "Success should not be called");
+	        	start();
+	        }, function(oVal) {
+	        	equal(oVal, "X", "Fail called with the correct value");
+	        	start();
+			});
+		});
+		
+		asyncTest("resolve called with a successful promise (multi-level)", function() {
+	        var p1 = asyncAction(false, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+	        var p3 = asyncAction(false, p2, 10, false);
+
+	        p3.then(function(oVal) {
+				equal(oVal, "X", "Success called with the correct value");
+				start();
+	        }, function(oVal) {
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("resolve called with a rejected promise (multi-level)", function() {
+	        var p1 = asyncAction(true, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+	        var p3 = asyncAction(false, p2, 10, false);
+
+	        p3.then(function(oVal) {
+	        	ok(false, "Success should not be called");
+	        	start();
+	        }, function(oVal) {
+	        	equal(oVal, "X", "Fail called with the correct value");
+	        	start();
+			});
+		});
+		
+		asyncTest("resolve called with a successful promise (multi-level, mix with thenables)", function() {
+	        var p1 = asyncAction(false, "X", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+	        var p3 = asyncAction(false, p2, 10, false);
+
+	        p3.then(function(oVal) {
+				equal(oVal, "X", "Success called with the correct value");
+				start();
+	        }, function(oVal) {
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+		
+		asyncTest("resolve called with a rejected promise (multi-level, mix with thenables)", function() {
+	        var p1 = asyncAction(true, "X", 10, false);
+	        var p2 = asyncAction_Deferred(false, p1, 10, false);
+	        var p3 = asyncAction(false, p2, 10, false);
+	        
+	        p3.then(function(oVal) {
+	        	ok(false, "Success should not be called");
+	        	start();
+	        }, function(oVal) {
+	        	equal(oVal, "X", "Fail called with the correct value");
+	        	start();
+			});
+		});
+		
+		asyncTest("reject called with a successful promise", function() {
+	        var p1 = asyncAction(false, "X", 10, false);
+	        var p2 = asyncAction(true, p1, 0, false);
+	
+	        p2.then(function(oVal) {
+	        	ok(false, "Success should not be called");
+	        	start();
+	        }, function(oVal) {
+	        	ok(oVal === p1, "Fail called with the correct value");
+	        	start();
+			});
+		});
+		
+		asyncTest("Promise.all", function() {
+	        var p1 = asyncAction(false, "Y", 10, false);
+	        var p2 = asyncAction(false, p1, 10, false);
+	        
+	        var p = P.all([asyncAction(false, "X", 10, false), p2]);
+			p.then(function(oVal){
+				ok(jQuery.isArray(oVal), "Result is array");
+				equal(oVal.length, 2, "Result has length 2");
+				equal(oVal[0], "X", "Result[0] is 'X'");
+				equal(oVal[1], "Y", "Result[1] is 'Y'");
+				start();
+			}, function(oVal){
+				ok(false, "Fail should not be called");
+				start();
+			});
+		});
+
+	</script>
+		  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: jquery.sap.promise</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

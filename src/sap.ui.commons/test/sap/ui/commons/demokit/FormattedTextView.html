@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.FormattedTextView,sap.ui.commons.FormattedTextViewControl">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+<title>TextView - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<style type="text/css">
+.sapUiFTVBold {
+	font-weight: bold;
+}
+
+</style>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+<script src="../../../../../js/utils.js"></script>
+
+<script id='FormattedTextView1'>
+	var sHtmlText = 'Aliquam erat volutpat. Vivamus vitae felis nec lacus ultricies dapibus condimentum quis felis.';
+	sHtmlText+= '<span class="sapUiFTVBold">Donec sit</span> amet <em>justo sem</em>, eget laoreet velit.<br>';
+	sHtmlText += 'Some link goes here: <embed data-index=\"0\"><br>';
+	sHtmlText += '<ul><li>vehicula vitae eleifend luctus, ultrices quis metus.</li><li>Vestibulum tristique nulla pellentesque</li>';
+	sHtmlText += '<li>tellus posuere ac imperdiet nulla viverra.</li><li>Aenean eu dolor lacus.</li></ul>';
+	
+	var oLink = new sap.ui.commons.Link("l1", {
+		text: "Click me",
+		href: "http://www.sap.com",
+		title: "SAP Homepage",
+		target: "_blank"
+	});
+	
+	var oFTV1 = new sap.ui.commons.FormattedTextView("otv1");
+	//set the text with placeholders inside
+	oFTV1.setHtmlText(sHtmlText);
+	//add the desired control to the FormattedTextView
+	oFTV1.addControl(oLink);
+	// attach it to an element in the page
+	oFTV1.placeAt("sample1");
+</script>
+<script id='FormattedTextView2'>
+	var sHtmlText = '<strong>Aliquam erat volutpat.</strong><br>Vivamus vitae felis nec lacus ultricies dapibus condimentum quis felis.';
+	sHtmlText += 'Some link goes here:<embed data-index=\"0\">';
+
+	var oLink2 = new sap.ui.commons.Link("l2", {
+		text : "Click me",
+		href : "http://scn.sap.com/welcome",
+		title : "SAP Community Network",
+		target : "_blank"
+	});
+
+	var oFTV2 = new sap.ui.commons.FormattedTextView("otv2");
+	//set the text with placeholders inside
+	oFTV2.setHtmlText(sHtmlText);
+	//add the desired control to the FormattedTextView
+	oFTV2.addControl(oLink2);
+
+	var oCallout = new sap.ui.commons.Callout({
+		content : oFTV2
+	});
+
+	// create a sample form with two fields and assign a callout to each of them
+	var oLayout = new sap.ui.commons.layout.MatrixLayout({
+		layoutFixed : false
+	});
+	var oTextField, oLabel;
+	oLayout.createRow(
+		oLabel = new sap.ui.commons.Label({text:"First name:", labelFor:"firstname1"}),
+		oTextField = new sap.ui.commons.TextField("firstname1", {required:true, value:"John"})
+	);
+	oTextField.setTooltip(oCallout);
+	// display it
+	oLayout.placeAt("sample2");
+</script>
+</head>
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/textview-icon.png">FormattedTextView</h1>
+	<h2>Introduction</h2>
+	<p>The FormattedTextView is designed to make mixed formatting of
+		text within one control possible. There is a limited set of tags and
+		attributes which is allowed for usage inside this control. </p>
+	<p>Predefined CSS classes exist for bold, italic, underlined and
+		monospace text as well as for semantic coloring. You may use one of
+		these, which is especially useful because they also take part in
+		theming, but you can also use your own style classes within span and div tags.</p>
+	<p>
+		Please see the list at the bottom of this page for details about which
+		tags and attributes can be used.<br>
+	<p>Be aware that all tags which are not explicitly allowed by the
+		control will be removed from the FormattedTextView. It has a
+		sanitizing functionality in place that will take care of
+		&quot;illegal&quot; tags and potentially malicious scripts. It will
+		remove such tags along with the content that may go between the
+		opening and closing tag.</p>
+	<p>
+		Certain other controls can be merged into the FormattedTextView
+		(currently these are sap.ui.commons.Link and sap.ui.commons.Image).
+		Thus, you can also easily attach events to these elements.<br>
+		The controls you want to include have to be added to the
+		<code>controls</code>
+		aggregation.<br> To define where these &quot;inner controls&quot;
+		should be placed, you simply put placeholder tags into the html string
+		that goes into the
+		<code>htmlText</code>
+		attribute, following this pattern:<br>
+		<code>yourFormattedTextView.setHtmlText(&quot;Some placeholder
+			goes here &lt;embed data-index=&quot;n&quot;&gt;);</code>
+		<br>,
+		<code>n</code>
+		is the index of the desired control in the
+		<code>controls</code>
+		aggregation.
+	</p>
+	<p>
+		This means the placeholder with n=0 will be replaced by the <em>first</em>
+		control in the aggregation
+	</p>
+	<p>Placeholders without a matching control will be removed.</p>
+
+	<p>The FormattedTextView can be used standalone as well as within
+		other controls, such as e.g. a Callout.</p>
+	<h2>Standalone Usage Example</h2>
+	<div code-sample="sample1" script="FormattedTextView1"></div>
+	<h2>Usage within a Callout</h2>
+	<p>The following code adds a callout to the text field in this
+		sample form. The callout itself contains a FormattedTextView.</p>
+	<div code-sample="sample2" script="FormattedTextView2"></div>
+
+	<h2>Supported tags</h2>
+	<p>*1: Header tags must be on the top level.</p>
+	<p>
+		*2: With these tags , the attributes
+		<code>class</code>
+		and
+		<code>id</code>
+		can be used. For all other tags, no attributes are supported.
+	</p>
+	<table>
+		<tr>
+			<th>Tag</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td>abbr</td>
+			<td>Abbreviation</td>
+		</tr>
+		<tr>
+			<td>acronym</td>
+			<td>Acronym</td>
+		</tr>
+		<tr>
+			<td>address</td>
+			<td>Format as address</td>
+		</tr>
+		<tr>
+			<td>blockquote</td>
+			<td>Blockquote</td>
+		</tr>
+		<tr>
+			<td>br</td>
+			<td>Line break</td>
+		</tr>
+		<tr>
+			<td>cite</td>
+			<td>Cite</td>
+		</tr>
+		<tr>
+			<td>ode</td>
+			<td>Inline Code</td>
+		</tr>
+		<tr>
+			<td>dfn</td>
+			<td>Definition</td>
+		</tr>
+		<tr>
+			<td>div</td>
+			<td>Div *2</td>
+		</tr>
+		<tr>
+			<td>em</td>
+			<td>Emphasis</td>
+		</tr>
+		<tr>
+			<td>h1</td>
+			<td>Header Level 1 *1</td>
+		</tr>
+		<tr>
+			<td>h2</td>
+			<td>Header Level 2 *1</td>
+		</tr>
+		<tr>
+			<td>h3</td>
+			<td>Header Level 3 *1</td>
+		</tr>
+		<tr>
+			<td>h4</td>
+			<td>Header Level 4 *1</td>
+		</tr>
+		<tr>
+			<td>h5</td>
+			<td>Header Level 5 *1 (not supported)</td>
+		</tr>
+		<tr>
+			<td>h6</td>
+			<td>Header Level 6 *1 (not supported)</td>
+		</tr>
+		<tr>
+			<td>kbd</td>
+			<td>Text to be entered via Keyboard</td>
+		</tr>
+		<tr>
+			<td>p</td>
+			<td>Section symbol</td>
+		</tr>
+		<tr>
+			<td>pre</td>
+			<td>Pre formatted text</td>
+		</tr>
+		<tr>
+			<td>q</td>
+			<td>Quotation</td>
+		</tr>
+		<tr>
+			<td>samp</td>
+			<td>Sample (block)</td>
+		</tr>
+		<tr>
+			<td>span</td>
+			<td>Span *2</td>
+		</tr>
+		<tr>
+			<td>strong</td>
+			<td>Strong</td>
+		</tr>
+		<tr>
+			<td>var</td>
+			<td>text that is a variable</td>
+		</tr>
+		<tr>
+			<td>dl</td>
+			<td>Definition list</td>
+		</tr>
+		<tr>
+			<td>dt</td>
+			<td>Definition topic</td>
+		</tr>
+		<tr>
+			<td>dd</td>
+			<td>Definition item</td>
+		</tr>
+		<tr>
+			<td>ol</td>
+			<td>Ordered list (numbered list)</td>
+		</tr>
+		<tr>
+			<td>ul</td>
+			<td>Unordered list (bullet list)</td>
+		</tr>
+		<tr>
+			<td>li</td>
+			<td>List item for "ol" and "ul"</td>
+		</tr>
+	</table>
+	<p>
+		<code>&lt;b&gt;</code>
+		,
+		<code>&lt;u&gt;</code>
+		and
+		<code>&lt;i&gt;</code>
+		tags are not supported because they are deprecated and lack any additional
+		semantic value. If styled accordingly in your chosen theme, you can either use
+		<code>&lt;em&gt;</code>
+		for italic font and
+		<code>&lt;strong&gt;</code>
+		for bold font or use a span tag along with a class carrying the
+		desired styling.
+	</p>
+	<p>
+	<h2>API Documentation</h2>
+	<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.FormattedTextView.html">API documentation</a>
+	</p>
+</body>
+</html>

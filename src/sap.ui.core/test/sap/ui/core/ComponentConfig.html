@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Component - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" 
+	data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
+
+</script>
+
+<script type="text/javascript">
+
+	sap.ui.localResources("samples");
+
+	var oComp = sap.ui.component({
+		name: "samples.components.config"
+	});
+	var oCompCont = new sap.ui.core.ComponentContainer({
+		component: oComp
+	});
+	oCompCont.placeAt("content");
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for <code>sap.ui.core.Component</code></h1>
+	<div id="content"></div>
+</body>
+</html>

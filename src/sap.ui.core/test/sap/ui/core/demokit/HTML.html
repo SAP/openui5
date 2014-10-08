@@ -1,0 +1,436 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.core.HTML">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>HTML Control - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script>
+
+			function rgb(r,g,b) {
+				return 'rgb(' + Math.round(255*r) + ',' + Math.round(255*g) + ',' + Math.round(255*b) + ')';
+			}
+
+			function hsb2rgb(h,s,b) {
+				h = (360.0 * h / 255.0);
+				s = s / 255.0;
+				b = b / 255.0;
+
+				var f,i,hTemp,p,q,t;
+				if ( s == 0 ) {
+					// color is on black-and-white center line
+					return rgb(b,b,b);
+				} else {
+				  	// chromatic color
+				    h = (h % 360) / 60.0;     // h is now IN [0,6)
+				    i = Math.floor(h);        // largest integer <= h
+				    f = h - i;                  // fractional part of h
+
+				    p = b * (1.0 - s);
+				    q = b * (1.0 - (s * f));
+				    t = b * (1.0 - (s * (1.0 - f)));
+
+				    switch(i) {
+					    case 0: return rgb(b,t,p);
+					    case 1: return rgb(q,b,p);
+					    case 2: return rgb(p,b,t);
+					    case 3: return rgb(p,q,b);
+					    case 4: return rgb(t,p,b);
+					    case 5: return rgb(b,p,q);
+				    }
+				}
+			}
+
+			function colorBlock(sColor, iX, iY, iSize) {
+				return jQuery("<div/>").
+					attr("title", sColor).
+					css({
+						"position" : "absolute",
+						"background-color" : sColor,
+						"top" : iY+"px",
+						"left" : iX+"px",
+						"width" : iSize+"px",
+						"height" : iSize+"px"
+					}).
+					click(function(e) { jQuery(this).remove(); });
+			}
+
+			function ColorWorm() {
+				this.color = { h : 220, s : 250, b : 200 };
+				this.vColor = 40.0; // degree per second
+				this.vRotation = -4; // degree per second
+				this.vLingering = 5;
+				this.t0 = 0;
+				this.sTimer = undefined;
+			};
+			ColorWorm.prototype.start = function(iDelay, iStart) {
+				this.stop();
+				this.t0 = new Date().getTime() / 1000;
+				var that = this;
+				setTimeout(function() {
+					this.sTimer = setInterval(function() { that.doFrame() }, iDelay);
+				}, iStart);
+			}
+			ColorWorm.prototype.stop = function() {
+				if ( this.sTimer ) {
+					clearInterval(this.sTimer);
+					this.sTimer = undefined;
+				}
+			}
+			ColorWorm.prototype.doFrame = function() {
+				var t = (new Date().getTime() / 1000) - this.t0;
+				this.color.h = (this.vColor * t / 360 * 255); 
+				var sColor = hsb2rgb(this.color.h, this.color.s, this.color.b);
+				var a = (this.vRotation * t);
+				var r = 15 + 7 * Math.sin(this.vLingering * t);
+				var iL = Math.round(32 + r * Math.cos(a) - 2);
+				var iT = Math.round(32 - r * Math.sin(a) - 2);
+				//jQuery.sap.log.info(sColor + "@" + iL + "," + iT);
+				jQuery('.colorworm').each(function(i,v) {
+					var $=jQuery(this);
+					colorBlock(sColor, iL,iT, 4).appendTo($);
+					if ( $.children().size() > 20 ) {
+						$.children().first().remove();
+					}
+				});
+				//sTimer = setTimeout(doFrameColorWorm,50);
+			}
+
+			jQuery(function() {
+				new ColorWorm().start(50,2000); 
+			});
+
+			function nextColorBlock(sParentId, iMaxCount) {
+				var $parent = jQuery("#"+sParentId); 
+				var i = $parent.children().size();
+				if ( i < iMaxCount ) {
+					var h = i * 255.0 / iMaxCount; // Math.random() * 255.0;
+					var s = 255; //+ Math.random() * 40; 
+					var b = 200; // + Math.random() * 40;
+					var x = Math.round(32 - 4 + s * 20 / 255.0 * Math.cos(h / 255 * 2 * Math.PI)); 
+					var y = Math.round(32 - 4 - s * 20 / 255.0 * Math.sin(h / 255 * 2 * Math.PI));
+					var color = hsb2rgb(h, s, b);
+					colorBlock(color, x,y,8).appendTo($parent);
+				} else {
+					$parent.empty();
+				}
+			}
+
+			function addColorBlockAtCursor($, e, psize, size) {
+				var oOffset;
+			  	if (typeof e.offsetX === "undefined" ) {
+			  		oOffset = jQuery(e.target).offset();
+			  		e.offsetX = e.pageX - oOffset.left;
+			  		e.offsetY = e.pageY - oOffset.top;
+			  	}
+				var dx = e.offsetX - psize/2;
+				var dy = -(e.offsetY - psize/2);
+				var a = 2 * Math.PI + (dx < 0 ? Math.PI - Math.atan2(dy, -dx) : Math.atan2(dy, dx));
+				var h = a / 2 / Math.PI * 255.0;
+				colorBlock(hsb2rgb(h, 255, 200), e.offsetX-4, e.offsetY-4, size).appendTo($);
+			}
+
+			function randomContent() {
+				return jQuery("<div style='border:1px solid blue;padding:2px 5px;'>" + new Date() + "</div>")[0];
+			}
+
+			function updateRedrawInfo(sHtmlId) {
+				var oDomRef = jQuery("#" + sHtmlId)[0];
+				var id = undefined;
+				if ( oDomRef ) {
+					jQuery.data(oDomRef);
+					id = oDomRef[jQuery.expando] || oDomRef.uniqueID || id;
+				}
+				jQuery("#redrawInfo-" + sHtmlId + "-date").text(""+new Date()); // TODO nicer formatting
+				jQuery("#redrawInfo-" + sHtmlId + "-node").text(id);
+			}
+
+		</script>
+
+		<script>
+
+		function createSamplePanel(sId, sTitle, oHtml, aAddtlCtrls) {
+
+			aAddtlCtrls = aAddtlCtrls || [];
+			
+			var oControl = new sap.ui.commons.Panel(sId, {
+				title : new sap.ui.core.Title({text:sTitle}),
+				width : "300px",
+				content : [
+					new sap.ui.commons.layout.MatrixLayout({layoutFixed:false}).
+						createRow(
+							new sap.ui.commons.Label({text:"First Name", labelFor: sId+"_firstname1"}),
+							new sap.ui.commons.TextField(sId + "_firstname1"),
+							new sap.ui.commons.layout.MatrixLayoutCell({
+								rowSpan : 2,
+								content : oHtml
+							})
+						).createRow(
+							new sap.ui.commons.Label({text:"Last Name", labelFor: sId+"_lastname1"}),
+							new sap.ui.commons.TextField(sId+"_lastname1")
+						).createRow(
+							"",
+							"",
+							new sap.ui.commons.Button({
+								text  : "Save",
+							})
+						)
+				]
+			});
+
+			oControl = new sap.ui.commons.layout.MatrixLayout({layoutFixed:false}).
+				createRow(
+					new sap.ui.commons.layout.MatrixLayoutCell({
+						rowSpan : 1 + aAddtlCtrls.length,
+						content : oControl,
+					}),
+					new sap.ui.commons.Button({
+						text  : "Redraw", 
+						press : function(e) { 
+	  	            		e.getSource().getUIArea().invalidate(); 
+						}
+	  				})
+				);
+
+			for(var i=0; i<aAddtlCtrls.length; i++) {
+				oControl.createRow(aAddtlCtrls[i]);
+			}
+
+			return oControl;
+		};
+
+		</script>
+
+<script id='sample1-script'>
+
+    // create the HTML control for Sample 1 (id and variable name are fixed)
+	var html1 = new sap.ui.core.HTML("html1", {
+		// the static content as a long string literal
+		content:
+			"<div style='position:relative;background-color:black;width:64px;height:64px'>" +
+			"<div style='position:absolute;background-color:rgb(200,  0,  0);width:8px;height:8px;top:28px;left:48px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(200,100,  0);width:8px;height:8px;top:18px;left:45px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(200,200,  0);width:8px;height:8px;top:11px;left:38px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(100,200,  0);width:8px;height:8px;top: 8px;left:28px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(  0,200,  0);width:8px;height:8px;top:11px;left:18px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(  0,200,100);width:8px;height:8px;top:18px;left:11px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(  0,200,200);width:8px;height:8px;top:28px;left: 8px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(  0,100,200);width:8px;height:8px;top:38px;left:11px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(  0,  0,200);width:8px;height:8px;top:45px;left:18px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(100,  0,200);width:8px;height:8px;top:48px;left:28px' ></div>" + 
+			"<div style='position:absolute;background-color:rgb(200,  0,200);width:8px;height:8px;top:45px;left:38px' ></div>" +
+			"<div style='position:absolute;background-color:rgb(200,  0,100);width:8px;height:8px;top:38px;left:45px' ></div>" +
+			"</div>",
+		preferDOM : false,			
+		// use the afterRendering event for 2 purposes
+		afterRendering : function(e) {
+
+			// a) add dynamic behavior
+			if ( !e.getParameters()["isPreservedDOM"] ) {
+				var $=e.getSource().$();
+				$.click(function(e) {
+					addColorBlockAtCursor($, e, 64, 8);
+				});
+			}
+    
+			// just for illustration purposes: update the redraw infos in the page
+			updateRedrawInfo(e.getSource().getId()); // note: does not touch / invalidate any UI5 control!
+
+		}
+	});
+
+	// Note: createSamplePanel is just a helper function defined elsewhere
+	var oPanel = createSamplePanel("p1", "Panel with some static HTML", html1); 
+	oPanel.placeAt("sample1");
+
+</script>
+
+<script id='sample2-script'>
+
+	// create the HTML control for Sample 2 (id and variable name are fixed)
+	var html2 = new sap.ui.core.HTML("html2", {
+		// static content
+		content : "<div style='position:relative;width:64px;height:64px;background-color:black;'></div>",
+		// initially behaves the same as Sample 1
+		preferDOM : false,
+		// use the afterRendering event for 2 purposes
+		afterRendering : function(e) {
+
+			// a) add dynamic behavior
+			if ( !e.getParameters()["isPreservedDOM"] ) {
+				var $=e.getSource().$();
+				$.click(function(e) {
+					addColorBlockAtCursor($, e, 64, 8);
+				});
+			}
+
+			// just for illustration purposes: update the redraw infos in the page
+			updateRedrawInfo("html2"); // note: does not touch / invalidate any UI5 control!
+		}
+	});
+
+	// Note: createSamplePanel is just a helper function defined elsewhere
+	createSamplePanel("p2", "Panel with some dynamically enriched HTML", html2, [ 
+		// add a checkbox to toggle the preferDOM property of 'html2'
+		new sap.ui.commons.CheckBox({ 
+			text : "prefer DOM",
+			change : function(e) {
+				html2.setPreferDOM(e.getSource().getChecked());
+			}
+		})
+	]).placeAt("sample2");
+
+</script>
+
+	<script>
+
+		// --------------------------------------------------------------------------------------
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout();
+			oLayout.setLayoutFixed(false);
+			oLayout.createRow(
+					new sap.ui.core.HTML("html3a", {
+						afterRendering : function(e) { updateRedrawInfo("html3a"); }
+					}),
+					new sap.ui.commons.Button({
+						text  : "Redraw",
+						press : function(e) {
+									//start();
+									e.getSource().getUIArea().invalidate();
+								}
+					})
+			);
+			oLayout.placeAt("sample3a");
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout();
+			oLayout.setLayoutFixed(false);
+			oLayout.createRow(
+					new sap.ui.core.HTML("html3b", {
+						afterRendering : function(e) { updateRedrawInfo("html3b"); }
+					}),
+					new sap.ui.commons.Button({
+						text  : "New Content",
+						press : function(e) {
+									//start();
+									sap.ui.getCore().byId("html3b").setDOMContent(randomContent());
+								}
+					}),
+					new sap.ui.commons.Button({
+						text  : "Redraw",
+						press : function(e) {
+									//start();
+									e.getSource().getUIArea().invalidate();
+								}
+					})
+			);
+
+			sap.ui.getCore().byId("html3b").setDOMContent(randomContent());
+			oLayout.placeAt("sample3b");
+
+			// --------------------------------------------------------------------------------------
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout();
+			oLayout.setLayoutFixed(false);
+			oLayout.createRow(
+					new sap.ui.core.HTML({
+						content : "<span class='colorworm' style='display:inline-block;position:relative;width:64px;height:64px;background-color:black;'></span><span class='colorworm' style='display:inline-block;position:relative;width:64px;height:64px;background-color:white;'></span>",
+						preferDOM : true
+					}),
+					new sap.ui.commons.Button({
+						text  : "Redraw", 
+						press : function(e) { 
+									//start(); 
+									e.getSource().getUIArea().invalidate();
+								}
+					})
+			);
+			oLayout.placeAt("sample4");
+
+		</script>
+	</head>
+	<body class="sapUiDemokitBody" role="application">
+	  <h1 color="Yellow" icon="images/ctrls/html-icon.png">HTML Container</h1>
+
+	  	<h2>Overview</h2>
+
+	  	<p>
+		The library controls can be embedded anywhere in an HTML page by the means of a UIArea. Such a UIArea denotes a place by a DOM node in a page where a control, or a tree of controls, will be rendered to. Whenever the JavaScript object that represents the control is modified, the control will be re-rendered. 
+	    </p> 
+	    <p>
+	    The HTML control which is part of the sap.ui.core library package can be used in any other control such as Tab, Panel, MatrixLayout, or others. In comparison to other library controls, the rendering for the HTML control is different: Instead of creating control-specific HTML, the HTML control displays the HTML that you have defined in the <code>content</code> property.
+	    </p>
+
+	    <h2>Examples</h2>
+
+	    <h3>Static HTML Provided as a String</h3>
+
+	    <p>This is the simple use case for the HTML control: Some - usually decorative - HTML fragment is specified as a string and set to the <code>content</code> property. Without further configuration, the HTML control will convert this string to DOM nodes whenever it has to render.</p>
+
+	    <p>The Panel in this example contains several controls out of the library and an HTML control on the right-hand side. The content of the HTML control is defined by a longer string literal. Open the source box to check this; whenever the control is rendered, the string content is rendered as inner HTML and thereby converted to DOM nodes.</p>
+
+	    <p>After rendering, the DOM nodes can be modified by an action such as add node, remove node, modify attribute, or attach event handler, for example. You can click into the HTML control below to simulate such dynamic changes. But whenever the control is rendered again, the original HTML fragment is also rendered and new DOM nodes replace the existing modified ones. Check it with the <i>Redraw</i> button which invalidates and re-renders the HTML control.</p>
+
+	    <div>Last Redraw: <span id="redrawInfo-html1-date"></span>, DOM Node UID: <span id="redrawInfo-html1-node"></span></div>
+	    <div code-sample="sample1" ></div>
+
+
+	    <h3>Static (decorative) HTML Provided as a String With Preserved DOM After Rendering</h3>
+
+	    <p>The second use case is similar to the first one: The HTML fragment is specified as a string. The difference is that after the first rendering, the HTML control tries to preserve the created DOM nodes as long as possible. Before each re-rendering step, the existing DOM is preserved in some hidden page area, and then the control and its relatives (parents, siblings) are rendered - this creates a new DOM node hierarchy. After the rendering, the preserved DOM content of the controls is integrated in the newly created DOM tree.</p>
+
+	    <p>This example is useful when the dynamic changes to the DOM cannot be re-done easily, for example if they represent valuable user interaction. The HTML control initially renders an empty black box. By clicking it, a dynamic modification is simulated (colored boxes are added). When the control is re-rendered, the string content is rendered again, and all dynamic changes are lost. If you enable the <i>preferDOM</i> option which is a control property, the existing DOM node is preserved together with the dynamic changes.</p>
+
+	    <div>Last Redraw: <span id="redrawInfo-html2-date"></span>, DOM Node UID: <span id="redrawInfo-html2-node"></span></div>
+	    <div code-sample="sample2" ></div>
+
+	    <h3>Predefined Content</h3>
+
+	    <p>A different approach for defining the HTML content of the control is to associate some existing DOM content with the control. There are two ways possible to implement this:</p>
+
+	    <li>Automatic Content Association
+	    <p>Embed the content into the HTML page as content of the enclosing UIArea. Give the content the same ID the HTML control has. The framework runtime analyzes the content of the UIArea before rendering it and preserves any content with an ID. After rendering the HTML control, the control will find the preserved content by its ID and display it.</p>
+	    </li>
+	    <li>Manual Content Association
+	    <p>Create the DOM content anywhere on the page and associate it with an HTML control by calling the <code>setDOMContent</code> method. The control will reproduce the content whenever it re-renders.</p> 
+	    </li>
+
+	    <p><b>Sample 3a:</b>Automatic Content Association</p>
+	    <div id="sample3a">
+		<div id="html3a" class='colorworm' style='position:relative;width:64px;height:64px;background-color:black;'>
+		</div>
+	    </div>
+	    <div>Last Redraw: <span id="redrawInfo-html3a-date"></span>, DOM Node UID: <span id="redrawInfo-html3a-node"></span></div>
+
+	    <p><b>Sample 3b:</b>Manual Content Association</p>
+		<p>In this example, some content is created using jQuery and set as the content of the HTML control.</p>
+	    <div id="sample3b"></div>
+	    <div>Last Redraw: <span id="redrawInfo-html3b-date"></span>, DOM Node UID: <span id="redrawInfo-html3b-node"></span></div>
+
+	    <h3>Use Case 4 (experimental): HTML With Multiple Root Nodes</h3>
+
+	    <p>The library controls must have a single root element. If you have the requirement that the HTML can consist of more than one root node, for example if you need a chain of spans with different styles, you can use the HTML control with the experimental support for multiple root nodes. Since this feature is experimental, problems are to be expected, especially in the case that single controls are re-rendered or invalidated. The scenario that should work without any problems is
+	    </p>
+	    <ul>
+	    	<li>Use string content, not a predefined DOM</li>
+	    	<li>Redraw full UIAreas or parents of the HTML control but not the HTML control itself</li>
+	    </ul>
+
+	    <p><b>Sample 4:</b>Multi-Root Content Within a MatrixLayoutCell</p>
+	    <div id="sample4"></div>
+	    <div>Last Redraw: <span id="redrawInfo-html4-date"></span>, DOM Node UID: <span id="redrawInfo-html4-node"></span></div>
+	    <p>Note: This use case is not fully supported by the framework. Especially re-rendering might fail or give unexpected results in the case of multiple roots. Use it only after carefully testing of your scenario.</p>
+
+	    <p>
+	    <h2>API Documentation</h2>
+	    See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.HTML.html">API documentation</a>
+	    </p>
+	</body>
+
+</html>

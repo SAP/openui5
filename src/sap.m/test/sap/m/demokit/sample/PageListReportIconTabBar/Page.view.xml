@@ -1,0 +1,104 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:t="sap.ui.table"
+	xmlns:fb="sap.ui.comp.filterbar"
+	height="100%">
+	<Page title="Title" enableScrolling="false" class="sapMSampleFioriListReportIconTabBarOverflow">
+		<content>
+			<VBox fitContainer="true" class="sapMSampleFioriListReportIconTabBar">
+				<fb:FilterBar>
+					<fb:filterItems>
+						<fb:FilterItem name="A" label="labelA">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterItem>
+						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterItem>
+						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterItem>
+						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterItem>
+					</fb:filterItems>
+					<fb:filterGroupItems>
+						<fb:FilterGroupItem groupName="G1" groupTitle="Group1" name="A" label="labelA" labelTooltip="Tooltip GroupItem Example">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+						<fb:FilterGroupItem groupName="G1" groupTitle="Group1" name="B" label="labelB">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+						<fb:FilterGroupItem groupName="G2" groupTitle="Group2" name="A2" label="labelA2" labelTooltip="Tooltip GroupItem Example">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+						<fb:FilterGroupItem groupName="G2" groupTitle="Group2" name="B2" label="labelB2">
+							<fb:control>
+								<Input type="Text"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+					</fb:filterGroupItems>
+				</fb:FilterBar>
+				<IconTabBar upperCase="true" expandable="false">
+					<items>
+						<IconTabFilter text="Balances" />
+						<IconTabFilter text="Compare" />
+					</items>
+					<content>
+						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
+							<t:toolbar>
+								<Toolbar design="Solid">
+									<Label text="Variant:" labelFor="select" />
+									<Select id="select" width="12rem" />
+									<ToolbarSpacer />
+									<SearchField width="12rem" />
+									<ToolbarSpacer width="1rem" />
+									<SegmentedButton>
+										<buttons>
+											<Button icon="sap-icon://table-view" />
+											<Button icon="sap-icon://bar-chart" />
+										</buttons>
+									</SegmentedButton>
+									<ToolbarSpacer width="1rem" />
+									<Button icon="sap-icon://group-2" type="Transparent" />
+									<Button icon="sap-icon://action-settings" type="Transparent" />
+								</Toolbar>
+							</t:toolbar>
+							<t:columns>
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+								<t:AnalyticalColumn />
+							</t:columns>
+						</t:AnalyticalTable>
+					</content>
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</IconTabBar>
+			</VBox>
+		</content>
+		<footer>
+			<Toolbar>
+				<content>
+					<ToolbarSpacer />
+					<Button text="Grouped View" />
+					<Button text="Classical Table" />
+				</content>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

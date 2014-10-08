@@ -1,0 +1,26 @@
+<mvc:View
+	controllerName="sap.m.sample.DateRangeSelection.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" >
+	<VBox class="marginBoxContent">
+		<Label text="DateRangeSelection with delimiter '@' and displayFormat 'yyyy/MM/dd', set via binding:" labelFor="DRS1"/>
+		<DateRangeSelection
+			id="DRS1"
+			delimiter="{path:'/delimiterDRS1'}"
+			dateValue="{path:'/dateValueDRS1'}"
+			secondDateValue="{path:'/secondDateValueDRS1'}"
+			displayFormat="{path:'/dateFormatDRS1'}"
+			change="handleChange"
+		/>
+
+		<Text text=""/>
+		<Text text=""/>
+		<Text text=""/>
+
+		<Label text="Change event" labelFor="TextEvent" />
+		<Text
+			id="TextEvent"
+		/>
+	</VBox>
+</mvc:View>

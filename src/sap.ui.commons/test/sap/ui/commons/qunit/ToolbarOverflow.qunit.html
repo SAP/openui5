@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.ui.commons.Toolbar
+
+  The focus is on the correct calculation of the number of visible items. When toolbar item widths are influenced
+  by images and these images are only loaded AFTER onAfterRendering (which happens sometimes in Safari and always in Chrome)
+  the calculation is wrong and not repeated after the images are loaded.
+
+  Author: d046011
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+	<title>Test Page for sap.ui.commons.Toolbar Overflow</title>
+
+		<script id="sap-ui-bootstrap"
+			      type="text/javascript"
+			      src="../../../../../resources/sap-ui-core.js"
+			      data-sap-ui-theme="sap_bluecrystal"
+			      data-sap-ui-noConflict="true"
+			      data-sap-ui-libs="sap.ui.commons"> 
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		
+	<script type="text/javascript">
+		
+
+		function addManyItems(oToolbar) {
+			var id = oToolbar.getId();
+
+		    // 10 buttons
+		    var aIcons =
+		      [
+		        "../images/new.png",
+		        "../images/open.png",
+		        "../images/save.png",
+		        "../images/cut.png",
+		        "../images/copy.png",
+		        "../images/paste2.png",
+		        null,
+		        null,
+		        null,
+		        null
+		      ];
+		    var aLabels =
+			  [
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "Forward",
+				  "Process",
+				  "View All",
+				  "Approve"
+		     ];
+
+
+		   // create ten buttons
+		    for (var i = 0; i < 10; ++i) {
+		      var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i]});
+		      if (aIcons[i]) {
+		    	  oButton.setIcon(aIcons[i]);
+		      }
+
+		      // add separators at various positions
+		      if (i==2) { 
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
+		      } else if (i==5) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
+		      } else if (i==8) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
+		      }
+	
+		      oToolbar.addItem(oButton);
+		    }
+	
+		    // input field
+		    var oTextField = new sap.ui.commons.TextField(id + "_tf",
+			  {
+			    value : "#0"
+			  });
+		    oToolbar.addItem(oTextField);
+	
+		    // combo box for 2nd button's text
+		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
+		      {
+		        items :
+		        [
+		          new sap.ui.core.ListItem({text : "#1"}),
+		          new sap.ui.core.ListItem({text : "Do it"}),
+		          new sap.ui.core.ListItem({text : "Hello world"}),
+		          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
+		        ]
+		      });
+		    oToolbar.addItem(oComboBox);
+		    return oToolbar;
+		}
+
+		
+		var oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width:"300px"}).placeAt("uiArea1");
+		addManyItems(oCtrl);
+
+		
+		asyncTest("VisibleItems calculation with images involved", function() {
+			expect(2);
+
+			setTimeout(function(){ // give the Toolbar some time to recognize the change
+				equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible (6 Buttons + 2 Separators)");
+				equal(oCtrl.iItemDomRefCount, 7, "There should be 8 items considered navigable by the ItemNavigation (6 Buttons + 1 overflow button)"); 
+				start();
+			}, 500);
+		});
+
+
+		asyncTest("VisibleItems calculation with item size change", function() {
+			expect(2);
+			sap.ui.getCore().byId("Toolbar_b_0").setWidth("400px");
+
+			setTimeout(function(){ // give the Toolbar some time to recognize the change
+				equal(oCtrl.getVisibleItemInfo().count, 1, "1 item should be considered visible (1 huge Button)");
+				equal(oCtrl.iItemDomRefCount, 2, "There should be 2 items considered navigable by the ItemNavigation (1 huge Button + 1 overflow button)");
+				start();
+			}, 500);
+		});
+
+
+		// ================================================== 
+		//          helper functions 
+		// ================================================== 
+
+		/**
+		 * Helper method using internal knowledge of the renderer to get the DomRef of oCtrl's overflow button
+		 */
+		function getOverflowDomRef() {
+			var sOverflowId = oCtrl.getId() + "-mn";
+			return jQuery.sap.domById(sOverflowId);
+		}
+	
+		/**
+		 * Returns the overflow popup DomRef for oCtrl or null if it does not exist
+		 */
+		function getPopupDomRef() {
+			var child = jQuery.sap.domById(oCtrl.getId()+"-pu");
+			if (child) {
+				return child.parentNode;
+			} else {
+				return null;
+			}
+		}
+
+
+    </script>
+  </head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.commons.Toolbar Overflow</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>	
+		<div id="uiArea1"></div>
+	</body>
+</html>

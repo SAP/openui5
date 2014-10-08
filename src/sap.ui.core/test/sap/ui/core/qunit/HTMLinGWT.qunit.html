@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: HTML / Preserve Content
+  Author: d039071
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for HTML Container in GWT Usage</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core,sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+			// =================================================================
+			// PAGE SETUP
+			// =================================================================
+
+			var oPreserveArea, oBtn1, oBtn2, oBtn3, oTabStrip, oPanel;
+				
+			jQuery(function() {
+				
+				jQuery.sap.require("sap.ui.core.HTML");
+				oPreserveArea = sap.ui.core.RenderManager.getPreserveAreaRef();
+					
+				var oHTML1 = new sap.ui.core.HTML();
+				var oHTML2 = new sap.ui.core.HTML();
+					
+				oBtn1 = document.createElement("button");
+				oBtn1.setAttribute("data-sap-ui-preserve", oHTML1.getId());
+				oBtn1.innerHTML = "My Native Button 1";
+				oPreserveArea.appendChild(oBtn1);
+				
+				oBtn2 = document.createElement("button");
+				oBtn2.setAttribute("data-sap-ui-preserve", oHTML2.getId());
+				oBtn2.innerHTML = "My Native Button 2";
+				oPreserveArea.appendChild(oBtn2);
+				
+				oTabStrip = new sap.ui.commons.TabStrip();
+				
+				oTabStrip.setWidth("100%");
+				oTabStrip.setHeight("100px");
+				
+				oTabStrip.createTab("Tab01", oHTML1);
+				oTabStrip.createTab("Tab02", oHTML2);
+				
+				var oHTML3 = new sap.ui.core.HTML();
+				var oDiv = document.createElement("div");
+				oDiv.setAttribute("data-sap-ui-preserve", oHTML3.getId());
+				oPreserveArea.appendChild(oDiv);
+				
+				oPanel = new sap.ui.commons.Panel();
+				oPanel.setText("Hello World");
+				oPanel.placeAt(oDiv);
+				
+				var oHTML4 = new sap.ui.core.HTML();
+				oBtn3 = document.createElement("button");
+				oBtn3.setAttribute("data-sap-ui-preserve", oHTML4.getId());
+				oBtn3.innerHTML = "My Native Button 3";
+				oPreserveArea.appendChild(oBtn3);
+				
+				oPanel.addContent(oHTML4);
+				
+				oTabStrip.createTab("Tab03", oHTML3);
+				
+				oBtn1.onclick = function () {
+					// modification of tab title triggers rerendering
+					oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + ".");
+				}
+
+				oBtn2.onclick = function () {
+					// modification of tab title triggers rerendering
+					oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + "!");
+					// modification of panel title triggers rerendering
+					oPanel.setText(oPanel.getTitle().getText() + "!");
+				}
+				
+				oBtn3.onclick = function () {
+					// modification of tab title triggers rerendering
+					oTabStrip.getTabs()[0].getTitle().setText(oTabStrip.getTabs()[0].getTitle().getText() + "?");
+					// modification of panel title triggers rerendering
+					oPanel.setText(oPanel.getTitle().getText() + ".");
+				}
+				
+				oTabStrip.placeAt("uiArea1");
+				
+			});
+			
+	
+			// =================================================================
+			// TESTS
+			// =================================================================
+
+			qutils.delayTestStart();
+				
+			module("sap.ui.core.HTML", {
+				setup : function() {},
+				tearDown : function () {}
+			});
+  		
+  			asyncTest("initialized", function() {
+  				setTimeout(function() {
+  					start();
+	  				ok(jQuery("#uiArea1").children().length > 0, "Initialized!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("rerenderTabStrip", function() {
+
+  				oBtn1.click();
+  				
+  				setTimeout(function() {
+					start();
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("tabSwitch1", function() {
+
+  				oTabStrip.setSelectedIndex(1);
+  				
+  				setTimeout(function() {
+					start();
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn2.id, "TabStrip contains btn2!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("tabSwitch2", function() {
+
+  				oTabStrip.setSelectedIndex(2);
+  				
+  				setTimeout(function() {
+					start();
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn3.id, "TabStrip contains btn3!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("rerenderTabStripAndPanel", function() {
+
+  				oBtn3.click();
+  				
+  				setTimeout(function() {
+					start();
+	  				equal(jQuery("button", oTabStrip.getDomRef()).length, 1, "TabStrip contains one button");
+	  				equal(jQuery("button", oTabStrip.getDomRef()).get(0).id, oBtn3.id, "TabStrip contains btn3!");
+	  				equal(jQuery("button", oPreserveArea).length, 2, "Hidden Area contains two hidden buttons!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("tabSwitch3", function() {
+
+  				oTabStrip.setSelectedIndex(0);
+  				
+  				setTimeout(function() {
+					start();
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+  			});
+
+  			asyncTest("rerenderTabStripAndHiddenPanel", function() {
+
+  				oBtn1.click();
+  				oBtn2.click();
+  				oBtn3.click();
+  				
+  				setTimeout(function() {
+					start();
+	  				ok(jQuery("button", oTabStrip.getDomRef()).length == 1, "TabStrip contains one button");
+	  				ok(jQuery("button", oTabStrip.getDomRef()).get(0).id == oBtn1.id, "TabStrip contains btn1!");
+	  				ok(jQuery("button", oPreserveArea).length == 2, "Hidden Area contains two hidden buttons!");
+	  				ok(jQuery("#" + oPanel.getId(), oPreserveArea).length == 1, "Hidden Area contains the panel!");
+	  				ok(jQuery("button", oPanel.getDomRef()).get(0).id == oBtn3.id, "Panel contains btn3!");
+  				}, (sap.ui.Device.browser.safari ? 2500 : 100));
+  				
+			});
+	  			
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for HTML Container in GWT Usage</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="uiArea1"></div>
+	</body>
+</html>

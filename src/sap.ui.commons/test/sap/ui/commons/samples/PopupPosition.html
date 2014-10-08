@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Popup Position Test Page</title>
+
+    <script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="true"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../../resources/sap-ui-core.js"
+			>
+	</script>
+
+	<script src="../../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+      function populateComboWithEntries(/**sap.ui.commons.ComboBox*/oCombo, iFinalLength, aValues) {
+          var finalLength = typeof(iFinalLength) == "number"?iFinalLength:3;
+          var createLevel = function(sPrefix, aChars, oCombo){
+        	  var oItem;
+              for(var i in aChars){
+            	  if(sPrefix.length < finalLength-1) {
+                	  createLevel(sPrefix + aChars[i], aChars, oCombo);
+            	  } else {
+            		  oItem = new sap.ui.core.ListItem({text: sPrefix + aChars[i], tooltip: "Some tooltip"});
+                	  oCombo.addItem(oItem);
+            	  }
+              }
+          };
+          if(!(aValues && aValues.length))
+              aValues = ['a','b'];
+          createLevel('', aValues, oCombo);
+      };
+
+   	  // combobox, no ListBox assigned from the outside
+	  var oCombo5 = new sap.ui.commons.ComboBox("myCombo5");
+    populateComboWithEntries(oCombo5, 2, ["d","e"]);
+    oCombo5.placeAt("target5");
+
+    </script>
+  </head>
+  <body class="sapUiBody" role="application" style="padding: 0; margin: 0;">
+    <div style="display: block; background-repeat: no-repeat; background-image: url(../images/ui5.png); height: 55px; width: 244px;"></div>
+    <div style="margin: 0; padding: 0 10;">
+      <div id="header">
+        <h1>Test Page for Popup Position</h1>
+      </div>
+      <div style="position:relative; left: 200px;border: 1px solid black;width: 320px;">
+      	This box is positioned (position: relative). Open the combo box and the popup contents will be displaced by the offset of this positioned element.
+      	The shadow (and block layer) are placed correctly because in the DOM they are not inside the same subtree, but on top-level, so their position is relative to the page, which is correct.
+      	<div id="target5" ></div>
+      </div>
+
+    </div>
+  </body>
+</html>

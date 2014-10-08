@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>qUnit Page for sap.m.GrowingList databinding</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+
+		var data = {persons:[
+			{name:"Adalbert"},
+			{name:"Anna"},
+			{name:"Karl"},
+			{name:"Berta"},
+			{name:"Maik"},
+			{name:"Franz"},
+			{name:"Andrea"},
+			{name:"Paula"},
+			{name:"Karl"},
+			{name:"Adelheid"},
+			{name:"Brimborium"},
+			{name:"Astrid"},
+			{name:"Bernd"},
+			{name:"Britta"},
+			{name:"Friedrich"},
+			{name:"Fritz"},
+			{name:"Ede"},
+			{name:"Eduard"},
+			{name:"Nicolas"}
+		]};
+
+		var data2 = {persons:[
+			{name:"Adalbert2"},
+			{name:"Berta2"},
+			{name:"Caesar2"},
+			{name:"Dora2"},
+			{name:"Ede2"},
+			{name:"Franz2"},
+			{name:"Gerald2"},
+			{name:"Hermann2"},
+			{name:"Iwona2"},
+			{name:"Joker2"},
+			{name:"Konrad2"}
+		]};
+
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(data);
+		sap.ui.getCore().setModel(model);
+
+		// the List
+		var gl = new sap.m.List("gl", {
+			growingThreshold: 3,
+			growing : true
+		});
+
+		gl.addEventDelegate({
+			onAfterRendering: function(){
+				ok("Complete rendering happened");
+			}
+		})
+
+		var oTemplate = new sap.m.StandardListItem({
+			title: "{name}"
+		});
+
+		var oSorter = new sap.ui.model.Sorter("name", false, function(oContext){
+			return oContext.getProperty("name").charAt(0); // group by first letter of name
+		});
+
+		gl.bindItems({
+			path:"/persons",
+			template:oTemplate,
+			sorter:oSorter
+		});
+
+
+		var app = new sap.m.App("myApp", {
+			initialPage: "page1",
+			pages: [
+				new sap.m.Page("page1", {
+					title: "GrowingList",
+					content: gl
+				})
+			]
+		});
+
+
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+
+		function $ul() {
+			return jQuery("#gl-listUl");
+		}
+
+		function info(index) {
+			var $Item = $ul().children(":eq(" + index + ")");
+			var bHeader = $Item.hasClass("sapMGHLI");
+			var sText = bHeader ? $Item.find(".sapMGHLITitle").text() : $Item.find(".sapMSLITitleOnly").text();
+			return {
+				header: bHeader,
+				text: sText
+			};
+		}
+
+
+		// Tests
+
+		test("GrowingList rendered", function() {
+			expect(10); // incl. rendering
+			app.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			ok(jQuery.sap.domById("gl"), "GrowingList should be rendered");
+			equal($ul().length, 1, "GrowingList should have its list rendered");
+			equal($ul().children().length, 4, "GrowingList should have one header and three items rendered");
+
+			equal(info(0).header, true, "First item should be a header");
+			equal(info(0).text, "A", "First item should be titled 'A'");
+			equal(info(1).header, false, "Second item should not be a header");
+			equal(info(1).text, "Adalbert", "Second item should be titled 'Adalbert'");
+			equal(info(2).header, false, "Third item should not be a header");
+			equal(info(2).text, "Adelheid", "Third item should be titled 'Adelheid'");
+		});
+
+		asyncTest("Grow Tap", function(){
+			expect(5); // no rerendering
+			gl._oGrowingDelegate.requestNewPage(); // this context should be the trigger list item
+			window.setTimeout(function(){
+				equal($ul().children().length, 8, "GrowingList should have two headers and six items rendered");
+
+				equal(info(6).header, true, "Sixth item should be a header");
+				equal(info(6).text, "B", "Sixth item should be titled 'B'");
+				equal(info(7).header, false, "Seventh item should not be a header");
+				equal(info(7).text, "Bernd", "Seventh item should be titled 'Bernd'");
+
+				start();
+			}, 0);
+		});
+
+		asyncTest("change data property", function(){
+			expect(6); // incl rendering
+			model.setProperty("name", "Adx", gl.getItems()[1].getBindingContext())
+
+			window.setTimeout(function(){
+				equal($ul().children().length, 8, "GrowingList should still have two headers and six items rendered");
+
+				equal(info(1).header, false, "Second item should not be a header");
+				equal(info(1).text, "Adelheid", "Second item should be titled 'Adelheid'");
+				equal(info(2).header, false, "Third item should not be a header");
+				equal(info(2).text, "Adx", "Third item should be titled 'Adx'");
+
+				start();
+			}, 0);
+		});
+
+		test("New Data", function(){
+			expect(8); // incl. rerendering
+			model.setData(data2);
+			sap.ui.getCore().applyChanges();
+			equal($ul().children().length, 12, "GrowingList should have six headers and six items rendered");
+
+			equal(info(0).header, true, "First item should be a header");
+			equal(info(0).text, "A", "First item should be titled 'A'");
+			equal(info(1).header, false, "Second item should not be a header");
+			equal(info(1).text, "Adalbert2", "Second item should be titled 'Adalbert2'");
+			equal(info(2).header, true, "Third item should be a header");
+			equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
+		});
+
+	</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.GrowingList databinding</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+
+		<div id="content"></div>
+	</body>
+</html>

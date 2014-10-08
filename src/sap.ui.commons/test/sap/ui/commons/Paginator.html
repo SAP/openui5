@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Paginator - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<script>
+			function onpage(e) {
+				var newPage = e.getParameter("targetPage");
+				var oldPage = e.getParameter("srcPage");
+				oOutput.setText("Navigated to page " + newPage + " (from page " + oldPage + ")");
+			}
+
+			var oPaginator = new sap.ui.commons.Paginator("testPaginator", {numberOfPages:110,currentPage:1,page:onpage});
+			oPaginator.placeAt("uiPaginator");
+
+			var oOutput = new sap.ui.commons.TextView();
+			oOutput.placeAt("output");
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for sap.ui.commons.Paginator</h1>		
+		<p>
+			<h2>Full Paginator - With 110 pages</h2>
+			<div id="uiPaginator"></div>
+		</p>
+		<br>
+		<p>
+			<h2>Event Output:</h2>
+			<div id="output"></div>
+		</p>
+
+	</body>
+</html>

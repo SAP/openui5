@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested module: jquery.sap.resources.js
+  Author: Frank Weigel, Martin Schaus 
+-->
+<html>
+	<head>
+		<title>Test Page for ResourceBunde class</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script language="javascript">
+		
+			function loadBundle(mParams, fDoWhenLoaded, bSkipStart){
+				var oRes = jQuery.sap.resources(mParams);
+				if(!mParams.async){
+					fDoWhenLoaded(oRes);
+				}else{
+					oRes.then(fDoWhenLoaded);
+					if(!bSkipStart){
+						oRes.then(function(){start();}, function(){start();});
+					}
+				}
+			}
+		
+			test("jQuery.sap.resource code available", function() {
+				ok(jQuery.sap.resources, "jQuery.sap.resources must exist");
+				equal(typeof jQuery.sap.resources, "function", "jQuery.sap.resources must be a function");
+			});
+			 
+			module(".properties files");
+			
+			function testAccessAndParsing(oProps){
+				var sValue = oProps.getText("transkey5");
+				equal(sValue, "Test Text 1 zh_HK", "transkey5 accessed");
+				sValue = oProps.getText("transkey4");
+				equal(sValue, "Test Text 1 zh_TW", "transkey4 accessed");
+				sValue = oProps.getText("transkey2");
+				equal(sValue, "Test Text 2 en", "transkey2 accessed");
+				sValue = oProps.getText("transkey1");
+				equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
+				
+				sValue = oProps.getText("emptykey");
+				equal(sValue, "", "emptykey accessed");
+				sValue = oProps.getText("nonexistingkey");
+				equal(sValue, "nonexistingkey", "nonexistingkey accessed");
+			};
+			
+			test("access and parsing (sync)", function() {
+				loadBundle({url : "testdata/resources/bundle.properties", locale : "zh_HK"}, testAccessAndParsing);
+			});
+			
+			asyncTest("access and parsing (async)", function() {
+				loadBundle({url : "testdata/resources/bundle.properties", locale : "zh_HK", async: true}, testAccessAndParsing);
+			});
+
+			function testFallbackForInvalidLocales(oProps){
+				var sValue = oProps.getText("transkey1");
+				equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
+			};
+			
+			test("fallback for invalid locales (sync)", function() {
+				loadBundle({url : "testdata/resources/bundle.properties", locale : "0815"}, testFallbackForInvalidLocales);
+				loadBundle({url : "testdata/resources/bundle.properties", locale : ""}, testFallbackForInvalidLocales);
+				loadBundle({url : "testdata/resources/bundle.properties", locale : undefined}, testFallbackForInvalidLocales);
+			});
+			
+			asyncTest("fallback for invalid locales (async)", function() {
+				loadBundle({url : "testdata/resources/bundle.properties", locale : "0815", async: true}, testFallbackForInvalidLocales, true);
+				loadBundle({url : "testdata/resources/bundle.properties", locale : "", async: true}, testFallbackForInvalidLocales, true);
+				loadBundle({url : "testdata/resources/bundle.properties", locale : undefined, async: true}, testFallbackForInvalidLocales);
+			});
+
+			test("origin info", function() {
+				var oProps = jQuery.sap.resources({url : "testdata/resources/bundle.properties", locale : "en", includeInfo : true});
+				var sValue = oProps.getText("transkey2"),
+					oInfo = sValue.originInfo;
+				equal(oInfo.source, "Resource Bundle", "Origin Info: source");
+				equal(oInfo.url, "testdata/resources/bundle.properties", "Origin Info: url");
+				equal(oInfo.locale, "en", "Origin Info: locale");
+				equal(oInfo.key, "transkey2", "Origin Info: key");
+			});
+
+			module(".hdbtextbundle files");
+
+			/*test("access and parsing", function() {
+				var oProps = jQuery.sap.resources({url : "testdata/resources/bundle.hdbtextbundle", locale : "zh_HK"});
+				var sValue = oProps.getText("transkey5");
+				equal(sValue, "Test Text 1 zh_HK", "transkey5 accessed");
+				sValue = oProps.getText("transkey4");
+				equal(sValue, "Test Text 1 zh_TW", "transkey4 accessed");
+				sValue = oProps.getText("transkey2");
+				equal(sValue, "Test Text 2 en", "transkey2 accessed");
+				sValue = oProps.getText("transkey1");
+				equal(sValue, "Test Text 1 Fallback", "transkey1 accessed");
+			});*/
+			
+			test("fallback for invalid locales (sync)", function() {
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : "0815"}, testFallbackForInvalidLocales);
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : ""}, testFallbackForInvalidLocales);
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : undefined}, testFallbackForInvalidLocales);
+			});
+			
+			asyncTest("fallback for invalid locales (async)", function() {
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : "0815", async: true}, testFallbackForInvalidLocales, true);
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : "", async: true}, testFallbackForInvalidLocales, true);
+				loadBundle({url : "testdata/resources/bundle.hdbtextbundle", locale : undefined, async: true}, testFallbackForInvalidLocales);
+			});
+
+			test("origin info", function() {
+				var oProps = jQuery.sap.resources({url : "testdata/resources/bundle.hdbtextbundle", locale : "en", includeInfo : true});
+				var sValue = oProps.getText("transkey2"),
+					oInfo = sValue.originInfo;
+				equal(oInfo.source, "Resource Bundle", "Origin Info: source");
+				equal(oInfo.url, "testdata/resources/bundle.hdbtextbundle", "Origin Info: url");
+				equal(oInfo.locale, "en", "Origin Info: locale");
+				equal(oInfo.key, "transkey2", "Origin Info: key");
+			});
+
+			module("negative tests");
+
+			test("type with query params and/or hash", 3, function() {
+				try {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.properties?version=2"});
+					ok(true, "no exception must occur");
+				} catch (e) {
+					ok(false, "no exception must occur");
+				}
+				try {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.properties#2"});
+					ok(true, "no exception must occur");
+				} catch (e) {
+					ok(false, "no exception must occur");
+				}
+				try {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.properties?version=2#2"});
+					ok(true, "no exception must occur");
+				} catch (e) {
+					ok(false, "no exception must occur");
+				}
+			});
+			
+			test("invalid file types", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle"});
+				}, "Sync: URL without file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle", async: true});
+				}, "Async: URL without file extension should raise an exception");
+			});
+
+			test("unsupported type (sync)", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json"});
+				}, "Sync: URL with invalid file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json", async: true});
+				}, "Async: URL with invalid file extension should raise an exception");
+			});
+
+			test("supported type after query", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json?.properties"});
+				}, "Sync: URL with invalid file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json?.properties", async: true});
+				}, "Async: URL with invalid file extension should raise an exception");
+			});
+
+			test("supported type after hash", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json#.properties"});
+				}, "Sync: URL with invalid file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json#.properties", async: true});
+				}, "Async: URL with invalid file extension should raise an exception");
+			});
+
+			test("supported type after query and hash", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json?test=true#.properties"});
+				}, "Sync: URL with invalid file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources/bundle.json?test=true#.properties", async: true});
+				}, "Async: URL with invalid file extension should raise an exception");
+			});
+
+			test("unexpected position of known type", function() {
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources.properties/bundle"});
+				}, "Sync: URL with misplaced file extension should raise an exception");
+				
+				raises(function() {
+					jQuery.sap.resources({ url : "testdata/resources.properties/bundle", async: true});
+				}, "Async: URL with misplaced file extension should raise an exception");
+			});
+			
+			test("enhancement", function(){
+				var oBundle = new jQuery.sap.resources({ url : "testdata/messages.properties" });
+				equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
+				equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
+				var oCustomBundle = new jQuery.sap.resources({ url : "testdata/messages_custom.properties" });
+				oBundle._enhance(oCustomBundle);
+				equal(oBundle.getText("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+				equal(oBundle.getText("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+			});
+
+			module("fallback");
+			
+			test("check expected sequences", function() {
+
+				function checkSequence(sLocale, aExpected) {
+					
+					var aLocales = [],
+						fnOrigProperties = jQuery.sap.properties;
+					
+					try {
+						// create a spy & mock for the properties function
+						jQuery.sap.properties = function(mParams) {
+							// just record the requested locales (by analyzing the URLs) 
+							var sUrl = mParams.url;
+							var sLocale;
+							var m = /dummy([^.]*)\.properties/i.exec(sUrl);
+							if ( m ) {
+								sLocale = m[1];
+							}
+							aLocales.push(sLocale);
+							// return a dummy bag that never finds a key
+							// This ensures that the fallback sequence is followed to the end
+							return {
+								getProperty: function(sKey) {}
+							};
+						}
+
+						// ask for a bundle with a well known name
+						var oBundle = new jQuery.sap.resources({ url : "dummy.properties", locale: sLocale});
+						// and for a text in it
+						oBundle.getText("DUMMY_KEY");
+						
+					} finally {
+						jQuery.sap.properties = fnOrigProperties;
+					}
+					
+					deepEqual(aLocales, aExpected, "locale fallback should match for '" + sLocale + "'");
+
+					return aLocales;
+				} 
+				
+				// simple test
+				checkSequence("de", ["_de", "_en", ""]);
+				// ensure that en is not requested twice
+				checkSequence("en", ["_en", ""]);
+				// simple case with region
+				checkSequence("de-CH", ["_de_CH", "_de", "_en", ""]);
+				// underscore instead of dash
+				checkSequence("fr_CH", ["_fr_CH", "_fr", "_en", ""]);
+				// JDK like language, region and variant
+				checkSequence("en_EN_Geekish", ["_en_EN_Geekish", "_en_EN", "_en", ""]);
+				// special case Hong Kong, should fallback to Taiwan
+				checkSequence("zh_HK", ["_zh_HK", "_zh_TW", "_zh", "_en", ""]);
+				// special case BCP47 tag with private extension for 1Q/saptrc, must always map to en-US and variant saptrc 
+				checkSequence("es-ES-x-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
+				// special case BCP47 tag with private extension for 1Q/sappsd, must always map to en-US and variant sappsd 
+				checkSequence("es-ES-x-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+				// special case BCP47 tag with variant for 1Q/saptrc, must always map to en-US and variant saptrc 
+				checkSequence("es-ES-saptrc", ["_en_US_saptrc", "_en_US", "_en", ""]);
+				// special case BCP47 tag with variant for 1Q/sappsd, must always map to en-US and variant sappsd 
+				checkSequence("es-ES-sappsd", ["_en_US_sappsd", "_en_US", "_en", ""]);
+			});
+		</script>
+  </head>
+  <body>		
+		<h1 id="qunit-header">QUnit tests: sap.ui.core.Core</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+	</body>
+</html>

@@ -1,0 +1,14 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout class="marginVerticalContent">
+		<Slider value="30" width="90%" />
+		<Slider value="27" width="10em" />
+		<Slider value="40" width="15em" />
+		<Slider value="5" width="66%"
+			min="0" max="50" enabled="false" />
+		<Slider value="9" width="77%"
+			min="0" max="10" />
+	</l:VerticalLayout>
+</mvc:View>

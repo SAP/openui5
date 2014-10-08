@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>QUnit Tests - sap.m.Tile</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script>
+
+		var core = sap.ui.getCore();
+
+		module("Dimensions");
+		
+		
+		test("ShouldRoundDimensionsToFloor", function() {
+			// SUT
+			var sut = new sap.m.Tile();
+						
+			// Act
+			sut.setPos(1.8,2.4);
+
+			// Assert
+			equals(sut._posX,1)
+			equals(sut._posY,2)
+		});
+
+		asyncTest("ShouldSetStyledForPosition", function() {
+			// Arrange
+			var sut, $sut,
+				xPosition = 5,
+				yPosition = 8;
+			
+						
+			// SUT
+			sut = new sap.m.Tile();
+			
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();	
+			
+			// Act
+			sut.setPos(xPosition,yPosition);
+			core.applyChanges();	
+			$sut = sut.$();
+			
+			setTimeout(function(){		
+
+				var result = $sut.css("transform") || $sut.css("-webkit-transform") || $sut.css("msTransform") || $sut.css("MozTransform");
+			
+				// Assert
+				if (result.indexOf('matrix3d')==0) {
+					equal(result,"matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, " + xPosition + ", " + yPosition + ", 0, 1)" );
+								} else {
+					equal(result,"matrix(1, 0, 0, 1, " + xPosition + ", " + yPosition + ")" );
+				}
+				start();
+			},800);
+		});
+		
+		test("ShouldSetTheSize", function() {
+			// Arrange
+			var sut,
+				width = 3,
+				height = 4;
+
+			// SUT
+			sut = new sap.m.Tile();
+
+			// Act
+			sut.setSize(width,height);
+
+			// Assert
+			equal(sut._width,width);
+			equal(sut._height,height);
+		});
+		
+
+		module("Properties");
+		
+
+		test("ShouldSetRemoveable", function() {
+			// SUT
+			var sut = new sap.m.Tile();
+			
+			// ACT
+			sut.isEditable(false);
+			
+			// Assert
+			equals(sut._bIsEditable,false)
+		});
+
+		
+		test("ShouldSetIfATileIsDragged", function() {
+				// SUT
+				var sut = new sap.m.Tile();
+				sut.isEditable(true);
+				sut.placeAt("qunit-fixture");
+
+				core.applyChanges();	
+				
+				// Act
+				sut.isDragged(true);
+
+				// Assert
+
+				ok(sut.$().hasClass("sapMTileDrag"),"has drag class set");	
+		});
+			
+		module("Events");
+		
+		test("ShouldReactOnTouchstart", function() {
+			// SUT
+			var sut = new sap.m.Tile();
+			sut.placeAt("qunit-fixture");
+
+			core.applyChanges();	
+			
+			// Act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(),{clientX: 0, clientY: 0});
+			
+			// Assert
+			ok(sut.$().hasClass("sapMTileActive"));
+			ok(sut.$().hasClass("sapMTileActive-CTX"));
+		});
+		
+		test("ShouldReactOnTouchEnd", function() {
+			//SUT
+			var sut = new sap.m.Tile();
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();	
+			
+			sut.$().toggleClass("sapMTileActive",true);
+			sut.$().toggleClass("sapMTileActive-CTX",true);
+			
+			//Act
+			sap.ui.test.qunit.triggerTouchEvent("touchend",sut.getDomRef());
+			
+			//Assert
+			ok(!sut.$().hasClass("sapMTileActive"));
+			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			
+		});
+		
+		test("ShouldReactOnTouchMove", function() {
+			//SUT
+			var sut = new sap.m.Tile();
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();	
+			
+			sap.ui.test.qunit.triggerTouchEvent("touchstart",sut.getDomRef(), {clientX: 0, clientY: 0});
+			
+			//Act
+			sap.ui.test.qunit.triggerTouchEvent("touchmove",sut.getDomRef(), {clientX: 100, clientY: 100});
+			
+			//Assert
+			ok(!sut.$().hasClass("sapMTileActive"));
+			ok(!sut.$().hasClass("sapMTileActive-CTX"))
+			
+		});
+		
+		test("ShouldPreventTapEventForChildren", function() {
+			//Arrange
+			var result ,
+			
+			//SUT
+				sut = new sap.m.Tile(),
+				
+			    container = new sap.m.TileContainer({tiles: [sut]});
+			
+			container._bAvoidChildTapEvent = true;
+			container.placeAt("qunit-fixture");
+			core.applyChanges();	
+		
+			//Act
+			result = sut._parentPreventsTapEvent;
+			sut._parentPreventsTapEvent = 5;
+		
+			//Assert
+			equal(result,true);
+			equal(result,sut._parentPreventsTapEvent);
+			container.destroy();
+		});
+
+	</script>
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit Tests - sap.m.Tile</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

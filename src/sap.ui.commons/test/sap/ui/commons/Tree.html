@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Tree - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<style>
+		.red {color:red}
+		.green {color:green}
+		.blue {color:blue}
+		</style>
+
+		<script>
+
+		function addSubNodes(oEvent){
+			alert("subNodes!");
+
+		}
+		var ocNode15;
+
+		var oTree1 = new sap.ui.commons.Tree("tree1", {title:"Tree with Header", width:"90%",height:"300px",showHearderIcons:true, showHorizontalScrollbar:false, minWidth:"100px"});		
+
+		var oNode11 = new sap.ui.commons.TreeNode("node11", {text:"Root 1",icon:"images/tree/library.gif", expanded: true});
+
+		var oNode13 = new sap.ui.commons.TreeNode("node13", {text:"Node 1.1 with preventDefault", expanded:true})
+
+		var oNode15 = new sap.ui.commons.TreeNode("node15", {text:"Not selectable node", hasExpander:true, selectable:false, expanded:false});
+		oNode15.attachToggleOpenState(function addSubNodes(oEvent){
+
+			if(!ocNode15){
+				ocNode15 = new sap.ui.commons.TreeNode("cnode15", {text:"Dyna Node"});
+				oNode15.addNode(ocNode15);
+				jQuery.sap.log.warning("New dyna node");
+			}
+
+		});
+		oNode13.addNode(oNode15);
+
+		oNode11.addNode(oNode13);
+
+		var oNode14 = new sap.ui.commons.TreeNode("node14", {text:"Node 1.2",icon:"images/tree/Image.gif",expanded: true});
+
+		var oNode16 = new sap.ui.commons.TreeNode("node16", {text:"Node 1.2.1", isSelected: true});
+
+		var oNode17 = new sap.ui.commons.TreeNode("node17", {text:"Really really really really really really really really really really really really really really really really long text for Node 1.2.1.1"});
+		oNode16.addNode(oNode17);
+
+		oNode14.addNode(oNode16);
+
+		oNode11.addNode(oNode14);
+
+		oTree1.addNode(oNode11);
+
+		var oNode12 = new sap.ui.commons.TreeNode("node12", {text:"Root 2"});
+		oTree1.addNode(oNode12);
+
+		oTree1.attachSelect(function(oEvent) {
+			if (oEvent.getParameter("node").getId() == "node13") {
+				oEvent.preventDefault();
+			}
+		});
+
+
+		//oNode13.attachToggleOpenState(function (oEvent){alert("Node was toggled. Expanded: " + oEvent.mParameters.opened)});
+		//oNode13.attachSelected(function (oEvent){alert("Node selected")});
+
+		oTree1.placeAt( "uiTree" );
+
+
+		////Second Tree
+
+		var oTree2 = new sap.ui.commons.Tree("tree2", {title:"Tree with Header", width:"200px",height:"300px", showHorizontalScrollbar:true, showHeader:false});		
+
+		var oNode21 = new sap.ui.commons.TreeNode("node21", {text:"Root 1"});
+
+		var oNode23 = new sap.ui.commons.TreeNode("node23", {text:"Node 1.1", expanded:false});
+
+		var oNode25 = new sap.ui.commons.TreeNode("node25", {text:"Node 1.1.1"});
+		oNode23.addNode(oNode25);
+
+		oNode21.addNode(oNode23);
+
+		var oNode24 = new sap.ui.commons.TreeNode("node24", {text:"Node 1.2"});
+
+		var oNode26 = new sap.ui.commons.TreeNode("node26", {text:"Node 1.2.1"});
+
+		var oNode27 = new sap.ui.commons.TreeNode("node27", {text:"Really really really really long text for Node 1.2.1.1"});
+		oNode26.addNode(oNode27);
+
+		oNode24.addNode(oNode26);
+
+		oNode21.addNode(oNode24);
+
+		oTree2.addNode(oNode21);
+
+		var oNode22 = new sap.ui.commons.TreeNode("node22", {text:"Root 2"});
+		oTree2.addNode(oNode22);
+
+		oTree2.placeAt( "uiTreeTransparent" );
+
+		////Third Tree
+
+		var oTree3 = new sap.ui.commons.Tree("tree3", {title:"Tree with custom styles"});		
+
+		var oNode31 = new sap.ui.commons.TreeNode("node31", {text:"Root 1"}).addStyleClass("red");
+
+		var oNode33 = new sap.ui.commons.TreeNode("node33", {text:"Node 1.1", expanded:false});
+
+		var oNode35 = new sap.ui.commons.TreeNode("node35", {text:"Node 1.1.1"});
+		oNode33.addNode(oNode35);
+
+		oNode31.addNode(oNode33);
+
+		var oNode34 = new sap.ui.commons.TreeNode("node34", {text:"Node 1.2"}).addStyleClass("green");
+
+		var oNode36 = new sap.ui.commons.TreeNode("node36", {text:"Node 1.2.1"}).addStyleClass("blue");
+
+		var oNode37 = new sap.ui.commons.TreeNode("node37", {text:"Really really really really long text for Node 1.2.1.1"});
+		oNode36.addNode(oNode37);
+
+		oNode34.addNode(oNode36);
+
+		oNode31.addNode(oNode34);
+
+		oTree3.addNode(oNode31);
+
+		var oNode32 = new sap.ui.commons.TreeNode("node32", {text:"Root 2"});
+		oTree3.addNode(oNode32);
+
+		oTree3.placeAt( "uiTreeCustom" );
+
+		////Fourth Tree
+
+		var oTree4 = new sap.ui.commons.Tree("tree4", {title:"Tree with custom styles", showHeader: false});		
+
+		var oNode41 = new sap.ui.commons.TreeNode("node41", {text:"Root 1", icon:"sap-icon://cart"});
+
+		var oNode43 = new sap.ui.commons.TreeNode("node43", {text:"Node 1.1", icon:"sap-icon://begin", expanded:false});
+
+		var oNode45 = new sap.ui.commons.TreeNode("node45", {text:"Node 1.1.1", icon:"sap-icon://alert"});
+		oNode43.addNode(oNode45);
+
+		oNode41.addNode(oNode43);
+
+		var oNode44 = new sap.ui.commons.TreeNode("node44", {text:"Node 1.2", icon:"sap-icon://group"});
+
+		var oNode46 = new sap.ui.commons.TreeNode("node46", {text:"Node 1.2.1", icon:"sap-icon://e-care"});
+
+		var oNode47 = new sap.ui.commons.TreeNode("node47", {text:"Really really really really long text for Node 1.2.1.1", icon:"sap-icon://customer"});
+		oNode46.addNode(oNode47);
+
+		oNode44.addNode(oNode46);
+
+		oNode41.addNode(oNode44);
+
+		oTree4.addNode(oNode41);
+
+		var oNode42 = new sap.ui.commons.TreeNode("node42", {text:"Root 2", icon:"sap-icon://action-settings"});
+		oTree4.addNode(oNode42);
+
+		oTree4.placeAt( "uiTreeIcon" );
+
+		////Fifth Tree
+
+	function createStandardTree() {
+		var oTree5 = new sap.ui.commons.Tree("tree5", {title : "Tree scrollIntoView", width : "240px", height : "250px", showHearderIcons : true, showHorizontalScrollbar : true});
+		var oNode50 = new sap.ui.commons.TreeNode("node50", {text : "Root"});
+		oTree5.addNode(oNode50);
+		var oNode51 = new sap.ui.commons.TreeNode("node51", {text : "Node"});
+		oNode50.addNode(oNode51);
+		var oNode52 = new sap.ui.commons.TreeNode("node52", {text : "Node"});
+		oNode51.addNode(oNode52);
+		var oNode53 = new sap.ui.commons.TreeNode("node53", {text : "Node"});
+		oNode52.addNode(oNode53);
+		var oNode54 = new sap.ui.commons.TreeNode("node54", {text : "Node"});
+		oNode53.addNode(oNode54);
+		var oNode55 = new sap.ui.commons.TreeNode("node55", {text : "Node"});
+		oNode54.addNode(oNode55);
+		var oNode56 = new sap.ui.commons.TreeNode("node56", {text : "Node"});
+		oNode55.addNode(oNode56);
+		var oNode57 = new sap.ui.commons.TreeNode("node57", {text : "Node"});
+		oNode56.addNode(oNode57);
+		var oNode58 = new sap.ui.commons.TreeNode("node58", {text : "Node"});
+		oNode57.addNode(oNode58);
+		var oNode59 = new sap.ui.commons.TreeNode("node59", {text : "Node"});
+		oNode58.addNode(oNode59);
+		var oNode60 = new sap.ui.commons.TreeNode("node60", {text : "Node"});
+		oNode59.addNode(oNode60);
+		var oNode61 = new sap.ui.commons.TreeNode("node61", {text : "Node"});
+		oNode60.addNode(oNode61);
+		var oNode62 = new sap.ui.commons.TreeNode("node62", {text : "Node"});
+		oNode61.addNode(oNode62);
+		var oNode63 = new sap.ui.commons.TreeNode("node63", {text : "Node"});
+		oNode62.addNode(oNode63);
+		var oNode64 = new sap.ui.commons.TreeNode("node64", {text : "Node"});
+		oNode63.addNode(oNode64);
+		var oNode65 = new sap.ui.commons.TreeNode("node65", {text : "Node"});
+		oNode64.addNode(oNode65);
+		var oNode66 = new sap.ui.commons.TreeNode("node66", {text : "Node"});
+		oNode65.addNode(oNode66);
+		var oNode67 = new sap.ui.commons.TreeNode("node67", {text : "Node"});
+		oNode66.addNode(oNode67);
+		return oTree5;
+		}
+
+	var oStandardTree = createStandardTree();
+	oStandardTree.placeAt('uiTreeScrollIntoView1');
+
+	var oButton1 = new sap.ui.commons.Button();
+	oButton1.setText("Select first Node");
+	oButton1.placeAt('uiTreeScrollIntoView2');
+	oButton1.attachPress(function() {
+	var selnode1 = sap.ui.getCore().getControl("node66");
+	selnode1.select();
+	});
+
+	var oButton2 = new sap.ui.commons.Button();
+	oButton2.setText("Select second Node");
+	oButton2.placeAt('uiTreeScrollIntoView2');
+	oButton2.attachPress(function() {
+	var selnode2 = sap.ui.getCore().getControl("node51");
+	selnode2.select();
+	});
+
+		/*function test(oEvent){
+			var oTree = oTree1;
+			var oNode = oNode13;
+
+			if(oTree.getSelection()){
+				jQuery.sap.log.warning("Node initially selected: " + oTree.getSelection().getId());
+			}
+
+			//oNode.setSelectable(true);
+			//oNode.setSelectable(false);
+
+			oNode.setIsSelected(true);
+			//oNode.setIsSelected(false);
+
+			jQuery.sap.log.warning("Node is selectable: " + oNode.getSelectable());
+			jQuery.sap.log.warning("Node is selected: " + oNode.getIsSelected());
+
+			if(oTree.getSelection()){
+				jQuery.sap.log.warning("Node finally selected: " + oTree.getSelection().getId());
+			}
+		}
+
+		var oButton1 = new sap.ui.commons.Button("button1", {text:"test"});
+		oButton1.attachPress(test);
+		oButton1.placeAt( "uiButton" );*/
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1 id="header">Test Page for <code>sap.ui.commons.Tree</code></h1>	
+
+		<div id="uiTree"></div>
+		<br/>
+		<div id="uiButton"></div>
+		<br/>
+		<div id="uiTreeTransparent"></div>
+		<br/>
+		<div id="uiTreeCustom"></div>
+		<br/>
+		<div id="uiTreeIcon"></div>
+		<br/>
+		<div id="uiTreeScrollIntoView1" style="display:inline-block;"></div>
+		<div id="uiTreeScrollIntoView2" style="display:inline-block; vertical-align: top;"></div>
+	</body>
+</html>

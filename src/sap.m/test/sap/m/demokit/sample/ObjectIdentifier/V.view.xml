@@ -1,0 +1,14 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectIdentifier.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		binding="{/ProductCollection/0}"
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<ObjectIdentifier title="{Name}" text="{Description}" titleActive="true" titlePress="titleClicked"/>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

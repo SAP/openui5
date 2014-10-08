@@ -1,0 +1,856 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>ObjectHeader - sap.m</title>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<!-- QUnit libraries -->
+
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+ 	jQuery.sap.require("sap.ui.core.IconPool");
+
+	var domRef = null;
+	var eventHandler = function(oEvent) {
+
+		domRef = oEvent.getParameters().domRef;
+	}
+
+	var ohBasicId = "ohBasic";
+
+	var attrs1 = [ new sap.m.ObjectAttribute("oa1", {
+		text : "Contract #D1234567890"
+	}), new sap.m.ObjectAttribute("oa2", {
+		text : "Created by John Doe",
+		active : true
+	}) ];
+
+	var statuses1 = [ new sap.m.ObjectStatus("oses1", {
+		text : "Statuses 1",
+		state : sap.ui.core.ValueState.Success
+	}), new sap.m.ObjectStatus("oses2", {
+		text : "Statuses 2",
+		state : sap.ui.core.ValueState.Success
+	}), new sap.m.ObjectAttribute("oattr1", {
+		text : "Should not be displayed"
+	}), new sap.m.ProgressIndicator(ohBasicId + "-pi", {
+		visible : true,
+		enabled : true,
+		barColor : sap.ui.core.BarColor.NEUTRAL,
+		displayValue : '80%',
+		percentValue : 80,
+		showValue : true,
+		width : '100%',
+		height : '1.375rem',
+	}) ];
+
+	var oItem0 = new sap.ui.core.Item({
+		key : "0",
+		text : "item 0",
+		enabled : true
+	});
+
+	var oItem1 = new sap.ui.core.Item({
+		key : "1",
+		text : "item 1",
+		enabled : true
+	});
+
+	var oItem2 = new sap.ui.core.Item({
+		key : "2",
+		text : "item 2",
+		enabled : true
+	});
+
+	var oItem3 = new sap.ui.core.Item({
+		key : "3",
+		text : "item 3",
+		enabled : true
+	});
+
+	var oItem4 = new sap.ui.core.Item({
+		key : "4",
+		text : "item 4",
+		enabled : true
+	});
+
+	//test popover title    
+	var oTitleArrowDomRef = null;
+	var oTitleArrowEventHandler = function(oEvent) {
+
+		oTitleArrowDomRef = oEvent.getParameters().domRef;
+	}
+
+	var ohBasic = new sap.m.ObjectHeader(ohBasicId, {
+		intro : "On behalf of John Smith",
+		introPress : eventHandler,
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		titlePress : eventHandler,
+		showTitleSelector : true,
+		titleSelectorPress : oTitleArrowEventHandler,
+		number : "3.624",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconPress : eventHandler,
+		attributes : attrs1,
+		statuses : statuses1,
+		firstStatus : new sap.m.ObjectStatus("os1", {
+			text : "Ñgçy Positive Text Ñgçy",
+			state : sap.ui.core.ValueState.Success,
+		}),
+		secondStatus : new sap.m.ObjectStatus("os2", {
+			text : "Negative Text Ñgçy",
+			state : sap.ui.core.ValueState.Error,
+		}),
+		tooltip : "Test tooltip for the header",
+		backgroundDesign : sap.m.BackgroundDesign.Solid
+	});
+	ohBasic.placeAt("objectHeaders");
+
+	var attrs2 = [ new sap.m.ObjectAttribute({
+		text : "It is great to flag objects!"
+	}), new sap.m.ObjectAttribute({
+		text : "It is great to markFavorite objects!"
+	}) ];
+
+	var ohFlagFavId = "flag_fav";
+	var ohFlagFav = new sap.m.ObjectHeader({
+		id : ohFlagFavId,
+		intro : "Flag & Favorites",
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		number : "3.624",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		attributes : attrs2,
+		firstStatus : new sap.m.ObjectStatus({
+			text : "Ñgçy Positive Text Ñgçy",
+			state : sap.ui.core.ValueState.Success
+		}),
+		secondStatus : new sap.m.ObjectStatus({
+			text : "Negative Text Ñgçy",
+			state : sap.ui.core.ValueState.Error
+		}),
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true
+	});
+	ohFlagFav.placeAt("objectHeaders");
+
+	var ohFlagFavId2 = "flag_fav2";
+	var ohFlagFav2 = new sap.m.ObjectHeader({
+		id : ohFlagFavId2,
+		intro : "Flag & Favorites",
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		number : "3.624",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "It is great to flag objects!"
+		}), new sap.m.ObjectAttribute({
+			text : "It is great to markFavorite objects!"
+		}) ],
+		firstStatus : new sap.m.ObjectStatus({
+			text : "Ñgçy Positive Text Ñgçy",
+			state : sap.ui.core.ValueState.Success
+		}),
+		secondStatus : new sap.m.ObjectStatus({
+			text : "Negative Text Ñgçy",
+			state : sap.ui.core.ValueState.Error
+		}),
+	});
+	ohFlagFav2.placeAt("objectHeaders");
+
+	var ohAttributeAndFlagId2 = "ohAttributeAndFlag2";
+
+	var ohAttributeAndFlag2 = new sap.m.ObjectHeader(ohAttributeAndFlagId2, {
+		title : "Object that is markFlagged with attribute",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		attributes : [ new sap.m.ObjectAttribute(ohAttributeAndFlagId2 + "-attr1", {
+			text : "Attribute number 1"
+		}) ],
+		markFlagged : true,
+		showMarkers : true
+	});
+	ohAttributeAndFlag2.placeAt("objectHeaders");
+
+	module("Rendering All Fields");
+
+	test("ControlRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId), null, "ObjectHeader Basic should be rendered.");
+	});
+
+	test("TooltipRendered", function() {
+
+		equal(jQuery("#" + ohBasicId).attr("title"), "Test tooltip for the header", "Tooltip should be rendered.");
+	});
+
+	test("IntroRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-intro"), null, "Intro should be rendered.");
+	});
+
+	test("TitleRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasic._titleText.getId()), null, "Title should be rendered.");
+	});
+
+	test("TitleArrowRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-titleArrow"), null, "Title Arrow Icon should be rendered.");
+		equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
+	});
+
+	test("NumberRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
+	});
+
+	test("NumberUnitRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-numberUnit"), null, "Number Unit should be rendered.");
+	});
+
+	test("AttributesRendered", function() {
+
+		notEqual(jQuery.sap.domById("oa1"), null, "Object attribute #1 should be rendered.");
+		notEqual(jQuery.sap.domById("oa2"), null, "Object attribute #2 should be rendered.");
+	});
+
+	test("StatusesRendered", function() {
+
+		notEqual(jQuery.sap.domById("oses1"), null, "Object statuses #1 should be rendered.");
+		notEqual(jQuery.sap.domById("oses2"), null, "Object statuses #2 should be rendered.");
+		equal(jQuery.sap.domById("oattr1"), null, "Object attribute should not be rendered.");
+	});
+
+	test("InfoRendered", function() {
+
+		notEqual(jQuery.sap.domById("os1"), null, "First status should be rendered.");
+		notEqual(jQuery.sap.domById("os2"), null, "Second status info should be rendered.");
+	});
+
+	test("FavoriteRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohFlagFavId + "-favorite"), null, "Favorite marker should be rendered.");
+		equal(jQuery.sap.byId(ohFlagFavId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite on icon should be rendered.");
+
+		equal(jQuery.sap.domById(ohFlagFavId2 + "-favorite"), null, "Favorite marker should not be rendered.");
+	});
+
+	test("FlagRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohFlagFavId + "-flag"), null, "Flag marker should be rendered.");
+		equal(jQuery.sap.byId(ohFlagFavId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
+
+		equal(jQuery.sap.domById(ohFlagFavId2 + "-flag"), null, "Flag marker should not be rendered.");
+
+		// test flag rendering with one attribute
+		notEqual(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag"), null, "Flag marker should be rendered.");
+		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
+
+	});
+
+	test("Flag Rendering Position", function() {
+
+		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop, jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop,
+				"Attribute and flag should be rendered on the same row");
+	});
+
+	test("ProgressIndicatorRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-pi"), null, "Progress Indicator should be rendered.");
+		ok(!jQuery(jQuery("#ohBasic .sapMOHStatusFixedWidth")[4]).attr("style"), "Progress Indicator only use 35% width.");
+		equal(jQuery("#ohBasic .sapMOHStatusFixedWidth .sapMPI").css("float"), "right", "Progress Indicator is floating right");
+	});
+
+	test("NumberStateColorRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
+		ok(jQuery("#ohBasic .sapMOHNumberStateSuccess").length, "Number color uses value state success color.");
+	});
+
+	asyncTest("Placeholders for invisible attributes", function() {
+
+		var oH = new sap.m.ObjectHeader({
+			title : "Invisible attribute issue",
+			attributes : [ new sap.m.ObjectAttribute({
+				text : "Invisible attribute",
+				visible : false
+			}), ]
+		});
+		oH.placeAt('objectHeaders');
+
+		setTimeout(function() {
+
+			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
+			oH.destroy();
+			start();
+		});
+	});
+
+	asyncTest("Placeholders for invisible status", function() {
+
+		var oH = new sap.m.ObjectHeader({
+			title : "Invisible status issue",
+			statuses : [ new sap.m.ProgressIndicator({
+				percentValue : 99,
+				state : sap.ui.core.ValueState.Error,
+				visible : false
+			}) ]
+		});
+		oH.placeAt('objectHeaders');
+
+		setTimeout(function() {
+
+			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
+			oH.destroy();
+			start();
+		});
+	});
+
+	asyncTest("Placeholders for invisible attribute with visible status", function() {
+
+		var oH = new sap.m.ObjectHeader({
+			title : "Reserved space for invisible attribute issue",
+			statuses : [new sap.m.ObjectStatus({
+				text : "Visible status",
+				state : sap.ui.core.ValueState.Success,
+				visible : true
+			}) ],
+			attributes : [ 
+			    new sap.m.ObjectAttribute({
+					text : "First invisible attribute",
+					visible : false
+				}),
+			    new sap.m.ObjectAttribute({
+					text : "First visible attribute",
+					visible : true
+				}),	]
+		});
+		oH.placeAt('objectHeaders');
+
+		setTimeout(function() {
+
+			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
+			oH.destroy();
+			start();
+		});
+	});
+
+	asyncTest("Placeholders for invisible status with visible attribute", function() {
+
+		var oH = new sap.m.ObjectHeader({
+			title : "Reserved space for invisible status issue",
+			statuses : [
+			    new sap.m.ProgressIndicator({
+				displayValue : '30%',
+				percentValue : 30,
+				state : sap.ui.core.ValueState.Error,
+				visible : false
+				}),
+				new sap.m.ProgressIndicator({
+					displayValue : '90%',
+					percentValue : 90,
+					state : sap.ui.core.ValueState.Error,
+					visible : true
+				})],
+			attributes : [ 
+			    new sap.m.ObjectAttribute({
+					text : "Visible attribute",
+					visible : true
+				}),	]
+		});
+		oH.placeAt('objectHeaders');
+
+		setTimeout(function() {
+
+			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
+			oH.destroy();
+			start();
+		});
+	});
+
+	/******************************************************************/
+
+	module("Rendering condensed Object Header");
+
+	var ohCondensedId = "ohc1";
+	var ohCondensed = new sap.m.ObjectHeader(ohCondensedId, {
+		title : "Condensed Object header with attribute, number and number unit",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "This is the only attribute in the object header"
+		}) ],
+	});
+	var ohCondensedId2 = "ohc2";
+	var ohCondensed2 = new sap.m.ObjectHeader(ohCondensedId2, {
+		title : "Condensed Object header with solid background",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true,
+		backgroundDesign : sap.m.BackgroundDesign.Solid,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "This is the only attribute in the object header"
+		}) ],
+	});
+
+	ohCondensed.placeAt("objectHeaders");
+	ohCondensed2.placeAt("objectHeaders");
+
+	test("Object Header has condensed style", function() {
+
+		equal(jQuery("#ohc1.sapMOHC").length, 1, "Object Header with condensed style is rendered");
+	});
+
+	test("Object Header attribute is displayed under title", function() {
+
+		equal(jQuery("#ohc1.sapMOHC > .sapMOHAttr").length, 1, "Object Header attribute is displayed under title");
+	});
+
+	test("NumberRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohCondensedId + "-number"), null, "Number should be rendered.");
+	});
+
+	test("NumberUnitRendered", function() {
+
+		notEqual(jQuery.sap.domById(ohCondensedId + "-numberUnit"), null, "Number Unit should be rendered.");
+	});
+
+	test("Background is transparent", function() {
+		
+		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer ? "transparent" : "rgba(0, 0, 0, 0)";
+
+		equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
+		equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
+	});
+
+	test("Background is solid", function() {
+
+		equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
+		equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
+	});
+
+	test("Background is transparent for Basic OH", function() {
+
+		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer ? "transparent" : "rgba(0, 0, 0, 0)";
+		
+		equal(jQuery("#" + ohBasicId + ".sapMOHBgSolid").length, 0, "Solid background style should not be set.");
+		equal(jQuery.sap.byId(ohBasicId).css("background-color"), transparentCssString, "Background color is transparent");
+	});
+
+	/******************************************************************/
+
+	module("Internal API");
+
+	var ohEmptyStatus1Id = "ohes1";
+	var ohEmptyStatus2Id = "ohes2";
+	var ohEmptyStatusesId = "ohess";
+	var ohEmptyAttributesId = "oheattr";
+	var ohEmptyAllId = "oheall";
+	var ohFlagAndFavoriteMarkerId = "ohefafm";
+	var ohOnlyProgressIndicatorId = "ohOnlyProgress";
+
+	var ohAttributeAndFlagId = "ohAttributeAndFlag";
+	var ohEmptyStatus1AndStatus2Id = "ohes1s2";
+
+	var ohAttributeAndFlag = new sap.m.ObjectHeader(ohAttributeAndFlagId, {
+		title : "Object that is markFlagged with attribute",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Attribute number 1"
+		}) ],
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var ohEmptyStatus1 = new sap.m.ObjectHeader(ohEmptyStatus1Id, {
+		title : "Header with empty second status",
+		firstStatus : new sap.m.ObjectStatus("ose1", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Success,
+		}),
+	});
+	var ohEmptyStatus2 = new sap.m.ObjectHeader(ohEmptyStatus2Id, {
+		title : "Header with empty first status",
+		secondStatus : new sap.m.ObjectStatus("ose2", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Error,
+		}),
+	});
+	var ohEmptyStatuses = new sap.m.ObjectHeader(ohEmptyStatusesId, {
+		title : "Header with empty statuses",
+		firstStatus : new sap.m.ObjectStatus("ose3", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Success,
+		}),
+		secondStatus : new sap.m.ObjectStatus("ose4", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Error,
+		}),
+	});
+
+	var ohEmptyAttributes = new sap.m.ObjectHeader(ohEmptyAttributesId, {
+		title : "Header with empty attributes",
+
+		attributes : [ new sap.m.ObjectAttribute("oae1", {
+			text : "\n  \n  \t",
+		}), new sap.m.ObjectAttribute("oae2", {
+			text : "\n  \n  \t",
+		}) ],
+	});
+
+	var ohEmptyAll = new sap.m.ObjectHeader(ohEmptyAllId, {
+		title : "Header with empty attributes and statuses",
+
+		attributes : [ new sap.m.ObjectAttribute("oae3", {
+			text : "\n  \n  \t",
+		}), new sap.m.ObjectAttribute("oae4", {
+			text : "\n  \n  \t",
+		}) ],
+
+		firstStatus : new sap.m.ObjectStatus("ose5", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Success,
+		}),
+		secondStatus : new sap.m.ObjectStatus("ose6", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Error,
+		}),
+	});
+
+	var ohEmptyStatus1AndStatus2 = new sap.m.ObjectHeader(ohEmptyStatus1AndStatus2Id, {
+		title : "Header with empty first and second status",
+		firstStatus : new sap.m.ObjectStatus("ose7", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Error,
+		}),
+		secondStatus : new sap.m.ObjectStatus("ose8", {
+			text : "\n  \n  \t",
+			state : sap.ui.core.ValueState.Error,
+		}),
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Statuses 1",
+			state : sap.ui.core.ValueState.Success
+		}) ]
+	});
+
+	var ohFlagAndFavoriteMarker = new sap.m.ObjectHeader(ohFlagAndFavoriteMarkerId, {
+		title : "Test dynamic marker states",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		showMarkers : true
+	});
+	ohFlagAndFavoriteMarker.placeAt("flagAndFavorite-oh");
+
+	var ohOnlyProgressIndicator = new sap.m.ObjectHeader(ohOnlyProgressIndicatorId, {
+		title : "Test dynamic marker states",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		showMarkers : true,
+		statuses : [ new sap.m.ProgressIndicator({
+			percentValue : 99,
+			state : sap.ui.core.ValueState.Error
+		}) ]
+	});
+	ohOnlyProgressIndicator.placeAt("flagAndFavorite-oh");
+
+	test("Attribute and Flag API", function() {
+
+		ok(ohAttributeAndFlag._hasBottomContent(), "Object header has bottom content");
+		ok(ohAttributeAndFlag._hasAttributes(), "Object header has attributes");
+		ok(ohAttributeAndFlag.getMarkFlagged(), "Object header has flag marker");
+	});
+
+	test("TestEmptyOH", function() {
+
+		ok(!ohEmptyStatus1._hasStatus(), "Object header has no rendered statuses");
+		ok(!ohEmptyStatus2._hasStatus(), "Object header has no rendered statuses");
+		ok(!ohEmptyStatuses._hasStatus(), "Object header has no rendered statuses");
+
+		ok(!ohEmptyAttributes._hasAttributes(), "Object header has no rendered attributes");
+
+		ok(!ohEmptyAll._hasAttributes(), "Object header has no rendered attributes");
+		ok(!ohEmptyAll._hasStatus(), "Object header has no rendered statuses");
+		ok(!ohEmptyAll.getMarkFlagged(), "Object header has no flag marker");
+		ok(!ohEmptyAll.getMarkFavorite(), "Object header has no markFavorite marker");
+		ok(!ohEmptyAll._hasBottomContent(), "Object header has no bottom content");
+	});
+
+	test("TestNonEmptyStatus", function() {
+
+		ok(ohEmptyStatus1AndStatus2._hasStatus(), "Object header has rendered statuses");
+		ok(ohOnlyProgressIndicator._hasStatus(), "Object header has rendered statuses if ProgressIndicator is only present");
+	});
+
+	asyncTest("FlagMarkerSet", function() {
+
+		ohFlagAndFavoriteMarker.setMarkFlagged(true);
+		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+
+		setTimeout(function() {
+
+			start();
+			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
+			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
+		}, 100);
+
+	});
+
+	asyncTest("FlagMarkerUnset", function() {
+
+		ohFlagAndFavoriteMarker.setMarkFlagged(false);
+		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+
+		setTimeout(function() {
+
+			start();
+			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+		}, 100);
+
+	});
+
+	asyncTest("FavoriteMarkerSet", function() {
+
+		ohFlagAndFavoriteMarker.setMarkFlagged(false);
+		ohFlagAndFavoriteMarker.setMarkFavorite(true);
+
+		setTimeout(function() {
+
+			start();
+			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
+			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite on icon should be rendered.");
+		}, 100);
+
+	});
+
+	asyncTest("FavoriteMarkerNotSet", function() {
+
+		ohFlagAndFavoriteMarker.setMarkFlagged(false);
+		ohFlagAndFavoriteMarker.setMarkFavorite(false);
+
+		setTimeout(function() {
+
+			start();
+			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+
+		}, 100);
+
+	});
+
+	asyncTest("AttributeWithoutSupportMarker", function() {
+
+		ohFlagAndFavoriteMarker.setShowMarkers(false);
+		ohFlagAndFavoriteMarker.addAttribute(new sap.m.ObjectAttribute("ohefafm1", {
+			text : "My Test Attribute",
+		}));
+
+		setTimeout(function() {
+
+			start();
+			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+			notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
+		}, 100);
+
+	});
+
+	/******************************************************************/
+
+	var oheId = "ohe";
+
+	var ohe = new sap.m.ObjectHeader(oheId, {
+		intro : "On behalf of John Smith",
+		introActive : true,
+		introPress : eventHandler,
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		titleActive : true,
+		titlePress : eventHandler,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconActive : true,
+		iconPress : eventHandler,
+	});
+	ohe.placeAt("objectHeaders");
+
+	module("Events");
+
+	test("Title color is blue", function() {
+
+		equal(jQuery.sap.byId(ohe._titleText.getId()).css("color"), "rgb(0, 103, 158)", "Title color is blue.");
+	});
+
+	test("TestTitleTap", function() {
+
+		qutils.triggerEvent("tap", ohe._titleText.getId());
+		ok(domRef, "domRef is set");
+		equal(domRef.id, ohe._titleText.getId(), "Title should be clickable");
+		domRef = null;
+		
+		qutils.triggerEvent("tap", ohe._titleText.getDomRef("inner"));
+		ok(domRef, "domRef is set");
+		equal(domRef.id, ohe._titleText.getId(), "When clicking inner text div event should return outer div as source");
+		domRef = null;
+
+		qutils.triggerEvent("tap", ohBasic._titleText.getId());
+		ok(domRef === null, ohBasicId + " Title should not be clickable");
+		domRef = null;
+	});
+
+	test("TestIntroTap", function() {
+
+		qutils.triggerEvent("tap", oheId + "-intro");
+		ok(domRef, "domRef is set");
+		equal(domRef.id, oheId + "-intro", "Intro should be clickable");
+		domRef = null;
+
+		qutils.triggerEvent("tap", ohBasicId + "-intro");
+		ok(domRef === null, ohBasicId + " intro should not be clickable");
+		domRef = null;
+	});
+
+	test("TestIconTap", function() {
+
+		qutils.triggerEvent("tap", oheId + "-img");
+		ok(domRef, "domRef is set");
+		equal(domRef.id, oheId + "-img", "Icon should be clickable");
+		domRef = null;
+
+		qutils.triggerEvent("tap", ohBasicId + "-img");
+		ok(domRef === null, ohBasicId + " icon should not be clickable");
+		domRef = null;
+	});
+
+	test("TestTitleSelectorTap", function() {
+
+		qutils.triggerEvent("tap", ohBasicId + "-titleArrow");
+		ok(oTitleArrowDomRef, "oTitleArrowDomRef is set to titleArrow");
+		equal(oTitleArrowDomRef.id, ohBasicId + "-titleArrow", "Title Arrow should be clickable");
+		oTitleArrowDomRef = null;
+	});
+
+	//***************************************************************************
+	var oTitleArrowOH = new sap.m.ObjectHeader("titleArrowOH", {
+		title : "Title Arrow reset to false and should not be displayed.",
+		number : "3.624",
+		numberUnit : "EUR",
+		showTitleSelector : true,
+		titleSelectorPress : oTitleArrowEventHandler
+	});
+
+	oTitleArrowOH.placeAt("titleArrowOH-oh");
+
+	module("TitleArrow");
+
+	asyncTest("TestTitleArrowResetToFalse", function() {
+
+		oTitleArrowOH.setShowTitleSelector(false);
+
+		setTimeout(function() {
+
+			start();
+			equal(jQuery.sap.byId("titleArrowOH-titleArrow").length, 0, " The titleArrowOH showTitleSelector is set to false and is not rendered.");
+		}, 100);
+
+	});
+
+	/******************************************************************/
+
+	var iconOH = new sap.m.ObjectHeader("iconOH", {
+		icon : sap.ui.core.IconPool.getIconURI("pdf-attachment"),
+		intro : "On behalf of John Smith",
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		number : "3.624",
+		numberUnit : "EUR",
+		markFlagged : true,
+		markFavorite : true,
+		showMarkers : true
+	});
+
+	var imageOH = new sap.m.ObjectHeader("imageOH", {
+		icon : "../images/action.png",
+		intro : "On behalf of John Smith",
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		number : "3.624",
+		numberUnit : "EUR",
+	});
+
+	iconOH.placeAt("destroy-oh");
+	imageOH.placeAt("destroy-oh");
+
+	module("Exiting");
+
+	test("TestIconExit", function() {
+
+		ok(!(iconOH === null), "iconOH is not null");
+		ok(sap.ui.getCore().byId("iconOH"), "Icon is found in UI5 Core");
+		ok(sap.ui.getCore().byId("iconOH-placeholder"), "Placeholder icon is found in UI5 Core");
+		ok(sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
+		ok(sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		iconOH.destroy();
+		ok(!sap.ui.getCore().byId("iconOH-placeholder"), "Placeholder icon removed from  UI5 Core");
+		ok(!sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
+		ok(!sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+	});
+
+	test("TestImageExit", function() {
+
+		ok(!(imageOH === null), "imageOH is not null");
+		ok(sap.ui.getCore().byId("imageOH"), "Image is found in UI5 Core");
+		imageOH.destroy();
+		ok(!sap.ui.getCore().byId("imageOH"), "Image is removed from UI5 Core");
+	});
+
+	test("Title selector icon size", function() {
+		// arrange
+		var oObjectHeader = new sap.m.ObjectHeader({
+			showTitleSelector: true,
+			condensed: false
+		});
+
+		// system under test
+		ohFlagFav.placeAt("objectHeaders");
+		sap.ui.getCore().applyChanges();
+
+		// assert: default in constructor
+		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem");
+
+		// assert: setter true
+		oObjectHeader.setCondensed(true);
+		sap.ui.getCore().applyChanges();
+		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.125rem", "for condensed object header the icon size is 1rem");
+
+		// assert: setter false
+		oObjectHeader.setCondensed(false);
+		sap.ui.getCore().applyChanges();
+		strictEqual (oObjectHeader._oTitleArrowIcon.getSize(), "1.375rem", "for a standard object header the icon size is 1.375rem again");
+
+		// cleanup
+		oObjectHeader.destroy();
+	});
+</script>
+</head>
+
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="objectHeaders"></div>
+	<div id="destroy-oh"></div>
+	<div id="flagAndFavorite-oh"></div>
+	<div id="titleArrowOH-oh"></div>
+</body>
+</html>

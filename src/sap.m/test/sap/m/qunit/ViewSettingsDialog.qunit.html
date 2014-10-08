@@ -1,0 +1,871 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.ViewSettingsDialog</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			jQuery.sap.require("sap.ui.model.FilterOperator");
+
+			var core = sap.ui.getCore();
+			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+			/* definition of a custom control */
+
+			var customPriceFilter = new sap.m.VBox({
+				items: [
+					new sap.m.Label("minLabel", {
+						design: sap.m.LabelDesign.Bold,
+						text: "Minimum price:"
+					}),
+					new sap.m.Slider("minSlider", {
+						value: 0,
+						min: 0,
+						max: 100,
+						step: 10,
+						progress: true,
+						liveChange: function (oEvent) {
+							oEvent.getSource().getParent().getItems()[0].setText("Minimum price >= " + oEvent.getParameter("value"));
+						}
+					}),
+					new sap.m.Label("maxLabel", {
+						design: sap.m.LabelDesign.Bold,
+						text: "Maximum price:"
+					}),
+					new sap.m.Slider("maxSlider", {
+						value: 100,
+						min: 0,
+						max: 100,
+						step: 10,
+						progress: true,
+						liveChange: function (oEvent) {
+							oEvent.getSource().getParent().getItems()[2].setText("Maximum price <= " + oEvent.getParameter("value"));
+						}
+					})
+				]
+			}).addStyleClass("customPriceFilter");
+
+			/* helper function to compare the filter state */
+
+			var compareFilterKeys = function(o1, o2) {
+				var sKey = "",
+					result = true;
+
+				for(sKey in o1) {
+					if (o1.hasOwnProperty(sKey)) {
+						if (!o2[sKey] || o2[sKey] !== o1[sKey]) {
+							result = false;
+						}
+					}
+				}
+				for(sKey in o2) {
+					if (o2.hasOwnProperty(sKey)) {
+						if (!o1[sKey] || o1[sKey] !== o2[sKey]) {
+							result = false;
+						}
+					}
+				}
+				return result;
+			};
+
+			var vsd2 = new sap.m.ViewSettingsDialog("vsd2");
+
+			// init sorting (with simple sorters as custom data for all fields)
+			vsd2.addSortItem(new sap.m.ViewSettingsItem({
+				key: "myNameSorter",
+				text: "Name"
+			}));
+			vsd2.addSortItem(new sap.m.ViewSettingsItem({
+				key: "myStatusSorter",
+				text: "Status"
+			}));
+			vsd2.addSortItem(new sap.m.ViewSettingsItem({
+				key: "myValueSorter",
+				text: "Value"
+			}));
+			vsd2.addSortItem(new sap.m.ViewSettingsItem({
+				key: "myPriceSorter",
+				text: "Price"
+			}));
+	
+			// init grouping (some simple sorters with default grouping and some with a custom grouping)
+			vsd2.addGroupItem(new sap.m.ViewSettingsItem({
+				key: "myNameGrouper",
+				text: "Name"
+			}));
+			vsd2.addGroupItem(new sap.m.ViewSettingsItem({
+				key: "myStatusGrouper",
+				text: "Status"
+			}));
+			vsd2.addGroupItem(new sap.m.ViewSettingsItem({
+				key: "myValueGrouper",
+				text: "Value"
+			}));
+			vsd2.addGroupItem(new sap.m.ViewSettingsItem({
+				key: "myPriceGrouper",
+				text: "Price"
+			}));
+	
+			vsd2.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "myNameFilter",
+				text: "Name",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "name1",
+						text: "Headphone"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name2",
+						text: "Mousepad"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name3",
+						text: "Monitor"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name4",
+						text: "Backpack"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name5",
+						text: "Printer"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name6",
+						text: "Optic Mouse"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "name7",
+						text: "Dock Station"
+					})
+				]
+			}));
+
+			vsd2.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "myStatusFilter",
+				text: "Status",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "status1",
+						text: "Approved"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "status2",
+						text: "Open"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "status3",
+						text: "Denied"
+					})
+				]
+			}));
+
+			vsd2.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "myValueFilter",
+				text: "Value",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "value1",
+						text: "< 10 EUR"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "value2",
+						text: "10 - 30 EUR"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "value3",
+						text: "30 - 50 EUR"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "value4",
+						text: "50 - 70 EUR"
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "value5",
+						text: "> 70 EUR"
+					})
+				]
+			}));
+
+			// custom price control filter
+			vsd2.addFilterItem(new sap.m.ViewSettingsCustomItem({
+				key: "myPriceFilter",
+				text: "Price",
+				customControl: customPriceFilter.clone()
+			}));
+
+			// preset filters
+			vsd2.addPresetFilterItem(new sap.m.ViewSettingsItem({
+				key: "myPresetFilter1",
+				text: "A very complex filter"
+			}));
+			vsd2.addPresetFilterItem(new sap.m.ViewSettingsItem({
+				key: "myPresetFilter2",
+				text: "Ridiculously complex filter"
+			}));
+			vsd2.addPresetFilterItem(new sap.m.ViewSettingsItem({
+				key: "myPresetFilter3",
+				text: "Expensive stuff"
+			}));
+			
+			var vsd3 = vsd2.clone(); // this one will never be rendered and then destroyed
+
+			var oButton = new sap.m.Button({
+				text : "Open ViewSettingsDialog",
+				press : function () {
+					vsd2.open();
+				}
+			});
+
+			var page = new sap.m.Page("myFirstPage", {
+				title : "ViewSettingsDialog Test",
+				content : oButton
+			});
+
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
+
+			app.addPage(page).placeAt("content");
+			
+			/* test state for the dialog */
+			var filterState = {
+				"name1": true,
+				"name2": true,
+				"name5": true,
+				"name6": true,
+				"status1": true,
+				"status2": true,
+				"status3": true,
+				"value3": true
+			};
+			var selectedSortItem = vsd2.getSortItems()[0];
+			var selectedGroupItem = vsd2.getGroupItems()[1];
+			var selectedPresetFilterItem = vsd2.getPresetFilterItems()[1];
+
+			module("Initial Check");
+
+			test("Initialization", function () {
+				ok(!jQuery.sap.domById("vsd1"), "Dialog is not rendered before it's ever opened.");
+				strictEqual(vsd2.getTitle(), "", 'The default title is empty and will be filled by "' + rb.getText("VIEWSETTINGS_TITLE") + '" later');
+				strictEqual(vsd2.getSortDescending(), false, 'The default value for sortDescending should be "false"');
+				strictEqual(vsd2.getGroupDescending(), false, 'The default value for groupDescending should be "false"');
+				strictEqual(vsd2.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
+				strictEqual(vsd2.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
+				strictEqual(vsd2.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
+			});	
+
+			module ("getter/setter");
+
+			test("set dialog state via API", function () {
+				/* set dialog state (solely by API instead of selected flag) */
+				vsd2.setTitle("TestTitle");
+				vsd2.setSelectedSortItem(selectedSortItem);
+				vsd2.setSortDescending(true);
+				vsd2.setSelectedGroupItem(vsd2.getGroupItems()[1]);
+				vsd2.setGroupDescending(true);
+				vsd2.setSelectedPresetFilterItem(selectedPresetFilterItem);
+
+				// title
+				strictEqual(vsd2.getTitle(), "TestTitle", "The title should be 'TestTitle'");
+
+				// sort / group / preset filter
+				strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
+				strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+				strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
+				strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
+				strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+				strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
+				strictEqual(vsd2.getSelectedPresetFilterItem(), selectedPresetFilterItem.getId(), "The selected preset filter item should be '"+ selectedPresetFilterItem.getId() +"'");
+				strictEqual(core.byId(vsd2.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
+
+				// filters
+				vsd2.setSelectedFilterKeys(filterState);				
+				ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+			})
+
+			module("Open and Close");
+
+			test("Open ViewSettingsDialog", function (){
+				oButton.firePress();
+				ok(jQuery.sap.domById("vsd2-dialog"), "Dialog should be rendered");
+				ok(jQuery.sap.domById("vsd2-navcontainer"), "Nav container should be rendered");
+				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
+				ok(!jQuery.sap.domById("vsd2-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+			});
+
+			asyncTest("Close ViewSettingsDialog", function (){
+				vsd2._dialog.getBeginButton().firePress();
+				// execute after rendering
+ 				setTimeout(function () {
+ 					ok(!vsd2._dialog.isOpen(), "Dialog should be in closed state");
+					start();
+ 				}, 1000);
+			});
+
+			module ("Events");
+
+			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
+				//do not run this tests on IE9 because of a timeout issue which need to be fixed
+			} else {
+				asyncTest("Cancel on cancel button press event", function () {
+					var fnChecks = function () {
+							// check if dialog is still in the previous state
+							ok(true, "Event cancel was fired");
+							strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
+							strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+							strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
+							strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
+							strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+							strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
+							ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+							vsd2.detachCancel(fnChecks);
+							start();
+						};
+
+					expect(8);
+
+					// open dialog to store previous state
+					vsd2.open();
+					vsd2.attachCancel(fnChecks);
+
+					// set everything to unselected / false and fire cancel request
+					vsd2.setSelectedSortItem();
+					vsd2.setSortDescending(false);
+					vsd2.setSelectedGroupItem();
+					vsd2.setGroupDescending(false);
+					vsd2.setSelectedFilterKeys([]);
+					vsd2._dialog.getEndButton().firePress();
+				});
+			}
+
+
+			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
+				//do not run this tests on IE9 because of a timeout issue which need to be fixed
+			} else {
+				asyncTest("Cancel on key ESCAPE event", function () {
+					var fnChecks = function () {
+						// check if dialog is still in the previous state
+						ok(true, "Event cancel was fired");
+						strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
+						strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+						strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
+						strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
+						strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+						strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
+						ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+						vsd2.detachCancel(fnChecks);
+						start();
+					};
+	
+					expect(8);
+	
+					// open dialog to store previous state
+					vsd2.open();
+					vsd2.attachCancel(fnChecks);
+	
+					// set everything to unselected / false and fire ESC key
+					vsd2.open();
+					vsd2.setSelectedSortItem();
+					vsd2.setSortDescending(false);
+					vsd2.setSelectedGroupItem();
+					vsd2.setGroupDescending(false);
+					vsd2.setSelectedFilterKeys([]);
+					sap.ui.test.qunit.triggerKeydown(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				});
+			}
+
+			asyncTest("Confirm event", function () {
+				expect(12);
+				// open dialog to store previous state
+				vsd2.open();
+				vsd2.attachConfirm(function(oEvent) {
+					var p = oEvent.getParameters();
+					ok(p, "Event applySettings was fired and has event parameters");
+					ok(p.sortItem, "Event has a sort item");
+					ok(p.groupItem, "Event has a group item");
+					ok(p.sortDescending, "Event has sort order tru)");
+					strictEqual(p.sortItem.getId(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
+					strictEqual(p.sortDescending, true, "Sort descending should be true");
+					strictEqual(p.groupItem.getId(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
+					strictEqual(p.groupDescending, true, "group descending should be true");
+					strictEqual(p.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
+					ok(compareFilterKeys(filterState, p.filterKeys), "The event filter keys should have the same structure as the passed one");
+					ok(p.filterString.length > 0, "The filter string is not empty");
+					strictEqual(p.filterItems.length, 8, "There are 8 selected filters");
+					start();
+				});
+				vsd2._dialog.getBeginButton().firePress();
+			});
+
+			test("Reset event", function () {
+				expect(2);
+				vsd2.attachResetFilters(function(oEvent) {
+					strictEqual(vsd2.getSelectedFilterItems().length, 0, "Selected filters are empty after reset event");
+					strictEqual(vsd2.getSelectedPresetFilterItem(), null, "Preset filter item is null after reset event");
+				});
+				vsd2._resetButton.firePress();
+			});
+
+			module ("Construction/Destruction");
+
+			asyncTest("Destroy ViewSettingsDialog after all pages have been visited", function (){
+				expect(41);
+
+				// open
+				vsd2.open();
+
+				// go to all pages again to init controls
+				vsd2._switchToPage(0);
+				vsd2._switchToPage(1);
+				vsd2._switchToPage(2);
+				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
+				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
+	
+				setTimeout(function () {
+					// store poiners to internal controls
+					var sortList = vsd2._sortList,
+						sortOrderList = vsd2._sortOrderList,
+						groupList = vsd2._groupList,
+						groupOrderList = vsd2._groupOrderList,
+						presetFilterList = vsd2._presetFilterList,
+						filterList = vsd2._filterList,
+						filterDetailList = vsd2._filterDetailList
+						titleLabel = vsd2._titleLabel,
+						detailTitleLabel = vsd2._detailTitleLabel,
+						resetButton = vsd2._resetButton,
+						header = vsd2._header,
+						sortButton = vsd2._sortButton,
+						groupButton = vsd2._groupButton
+						filterButton = vsd2._filterButton,
+						segmentedButton = vsd2._segmentedButton,
+						page1 = vsd2._page1,
+						page2 = vsd2._page2,
+						navContainer = vsd2._navContainer,
+						dialog = vsd2._dialog,
+						subHeader = vsd2._subHeader;
+	
+					vsd2.destroy();
+	
+					// check if internal controls are destroyed correctly (when initialized they must be destroyed)
+					strictEqual(vsd2.$().length, 0, "There is no Domref for ViewSettingsDialog");
+	
+					// check if all internal controls are destroyed successfully
+					strictEqual(sortList.bIsDestroyed, true, "sort list is destroyed successfully");
+					strictEqual(sortOrderList.bIsDestroyed, true, "sort order list is destroyed successfully");
+					strictEqual(groupList.bIsDestroyed, true, "group list is destroyed successfully");
+					strictEqual(groupOrderList.bIsDestroyed, true, "group order list is destroyed successfully");
+					strictEqual(presetFilterList.bIsDestroyed, true, "preset filter list is destroyed successfully");
+					strictEqual(filterList.bIsDestroyed, true, "filter list is destroyed successfully");
+					strictEqual(filterDetailList.bIsDestroyed, true, "filter detail list is destroyed successfully");
+					strictEqual(titleLabel.bIsDestroyed, true, "title label is destroyed successfully");
+					strictEqual(detailTitleLabel.bIsDestroyed, true, "detail title label is destroyed successfully");
+					strictEqual(resetButton.bIsDestroyed, true, "reset button is destroyed successfully");
+					strictEqual(header.bIsDestroyed, true, "header is destroyed successfully");
+					strictEqual(sortButton.bIsDestroyed, true, "sortButton is destroyed successfully");
+					strictEqual(groupButton.bIsDestroyed, true, "groupButton is destroyed successfully");
+					strictEqual(filterButton.bIsDestroyed, true, "filterButton is destroyed successfully");
+					strictEqual(segmentedButton.bIsDestroyed, true, "segmentedButton is destroyed successfully");
+					strictEqual(page1.bIsDestroyed, true, "page1 is destroyed successfully");
+					strictEqual(page2.bIsDestroyed, true, "page2 is destroyed successfully");
+					strictEqual(navContainer.bIsDestroyed, true, "navContainer is destroyed successfully");
+					strictEqual(dialog.bIsDestroyed, true, "dialog is destroyed successfully");
+					strictEqual(subHeader.bIsDestroyed, true, "subHeader is destroyed successfully");
+	
+					// check if all controls are set to null correctly
+					strictEqual(vsd2._sortList, null, "sort list is null");
+					strictEqual(vsd2._sortOrderList, null, "sort order list is null");
+					strictEqual(vsd2._groupList, null, "group list is null");
+					strictEqual(vsd2._groupOrderList, null, "group order list is null");
+					strictEqual(vsd2._presetFilterList, null, "preset filter list is null");
+					strictEqual(vsd2._filterList, null, "filter list is null");
+					strictEqual(vsd2._filterDetailList, null, "filter detail list is null");
+					strictEqual(vsd2._titleLabel, null, "title label is null");
+					strictEqual(vsd2._detailTitleLabel, null, "detail title label is null");
+					strictEqual(vsd2._resetButton, null, "reset button is null");
+					strictEqual(vsd2._header, null, "header is null");
+					strictEqual(vsd2._sortButton, null, "sortButton is null");
+					strictEqual(vsd2._groupButton, null, "groupButton is null");
+					strictEqual(vsd2._filterButton, null, "filterButton is null");
+					strictEqual(vsd2._segmentedButton, null, "segmentedButton is null");
+					strictEqual(vsd2._page1, null, "page1 is null");
+					strictEqual(vsd2._page2, null, "page2 is null");
+					strictEqual(vsd2._navContainer, null, "navContainer is null");
+					strictEqual(vsd2._dialog, null, "dialog is null");
+					strictEqual(vsd2._subHeader, null, "subHeader is null");
+					start();
+				}, 1000);
+			});
+
+			test("Destroy ViewSettingsDialog that has never been opened/rendered", function (){
+				expect(21);
+
+				// store poiners to internal controls
+				var sortList = vsd3._sortList,
+					sortOrderList = vsd3._sortOrderList,
+					groupList = vsd3._groupList,
+					groupOrderList = vsd3._groupOrderList,
+					presetFilterList = vsd3._presetFilterList,
+					filterList = vsd3._filterList,
+					filterDetailList = vsd3._filterDetailList
+					titleLabel = vsd3._titleLabel,
+					detailTitleLabel = vsd3._detailTitleLabel,
+					resetButton = vsd3._resetButton,
+					header = vsd3._header,
+					sortButton = vsd3._sortButton,
+					groupButton = vsd3._groupButton
+					filterButton = vsd3._filterButton,
+					segmentedButton = vsd3._segmentedButton,
+					page1 = vsd3._page1,
+					page2 = vsd3._page2,
+					navContainer = vsd3._navContainer,
+					dialog = vsd3._dialog,
+					subHeader = vsd3._subHeader;
+
+				// check if all internal controls are not initialized yet
+				strictEqual(sortList, undefined, "sort list is not initialized yet");
+				strictEqual(sortOrderList, undefined, "sort order list is not initialized yet");
+				strictEqual(groupList, undefined, "group list is not initialized yet");
+				strictEqual(groupOrderList, undefined, "group order list is not initialized yet");
+				strictEqual(presetFilterList, undefined, "preset filter list is not initialized yet");
+				strictEqual(filterList, undefined, "filter list is not initialized yet");
+				strictEqual(filterDetailList, undefined, "filter detail list is not initialized yet");
+				strictEqual(titleLabel, undefined, "title label is not initialized yet");
+				strictEqual(detailTitleLabel, undefined, "detail title label is not initialized yet");
+				strictEqual(resetButton, undefined, "reset button is not initialized yet");
+				strictEqual(header, undefined, "header is not initialized yet");
+				strictEqual(sortButton, undefined, "sortButton is not initialized yet");
+				strictEqual(groupButton, undefined, "groupButton is not initialized yet");
+				strictEqual(filterButton, undefined, "filterButton is not initialized yet");
+				strictEqual(segmentedButton, undefined, "segmentedButton is not initialized yet");
+				strictEqual(page1, undefined, "page1 is not initialized yet");
+				strictEqual(page2, undefined, "page2 is not initialized yet");
+				strictEqual(navContainer, undefined, "navContainer is not initialized yet");
+				strictEqual(dialog, undefined, "dialog is not initialized yet");
+				strictEqual(subHeader, undefined, "subHeader is not initialized yet");
+
+				vsd3.destroy();
+
+				// check if internal controls are destroyed correctly (when initialized they must be destroyed)
+				strictEqual(vsd3.$().length, 0, "There is no Domref for ViewSettingsDialog");
+
+			});
+
+			module ("Sort tab only checks")
+
+			test("Check sort tab only mode", function  () {
+				var vsd = new sap.m.ViewSettingsDialog("vsd-sort", {
+					sortItems: [
+						new sap.m.ViewSettingsItem({
+							key: "myNameSorter",
+							text: "Name",
+							selected: true
+						}),
+						new sap.m.ViewSettingsItem({
+							key: "myStatusSorter",
+							text: "Status",
+							selected: true
+						}),
+						new sap.m.ViewSettingsItem({
+							key: "myValueSorter",
+							text: "Value",
+							selected: false
+						}),
+						new sap.m.ViewSettingsItem({
+							key: "myPriceSorter",
+							text: "Price",
+							selected: false
+						})
+					]
+				});
+
+				vsd.open();
+				strictEqual(vsd.getSelectedSortItem(), vsd.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
+				strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
+				strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+				strictEqual(vsd._sortContent.length, 2, "Sort content is initialized and has two items");
+				strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
+				strictEqual(vsd._filterContent, undefined, "Filter content is not initialized");
+				strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+				ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+				vsd._dialog.close();
+		});
+
+		module ("Group tab only checks")
+
+		test("Check group tab only mode", function  () {
+			var vsd = new sap.m.ViewSettingsDialog("vsd-group", {
+				groupItems: [
+					new sap.m.ViewSettingsItem({
+						key: "myNameGrouper",
+						text: "Name",
+						selected: true
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "myStatusGrouper",
+						text: "Status",
+						selected: true
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "myValueGrouper",
+						text: "Value",
+						selected: false
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "myPriceGrouper",
+						text: "Price",
+						selected: false
+					})
+				]
+			});
+
+			vsd.open();
+			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(vsd.getSelectedGroupItem(), vsd.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
+			strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
+			strictEqual(vsd._groupContent.length, 2, "Group content is initialized and has two items");
+			strictEqual(vsd._filterContent, undefined, "Filter content is not initialized");
+			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+			vsd._dialog.close();
+		});
+
+		module ("Preset Filter only checks")
+
+		test("Check preset filter only mode", function  () {
+			var vsd = new sap.m.ViewSettingsDialog("vsd-presetfilter", {
+				presetFilterItems: [
+					new sap.m.ViewSettingsItem({
+						key: "myPresetFilter1",
+						text: "A very complex filter",
+						selected: true
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "myPresetFilter2",
+						text: "Ridiculously complex filter",
+						selected: true
+					}),
+					new sap.m.ViewSettingsItem({
+						key: "myPresetFilter3",
+						text: "Expensive stuff",
+						selected: false
+					})
+				]
+			});
+
+			vsd.open();
+			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
+			strictEqual(vsd.getSelectedPresetFilterItem(), vsd.getPresetFilterItems()[1].getId(), "Second preset filter item is set successfully by selected flag");
+			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
+			strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
+			strictEqual(vsd._filterContent.length, 2, "Filter content is initalized and has two items");
+			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			strictEqual(vsd.getSelectedFilterItems().length, 0, "There are no selected filter items");
+			ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+			vsd._dialog.close();
+		});
+
+		module ("Filter only checks")
+
+		asyncTest("Check filter only mode", function  () {
+			var vsd = new sap.m.ViewSettingsDialog("vsd-filter", {
+				filterItems: [
+					new sap.m.ViewSettingsFilterItem({
+						key: "myNameFilter",
+						text: "Name",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "name1",
+								text: "Headphone",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name2",
+								text: "Mousepad",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name3",
+								text: "Monitor",
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name4",
+								text: "Backpack",
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name5",
+								text: "Printer",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name6",
+								text: "Optic Mouse",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name7",
+								text: "Dock Station",
+							})
+						]
+					}),
+					new sap.m.ViewSettingsFilterItem({
+						key: "myStatusFilter",
+						text: "Status",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "status1",
+								text: "Approved",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status2",
+								text: "Open",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status3",
+								text: "Denied",
+								selected: true,
+							})
+						]
+					}),
+					new sap.m.ViewSettingsFilterItem({
+						key: "myValueFilter",
+						text: "Value",
+						multiSelect: false,
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "value1",
+								text: "< 10 EUR",
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value2",
+								text: "10 - 30 EUR",
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value3",
+								text: "30 - 50 EUR",
+								selected: true,
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value4",
+								text: "50 - 70 EUR",
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value5",
+								text: "> 70 EUR",
+							})
+						]
+					}),
+					new sap.m.ViewSettingsCustomItem({
+						key: "myPriceFilter",
+						text: "Price",
+						customControl: customPriceFilter.clone(),
+					})
+				]
+			});
+
+			vsd.open();
+
+			// overview page
+			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
+			strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
+			strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
+			strictEqual(vsd._filterContent.length, 2, "Filter content is initalized and has two items");
+			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			ok(compareFilterKeys(filterState, vsd.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+			ok(jQuery.sap.domById("vsd-filter-resetbutton"), "Filter reset button should be rendered");
+			strictEqual(vsd._filterList.getItems()[0].getCounter(), 4, "Filter counter for name is 4");
+
+			// go to detail page
+			jQuery.sap.delayedCall(0, vsd._navContainer, "to", [vsd.getId() + '-page2', "show"]);
+
+			vsd._switchToPage(3,vsd.getFilterItems()[0]); // name details page
+			setTimeout(function () {
+				ok(jQuery.sap.domById(vsd.getId() + "-page2"), "Page 2 is rendered");
+				ok(jQuery.sap.domById(vsd.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
+				ok(jQuery.sap.domById(vsd.getId() + "-backbutton"), "Back button should be rendered");
+				vsd._dialog.close();
+				start();
+			}, 1000);
+
+			vsd._switchToPage(3,vsd.getFilterItems()[2]); // value details page
+			strictEqual(vsd._filterDetailList.getMode(), sap.m.ListMode.SingleSelectLeft, "The value detail list is in single select left mode");
+			strictEqual(vsd._filterDetailList.getSelectedItem().data("item"), vsd.getFilterItems()[2].getItems()[2], "The item 'value3' is selected");
+		});
+	
+		asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
+			var oVSD = new sap.m.ViewSettingsDialog("ViewSettingsDialog"),
+				sCustomStyleClass = "myStyleClass";
+
+			// add + has
+			oVSD.addStyleClass(sCustomStyleClass);
+			oVSD.open();
+			ok(oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
+			ok(oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog now has style class "' + sCustomStyleClass + '"');
+
+			// remove
+			oVSD.removeStyleClass(sCustomStyleClass);
+			ok(!oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
+			ok(!oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog does not have style class "' + sCustomStyleClass + '" after remove');
+
+			// toggle
+			oVSD.toggleStyleClass(sCustomStyleClass);
+			ok(oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
+			ok(oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
+
+			// cleanup
+			oVSD._dialog.attachAfterClose(function (oEvent) {
+				oVSD.destroy();
+				start();
+			});
+			oVSD._dialog.close();
+		});
+
+		asyncTest("Check $ and getDomRef methods", function () {
+			var oVSD = new sap.m.ViewSettingsDialog("ViewSettingsDialog");
+
+			oVSD.open();
+
+			// $ method
+			ok(oVSD.$() instanceof jQuery && oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
+
+			// getDomRef
+			ok(oVSD.getDomRef() instanceof Element && oVSD.getDomRef().id === oVSD.getId()+"-dialog", "The inner dialogs DOM reference is returned");
+
+			// cleanup
+			oVSD._dialog.attachAfterClose(function (oEvent) {
+				oVSD.destroy();
+				start();
+			});
+			oVSD._dialog.close();
+		});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.ViewSettingsDialog</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

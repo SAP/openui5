@@ -1,0 +1,63 @@
+<mvc:View
+	controllerName="sap.m.sample.TableMergeCells.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table
+		headerText="Products"
+		items="{
+			path:'/ProductCollection',
+			sorter: {
+				path: 'SupplierName',
+				descending: false
+			}
+		}" >
+		<columns>
+			<Column mergeDuplicates="true">
+				<header>
+					<Text text="Supplier" />
+				</header>
+			</Column>
+			<Column mergeDuplicates="true">
+				<header>
+					<Text text="Product" />
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Right" >
+				<header>
+					<Text text="Dimensions" />
+				</header>
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="true"
+				hAlign="Center" >
+				<header>
+					<Text text="Weight" />
+				</header>
+			</Column>
+			<Column hAlign="Right" >
+				<header>
+					<Text text="Price" />
+				</header>
+			</Column>
+		</columns>
+		<ColumnListItem>
+			<Text text="{SupplierName}" />
+			<ObjectIdentifier title="{Name}" text="{ProductId}" class="sapMTableContentMargin" />
+			<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<ObjectNumber
+				number="{WeightMeasure}" unit="{WeightUnit}"
+				state="{
+					path: 'WeightMeasure',
+					formatter: 'sap.m.sample.TableMergeCells.Formatter.weightState'
+				}" />
+			<ObjectNumber
+				number="{Price}"
+				unit="{CurrencyCode}" />
+		</ColumnListItem>
+	</Table>
+</mvc:View>

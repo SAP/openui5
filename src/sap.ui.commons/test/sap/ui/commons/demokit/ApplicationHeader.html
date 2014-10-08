@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.ApplicationHeader">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>ApplicationHeader - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='AppHeader'>
+		//create the ApplicationHeader control
+		var oAppHeader = new sap.ui.commons.ApplicationHeader("appHeader"); 
+
+		//configure the branding area
+		oAppHeader.setLogoSrc("http://www.sap.com/global/images/SAPLogo.gif");
+		oAppHeader.setLogoText("SAP SAPUI5 Library");
+
+		//configure the welcome area
+		oAppHeader.setDisplayWelcome(true);
+		oAppHeader.setUserName("John Doe");
+
+		//configure the log off area
+		oAppHeader.setDisplayLogoff(true);
+
+		oAppHeader.placeAt("sample1");
+		</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/applicationheader-icon.png">ApplicationHeader</h1>
+		
+		<h2>Introduction</h2>
+		
+		<p>
+		ApplicationHeader is a control that is used as the top area of any application page. The purpose is to provide a welcome text and a log off button, but also the company branding. It thus enforces a consistent look and feel from an application page to another one. 
+		</p>
+		
+		<p>
+		The ApplicationHeader is completely configurable. The branding part, consisting of a logo and a text, can be set through the <code>logoSrc</code> and <code>logoText</code> attributes. 
+		The display of the log off and the welcome area is determined by the attribute settings for <code>displayLogoff</code> and <code>displayWelcome</code>. 
+		</p>
+		
+		<h2>Example</h2>
+		
+		<div code-sample="sample1" script="AppHeader"></div>
+		
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ApplicationHeader.html" >API documentation</a>
+		</p>
+	</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.ThingInspector,sap.ui.ux3.ThingGroup,sap.ui.ux3.ThingAction">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="Control ThingInspector" />
+		<title>ThingInspector - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+				data-sap-ui-language="en"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='samplescript1'>
+//Helper function to easier create a Matrixlayout
+function row(sLabel, sText, sUrl) {
+	var oControl;
+	if(!sUrl){
+		oControl = new sap.ui.commons.TextView({
+			text: sText,
+			tooltip: sText
+		});
+	}else{
+		oControl = new sap.ui.commons.Link({
+			text: sText,
+			href: sUrl,
+			tooltip: sText,
+			target: "_blank"
+		});
+	}
+
+	var oLabel = new sap.ui.commons.Label({
+		text: sLabel + ":",
+		labelFor: oControl
+	});
+
+	var oMLCell1 = new sap.ui.commons.layout.MatrixLayoutCell({
+		hAlign : sap.ui.commons.layout.HAlign.End,
+		vAlign : sap.ui.commons.layout.VAlign.Top,
+		content : [ oLabel ]
+	});
+	var oMLCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
+		hAlign : sap.ui.commons.layout.HAlign.Begin,
+		vAlign : sap.ui.commons.layout.VAlign.Top,
+		content : [ oControl ]
+	});
+
+	return new sap.ui.commons.layout.MatrixLayoutRow({
+		cells : [ oMLCell1, oMLCell2 ]
+	});
+}
+
+//Actions of the ThingInspector
+var oA1 = new sap.ui.ux3.ThingAction({
+	id: "create",
+	text: "Create",
+	tooltip: "Create"
+});
+var oA2 = new sap.ui.ux3.ThingAction({
+	id : "delete",
+	text : "Delete",
+	tooltip: "Delete"
+});
+var oA3 = new sap.ui.ux3.ThingAction({
+	id : "change",
+	text : "Change",
+	tooltip: "Change"
+});
+
+var oA4 = new sap.ui.ux3.ThingAction({
+	id : "close",
+	text : "Close",
+	tooltip: "Close"
+});
+
+//Facet content of the ThingInspector
+var oFC1 = new sap.ui.ux3.ThingGroup({
+	title : "Group 1",
+	content: [
+		new sap.ui.commons.Button({
+			text: "Some example content",
+			tooltip: "Some example content"
+		})
+	]
+});
+var oFC2 = new sap.ui.ux3.ThingGroup({
+	title : "Group 2",
+	content: [
+		new sap.ui.commons.Button({
+			text: "Some example content",
+			tooltip: "Some example content"
+		})
+	]
+});
+
+//ThingInspector
+var oTI = new sap.ui.ux3.ThingInspector({
+	firstTitle: "Max Mustermann",
+	secondTitle: "Manager",
+	type: "Employee",
+	icon: "images/Employee.png",
+	updateActionEnabled: false,
+	facets: [
+		 new sap.ui.ux3.NavigationItem({key : "overview", text : "Overview"}),
+		 new sap.ui.ux3.NavigationItem({key : "detail", text : "Details"})
+	],
+	headerContent: [
+		new sap.ui.ux3.ThingGroup({
+			title : "About",
+			content: [
+				new sap.ui.commons.layout.MatrixLayout({rows: [
+					row("Date of birth", "09/09/1999"),
+					row("Gender", "male"),
+					row("Nationality", "german"),
+					row("VIP", "yes")
+				]})
+			]
+		}),
+		new sap.ui.ux3.ThingGroup({
+			title : "Contact",
+			content: [
+				new sap.ui.commons.layout.MatrixLayout({rows: [
+					row("Address", "Hauptstraße 10, Musterstadt, Germany"),
+					row("Phone", "06221/23428374"),
+					row("Fax", "06221/23423432"),
+					row("E-mail", "m.m@sap.com", "mailto:m.m@sap.com"),
+					row("Web Site", "www.sap.com", "http://www.sap.com")
+				]})
+			]
+		})
+	],
+	openNew: function(oEvent) {
+		sap.ui.commons.MessageBox.show("You triggered the open in new window action which is not implemented here.", "INFORMATION", "Open new", "CLOSE", null, "CLOSE");
+	},
+	facetSelected: function(oEvent) {
+		oTI.removeAllFacetContent();
+		oTI.removeAllActions();
+		switch(oEvent.getParameter("key")){
+			case "overview":
+				oTI.addAction(oA1);
+				oTI.addAction(oA2);
+				oTI.addAction(oA3);
+				oTI.addAction(oA4);
+				oTI.addFacetContent(oFC1);
+				break;
+			case "detail":
+				oTI.addFacetContent(oFC1);
+				oTI.addFacetContent(oFC2);
+				break;
+		}
+	},
+	actionSelected: function(oEvent) {
+		var oAction = oEvent.getParameter("action");
+		var sActionId = oAction.getId();
+
+		if(sActionId == "close"){
+			if(oTI.isOpen()){
+				oTI.close();
+			    return;
+			}
+		}
+		var idx = sActionId.lastIndexOf("-");
+		if(idx >= 0){
+			sActionId = sActionId.substring(idx+1);
+			if(sActionId == "follow"){
+				sActionId = sActionId + " (State: "+ oTI.getFollowState()+")";
+			}
+		}
+		sap.ui.commons.MessageBox.show("You triggered the following action: " + sActionId, "INFORMATION", "Action triggered", "CLOSE", null, "CLOSE");
+	}
+});
+
+var oButton = new sap.ui.commons.Button({
+	text: "Open ThingInspector",
+	press: function(oEvent){
+		if(!oTI.isOpen()){
+			oTI.open();
+		}
+	}
+});
+oButton.placeAt("sample1");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/thinginspector-icon.png">ThingInspector</h1>
+		<h2>Introduction</h2>
+
+		<p>The ThingInspector exposes all aspects of a Thing including a handle on the Things, a compact summary of the attributes, Tags and the generic Thing actions, as well as the different facets of the Thing. 
+		A Thing is a representation of one or several entities in the form that is familiar to the user from daily work.</p>
+		
+		<p>The ThingInspector is based on <a class="sapUiDemokitSrcLink" href="OverlayContainer.html">OverlayContainer</a> control that can run within the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a> 
+		control if it is available or within the window itself. When running in the Shell, the ThingInspector overlays the workset and the content area of the Shell, the tool palette and the pane bar remains accessible. 
+		If the ThingInspector runs in the window it overlays this whole window and does not have default "close" button.</p>
+		
+		<p>The ThingInspector consists of: a Header area, a Canvas area and a Toolbar. The Header area contains a top panel with type, icon and title of the Thing as well as optional content blocks. 
+		The Canvas area contains the "Facet Navigation Bar" and the "Facet Content area". The "Facet Content area" consists of optional content blocks. 
+		An important part of the ThingInspector is its content, showing the details of the Thing you inspect. To add additional details of a Thing you can add so called <code>ThingGroups</code>. 
+		A <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingGroup.html">sap.ui.ux3.ThingGroup</a> is a "group" control, consisting of a title property and a content aggregation. 
+		The content can be every SAPUI5 control. The Facets are represented via a <a class="sapUiDemokitSrcLink" href="NavigationBar.html">NavigationBar</a> similar to the one in the Shell.
+		The Toolbar offers a set of the predefined actions (update, follow, favorite and flag). You can also add ThingInspector-specific actions as well. The specific actions (see 
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingAction.html">sap.ui.ux3.ThingAction</a>) appear as buttons at the right-hand side of the Toolbar.</p>
+
+		<br/>
+
+		<h2>Example</h2>
+
+		<p>Here is an example using the ThingInspector control.</p>
+		<div code-sample="sample1" script="samplescript1"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.ThingInspector.html" >API documentation</a>
+		</p>
+	</body>
+</html>

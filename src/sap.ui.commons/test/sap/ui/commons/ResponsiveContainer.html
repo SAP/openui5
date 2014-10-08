@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ResponsiveContainer - sap.ui.commons</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ResponsiveContainer.gif">
+<style>
+#content1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 200px;
+	height: 200px;
+}
+#content2 {
+	position: absolute;
+	top: 0;
+	left: 200px;
+	right: 0;
+	height: 200px;
+}
+#content3 {
+	position: absolute;
+	top: 200px;
+	left: 0;
+	width: 200px;
+	bottom: 0;
+}
+#content4 {
+	position: absolute;
+	top: 200px;
+	left: 200px;
+	right: 0;
+	bottom: 0;
+}
+</style>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+<script>
+	sap.ui.core.Control.extend("Box", {
+		metadata: {
+			properties: {
+				width: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
+				height: { type: "sap.ui.core.CSSSize", defaultValue: "100%" },
+				color: { type: "sap.ui.core.CSSColor", defaultValue: "black" },
+				text: { type: "string", defaultValue: "" }
+			}
+		},
+		renderer: function(oRM, oControl) {
+			oRM.write("<div");
+			oRM.writeControlData(oControl);
+			oRM.addStyle("width", oControl.getWidth());
+			oRM.addStyle("height", oControl.getHeight());
+			oRM.addStyle("border", "2px solid " + oControl.getColor());
+			oRM.addStyle("box-sizing", "border-box");
+			oRM.writeStyles();
+			oRM.write(">");
+			oRM.writeEscaped(oControl.getText());
+			oRM.write("</div>");
+		}
+	});
+
+	var oContent1 = new sap.ui.commons.TextView({text: "Responsive Container Test"});
+	oContent1.placeAt("content1");
+	
+	var oContent2 = new sap.ui.commons.ResponsiveContainer({
+		defaultContent: new sap.ui.commons.TextView({
+			text: "No content, too small"
+		}),
+		ranges: [
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "200px",
+				content: new Box({
+					width: "200px",
+					color: "red",
+					text: "200px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "400px",
+				content: new Box({
+					width: "400px",
+					color: "green",
+					text: "400px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "60em",
+				content: new Box({
+					width: "60em",
+					color: "blue",
+					text: "60em"
+				})
+			})
+		]
+	});
+	oContent2.placeAt("content2");
+	
+	var oContent3 =  new sap.ui.commons.ResponsiveContainer({
+		defaultContent: new sap.ui.commons.TextView({
+			text: "No content, too small"
+		}),
+		ranges: [
+			new sap.ui.commons.ResponsiveContainerRange({
+				height: "200px",
+				content: new Box({
+					height: "200px",
+					color: "red",
+					text: "200px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				height: "30em",
+				content: new Box({
+					height: "30em",
+					color: "green",
+					text: "30em"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				height: "600px",
+				content: new Box({
+					height: "600px",
+					color: "blue",
+					text: "600px"
+				})
+			})
+		]
+	});
+	oContent3.placeAt("content3");
+	
+	var oContent4 =  new sap.ui.commons.ResponsiveContainer({
+		defaultContent: new sap.ui.commons.TextView({
+			text: "No content, too small"
+		}),
+		ranges: [
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "50rem",
+				height: "40rem",
+				content: new Box({
+					width: "50rem",
+					height: "40rem",
+					color: "orange",
+					text: "50rem x 40rem"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "200px",
+				height: "200px",
+				content: new Box({
+					width: "200px",
+					height: "200px",
+					color: "red",
+					text: "200px x 200px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "200px",
+				height: "600px",
+				content: new Box({
+					width: "200px",
+					height: "600px",
+					color: "green",
+					text: "200px x 600px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "600px",
+				height: "200px",
+				content: new Box({
+					width: "600px",
+					height: "200px",
+					color: "blue",
+					text: "600px x 200px"
+				})
+			}),
+			new sap.ui.commons.ResponsiveContainerRange({
+				width: "500px",
+				height: "500px",
+				content: new Box({
+					width: "500px",
+					height: "500px",
+					color: "purple",
+					text: "500px x 500px"
+				})
+			}),
+		]
+	});
+	oContent4.placeAt("content4");
+
+
+
+</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content1"></div>
+<div id="content2"></div>
+<div id="content3"></div>
+<div id="content4"></div>
+</body>
+</html>

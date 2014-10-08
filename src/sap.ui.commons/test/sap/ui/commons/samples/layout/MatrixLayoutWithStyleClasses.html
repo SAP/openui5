@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<title>test</title>
+
+	<script id='sap-ui-bootstrap' type='text/javascript'
+			src='../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_goldreflection'
+			data-sap-ui-libs='sap.ui.commons'></script>
+
+	<script>
+		var c = sap.ui.commons;
+
+		// construct and fill the layout
+		var layout = new c.layout.MatrixLayout()
+		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
+		
+		// add a cell with a custom style class
+		var cell = new c.layout.MatrixLayoutCell({content:new c.TextView({text:"Hello World"})});
+		cell.addStyleClass("myCell");
+		layout.createRow(new c.TextView({text:"Hello World"}), cell, new c.TextView({text:"Hello World"}));
+		
+		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
+		
+ 		// add a row with a custom style class
+		var row = new c.layout.MatrixLayoutRow({
+			cells:[
+				new c.layout.MatrixLayoutCell({content:new c.TextView({text:"Hello World"})}),
+				new c.layout.MatrixLayoutCell({content:new c.TextView({text:"Hello World"})}),
+				new c.layout.MatrixLayoutCell({content:new c.TextView({text:"Hello World"})})
+			]
+		});
+		row.addStyleClass("myRow");
+		layout.addRow(row);
+		
+		layout.createRow(new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}), new c.TextView({text:"Hello World"}));
+		
+		// add the layout to the UI
+		layout.placeAt('content');
+	</script>
+
+	<style>
+		/* here the custom style classes are defined - they set a different text color */
+		
+		.myRow {
+			color: green;
+		}
+		
+		.myCell {
+			color: red;
+		}
+	</style>
+
+</head>
+<body class='sapUiBody'>
+	<h1>Test page for MatrixLayout using custom style classes</h1>
+	<p>The MatrixLayout below has one cell and one row marked with custom style classes defined by the application, changing the respective text colors to red/green.</p>
+	<div id='content'></div>
+</body>
+</html>

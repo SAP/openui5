@@ -1,0 +1,45 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		title="Table Dialog"
+		class="sapUiPopupWithPadding" >
+		<content>
+			<Table
+				mode="MultiSelect"
+				items="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'Name'
+					}
+				}">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Products"/>
+						<ToolbarSpacer/>
+						<CheckBox text="Fixed Layout" selected="true" select="onCheckBoxSelect"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="Supplier Name" />
+					</Column>
+					<Column hAlign="End">
+						<Text text="Product ID" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem vAlign="Middle" type="Navigation">
+						<cells>
+							<Text text="{Name}" wrapping="false"/>
+							<Text text="{ProductId}" wrapping="false" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<beginButton>
+			<Button text="Close" press="onClosePressed" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

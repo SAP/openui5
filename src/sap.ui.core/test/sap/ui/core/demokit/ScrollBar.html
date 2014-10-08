@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.core.ScrollBar">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>ScrollBar - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script id='scrollbar1'>
+
+	    // Create a vertical scrollbar with size 200 px and 20 steps
+		var oVSB = new sap.ui.core.ScrollBar("vertSB");
+		oVSB.setSize("200px");
+		oVSB.setSteps(20);
+		// Initial scroll position - in steps
+		oVSB.setScrollPosition(0);
+
+		// attach it to some other element in the page
+		oVSB.placeAt("sample1");
+
+
+		var oTextView1 = new sap.ui.commons.TextView();
+		oTextView1.setText("Scroll position: " + oVSB.getScrollPosition());
+		oTextView1.setTooltip("Scroll position");
+
+		// attach it to some element in the page
+		oTextView1.placeAt("sample1");
+
+		oVSB.attachScroll(function(oEvent) {
+			oTextView1.setText("Scroll position: " + oVSB.getScrollPosition());
+        });
+
+		</script>
+
+		<script id='scrollbar2'>
+		// Create a horizontal scrollbar with size 200 px and content size 500 px
+		var oHSB = new sap.ui.core.ScrollBar("horiSB");
+		oHSB.setVertical(false);
+		oHSB.setSize("200px");
+		oHSB.setContentSize("500px");
+		// Initial scroll position in px
+		oHSB.setScrollPosition(50);
+
+		// attach it to some other element in the page
+		oHSB.placeAt("sample2");
+
+		var oTextView2 = new sap.ui.commons.TextView();
+		oTextView2.setText("Scroll position: " + oHSB.getScrollPosition());
+		oTextView2.setTooltip("Scroll position");
+
+		// attach it to some other element in the page
+		oTextView2.placeAt("sample2");
+
+		oHSB.attachScroll(function(oEvent) {
+			oTextView2.setText("Scroll position: " + oHSB.getScrollPosition());
+		});
+
+		</script>
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/scrollbar-icon.png">ScrollBar</h1>
+
+  <h2>Introduction</h2>
+		<p>
+		The scrollbar control harmonizes the usage of the browser scrollbar to
+		prevent different behavior across browsers. Also it fixes the IE9 
+		problem which prevents scrolling when a scrollbar has no content. 
+		</p>
+		<p>
+		The scrollbar can be used in two different modes:
+		<ul>
+			<li>Pixel Mode: pixel-based mode that works if the content size to scroll is set. That is the common use case</li>
+			<li>Step Mode: the content size is unknown and is calculated by the scrollbar control based on scroll step size of the browser.</li>
+		</ul>
+		</p>
+
+	<h2>Example</h2>
+
+	<h3> Vertical scrollbar in step mode</h3>
+	<div code-sample="sample1" script="scrollbar1"></div>
+
+	<h3> Horizontal scrollbar in pixel mode</h3>
+	<div code-sample="sample2" script="scrollbar2"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.ScrollBar.html">API documentation</a>
+	</p>
+	</body>
+</html>

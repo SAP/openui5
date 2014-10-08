@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.unified</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+  
+  <documentation>Unified controls intended for both, mobile and desktop scenarios</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+  </dependencies>
+  
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.unified" />
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.unified.js." />
+    </jscoverage>
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../../test-resources/sap/ui/unified/demokit/docuindex.json"
+        resolve="lib" />
+  </appData>
+
+</library>

@@ -1,0 +1,417 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.TabStrip
+  Author: SAP
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+		var iIndex = -1; // for event test
+		var iEvent = 0; // 1= selected, 2= closed
+
+		function handleSelected(oEvent){
+			iIndex = oEvent.getParameter("index");
+			iEvent = 1;
+		};
+
+		function handleClose(oEvent){
+			iIndex = oEvent.getParameter("index");
+			iEvent = 2;
+		};
+
+		var oTabStrip1 = new sap.ui.commons.TabStrip("tabstrip1");
+		oTabStrip1.setWidth("700px");
+		oTabStrip1.setHeight("300px");
+		oTabStrip1.placeAt("uiArea1");
+		oTabStrip1.attachSelect(handleSelected);
+		oTabStrip1.attachClose(handleClose);
+		oTabStrip1.createTab("First tab", new sap.ui.commons.Button("button1",{text:"press me", width: "800px", height: "400px"}));
+		// large button to test if content area holds its size
+
+		var oTab1 = new sap.ui.commons.Tab("tab1",{
+			title: new sap.ui.core.Title("title1",{text:"Second tab",icon:"../images/icon.gif"}),
+			content: new sap.ui.commons.TextView("TV1",{text:"This is the content of the second tab"}),
+			closable: true });
+		oTabStrip1.addTab(oTab1);
+
+		var oTab2 = new sap.ui.commons.Tab("tab2",{
+			title: new sap.ui.core.Title("title2",{text:"Third tab", tooltip: "Tooltip2"}),
+			content: new sap.ui.commons.TextView("TV2",{text:"This is the content of the third tab"}),
+			enabled: false });
+		oTabStrip1.addTab(oTab2);
+
+		var oTab3 = new sap.ui.commons.Tab("tab3",{
+			title: new sap.ui.core.Title("title3",{text:"4. tab"}),
+			content: new sap.ui.commons.TextView("TV3",{text:"This should not ve visible!"}),
+			visible: false });
+		oTabStrip1.addTab(oTab3);
+
+		var oTab4 = new sap.ui.commons.Tab("tab4",{
+			text:"5. tab",
+			tooltip : "Tooltip4",
+			content: new sap.ui.commons.TextView("TV4",{text:"This is the content of the fifth tab"}),
+			visible: true });
+		oTabStrip1.addTab(oTab4);
+
+		var oTabStrip2 = new sap.ui.commons.TabStrip("tabstrip2", {
+			tabs: [ new sap.ui.commons.Tab("T2-tab0",{
+								text: "Tab 1",
+								content: new sap.ui.commons.TextView({text:"Test 1"}) }),
+							new sap.ui.commons.Tab("T2-tab1",{
+								text: "Tab 2",
+								content: new sap.ui.commons.TextView({text:"Test 2"}) })
+			       ],
+			selectedIndex: 1
+		}).placeAt("uiArea2");
+
+		// TEST functions
+		qutils.delayTestStart();
+
+		module("Appearance");
+
+		test("Visibility", function() {
+			equal(jQuery("#tabstrip1").get(0).offsetWidth, 700, "Width of control");
+			equal(jQuery("#tabstrip1").get(0).offsetHeight, 300, "Height of control");
+			ok(jQuery("#tabstrip1-0").get(0), "1.Tab is Visible: expected defined");
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabDsbl"), "1.Tab is enabled - has no Class sapUiTabDsbl");
+			ok(!jQuery("#tabstrip1-0").children(":has(.sapUiTabClose)").get(0), "1.Tab has no close icon");
+			ok(!jQuery("#tabstrip1-0").find(".sapUiTabIco").get(0), "1.Tab has no icon");
+			equal(jQuery("#tabstrip1-0").text(), "First tab", "Text of 1.tab");
+			ok(!jQuery("#tabstrip1-0").attr("title"), "1.tab - no tooltip");
+			ok(jQuery("#button1").get(0), "Button 1 rendered");
+
+			ok(jQuery("#tab1").get(0), "2.Tab is Visible: expected defined");
+			ok(!jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
+			ok(!jQuery("#tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled - has no Class sapUiTabDsbl");
+			ok(jQuery("#tab1").children(".sapUiTabClose").get(0), "2.Tab has close icon");
+			ok(jQuery("#tab1").find(".sapUiTabIco").get(0), "2.Tab has an icon");
+			equal(jQuery("#tab1").text(), "Second tab", "Text of 2.tab");
+			ok(!jQuery("#tab1").attr("title"), "2.tab - no tooltip");
+
+			ok(jQuery("#tab2").get(0), "3.Tab is Visible: expected defined");
+			ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
+			ok(!jQuery("#tab2").hasClass("sapUiTab"), "3.Tab is disabled - has no Class sapUiTab");
+			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is disabled - has Class sapUiTabDsbl");
+			ok(!jQuery("#tab2").children(":has(.sapUiTabClose)").get(0), "3.Tab has no close icon");
+			ok(!jQuery("#tab2").find(".sapUiTabIco").get(0), "3.Tab has no icon");
+			equal(jQuery("#tab2").text(), "Third tab", "Text of 3.tab");
+			equal(jQuery("#tab2").attr("title"), "Tooltip2", "3.tab - tooltip");
+
+			ok(!jQuery("#tab3").get(0), "4.Tab is Invisible: expected undefined");
+
+			ok(jQuery("#tab4").get(0), "5.Tab is Visible: expected defined");
+			equal(jQuery("#tab4").text(), "5. tab", "Text of 5.tab");
+			equal(jQuery("#tab4").attr("title"), "Tooltip4", "5.tab - tooltip");
+		});
+
+		test("ARIA", function() {
+			// tab list
+			equal(jQuery("#tabstrip1").find("ul").attr("role"), "tablist", "Role of the list area");
+
+			//tabs
+			equal(jQuery("#tabstrip1-0").attr("role"), "tab", "Role of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-disabled"), "false", "ARIA-DISABLED of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-controls"), "tabstrip1-0-panel", "ARIA-CONTROLS of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-setsize"), "4", "ARIA-SETSIZE of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-posinset"), "1", "ARIA-POSINSET of 1. tab");
+
+			equal(jQuery("#tab1").attr("role"), "tab", "Role of 2. tab");
+			equal(jQuery("#tab1").attr("aria-selected"), "false", "ARIA-SELECTED of 2. tab");
+			equal(jQuery("#tab1").attr("aria-disabled"), "false", "ARIA-DISABLED of 2. tab");
+			equal(jQuery("#tab1").attr("aria-controls"), "tab1-panel", "ARIA-CONTROLS of 2. tab");
+			equal(jQuery("#tab1").attr("aria-setsize"), "4", "ARIA-SETSIZE of 2. tab");
+			equal(jQuery("#tab1").attr("aria-posinset"), "2", "ARIA-POSINSET of 2. tab");
+
+			equal(jQuery("#tab2").attr("role"), "tab", "Role of 3. tab");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+			equal(jQuery("#tab2").attr("aria-disabled"), "true", "ARIA-DISABLED of 3. tab");
+			equal(jQuery("#tab2").attr("aria-controls"), "tab2-panel", "ARIA-CONTROLS of 3. tab");
+			equal(jQuery("#tab2").attr("aria-setsize"), "4", "ARIA-SETSIZE of 3. tab");
+			equal(jQuery("#tab2").attr("aria-posinset"), "3", "ARIA-POSINSET of 3. tab");
+
+			equal(jQuery("#tab4").attr("role"), "tab", "Role of 5. tab");
+			equal(jQuery("#tab4").attr("aria-selected"), "false", "ARIA-SELECTED of 5. tab");
+			equal(jQuery("#tab4").attr("aria-disabled"), "false", "ARIA-DISABLED of 5. tab");
+			equal(jQuery("#tab4").attr("aria-controls"), "tab4-panel", "ARIA-CONTROLS of 5. tab");
+			equal(jQuery("#tab4").attr("aria-setsize"), "4", "ARIA-SETSIZE of 5. tab");
+			equal(jQuery("#tab4").attr("aria-posinset"), "4", "ARIA-POSINSET of 5. tab");
+
+			//content area
+			equal(jQuery("#tabstrip1-0-panel").attr("role"), "tabpanel", "Role of content area");
+			equal(jQuery("#tabstrip1-0-panel").attr("aria-labelledby"), "tabstrip1-0", "ARIA-LABELLEDBY of content area");
+		});
+
+		module("Behaviour");
+
+		test("mouse interaction", function() {
+			//click on title ID -> otherwise DOM element would be needed
+			qutils.triggerMouseEvent("tab1", "click");
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 2. Tab :");
+			equal(iEvent, 1, "Event number after click on 2. Tab :");
+			equal(iIndex, 1, "event index after click on 2. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
+			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
+
+			qutils.triggerMouseEvent("tab2", "click"); // disabled tab
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 3. Tab :");
+			equal(iEvent, 0, "Event number after click on 3. Tab :");
+			equal(iIndex, -1, "event index after click on 3. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
+			ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+
+			// click on close icon -> get DOM of it
+			var oCloseDom = jQuery("#tab1").children(".sapUiTabClose").get(0);
+			qutils.triggerMouseEvent(oCloseDom, "click");
+			equal(iEvent, 2, "Event number after click on Close icon of 2.Tab :");
+			equal(iIndex, 1, "Event index after click on Close icon of 2.Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+
+		});
+
+		test("keyboard interaction", function() {
+			qutils.triggerKeyboardEvent("tabstrip1-0", "SPACE");
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 1. Tab :");
+			equal(iEvent, 1, "Event number after SPACE on 1. Tab :");
+			equal(iIndex, 0, "event index after SPACE on 1. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
+			ok(!jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is not Selected - has Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "false", "ARIA-SELECTED of 2. tab");
+
+			qutils.triggerKeyboardEvent("tab2", "SPACE"); // disabled tab
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 3. Tab :");
+			equal(iEvent, 0, "Event number after SPACE on 3. Tab :");
+			equal(iIndex, -1, "event index after SPACE on 3. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
+			ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+
+			qutils.triggerKeyboardEvent("tab1", "DELETE"); 
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(iEvent, 2, "Event number after DELETE on 2. Tab :");
+			equal(iIndex, 1, "event index after DELETE on 2. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+
+			qutils.triggerKeyboardEvent("tabstrip1-0", "DELETE");
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(iEvent, 0, "Event number after DELETE on 1. Tab :");
+			equal(iIndex, -1, "event index after DELETE on 1. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+		});
+
+		test("switching using method", function() {
+			oTabStrip1.setSelectedIndex(1);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 2. Tab :");
+			equal(iEvent, 0, "Event number after SetSelectedIndex to 2. Tab :");
+			equal(iIndex, -1, "event index after SetSelectedIndex to 2. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
+			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
+
+			//select disabled tab
+			oTabStrip1.setSelectedIndex(2); // disabled tab
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 3. Tab :");
+			equal(iEvent, 0, "Event number after SetSelectedIndex to 3. Tab :");
+			equal(iIndex, -1, "event index after SetSelectedIndex to 3. Tab :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
+			ok(!jQuery("#tab2").hasClass("sapUiTabSel"), "3.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+
+			//select invisible tab
+			oTabStrip1.setSelectedIndex(3);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 4. Tab(invisible) :");
+			equal(iEvent, 0, "Event number after SetSelectedIndex to 4. Tab(invisible) :");
+			equal(iIndex, -1, "event index after SetSelectedIndex to 4. Tab(invisible) :");
+			iEvent = 0; 
+			iIndex = -1; 
+			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
+
+		});
+
+		test("CloseTab-method", function() {
+			oTabStrip1.closeTab(0); // not closeable
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after close of 1.Tab :");
+			ok(jQuery("#tabstrip1-0").get(0), "1.Tab is Visible: expected defined");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
+
+			oTabStrip1.closeTab(1);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			equal(oTabStrip1.getSelectedIndex(), 4, "Selection index after close of 2.Tab :");
+			ok(jQuery("#tab4").hasClass("sapUiTabSel"), "5.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tab4").hasClass("sapUiTab"), "5.Tab is Selected - has no Class sapUiTab");
+			ok(!jQuery("#tab1").get(0), "2.Tab is Invisible: expected undefined");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-setsize"), "3", "ARIA-SETSIZE of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-posinset"), "1", "ARIA-POSINSET of 1. tab");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+			equal(jQuery("#tab2").attr("aria-setsize"), "3", "ARIA-SETSIZE of 3. tab");
+			equal(jQuery("#tab2").attr("aria-posinset"), "2", "ARIA-POSINSET of 3. tab");
+			equal(jQuery("#tab4").attr("aria-selected"), "true", "ARIA-SELECTED of 5. tab");
+			equal(jQuery("#tab4").attr("aria-setsize"), "3", "ARIA-SETSIZE of 5. tab");
+			equal(jQuery("#tab4").attr("aria-posinset"), "3", "ARIA-POSINSET of 5. tab");
+
+		});
+
+		test("removeTab-method", function() {
+			oTabStrip1.removeTab(4);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after remove of 5.Tab :");
+			ok(!jQuery("#tab4").get(0), "1.Tab is Invisible: expected undefined");
+			equals(oTabStrip1.getTabs().length, 4, "Only 4 tabs assigned to TabStrip");
+			var bFound = false; 
+			for(var i = 1; i  < oTabStrip1.getTabs().length; i++){
+				if(oTabStrip1.getTabs()[i] == oTab4){
+					bFound = true;
+				}
+			}
+			ok(!bFound, "5.Tab is not assignet to Tabstrip");
+			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
+			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
+			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-setsize"), "2", "ARIA-SETSIZE of 1. tab");
+			equal(jQuery("#tabstrip1-0").attr("aria-posinset"), "1", "ARIA-POSINSET of 1. tab");
+			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
+			equal(jQuery("#tab2").attr("aria-setsize"), "2", "ARIA-SETSIZE of 3. tab");
+			equal(jQuery("#tab2").attr("aria-posinset"), "2", "ARIA-POSINSET of 3. tab");
+
+		});
+
+		test("toggling tabs enabled", function() {
+			ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
+			ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
+			ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
+
+			var oTab0 = sap.ui.getCore().byId("T2-tab0");
+			var oTab1 = sap.ui.getCore().byId("T2-tab1");
+
+			// disable 1.Tab
+			oTab0.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
+
+			// disable 2.Tab -> no tab must be selected and no content must be displayed
+			oTab1.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is disabled");
+			ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
+			equal(oTabStrip2.getSelectedIndex(), -1, "No tab is selected");
+			ok(jQuery("#tabstrip2-panel").get(0), "Dummy panel rendered");
+			equal(jQuery("#tabstrip2-panel").children().length, 0, "Dummy panel has no content");
+
+			// enable 1.Tab -> it must be selected and it's content must be displayed
+			oTab0.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			ok(!jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is enabled");
+			ok(jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is selected");
+			equal(oTabStrip2.getSelectedIndex(), 0, "1.tab is selected");
+			ok(jQuery("#T2-tab0-panel").get(0), "Tab1 - panel rendered");
+			equal(jQuery("#T2-tab0-panel").children().length, 1, "Panel has content");
+			equal(jQuery(jQuery("#T2-tab0-panel").children()[0]).text(), "Test 1", "Text 1 is rendered");
+
+			// enable 2.Tab
+			oTab1.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			ok(!jQuery("#T2-tab1").hasClass("sapUiTabDsbl"), "2.Tab is enabled");
+			ok(!jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is not selected");
+
+			// disable 1.tab -> 2.Tab must be selected and it's content must be displayed
+			oTab0.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			ok(jQuery("#T2-tab0").hasClass("sapUiTabDsbl"), "1.Tab is disabled");
+			ok(!jQuery("#T2-tab0").hasClass("sapUiTabSel"), "1.Tab is not selected");
+			ok(jQuery("#T2-tab1").hasClass("sapUiTabSel"), "2.Tab is selected");
+			equal(oTabStrip2.getSelectedIndex(), 1, "2.tab is selected");
+			ok(jQuery("#T2-tab1-panel").get(0), "Tab2 - panel rendered");
+			equal(jQuery("#T2-tab1-panel").children().length, 1, "Panel has content");
+			equal(jQuery(jQuery("#T2-tab1-panel").children()[0]).text(), "Test 2", "Text 2 is rendered");
+		});
+
+	</script>
+
+	<title>qunit Test for TabStrip</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.TabStrip.gif">
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.TabStrip</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<br>
+	<div id="uiArea2"></div>
+
+</body>
+</html>

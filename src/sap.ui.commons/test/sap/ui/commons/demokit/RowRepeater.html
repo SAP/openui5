@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.RowRepeater">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>RowRepeater - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+
+		<script id='RR'>
+
+		// create the row repeater control
+		var oRowRepeater = new sap.ui.commons.RowRepeater("rr1");
+		oRowRepeater.setNoData(new sap.ui.commons.TextView({text: "Sory, no data available!"}));
+
+		// create test data
+	 	var dataObject = { data : [
+				{lastName: "Platte", name: "Rudolf",  href: "http://www.sap.com", src: "images/persons/male_PlatteR.jpg", gender: "male" , country: "US"},
+				{lastName: "Dwyer", name: "Nora",  href: "http://www.sap.com", src: "images/persons/female_DwyerN.jpg", gender: "female" , country: "US"},
+				{lastName: "Wallace", name: "Alex",  href: "http://www.sap.com", src: "images/persons/male_WallaceA.jpg", gender: "male", country:  "DE"},
+				{lastName: "Wang", name: "Megan",  href: "http://www.sap.com", src: "images/persons/female_WangM.jpg", gender: "female", country: "US"},
+				{lastName: "Ingalls", name: "Barbara",  href: "http://www.sap.com", src: "images/persons/female_IngallsB.jpg", gender: "female" , country: "US"},
+				{lastName: "Wallace", name: "Bruno",  href: "http://www.sap.com", src: "images/persons/male_WallaceA.jpg", gender: "male", country: "US"},
+				{lastName: "Zar", name: "Lou", href: "http://www.sap.com", src: "images/persons/male_FieldJ.jpg", gender: "male", country:  "DE"},
+				{lastName: "Watson", name: "Mary",  href: "http://www.sap.com", src: "images/persons/female_WatsonM.jpg", gender: "female", country: "US"},
+				{lastName: "Spring", name: "Sally", href: "http://www.sap.com", src: "images/persons/female_SpringS.jpg", gender: "female", country: "US"},
+				{lastName: "Schutt", name: "Doris", href: "http://www.sap.com", src: "images/persons/female_BaySu.jpg", gender: "female", country: "US"},
+				{lastName: "Nicols", name: "John", href: "http://www.sap.com", src: "images/persons/male_NicolsJ.jpg", gender: "male", country:  "FR"},
+				{lastName: "Gains", name: "Viola", href: "http://www.sap.com", src: "images/persons/female_GainsV.jpg", gender: "female", country:  "DE"},
+				{lastName: "Bay", name: "Sue",  href: "http://www.sap.com", src: "images/persons/female_BaySu.jpg", gender: "female", country:  "FR"},
+				{lastName: "Smith", name: "John", href: "http://www.sap.com", src: "images/persons/male_SmithJo.jpg", gender: "male", country:  "CH"},
+				{lastName: "Gordon", name: "Randy", href: "http://www.sap.com", src: "images/persons/male_GordonR.jpg", gender: "male", country:  "DE"},
+				{lastName: "Schulz", name: "Justin", href: "http://www.sap.com", src: "images/persons/male_SchulzJ.jpg", gender: "male", country:  "DE"},
+				{lastName: "Time", name: "Tino", href: "http://www.sap.com", src: "images/persons/male_KentC.jpg", gender: "male", country: "US"},
+				{lastName: "East", name: "Jonathan", href: "http://www.sap.com", src: "images/persons/male_EastJ.jpg", gender: "male", country:  "FR"},
+				{lastName: "Poole", name: "Gene", href: "http://www.sap.com", src: "images/persons/female_GainsV.jpg", gender: "female", country:  "IT"},
+				{lastName: "Ander", name: "Corey", href: "http://www.sap.com", src: "images/persons/male_SchulzJ.jpg", gender: "male", country:  "CH"},
+				{lastName: "Early", name: "Brighton", href: "http://www.sap.com", src: "images/persons/male_FieldJ.jpg", gender: "male", country:  "FR"},
+				{lastName: "Noring", name: "Constance", href: "http://www.sap.com", src: "images/persons/female_WatsonM.jpg", gender: "female", country: "US"},
+				{lastName: "Miller", name: "Michael", href: "http://www.sap.com", src: "images/persons/male_MillerM.jpg", gender: "male", country:  "DE"},
+				{lastName: "Tress", name: "Matt", href: "http://www.sap.com", src: "images/persons/female_WatsonM.jpg", gender: "female", country: "US"},
+				{lastName: "Turner", name: "Pamela", href: "http://www.sap.com", src: "images/persons/female_RushJ.jpg", gender: "female", country:  "DE"},
+				{lastName: "Dente", name: "Al",  href: "http://www.sap.com", src: "images/persons/i2.jpg", gender: "male", country: "US"},
+				{lastName: "Friese", name: "Andy", href: "http://www.sap.com", src: "images/persons/i3.jpg", gender: "male", country:  "DE"},
+				{lastName: "Mann", name: "Anita", href: "http://www.sap.com", src: "images/persons/i1.jpg", gender: "female", country:  "DE"},
+				{lastName: "Fisher", name: "Richard",  href: "http://www.sap.com", src: "images/persons/male_FisherR.jpg", gender: "male", country: "US"},
+				{lastName: "Fuchs", name: "Peter", href: "http://www.sap.com", src: "images/persons/male_FuchsP.jpg", gender: "male", country:  "DE"},
+				{lastName: "Rush", name: "Joanne", href: "http://www.sap.com", src: "images/persons/female_RushJ.jpg", gender: "female", country:  "DE"},],
+					empty : []
+				};
+		// Increase the number of the lines to more than 100
+	  for(var n = 1; n <= 100; n++) {
+		  dataObject.data.push( { lastName:"LastName"+ n, name:"Name" + n, src:"images/persons/male.jpg", country: "DE", href: "http://www.sap.com" } );
+	  }
+
+		// create JSON model
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(dataObject);
+		sap.ui.getCore().setModel(oModel);
+
+
+		//create title
+		var oTitle = new sap.ui.core.Title({text:"Employees", icon:"images/SAPLogo.gif", tooltip:"Employees"});
+
+		// create filters
+		var oFilter1 = new sap.ui.commons.RowRepeaterFilter("first_filter",{text:"All Countries"});
+		var oFilter2 = new sap.ui.commons.RowRepeaterFilter("second_filter",{text:"Germany",filters:[new sap.ui.model.Filter("country","EQ", "DE")],tooltip:"Show Employees working in Germany"});
+		var oFilter3 = new sap.ui.commons.RowRepeaterFilter("third_filter",{text:"USA",filters:[new sap.ui.model.Filter("country", "EQ","US")],tooltip:"Show Emloyees working in USA"});
+
+		// create sorters
+		var oSorter1 = new sap.ui.commons.RowRepeaterSorter("third_sorter",{text:"Country",sorter:new sap.ui.model.Sorter("country",true),tooltip:"Sort By Country"});
+		var oSorter2 = new sap.ui.commons.RowRepeaterSorter("first_sorter",{text:"Gender",sorter:new sap.ui.model.Sorter("gender",false),tooltip:"Sort By Gender"});
+		var oSorter3 = new sap.ui.commons.RowRepeaterSorter("second_sorter",{text:"Last Name",sorter:new sap.ui.model.Sorter("lastName",false)});
+
+		//add title
+		oRowRepeater.setTitle(oTitle);
+
+		//add filters and sorters
+		oRowRepeater.addFilter(oFilter1);
+		oRowRepeater.addFilter(oFilter2);
+		oRowRepeater.addFilter(oFilter3);
+
+		oRowRepeater.addSorter(oSorter1);
+		oRowRepeater.addSorter(oSorter2);
+		oRowRepeater.addSorter(oSorter3);
+
+		//configure the RowRepeater
+		oRowRepeater.setDesign("Standard");
+		oRowRepeater.setNumberOfRows(5);
+		oRowRepeater.setCurrentPage(1);
+		oRowRepeater.setTitle(oTitle);
+
+
+
+		//create the template control that will be repeated and will display the data
+		var oRowTemplate = new sap.ui.commons.layout.MatrixLayout("theMatrix");
+
+		var  matrixRow, matrixCell, control;
+		// main matrix
+		oRowTemplate.setWidth("70%");
+		// main row
+		matrixRow = new sap.ui.commons.layout.MatrixLayoutRow();
+		//image
+		control = new sap.ui.commons.Image();
+		control.setHeight("60px");
+		control.setWidth("50px");
+		control.bindProperty("src","src");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 1
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","lastName");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 2
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","name");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 3
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","country");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//link
+		control = new sap.ui.commons.Link();
+		control.bindProperty("text","href");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+		// add row to matrix
+		oRowTemplate.addRow(matrixRow);
+
+
+
+		//attach data to the RowRepeater
+		oRowRepeater.bindRows("/data", oRowTemplate);
+
+		oRowRepeater.placeAt("sample1");
+	</script>
+
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/rowrepeater-icon.png">RowRepeater</h1>
+
+		<h2>Introduction</h2>
+
+		<p>
+		The RowRepeater control is used to repeat complex controls. It is best used in cases where a tabular layout is not possible, for example when viewing an RSS feed, or displaying complex search results. The data to be displayed is bound to the RowRepeater using the data binding feature the framework provides. By using the <code>bindRows(bindingPath,rowControl)</code> method, one can specify the binding path pointing to the model data, as well as the control that shall display this data and is repeated for each row.
+		</p>
+
+		<h3>Filter and Sort</h3>
+		<p>
+		The RowRepeater offers filtering and sorting features. It is possible to define multiple filters and sorters, they are available in the header and in the toolbar of the RowRepeater then. Filtering and sorting can also be triggered via the RowRepeater’s public API 
+		(see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RowRepeater.html" >API documentation</a>).
+		</p>
+		<h3>Paging</h3>
+		<p>
+		In order to be able to browse through the RowRepeater, paging features are available. By default, the RowRepeater displays a Paginator. The number of rows to be displayed can be set at design-time, as well as the index of the page to load on first rendering via the attributes <code>numberOfRows</code> and <code>currentPage</code>. It is possible to switch to the <code>ShowMore</code> mode of paging by setting the <code>showMoreSteps</code> attribute. Once this attribute is set, the RowRepeater hides the Paginator and displays a button that makes the control grow to show more rows each time it is clicked. Using this attribute also allows to determine how many rows need to be added after each click. All functions are also available in the public API 
+		</p>
+		<h3>Design</h3>
+		<p>
+		The RowRepeater comes with three different visual designs: <code>standard</code>, <code>transparent</code> and <code>bareshell</code>.
+		In its <code>standard</code> design, the RowRepeater displays all of it features: The header with filter, the toolbar with sorters,
+		the footer with paginator or <code>show more</code> button. The <code>transparent</code> design reuses the <code>standard</code> design and 
+		makes all the borders and backgrounds transparent. The <code>bareshell</code> design hides header, toolbar and
+		footer. Every functionality of the RowRepeater can be accessed via its public API.
+		</p>
+
+		<p>
+		See also: <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Paginator.html">Paginator</a>  
+		</p>
+
+		<h2>Examples</h2>
+
+		<h3>Row Repeater With Paginator</h3>
+		<div code-sample="sample1" script="RR"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RowRepeater.html">API documentation</a>
+		</p>
+		<br/>
+	</body>
+</html>

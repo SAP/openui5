@@ -1,0 +1,130 @@
+{
+	"explored": {
+		"entitiesDefaults": {
+			"appComponent": "CA-UI5",
+			"formFactors": "ML"
+		},
+		"samplesRef": {
+			"namespace": "sap.ui.unified.sample",
+			"ref": "test-resources/sap/ui/unified/sample"
+		},
+		"entities": [
+			{
+				"id": "sap.ui.unified.Menu",
+				"name": "Menu",
+				"category": "Action",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.MenuItemEventing",
+					"sap.ui.unified.sample.MenuMenuEventing"
+				]
+			},
+			{
+				"id": "sap.ui.unified.Currency",
+				"name": "Currency",
+				"category": "Display",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.Currency"
+				]
+			},
+			{
+				"id": "sap.ui.unified.FileUploader",
+				"name": "File Uploader",
+				"category": "User Input",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.FileUploaderBasic",
+					"sap.ui.unified.sample.FileUploaderComplex"
+				]
+			},
+			{
+				"id": "sap.ui.unified.Calendar",
+				"name": "Calendar",
+				"category": "User Input",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.CalendarSingleDaySelection",
+					"sap.ui.unified.sample.CalendarSingleIntervalSelection",
+					"sap.ui.unified.sample.CalendarMultipleDaySelection",
+					"sap.ui.unified.sample.CalendarSpecialDaysLegend"
+				]
+			},
+			{
+				"id": "sap.ui.unified.Shell",
+				"name": "Unified Shell",
+				"category": "Container",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.ShellBasic"
+				]
+			},
+			{
+				"id": "sap.ui.unified.SplitContainer",
+				"name": "Unified Split Container",
+				"category": "Container",
+				"since": "1.22",
+				"samples": [
+					"sap.ui.unified.sample.SplitContainer"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.unified.sample.MenuItemEventing",
+				"name": "Item Eventing",
+				"description": "Menu with Item Eventing"
+			},
+			{
+				"id": "sap.ui.unified.sample.MenuMenuEventing",
+				"name": "Menu Eventing",
+				"description": "Menu with Menu Eventing"
+			},
+			{
+				"id": "sap.ui.unified.sample.Currency",
+				"name": "Currency",
+				"description": "Display Currencies with proper Alignment"
+			},
+			{
+				"id": "sap.ui.unified.sample.FileUploaderBasic",
+				"name": "Basic",
+				"description": "Basic File Uploader Example"
+			},
+			{
+				"id": "sap.ui.unified.sample.FileUploaderComplex",
+				"name": "Complex",
+				"description": "File Uploader Example with Parameters"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarSingleDaySelection",
+				"name": "Single Day Selection",
+				"description": "Calendar where the user can select a single day"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarSingleIntervalSelection",
+				"name": "Single Interval Selection",
+				"description": "Calendar where the user can select an interval"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarMultipleDaySelection",
+				"name": "Multiple Day Selection",
+				"description": "Calendar where the user can select multiple days"
+			},
+			{
+				"id": "sap.ui.unified.sample.CalendarSpecialDaysLegend",
+				"name": "Special Days with Legend",
+				"description": "Calendar with special days and legend"
+			},
+			{
+				"id": "sap.ui.unified.sample.ShellBasic",
+				"name": "Basic",
+				"description": "Basic Shell Example"
+			},
+			{
+				"id": "sap.ui.unified.sample.SplitContainer",
+				"name": "Basic",
+				"description": "Basic Split Container Example"
+			}
+		]
+	}
+}

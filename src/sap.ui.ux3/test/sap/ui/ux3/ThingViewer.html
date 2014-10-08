@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>ThingViewer - sap.ui.ux3</title>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+	
+</script>
+
+<script>
+	c = sap.ui.commons;
+	// helper fucntion to create a row with label and text
+	function createLMatrixLayoutRowRow(sLabel, sText) {
+		var oLabel = new c.Label({
+			text : sLabel + ":"
+		});
+		var oTextView = new c.TextView({
+			text : sText
+		});
+
+		var oMLCell1 = new c.layout.MatrixLayoutCell({
+			hAlign : c.layout.HAlign.End,
+			vAlign : c.layout.VAlign.Top,
+			content : [ oLabel ]
+		});
+		var oMLCell2 = new c.layout.MatrixLayoutCell({
+			hAlign : c.layout.HAlign.Begin,
+			vAlign : c.layout.VAlign.Top,
+			content : [ oTextView ]
+		});
+
+		return new c.layout.MatrixLayoutRow({
+			cells : [ oMLCell1, oMLCell2 ]
+		});
+	}
+
+	function createTV() {
+		//Actions
+		var oA1 = new sap.ui.ux3.ThingAction({
+			id : "create",
+			text : "Create Survey"
+		});
+		var oA2 = new sap.ui.ux3.ThingAction({
+			id : "delete",
+			text : "Delete"
+		});
+		var oA3 = new sap.ui.ux3.ThingAction({
+			id : "dublicate",
+			text : "Duplicate"
+		});
+
+		// Facets of the ThingInspector
+		oNI1 = new sap.ui.ux3.NavigationItem({
+			key : "overview",
+			text : "Overview"
+		});
+		oNI2 = new sap.ui.ux3.NavigationItem({
+			key : "feed",
+			text : "Feed"
+		});
+		oNI3 = new sap.ui.ux3.NavigationItem({
+			key : "activities",
+			text : "Activities"
+		});
+		oNI4 = new sap.ui.ux3.NavigationItem({
+			key : "account team",
+			text : "Account Team"
+		});
+		oNI5 = new sap.ui.ux3.NavigationItem({
+			key : "addresses",
+			text : "Addresses"
+		});
+		oNI6 = new sap.ui.ux3.NavigationItem({
+			key : "contacts",
+			text : "Contacts"
+		});
+		oNI7 = new sap.ui.ux3.NavigationItem({
+			key : "Leads",
+			text : "Leads"
+		});
+		oNI8 = new sap.ui.ux3.NavigationItem({
+			key : "opportunities",
+			text : "Opportunities"
+		});
+
+		var oTV = new sap.ui.ux3.ThingViewer({
+			id : "Thing0001",
+			title : "Thing title",
+			subtitle : "Thing subtitle",
+			type : "ThingType with a long type should have text-overflow:ellipsis",
+			icon : "images/Account_48.png",
+			actions : [ oA1, oA2, oA3 ],
+			facets : [ oNI1, oNI2, oNI3, oNI4, oNI5, oNI6, oNI7, oNI8 ],
+			selectedFacet : oNI2
+		});
+		var oTC1 = new sap.ui.ux3.ThingGroup({
+			title : "About"
+		});
+		var oTC2 = new sap.ui.ux3.ThingGroup({
+			title : "Contact"
+		});
+
+		var oLayout = new c.layout.MatrixLayout();
+		oLayout.setLayoutFixed(false);
+		oLayout.addRow(createLMatrixLayoutRowRow("Status", "active"));
+		oLayout.addRow(createLMatrixLayoutRowRow("Owner", "Erwin M."));
+		oLayout.addRow(createLMatrixLayoutRowRow("Territory", "a Contact"));
+		oLayout.addRow(createLMatrixLayoutRowRow("Prim. Contact", "Hugo"));
+		oLayout.addRow(createLMatrixLayoutRowRow("Web Site", "link!!!"));
+		oTC1.addContent(oLayout);
+		oTV.addHeaderContent(oTC1);
+
+		var oLayout2 = new c.layout.MatrixLayout();
+		oLayout2.setLayoutFixed(false);
+		oLayout2.addRow(createLMatrixLayoutRowRow("Address",
+				"Irgendwo, Strasse + HNr."));
+		oLayout2.addRow(createLMatrixLayoutRowRow("Phone", "06221/23428374"));
+		oLayout2.addRow(createLMatrixLayoutRowRow("Fax", "06221/23423432"));
+		oLayout2.addRow(createLMatrixLayoutRowRow("Email", "hugo.m@web.de"));
+		oTC2.addContent(oLayout2);
+		oTV.addHeaderContent(oTC2);
+
+		oTV.attachFacetSelected(function(oControlEvent) {
+			var id = oControlEvent.getParameters().id;
+			//alert("Facet \"" + id + "\" of Thing \""
+			//		+ oControlEvent.getSource().getId() + "\" selected");
+			//setContent();
+		});
+		return oTV;
+	}
+	var btn = new sap.ui.commons.Button({
+		text : 'open ThingViewer in Overlay'
+	});
+	var oAB = new sap.ui.ux3.ActionBar();
+	var oOL = new sap.ui.ux3.OverlayContainer();
+	var oTV = createTV();
+	oTV.setActionBar(oAB);
+	oOL.addContent(oTV);
+	
+	var press = function() {
+		oOL.open();
+	}
+	btn.attachPress(press);
+	btn.placeAt('content');
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

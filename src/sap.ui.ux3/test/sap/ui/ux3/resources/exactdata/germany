@@ -1,0 +1,18 @@
+[
+	{"name":"Baden-Württemberg","subVals":false},
+	{"name":"Bayern","subVals":false},
+	{"name":"Berlin","subVals":false},
+	{"name":"Brandenburg","subVals":false},
+	{"name":"Bremen","subVals":false},
+	{"name":"Hamburg","subVals":false},
+	{"name":"Hessen","subVals":false},
+	{"name":"Mecklenburg-Vorpommern","subVals":false},
+	{"name":"Niedersachsen","subVals":false},
+	{"name":"Nordrhein-Westfalen","subVals":false},
+	{"name":"Rheinland-Pfalz","subVals":false},
+	{"name":"Saarland","subVals":false},
+	{"name":"Sachsen","subVals":false},
+	{"name":"Sachsen-Anhalt","subVals":false},
+	{"name":"Schleswig-Holstein","subVals":false},
+	{"name":"Thüringen","subVals":false}
+]

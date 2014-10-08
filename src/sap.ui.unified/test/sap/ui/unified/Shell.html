@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+	<title>Shell - sap.ui.unified</title>
+	<script src="../../../../resources/sap-ui-core.js" 
+	        type="text/javascript" 
+	        id="sap-ui-bootstrap"            
+	        data-sap-ui-libs="sap.ui.unified"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script src="resources/ShellTestPage.js" type="text/javascript"></script>
+	<script>
+	
+	var state, oldState = null;
+	
+	
+	var configItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Configuration",
+		icon: sap.ui.core.IconPool.getIconURI("menu2"),
+		press: function(){
+			oShell.setShowPane(!oShell.getShowPane());
+			configItm.setSelected(!configItm.getSelected());
+		}
+	});
+	
+	var curtainConfigItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Configuration",
+		icon: sap.ui.core.IconPool.getIconURI("menu2"),
+		showMarker: true,
+		press: function(){
+			oShell.setShowCurtainPane(!oShell.getShowCurtainPane());
+			curtainConfigItm.setSelected(!curtainConfigItm.getSelected());
+			curtainConfigItm.setShowMarker(!curtainConfigItm.getShowMarker());
+			sap.ui.getCore().byId("CurtainContent").setHeaderHidden(oShell.getShowCurtainPane());
+		}
+	});
+	
+	var homeItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Home",
+		icon: sap.ui.core.IconPool.getIconURI("home"),
+		press: function(){setState("HOME");}
+	});
+	
+	var filterItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Filter",
+		icon: sap.ui.core.IconPool.getIconURI("filter"),
+		press: function(){
+			filterItm.setSelected(!filterItm.getSelected());
+		}
+	});
+	
+	var closeItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Close",
+		icon: sap.ui.core.IconPool.getIconURI("decline"),
+		press: function(){
+			oShell.setShowCurtain(false);
+			setState(oldState);
+		}
+	});
+	
+	var logoffItm = new sap.ui.unified.ShellHeadItem({
+		tooltip: "Logoff",
+		icon: sap.ui.core.IconPool.getIconURI("log"),
+		press: function(){
+		}
+	});
+
+	
+	var oDialog = new sap.ui.commons.Dialog({
+		width: "200px",
+		height: "200px",
+		title: "Dialog"
+	});
+	
+	var oCntnt = {
+		"SEARCH" : {
+			curt: [
+				new CurtainContent("CurtainContent", {
+					text: "Title",
+					content: [
+						new sap.ui.commons.Button({
+							text: "Focussable Button #1",
+							press: function() { alert("Yay, you pressed a button..."); }
+						}),
+						new sap.ui.commons.TextView({text: "This is the search screen\n\n"+sLorem})
+					]
+				})
+			],
+			curtPane: [
+		       new sap.ui.commons.Button({
+		        	text: "Focussable Pane Button #1",
+		        	press: function() { alert("Yay, you pressed a button..."); }
+		        }),
+		       new sap.ui.commons.TextView({text: "Configure the search screen ...\n\n"+sLorem})
+		    ],
+			items: [curtainConfigItm, homeItm],
+			rightItems: [filterItm, closeItm, logoffItm]
+		},
+		"HOME" : {
+			pane: [
+ 				new sap.ui.commons.Button({
+		        	text: "Focussable Button #2",
+		        	press: function() { alert("Yay, you pressed a button..."); }
+		        }),			       
+			   new sap.ui.commons.TextView({text: "Configure the home screen ...\n\n"+sLorem})
+ 			],
+			cntnt: [new sap.ui.commons.Button({
+			        	text: "Click to open App 1",
+			        	press: function(){setState("APP1");}
+			        }),
+			        new sap.ui.commons.Button({
+			        	text: "Click to open App 2",
+			        	press: function(){setState("APP2");}
+			        }),
+			        new sap.ui.commons.Button({
+			        	text: "Open a dialog",
+			        	press: function(){
+			        		oDialog.open();
+			        	}
+			        }),
+			        new sap.ui.commons.TextView({text: "Your home screen\n\n"+sLorem})],
+			items: [configItm],
+			rightItems: [logoffItm]
+		},
+		"APP1" : {
+			cntnt: [new sap.ui.commons.TextView({text: "This is App 1\n\n"+sLorem})],
+			items: [homeItm],
+			rightItems: [logoffItm]
+		},
+		"APP2" : {
+			cntnt: [new sap.ui.commons.TextView({text: "This is App 2\n\n"+sLorem})],
+			items: [homeItm],
+			rightItems: [logoffItm]
+		}
+	};
+	
+	function applyContent(){
+		var cntnt = oCntnt[state];
+		
+		if(cntnt.pane){
+			oShell.removeAllPaneContent();
+			for(var i=0; i<cntnt.pane.length; i++){
+				oShell.addPaneContent(cntnt.pane[i]);
+			}
+		}
+		if(cntnt.curtPane){
+			oShell.removeAllCurtainPaneContent();
+			for(var i=0; i<cntnt.curtPane.length; i++){
+				oShell.addCurtainPaneContent(cntnt.curtPane[i]);
+			}
+		}
+		if(cntnt.curt){
+			oShell.removeAllCurtainContent();
+			for(var i=0; i<cntnt.curt.length; i++){
+				oShell.addCurtainContent(cntnt.curt[i]);
+			}
+		}
+		if(cntnt.cntnt){
+			oShell.removeAllContent();
+			for(var i=0; i<cntnt.cntnt.length; i++){
+				oShell.addContent(cntnt.cntnt[i]);
+			}
+		}
+		if(cntnt.items){
+			oShell.removeAllHeadItems();
+			for(var i=0; i<cntnt.items.length; i++){
+				oShell.addHeadItem(cntnt.items[i]);
+			}
+		}
+		if(cntnt.rightItems){
+			oShell.removeAllHeadEndItems();
+			for(var i=0; i<cntnt.rightItems.length; i++){
+				oShell.addHeadEndItem(cntnt.rightItems[i]);
+			}
+		}
+	};
+	
+	function setState(sState){
+		switch(sState){
+			case "SEARCH":
+				oShell.setShowCurtain(true);
+				oldState = state;
+				break;
+			case "APP1":
+			case "APP2":
+				oShell.setShowCurtain(false);
+				oShell.setShowPane(false);
+				oShell.setHeaderHiding(true);
+				break;
+			case "HOME":
+			default:
+				sState = "HOME";
+				oShell.setHeaderHiding(false);
+				oShell.setShowCurtain(false);
+				break;
+		}
+		configItm.setSelected(false);
+		filterItm.setSelected(false);
+		
+		state = sState;
+		applyContent();
+	};
+	
+	var oShell = new sap.ui.unified.Shell({
+		icon: sLogo,
+		search: new SearchFieldPlaceHolder("sf", {
+			search: function(oEvent){
+				if(state != "SEARCH"){
+					setState("SEARCH");
+				}
+			}
+		})
+	});
+	oShell.placeAt("content");
+	
+	oShell.setUser(new sap.ui.unified.ShellHeadUserItem({
+		image: "images/person.jpg",
+		username: "Karl Mustermann",
+		press: function(){alert("User Item pressed");}
+	}));
+	
+	setState("HOME");
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

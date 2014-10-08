@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectHeaderTitleActive.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<ObjectHeader
+		binding="{/ProductCollection/0}"
+		title="{Name}"
+		titleActive="true"
+		titlePress="handleTitlePress"
+		number="{Price}"
+		numberUnit="{CurrencyCode}" >
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		</attributes>
+	</ObjectHeader>
+</mvc:View>

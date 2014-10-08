@@ -1,0 +1,35 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
+	function(jQuery, Renderer) {
+	"use strict";
+
+
+	/**
+	 * @class ToolbarSpacer renderer.
+	 * @static
+	 */
+	var ToolbarSpacerRenderer = {};
+	
+	ToolbarSpacerRenderer.render = function(rm, oControl) {
+		rm.write("<div");
+		rm.writeControlData(oControl);
+		rm.addClass("sapMTBSpacer");
+	
+		var sWidth = oControl.getWidth();
+		if (sWidth) {
+			rm.addStyle("width", oControl.getWidth());
+		} else {
+			rm.addClass(sap.m.ToolbarSpacer.flexClass);
+		}
+	
+		rm.writeStyles();
+		rm.writeClasses();
+		rm.write("></div>");
+	};
+
+	return ToolbarSpacerRenderer;
+
+}, /* bExport= */ true);

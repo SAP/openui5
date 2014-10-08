@@ -1,0 +1,178 @@
+/* ========================================================= */
+/* CSS for control sap.m/InputBase.control BlueCrystal theme */
+/* ========================================================= */
+
+.sapMInputBase {
+	background-color:	   transparent;
+	border:                none;
+	position:              relative;
+	display:			   inline-block;
+	padding: 			   0.25rem 0;
+	height: 			   3rem;
+	vertical-align:        top;
+}
+
+.sapMInputBaseInner {
+	color: 				   @sapUiInputBaseText;
+	background-color:	   @sapUiInputBaseBG;
+	border:		           1px solid @sapUiInputBaseBorder;
+	margin:                0;
+	font-size: 			   @sapMFontMediumSize;
+	font-family: 		   @sapUiInputBaseFont;
+	line-height:		   normal;
+	height: 			   2.5rem;
+	vertical-align:		   top;
+	padding:               0 0.75rem;
+	-moz-appearance:       textfield;
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	color:				   @sapUiInputBasePlaceholder;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   italic;
+}
+
+.sapMInputBaseInner::-moz-placeholder {
+	color:				   @sapUiInputBasePlaceholder;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   italic;
+}
+
+.sapMInputBaseInner:-ms-input-placeholder {
+	color:				   @sapUiInputBasePlaceholder;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   italic;
+}
+
+.sapMInputBasePlaceholder {
+	color:				   @sapUiInputBasePlaceholder;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   italic;
+	position:			   absolute;
+	text-overflow:		   ellipsis;
+	white-space:           nowrap;
+	overflow:			   hidden;
+	line-height:		   2.5rem;
+	padding:               0 0.75rem;
+}
+
+.sapMInputBaseInner:focus {
+	outline:               none;
+	outline-width:         0;
+}
+
+.sapMInputBaseStateInner {
+	border-width: 2px;
+	padding: 0 0.6875rem;
+}
+
+.sapMInputBaseWarningInner {
+	border-color: @sapUiInputBaseWarning;
+}
+
+.sapMInputBaseErrorInner {
+	border-color: @sapUiInputBaseError;
+}
+
+.sapMInputBaseSuccessInner {
+	border-color: @sapUiInputBaseSuccess;
+}
+
+.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+	border-color: transparent;
+	background-color: transparent;
+}
+
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus,
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):hover {
+	border-color: @sapUiInputBaseFocus;
+}
+
+.sapMILI-CTX .sapMInputBase {
+	display: block;
+}
+
+.sapMILI-CTX .sapMInputBaseInner {
+	text-align:	right;
+	background-color: transparent;
+}
+
+html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
+html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
+	text-align: left;
+}
+
+.sapMILI-CTX .sapMInputBasePlaceholder {
+	text-align: right;
+}
+
+.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner){
+	border: none;
+}
+
+.sapMLIBActive .sapMInputBaseInner {
+	color: @sapUiLITextInverted;
+	background: transparent;
+}
+
+.sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
+	color: @sapUiLITextInverted;
+}
+
+.sapMInputBaseMessage {
+	color: 				   @sapUiInputBaseText;
+	border-width:          0;
+	font-size:             @sapMFontSmallSize;
+	font-family:           @sapUiFontFamily;
+	padding:               0.3rem 0.625rem;
+}
+
+.sapMInputBaseMessageError {
+	background: @sapUiInputBaseErrorBG;
+	border: @sapUiInputBaseError;
+}
+
+.sapMInputBaseMessageWarning {
+	background: @sapUiInputBaseWarningBG;
+	border: @sapUiInputBaseWarning;
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+
+	.sapMInputBase {
+		height: 		   2rem;
+		padding: 		   0.1875rem 0;
+	}
+
+	.sapMInputBaseInner {
+		height: 		   1.625rem;
+		padding:           0 0.5rem;
+	}
+
+	.sapMInputBasePlaceholder {
+		line-height:	   1.625rem;
+		padding:           0 0.5rem;
+	}
+
+}
+
+/* Compact size */
+.sapUiSizeCondensed{
+	.sapMInputBase {
+		height: 		   1.5rem;
+		padding: 		   0;
+	}
+
+	.sapMInputBaseInner{
+		border-color: transparent;
+	}
+
+	.sapMInputBaseInner {
+		height: 		   1.5rem;
+	}
+
+	.sapMInputBasePlaceholder {
+		line-height:	   1.5rem;
+	}
+}

@@ -1,0 +1,16 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Label text="Label a" />
+			<Label text="Label b" />
+			<Label text="Label c" />
+			<Label text="Label d" design="Bold" />
+			<Label text="Label e" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

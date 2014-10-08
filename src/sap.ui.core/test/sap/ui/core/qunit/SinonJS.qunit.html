@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sinonJS Support</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE]>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		
+			module("Spies");
+			
+			test("Basic", 2, function() {
+
+				var callback = sinon.spy();
+				var oButton = new sap.ui.commons.Button();
+				oButton.attachPress(callback);
+				ok(!callback.called, "Callback Spy not called yet");
+
+				oButton.firePress();
+
+				ok(callback.called, "Callback Spy called");
+				
+				oButton.destroy();
+			});
+
+			
+			test("Existing methods", 2, function() {
+				var callback = function() {};
+
+				var spy = sinon.spy(callback);
+
+				var oButton = new sap.ui.commons.Button();
+				oButton.attachPress(spy);
+				ok(!spy.called, "Callback Spy not called yet");
+
+				oButton.firePress();
+
+				ok(spy.calledOnce, "Callback Spy called");
+				
+				oButton.destroy();
+			});
+			
+			
+			test("Replace existing methods of objects", 2, function() {
+				var obj = {
+					doSomething : function(msg) {}	
+				};
+
+				sinon.spy(obj, "doSomething");
+				
+				obj.doSomething("My message");
+
+				ok(obj.doSomething.calledOnce, "Spy called");
+				
+				ok(obj.doSomething.calledWith("My message"), "Spy called with right value");
+				
+				// Restore the function
+				obj.doSomething.restore();
+
+			});
+			
+			
+			module("Stubs");
+			
+			test("Basic", 1, function() {
+				sinon.stub(jQuery, "ajax").yieldsTo("success", [1, 2, 3]);
+
+			    jQuery.ajax({
+			        success: function (data) {
+			            deepEqual(data, [1, 2, 3], "Right data set");
+			        }
+			    });
+			    
+			    jQuery.ajax.restore();
+			});
+			
+			
+			module("Mocks");
+			
+			test("Basic", 2, function() {
+				var myAPI = { method: function () {} };
+
+			    var mock = sinon.mock(myAPI);
+			    mock.expects("method").once().throws();
+
+			    try {
+			    	myAPI.method();	
+			    } catch (exc) {
+			    	ok(mock.verify(), "Mock function called and all expectations are fullfilled");
+			    }
+			    
+			    mock.restore();
+			});
+			    	
+			module("Faked Timers");
+			
+			test("Basic", 1, function() {
+				var oClock = sinon.useFakeTimers();
+				setTimeout(function() {
+					ok(true, "Called without need of async test");
+				},800);
+				oClock.tick(800);
+				oClock.restore();
+			});
+
+			
+			module("Faked XHR", {
+				setup : function() {
+					this.xhr = sinon.useFakeXMLHttpRequest();
+			        var requests = this.requests = [];
+
+			        this.xhr.onCreate = function (xhr) {
+			            requests.push(xhr);
+			        };
+				},
+				
+				teardown : function() {
+					this.xhr.restore();
+				}
+			});
+			
+			test("Basic", 2, function() {
+				var callback = sinon.spy();
+				
+				jQuery.ajax("test", {
+					success : callback
+				});
+				
+		        equal(1, this.requests.length, "Right number of requests");
+
+		        this.requests[0].respond(200, { "Content-Type": "application/json" },
+		                                 '[{ "foo": "bar", "bar" : "foo" }]');
+		        ok(callback.calledWith([{ "foo": "bar", "bar" : "foo" }]), "Data is called right");
+			});
+			
+			
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for sinonJS Support</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="canvas" style="height:300px; width:300px"></div>
+	</body>
+</html>

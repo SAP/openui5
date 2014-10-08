@@ -1,0 +1,31 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectNumber.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<ObjectNumber
+				binding="{/ProductCollection/0}"
+				number="{Price}"
+				unit="{CurrencyCode}" />
+			<ObjectNumber
+				binding="{/ProductCollection/1}"
+				number="{Price}"
+				unit="{CurrencyCode}"
+				state="Error" />
+			<ObjectNumber
+				binding="{/ProductCollection/2}"
+				number="{Price}"
+				unit="{CurrencyCode}"
+				state="Warning" />
+			<ObjectNumber
+				binding="{/ProductCollection/3}"
+				number="{Price}"
+				unit="{CurrencyCode}"
+				state="Success" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

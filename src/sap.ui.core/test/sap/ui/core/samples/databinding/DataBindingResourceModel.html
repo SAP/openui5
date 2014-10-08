@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+
+<html>
+
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page with resource Model</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+  		try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+    	//define application namespace and define location for loading resources wiothin this namespace
+    	sap.ui.localResources("testdata");
+
+    	var locale = sap.ui.getCore().getConfiguration().getLanguage();
+    	//create ResourceModel an set it for the core
+    	createModel();
+
+    	var c = sap.ui.commons;
+    	// create Labels
+    	var oLabel = new c.Label({text:"{TEXT_FIRSTNAME}"});
+    	oLabel.placeAt("target1");
+    	var oTextField = new c.TextField();
+    	oTextField.placeAt("target1");
+    	var oLabel2 = new c.Label({text:"{TEXT_LASTNAME}"});
+    	oLabel2.placeAt("target2");
+    	var oTextField2 = new c.TextField();
+    	oTextField2.placeAt("target2");
+
+    	var oLabel3 = new c.Label({text:"{TEXT_ENTERPARAMS}"});
+    	oLabel3.placeAt("target3");
+    	var oTextField3 = new c.TextField({change:changeParam});
+    	oTextField3.placeAt("target3");
+    	var oLabel4 = new c.Label({text:"{TEXT_PARAMS}"});
+    	oLabel4.placeAt("target4");
+
+    	var oButton = new c.Button({text:"switch language: de <-> en", press:switchLanguage});
+		oButton.placeAt("buttons");
+
+		var view = sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"testdata.test"});
+	    var view2 = sap.ui.view({type:sap.ui.core.mvc.ViewType.JSON,viewName:"testdata.test"});
+	    view.placeAt("target5");
+	    view2.placeAt("target6");
+	    
+	    var oLabel7 = new c.Label({text:"Async:"});
+    	oLabel7.placeAt("target7");
+	    var oTextField7 = new c.TextField({value: "{async>TEXT_FIRSTNAME}"});
+    	oTextField7.placeAt("target7");
+
+	    function switchLanguage() { 
+			if (locale === "de") {
+				locale = "en";
+			} else {
+				locale= "de";
+			}
+			createModel();
+		}
+
+		function createModel() {
+			var oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.text",bundleLocale:locale});
+    		sap.ui.getCore().setModel(oModel);
+    		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.text", bundleLocale:locale, async: true});
+    		sap.ui.getCore().setModel(oModel, "async");
+    		changeParam();
+		}
+
+		function changeParam() {
+			// have some parameter for a text 
+			if (!oTextField3 || jQuery.trim(oTextField3.getValue()).length === 0 ) {
+				return;
+			};
+	    	var aParams = [oTextField3.getValue()];
+			var oModel = sap.ui.getCore().getModel();
+	    	oLabel4.setText(oModel.getResourceBundle().getText("TEXT_PARAMS",aParams));
+		}
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>Data binding test page for Resource Model</h1>
+      </div>
+      <div id="buttons"></div>
+
+      <div id="target1"></div>
+      <div id="target2"></div>
+      <hr/>
+      <div id="target3"></div>
+      <div id="target4"></div>
+      <hr/>
+      <h3>XMLView:</h3>
+      <div id="target5"></div>
+      <h3>JSONView:</h3>
+      <div id="target6"></div>
+      <hr/>
+      <div id="target7"></div>
+    </div>
+
+  </body>
+
+</html>

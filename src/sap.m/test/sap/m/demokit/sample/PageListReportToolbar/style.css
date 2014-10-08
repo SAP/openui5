@@ -1,0 +1,11 @@
+.sapMSampleFioriListReportToolbar {
+	padding: 1rem 2rem 0;
+}
+
+.sapMSampleFioriListReportTable {
+	padding: 0 2rem;
+}
+
+.sapMSampleFioriListReportPageOverflow .sapMPageScroll {
+	overflow: auto;
+}

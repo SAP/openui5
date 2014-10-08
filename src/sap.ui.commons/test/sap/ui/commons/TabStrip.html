@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>TabStrip - sap.ui.commons</title>
+
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TabStrip.gif">
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-areas="uiArea1,uiArea2"
+				data-sap-ui-evt-oninit="createControls()"
+				>
+		</script>
+
+		<script>
+			function createControls() {
+
+				oTabStrip1 = new sap.ui.commons.TabStrip("tabstrip1");
+				oTabStrip1.setWidth("700px");
+				oTabStrip1.setHeight("300px");
+				oTabStrip1.setTooltip("Weekdays");
+				oTabStrip1.placeAt("uiArea1");
+
+				oButton1 = new sap.ui.commons.Button("button1",{text:"hello1"});
+				oButton2 = new sap.ui.commons.Button("button2",{text:"hello2"});
+				oButton3 = new sap.ui.commons.Button("button3",{text:"hello3"});
+				oTabStrip1.createTab("Monday",oButton1);
+				oTabStrip1.attachSelect( function (oParams) {
+					var oTV = sap.ui.getCore().getControl("TV1");
+					oTV.setText("select "+oParams.getParameter("index"));
+				});
+				oTabStrip1.attachClose( function (oParams) {
+					var oTV = sap.ui.getCore().getControl("TV1");
+					oTV.setText("close "+oParams.getParameter("index"));
+					oTabStrip1.closeTab(oParams.getParameter("index"));
+				});
+				oTab2 = new sap.ui.commons.Tab("tab1");
+				oTab2.setTitle(new sap.ui.core.Title("title1",{text:"Tuesday",icon:"images/icon.gif"}));
+				oTab2.addContent(oButton2);
+				oTab2.addContent(oButton3);
+				oTab2.setTooltip("second day");
+				oTabStrip1.addTab(oTab2);
+
+				oTab3 = new sap.ui.commons.Tab("tab2");
+				oTab3.setTitle(new sap.ui.core.Title("title2",{text:"Wednesday",icon:"images/icon.gif"}));
+				oTab3.setClosable(true);
+				oTab3.setEnabled(false);
+				oTab3.setTooltip(new sap.ui.commons.RichTooltip({
+					title: "third day",
+					imageSrc: "images/help.gif",
+					text: "This ist the thrird tab of the tabstrip. It is the tab for wednesday. Select it to see the content."
+				}));
+				oTabStrip1.addTab(oTab3);
+
+				oTab4 = new sap.ui.commons.Tab("tab3");
+				oTab4.setTitle(new sap.ui.core.Title("title3",{text:"Thursday",icon:"sap-icon://sys-help", tooltip:"fourth day"}));
+				oTab4.setClosable(true);
+				oTab4.addContent(new sap.ui.commons.Image("IMG1",{src: "images/SAPLogo.gif", alt: "SAP logo", width: "100%"}));
+				oTabStrip1.addTab(oTab4);
+
+				oTab5= new sap.ui.commons.Tab("tab4");
+				oTab5.setTitle(new sap.ui.core.Title("title4",{text:"Friday",icon:"images/icon.gif"}));
+				oTab5.setVisible(false);
+				oTab5.setTooltip("fifth day");
+				oTabStrip1.addTab(oTab5);
+
+				oTab6 = new sap.ui.commons.Tab("tab5");
+				oTab6.setTitle(new sap.ui.core.Title("title5",{text:"Saturday", tooltip:"sixth day"}));
+				oTab6.setClosable(true);
+				oTab6.setTooltip("last day");
+				oTab6.addContent(new sap.ui.commons.Image("IMG2",{src: "images/SAPLogo.gif", alt: "SAP logo", height: "100%"}));
+				oTabStrip1.addTab(oTab6);
+
+				oTabStrip1.setSelectedIndex(0);
+
+	      var oTV = new sap.ui.commons.TextView("TV1")
+	      oTV.placeAt("uiArea2"); 
+
+				var oTabStrip2 = new sap.ui.commons.TabStrip({
+					width: "300px",
+					tabs: [
+						new sap.ui.commons.Tab("Tab2-1", {title: new sap.ui.core.Title({text: "Tab1"}), closable: true, content: new sap.ui.commons.TextView({text: "Content 1"})}),
+						new sap.ui.commons.Tab("Tab2-2", {title: new sap.ui.core.Title({text: "Tab2"}), closable: true, content: new sap.ui.commons.TextView({text: "Content 2"})}),
+						new sap.ui.commons.Tab("Tab2-3", {title: new sap.ui.core.Title({text: "Tab3"}), closable: true, content: new sap.ui.commons.TextView({text: "Content 3"})})
+					],
+					close: function(oEvent) {
+						var oTabStrip = oEvent.oSource;
+						var iIndex = oEvent.getParameter("index");
+						var oTab = oTabStrip.getTabs()[iIndex];
+						oTabStrip.removeTab(oTab);
+					}
+				}).placeAt('uiArea3');
+			}
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.commons.TabStrip</code></h1>
+		<div id="uiArea1"></div>
+		<br>
+    <label for="TV1">Event:</label>
+		<div id="uiArea2"></div>
+		<br>
+		<p>Close event with own implementation using <code>removeTab</code>:</p>
+		<div id="uiArea3"></div>
+	</body>
+</html>

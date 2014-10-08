@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>sap.m.PullToRefresh Test</title>
+
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+	
+</script>
+
+<script type="text/javascript">
+	var app = new sap.m.App("P2RApp");
+
+/*
+ * functions
+ */
+
+function getLastUpdated() {
+	return "updated " + new Date().toLocaleTimeString();
+}
+
+function createSelect(oPullDown, iSelectedItem){
+	var sId = oPullDown.getId();
+	return [
+		new sap.m.Select({
+			title: "Show Logo",
+			items: [
+				new sap.ui.core.Item(sId + "0", { key: "0", text: "Standard Icon" }),
+				new sap.ui.core.Item(sId + "1", { key: "1", text: "Custom Icon" }),
+				new sap.ui.core.Item(sId + "2", { key: "2", text: "No Icon" })
+			],
+			selectedItem: sId + (iSelectedItem || "0"),
+			change: function(oControlEvent){
+				var sKey = oControlEvent.getParameter("selectedItem").getKey();
+				switch(sKey){
+					case "0": oPullDown.setShowIcon(true).setCustomIcon(null); break;
+					case "1": oPullDown.setShowIcon(true).setCustomIcon("images/SAPUI5Logo.png"); break;
+					case "2": oPullDown.setShowIcon(false); break;
+				}
+				// re-render the parent container after content change
+				oPullDown.getParent().invalidate();
+			}
+		}),
+		new sap.m.Select({
+			title: "Visibility",
+			items: [
+				new sap.ui.core.Item(sId + "v0", { key: "0", text: "Visible" }),
+				new sap.ui.core.Item(sId + "v1", { key: "1", text: "Hidden" })
+			],
+			selectedItem: sId +  "v0",
+			change: function(oControlEvent){
+				var sKey = oControlEvent.getParameter("selectedItem").getKey();
+				switch(sKey){
+					case "0": oPullDown.setVisible(true); break;
+					case "1": oPullDown.setVisible(false); break;
+				}
+			}
+		})
+	];
+}
+
+/*
+ * Entry page
+ */
+	var overviewPage = new sap.m.Page("overviewPage", {
+		title : "Pull to Refresh",
+	});
+
+	overviewPage.addContent(new sap.m.List({
+		inset : false,
+		headerText : "Pull variants",
+		items: [
+			new sap.m.StandardListItem({
+				title: "Standard Pull Down to Refresh",
+				type: sap.m.ListType.Active,
+				press: function() {
+					app.to("standardP2R");
+				}
+			}),
+			new sap.m.StandardListItem({
+				title: "Hide Immediately",
+				type: sap.m.ListType.Active,
+				press: function() {
+					app.to("simplePage");
+				}
+			}),
+			new sap.m.StandardListItem({
+				title: "Show Busy Dialog",
+				type: sap.m.ListType.Active,
+				press: function() {
+					app.to("busyPage");
+				}
+			})
+		]
+	}));
+
+	var detailPage = new sap.m.Page("detailPage", {
+		title : "Detail Page",
+		showNavButton : true,
+		navButtonText : "Back",
+		navButtonPress : function() {
+			app.back();
+		}
+	});
+
+/*
+ * Standard PullDown To Refresh example
+ */
+
+	var standardList =  new sap.m.List({inset : false});
+	addItems(standardList, 5);
+	var pullToRefreshStd = new sap.m.PullToRefresh({
+		description: getLastUpdated(),
+		refresh: function(){
+			setTimeout(function(){
+				pullToRefreshStd.hide();
+				addItems(standardList, 10);
+				pullToRefreshStd.setDescription(getLastUpdated());
+			}, 2000);
+		}
+	});
+
+	var oBar0 = new sap.m.Bar({
+		contentLeft : [
+			new sap.m.Button({
+				text : "Clear List",
+				press : function() {
+					standardList.removeAllAggregation("items");
+				}
+			})
+		],
+		contentRight: createSelect(pullToRefreshStd)
+	});
+
+	var standardPull2Refresh = new sap.m.Page("standardP2R", {
+		title : "Standard Pull to Refresh",
+		enableScrolling: true,
+		showNavButton : true,
+		navButtonText : "Back",
+		navButtonPress : function() {
+			app.back();
+		},
+		footer: oBar0
+	});
+
+	standardPull2Refresh.addContent(pullToRefreshStd);
+	standardPull2Refresh.addContent(standardList);
+
+	function addItems(list, nItems){
+		var n = list.getItems().length + 1;
+		for(var i = 0; i < nItems; i++){
+			list.insertItem(
+				new sap.m.StandardListItem({
+					title: "List item " + (n + i),
+					type: sap.m.ListType.Active,
+					press: function() {
+						app.to("detailPage");
+					}
+				}), 0 // insert new items at the top of the list
+			);
+		}
+	}
+
+/* 
+ * Hide immediately example
+ */
+
+	var pullToHide = new sap.m.PullToRefresh({
+		customIcon: "images/SAPUI5Logo.png",
+		showIcon: true,
+		description: getLastUpdated(),
+		refresh: function(){
+			pullToHide.hide();
+			pullToHide.setDescription("...");
+			setTimeout(function(){
+				addItems(simpleList, 10);
+				pullToHide.setDescription(getLastUpdated());
+			}, 2000);
+	}});
+	var simpleList =  new sap.m.List("simpleList", {inset : false});
+	addItems(simpleList, 5);
+
+	var simplePage = new sap.m.Page("simplePage", {
+		title : "Hide pull-down immediately",
+		enableScrolling: true,
+		showNavButton : true,
+		navButtonText : "Back",
+		navButtonPress : function(){ app.back(); },
+		footer : new sap.m.Bar({
+			contentLeft : [
+				new sap.m.Button({
+					text: "Clear list",
+					press : function() {
+						simpleList.removeAllAggregation("items");
+					}
+			})],
+			contentRight: createSelect(pullToHide, 1)
+		})
+	});
+
+	simplePage.addContent(pullToHide);
+	simplePage.addContent(simpleList);
+
+	/* 
+	 * Busy dialog example
+	 */
+
+	var sOldDescription;
+
+	var busyDialog = new sap.m.BusyDialog({
+			text:"Please wait, data is loading..", 
+			title: "Loading..",
+			showCancelButton: true,
+			close: function(oEvent){
+				if(oTimeout){
+					clearTimeout(oTimeout);
+					oTimeout = null;
+					if(sOldDescription){
+						pullToBusy.setDescription(sOldDescription);
+					}
+				}
+			}
+		});
+	
+	var oTimeout = null;
+
+	var pullToBusy = new sap.m.PullToRefresh({
+		description: getLastUpdated(),
+		showIcon: false,
+		refresh: function(){
+			pullToBusy.hide();
+			sOldDescription = pullToBusy.getDescription();
+			pullToBusy.setDescription("...");
+			setTimeout(function(){
+				busyDialog.open();
+				oTimeout = setTimeout(function(){
+					addItems(busyList, 10);
+					pullToBusy.setDescription(getLastUpdated());
+					oTimeout = null;
+					busyDialog.close();
+				}, 5000);
+			}, 100);
+		}});
+		var busyList =  new sap.m.List("busyList", {inset : false});
+		addItems(busyList, 5);
+
+		var busyPage = new sap.m.Page("busyPage", {
+			title : "Show busy dialog",
+			enableScrolling: true,
+			showNavButton : true,
+			navButtonText : "Back",
+			navButtonPress : function(){ app.back(); },
+			footer : new sap.m.Bar({
+				contentLeft : [
+					new sap.m.Button({
+						text: "Clear list",
+						press : function() {
+							busyList.removeAllAggregation("items");
+						}
+				})],
+				contentRight: createSelect(pullToBusy, 2)
+			})
+		});
+
+		busyPage.addContent(pullToBusy);
+		busyPage.addContent(busyList);
+
+	app.addPage(overviewPage)
+		.addPage(standardPull2Refresh)
+		.addPage(detailPage)
+		.addPage(simplePage)
+		.addPage(busyPage)
+		.setInitialPage("overviewPage")
+		.placeAt("body");
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

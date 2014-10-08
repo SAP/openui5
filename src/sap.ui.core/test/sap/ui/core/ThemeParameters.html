@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Theme Parameters - sap.ui.core</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ListBox.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+
+		<script type="text/javascript">
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+
+			jQuery.sap.require("sap.ui.core.theming.Parameters");
+
+			var oListBox = new sap.ui.commons.ListBox({
+				height : "480px",
+				displaySecondaryValues: true
+			}).placeAt("content");
+
+
+			function fetchParameters() {
+				var mAllParameters = sap.ui.core.theming.Parameters.get();
+
+				oListBox.destroyItems();
+				for (var name in mAllParameters) {
+					oItem = new sap.ui.core.ListItem();
+					oItem.setText(name);
+					oItem.setAdditionalText(mAllParameters[name]);
+					oListBox.addItem(oItem);
+				}
+			}
+
+
+			// react on theme change
+			sap.ui.getCore().attachThemeChanged(function(evt){
+				fetchParameters();
+			});
+
+
+			fetchParameters();
+
+		</script>
+	</head>
+
+	<body class="sapUiBody">
+		<h1>Test Page for Theme Parameters</h1>
+
+		<div id="content"></div>
+
+	</body>
+</html>

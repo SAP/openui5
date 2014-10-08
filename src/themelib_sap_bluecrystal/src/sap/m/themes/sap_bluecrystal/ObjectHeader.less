@@ -1,0 +1,181 @@
+/* ============================================= */
+/* CSS for control sap.m/ObjectHeaderItem.control */
+/* ============================================= */
+
+.sapMOHC.sapMOHBgTransparent{
+	background-color: transparent;
+}
+
+.sapMOHC.sapMOHBgSolid{
+	background-color: @sapUiLightestBG;
+	border-bottom: 0.063rem @sapUiLightBG;
+}
+
+.sapMOHC.sapMOHBgTranslucent {
+	background: fade(@sapUiLightestBG, 60%);
+}
+
+.sapMOHIntro {
+	color: @sapUiLightText;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMOHIntro.sapMOHIntroActive,
+.sapMOHTitle.sapMOHTitleActive>.sapMText{
+	color: @sapUiLink;
+	cursor: pointer;
+}
+
+.sapMOHTitle .sapMText {
+	color: @sapUiDarkText;
+	font-size: @sapMFontHeader2Size;
+}
+
+.sapMOHC .sapMOHTitle>.sapMText {
+	line-height: 1.313rem;
+	font-size: @sapMFontLargeSize;
+}
+
+.sap-phone .sapMOHTitle>.sapMText {
+	font-size: @sapMFontHeader4Size;
+}
+
+.sapMOHTitleArrow {
+	color: @sapUiLink;	
+}
+
+.sapMOHNumber {
+	font-family: @sapUiFontCondensedFamily;
+	font-stretch: condensed;	
+	font-size: @sapMFontHeader1Size;
+}
+
+.sapMOHNumberUnit {
+	font-size: @sapMFontSmallSize;
+}
+
+.sapMOHBottomRow {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMOH .sapMObjectAttributeDiv {
+	color: @sapUiLightText;
+}
+
+.sapMOH .sapMObjectAttributeActive{
+	color: @sapUiLink;
+}
+
+.sapMOHNumberStateNone {
+	color: @sapUiDarkText;
+}
+
+.sapMOHNumberStateError {
+	color: @sapUiNegativeText;		
+}
+
+.sapMOHNumberStateWarning {
+	color: @sapUiCriticalText;
+}
+
+.sapMOHNumberStateSuccess {
+	color: @sapUiPositiveText;
+}
+
+/*** styles for responsive object header ***/
+
+.sapMOHR .sapMObjectNumberText {
+	font-family: @sapUiFontCondensedFamily;
+	font-stretch: condensed;
+	font-size: @sapMFontHeader1Size;
+}
+
+.sapMOHR > .sapMOHTitleDiv.sapMOHTitleIcon > .sapMOHIcon > .sapUiIcon{
+	line-height: 3rem;
+	font-size: 2.5rem;
+	color: @sapUiElement;
+}
+
+
+.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle {
+	font-family:@sapUiFontHeaderFamily;
+	font-size:@sapMFontHeader2Size;
+	font-weight:@sapUiFontHeaderWeight;
+	color:@sapUiHeaderText;
+	line-height: 1.125;
+}
+
+.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHIntro {
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMOHR.sapMOH  >.sapMOHStates .sapMOHStatus > .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMObjectNumber > .sapMObjectNumberText {
+	font-family: @sapUiFontHeaderFamily;
+	font-size: @sapMFontHeader2Size;
+	font-weight: @sapUiFontHeaderWeight;
+}
+
+.sapMOHR.sapMOH.sapMOHBgTranslucent {
+	background: fade(@sapUiLightestBG, 60%);
+}
+
+.sapMOHR.sapMOH.sapMOHBgTransparent {
+	background: transparent;
+}
+
+.sapMOHR.sapMOH.sapMOHBgSolid {
+	background: @sapUiLightestBG;
+}
+
+.sapMOHR.sapMOH.sapMOHNoTabs {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapMOHR.sapMOH.sapMOHNoTabs:not(.sapMOHBgTransparent) {
+	border-bottom: 0.0625rem solid @sapUiLightBorder;
+	-webkit-box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5%);
+	box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5%);
+} 
+
+.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle {
+	line-height: 1.5;
+}
+
+.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle > .sapMText {
+	font-size: @sapMFontHeader4Size;
+	line-height: 1.5;
+}
+
+.sapUiMedia-Std-Phone .sapMOHR.sapMOH > .sapMOHTitleDiv > .sapMOHTitle > .sapMOHIntro {
+	/* there is an unwanted distance, for now we can solve the problem like this */
+	margin-top: -0.25rem;
+}
+
+.sapMOHR .sapSuiteHdrCntr {
+	background: transparent;
+}
+
+.sapUiMedia-Std-Desktop .sapMOHR .sapMITH,
+.sapUiMedia-Std-Desktop .sapMOHR.sapMOHTabsMoreThanSeven > .sapMOHTabsNoStates .sapMITH,
+.sapUiMedia-Std-Tablet .sapMOHR > .sapMOHTabsNoStates .sapMITH {
+	border-left:  0.0625rem solid @sapUiLightBorder;
+}
+
+.sapMOHR.sapMOHStatesFiveOrMore .sapMITH {
+	border: none;
+}

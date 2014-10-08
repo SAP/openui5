@@ -1,0 +1,142 @@
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>FormattedTextView - sap.ui.commons</title>
+<script id="sap-ui-bootstrap" type="text/javascript"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.commons"
+	src="../../../../resources/sap-ui-core.js"></script>
+
+<style type="text/css">
+.foo {
+	color: red;
+}
+</style>
+
+<script type="text/javascript">
+	var fnOriginalSetHtmlText;
+
+	var oHtmlText = 'I\'m &lt;u&gt;writing&lt;/u&gt;writing a &lt;strong class="foo"&gt;mail&lt;/strong&gt; to &lt;embed data-index="0" /&gt;<br>';
+	oHtmlText += 'Here &lt;em&gt;is an&lt;/em&gt; &lt;strong&gt;XSS attack&lt;/strong&gt; that alerts "XSS attack"<br>';
+	oHtmlText += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr'
+			+ 'ipt&gt;&lt;br&gt;<br>';
+	// a injection with entities
+	oHtmlText += '&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;&#97;&#108;&#101;&#114;&#116;&#40;&#34;&#88;&#83;&#83;&#32;&#97;&#116;&#116;&#97;&#99;&#107;&#32;&#97;&#115;&#32;&#101;&#110;&#116;&#105;&#116;&#105;&#101;&#115;&#34;&#41;&#59;&#60;&#47;&#115;&#99;&#114;&#105;&#112;&#116;&#62;<br>';
+	oHtmlText += '&lt;p&gt;fbdfb&lt;img border="0" alt="Innocent" src="../../../../resources/sap/ui/richtexteditor/js/tiny_mce/plugins/emotions/img/smiley-innocent.gif" title="Innocent"&gt;fdb&lt;span style="text-decoration: underline;"&gt;drheheheh&lt;/span&gt;erherh&lt;span style="font-family: arial black,avant garde;"&gt;erherherh&lt;span style="font-size: large;"&gt;erherherher&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;<br>';
+	oHtmlText += '&lt;ul&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span class="foo"&gt;It supports RIA like &lt;strong&gt;client-side&lt;/strong&gt; features based on Java Script&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small; background-color: rgb(255, 255, 255);"&gt;It fully supports SAP &lt;strong&gt;Product Standards&lt;/strong&gt;&lt;br&gt;&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small; background-color: rgb(255, 255, 255);"&gt;It supports an &lt;strong&gt;extensibility &lt;/strong&gt;concept regarding custom controls&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small;"&gt;It allows &lt;strong&gt;theming&lt;/strong&gt;/apply customer branding in an effective manner&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small;"&gt;It is &lt;strong&gt;Open AJAX&lt;/strong&gt; compliant&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small;"&gt;It does not assume a concrete porgraming model and thus could be used together with e.g. GWT, JSF, ASP.Net or Web Dynpro&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;li&gt;&lt;span style="font-size: small;"&gt;It uses &lt;strong&gt;open source&lt;/strong&gt; components where it makes sense and it is also ready for being contributed&lt;/span&gt;&lt;/li&gt;<br>';
+	oHtmlText += '&lt;/ul&gt;<br>';
+
+	var oFTV = new sap.ui.commons.FormattedTextView("textView1", {
+		visible : false
+	});
+	oFTV.setTooltip("just a tooltip");
+	oFTV.placeAt("content");
+
+	var oLink = new sap.ui.commons.Link();
+	oLink.setText("Test meeee");
+	oLink.setTooltip("This will send a mail to test.me@sap.com");
+	oLink.setHref("mailto:test.me@sap.com");
+
+	var oLink2 = new sap.ui.commons.Link();
+	oLink2.setText("Test meeee too");
+	oLink2.setTooltip("This will send a mail to test.me.too@sap.com");
+	oLink2.setHref("mailto:test.me.too@sap.com");
+
+	var oButton1 = new sap.ui.commons.Button("B1", {
+		text : "Show",
+		press : function(oEvent) {
+			if (oFTV.getVisible()) {
+
+				// since the HTML text contains an XSS attack and if sanatizing is disabled the
+				// content of the div where the FormattedTextView is rendered into contains more 
+				// that the rendered control. This additional stuff needs to be removed, since 
+				// it won't be removed by rerendering the control.
+				if (oCheck.getChecked()) {
+					var aContentChildren = jQuery("#content").children();
+					for ( var i = 0; i < aContentChildren.length; i++) {
+						var $child = jQuery(aContentChildren[i]);
+						if ($child.hasClass("sapUiFTV")) {
+							jQuery.sap.byId("content").html($child);
+							break;
+						}
+					}
+				}
+
+				oFTV.setHtmlText("");
+				oFTV.removeAllControls();
+				oFTV.setVisible(false);
+
+				this.setText("Show");
+			} else {
+				var code = oHtmlText.replace(/<br>/g, "");
+				code = oHtmlText.replace(/&lt;/g, "<");
+				code = code.replace(/&gt;/g, ">");
+
+				oFTV.setContent(code, aControls);
+				oFTV.setVisible(true);
+
+				this.setText("Hide");
+			}
+		}
+	}).placeAt("button");
+
+	var oCheck = new sap.ui.commons.CheckBox("disableCheck", {
+		text : "Disable sanitizing",
+		change : function() {
+			if (this.getChecked()) {
+				// this variable is set and only used by the test page
+				fnOriginalSetHtmlText = oFTV.setHtmlText;
+				oFTV.setHtmlText = function(sText) {
+					oFTV.setProperty("htmlText", sText);
+				}
+			} else {
+				if (fnOriginalSetHtmlText) {
+					oFTV.setHtmlText = fnOriginalSetHtmlText;
+					delete fnOriginalSetHtmlText;
+				}
+			}
+		}
+	});
+	oCheck.placeAt("check");
+
+	var aControls = [];
+	aControls[0] = oLink;
+	aControls[1] = oLink2;
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="header">
+		Test Page for
+		<code>sap.ui.commons.FormattedTextView</code>
+	</h1>
+
+	<h4>CSS classes</h4>
+	<div style="border: 1px solid black; overflow: auto">
+		<pre><code>.foo {
+	color: red;
+}</code>
+		</pre>
+	</div>
+
+	<h4>Text given to FormattedTextView</h4>
+	<div style="border: 1px solid black; overflow: auto">
+		<pre><code><script type="text/javascript">document.write(oHtmlText);</script></code></pre>
+	</div>
+
+	<br>
+	<div id="button"></div>
+	<div id="check"></div>
+	<br>
+	<h4>Result</h4>
+	<div id="content" style="border: 1px solid black; min-height: 10px"></div>
+</body>
+</html>

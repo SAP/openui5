@@ -1,0 +1,86 @@
+
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>CheckBox - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+			jQuery.sap.initMobile();
+			
+			var checkBox = new sap.m.CheckBox({selected:true, visible: true, enabled: true});
+			var checkBox1 = new sap.m.CheckBox({selected:false, visible: true, enabled: true});
+			var checkBox2 = new sap.m.CheckBox({selected:true, visible: true, enabled: false});
+			var checkBox3 = new sap.m.CheckBox({selected:false, visible: true, enabled: false});
+			var checkBox4 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, text: "123"});
+			var checkBox5 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, text: "text length test", width:"100px"});
+			var checkBox6 = new sap.m.CheckBox({activeHandling:false , selected:true, visible:true, enabled: true, text: "RTL", width:"100px", textDirection:"RTL"});
+			var checkBox7 = new sap.m.CheckBox({selected:true, visible:true, enabled: true, editable: false, text: "Not editable"});
+			
+			
+			var bToolbarAEnabled = true;
+
+			var toolbar = new sap.m.Toolbar("toolbar", {
+				enabled: bToolbarAEnabled,
+				content: [
+					new sap.m.CheckBox({
+						text: "Enabled in toolbar"
+					})
+				]
+			});
+
+			oForm = new sap.ui.layout.form.SimpleForm({
+				editable : true,
+				content : [
+					new sap.m.Label({text:"In a Form"}),
+					new sap.m.CheckBox({selected:true, text : "I am a text"})
+				]
+			});
+
+			new sap.m.App({
+				pages : [
+					new sap.m.Page({
+						content : [
+									checkBox,
+									checkBox1,
+									checkBox2,
+									checkBox3,
+									checkBox4,
+									checkBox5,
+									checkBox6,
+									checkBox7,
+									toolbar,
+									new sap.m.Button({
+										text: "Toggle Enabled",
+										press: function() {
+											bToolbarAEnabled = !bToolbarAEnabled;
+											toolbar.setEnabled(bToolbarAEnabled);
+										}
+									}),
+									oForm
+								],
+						enableScolling : false
+					})
+				]
+				
+			}).placeAt('content');
+		</script>
+		<style type="text/css">
+		</style>
+	</head>
+	<body id="body" class="sapUiBody" style="background-color:white;">
+	<div id="content" class="holder"></div>
+	<div id="c0" class="holder"></div>
+	<div id="c1" class="holder"></div>
+	<div id="c2" class="holder"></div>
+	<div id="c3" class="holder"></div>
+	<div id="c4" class="holder"></div>
+	<div id="c5" class="holder"></div>
+	<div id="c6" class="holder"></div>
+	</body>
+</html>

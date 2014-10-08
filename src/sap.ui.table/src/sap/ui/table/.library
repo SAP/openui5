@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.table</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+  
+  <documentation>Table-like controls, mainly for desktop scenarios.</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+    </dependency>
+  </dependencies>
+  
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.table" />
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.table.js." />
+    </jscoverage>
+  </appData>
+  
+</library>

@@ -1,0 +1,31 @@
+<core:FragmentDefinition
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	class="viewPadding">
+		<u:ShellOverlay
+			closed="handleShellOverlayClosed">
+			<u:content>
+				<l:VerticalLayout
+					width="100%">
+					<l:HorizontalLayout>
+						<Label text="Your Search: " class="labelMarginLeft" />
+						<Text
+							text="{/searchFieldContent}" class="labelMarginLeft" />
+					</l:HorizontalLayout>
+
+					<List
+						width="100%"
+						items="{path:'/resultData'}">
+							<StandardListItem
+								type="Active"
+								press="handleSearchItemSelect"
+								title="{title}"
+								icon="sap-icon://display"
+								description="{text}" />
+					</List>
+				</l:VerticalLayout>
+			</u:content>
+		</u:ShellOverlay>
+</core:FragmentDefinition>

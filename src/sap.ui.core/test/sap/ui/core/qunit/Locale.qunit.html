@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.Locale
+  Author: d040216
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-language="en-US">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	jQuery.sap.require("sap.ui.core.Locale");
+
+	var aLocales = [
+		["en",						"en",		null,	null,	null,		null,			null,		"EN"],
+		["en-US",					"en",		null,	"US",	null,		null,			null,		"EN"],
+		["es-419",					"es",		null,	"419",	null,		null,			null,		"ES"],
+		["zh-Hans",					"zh",		"Hans",	null,	null,		null,			null,		"ZH"],
+		["zh-yue",					"zh-yue",	null,	null,	null,		null,			null,		"ZH"],
+		["az-Latn",					"az",		"Latn",	null,	null,		null,			null,		"AZ"],
+		["zh-Hant-HK",				"zh",		"Hant",	"HK",	null,		null,			null,		"ZF"],
+		["sl-IT-nedis",				"sl",		null,	"IT",	"nedis",	null,			null,		"SL"],
+		// alphanum in regex
+		["sl-IT-var0815",			"sl",		null,	"IT",	"var0815",	null,			null,		"SL"],
+		["de-DE-u-co-phonebk",		"de",		null,	"DE",	null,		"u-co-phonebk",	null,		"DE"],
+		["en-US-x-twain",			"en",		null,	"US",	null,		null,			"x-twain",	"EN"],
+		
+		// additonal tests for normalization
+		["en_US",					"en",		null,	"US",	null,		null,			null,		"EN"],
+		["EN-US",					"en",		null,	"US",	null,		null,			null,		"EN"],
+		["en-us",					"en",		null,	"US",	null,		null,			null,		"EN"],
+		["zh_hant_hk",				"zh",		"Hant",	"HK",	null,		null,			null,		"ZF"],
+
+		// additonal tests for SAP Logon Language
+		["en-x-saptrc",				"en",		null,	null,	null,		null,			"x-saptrc",	"1Q"],
+		["EN-X-sAptRc",				"en",		null,	null,	null,		null,			"X-sAptRc",	"1Q"],
+		["en-x-sappsd",				"en",		null,	null,	null,		null,			"x-sappsd",	"2Q"],
+		["de-CH-x-sapufmt-sappsd",	"de",		null,	"CH",	null,		null,			"x-sapufmt-sappsd",	"2Q"],
+		["iw-IL",					"iw",		null,	"IL",	null,		null,			null,		"HE"],
+		["zz",						"zz",		null,	null,	null,		null,			null,		"ZZ"] // unknown language
+	];
+
+	function localeTest(sLocale, sLanguage, sScript, sRegion, sVariant, sExtension, sPrivateUse) {
+		test("Locale " + sLocale, function() {
+			var oLocale = new sap.ui.core.Locale(sLocale);
+			equal(oLocale.getLanguage(), sLanguage, "Language");
+			equal(oLocale.getScript(), sScript, "Script");
+			equal(oLocale.getRegion(), sRegion, "Region");
+			equal(oLocale.getVariant(), sVariant, "Variant");
+			equal(oLocale.getExtension(), sExtension, "Extension");
+			equal(oLocale.getPrivateUse(), sPrivateUse, "PrivateUse");
+		});
+	}
+
+	for (var i = 0; i < aLocales.length; i++) {
+		localeTest.apply(this, aLocales[i]);
+	}
+	
+	test("hasPrivateUseSubtag", function() {
+		var oLocale = new sap.ui.core.Locale("de_DE-x-sapufmt");
+		equal(oLocale.getPrivateUse(), "x-sapufmt", "PrivateUse must be set");
+		equal(oLocale.hasPrivateUseSubtag("sapufmt"), true, "PrivateUse subtag must be detected");
+		equal(oLocale.hasPrivateUseSubtag("sap"), false, "parts of PrivateUse subtag must not be detected");
+		equal(oLocale.hasPrivateUseSubtag("apu"), false, "parts of PrivateUse subtag must not be detected");
+		equal(oLocale.hasPrivateUseSubtag("ufmt"), false, "parts of PrivateUse subtag must not be detected");
+	});
+
+	test("SAPLogonLanguage", function() {
+		for(var i = 0; i< aLocales.length; i++) {
+			var oLocale = new sap.ui.core.Locale(aLocales[i][0]);
+			equal(oLocale.getSAPLogonLanguage(), aLocales[i][7], "locale should return the correct SAP Logon Language");
+		}
+	});
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Locale</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

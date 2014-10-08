@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.InstanceManager</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script language="javascript">
+			sinon.config.useFakeTimers = false;
+			QUnit.config.autostart = false;
+			jQuery(document).ready(function() {
+				QUnit.start();
+			});
+			
+			jQuery.sap.require("sap.m.InstanceManager");
+			var im = sap.m.InstanceManager;
+			
+			var oList2 = new sap.m.List({
+				inset : true
+			});
+			
+			var data = {
+				navigation : [ {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					icon : "../images/travel_expend.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					icon : "../images/travel_expense_report.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					icon : "../images/travel_request.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					icon : "../images/wounds_doc.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					icon : "../images/settings.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				} ]
+			};
+			
+			var oItemTemplate1 = new sap.m.StandardListItem({
+				title : "{title}",
+				description : "{description}",
+				icon : "{icon}",
+				iconInset : "{iconInset}",
+				type : "{type}"
+			});
+			
+			function bindListData(data, itemTemplate, list)
+			{
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(data);
+				list.setModel(oModel);
+				list.bindAggregation("items", "/navigation", itemTemplate);
+			}
+			
+			bindListData(data, oItemTemplate1, oList2)
+
+			var oScrollContainer = new sap.m.ScrollContainer({
+				horizontal: false,
+				vertical: true,
+				content: oList2
+			});
+			
+			var oPopover = new sap.m.Popover("popover", {
+				placement: sap.m.PlacementType.Bottom,
+				title: "Popover",
+				showHeader: true,
+				afterOpen: function(){
+					ok(im.hasOpenPopover(), "There is popover open");
+					ok(im.isPopoverOpen(this), "This popover is open");
+					equal(im.getOpenPopovers().length, 1, "There is one popover open");
+					start();
+				},
+				afterClose:function(){
+					ok(!im.hasOpenPopover(), "There is popover open");
+					ok(!im.isPopoverOpen(this), "This Popover isn't open");
+					equal(im.getOpenPopovers().length, 0, "There is no dialog open");
+					start();
+				},
+				content: [
+					oScrollContainer
+				]
+			});
+			
+			var oDialog = new sap.m.Dialog("dialog", {
+				title: "World Domination",
+				content: [
+					new sap.ui.core.HTML({content:"<p>Do you want to start a new world domination campaign?</p>"}),
+				],
+				icon: "../images/SAPUI5Icon.png",
+				leftButton: 
+					new sap.m.Button("leftButton", {
+						text: "Reject",
+						type: sap.m.ButtonType.Reject,
+						press : function() {
+							oDialog.close();
+						}
+					}),
+				rightButton:
+					new sap.m.Button("rightButton", {
+						text: "Accept",
+						type: sap.m.ButtonType.Accept,
+						press : function() {
+							oDialog.close();
+						}
+					}),
+				afterOpen: function(){
+					ok(im.hasOpenDialog(), "There is dialog open");
+					ok(im.isDialogOpen(this), "This dialog is open");
+					equal(im.getOpenDialogs().length, 1, "There is one dialog open");
+					start();
+				},
+				afterClose: function(){
+					ok(!im.hasOpenDialog(), "There is dialog open");
+					ok(!im.isDialogOpen(this), "This dialog isn't open");
+					equal(im.getOpenDialogs().length, 0, "There is no dialog open");
+					start();
+				}
+			});
+			
+			var oButton = new sap.m.Button({
+				text : "Open"
+			});
+			
+			var page = new sap.m.Page("myFirstPage", {
+				title : "Instance Mananger Test",
+				showNavButton : true,
+				enableScrolling : true,
+				content : oButton
+			});
+			
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
+			app.addPage(page).placeAt("content");
+			
+			var sCategoryId = "_category_",
+				oInstance = {property: "Property"};
+			
+			module("Initial Check");
+			test("Initialization", function() {
+				ok(sap.m.InstanceManager, "Instance Manager module has been loaded");
+			});
+			
+			module("Add and remove normal object");
+			test("Add object", function(){
+				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
+				im.addInstance(sCategoryId, oInstance);
+				ok(!im.isCategoryEmpty(sCategoryId), "Category is not empty anymore");
+				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance array is not empty and length should equal 1");
+				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is managed");
+				// add the same instance again
+				im.addInstance(sCategoryId, oInstance);
+				equal(im.getInstancesByCategoryId(sCategoryId).length, 1, "Intance shouldn't be added again");
+				ok(im.isInstanceManaged(sCategoryId, oInstance), "Instance is still managed");
+			});
+			
+			test("Remove object", function(){
+				im.removeInstance(sCategoryId, oInstance);
+				ok(im.isCategoryEmpty(sCategoryId), "Category is empty now");
+				ok(!im.isInstanceManaged(sCategoryId, oInstance), "Instance is not managed any more");
+				ok(im.getInstancesByCategoryId(sCategoryId).length === 0, "Intance array is empty");
+			});
+			
+			
+			module("Open and close Dialog");
+			asyncTest("Open Dialog", function(){
+				oDialog.open();
+				expect(3);
+			});
+			
+			asyncTest("Close Dialog", function(){
+				im.closeAllDialogs();
+				expect(3);
+			});
+						
+            module("callbacks");
+            
+            test("Should close all dialogs and trigger a callback", function() {
+
+                    //Arrange
+
+                    var callback  = this.spy(),
+                        closeSpy = this.spy(),
+                        events = [];
+                        fakeDialog = {
+                                close : closeSpy,
+                                attachEvent : function(eventName, fnFireEvent){
+                                        events.push(fnFireEvent);
+                                }
+                        },
+                        dialogs = [ fakeDialog , fakeDialog ];
+
+                    
+
+                    this.stub(im, "getOpenDialogs").returns(dialogs)
+
+                    
+                    //System under Test + Act
+                    im.closeAllDialogs(callback);
+
+
+                    //Assert
+                    strictEqual(events.length, dialogs.length, "registered to event");
+                    strictEqual(closeSpy.callCount, dialogs.length, "close was called");
+
+
+                    //fire first close event
+                    events[0]();
+                    strictEqual(callback.callCount, 0, "callback was not executed yet");
+
+
+
+
+                    //fire second close event
+                    events[1]();
+                    strictEqual(callback.callCount, 1, "callback was executed");
+            });
+			
+			module("Open and close Popover");
+			asyncTest("Open Dialog", function(){
+				oPopover.openBy(oButton);
+				expect(3);
+			});
+			
+			asyncTest("Close Dialog", function(){
+				im.closeAllPopovers();
+				expect(3);
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.InstanceManager</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

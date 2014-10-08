@@ -1,0 +1,5 @@
+src/*/target
+src/*/test
+
+src/sap.ui.core/src/**/jquery-*
+src/sap.ui.core/src/sap/ui/thirdparty

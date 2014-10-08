@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.ui.core.tmpl.Template
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.tmpl.Template</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script id="theTemplate" type="text/x-handlebars-template">
+			<code>Hello {{value}}</code>
+		</script>
+
+		<script id="theSecondTemplate" type="text/unknown">
+			<code>Hello {{value}}</code>
+		</script>
+
+		<script language="javascript">
+
+			test("Basic Lookup", 9, function() {
+				
+				// find and load all existing known templates
+				var aTemplates = sap.ui.template();
+				equal(aTemplates.length, 2, "2 Templates have been found!");
+				
+				// check the first template to be a valid template
+				var oTemplate = sap.ui.getCore().getTemplate("theTemplate");
+				ok(oTemplate !== undefined, "Template has been found!");
+				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
+				ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				
+				// check the second template to be ignored
+				oTemplate = sap.ui.getCore().getTemplate("theSecondTemplate");
+				ok(oTemplate === undefined, "Second Template has not been found!");
+				
+				// check the first embedded template to be a valid template
+				oTemplate = sap.ui.getCore().getTemplate("theEmbeddedTemplate");
+				ok(oTemplate !== undefined, "Embedded Template has been found!");
+				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Embedded Template is a sap.ui.core.tmpl.Template!");
+				ok(oTemplate === sap.ui.template("theEmbeddedTemplate"), "Same instance retrieved by sap.ui.template!");
+				
+				// check the second embedded template to be ignored
+				oTemplate = sap.ui.getCore().getTemplate("theSecondTemplate");
+				ok(oTemplate === undefined, "Second Embedded Template has not been found!");
+				
+			});
+
+			test("ID Lookup", 4, function() {
+				
+				// lookup an existing template
+				var oTemplate = sap.ui.template("theTemplate");
+				ok(oTemplate !== undefined, "Template has been found!");
+				ok(oTemplate instanceof sap.ui.core.tmpl.Template, "Template is a sap.ui.core.tmpl.Template!");
+				ok(oTemplate === sap.ui.template("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				ok(oTemplate === sap.ui.getCore().getTemplate("theTemplate"), "Same instance retrieved by sap.ui.template!");
+				
+			});
+			
+			test("Inline Templates", 1, function() {
+
+				equal(jQuery("#theEmbeddedTemplate > code").length, 1, "Inline Template doesn't create extra DOM");
+				
+			});
+
+			test("Unsupported Type", 1, function() {
+				var theEx;
+				try {
+					sap.ui.template("theSecondTemplate");
+				} catch (ex) {
+					theEx = ex;					
+				}
+
+				ok(theEx !== undefined, "Unknown template type not found. Exception was raised!");
+			});
+			
+			asyncTest("Binding Path in Template", 1, function() {
+				var sTitle = "Test123";
+
+				sap.ui.controller("test.myController", {
+					model: new sap.ui.model.json.JSONModel({ 
+						title: sTitle
+					}),
+		    
+					onInit: function(){
+						sap.ui.getCore().setModel(this.model, "navigation");
+					}
+				});
+				
+				var html = '' +
+					'<template data-controller-name="test.myController">' +
+						'<div id="myTemplate" data-type="text/x-handlebars-template">' +
+							'<div>Binding in Template:</div>' +
+							'<span id="templateContent">{{text path="navigation>/title"}}</span>' +
+						'</div>' +
+					'</template>';
+				
+				var myView = sap.ui.htmlview({viewContent:html});
+				myView.placeAt("templateWithBinding");
+				
+				jQuery.sap.registerModulePath('test', './');
+				
+				setTimeout(function(){
+					sap.ui.template({
+						id: "myTemplate"
+					});
+					
+					setTimeout(function() {
+						start();
+						var sResult = jQuery(document.getElementById("templateContent")).text()
+						ok(sResult === sTitle, "Binding resolved properly");
+					}, 10);
+				}, 10);
+				
+			});
+
+		</script>
+	</head>
+	<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.tmpl.Template</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="main"></div>
+	<div id="theEmbeddedTemplate" data-type="text/x-handlebars-template" style="display: none;">
+		<code>Hello {{value}}</code>
+	</div>
+	<div id="theSecondEmbeddedTemplate" data-type="text/x-unknown-template" style="display: none;">
+		<code>Hello {{value}}</code>
+	</div>
+	<div id="theThirdEmbeddedTemplate" style="display: none;">
+		<code>Hello {{value}}</code>
+	</div>
+
+	<div id="templateWithBinding" style="display: none;">
+	</div>
+
+	</body>
+</html>

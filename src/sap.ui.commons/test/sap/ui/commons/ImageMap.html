@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ImageMap - sap.ui.commons</title>
+	<script id="sap-ui-bootstrap" type="text/javascript"
+	        data-sap-ui-theme="sap_goldreflection"
+	        data-sap-ui-trace="false"
+	        data-sap-ui-libs="sap.ui.commons"
+	        src="../../../../resources/sap-ui-core.js"></script>
+
+	<script type="text/javascript">
+
+	   	// SAP Logo Image
+		var oImage = new sap.ui.commons.Image("Image1");
+		oImage.setSrc("http://www.sap.com/global/images/SAPLogo.gif");
+		oImage.setAlt("Alternative image text for Image1");
+		oImage.setHeight("200px");
+		oImage.setWidth("300px");
+		oImage.setUseMap("Map1");
+		oImage.placeAt("target1");
+
+		var oMap = new sap.ui.commons.ImageMap("idmap1");
+		oMap.attachPress(function(oEvent) {
+			alert("Action: clicked on Area with Id: " + oEvent.getParameter("areaId"));
+		});
+ 		oMap.setName("Map1");
+ 		var oArea1 = new sap.ui.commons.Area ({id: "area1", shape: "rect", alt: "Text on Alt1", href: "http://www.sap.com", coords: "1,1,100,100"}); 
+ 		oArea1.setTooltip("Link to SAP");
+
+ 		var oArea2 = new sap.ui.commons.Area ({shape: "rect", alt: "Text on Alt2", href: "http://www.sap.de", coords: "101,1,200,100", tooltip: "Link to IBM"}); 
+ 		oMap.addArea(oArea1);
+		oMap.createArea(oArea2);
+		oMap.createArea({shape: "rect", alt: "Text on Alt3", href: "http://www.sap.dk", coords: "201,1,300,100"});
+		oMap.createArea({shape: "rect", alt: "Text on Alt4", href: "http://www.sdn.sap.com", coords: "1,101,100,101"}, {shape: "rect", alt: "Text on Alt5", href: "http://www.sap.com", coords: "101,101,200,200"});
+	 	oMap.placeAt("target2");
+
+		// SAP Logo Image 2
+		oImage = new sap.ui.commons.Image("Image2");
+		oImage.setSrc("http://www.sap.com/global/images/SAPLogo.gif");
+		oImage.setAlt("Alternative image text for Image2");
+		oImage.setHeight("200px");
+		oImage.setWidth("300px");
+		oImage.setUseMap("Map2");
+		oImage.placeAt("target3");
+ 		oMap = new sap.ui.commons.ImageMap();
+ 		oMap.setName("Map2");
+ 		oArea1 = new sap.ui.commons.Area ({shape: "circle", alt: "Text on Alt1", href: "http://www.sap.com", coords: "50,50,50"}); 
+ 		oArea2 = new sap.ui.commons.Area ({shape: "circle", alt: "Text on Alt2", href: "http://www.sap.de", coords: "150,50,50"}); 
+ 		oMap.addArea(oArea1);
+		oMap.createArea(oArea2);
+		oMap.createArea({shape: "circle", alt: "Text on Alt3", href: "http://www.sap.dk", coords: "250,50,50"});
+		oMap.createArea({shape: "circle", alt: "Text on Alt4", href: "http://www.sdn.sap.com", coords: "50,150,50"}, {shape: "circle", alt: "Text on Alt5", href: "http://www.sap.com", coords: "150,150,50"});
+	 	oMap.placeAt("target4");
+
+		// SAP Logo Image 2
+		oImage = new sap.ui.commons.Image("Image3");
+		oImage.setSrc("http://www.sap.com/global/images/SAPLogo.gif");
+		oImage.setAlt("Alternative image text for Image3");
+		oImage.setHeight("200px");
+		oImage.setWidth("300px");
+		oImage.setUseMap("Map3");
+		oImage.placeAt("target5");
+ 		oMap = new sap.ui.commons.ImageMap();
+ 		oMap.setName("Map3");
+ 		oArea1 = new sap.ui.commons.Area ({shape: "poly", alt: "Text on Alt1", href: "http://www.sap.com", coords: "74,46,50,36,26,38,6,62,6,87,50,122,50,132,32,138,13,128,6,154,20,162,52,162,65,150,76,112,28,75,28,65,44,61,64,68"}); 
+ 		oArea2 = new sap.ui.commons.Area ({shape: "poly", alt: "Text on Alt2", href: "http://www.sap.de", coords: "94,38,122,38,154,162,130,162,126,144,91,144,88,162,63,162"}); 
+ 		oMap.addArea(oArea1);
+		oMap.createArea(oArea2);
+		oMap.createArea({shape: "poly", alt: "Text on Alt3", href: "http://www.sap.dk", coords: "148,38,192,38,213,63,213,103,192,122,170,122,170,162,148,162"});
+	 	oMap.placeAt("target6");
+
+	</script>
+
+</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.commons.ImageMap</code></h1>
+		<br> ImageMap with rectangular areas
+			<div id="target1"></div>
+			<div id="target2"></div>
+
+		<br> ImageMap with circle areas
+			<div id="target3"></div>
+			<div id="target4"></div>
+		<br> ImageMap with polygon areas
+			<div id="target5"></div>
+			<div id="target6"></div>
+	</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.RoadMap,sap.ui.commons.RoadMapStep">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control RoadMap Workflow Guided Activity" />
+		<title>RoadMap - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='RoadMapScript'>
+	//create the RoadMap control
+	var oRMap = new sap.ui.commons.RoadMap("rMap");
+
+	//create the RoadMap steps
+	var oStep1 = new sap.ui.commons.RoadMapStep("step1", {label: "Step 1"});
+	var oStep2 = new sap.ui.commons.RoadMapStep("step2", {label: "Step 2", enabled: false});
+	var oStep3 = new sap.ui.commons.RoadMapStep("step3", {label: "Step 3"});
+	var oStep4 = new sap.ui.commons.RoadMapStep("step4", {label: "Step 4"});
+
+	//create sub steps for step 3
+	var oSubStep1 = new sap.ui.commons.RoadMapStep("subStep1", {label: "Sub Step 1"});
+	var oSubStep2 = new sap.ui.commons.RoadMapStep("subStep2", {label: "Sub Step 2"});
+
+	//add sub steps to step 3
+	oStep3.addSubStep(oSubStep1);
+	oStep3.addSubStep(oSubStep2);
+
+	//add steps to the RoadMap
+	oRMap.addStep(oStep1);
+	oRMap.addStep(oStep2);
+	oRMap.addStep(oStep3);
+	oRMap.addStep(oStep4);
+
+	//Set the first step as selected
+	oRMap.setSelectedStep("step1");
+
+	//Set the number of visible steps
+	oRMap.setNumberOfVisibleSteps(3);
+
+	//Place the control on the UI	
+	oRMap.placeAt("sample1");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/roadmap-icon.png">RoadMap</h1>
+
+		<h2>Introduction RoadMap and RoadMapStep</h2>
+
+		The RoadMap control and its sub-control <code>RoadMapStep</code> are used to display step by step workflows. They support displaying steps of a clearly defined work process. One or more steps in a roadmap can be designed using animation. 
+
+		The RoadMap supports nesting that means that a <code>RoadMapStep</code> can contain sub-steps. From the visual perspective, the <code>RoadMapStep</code> is expanded to show its internal sub-steps once the user has clicked on it. 
+
+		The numbering for the steps is done automatically by the framework, depending on the order in which the steps have been added to the RoadMap (using the <code>addStep(RoadMapStep)</code> method); or to a <code>RoadMapStep</code> using method <code>addSubStep(RoadMapStep)</code>. 
+
+		For the steps and sub-steps, a Label control can be set. For the notification about step selections, <code>stepSelected(stepID)</code> which is a public event is available.
+
+		<h2>Example</h2>
+		<p>
+		In this RoadMap example, three RoadMapSteps are visible at application start, an arrow leads to the fourth step. Step three has two sub-steps.
+		</p>
+		<br><br>
+		<div code-sample="sample1" script="RoadMapScript"></div>
+
+		<h2>Keyboard Support</h2>
+		<p>
+		It is possible to navigate between the Roadmap steps using the <code>arrow left</code>/<code>arrow down</code> and <code>arrow right</code>/<code>arrow up</code> keys step by step. <code>Pos1</code> and <code>End</code> let you directly jump to the first/last step.
+		<i>Space</i> and <i>Enter</i> support selecting and expanding the currently focused step.
+		</p>
+
+		<h2>ARIA Support</h2>
+		<p>
+		The Roadmap control implements the ARIA <code>group</code> role. The <code>RoadmapSteps</code> implement the ARIA role <code>treeitem</code>.
+		</p>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RoadMap.html">API documentation</a>
+		</p>
+	</body>
+</html>

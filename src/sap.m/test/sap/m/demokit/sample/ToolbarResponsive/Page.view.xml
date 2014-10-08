@@ -1,0 +1,30 @@
+<mvc:View
+	controllerName="sap.m.sample.ToolbarResponsive.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%">
+	<Page
+		showHeader="false">
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button text="Approve" press="onPress" type="Accept"/>
+				<Button text="Reject" press="onPress" type="Reject"/>
+
+				<Button text="Mark as Favorite" press="onPress" visible="{range>/isNoPhone}"/>
+
+				<Button text="Send Email" press="onPress" visible="{range>/isNoPhone}"/>
+
+				<Button text="Share" press="onPress" visible="{range>/isNoPhone}"/>
+
+				<Button text="Print" press="onPress" visible="{range>/isNotPhoneOrTablet}"/>
+				<Button icon="sap-icon://print" press="onPress" visible="{range>/isTablet}"/>
+
+				<Button text="Export as Excel" press="onPress" visible="{range>/isNotPhoneOrTablet}"/>
+
+				<Button icon="sap-icon://overflow" press="onOpen" visible="{range>/isPhoneOrTablet}"/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

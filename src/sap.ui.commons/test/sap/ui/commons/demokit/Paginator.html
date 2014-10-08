@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Paginator">
+ <head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="UTF-8"/>
+  <title>Paginator - SAPUI5 Demo Kit</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+  <script id="sap-ui-bootstrap"
+	 src="../../../../../resources/sap-ui-core.js"
+	 data-sap-ui-theme="sap_bluecrystal"
+	 data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+  </script>
+  <script src="../../../../../js/utils.js"></script>
+
+  <script id='Paginator1'>
+   var oPaginator = new sap.ui.commons.Paginator("paginator1");
+	   oPaginator.setNumberOfPages(110);
+	   oPaginator.setCurrentPage(13);
+	   oPaginator.placeAt("sample1");
+  </script>
+
+  <script id='Paginator2'>
+   var oPaginator2 = new sap.ui.commons.Paginator("paginator2",{
+       numberOfPages: 21,
+	   currentPage: 1,
+	   page : function(oEvent) {alert('Page event type: ' + oEvent.getParameter("type") + '\nCurrent Page: ' + oEvent.getParameter("srcPage") + '\nTarget Page: ' + oEvent.getParameter("targetPage"));}
+   });
+   oPaginator2.placeAt("sample2");
+  </script>
+
+ </head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/paginator-icon.png">Paginator</h1>
+
+		<h2>Introduction</h2>
+
+		<p>
+		A Paginator is a control that lets users browse through the pages of a given page set. For example, it is possible to use a Paginator in order to let the user navigate back and forth through the pages of a list or a table. 
+		There are only two parameters that need to be set to make the Paginator work: <code>currentPage</code> and <code>numberOfPages</code>. Then for each modification of the Paginator done by the user, a <code>page</code> event is sent containing the necessary information for the controlled page set to navigate to the desired page. 
+		Available properties are as following: <code>type of event</code>, <code>index of current page</code>, <code>index of target page</code>.
+		</p>
+		<h2>Examples</h2>
+
+		<h3>Paginator for a Large Page Set</h3>
+		<p>
+		In this example, a Paginator is set up for 110 pages. The currently shown page is 13.
+
+
+		</p>
+		<div code-sample="sample1" script="Paginator1"></div>
+		<br/>
+		<h3>The <font face=courier>page</font> Event</h3>
+		<p>
+		The Paginator example has a descriptive JavaScript alert attached to the <code>page</code> event. 
+		</p>
+		<div code-sample="sample2" script="Paginator2"></div>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Paginator.html" >API documentation</a>
+		</p>
+	</body>
+</html>

@@ -1,0 +1,17 @@
+<mvc:View controllerName="view.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page>
+			<headerContent>
+				<Button id="changingButton" text="My text will change after 5 seconds"/>
+			</headerContent>
+			<footer>
+				<Toolbar>
+					<Button text="You won't find me" />
+					<Button text="Me neither" />
+				</Toolbar>
+			</footer>
+		</Page>
+	</App>
+</mvc:View>

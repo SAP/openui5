@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+
+		<title>Link - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Link.gif">
+
+    <!-- ********************************************************************** -->
+		<!-- SAPUI5 Bootstrap:                                                      -->
+		<!-- Extend the "libs" property if you like to import additional libraries  -->
+		<!-- ********************************************************************** -->
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			// create a standard link 
+			var oLink1 = new sap.ui.commons.Link("l1");
+			oLink1.setText("Link to Action");
+			oLink1.setTooltip("This is a test tooltip");
+			var sText1 = oLink1.getText();
+			oLink1.attachPress(function() {alert('Alert from ' + sText1);});
+			oLink1.placeAt("target1");
+
+			// create an external link (mode: )
+			var oLink2 = new sap.ui.commons.Link("l2");
+			oLink2.setText("Link to URL (Target: _blank)");
+			oLink2.setTooltip("Target: _blank");
+			oLink2.setHref("http://www.sap.com");
+			oLink2.setTarget("_blank");
+			var sText2 = oLink2.getText();
+			oLink2.attachPress(function() {alert('Alert from ' + sText2);});
+			oLink2.placeAt("target2");
+
+			// create an external link 
+			var oLink3 = new sap.ui.commons.Link("l3", 
+					{text: "Link to URL (Target: _self)", tooltip: "Target: _self", 
+				   href: "http://www.sap.com", target: "_self"});
+			oLink3.placeAt("target3");
+
+			// create an external link 
+			var oLink4 = new sap.ui.commons.Link("l4", 
+					{text: "Link to URL (Target: _search)", tooltip: "Target: _search", 
+				   href: "http://www.sap.com", target: "_search"});
+			oLink4.placeAt("target4");
+
+			// create an external link with prevent default
+			var oLink5 = new sap.ui.commons.Link("l5", {
+					text: "Link to URL (Prevent default)", 
+					tooltip: "Prevent default", 
+					href: "http://www.sap.com", 
+					press: function(oEvent) {oEvent.preventDefault()}
+				});
+			oLink5.placeAt("target5");
+
+			// test enable and visibility of Link
+			var oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+			oLayout.setLayoutFixed(false);
+
+			// row 1: toggle enabled state
+			var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
+			oLayout.addRow(oMLR);
+
+			var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1");
+			oLink = new sap.ui.commons.Link("l6");
+			oLink.setText("Toggle enable state");
+			oLink.attachPress(function toggleEnabledState(oControlEvent) {
+				var innerLink = sap.ui.getCore().getControl("l6_a");
+				innerLink.setEnabled(!innerLink.getEnabled());
+				if (innerLink.getEnabled() == true ) {
+					innerLink.setText("Enabled"); 
+				} else {
+					innerLink.setText("Disabled");
+				}
+			});
+			oMLC.addContent(oLink);
+			oMLR.addCell(oMLC);
+
+			oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
+			var oToggleLink = new sap.ui.commons.Link("l6_a");
+			oToggleLink.setText("Disabled");
+			oToggleLink.setEnabled(false);
+			oToggleLink.attachPress(function() {alert('Alert from Link');});
+			oMLC.addContent(oToggleLink);
+			oMLR.addCell(oMLC);
+
+			// row 2: toggle visible state
+			oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_2");
+			oLayout.addRow(oMLR);
+
+			oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1");
+			oLink = new sap.ui.commons.Link("l7");
+			oLink.setText("Toggle visibility");
+			oLink.attachPress(function toggleVisibility(oControlEvent){
+				var innerLink = sap.ui.getCore().getControl("l7_a");
+				innerLink.setVisible(!innerLink.getVisible());
+			} );
+			oMLC.addContent(oLink);
+			oMLR.addCell(oMLC);
+
+			oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2");
+			oToggleLink = new sap.ui.commons.Link("l7_a");
+			oToggleLink.setText("Visible");
+			oMLC.addContent(oToggleLink);
+			oMLR.addCell(oMLC);
+
+			// add the MatrixLayout to the screen
+			oLayout.placeAt("target6");
+
+		</script>
+
+	</head>
+
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for sap.ui.commons.Link</h1>
+
+		<p id="target1"></p>
+		<p id="target2"></p>
+		<p id="target3"></p>
+		<p id="target4"></p>
+		<p id="target5"></p>
+		<p id="target6"></p>
+
+	</body>
+
+</html>

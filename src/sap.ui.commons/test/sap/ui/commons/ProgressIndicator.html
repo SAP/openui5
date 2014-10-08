@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ProgressIndicator Test Page</title>
+		<script
+			src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="true" >
+		</script>
+
+ 		<script src="../../../../resources/sap-ui-debug.js"></script>	
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();	
+
+			function handleTextChange(oEvent) {
+				var oText = oEvent.oSource;
+				var oProgInd = oCore.getControl("ProgInd1");
+				oProgInd.setPercentValue( parseInt(oText.getValue()) );
+			}
+
+			// Progressindicator 1
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd1");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(0);
+			oProgInd.setDisplayValue("0% of 5GB");
+			oProgInd.placeAt("target1");
+
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
+			oLyt.setWidth('300px');
+			oLyt.setColumns(2);
+			oLyt.setWidths("100px", null);
+
+			// second row: label and textfield and checkbox
+    	var oLabel = new sap.ui.commons.Label("Label1");
+   		oLabel.setText("Value:");
+
+   		var oText = new sap.ui.commons.TextField("TF1");
+			oText.setValue( oProgInd.getPercentValue() );
+			oText.attachChange(handleTextChange);
+
+  		oLyt.createRow(oLabel, oText);
+
+			oLyt.placeAt("target2");
+
+			// Progressindicator 2
+			oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd2");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(30);
+			oProgInd.setDisplayValue("30%");
+			oProgInd.setTooltip("tooltip");
+			oProgInd.placeAt("target3");
+
+			// Progressindicator 3
+			oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd3");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.setTooltip("tooltip");
+			oProgInd.placeAt("target4");
+
+			// Progressindicator 4
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd4");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(99);
+			oProgInd.setDisplayValue("99%");
+			oProgInd.placeAt("target5");
+
+			// Progressindicator 5
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd5");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(100);
+			oProgInd.setDisplayValue("100%");
+			oProgInd.placeAt("target6");
+
+			// Progressindicator 6
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd6");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(110);
+			oProgInd.setDisplayValue("110%");
+			oProgInd.placeAt("target7");
+
+			// Progressindicator 7
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd7");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.setBarColor("POSITIVE");
+			oProgInd.placeAt("target8");
+
+			// Progressindicator 8
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd8");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.setBarColor("NEGATIVE");
+			oProgInd.placeAt("target9");
+
+			// Progressindicator 9
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd9");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.setBarColor("CRITICAL");
+			oProgInd.placeAt("target10");
+
+			// Progressindicator 10
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd10");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.placeAt("target11");
+
+			// Progressindicator 11
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd11");
+			oProgInd.setWidth("100%");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.placeAt("target12");
+
+			// Progressindicator 12
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd12");
+			oProgInd.setWidth("10%");
+			oProgInd.setPercentValue(200);
+			oProgInd.setDisplayValue("200%");
+			oProgInd.placeAt("target13");
+
+			// Progressindicator 13
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd13");
+			oProgInd.setWidth("1%");
+			oProgInd.setPercentValue(200);
+			oProgInd.setDisplayValue("200%");
+			oProgInd.placeAt("target14");
+
+			// Progressindicator 14
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd14");
+			oProgInd.setWidth("10%");
+			oProgInd.setPercentValue(200);
+			oProgInd.setDisplayValue("200%");
+			oProgInd.setShowValue(false);
+			oProgInd.placeAt("target15");
+
+			// Progressindicator 15
+			var oProgInd = new sap.ui.commons.ProgressIndicator("ProgInd15");
+			oProgInd.setWidth("300px");
+			oProgInd.setPercentValue(50);
+			oProgInd.setDisplayValue("50%");
+			oProgInd.setTooltip("tooltip");
+			oProgInd.placeAt("target16");
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.commons.ProgressIndicator</code></h1>
+		<br> ProgressIndicator with 0%
+			<div id="target1"></div>
+			<div id="target2"></div>
+		<br> ProgressIndicator with 30%
+			<div id="target3"></div>
+		<br> ProgressIndicator with 50%
+			<div id="target4"></div>
+		<br> ProgressIndicator with 99%
+			<div id="target5"></div>
+		<br> ProgressIndicator with 100%
+			<div id="target6"></div>
+		<br> ProgressIndicator with 110%
+			<div id="target7"></div>
+		<br> ProgressIndicator with 50% POSITIVE
+			<div id="target8"></div>
+		<br> ProgressIndicator with 50% NEGATIVE
+			<div id="target9"></div>
+		<br> ProgressIndicator with 50% CRITICAL
+			<div id="target10"></div>
+		<br> ProgressIndicator with 50% NEUTRAL
+			<div id="target11"></div>
+		<br> ProgressIndicator with 50% NEUTRAL width=100%
+			<div id="target12"></div>
+		<br> ProgressIndicator with 200% NEUTRAL width=10%
+			<div id="target13"></div>
+		<br> ProgressIndicator with 200% NEUTRAL width=1%
+			<div id="target14"></div>
+		<br> ProgressIndicator with 200% NEUTRAL width=10% and no value displayed
+			<div id="target15"></div>
+		<br> ProgressIndicator with Label
+			<div id="target16"></div>
+
+	</body>
+</html>

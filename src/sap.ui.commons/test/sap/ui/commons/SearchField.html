@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>Examples: SearchField - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.SearchField.gif">
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+	</script>
+
+	<style type="text/css">
+		.MarginLeft {
+			margin-left: 10px;
+		}
+		.MarginTop {
+			margin-top: 5px;
+		}
+		.Output {
+			height: 100px;
+			border: 1px solid gray;
+		}
+	</style>
+
+	<script>
+		var doSearch = function(oEvent){
+			alert("Search triggered: " + oEvent.getParameter("query"));
+		};
+
+		var dummySuggest = function(oEvent){
+			var sVal = oEvent.getParameter("value");
+			var aSuggestions = [];
+			var aVal = ["a", "b", "c"];
+			for(var i=0; i<aVal.length; i++){
+				for(var j=0; j<aVal.length; j++){
+					for(var k=0; k<aVal.length; k++){
+						aSuggestions.push(sVal+"_"+aVal[i]+aVal[j]+aVal[k]);
+					}
+				}
+			}
+			var sId = oEvent.getParameter("id");
+			var oSearchControl = sap.ui.getCore().byId(sId);
+			// a little delay to simulate server roundtrip
+			setTimeout(function(){oSearchControl.suggest(sVal, aSuggestions);}, 50);
+		};
+
+
+		//Simple Search Fields without suggestion
+		var oSearch = new sap.ui.commons.SearchField("simpleSearch1", {
+			enableListSuggest: false,
+			search: doSearch
+		});
+		oSearch.placeAt("simple1");
+		oSearch = new sap.ui.commons.SearchField("simpleSearch2", {
+			enableListSuggest: false,
+			enableFilterMode: true,
+			search: doSearch
+		});
+		oSearch.placeAt("simple2");
+		oSearch = new sap.ui.commons.SearchField("simpleSearch3", {
+			enableListSuggest: false,
+			enableFilterMode: true,
+			enableClear: true,
+			search: doSearch
+		});
+		oSearch.placeAt("simple3");
+
+		//Live Search with clear icon
+		var aCountriesOfEurope = ["Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Iceland", "Albania", "Andorra", "Austria", "Belarus", "Belgium", "Bosnia and Herzegovina", "Ireland", "Italy", "Latvia", "Liechtenstein", "Lithuania", "Luxembourg", "Macedonia", "Malta", "Moldova", "Monaco", "Netherlands", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino", "Serbia and Montenegro", "Slovakia (Slovak Republic)", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom", "Vatican City"];
+		aCountriesOfEurope.sort();
+		jQuery.sap.require("jquery.sap.strings");
+
+		var updateCountries = function(sVal){
+			var aBuffer = [];
+			for(var i=0; i<aCountriesOfEurope.length; i++){
+				if(!sVal || sVal.length == 0 || jQuery.sap.startsWithIgnoreCase(aCountriesOfEurope[i], sVal)){
+					aBuffer.push("<li>", aCountriesOfEurope[i], "</li>");
+				}
+			}
+			jQuery("#countries").html(aBuffer.join(""));
+		};
+
+		jQuery(function(){
+			updateCountries();
+		});
+
+		oSearch = new sap.ui.commons.SearchField("liveSearch", {
+			enableListSuggest: false,
+			enableClear: true,
+			startSuggestion: 0,
+			search: doSearch,
+			suggest: function(oEvent){
+				updateCountries(oEvent.getParameter("value"));
+			}
+		});
+		oSearch.placeAt("live");
+
+		//Search Field with suggestion list
+		//With list expander
+		oSearch = new sap.ui.commons.SearchField("suggestionSearch", {
+			enableListSuggest: true,
+			search: doSearch,
+			suggest: dummySuggest
+		});
+		oSearch.placeAt("suggestion");
+
+		//Without list expander
+		oSearch = new sap.ui.commons.SearchField("suggestionNoExpSearch", {
+			enableListSuggest: true,
+			showListExpander: false,
+			search: doSearch,
+			suggest: dummySuggest
+		});
+		oSearch.placeAt("suggestionNoExp");
+
+		//Search Field with attached search provider (Open Search Protocol) for suggestion
+		//JSON Response format
+		oSearch = new sap.ui.commons.SearchField("providerJSONSearch", {
+			enableListSuggest: true,
+			visibleItemCount: 10,
+			showListExpander: false,
+			search: doSearch,
+			width: "200px",
+			searchProvider: new sap.ui.core.search.OpenSearchProvider({
+				icon: "http://en.wikipedia.org/favicon.ico",
+				suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
+				suggestType: "json"
+			})
+		});
+		oSearch.placeAt("providerJSON");
+
+		//XML Response format
+		oSearch = new sap.ui.commons.SearchField("providerXMLSearch", {
+			enableListSuggest: true,
+			visibleItemCount: 10,
+			showListExpander: false,
+			search: doSearch,
+			width: "200px",
+			searchProvider: new sap.ui.core.search.OpenSearchProvider({
+				icon: "http://en.wikipedia.org/favicon.ico",
+				suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&format=xml&namespace=0&search={searchTerms}",
+				suggestType: "xml"
+			})
+		});
+		oSearch.placeAt("providerXML");
+
+
+		//Without icon
+		oSearch = new sap.ui.commons.SearchField("providerXMLNoIcoSearch", {
+			enableListSuggest: true,
+			visibleItemCount: 10,
+			showListExpander: false,
+			search: doSearch,
+			width: "200px",
+			searchProvider: new sap.ui.core.search.OpenSearchProvider({
+				suggestUrl: "../../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&format=xml&namespace=0&search={searchTerms}",
+				suggestType: "xml"
+			})
+		});
+		oSearch.placeAt("providerXMLNoIco");
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+
+<h1 id="header">Test Page for <code>sap.ui.commons.SearchField</code></h1>
+
+<h2>Simple Search Field without suggestion</h2>
+<h3>Without Filter option (no search event when field is empty)</h3>
+<div id="simple1"></div>
+<h3>With Filter option (search event also when field is empty)</h3>
+<div id="simple2"></div>
+<h3>With Filter option and clear (search event also when field is empty)</h3>
+<div id="simple3"></div>
+<hr>
+
+<h2>Live Search with clear icon</h2>
+<div id="live"></div>
+<ul id="countries" style="width:200px;height:200px;overflow:auto;border:1px solid;padding-left:2px;"></ul>
+<hr>
+
+<h2>Search Field with suggestion list</h2>
+<h3>With list expander</h3>
+<div id="suggestion"></div>
+<h3>Without list expander</h3>
+<div id="suggestionNoExp"></div>
+<hr>
+
+<h2>Search Field with attached search provider (Open Search Protocol) for suggestion</h2>
+<h3>JSON Response format</h3>
+<div id="providerJSON"></div>
+<h3>XML Response format</h3>
+<div id="providerXML"></div>
+<h3>Without icon</h3>
+<div id="providerXMLNoIco"></div>
+</body>
+</html>

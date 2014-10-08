@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		title="Dialog with Search"
+		class="sapUiPopupWithPadding" >
+		<subHeader>
+			<Toolbar>
+				<SearchField width="100%" />
+			</Toolbar>
+		</subHeader>
+		<content>
+			<Text 
+				width="300px"
+				text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est" />
+		</content>
+		<beginButton>
+			<Button text="Close" press="onCloseDialog" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,49 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.Icon.IconGroup"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<HBox class="marginAll">
+		<core:Icon
+			src="sap-icon://syringe"
+			class="size1"
+			color="#031E48" >
+			<core:layoutData>
+				<FlexItemData growFactor="1" />
+			</core:layoutData>
+		</core:Icon>
+		<core:Icon
+			src="sap-icon://pharmacy"
+			class="size2"
+			color="#64E4CE" >
+			<core:layoutData>
+				<FlexItemData growFactor="1" />
+			</core:layoutData>
+		</core:Icon>
+		<core:Icon
+			src="sap-icon://electrocardiogram"
+			class="size3"
+			color="#E69A17" >
+			<core:layoutData>
+				<FlexItemData growFactor="1" />
+			</core:layoutData>
+		</core:Icon>
+		<core:Icon
+			src="sap-icon://doctor"
+			class="size4"
+			color="#1C4C98" >
+			<core:layoutData>
+				<FlexItemData growFactor="1" />
+			</core:layoutData>
+		</core:Icon>
+		<core:Icon
+			src="sap-icon://stethoscope"
+			class="size5"
+			color="#8875E7"
+			press="handleStethoscopePress" >
+			<core:layoutData>
+				<FlexItemData growFactor="1" />
+			</core:layoutData>
+		</core:Icon>
+	</HBox>
+</mvc:View>

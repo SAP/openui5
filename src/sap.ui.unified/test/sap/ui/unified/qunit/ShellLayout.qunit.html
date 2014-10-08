@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.unified.ShellLayout
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ShellLayout - sap.ui.unified</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.unified"
+		data-sap-ui-language=en>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<style>
+		#shell-cntnt{
+			background: none;
+		}
+	</style>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	
+	sap.ui.core.Control.extend("my.Test", {
+		renderer: function(rm, ctrl){
+			rm.write("<div style='width:10px;height:10px;background-color:gray;'");
+			rm.writeControlData(ctrl);
+			rm.write("></div>");
+		}
+	});
+	
+	var oShell = new sap.ui.unified.ShellLayout("shell", {
+		content: [new my.Test("_ctnt")],
+		paneContent: [new my.Test("_pane_ctnt")],
+		//curtainContent: [new my.Test("_curt_ctnt")],
+		//curtainPaneContent: [new my.Test("_curt_pane_ctnt")],
+		header: new my.Test("_header")
+	});
+	oShell.placeAt("uiArea1");
+	oShell.addCurtainContent(new my.Test("_curt_ctnt"));
+	oShell.addCurtainPaneContent(new my.Test("_curt_pane_ctnt"));
+	
+	var oShell2 = new sap.ui.unified.ShellLayout("shell2", {
+		showPane: true,
+		//showCurtain: true,
+		//showCurtainPane: true,
+		headerHiding: true,
+		headerVisible: false
+	});
+	oShell2.setShowCurtain(true);
+	oShell2.setShowCurtainPane(true);
+	
+	
+	function testMultiAggregation(sName, oCtrl, sGetter, sMutator){
+		oCtrl.getMetadata()._enrichChildInfos();
+		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
+		var oType = jQuery.sap.getObject(!oAggMetaData || oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
+		
+		sGetter = oAggMetaData ? oAggMetaData._sGetter : sGetter;
+		sMutator = oAggMetaData ? oAggMetaData._sMutator : sMutator;
+		
+		function _get(){
+			return oCtrl[sGetter]();
+		}
+		
+		function _mutator(bInsert, aArgs){
+			oCtrl[bInsert ? sMutator.replace("add", "insert") : sMutator].apply(oCtrl, aArgs);
+		}
+		
+		function _removeAll(){
+			oCtrl[sGetter.replace("get", "removeAll")].apply(oCtrl);
+		}
+		
+		function _remove(){
+			oCtrl[sMutator.replace("add", "remove")].apply(oCtrl, arguments);
+		}
+		
+		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		_mutator(false, [new oType(sName+"_1")]);
+		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		_mutator(true, [new oType(sName+"_2"), 0]);
+		equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		_remove(0);
+		equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		_removeAll();
+		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+	};
+	
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+	
+		qutils.delayTestStart();
+		
+		
+		module("API");
+	
+		test("Properties - Default Values", function() {
+			equal(oShell.getShowPane(), false, "Default 'showPane'");
+			equal(oShell.getShowCurtain(), false, "Default 'showCurtain'");
+			equal(oShell.getShowCurtainPane(), false, "Default 'showCurtainPane'");
+			equal(oShell.getHeaderHiding(), false, "Default 'headerHiding'");
+			equal(oShell.getHeaderVisible(), true, "Default 'headerVisible'");
+		});
+	
+		test("Properties - Custom Values", function() {
+			equal(oShell2.getShowPane(), true, "Custom 'showPane'");
+			equal(oShell2.getShowCurtain(), true, "Custom 'showCurtain'");
+			equal(oShell2.getShowCurtainPane(), true, "Custom 'showCurtainPane'");
+			equal(oShell2.getHeaderHiding(), true, "Custom 'headerHiding'");
+			equal(oShell2.getHeaderVisible(), false, "Custom 'headerVisible'");
+		});
+		
+		test("Aggregation 'content'", function() {
+			testMultiAggregation("content", oShell2);
+		});
+		
+		test("Aggregation 'paneContent'", function() {
+			testMultiAggregation("paneContent", oShell2);
+		});
+		
+		test("Aggregation 'curtainContent'", function() {
+			testMultiAggregation("curtainContent", oShell2, "getCurtainContent", "addCurtainContent");
+		});
+		
+		test("Aggregation 'curtainPaneContent'", function() {
+			testMultiAggregation("curtainPaneContent", oShell2, "getCurtainPaneContent", "addCurtainPaneContent");
+		});
+		
+		test("Aggregation 'header'", function() {
+			ok(!oShell2.getHeader(), "Initially no header control");
+			oShell2.setHeader(new my.Test());
+			ok(!!oShell2.getHeader(), "Header control available after set");
+			oShell2.setHeader(null);
+			ok(!oShell2.getHeader(), "No header control again");
+		});
+		
+		
+		module("Rendering");
+		
+		test("Content", function() {
+			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-hdrcntnt"), jQuery.sap.domById("_header")), "Header rendered correctly");
+			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-canvas"), jQuery.sap.domById("_curt_ctnt")), "Curtain Content rendered correctly");
+			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-curt-container-pane"), jQuery.sap.domById("_curt_pane_ctnt")), "Curtain Pane rendered correctly");
+			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-canvas"), jQuery.sap.domById("_ctnt")), "Content rendered correctly");
+			ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("shell-container-pane"), jQuery.sap.domById("_pane_ctnt")), "Pane Content rendered correctly");
+		});
+		
+		module("Behavior");
+		
+		asyncTest("Open/Close Pane", function() {
+			function checkVisibility(){
+				return jQuery.sap.byId("shell-container-panecntnt").is(":visible");
+			}
+			
+			ok(!checkVisibility(), "Pane initially hidden");
+			oShell.setShowPane(true);
+			
+			setTimeout(function(){
+				ok(checkVisibility(), "Pane visible");
+				oShell.setShowPane(false);
+				setTimeout(function(){
+					ok(!checkVisibility(), "Pane hidden again");
+					start();
+				}, 600);
+			}, 600);
+		});
+		
+		asyncTest("Open Curtain", function() {
+			function checkVisibility(){
+				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+			}
+			
+			ok(!checkVisibility(), "Curtain initially hidden");
+			oShell.setShowCurtain(true);
+			
+			setTimeout(function(){
+				ok(checkVisibility(), "Curtain visible");
+				start();
+			}, 600);
+		});
+		
+		asyncTest("Open/Close Curtain Pane", function() {
+			function checkVisibility(){
+				return jQuery.sap.byId("shell-curt-container-panecntnt").is(":visible");
+			}
+			
+			ok(!checkVisibility(), "Curtain Pane initially hidden");
+			oShell.setShowCurtainPane(true);
+			
+			setTimeout(function(){
+				ok(checkVisibility(), "Curtain Pane visible");
+				oShell.setShowCurtainPane(false);
+				setTimeout(function(){
+					ok(!checkVisibility(), "Curtain Pane hidden again");
+					start();
+				}, 600);
+			}, 600);
+		});
+		
+		asyncTest("Close Curtain", function() {
+			function checkVisibility(){
+				return jQuery.sap.byId("shell-curtcntnt").is(":visible");
+			}
+			
+			ok(checkVisibility(), "Curtain visible");
+			oShell.setShowCurtain(false);
+			
+			setTimeout(function(){
+				ok(!checkVisibility(), "Curtain hidden again");
+				start();
+			}, 600);
+		});
+		
+		test("Show/Hide Header", function() {
+			function checkVisibility(){
+				return jQuery.sap.byId("shell-hdr").is(":visible");
+			}
+
+			ok(checkVisibility(), "Header visible");
+			oShell.setHeaderVisible(false);
+			ok(!checkVisibility(), "Header not visible");
+			oShell.setHeaderVisible(true);
+			ok(checkVisibility(), "Header visible");
+		});
+		
+		test("Clear UI", 0, function(){
+			jQuery("#uiArea1").remove();
+		});
+		
+	</script>
+  
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.unified.ShellLayout</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+</body>
+</html>

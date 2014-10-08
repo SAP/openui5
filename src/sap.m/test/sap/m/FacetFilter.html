@@ -1,0 +1,964 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.FacetFilter Test</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"></script>
+
+
+<script type="text/javascript">
+		
+	var id = 1;
+	function genId() {
+		return "ff" + id++; 
+	}
+	
+	function createListValues(nCount) {
+		var aVals = [];
+		for(var i=1; i < nCount+1; i++) {
+			aVals.push({text: "Val" + i, key: "val" + i, count: i});
+		}
+		return aVals;
+	}
+	
+	function handleListOpen(oEvent) {
+		
+		var oList = oEvent.getSource();
+		console.log("FacetFilterList: listOpen event for list \"" + oList.getTitle() + "\" received by handler");
+	}
+	
+	function handleListClose(oEvent) {
+		
+		var oList = oEvent.getSource();
+		var bAllSelected = oEvent.getParameter("allSelected");
+		var aSelectedItems = oEvent.getParameter("selectedItems");
+		var sSelectedItems = "[";
+		for(var i=0; i < aSelectedItems.length; i++) {
+			
+			sSelectedItems +=  aSelectedItems[i].getText();
+			if(i < aSelectedItems.length - 1) {
+				sSelectedItems += ", ";
+			}
+		}
+		sSelectedItems += "]";
+		
+		var sSelectedKeys = "[";
+		var aSelectedKeys = Object.getOwnPropertyNames(oEvent.getParameter("selectedKeys"));
+		for(var i=0; i < aSelectedKeys.length; i++) {
+			
+			sSelectedKeys +=  aSelectedKeys[i];
+			if(i < aSelectedKeys.length - 1) {
+				sSelectedKeys += ", ";
+			}
+		}		
+		sSelectedKeys += "]";
+		
+		console.log("FacetFilterList: listClose event for list \"" + oList.getTitle() + "\" received by handler. allSelected=" + bAllSelected + ", selectedItems=" + sSelectedItems + ", selectedKeys=" + sSelectedKeys);
+	}
+	
+	function handleReset(oEvent) {
+		
+		console.log("FacetFilter: Reset event fired for source " + oEvent.getSource());
+		var oFF = oEvent.getSource();
+		var aLists = oFF.getLists();
+		for(var i=0; i < aLists.length; i++) {
+			
+			aLists[i].removeSelections(true);
+			//aLists[i].setSelectedKeys(); //clear selected keys
+		}
+	}
+	
+	// Start page controls
+	var oApp = new sap.m.App("myApp", {
+		initialPage : "myPage1"
+	});
+	
+	var oTestPage = new sap.m.Page("myPage1", {
+		title : "Mobile Facet Filter Control"
+	
+	});		
+	
+	oApp.addPage(oTestPage);
+	oApp.placeAt("content");
+	
+	var fnOData = function() {
+		
+		var oDataModel1 = new sap.ui.model.odata.ODataModel("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+		oDataModel1.setSizeLimit(5);
+		var oDataModel2 = new sap.ui.model.odata.ODataModel("/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+		
+		oDataModel1.attachRequestCompleted(function (oEvent) {
+			jQuery.sap.log.info("oData Request completed: " + oEvent.getParameters());
+		});
+		oDataModel1.attachRequestSent(function (oEvent) {
+			jQuery.sap.log.info("oData Request sent: " + oEvent.getParameters());
+		});
+		
+		var ffl1 = new sap.m.FacetFilterList( {
+			title: "Product (growing) with preselected items",
+			growingThreshold: 20,
+			key: "Products1",
+			items: {
+				 path: "/Products",
+				template: new sap.m.FacetFilterItem( {
+					text: "{ProductName}",
+					key: "{ProductID}"
+				})
+			},
+			listOpen: function(oEvent) {
+				
+				handleListOpen(oEvent);
+				
+				var that = this;
+				var sNoDataText = this.getNoDataText();
+				oDataModel1.attachRequestSent(function() {
+					that.setNoDataText("*** loading ***");
+				});
+				oDataModel1.attachRequestCompleted(function() {
+					that.setNoDataText(sNoDataText);
+				});		
+				oDataModel1.attachRequestFailed(function() {
+					that.setNoDataText(sNoDataText);
+				});	
+				this.setModel(oDataModel1);
+			},
+			listClose: handleListClose,
+			selectionChange: function(oEvent) {
+				jQuery.sap.log.info("selectionChange works!");
+			},
+		});
+		
+		ffl1.setSelectedKeys(JSON.parse(sessionStorage.getItem("Products1")));
+		
+		var ffl2 = new sap.m.FacetFilterList( {
+			title: "Product (not growing)",
+			growing: false,
+			key: "Products2",
+			items: {
+				 path: "/Products",
+				template: new sap.m.FacetFilterItem( {
+					text: "{ProductName}",
+					key: "{ProductID}"
+				} 
+			)
+			},
+			listOpen: handleListOpen,
+			listClose: handleListClose			
+		});
+		ffl2.setModel(oDataModel2);
+		
+        var oTypeDate = new sap.ui.model.type.Date(  
+                {    
+                 style: "short"
+               });  
+        
+  		var ffl3 = new sap.m.FacetFilterList( {
+            title: "Order Dates (growing)",
+            growingThreshold: 20,
+			key: "OrderDate",
+            dataType: sap.m.FacetFilterListDataType.Date,
+			items: {
+				 path: "/Orders",
+				template: new sap.m.FacetFilterItem( {
+                    text: {path: 'OrderDate', type: oTypeDate},
+                    key: "{OrderID}"
+				} 
+			)
+			},  		
+			
+			listOpen: handleListOpen,
+			listClose: handleListClose			
+		});
+		ffl3.setModel(oDataModel1);   
+
+		
+		var oTypeN = new sap.ui.model.type.Float(
+				{
+ 			  minIntegerDigits: 1, // minimal number of non-fraction digits
+			  maxIntegerDigits: 99, // maximal number of non-fraction digits
+			  minFractionDigits: 0, // minimal number of fraction digits
+			  maxFractionDigits: 99, // maximal number of fraction digits
+			  groupingEnabled: true, // enable grouping (show the grouping separators)
+			  groupingSeparator: ",", // the used grouping separator
+			  decimalSeparator: "." // the used decimal separator 
+			} 
+				);		
+		
+		
+		var ffl4 = new sap.m.FacetFilterList( {
+			title: "Category Sales(not growing)",
+ 			growing: false,
+			key: "Category_Sales_for_1997",
+            dataType: sap.m.FacetFilterListDataType.Float,
+			items: {
+				 path: "/Category_Sales_for_1997",
+				template: new sap.m.FacetFilterItem( {
+                  text: {path: 'CategorySales', type: oTypeN},
+					key: "{CategorySales}"
+				} 
+			)
+
+			}, 
+
+			listOpen: handleListOpen,
+			listClose: handleListClose			
+		});
+		ffl4.setModel(oDataModel2);	 			
+        
+		var oFF = new sap.m.FacetFilter(genId(), {
+			lists: [ffl1,ffl2,ffl3,ffl4],
+			reset: handleReset,
+			showPersonalization: true
+		});
+		
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({text: "{" + oFF.getId() + "} FacetFilterList OData Model Set on List Open"}),
+					    
+		}));		
+		oTestPage.addContent(oFF);				
+		
+		var oToolbar = new sap.m.Toolbar({
+			content: [new sap.m.Button({
+				    	text: "Save Selections",
+				    	press: function(oEvent) {
+				    		
+							oFF.getLists().forEach(function(oList) {
+								
+								sessionStorage.setItem(oList.getKey(), JSON.stringify(oList.getSelectedKeys()));
+							});
+				    	}
+					  }),
+					  new sap.m.Button({
+				    	text: "Load Selections",
+				    	press: function(oEvent) {
+				    		
+							oFF.getLists().forEach(function(oList) {
+								
+								oList.setSelectedKeys(JSON.parse(sessionStorage.getItem(oList.getKey())));
+							});
+				    	}
+					  }),
+					  new sap.m.Button({
+				    	text: "Clear Saved Selections",
+				    	press: function(oEvent) {
+				    		
+							oFF.getLists().forEach(function(oList) {
+								
+								sessionStorage.removeItem(oList.getKey());
+							});
+				    	}
+					  }),
+					  new sap.m.CheckBox({
+							
+							text: "Summary Bar",
+							selected: oFF.getShowSummaryBar(),
+							select: function(oEvent) {
+								
+								oFF.setShowSummaryBar(oEvent.getParameter("selected"));
+							}
+						})]
+		});
+		
+		oTestPage.addContent(oToolbar);		
+	};	
+
+	
+	var fnFacetFilterListProperties = function() {
+		
+		var oData = {
+				showPersonalization: true,
+				lists: [{key: "A", sequence: 1, values: createListValues(15)},
+				        {key: "B", sequence: 1, values: createListValues(15)},
+				        {key: "C", sequence: 0, values: createListValues(15)}]
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		
+		var oFF = new sap.m.FacetFilter(genId(), {
+			showPersonalization: "{/showPersonalization}",
+			lists: {
+				path: "/lists",
+				template: new sap.m.FacetFilterList({
+					key: "{key}",
+					sequence: "{sequence}",
+					growingThreshold: 5,
+					items: {
+						path: "values",	
+						template: new sap.m.FacetFilterItem({
+							key: "{key}",
+							text: "{text}",
+							count: "{count}"
+						})
+					},
+					listOpen: handleListOpen,
+					listClose: handleListClose					
+				})
+			},
+			reset: handleReset
+		});
+		oFF.setModel(oModel);
+		
+		oFF.getLists()[0].setSelectedKeys(JSON.parse(sessionStorage.getItem("A")));
+		oFF.getLists()[1].setSelectedKeys(JSON.parse(sessionStorage.getItem("B")));
+		oFF.getLists()[2].setSelectedKeys(JSON.parse(sessionStorage.getItem("C")));
+		
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({text: "{" + oFF.getId() + "} FacetFilterList Properties"}),
+			}));
+		
+		oTestPage.addContent(oFF);
+		
+		fnUpdateButtonText = function() {
+			for(var i=0; i < oFF.getLists().length; i++) {
+				var oList = oFF.getLists()[i];
+				oList.setTitle( "(" + oList.getKey() + ")" + " [" + i + ", " + oList.getSequence() + "]" );
+			}			
+		};
+		fnUpdateButtonText();
+		
+		var oActiveCheckbox = new sap.m.CheckBox({
+			
+			text: "Active",
+			selected: oFF.getLists()[0].getActive(),
+			select: function(oEvent) {
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setActive(oEvent.getParameter("selected"));
+			}
+		});
+		var oRetainListSequenceCheckBox = new sap.m.CheckBox({
+			
+			text: "Retain List Sequence",
+			selected: oFF.getLists()[0].getRetainListSequence(),
+			select: function(oEvent) {
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setRetainListSequence(oEvent.getParameter("selected"));
+			}
+		});
+		
+		var oShowRemoveFacetIconCheckBox = new sap.m.CheckBox({
+			text: "Show Remove Facet Icon",
+			selected: oFF.getLists()[0].getShowRemoveFacetIcon(),
+			select: function(oEvent) {
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setShowRemoveFacetIcon(oEvent.getParameter("selected"));
+			}
+		});
+		var oGrowingCheckbox = new sap.m.CheckBox({
+			text: "Growing",
+			selected: oFF.getLists()[0].getGrowing(),
+			select: function(oEvent) {
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setGrowing(oEvent.getParameter("selected"));
+			}
+		});	
+		var oListSelect = new sap.m.Select({
+			change: function(oEvent) {
+				
+				var oItem = oEvent.getParameter("selectedItem");
+				var oList = sap.ui.getCore().byId(oItem.getKey());
+				oSequence.setValue(oList.getSequence());	
+				if(oList.getMultiSelect()) {
+					oRadioMultiSelect.setSelected(true);
+				} else {
+					oRadioSingleSelect.setSelected(true);
+				}				
+				oAllCount.setValue(oList.getAllCount());
+				oActiveCheckbox.setSelected(oList.getActive());
+				oShowRemoveFacetIconCheckBox.setSelected(oList.getShowRemoveFacetIcon());
+				oGrowingCheckbox.setSelected(oList.getGrowing());
+				oRetainListSequenceCheckBox.setSelected(oList.getRetainListSequence());
+				}
+		
+		});
+		for(var i=0; i < oFF.getLists().length; i++) {
+			var oList = oFF.getLists()[i];
+			oListSelect.addItem(new sap.ui.core.Item({key: oList.getId(), text: oList.getTitle()}));
+		}		
+		oListSelect.setSelectedItem(oListSelect.setSelectedItem(oListSelect.getItemAt(0)));
+		
+		var oRadioSingleSelect = new sap.m.RadioButton({
+			
+			groupName: "FFLSelectionMode",
+			selected: !oFF.getLists()[0].getMultiSelect(),
+			text: "Single Select",	
+			select: function(oEvent) {
+				
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setMultiSelect(!oEvent.getParameter("selected"));
+			}
+		});		
+		
+		var oRadioMultiSelect = new sap.m.RadioButton({
+			
+			groupName: "FFLSelectionMode",
+			selected: oFF.getLists()[0].getMultiSelect(),
+			text: "Multi Select",
+			select: function(oEvent) {
+				
+				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				oList.setMultiSelect(oEvent.getParameter("selected"));
+			}
+		});		
+		
+		var oSequence = new sap.m.Input({
+			type: sap.m.InputType.Number,
+			width: "3rem"
+		});
+		oSequence.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getSequence());
+		
+		var oAllCount = new sap.m.Input({
+			type: sap.m.InputType.Number,
+			width: "3rem"
+		});
+		oAllCount.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getAllCount());
+		
+		var oListLabel = new sap.m.Label({text: "List:",tooltip:"List", labelFor: oListSelect});
+		var oSequenceLabel = new sap.m.Label({text: "Sequence: ",tooltip: "Sequence", labelFor: oSequence});
+		var oAllCountLabel = new sap.m.Label({text: "All Count: ",tooltip: "All Count", labelFor: oAllCount});
+		var oApplyButton = new sap.m.Button({
+					    	text: "Apply",
+					    	press: function() {
+					    		
+					    		var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+					    		oList.setSequence(parseInt(oSequence.getValue()));
+					    		oList.setAllCount(parseInt(oAllCount.getValue()));
+					    		oFF._getSequencedLists(); // hack...force sequencing now so we can update the button text before the FacetFilter is rendered
+					    		fnUpdateButtonText();
+					    	}
+  					  });
+		var oSaveSelectionsButton = new sap.m.Button({
+    	text: "Save Selections",
+    	press: function(oEvent) {
+    		
+    		var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+			sessionStorage.setItem(oList.getKey(), JSON.stringify(oList.getSelectedKeys()));
+	    	}
+		  });
+	  	var oClearSavedSelectionsButton = new sap.m.Button({
+	    	text: "Clear Saved Selections",
+	    	press: function(oEvent) {
+	    		
+	    		var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				sessionStorage.removeItem(oList.getKey());
+	    	}
+		  });		
+		
+		var oToolbar1 = new sap.m.Toolbar({
+			content: [
+			          oListLabel,
+			          oListSelect,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oSequenceLabel,
+			          oSequence,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oAllCountLabel,
+			          oAllCount,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oApplyButton
+			          ]
+		});
+		var oToolbar2 = new sap.m.Toolbar({
+			content: [
+			          oRadioSingleSelect,
+			          oRadioMultiSelect,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oActiveCheckbox,		
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oGrowingCheckbox,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oRetainListSequenceCheckBox,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oShowRemoveFacetIconCheckBox,
+			          new sap.m.ToolbarSpacer({width: "1rem"}),
+			          oSaveSelectionsButton,
+			          oClearSavedSelectionsButton
+			          ]
+		});		
+		oTestPage.addContent(oToolbar1);		
+		oTestPage.addContent(oToolbar2);
+	};		
+	
+	var fnFacetFilterProperties = function() {
+		
+		var oData = {
+				lists: 
+					[ 
+					  {title: "List1", values: createListValues(5)},
+					  {title: "List2", values: createListValues(5)},
+					  {title: "List3", values: createListValues(5)},
+					  {title: "List4", values: createListValues(5)},
+					  {title: "List5", values: createListValues(5)},
+					  {title: "List6", values: createListValues(5)},
+					  {title: "List7", values: createListValues(5)},
+					  {title: "List8", values: createListValues(5)},
+					  {title: "List9", values: createListValues(5)},
+					  {title: "List10", values: createListValues(5)},
+					  {title: "List11", values: createListValues(5)},
+					  {title: "List12", values: createListValues(5)}
+					]
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		
+		var oFF = new sap.m.FacetFilter(genId(), {
+			lists: {
+				path: "test>/lists",
+				template: new sap.m.FacetFilterList({
+					title: "{test>title}",
+					items: {
+						path: "test>values",	
+						template: new sap.m.FacetFilterItem({
+							key: "{test>key}",
+							text: "{test>text}",
+							count: "{test>count}"
+						})
+					},
+					listOpen: handleListOpen,
+					listClose: handleListClose					
+				})
+			},
+			reset: handleReset
+		});
+		oFF.setModel(oModel, "test");
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({text: "{" + oFF.getId() + "} FacetFilter Properties"}),
+		}));		
+		oTestPage.addContent(oFF);		
+		
+		var oVisibleCheckbox = new sap.m.CheckBox({
+			
+			text: "Visible",
+			selected: oFF.getVisible(),
+			select: function(oEvent) {
+				
+				oFF.setVisible(oEvent.getParameter("selected"));
+			}
+		});			
+		
+		var oRadioSimpleType = new sap.m.RadioButton({
+			
+			groupName: "FFType",
+			selected: oFF.getType() === sap.m.FacetFilterType.Simple ? true : false,
+			text: "Simple",	
+			select: function(oEvent) {
+				if(oEvent.getParameter("selected")) {
+					
+					oFF.setType(sap.m.FacetFilterType.Simple);					
+				} 
+			}
+		});
+		
+		var oRadioLightType = new sap.m.RadioButton({
+			
+			groupName: "FFType",
+			selected: oFF.getType() === sap.m.FacetFilterType.Light ? true : false,
+			text: "Light",	
+			select: function(oEvent) {
+				if(oEvent.getParameter("selected")) {
+					
+					oFF.setType(sap.m.FacetFilterType.Light);					
+				} 
+			}
+		});		
+		
+		var oShowSummaryBarCheckbox = new sap.m.CheckBox({
+			
+			text: "Summary Bar",
+			selected: oFF.getShowSummaryBar(),
+			select: function(oEvent) {
+				
+				oFF.setShowSummaryBar(oEvent.getParameter("selected"));
+			}
+		});
+		
+		var oShowResetCheckbox = new sap.m.CheckBox({
+			text: "Reset",
+			selected: oFF.getShowReset(),
+			select: function(oEvent) {
+				
+				oFF.setShowReset(oEvent.getParameter("selected"));
+			}
+		});	
+		
+		var oShowPersonalizationCheckbox = new sap.m.CheckBox({
+			text: "Personalization",
+			selected: oFF.getShowPersonalization(),
+			select: function(oEvent) {
+				
+				oFF.setShowPersonalization(oEvent.getParameter("selected"));
+			}
+		});	
+		
+		var oShowPopoverOKButtonCheckbox = new sap.m.CheckBox({
+			text: "Popover OK Button",
+			selected: oFF.getShowPopoverOKButton(),
+			select: function(oEvent) {
+				
+				oFF.setShowPopoverOKButton(oEvent.getParameter("selected"));
+			}
+		});			
+		
+		var oLiveSearchCheckbox = new sap.m.CheckBox({
+			text: "Live Search",
+			selected: oFF.getLiveSearch(),
+			select: function(oEvent) {
+				
+				oFF.setLiveSearch(oEvent.getParameter("selected"));
+			}
+		});			
+		
+		var oToolbar = new sap.m.Toolbar({
+			content: [oVisibleCheckbox,
+			          oRadioSimpleType,
+			          oRadioLightType,
+			          oShowSummaryBarCheckbox,
+			          oShowResetCheckbox,
+			          oShowPersonalizationCheckbox,
+			          oShowPopoverOKButtonCheckbox,
+			          oLiveSearchCheckbox]
+		});
+		oTestPage.addContent(oToolbar);
+	};
+	
+	var fnVariantNoListOpen = function() {
+		
+		var oFF = new sap.m.FacetFilter(genId(), {
+			reset: handleReset,
+			showPersonalization: true,
+			//type: "Light"
+		});
+		
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({text: "{" + oFF.getId() + "} List items loaded immediately (not from listOpen handler)"})
+		}));		
+		
+		var fnKeysBindingModel = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "KeysBindingModel",
+				growingThreshold: 3,
+				listClose: handleListClose			
+			});
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});			
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key: "{key}"
+				})
+			});			
+			
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});
+			oModel.setSizeLimit(2);
+			oFFL.setModel(oModel);
+			
+			oFF.addList(oFFL);
+		};
+		
+		var fnBindingModelKeys = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "BindingModelKeys",
+				growingThreshold: 3,
+				listClose: handleListClose			
+			});
+			
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key: "{key}"
+				})
+			});			
+			
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});
+			oModel.setSizeLimit(2);
+			oFFL.setModel(oModel);
+			
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});
+			oFF.addList(oFFL);
+		};		
+		
+		var fnModelBindingKeys = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "ModelBindingKeys",
+				growingThreshold: 3,
+				listClose: handleListClose			
+			});
+			
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});
+			oModel.setSizeLimit(2);
+			oFFL.setModel(oModel);			
+			
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key: "{key}"
+				})
+			});			
+			
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});
+			oFF.addList(oFFL);
+		};
+		
+		var fnKeysModelBinding = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "KeysModelBinding",
+				growingThreshold: 3,
+				listClose: handleListClose			
+			});
+			
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});
+			oModel.setSizeLimit(2);
+			oFFL.setModel(oModel);			
+			
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key: "{key}"
+				})
+			});			
+			
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});
+			oFF.addList(oFFL);
+		};		
+		
+		fnKeysBindingModel();
+		fnKeysModelBinding();
+		fnBindingModelKeys();
+		fnModelBindingKeys();		
+		
+		oTestPage.addContent(oFF);		
+	}
+	
+	
+	var fnVariantListOpen = function() {
+		
+		var oFF = new sap.m.FacetFilter(genId(), {
+			reset: handleReset,
+			showPersonalization: true,
+			//type: "Light"
+		});
+		
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft: new sap.m.Text({text: "{" + oFF.getId() + "} List items loaded from listOpen handler"}),
+			tooltip: "{" + oFF.getId() + "} List items loaded from listOpen handler"
+		}));		
+		
+		var fnKeysBindingListOpenModel = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "KeysBindingListOpenModel",
+				growingThreshold: 3,
+				listOpen: function(oEvent) {
+					
+					//if(!this.getBinding("items")) {
+						var oModel = new sap.ui.model.json.JSONModel({
+							values: createListValues(5)
+						});
+						oModel.setSizeLimit(2);
+						this.setModel(oModel);	
+					//}
+				},
+				listClose: handleListClose			
+			});
+			oFFL.bindAggregation("items", {
+				path : "/values",
+				template : new sap.m.FacetFilterItem({
+					text : "{text}",
+					key: "{key}"
+				})
+			});		
+			
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});	
+			oFF.addList(oFFL);
+		}
+		
+		
+		var fnKeysModelListOpenBinding = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "KeysModelListOpenBinding",
+				growingThreshold: 3,
+				listOpen: function(oEvent) {
+					
+					//if(!this.getBinding("items")) {
+						this.bindAggregation("items", {
+							path : "/values",
+							template : new sap.m.FacetFilterItem({
+								text : "{text}",
+								key: "{key}"
+							})
+						});		
+					//}
+				},
+				listClose: handleListClose			
+			});
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});
+			oModel.setSizeLimit(2);
+			oFFL.setModel(oModel);
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});		
+			oFF.addList(oFFL);	
+		}
+		
+		fnParentModelKeysListOpenBinding = function() {
+			
+			var oModel = new sap.ui.model.json.JSONModel({
+				values: createListValues(5)
+			});					
+			sap.ui.getCore().setModel(oModel);			
+			var oFFL = new sap.m.FacetFilterList({
+				title: "ParentModelKeysListOpenBinding",
+				growingThreshold: 3,
+				listOpen: function(oEvent) {
+					this.bindAggregation("items", {
+						path : "/values",
+						template : new sap.m.FacetFilterItem({
+							text : "{text}",
+							key: "{key}"
+						})
+					});
+				},				
+				listClose: handleListClose
+			});
+
+			oFF.addList(oFFL);		
+			oFFL.setSelectedKeys({"val1": "Val1", "val5": "Val5"});
+		}
+		
+		var fnKeysListOpenModelBinding = function() {
+			var oFFL = new sap.m.FacetFilterList({
+				title: "KeysListOpenModelBinding",
+				growingThreshold: 3,
+				listOpen: function(oEvent) {
+					
+					//if(!this.getBinding("items")) {
+						var oModel = new sap.ui.model.json.JSONModel({
+							values: createListValues(5)
+						});
+						oModel.setSizeLimit(2);
+						this.setModel(oModel);
+						
+						this.bindAggregation("items", {
+							path : "/values",
+							template : new sap.m.FacetFilterItem({
+								text : "{text}",
+								key: "{key}"
+							})
+						});		
+					//}
+				},
+				listClose: handleListClose			
+			});
+			oFFL.setSelectedKeys({
+				"val1": "Val1", "val5": "Val5"
+			});
+			oFF.addList(oFFL);
+		}		
+		
+		fnKeysBindingListOpenModel();
+		fnKeysModelListOpenBinding();		
+		fnKeysListOpenModelBinding();
+		fnParentModelKeysListOpenBinding();
+		
+		oTestPage.addContent(oFF);
+	}		
+	
+	  	
+	function fnDependentFacets() {
+
+		var oCategoriesModel = new sap.ui.model.odata.ODataModel(
+				"/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+
+		var oCategoriesFFL = new sap.m.FacetFilterList({ // create the categories facet list
+			title : "Categories",
+			mode : sap.m.ListMode.SingleSelectMaster, // restrict to one selection for simplicity
+			key : "Categories",
+			items : {
+				path : "/Categories",
+				template : new sap.m.FacetFilterItem({
+					text : "{CategoryName}",
+					key : "{CategoryID}"
+				})
+			}
+		});
+		oCategoriesFFL.setModel(oCategoriesModel); // set the data model
+
+		// create the data model for the products facet list
+		var oProductsModel = new sap.ui.model.odata.ODataModel(
+				"/uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc", true);
+
+		var oProductsFFL = new sap.m.FacetFilterList({
+			title : "Products",
+			key : "Products",
+			items : {
+				path : "/Products_by_Categories",
+				template : new sap.m.FacetFilterItem({
+					text : "{ProductName}",
+					key : "{ProductID}"
+				})
+			},
+			listOpen : function(oEvent) {
+
+				// only display products from the selected category (if any)
+				var aSelectedKeys = Object.getOwnPropertyNames(oCategoriesFFL.getSelectedKeys());
+				if (aSelectedKeys.length > 0) {
+
+					var oBinding = this.getBinding("items");
+					var oUserFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains,
+							oCategoriesFFL.getSelectedKeys()[aSelectedKeys[0]]);
+					var oFinalFilter = new sap.ui.model.Filter([oUserFilter], true);
+					oBinding.filter(oFinalFilter, sap.ui.model.FilterType.Control);
+				}
+			},
+		});
+		oProductsFFL.setModel(oProductsModel);
+
+		// create the facet filter control
+		var oFF = new sap.m.FacetFilter(genId(), {
+			lists : [oCategoriesFFL, oProductsFFL],
+		});
+
+		oTestPage.addContent(new sap.m.Bar({
+			contentLeft : new sap.m.Text({
+				text : "{" + oFF.getId() + "} Dependent facets, display products associated with selected categories"
+			}),
+
+		}));
+		oTestPage.addContent(oFF);
+	}
+
+	////////////////////////////
+	//fnVariantNoListOpen();
+	//fnVariantListOpen();		
+	fnOData();
+	fnFacetFilterListProperties();
+	fnFacetFilterProperties();
+	fnDependentFacets();
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<div id="content" style="height: 1000px"></div>
+</body>
+</html>

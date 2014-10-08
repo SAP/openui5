@@ -1,0 +1,544 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.SearchField
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>SearchField - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.SearchField.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	
+	var createSearchField = function(iIdSuffix, oProps){
+		if(!oProps) oProps = {};
+		var oSearch = new sap.ui.commons.SearchField("search"+iIdSuffix, oProps);
+		oSearch.placeAt("uiArea"+iIdSuffix);
+		return oSearch;
+	}
+	
+	
+	var oSearch1 = createSearchField(1);
+	var oSearch2 = createSearchField(2, {enableListSuggest: false});
+	var oSearch3 = createSearchField(3, {enableListSuggest: false, enableClear: true, startSuggestion: 0});
+	var oSearch4 = createSearchField(4, {startSuggestion: 1});
+	var oSearch5 = createSearchField(5, {enableClear: true, startSuggestion: 20});
+	var oSearch6 = createSearchField(6, {maxHistoryItems: 5});
+	var oSearch7 = createSearchField(7, {enableListSuggest: false});
+	var oSearch8 = createSearchField(8, {searchProvider: new sap.ui.core.search.OpenSearchProvider({
+		suggestType: "xml",
+		suggestUrl: "searchprovidertest.xml",
+		icon:jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/txtonly_16x16.ico"
+	})});
+	var oSearch9 = createSearchField(9, {searchProvider: new sap.ui.core.search.OpenSearchProvider({
+		suggestType: "json",
+		suggestUrl: "searchprovidertest.json"
+	})});
+	var oSearch10 = createSearchField(10, {
+		suggest: function(oEvent){
+			var sVal = oEvent.getParameter("value");
+			var aSuggestions = ["a", "b"];
+			oSearch10.suggest(sVal, aSuggestions);
+		}
+	});
+	var oSearch11 = createSearchField(11, {enableListSuggest: false, enableFilterMode: true});
+	
+	</script>
+	
+	<!-- Test help functions -->
+	<script language="javascript">
+	
+	var triggerInputSequence = function(oSearchField, iCount, bDoReset) {
+		if(bDoReset){
+			var sNew = "";
+			oSearchField.setValue(sNew);
+			equal(oSearchField.getValue(), sNew, "SearchField' value should have changed.");
+			equal(oSearchField.getFocusDomRef().value, sNew, "SearchField' value should have changed in HTML.");
+		}
+		var aKeys = ["S", "a", "p", "U", "i", "5"];
+		var iLength = Math.min(iCount, aKeys.length);
+		for(var i=0; i<iLength; i++){
+			sap.ui.test.qunit.triggerCharacterInput(oSearchField.getFocusDomRef(), aKeys[i]);
+			sap.ui.test.qunit.triggerKeyEvent("keyup", oSearchField.getFocusDomRef(), aKeys[i]);
+		}
+	};
+	
+	var checkFocus = function(sId, sText, bExpectFocus){
+		var sActiveId = document.activeElement ? document.activeElement.id : "<undef>";
+		if(bExpectFocus){
+			ok(sActiveId === sId, sText + " ("+sId+"): "+ sActiveId);
+		}else{
+			ok(sActiveId != sId, sText + " ("+sId+"): "+sActiveId);
+		}
+	};
+
+	var checkVisible = function(sId, bExpectVisible){
+		var bVisible = jQuery("#"+sId).is(":visible");
+		return (bExpectVisible && bVisible) || (!bExpectVisible && !bVisible);
+	};
+	
+	var checkSearch = function(sType, oSearchField, bReadOnly, bWithClear) {
+		if(!bReadOnly){
+			oSearchField.focus();
+		}
+		
+		setTimeout(function(){
+			start();
+			if(!jQuery.sap.startsWith(jQuery("html").attr("data-sap-ui-browser"), "ie")){ //TODO check why this does not work for IE
+				checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus before user action", !bReadOnly);
+			}
+			var bEventHandlerCalled = false;
+			var handler = function(oControlEvent){
+				equals(oControlEvent.getParameter("query"), "SapUi5", "Value of search event:");
+				oSearchField.detachSearch(handler);
+				bEventHandlerCalled = true;
+			};
+			oSearchField.attachSearch(handler);
+			triggerInputSequence(oSearchField, bReadOnly ? 0 : 6, true); //Reset only in readonly case
+			if(sType == "click"){
+				sap.ui.test.qunit.triggerEvent("click", oSearchField._ctrl.getId()+"-searchico");
+			}else{
+				sap.ui.test.qunit.triggerKeydown(oSearchField.getFocusDomRef(), "ENTER");
+			}
+			
+			var bNoChange = bReadOnly || (bWithClear && sType == "click");
+			if(bNoChange){
+				ok(!bEventHandlerCalled, "Search handler not called.");
+				oSearchField.detachSearch(handler);
+			}else{
+				ok(bEventHandlerCalled, "Search handler called.");
+			}
+
+			equal(jQuery(oSearchField.getFocusDomRef()).val(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (HTML)");
+			equal(oSearchField.getValue(), bNoChange ? "" : "SapUi5", "SearchField' value after user action (Property)");
+			checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus after user action", !bReadOnly);
+		}, 10);
+	};
+	
+	var checkSuggestion = function(oSearchField, fSecondPassCheck){
+		oSearchField.clearHistory();
+		oSearchField.focus();
+		
+		var sSuggestValue = "INITIAL";
+		var handler = function(oControlEvent){
+			oSearchField.detachSuggest(handler);
+			sSuggestValue = oControlEvent.getParameter("value");
+		};
+		oSearchField.attachSuggest(handler);
+		
+		triggerInputSequence(oSearchField, 2, true);
+		setTimeout(function(){
+			oSearchField.detachSuggest(handler);
+			equals(sSuggestValue, "INITIAL", "No suggestions when input has not yet reach configured 'startSuggestion' value");
+			sSuggestValue = "INITIAL";
+			oSearchField.attachSuggest(handler);
+			triggerInputSequence(oSearchField, 3, false);
+			setTimeout(function(){
+				start();
+				oSearchField.detachSuggest(handler);
+				var aItems = [];
+				if(oSearchField.getEnableListSuggest()){
+					ok(checkVisible(oSearchField._lb.getId(), true), "List is visible");
+					aItems = oSearchField._lb.getItems();
+				}
+				fSecondPassCheck(sSuggestValue, aItems);
+				if(oSearchField.getEnableListSuggest()){
+					var bEventHandlerCalled = false;
+					var handler2 = function(oControlEvent){
+						equals(oControlEvent.getParameter("query"), "b", "Value of search event:");
+						oSearchField.detachSearch(handler2);
+						bEventHandlerCalled = true;
+					};
+					oSearchField.attachSearch(handler2);
+					sap.ui.test.qunit.triggerEvent("click", aItems[1].getId());
+					ok(bEventHandlerCalled, "Search Event triggered");
+					equal(jQuery(oSearchField.getFocusDomRef()).val(), "b", "SearchField' value after user action (HTML)");
+					equal(oSearchField.getValue(), "b", "SearchField' value after user action (Property)");
+					if(!bEventHandlerCalled){
+						oSearchField.detachSearch(handler2);
+					}
+				}
+			}, 1000);
+		}, 300);
+	};
+	
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+	
+		qutils.delayTestStart();
+	
+		module("Properties and Aggregations");
+		
+		test("Default Values", function() {
+			equals(oSearch1.getEnableListSuggest(), true, "Default 'enableListSuggest'");
+			equals(oSearch1.getShowListExpander(), true, "Default 'showListExpander'");
+			equals(oSearch1.getEnableClear(), false, "Default 'enableClear'");
+			equals(oSearch1.getShowExternalButton(), false, "Default 'showExternalButton'");
+			equals(oSearch1.getValue(), "", "Default 'value'");
+			equals(oSearch1.getWidth(), "", "Default 'width'");
+			equals(oSearch1.getEnabled(), true, "Default 'enabled'");
+			equals(oSearch1.getEditable(), true, "Default 'editable'");
+			equals(oSearch1.getVisible(), true, "Default 'visible'");
+			equals(oSearch1.getEnableFilterMode(), false, "Default 'enableFilterMode'");
+			equals(oSearch1.getMaxLength(), 0, "Default 'maxLength'");
+			equals(oSearch1.getTextAlign(), "Begin", "Default 'textAlign'");
+			equals(oSearch1.getVisibleItemCount(), 20, "Default 'visibleItemCount'");
+			equals(oSearch1.getStartSuggestion(), 3, "Default 'startSuggestion'");
+			equals(oSearch1.getMaxSuggestionItems(), 10, "Default 'maxSuggestionItems'");
+			equals(oSearch1.getMaxHistoryItems(), 0, "Default 'maxHistoryItems'");
+			equals(oSearch1.getSearchProvider(), null, "Default aggregation 'searchProvider'");
+		});
+		
+		test("Custom Values", function() {
+			oSearch1.setEnableListSuggest(false);
+			oSearch1.setShowListExpander(false);
+			oSearch1.setEnableClear(true);
+			oSearch1.setShowExternalButton(true);
+			oSearch1.setValue("Hello");
+			oSearch1.setWidth("200px");
+			oSearch1.setEnabled(false);
+			oSearch1.setEditable(false);
+			oSearch1.setVisible(false);
+			oSearch1.setEnableFilterMode(true);
+			oSearch1.setMaxLength(5);
+			oSearch1.setTextAlign("End");
+			oSearch1.setVisibleItemCount(10);
+			oSearch1.setStartSuggestion(5);
+			oSearch1.setMaxSuggestionItems(5);
+			oSearch1.setMaxHistoryItems(5);
+			oSearch1.setSearchProvider(new sap.ui.core.search.OpenSearchProvider("search1_provider"));
+			
+			equals(oSearch1.getEnableListSuggest(), false, "Custom 'enableListSuggest'");
+			equals(oSearch1.getShowListExpander(), false, "Custom 'showListExpander'");
+			equals(oSearch1.getEnableClear(), true, "Custom 'enableClear'");
+			equals(oSearch1.getShowExternalButton(), true, "Custom 'showExternalButton'");
+			equals(oSearch1.getValue(), "Hello", "Custom 'value'");
+			equals(oSearch1.getWidth(), "200px", "Custom 'width'");
+			equals(oSearch1.getEnabled(), false, "Custom 'enabled'");
+			equals(oSearch1.getEditable(), false, "Custom 'editable'");
+			equals(oSearch1.getVisible(), false, "Custom 'visible'");
+			equals(oSearch1.getEnableFilterMode(), true, "Custom 'enableFilterMode'");
+			equals(oSearch1.getMaxLength(), 5, "Custom 'maxLength'");
+			equals(oSearch1.getTextAlign(), "End", "Custom 'textAlign'");
+			equals(oSearch1.getVisibleItemCount(), 10, "Custom 'visibleItemCount'");
+			equals(oSearch1.getStartSuggestion(), 5, "Custom 'startSuggestion'");
+			equals(oSearch1.getMaxSuggestionItems(), 5, "Custom 'maxSuggestionItems'");
+			equals(oSearch1.getMaxHistoryItems(), 5, "Custom 'maxHistoryItems'");
+			equals(oSearch1.getSearchProvider().getId(), "search1_provider", "Custom aggregation 'searchProvider'");
+		});
+		
+		
+		//***********************************
+		module("Appearance");
+		
+		test("Visibility", function() {
+			oSearch1.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			ok(!oSearch1.getDomRef(), "Control is not visible, when property visible is set to false");
+			oSearch1.setVisible(true);
+			sap.ui.getCore().applyChanges();
+			ok(!!oSearch1.getDomRef(), "Control is visible, when property visible is set to true");
+		});
+		
+		test("Width", function() {
+			oSearch1.setWidth("200px");
+			oSearch1.setVisible(true);
+			
+			var checkWidth = function(bSuggList, bWithButton){
+				oSearch1.setEnableListSuggest(bSuggList);
+				oSearch1.setShowExternalButton(bWithButton);
+				sap.ui.getCore().applyChanges();
+				equals(jQuery(oSearch1.getDomRef()).outerWidth(true), 200, "Width for SearchField (with suggestion list:"+bSuggList+", with Button: "+bWithButton+")");
+			};
+			
+			checkWidth(false, false);
+			checkWidth(false, true);
+			checkWidth(true, false);
+			checkWidth(true, true);
+		});
+		
+		test("List Expander Visibility", function() {
+			ok(checkVisible(oSearch6._ctrl.getId()+"-icon", true), "List expander is not visible");
+			oSearch6.setShowListExpander(false);
+			sap.ui.getCore().applyChanges();
+			ok(checkVisible(oSearch6._ctrl.getId()+"-icon", false), "List expander is not visible");
+		});
+		
+		test("Search Provider Icon Visibility", function() {
+			ok(checkVisible(oSearch8._ctrl.getId()+"-providerico", true), "Search Provider Icon is visible when configured");
+			ok(checkVisible(oSearch9._ctrl.getId()+"-providerico", false), "Search Provider Icon is not visible when not configured");
+		});
+		
+		
+		//***********************************
+		module("Trigger Search", {
+			setup: function(){
+				oSearch4.clearHistory();
+			},
+			teardown: function(){
+				oSearch2.setEnabled(true);
+				oSearch4.setEnabled(true);
+				sap.ui.getCore().applyChanges();
+			}
+		});
+		
+		asyncTest("TextField - Click on icon", function() {
+			checkSearch("click", oSearch2, false, false);
+		});
+		
+		asyncTest("TextField - Press enter", function() {
+			checkSearch("enter", oSearch2, false, false);
+		});
+		
+		asyncTest("TextField - Click on icon (disabled)", function() {
+			oSearch2.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			checkSearch("click", oSearch2, true, false);
+		});
+		
+		asyncTest("ComboBox - Click on icon", function() {
+			oSearch4.clearHistory();
+			checkSearch("click", oSearch4, false, false);
+		});
+		
+		asyncTest("ComboBox - Press enter", function() {
+			oSearch4.clearHistory();
+			checkSearch("enter", oSearch4, false, false);
+		});
+		
+		asyncTest("ComboBox - Click on icon (disabled)", function() {
+			oSearch4.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			checkSearch("click", oSearch4, true, false);
+		});
+		
+		
+		//***********************************
+		module("Clear", {
+			setup: function(){
+				oSearch5.clearHistory();
+			},
+			teardown: function(){
+				oSearch3.setEnabled(true);
+				oSearch5.setEnabled(true);
+				sap.ui.getCore().applyChanges();
+			}
+		});
+		
+		asyncTest("TextField - Click on icon", function() {
+			checkSearch("click", oSearch3, false, true);
+		});
+		
+		asyncTest("TextField - Press enter", function() {
+			checkSearch("enter", oSearch3, false, true);
+		});
+		
+		asyncTest("TextField - Click on icon (disabled)", function() {
+			oSearch3.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			checkSearch("click", oSearch3, true, true);
+		});
+		
+		asyncTest("ComboBox - Click on icon", function() {
+			oSearch5.clearHistory();
+			checkSearch("click", oSearch5, false, true);
+		});
+		
+		asyncTest("ComboBox - Press enter", function() {
+			oSearch5.clearHistory();
+			checkSearch("enter", oSearch5, false, true);
+		});
+		
+		asyncTest("ComboBox - Click on icon (disabled)", function() {
+			oSearch5.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+			checkSearch("click", oSearch5, true, true);
+		});
+		
+		
+		//***********************************
+		module("List Handling");
+		
+		test("Open List with F4 - No List Expander", function() {
+			oSearch6.clearHistory();
+			oSearch6.setShowListExpander(false);
+			sap.ui.getCore().applyChanges();
+			oSearch6.focus();
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "F4");
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is still not visible");
+		});
+		
+		test("Open List with F4 - no values", function() {
+			oSearch6.clearHistory();
+			oSearch6.setShowListExpander(true);
+			sap.ui.getCore().applyChanges();
+			oSearch6.focus();
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "F4");
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+		});
+		
+		test("Open List with click - no values", function() {
+			oSearch6.clearHistory();
+			oSearch6.setShowListExpander(true);
+			sap.ui.getCore().applyChanges();
+			oSearch6.focus();
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+			sap.ui.test.qunit.triggerEvent("click", oSearch6._ctrl.getId()+"-icon");
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+		});
+		
+		test("Open List with F4", function() {
+			oSearch6.focus();
+			triggerInputSequence(oSearch6, 1, true);
+			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "ENTER"); //Create History entry
+			
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "F4");
+			ok(checkVisible(oSearch6._lb.getId(), true), "List is  visible");
+		});
+		
+		test("Close List with ESCAPE", function() {
+			ok(checkVisible(oSearch6._lb.getId(), true), "List is visible");
+			sap.ui.test.qunit.triggerKeydown(oSearch6.getFocusDomRef(), "ESCAPE");
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+		});
+		
+		test("Open List with click", function() {
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+			sap.ui.test.qunit.triggerEvent("click", oSearch6._ctrl.getId()+"-icon");
+			ok(checkVisible(oSearch6._lb.getId(), true), "List is  visible");
+		});
+		
+		test("Close List with click", function() {
+			ok(checkVisible(oSearch6._lb.getId(), true), "List is visible");
+			sap.ui.test.qunit.triggerEvent("click", oSearch6._ctrl.getId()+"-icon");
+			ok(checkVisible(oSearch6._lb.getId(), false), "List is not visible");
+		});
+		
+		
+		//***********************************
+		module("Suggestion");
+		
+		var getProviderTest = function(oSearchControl){
+			return function(){
+				checkSuggestion(oSearchControl, function(sSuggestValue, aItems){
+					equals(sSuggestValue, "INITIAL", "No suggest event when search provider connected");
+					equals(aItems.length, 2, "Number of suggestions correct");
+					equals(aItems[0].getText(), "a", "First suggestion item correct");
+					equals(aItems[1].getText(), "b", "Second suggestion item correct");
+				});	
+			};
+		};
+		
+		asyncTest("Textfield mode (no suggestion list)", function() {
+			checkSuggestion(oSearch7, function(sSuggestValue, aItems){
+				equals(sSuggestValue, "SaSap", "Suggest value");
+			});
+		});
+		
+		asyncTest("Open Search provider with XML response", getProviderTest(oSearch8));
+		
+		asyncTest("Open Search provider with JSON response", getProviderTest(oSearch9));
+		
+		asyncTest("Combobox mode (with suggestion list)", function() {
+			checkSuggestion(oSearch10, function(sSuggestValue, aItems){
+				equals(sSuggestValue, "SaSap", "Suggest value");
+				equals(aItems.length, 2, "Number of suggestions correct");
+				equals(aItems[0].getText(), "a", "First suggestion item correct");
+				equals(aItems[1].getText(), "b", "Second suggestion item correct");
+			});
+		});
+		
+		
+		//***********************************
+		module("Filter Mode");	
+		
+		function testFilterMode(bClick, sVal) {
+			function trigger(bClick) {
+				if(bClick){
+					sap.ui.test.qunit.triggerEvent("click", oSearch11._ctrl.getId()+"-searchico");
+				}else{
+					sap.ui.test.qunit.triggerKeydown(oSearch11.getFocusDomRef(), "ENTER");
+				}
+			};
+			
+			oSearch11.setEnableFilterMode(true);
+			oSearch11.setValue(sVal);
+			sap.ui.getCore().applyChanges();
+			
+			var bEventHandlerCalled = false;
+			var handler = function(oControlEvent){
+				equals(oControlEvent.getParameter("query"), "", "Value of search event is empty:");
+				bEventHandlerCalled = true;
+			};
+			oSearch11.attachSearch(handler);
+			trigger(bClick);
+			ok(bEventHandlerCalled, "Search handler called.");
+
+			oSearch11.setEnableFilterMode(false);
+			oSearch11.setValue(sVal);
+			sap.ui.getCore().applyChanges();
+			
+			bEventHandlerCalled = false;
+			trigger(bClick);
+			ok(!bEventHandlerCalled, "Search handler not called.");
+			
+			oSearch11.detachSearch(handler);
+		};
+		
+		test("Press ENTER", function() {
+			testFilterMode(false, "");
+		});
+		
+		test("Click Search Icon", function() {
+			testFilterMode(true, "");
+		});
+		
+		test("Click Clear Icon", function() {
+			oSearch11.setEnableClear(true);
+			sap.ui.getCore().applyChanges();
+			testFilterMode(true, "Test");
+		});
+		
+	</script>
+  
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.SearchField</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
+	<div id="uiArea5"></div>
+	<div id="uiArea6"></div>
+	<div id="uiArea7"></div>
+	<div id="uiArea8"></div>
+	<div id="uiArea9"></div>
+	<div id="uiArea10"></div>
+	<div id="uiArea11"></div>
+</body>
+</html>

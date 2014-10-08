@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.m.sample.DisplayListItem.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		width="100%">
+		<l:content>
+			<List
+				binding="{/SupplierCollection/0}"
+				headerText="Address" >
+				<DisplayListItem
+					label="Name"
+					value="{SupplierName}" />
+				<DisplayListItem
+					label="Street"
+					value="{Street} {HouseNumber}" />
+				<DisplayListItem
+					label="City"
+					value="{ZIPCode} {City}"
+					type="Navigation"/>
+				<DisplayListItem
+					label="Country"
+					value="{Country}"
+					type="Navigation" />
+			</List>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

@@ -1,0 +1,15 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		title="{i18n>notFoundTitle}"
+		enableScrolling="false">
+		<content>
+			<Text text="{i18n>notFoundText}" class="spacerTop" width="100%" textAlign="Center" />
+		</content>
+		<footer>
+			<Toolbar>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

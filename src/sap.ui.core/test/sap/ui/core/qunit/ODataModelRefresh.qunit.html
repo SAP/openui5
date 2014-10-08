@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.odata.ODataModel
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<!-- 
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+ -->
+ <!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<!-- 
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+ -->
+
+<!-- This test is not running against the real Northwind service, but a fake service based on
+     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
+<!-- <script type="text/javascript" src="ODataModelRefreshService.js"></script>  -->
+
+<!-- Test functions -->
+<script language="javascript">
+
+	//TODO currently we rely on northwind odata service for tests...
+	//TODO tests depends on server response time and northwind content...so tests may be unstable
+	
+	// time to wait for server responses
+	var timeout = 3000,
+		sReadURI = "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
+		sWriteURI = "../../../../../proxy/http/services.odata.org/V3/(S(iigy1oswxpi3mnmpdk0edd2l))/odata/odata.svc/";
+		
+	var oLabel = new sap.ui.commons.Label("myLabel");
+	oLabel.placeAt("target1");
+	
+	function initModel(sURI, bJSON, bUseBatch){
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			json: bJSON,
+			useBatch: bUseBatch,
+			tokenHandling: false,
+			maxDataServiceVersion : "3.0"
+		});
+		oModel.forceNoCache(true);
+		return oModel;
+	}
+	
+	function createContextBinding(oModel, sPath, fnChange) {
+		var oBinding = oModel.bindContext(sPath);
+		if (fnChange) oBinding.attachChange(fnChange);
+		oBinding.initialize();
+		return oBinding;
+	}
+
+	function createListBinding(oModel, sPath, iSkip, iTop, fnChange) {
+		var oBinding = oModel.bindList(sPath);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(iSkip, iTop);
+		});
+		if (fnChange) oBinding.attachChange(fnChange);
+		oBinding.initialize();
+		return oBinding;
+	}
+	
+	function readTests(bJSON, bUseBatch) {
+	
+		module("After read, " + (bJSON ? "JSON" : "XML") + ", " + (bUseBatch ? "w/" : "w/o") + " $batch");
+		
+		asyncTest("Context & Context", function() {
+			var bChanged2, bChanged3,
+				oModel = initModel(sReadURI, bJSON, bUseBatch),
+				iRequestCount = 0,
+				oBinding1 = createContextBinding(oModel, "/Products(1)"),
+				oBinding2 = createContextBinding(oModel, "/Products(1)", function() {bChanged2 = true;}),
+				oBinding3 = createContextBinding(oModel, "/Products(2)", function() {bChanged3 = true;});
+			oModel.attachRequestCompleted(function() {
+				iRequestCount++;
+				if (iRequestCount == 3) {
+					bChanged2 = false;
+					bChanged3 = false;
+					oBinding1.refresh();
+				}
+				if (iRequestCount == 4) {
+					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
+					ok(!bChanged3, "No change event on different entity");
+					start();
+				}
+			});
+		});
+	
+		asyncTest("Context & List, Context refreshes", function() {
+			var bChanged2, bChanged3, bChanged4,
+				oModel = initModel(sReadURI, bJSON, bUseBatch),
+				iRequestCount = 0,
+				oBinding1 = createContextBinding(oModel, "/Products(1)"),
+				oBinding2 = createListBinding(oModel, "/Products", 0, 3, function() {bChanged2 = true;}),
+				oBinding3 = createListBinding(oModel, "/Products", 4, 3, function() {bChanged3 = true;}),
+				oBinding4 = createListBinding(oModel, "/Suppliers", 0, 3, function() {bChanged4 = true;});
+			oModel.attachRequestCompleted(function() {
+				iRequestCount++;
+				if (iRequestCount == 4) {
+					bChanged2 = false;
+					bChanged3 = false;
+					bChanged4 = false;
+					oBinding1.refresh();
+				}
+				if (iRequestCount == 5) {
+					ok(bChanged2, "ListBinding with contained entity must fire Change event");
+					ok(!bChanged3, "No change event on ListBinding with different subset");
+					ok(!bChanged4, "No change event on ListBinding on different collection");
+					start();
+				}
+			});
+		});
+		
+		asyncTest("Context & List, List refreshes", function() {
+			var bChanged2, bChanged3, bChanged4,
+				oModel = initModel(sReadURI, bJSON, bUseBatch),
+				iRequestCount = 0,
+				oBinding1 = createListBinding(oModel, "/Products", 0, 3),
+				oBinding2 = createContextBinding(oModel, "/Products(1)", function() {bChanged2 = true;}),
+				oBinding3 = createContextBinding(oModel, "/Products(5)", function() {bChanged3 = true;}),
+				oBinding4 = createContextBinding(oModel, "/Suppliers(1)", function() {bChanged4 = true;});
+			oModel.attachRequestCompleted(function() {
+				iRequestCount++;
+				if (iRequestCount == 4) {
+					bChanged2 = false;
+					bChanged3 = false;
+					bChanged4 = false;
+					oBinding1.refresh();
+				}
+				if (iRequestCount == 5) {
+					ok(!bChanged2, "No change event on same entity (not needed for context binding)");
+					ok(!bChanged3, "No change event on not contained entity");
+					ok(!bChanged4, "No change event on unrelated entity from different collection");
+					start();
+				}
+			});
+		});
+	
+		asyncTest("List & List", function() {
+			var bChanged2, bChanged3, bChanged4,
+				oModel = initModel(sReadURI, bJSON, bUseBatch),
+				iRequestCount = 0,
+				oBinding1 = createListBinding(oModel, "/Products", 0, 3),
+				oBinding2 = createListBinding(oModel, "/Products", 2, 3, function() {bChanged2 = true;}),
+				oBinding3 = createListBinding(oModel, "/Products", 4, 3, function() {bChanged3 = true;}),
+				oBinding4 = createListBinding(oModel, "/Suppliers", 0, 3, function() {bChanged4 = true;});
+			oModel.attachRequestCompleted(function() {
+				iRequestCount++;
+				if (iRequestCount == 4) {
+					bChanged2 = false;
+					bChanged3 = false;
+					bChanged4 = false;
+					oBinding1.refresh();
+				}
+				if (iRequestCount == 5) {
+					ok(bChanged2, "ListBinding with intersecting entities must fire Change event");
+					ok(!bChanged3, "No change event if there are not shared entities");
+					ok(!bChanged4, "No change event if bound to unrelated collection");
+					start();
+				}
+			});
+		});
+	}
+	
+	readTests(true, true);
+	readTests(true, false);
+	readTests(false, true);
+	readTests(false, false);
+	
+	module("After write");
+
+	asyncTest("Create", function() {
+		var bChanged1, bChanged2,
+			oModel = initModel(sWriteURI),
+			iRequestCount = 0,
+			oBinding1 = createListBinding(oModel, "/Products", 0, 3, function() {bChanged1 = true;}),
+			oBinding2 = createListBinding(oModel, "/Suppliers", 0, 3, function() {bChanged2 = true;});
+		oModel.attachRequestCompleted(function() {
+			iRequestCount++;
+			if (iRequestCount == 2) {
+				bChanged1 = false;
+				bChanged2 = false;
+				oModel.create("/Products", {
+					__metadata: {type: "ODataDemo.Product"},
+					ID: "1",
+					Rating: 5,
+					Price: 12.75,
+					ReleaseDate: new Date()
+				}, {
+					success: function() {
+						
+					}
+				});
+			}
+			if (iRequestCount == 3) {
+				ok(bChanged1, "ListBinding with contained entity must refresh");
+				ok(!bChanged2, "No change event if bound to unrelated collection");
+				start();
+			}
+		});
+	});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding OData Model</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

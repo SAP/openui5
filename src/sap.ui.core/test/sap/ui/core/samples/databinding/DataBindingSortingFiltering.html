@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page for sorting and filtering</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+  		 try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+    	jQuery.sap.require("sap.ui.model.json.JSONModel");
+    	sap.ui.getCore().attachInitEvent(doIt);
+    	var oModel;
+    	function doIt(){
+    		oModel = new sap.ui.model.json.JSONModel();
+	    	oModel.setData({
+	    		teamMembers:[
+	    		            {firstName:"Andreas", lastName:"Klark", enabled:false},
+	    		            {firstName:"Peter", lastName:"Miller", enabled:true},
+	    		            {firstName:"Gina", lastName:"Rush", enabled:true},
+	    		            {firstName:"Steave", lastName:"Ander", enabled:false},
+	    		            {firstName:"Michael", lastName:"Spring", enabled:true},
+	    		            {firstName:"Marc", lastName:"Green", enabled:true},
+	    		            {firstName:"Frank", lastName:"Wallas", enabled:false}]
+	    	 	});
+	    	sap.ui.getCore().setModel(oModel);
+
+	    	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
+
+	    	// define initial sorter to sort firstName in descending order
+	    	var oSorter = new sap.ui.model.Sorter("firstName", true);
+
+	    	var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("text", "firstName").bindProperty("additionalText", "lastName").bindProperty("enabled", "enabled");
+			// add sorter to aggregation binding
+			oLB.bindAggregation("items", "/teamMembers", oItemTemplate, oSorter);
+			oLB.placeAt("target1");
+
+			//*********************************
+			// ComboBox
+
+			// define initial filters
+			var oFilter1 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.StartsWith, "M");
+			var oFilter2 = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, "Gre");
+
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("key", "firstName");
+			oItemTemplate.bindProperty("text", "firstName");
+			oItemTemplate.bindProperty("enabled", "enabled");
+
+			//var oCombo1 = new sap.ui.commons.ComboBox("Entry");
+			// add filters to aggregationBinding
+			//oCombo1.bindAggregation("items", "teamMembers", oItemTemplate, null, [oFilter1, oFilter2]);
+
+			// you could also call
+			//oCombo1.bindItems("teamMembers", oItemTemplate, null, [oFilter1, oFilter2]);
+
+			// or simply use
+			var oCombo1 = new sap.ui.commons.ComboBox({
+			    items: {path: "/teamMembers", template: oItemTemplate, filters: [oFilter1, oFilter2]}
+			});
+
+			oCombo1.placeAt("target2");
+    	}
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>data binding test page for sorting and filtering</h1>
+      </div>
+      <hr />
+      <h2>ListBox sorted in descending order</h2>
+      <div id="target1"></div>
+      <hr/>
+      <h2>ComboBox filtered with: startsWith 'M' and contains 'Gre'</h2>
+      <div id="target2"></div>
+      <hr/>
+    </div>
+
+  </body>
+
+</html>

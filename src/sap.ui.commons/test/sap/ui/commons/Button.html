@@ -1,0 +1,501 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<title>Button - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Button.gif">
+
+    <!-- ********************************************************************** -->
+		<!-- SAPUI5 Bootstrap:                                                     -->
+		<!-- Extend the "libs" property if you like to import additional libraries  -->
+		<!-- ********************************************************************** -->
+		<script id="sap-ui-bootstrap"
+						data-sap-ui-theme="sap_goldreflection"
+						type="text/javascript"
+						data-sap-ui-libs="sap.ui.commons"
+						src="../../../../resources/sap-ui-core.js"
+						data-sap-ui-areas="target1,target2,target2a,target3,target4,target5,target6,target7,target8,target9,target10,target11,target12,target13,target14,target15,target16,target17,target18,target19"
+		>
+		</script>
+
+		<style>
+			/* Higher button - test using setStyleClass */
+			.tallButton {
+				height: 45px;
+			}
+		</style>
+
+		<script type="text/javascript">	
+
+				var oHelper = {
+		  		alert: function (sMsg) {
+		    		jQuery.sap.domById("outputTarget").innerHTML = "Button pressed: '" + sMsg + "'";
+		     	}
+				};
+
+				var oCore = sap.ui.getCore();
+				oCore.attachInitEvent(function () {
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				var oButton = new sap.ui.commons.Button("b1");
+				oButton.setText("Button with alert action");
+				oButton.setTooltip("This is a test tooltip");
+				var sText1 = oButton.getText();
+				oButton.attachPress(function() {
+					oHelper.alert(sText1);
+					alert("Here is the promised alert box!");
+				});
+				oButton.placeAt("target1");
+
+				var oButton = new sap.ui.commons.Button("b2");
+				oButton.setText("Button with icons and width 400px");
+     		oButton.setIcon("images/backtotop.gif");
+     		oButton.setWidth("400px"); 
+     		var sText2 = oButton.getText();
+				oButton.attachPress(function() {oHelper.alert(sText2)});
+				oButton.placeAt("target2");
+				
+				var oButton = new sap.ui.commons.Button("b2a");
+				oButton.setText("Button with different icons");
+     			oButton.setIcon("images/Button_regular.png");
+     			oButton.setIconHovered("images/Button_hover.png");
+     			oButton.setIconSelected("images/Button_down.png");
+				oButton.placeAt("target2a");
+
+				// test enable and visibility of button
+				oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+				oLayout.setLayoutFixed(false);
+				oLayout.placeAt("target3");
+
+				// row 1: toggle enabled state
+				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
+				oLayout.addRow(oMLR);
+
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1"); 
+				oButton = new sap.ui.commons.Button("b3");
+				oButton.setText("Toggle enable state");
+				oButton.setWidth("140px");
+				oButton.attachPress(function toggleEnabledState(oControlEvent) {
+					var oButton = sap.ui.getCore().getControl("b3_a");
+					oButton.setEnabled(!oButton.getEnabled());
+					if (oButton.getEnabled() == true ) {
+						oButton.setText("Enabled");
+					} else {
+						oButton.setText("Disabled");
+					}
+				} );
+				oMLC.addContent(oButton);
+				oMLR.addCell(oMLC);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+				var oToggleButton = new sap.ui.commons.Button("b3_a");
+				oToggleButton.setText("Disabled");
+				oToggleButton.setWidth("140px");
+				oToggleButton.setEnabled(false);
+				oMLC.addContent(oToggleButton);
+				oMLR.addCell(oMLC);
+
+				// row 2: toggle visible state
+				oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_2");
+				oLayout.addRow(oMLR);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1"); 
+				oButton = new sap.ui.commons.Button("b4");
+				oButton.setText("Toggle visibility");
+				oButton.setWidth("140px");
+				oButton.attachPress(function toggleVisibility(oControlEvent){
+					var oButton = sap.ui.getCore().getControl("b4_a");
+					oButton.setVisible(!oButton.getVisible());
+				} );
+				oMLC.addContent(oButton);
+				oMLR.addCell(oMLC);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2"); 
+				oToggleButton = new sap.ui.commons.Button("b4_a");
+				oToggleButton.setText("Visible");
+				oToggleButton.setWidth("140px");
+				oMLC.addContent(oToggleButton);
+				oMLR.addCell(oMLC);
+
+
+				// button with icons
+				oButton = new sap.ui.commons.Button("b5");
+				oButton.setText("Button with icon first"); 
+				oButton.setIcon("images/help.gif");
+				oButton.setIconFirst(true);
+				var sText3 = oButton.getText();
+				oButton.attachPress(function() {oHelper.alert(sText3)});
+				oButton.placeAt("target4");
+
+				oButton = new sap.ui.commons.Button("b6");
+				oButton.setText("Button with icon last");
+				oButton.setIcon("images/help.gif");
+				oButton.setIconFirst(false);
+				var sText4 = oButton.getText();
+				oButton.attachPress(function() {oHelper.alert(sText4)});
+				oButton.placeAt("target5");
+
+				oButton = new sap.ui.commons.Button("b7");
+				oButton.setText("Button with icon first");
+				oButton.setIcon("images/personalize.gif");
+				oButton.setIconFirst(true);
+				oButton.setEnabled(false);
+				oButton.placeAt("target6");
+
+				oButton = new sap.ui.commons.Button("b9", {text:"This is a button which uses the new constructor", 
+					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Just listener function.",
+					press: [function(oControlEvent){oHelper.alert("Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}]
+				});
+				oButton.placeAt("target9");
+
+				var oListener = {doSomething: function(oControlEvent){
+					oHelper.alert("Listener Object: Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}
+				};
+				oButton = new sap.ui.commons.Button("b10", {text:"This is a button which uses the new constructor, too", 
+					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Listenner function and object.",
+					icon:"images/help.gif",
+					iconFirst:false,
+					press: [oListener.doSomething, oListener]
+				});
+				oButton.placeAt("target10");
+
+				oButton = new sap.ui.commons.Button("b11");
+				oButton.setText("");
+				oButton.setTooltip("This is a button without text but with a 14px icon and a tooltip");
+				oButton.setIcon("images/help.gif");
+				oButton.placeAt("target11");
+
+				oButton = new sap.ui.commons.Button("b11b");
+				oButton.setText("");
+				oButton.setTooltip("This is another button without text but with a 16px icon and a tooltip");
+				oButton.setIcon("images/personalize.gif");
+				oButton.placeAt("target11");
+
+				// special characters / XSS
+				oButton = new sap.ui.commons.Button("b12");
+				oButton.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
+				oButton.setTooltip("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
+				oButton.placeAt("target12");
+
+				// width test
+				oButton = new sap.ui.commons.Button("bw1");
+				oButton.setText("Button (width = 200px)");
+				oButton.setWidth("200px");
+				oButton.placeAt("target7");
+
+				oButton = new sap.ui.commons.Button("bw2");
+				oButton.setText("and 100px");
+				oButton.setWidth("100px"); 
+				oButton.placeAt("target8");
+
+				oButton = new sap.ui.commons.Button("b13");
+				oButton.addStyleClass("tallButton");
+				oButton.setText("Higher via AddStyleClass");
+				oButton.setTooltip("This Button uses function AddStyleClass to add an CSS class with different height."); 
+				oButton.setIcon("images/help.gif");
+				oButton.setIconFirst(true);
+				oButton.setEnabled(true);
+				oButton.placeAt("target13");
+
+				oButton = new sap.ui.commons.Button("b14", {height:"100px",text:"100px high via 'height' property"});
+				oButton.placeAt("target14");
+
+				// emphasized button
+				oButton = new sap.ui.commons.Button("Button15",{
+					text: "Emphasized",
+					style: sap.ui.commons.ButtonStyle.Emph
+				}).placeAt("target15");
+
+				oButton = new sap.ui.commons.Button("Button15-dis",{
+					text: "Emphasized disabled",
+					style: sap.ui.commons.ButtonStyle.Emph,
+					enabled: false
+				}).placeAt("target15");
+
+				// accept button
+				oButton = new sap.ui.commons.Button("Button16",{
+					text: "Accept",
+					style: sap.ui.commons.ButtonStyle.Accept
+				}).placeAt("target16");
+
+				oButton = new sap.ui.commons.Button("Button16-dis",{
+					text: "Accept disabled",
+					style: sap.ui.commons.ButtonStyle.Accept,
+					enabled: false
+				}).placeAt("target16");
+
+				// reject button
+				oButton = new sap.ui.commons.Button("Button17",{
+					text: "Reject",
+					style: sap.ui.commons.ButtonStyle.Reject
+				}).placeAt("target17");
+
+				oButton = new sap.ui.commons.Button("Button17-dis",{
+					text: "Reject disabled",
+					style: sap.ui.commons.ButtonStyle.Reject,
+					enabled: false
+				}).placeAt("target17");
+
+				// lite buttons
+				oButton = new sap.ui.commons.Button("Button18-1",{
+					text: "Ñagçyfox",
+					lite: true
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-2",{
+					text: "Ñagçyfox",
+					lite: true,
+					icon: "images/help.gif",
+					iconFirst: true
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-3",{
+					lite: true,
+					icon: "images/help.gif",
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-4",{
+					text: "Ñagçyfox",
+					lite: true,
+					icon: "images/help.gif",
+					iconFirst: false
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-5",{
+					text: "Ñagçyfox",
+					lite: true,
+					enabled: false
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-6",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Emph
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-7",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Emph,
+					enabled: false
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-8",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Accept
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-9",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Accept,
+					enabled: false
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-10",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Reject
+				}).placeAt("target18");
+
+				oButton = new sap.ui.commons.Button("Button18-11",{
+					text: "Ñagçyfox",
+					lite: true,
+					style: sap.ui.commons.ButtonStyle.Reject,
+					enabled: false
+				}).placeAt("target18");
+
+				// unstyled buttons
+				var bStyled = false; //for faster change ;-)
+				oButton = new sap.ui.commons.Button("Button19-1",{
+					text: "Ñagçyfox",
+					styled: bStyled
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-2",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					icon: "images/help.gif",
+					iconFirst: true
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-3",{
+					styled: bStyled,
+					icon: "images/help.gif",
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-4",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					icon: "images/help.gif",
+					iconFirst: false
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-5",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					enabled: false
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-6",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Emph
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-7",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Emph,
+					enabled: false
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-8",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Accept
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-9",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Accept,
+					enabled: false
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-10",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Reject
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button19-11",{
+					text: "Ñagçyfox",
+					styled: bStyled,
+					style: sap.ui.commons.ButtonStyle.Reject,
+					enabled: false
+				}).placeAt("target19");
+
+				oButton = new sap.ui.commons.Button("Button20-01",{
+					press: function () {
+						this.setEnabled(false);
+					},
+					lite: true,
+					icon:"images/save_grey.png",
+					iconHovered: "images/save_white.png"
+				}).placeAt("target20");
+				oButton = new sap.ui.commons.Button("Button20-02",{
+					lite: true,
+					icon:"images/save_grey.png",
+					iconHovered: "images/save_white.png",
+					iconSelected: "images/save_old.png"
+				}).placeAt("target20");
+				oButton = new sap.ui.commons.Button("Button20-03",{
+					lite: true,
+					icon:"images/save_grey.png",
+					iconHovered: "images/save_white.png"
+				}).placeAt("target20");
+				oButton = new sap.ui.commons.Button("Button20-04",{
+					lite: true,
+					enabled: false,
+					icon:"images/save_grey.png",
+					iconHovered: "images/save_white.png"
+				}).placeAt("target20");
+
+				oButton = new sap.ui.commons.Button("Button21-01",{
+					icon: "sap-icon://lead",
+					text: "Test"
+				}).placeAt("target21");
+				oButton = new sap.ui.commons.Button("Button21-02",{
+					icon: "sap-icon://contacts",
+					style: sap.ui.commons.ButtonStyle.Emph
+				}).placeAt("target21");
+				oButton = new sap.ui.commons.Button("Button21-03",{
+					icon: "sap-icon://settings",
+					iconFirst: false,
+					text: "Test",
+					style: sap.ui.commons.ButtonStyle.Accept
+				}).placeAt("target21");
+				oButton = new sap.ui.commons.Button("Button21-04",{
+					lite: true,
+					icon: "sap-icon://lead",
+					text: "Test"
+				}).placeAt("target21");
+				oButton = new sap.ui.commons.Button("Button21-05",{
+					lite: true,
+					icon: "sap-icon://contacts",
+					style: sap.ui.commons.ButtonStyle.Emph
+				}).placeAt("target21");
+				oButton = new sap.ui.commons.Button("Button21-06",{
+					lite: true,
+					icon: "sap-icon://settings",
+					iconFirst: false,
+					text: "Test",
+					style: sap.ui.commons.ButtonStyle.Reject
+				}).placeAt("target21");
+
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.Button</h1>
+
+		<div id="target1"></div>
+		<br>
+		<div id="target2"></div>
+		<br>
+		<div id="target2a"></div>
+		<br>
+		<div id="target3"></div>
+		<br>
+		<div id="target4"></div>
+		<br>
+		<div id="target5"></div>
+		<br>
+		<div id="target6"></div>
+		<br>
+		<div id="target9"></div>
+		<br>
+		<div id="target10"></div>
+		<br>
+		<div id="target11"></div>   
+		<br>
+		<div id="target12"></div>   
+		<br>
+		Width test:<br>
+		<span id="target7"></span><span id="target8"></span>
+		<br>
+		<img src="images/test-ruler.png">
+		<p>
+		<div id="target13"></div>
+		<p>
+		<div id="target14"></div>
+		<br>
+		<div id="target15"></div>
+		<br>
+		<br>
+		<div id="target16"></div>
+		<br>
+		<br>
+		<div id="target17"></div>
+		<br>
+		lite buttons:<br>
+		<div id="target18"></div>
+		<br>
+		unstyled buttons:<br>
+		<div id="target19"></div>
+		<br>
+		lite button with icon only:<br>
+		<div id="target20"></div>
+		<br>
+		buttons with icon font:<br>
+		<div id="target21"></div>
+		<p>
+		<span id="outputTarget"></span>
+		</p>
+	</body>
+</html>

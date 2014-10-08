@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>ScrollContainer - sap.m</title>
+		
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		
+		<script type="text/javascript">
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+			
+			var bigContent = new sap.ui.core.HTML({content:"<div id='cont1'>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
+//			var bigContent = new sap.ui.core.HTML({content:"<div style=\"overflow:scroll; -webkit-overflow-scrolling: touch; width:200px; height:200px; border: 1px solid red;\">abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
+			
+			var page1 = new sap.m.Page("page1", {
+				title:"ScrollContainer Test",
+				enableScrolling:false,
+				content : [ new sap.m.Button({
+					text : "nop"
+				}),
+//				bigContent,
+				new sap.m.ScrollContainer({
+					horizontal: false,
+					vertical: true,
+					content:[bigContent],
+					height: "100px",
+					width: "200px"
+				}), 
+				new sap.m.ScrollContainer("sc2",{
+					content:[
+					         new sap.m.Image({src: "images/SAPLogo.jpg",width:"150px"}),
+					         new sap.m.Image({src: "images/SAPUI5.png",width:"100px",height:"100px", densityAware: false}),
+					         new sap.m.Image({src: "images/SAPLogo.jpg",width:"150px"}),
+					         new sap.m.Image({src: "images/SAPUI5.png",width:"100px",height:"100px", densityAware: false}),
+					         new sap.m.Image({src: "images/SAPLogo.jpg",width:"150px"}),
+					         new sap.m.Image({src: "images/SAPUI5.png",width:"100px",height:"100px", densityAware: false}),
+					         new sap.m.Image({src: "images/SAPLogo.jpg",width:"150px"}),
+					         new sap.m.Image({src: "images/SAPUI5.png",width:"100px",height:"100px", densityAware: false}),
+					         ],
+					height: "120px"
+				}),
+				new sap.m.Label({text:"X:"}),
+				new sap.m.Input("xIn",{value:50}),
+				new sap.m.Label({text:"Time:"}),
+				new sap.m.Input("tIn",{value:500}),
+				new sap.m.Button({text:"Scroll",press:function(){
+					var c = sap.ui.getCore();
+					var x = parseInt(c.byId("xIn").getValue());
+					var t = parseInt(c.byId("tIn").getValue());
+					c.byId("sc2").scrollTo(x, 0, t);
+				}}),
+				new sap.m.Button({text:"Rerender Page",press:function(){
+					sap.ui.getCore().byId("page1").rerender();
+				}})]
+			});
+			
+			sap.ui.getCore().byId("sc2").attachEvent("scrollEnd", function(evt) {
+				var x = evt.getParameter("x");
+				var page = sap.ui.getCore().byId("page1");
+				var html = new sap.ui.core.HTML({content:"<div>" + new Date().getTime() + ": Rerender on scrollEnd at x=" + x + "</div>"});
+				window.setTimeout(function(){
+				page.addContent(html);
+				}, 0000);
+			});
+
+			app.addPage(page1);
+
+			app.placeAt("body");
+			
+		</script>
+		
+		<style>
+		#cont1 {
+			width: 400px;
+		}
+		#sc2 {
+			white-space: nowrap;
+		}
+		#sc2-scroll {
+			min-width: 650px;
+		}
+		</style>
+		
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

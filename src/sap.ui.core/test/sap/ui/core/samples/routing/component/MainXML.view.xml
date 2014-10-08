@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+		controllerName="NavigationWithoutMasterDetailPattern.MainXML" xmlns:html="http://www.w3.org/1999/xhtml"
+		  xmlns:form="sap.ui.commons.form"
+		    xmlns:commons="sap.ui.commons"
+		>
+		
+		
+	<App id="app">
+   </App>
+</mvc:View>

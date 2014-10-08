@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Legend - sap.ui.unified</title>
+<link rel="shortcut icon" type="image/x-icon"
+	href="images/controls/sap.ui.unified.Calendar.gif">
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-trace="false" type="text/javascript"
+	data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
+	src="../../../../resources/sap-ui-core.js">
+	
+</script>
+
+<script type="text/javascript">
+	var oLeg1 = new sap.ui.unified.CalendarLegend("Leg1", {}).placeAt("sample1");
+
+	var oLeg2 = new sap.ui.unified.CalendarLegend("Leg2", {}).placeAt("sample2");
+
+	var oLeg3 = new sap.ui.unified.CalendarLegend("Leg3", {}).placeAt("sample3");
+
+	var oLeg4 = new sap.ui.unified.CalendarLegend("Leg4", {});
+	for (var i = 0; i < 10; i++) {
+		oLeg4.addItem(new sap.ui.unified.CalendarLegendItem({
+			text : "Placeholder " + (i + 1)
+		}));
+	}
+	oLeg4.placeAt("sample4");
+
+	jQuery.sap.require("sap.ui.model.type.Date");
+
+	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
+		pattern : "yyyyMMdd"
+	});
+
+	var aSpecialDays = [ [ "20140801", undefined, "Placeholder01", 1 ], [ "20140802", undefined, "Placeholder02", 2 ], [ "20140803", undefined, "Placeholder03", 3 ], [ "20140804", undefined, "Placeholder04", 4 ], [ "20140805", undefined, "Placeholder05", 5 ], [ "20140806", undefined, "Placeholder06", 6 ], [ "20140807", undefined, "Placeholder07", 7 ], [ "20140808", undefined, "Placeholder08", 8 ], [ "20140809", undefined, "Placeholder09", 9 ], [ "20140810", undefined, "Placeholder10", 10 ] ];
+
+	var oCal = new sap.ui.unified.Calendar("Cal", {
+		select : function(oEvent) {
+			alert("Select");
+		},
+		cancel : function(oEvent) {
+			alert("Cancel");
+		}
+	});
+
+	var oLeg5 = new sap.ui.unified.CalendarLegend("Leg5", {});
+
+	//add specialDays
+	for (var i = 0; i < aSpecialDays.length; i++) {
+		var aSpecialDay = aSpecialDays[i];
+		var sType = "";
+		if (aSpecialDay[3] < 10) {
+			sType = "Type0" + aSpecialDay[3];
+		} else {
+			sType = "Type" + aSpecialDay[3];
+		}
+		specialDate = new sap.ui.unified.DateTypeRange({
+			startDate : oFormatYyyymmdd.parse(aSpecialDay[0]),
+			endDate : oFormatYyyymmdd.parse(aSpecialDay[1]),
+			type : sType,
+			tooltip : aSpecialDay[2]
+		});
+		sap.ui.getCore().byId("Cal").addSpecialDate(specialDate);
+		oLeg5.addItem(new sap.ui.unified.CalendarLegendItem({
+			text : aSpecialDay[2]
+		}));
+	}
+
+	var oLayout = new sap.ui.layout.ResponsiveFlowLayout();
+	var oCalLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
+		minWidth : 320,
+		weight : 2,
+		margin : false,
+		linebreakable : false
+	});
+	var oLegLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
+		minWidth : 150,
+		weight : 1,
+		margin : false
+	});
+	oLeg5.setLayoutData(oLegLayout);
+	oCal.setLayoutData(oCalLayout);
+	oLayout.addContent(oCal);
+	oLayout.addContent(oLeg5);
+	oLayout.placeAt("sample5");
+
+	var oCal2 = new sap.ui.unified.Calendar("Cal2", {
+		select : function(oEvent) {
+			alert("Select");
+		},
+		cancel : function(oEvent) {
+			alert("Cancel");
+		}
+	});
+
+	var oLeg6 = new sap.ui.unified.CalendarLegend("Leg6", {});
+
+	//add specialDays
+	for (var i = 0; i < aSpecialDays.length; i++) {
+		var aSpecialDay = aSpecialDays[i];
+		var sType = "";
+		if (aSpecialDay[3] < 10) {
+			sType = "Type0" + aSpecialDay[3];
+		} else {
+			sType = "Type" + aSpecialDay[3];
+		}
+		specialDate = new sap.ui.unified.DateTypeRange({
+			startDate : oFormatYyyymmdd.parse(aSpecialDay[0]),
+			endDate : oFormatYyyymmdd.parse(aSpecialDay[1]),
+			type : sType,
+			tooltip : aSpecialDay[2]
+		});
+		sap.ui.getCore().byId("Cal2").addSpecialDate(specialDate);
+		oLeg6.addItem(new sap.ui.unified.CalendarLegendItem({
+			text : aSpecialDay[2]
+		}));
+	}
+
+	var oLayout2 = new sap.ui.layout.ResponsiveFlowLayout();
+	var oCalLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
+		minWidth : 280,
+		weight : 2,
+		margin : false,
+		linebreakable : false
+	});
+	var oLegLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
+		minWidth : 100,
+		weight : 1,
+		margin : false
+	});
+	oLeg6.setColumnWidth("115px");
+	oLeg6.setLayoutData(oLegLayout2);
+	oCal2.setLayoutData(oCalLayout2);
+	oLayout2.addContent(oCal2);
+	oLayout2.addContent(oLeg6);
+	oLayout2.placeAt("sample6");
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1>
+		Test Page for
+		<code>sap.ui.unified.CalendarLegend</code>
+	</h1>
+	<div>Simple Legend example</div>
+	<br>
+	<div>
+		<div id="sample1"></div>
+	</div>
+	<br>
+	<div>Legend with limited width 150px</div>
+	<br>
+	<div style="width: 150px">
+		<div id="sample2"></div>
+	</div>
+	<br>
+	<div>Legend with limited width 300px</div>
+	<br>
+	<div style="width: 300px">
+		<div id="sample3"></div>
+	</div>
+	<br>
+	<div>Legend with custom categories</div>
+	<br>
+	<div>
+		<div id="sample4"></div>
+	</div>
+	<br>
+	<div>
+		<div>Legend with calendar</div>
+		<br>
+		<div style="max-width: 480px; background: white">
+			<div id="sample5" />
+		</div>
+	</div>
+	<br>
+	<div>
+		<div>Legend with calendar (compact mode)</div>
+		<br>
+		<div style="max-width: 420px; background: white">
+			<div id="sample6" class="sapUiSizeCompact" />
+		</div>
+	</div>
+</body>
+</html>

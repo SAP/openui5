@@ -1,0 +1,29 @@
+<core:View xmlns:core="sap.ui.core" xmlns:l="sap.ui.commons.layout"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:style type="text/css">
+		li {padding:10px; background:#ccc;
+		border:1px solid black;}
+		.round {valign: center;
+		background:#fff;
+		display:inline-block;
+		color: #007DC0; padding:5px;
+		border:1px solid black;
+		-webkit-border-radius: 40px;
+		border-radius: 40px;
+		-moz-border-radius:
+		40px; width:80px;}
+		.pic {padding:5px; border-right:1px solid black;
+		width:90px;}
+		.round img {
+		    padding:10px;
+			width:50px;
+			height:58px;
+		}
+	</html:style>
+	<html:div class="round">
+		<Image src="{imageSrc}"></Image>
+	</html:div>
+	<html:div class="round">
+		<TextView text="{title}"></TextView>
+	</html:div>
+</core:View>

@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.VerticalLayout.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout>
+		<Image
+			class="marginTopLeft"
+			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			width="{/widthS}">
+		</Image>
+		<Image
+			class="marginTopLeft"
+			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			width="{/widthM}">
+		</Image>
+		<Image
+			class="marginTopLeft"
+			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			width="{/widthL}">
+		</Image>
+	</l:VerticalLayout>
+</mvc:View>

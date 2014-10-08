@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.MessageBox</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script language="javascript">
+			sinon.config.useFakeTimers = true;
+
+			sap.ui.test.qunit.delayTestStart();
+
+			var page = new sap.m.Page("myFirstPage", {
+				title : "MessageBox Test",
+				showNavButton : true
+			});
+
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
+			app.addPage(page).placeAt("content");
+
+			var sMessageText = "Text to be tested";
+			var sMessageTitle = "Title to be tested";
+
+			function callback(oAction){
+				ok(!oAction, "Dialog is closed by calling close method, so the action parameter is null");
+				start();
+			}
+
+			var sClassName = "sapUiSizeCompact";
+
+			jQuery.sap.require("sap.m.MessageBox");
+
+			test("show", function(){
+				sap.m.MessageBox.show(sMessageText,{
+					title: sMessageTitle,
+					actions: [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO],
+					onClose: callback,
+					id: "messagebox1",
+					styleClass: sClassName
+				});
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("messagebox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("alert", function(){
+				sap.m.MessageBox.alert(sMessageText, {
+					onClose: callback,
+					title: sMessageTitle,
+					id: "alertbox1",
+					styleClass: sClassName
+				});
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("alertbox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				ok(oMessageBox.getLeftButton(), "Left button is created");
+				ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("confirm", function(){
+				sap.m.MessageBox.confirm(sMessageText, {
+					onClose: callback,
+					title: sMessageTitle,
+					id: "confirmbox1",
+					styleClass: sClassName
+				});
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("confirmbox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				ok(oMessageBox.getLeftButton(), "Left button is created");
+				ok(oMessageBox.getRightButton(), "Right button is also created");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("show with OLD API", function(){
+				sap.m.MessageBox.show(sMessageText, null, sMessageTitle, [sap.m.MessageBox.Action.OK, "Cancel", sap.m.MessageBox.Action.NO], callback, "messagebox1", sClassName);
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("messagebox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("alert with OLD API", function(){
+				sap.m.MessageBox.alert(sMessageText, callback, sMessageTitle, "alertbox1", sClassName);
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("alertbox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				ok(oMessageBox.getLeftButton(), "Left button is created");
+				ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+
+			test("confirm with OLD API", function(){
+				sap.m.MessageBox.confirm(sMessageText, callback, sMessageTitle, "confirmbox1", sClassName);
+				this.clock.tick(500);
+				var oMessageBox = sap.ui.getCore().byId("confirmbox1");
+				ok(oMessageBox, "Dialog should be created");
+				equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
+				ok(oMessageBox.getLeftButton(), "Left button is created");
+				ok(oMessageBox.getRightButton(), "Right button is also created");
+				equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
+				ok(oMessageBox.$().hasClass(sClassName));
+				oMessageBox.destroy();
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.MessageBox</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.ui.ux3.CollectionInspector
+  Author: d053398
+  -->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.ux3.CollectionInspector</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
+
+<!-- Control initialization -->
+<script type="text/javascript">
+	var oCollection1 = new sap.ui.ux3.Collection();
+	oCollection1.setTitle("collection1");
+	oCollection1.addItem(new sap.ui.core.Item({
+		'text' : 'test1'
+	}));
+	oCollection1.addItem(new sap.ui.core.Item({
+		'text' : 'test2'
+	}));
+
+	var oCollection2 = new sap.ui.ux3.Collection();
+	oCollection2.setTitle("collection2");
+	oCollection2.setMultiSelection(true);
+	oCollection2.addItem(new sap.ui.core.Item({
+		'text' : 'test4'
+	}));
+	oCollection2.addItem(new sap.ui.core.Item({
+		'text' : 'test5'
+	}));
+	oCollection2.addItem(new sap.ui.core.Item({
+		'text' : 'test6'
+	}));
+
+	var oCollection3 = new sap.ui.ux3.Collection();
+	oCollection3.setTitle("collection3");
+	oCollection3.addItem(new sap.ui.core.Item({
+		'text' : 'test7'
+	}));
+	oCollection3.addItem(new sap.ui.core.Item({
+		'text' : 'test8'
+	}));
+	oCollection3.addItem(new sap.ui.core.Item({
+		'text' : 'test9'
+	}));
+	
+	var oCollection4 = new sap.ui.ux3.Collection();
+	oCollection4.setTitle("collection4");
+	oCollection4.addItem(new sap.ui.core.Item({
+		'text' : 'test10'
+	}));
+	oCollection4.addItem(new sap.ui.core.Item({
+		'text' : 'test11'
+	}));
+	oCollection4.addItem(new sap.ui.core.Item({
+		'text' : 'test12'
+	}));
+
+	var oContent1 = new sap.ui.ux3.ThingViewer();
+
+	var oContent2 = new sap.ui.commons.Panel();
+
+	var oCollectionInspector = new sap.ui.ux3.CollectionInspector();
+	oCollectionInspector.addCollection(oCollection1);
+	oCollectionInspector.addCollection(oCollection2);
+	oCollectionInspector.addCollection(oCollection3);
+	oCollectionInspector.setSidebarVisible(false);
+	oCollectionInspector.placeAt("uiArea1");
+	oCollectionInspector.attachCollectionSelected(function(oEvent) {
+		oCollectionInspector.removeAllContent();
+		if (oEvent.getParameters().collection.getId() == "__collection0") {
+			oCollectionInspector.addContent(oContent1);
+		} else if (oEvent.getParameters().collection.getId() == "__collection1") {
+			oCollectionInspector.addContent(oContent2);
+		}
+	});
+
+</script>
+
+<!-- Test functions -->
+<script type="text/javascript">
+	module("Sidebar");
+
+	asyncTest("Show/Hide sidebar", function() {
+		qutils.triggerMouseEvent(jQuery.sap.byId(oCollectionInspector.getId()
+				+ "-toggleButton"), "click", 1, 1, 1, 1);
+		setTimeout(function() {
+			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 150, "Sidebar is visible.");
+			start();
+		}, 600);
+	});
+
+	asyncTest("Hide sidebar", function() {
+		qutils.triggerMouseEvent(jQuery.sap.byId(oCollectionInspector.getId()
+				+ "-toggleButton"), "click", 1, 1, 1, 1);
+		setTimeout(function() {
+			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 0, "Sidebar is invisible.");
+			start();
+		}, 600);
+	});
+
+	module("Top Navigation");
+
+	asyncTest("Show collection two", function() {
+		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
+		setTimeout(function() {
+			equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').width(), 150, "Sidebar is visible.");
+			start();
+		}, 600);
+	});
+	test("Content",
+			function() {
+				equal(oCollectionInspector.getSelectedCollection(), oCollection2.getId());
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-content').find('section').attr('id'), "__panel0");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar li').length, 3);
+				qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection1.getId());
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-content').find('div').attr('id'), "__viewer0");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar li').length, 2);
+				qutils.triggerMouseEvent(jQuery.sap.byId("__button3"), "click", 1, 1, 1, 1);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection3.getId());
+			});
+
+	module("Sidebar Navigation");
+	test("Select items", function() {
+		qutils.triggerMouseEvent(jQuery.sap.byId("__button1"), "click", 1, 1, 1, 1);
+		var oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[1]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		qutils.triggerMouseEvent(jQuery.sap.byId("__button2"), "click", 1, 1, 1, 1);
+		oSelectedCollection = sap.ui.getCore().byId(oCollectionInspector.getSelectedCollection());
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[1]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		oSelectedCollection.removeSelectedItem(oSelectedCollection.getItems()[0]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[0]);
+		oSelectedCollection.addSelectedItem(oSelectedCollection.getItems()[2]);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		oSelectedCollection.removeAllSelectedItems();
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(1)').hasClass("sapUiUx3CICollectionListItemSelected"), true);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(2)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+		equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar').find('ul li:nth-child(3)').hasClass("sapUiUx3CICollectionListItemSelected"), false);
+	});
+
+	module("Setter");
+	test(
+			"Set methods",
+			function() {
+				oCollectionInspector.setSelectedCollection(oCollection2);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection2.getId());
+				oCollectionInspector.setSelectedCollection(oCollection1);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection1.getId());
+				oCollectionInspector.setSelectedCollection(oCollection3);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection3.getId());
+			});
+
+	test(
+			"Single/MultiSelections",
+			function() {
+				oCollectionInspector.setSelectedCollection(oCollection2);
+				equal(oCollectionInspector.getSelectedCollection(), oCollection2.getId());
+				oCollection2.removeAllSelectedItems();
+				oCollection2.setMultiSelection(true);
+				oCollection2.addSelectedItem(oCollection2.getItems()[0]);
+				oCollection2.addSelectedItem(oCollection2.getItems()[1]);
+				oCollection2.addSelectedItem(oCollection2.getItems()[2]);
+				deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId(),oCollection2.getItems()[1].getId(),oCollection2.getItems()[2].getId()]);
+				oCollection2.setMultiSelection(false);
+				deepEqual(oCollection2.getSelectedItems(), [oCollection2.getItems()[0].getId()]);
+			});
+
+	test(
+			"Editable / Not editable",
+			function() {
+				equal(oCollection2.getEditable(), false);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar > button').length, 0);
+				oCollection2.setEditable(true);
+				equal(oCollection2.getEditable(), true);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-sidebar > button').length, 1);
+			});
+
+	module("Collection Operation");
+	test(
+			"Insert collection",
+			function() {
+				equal(oCollectionInspector.getCollections().length, 3);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection3");
+				oCollectionInspector.insertCollection(oCollection4, 2);
+				equal(oCollectionInspector.getCollections().length, 4);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection4);
+				equal(oCollectionInspector.getCollections()[3], oCollection3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection4");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(4)').html(), "collection3");
+			});
+
+	test(
+			"Remove collection",
+			function() {
+				equal(oCollectionInspector.getCollections().length, 4);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection4);
+				equal(oCollectionInspector.getCollections()[3], oCollection3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection4");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(4)').html(), "collection3");
+				oCollectionInspector.removeCollection(oCollection4);
+				equal(oCollectionInspector.getCollections().length, 3);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection3");
+
+			});
+
+	test(
+			"add collection",
+			function() {
+				equal(oCollectionInspector.getCollections().length, 3);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 3);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection3");
+				oCollectionInspector.addCollection(oCollection4);
+				equal(oCollectionInspector.getCollections().length, 4);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection3);
+				equal(oCollectionInspector.getCollections()[3], oCollection4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection3");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(4)').html(), "collection4");
+			});
+
+	test(
+			"Remove all collections",
+			function() {
+				equal(oCollectionInspector.getCollections().length, 4);
+				equal(oCollectionInspector.getCollections()[0], oCollection1);
+				equal(oCollectionInspector.getCollections()[1], oCollection2);
+				equal(oCollectionInspector.getCollections()[2], oCollection3);
+				equal(oCollectionInspector.getCollections()[3], oCollection4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 4);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(1)').html(), "collection1");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(2)').html(), "collection2");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(3)').html(), "collection3");
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button:nth-child(4)').html(), "collection4");
+				oCollectionInspector.removeAllCollections();
+				equal(oCollectionInspector.getCollections().length, 0);
+				equal(jQuery.sap.byId(oCollectionInspector.getId() + '-selector').find('button').length, 0);
+
+			});
+
+	module("Content Operations");
+	test(
+			"Add content",
+			function() {
+				equal(oCollectionInspector.getContent().length, 1);
+				equal(oCollectionInspector.getContent()[0], oContent2);
+				oCollectionInspector.addContent(oContent1);
+				equal(oCollectionInspector.getContent().length, 2);
+				equal(oCollectionInspector.getContent()[0], oContent2);
+				equal(oCollectionInspector.getContent()[1], oContent1);
+			});
+
+	test(
+			"remove content",
+			function() {
+				equal(oCollectionInspector.getContent().length, 2);
+				equal(oCollectionInspector.getContent()[0], oContent2);
+				equal(oCollectionInspector.getContent()[1], oContent1);
+				oCollectionInspector.removeContent(oContent2);
+				equal(oCollectionInspector.getContent().length, 1);
+				equal(oCollectionInspector.getContent()[0], oContent1);
+			});
+
+	test(
+			"insert content",
+			function() {
+				equal(oCollectionInspector.getContent().length, 1);
+				equal(oCollectionInspector.getContent()[0], oContent1);
+				oCollectionInspector.insertContent(oContent2,0);
+				equal(oCollectionInspector.getContent().length, 2);
+				equal(oCollectionInspector.getContent()[0], oContent2);
+				equal(oCollectionInspector.getContent()[1], oContent1);
+			});
+
+	test(
+			"remove all content",
+			function() {
+				equal(oCollectionInspector.getContent().length, 2);
+				equal(oCollectionInspector.getContent()[0], oContent2);
+				equal(oCollectionInspector.getContent()[1], oContent1);
+				oCollectionInspector.removeAllContent();
+				equal(oCollectionInspector.getContent().length, 0);
+			});
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for
+		sap.ui.ux3.CollectionInspector</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="uiArea1"></div>
+</body>
+</html>

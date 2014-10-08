@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Trace</title>		
+		<link rel="stylesheet" href="styles/main.css" type="text/css" />	
+		<script>
+			var testfwk = top.testfwk;
+			testfwk.attachContentWillChange(onContentWillChange);
+
+			var oLogViewer = undefined;
+			var sCurrentTab = "trace";		
+			window.onload = onLoadPage;
+			window.onunload = onUnloadPage;
+			window.onresize = onResizePage;
+	
+			function onLoadPage() {
+				setTimeout(onResizePage, 10);
+			};
+	
+			function onUnloadPage() {
+				testfwk.detachContentWillChange(onContentWillChange);
+			};
+			
+			function onContentWillChange() {
+				if ( oLogViewer ) {
+					try { // Avoid "Can't execute code from a freed script" in IE
+						oLogViewer.onDetachFromLog(null);
+						oLogViewer.lock();
+					} catch(e) {}
+				}
+			};
+			
+			function onResizePage() {
+				var borderHeight = 6,
+					tabstripHeight = document.getElementById("tabstrip").offsetHeight,
+					toolbarHeight = sCurrentTab == "trace" ? (document.getElementById("trace-toolbar").offsetHeight+4) : 0,
+					pageHeight = document.body.clientHeight,
+					newContentHeight = pageHeight - borderHeight - toolbarHeight - tabstripHeight;
+					
+				var oTraceContent = document.getElementById("sap-ui-TraceWindowRoot");
+					
+				if (newContentHeight > 0 && oTraceContent.style.display!="none") oTraceContent.style.height = newContentHeight + 'px';
+				//alert("set trace height to " + newContentHeight);
+			}
+	
+			function selectTab(e) {
+				if (!e) e = window.event;
+				if (e.target) e.srcElement = e.target;
+				var sNewTab = e.srcElement.getAttribute("id");
+				if ( !sNewTab.substring(-6) === "-title" )
+					return;
+				sNewTab = sNewTab.slice(0, -6);
+				if ( sCurrentTab === sNewTab || !document.getElementById(sNewTab) ) 
+					return;
+				document.getElementById(sCurrentTab).style.display = "none";
+				document.getElementById(sNewTab).style.display = "block";
+				document.getElementById(sCurrentTab + "-title").className = "tab deselected";
+				document.getElementById(sNewTab + "-title").className = "tab selected";
+				onDeselectTab(sCurrentTab);
+				onSelectTab(sNewTab);
+				sCurrentTab = sNewTab;
+			}
+	
+			function onSelectTab(tabId) {
+				switch(tabId) {
+					case "trace":
+						if ( oLogViewer ) 
+							oLogViewer.scrollToBottom();
+						break;
+				}
+			}
+	
+			function onDeselectTab(tabId) {
+				switch(tabId) {
+					case "trace":
+						break;
+				}
+			}
+	
+			var oTimerId = undefined;
+			function setLogFilter(oInputField) {
+				var oFilter = undefined;
+				if ( oInputField.value ) {
+					sFilter = oInputField.value.toUpperCase();
+					oFilter = function(sText) { return sText && sText.toUpperCase().indexOf(sFilter) >= 0; };
+				}
+				clearTimeout(oTimerId);
+				oTimerId = setTimeout(function() { if ( oLogViewer ) oLogViewer.setFilter(oFilter); }, 200);
+			};
+			
+			function setLogLevel(sLevel) {
+				if ( isNaN(sLevel) ) return;
+				var iLevel = parseInt(sLevel);
+				if ( oLogViewer ) oLogViewer.setLogLevel(iLevel);
+			}
+	
+			function clearLog(event) {
+				if ( oLogViewer ) {
+					if ( event.shiftKey === true ) 
+						oLogViewer.fillFromLogger(0);
+					else
+						oLogViewer.truncate();
+				} 
+			};
+			
+			function toggleTabStrip(oExpander) {
+				var tabstrip = document.getElementById("tabstrip");
+				if ( tabstrip.style.display == 'none' ) {
+					tabstrip.style.display = '';
+					oExpander.className = "expander less";
+				} else {
+					tabstrip.style.display = 'none';
+					oExpander.className = "expander more";
+				}
+				document.getElementById("trace-toolbar").style.display = tabstrip.style.display;
+				onResizePage();
+			};		
+		</script>
+	</head>
+	
+	<body class="middle" style="font-size:8pt" >
+		<div class="expander more" style="right:20px" onclick="toggleTabStrip(this);"></div> 
+		<div id="border" class="border" style="padding-top:2px;border-top:1px solid #ccddff">
+			<div id="tabstrip" class="tabstrip" style="display:none" onclick="selectTab(event)">
+				<div id="trace-title" class="tab selected" >JavaScript Trace</div>
+				<div id="other-title" class="tab disabled" >Future Extension...</div>
+			</div>
+			<div id="trace" style="display:block">
+				<div id="trace-toolbar" class="toolbar" style="display:none">
+				    Trace Level:
+		    		<select id="loglevel" onchange="setLogLevel(this.value)" title="Select the recording level of the sample page loggers">
+				    	<option value="-1">NONE</option>
+				    	<option value="0">FATAL</option>
+				    	<option value="1">ERROR</option>
+					    <option value="2">WARNING</option>
+					    <option value="3" selected>INFO</option>
+				    	<option value="4">DEBUG</option>
+					    <option value="5">FINE</option>
+				    	<option value="6">ALL</option>
+					</select>
+					<!--  
+					<button onclick="filter(this, 'browser')" type="button" class="up">browser</button>
+					<button onclick="filter(this, 'semantic')" type="button" class="down">semantic</button>
+					-->
+					<button onclick="clearLog(event)" type="button" title="Hide all previous log entries (does not clear the logger)">Clear</button>
+					Filter: <input type="text" onkeyup="setLogFilter(this)" title="Show only those entries that contain the given text">
+				</div>
+				<div id="sap-ui-TraceWindowRoot" class="logviewer scrollpanel" >
+			</div>
+		</div>
+	</div>
+	</body>
+</html>

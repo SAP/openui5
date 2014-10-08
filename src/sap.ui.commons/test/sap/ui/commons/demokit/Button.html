@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.Button">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Button - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='TextButtonScript'>
+// create a simple button with some text and a tooltip only
+var oButton1 = new sap.ui.commons.Button({
+	text : "Button",
+	tooltip : "This is a test tooltip",
+	press : function() {alert('Alert from ' + oButton1.getText());}
+});
+// attach it to some element in the page
+oButton1.placeAt("sample1");
+</script>
+
+<script id='ButtonWithIconAndText'>
+// create a button with an icon and a text
+var oButton2 = new sap.ui.commons.Button({
+	text : "200px wide Button with icon",
+	icon : "images/save-icon.gif",
+	width: "200px", 
+	press : function() {alert('Alert from ' + oButton2.getText());}
+});
+// attach it to some other element in the page
+oButton2.placeAt("sample2");
+</script>
+
+<script id='LiteButton'>
+// create a lite button with an icon and a text
+var oButton3 = new sap.ui.commons.Button({
+	text : "lite button",
+	icon : "images/save-icon.gif",
+	lite: true,
+	press : function() {alert('Alert from ' + oButton3.getText());}
+}).placeAt("sample3");
+</script>
+
+<script id='SpecialButton'>
+//create an emphasized button
+var oButton4 = new sap.ui.commons.Button({
+	text : "Emphasized",
+	style: sap.ui.commons.ButtonStyle.Emph,
+	press : function() {alert('Alert from ' + oButton4.getText());}
+}).placeAt("sample4");
+
+//create an accept button
+var oButton5 = new sap.ui.commons.Button({
+	text : "Accept",
+	style: sap.ui.commons.ButtonStyle.Accept,
+	press : function() {alert('Alert from ' + oButton5.getText());}
+}).placeAt("sample4");
+
+//create a reject button
+var oButton6 = new sap.ui.commons.Button({
+	text : "Reject",
+	style: sap.ui.commons.ButtonStyle.Reject,
+	press : function() {alert('Alert from ' + oButton6.getText());}
+}).placeAt("sample4");
+</script>
+
+<style>
+	.myButton{
+		border: 1px solid red;
+		background-color: yellow;
+		font-style: italic;
+	}
+	.myButton:hover,
+	.myButton:focus{
+		border-color: yellow;
+		background-color: red;
+	}
+	.myButton:active{
+		border: 2px solid black;
+		background-color: blue;
+		color: white;
+	}
+</style>
+
+<script id='UnstyledButton'>
+// create an unstyled button
+var oButton7 = new sap.ui.commons.Button({
+	text : "unstyled button",
+	styled: false,
+	press : function() {alert('Alert from ' + oButton7.getText());}
+}).placeAt("sample5");
+
+//create a button with own CSS-class
+var oButton8 = new sap.ui.commons.Button({
+	text : "styled button",
+	tooltip: "This button has an own style",
+	styled: false,
+	press : function() {alert('Alert from ' + oButton8.getText());}
+}).addStyleClass("myButton").placeAt("sample5");
+</script>
+
+<script id='IconFontButton'>
+// create a lite button with an icon and a text
+var oButton9 = new sap.ui.commons.Button({
+	text : "Settings",
+	icon : "sap-icon://settings",
+	press : function() {alert('Alert from ' + oButton9.getText());}
+}).placeAt("sample6");
+</script>
+
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/button-icon.png">Button</h1>
+
+  <h2>Introduction</h2>
+		<p>
+		The button control represents a simple push button. 
+		It is used for initiating actions, such as save or print.
+		It can contain some text, an icon, or both; the order of the two can be configured. 
+		By applying additional styles by custom classes, applications can give a different style to any button.
+		</p>
+
+	<h2>Examples</h2>
+
+	<h3>Button With Text and Tooltip</h3>
+	<div code-sample="sample1" script="TextButtonScript"></div>
+
+	<h3>Button With Text and Icon</h3>
+	<div code-sample="sample2" script="ButtonWithIconAndText"></div>
+
+	<h3>LiteButton</h3>
+		<p>
+		The button can be displayed as lite-button using the <code>lite</code> property. Depending on the used theme the button is displayed less prominent.
+		</p>
+	<div code-sample="sample3" script="LiteButton"></div>
+
+	<h3>Special buttons</h3>
+		<p>
+		There are different special layouts for buttons, emphasized, accept and reject. These designs can be activated using the <code>style</code> property. 
+		</p>
+	<div code-sample="sample4" script="SpecialButton"></div>
+
+	<h3>Unstyled buttons</h3>
+		<p>
+		Buttons can be displayed "native" without any own CSS-styling using the <code>styled</code> property. 
+		This is useful for applications which need a special application-dependent style for buttons. Using the function <code>addStyleClass</code> applications can add their own style to the button.
+		</p>
+	<div code-sample="sample5" script="UnstyledButton"></div>
+
+	<h3>button with icon using icon font</h3>
+		<p>
+		If an icon from an icon font is defined in the <code>icon</code> property, the properties <code>iconHovered</code> and <code>iconSelected</code> are ignored.
+		</p>
+	<div code-sample="sample6" script="IconFontButton"></div>
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Button.html">API documentation</a>
+	</p>
+	</body>
+</html>

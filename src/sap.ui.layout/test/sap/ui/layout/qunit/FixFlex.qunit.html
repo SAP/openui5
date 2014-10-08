@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>FixFlex - sap.ui.layout</title>
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.layout, sap.m">
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script>
+	// Create test for given property
+	var fnTestControlProperty = function(mOptions) {
+		var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
+
+		test("get" + sProperty + "()", function() {
+			strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+		});
+	};
+
+	/* =========================================================== */
+	/* Initialize module                                           */
+	/* =========================================================== */
+
+	module("Init");
+
+	test("Initial Check", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button();
+		var oButton2 = new sap.m.Button();
+		var oButton3 = new sap.m.Button();
+
+		// System under Test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : oButton1,
+			fixContent : [ oButton2, oButton3 ]
+		});
+
+		// Act
+		var s1 = sap.ui.getCore().byId(oFixFlex.getId());
+
+		// Assert
+		ok((s1 !== undefined) && (s1 != null), "FixFlex should be found");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+
+	/* =========================================================== */
+	/* Render module                                               */
+	/* =========================================================== */
+
+	module("Render");
+
+	test("Check if fix/flex content is rendered", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+
+		// System under Test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : oButton1,
+			fixContent : [ oButton2, oButton3 ]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(oFixFlex.$().hasClass("sapUIFixFlex"), "FixFlex should be rendered");
+		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUIFixFlexFixed"), "Fixed container should be rendered");
+		ok(jQuery(oFixFlex.$().children()[1]).hasClass("sapUIFixFlexFlexible"), "Flex container should be rendered");
+		ok(oButton1.$().hasClass("sapMBtn"), "Button should be rendered");
+		ok(oButton2.$().hasClass("sapMBtn"), "Button should be rendered");
+		ok(oButton3.$().hasClass("sapMBtn"), "Button should be rendered");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+
+	/* =========================================================== */
+	/* API module                                                  */
+	/* =========================================================== */
+
+	module("API");
+
+	test("Test child order", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+
+		// System under test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : oButton1,
+			fixContent : [ oButton2, oButton3 ]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFixFlex.setFixFirst(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(jQuery(oFixFlex.$().children()[0]).hasClass("sapUIFixFlexFlexible"), "Flex container should be the first child");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+
+	test("Test layout direction", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+
+		// System under test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : oButton1,
+			fixContent : [ oButton2, oButton3 ]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oFixFlex.setVertical(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(jQuery(oFixFlex.$()).hasClass("sapUIFixFlexRow"), "The layout direction should be horizontal (row)");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+	
+	test("Legacy support", function() {
+		var	$FixChild, 
+			$FlexChild, 
+			iFixChildWidth, 
+			iFixChildHeight, 
+			iFlexChildWidth, 
+			iFlexChildHeight;
+		
+		// Arrange
+		var oButton1 = new sap.m.Button(), oButton2 = new sap.m.Button(), oButton3 = new sap.m.Button();
+
+		// System under test
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent : oButton1,
+			fixContent : [ oButton2, oButton3 ]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$FixChild = oFixFlex.$("Fixed");
+		$FlexChild = oFixFlex.$("Flexible");
+		
+		iFixChildWidth = $FixChild.outerWidth();
+		iFixChildHeight = $FixChild.outerHeight();	
+		iFlexChildWidth = $FlexChild.outerWidth();
+		iFlexChildHeight = $FlexChild.outerHeight();
+
+		// Act
+		oFixFlex._handlerResize();
+		sap.ui.getCore().applyChanges();
+		
+		// Assert
+		strictEqual(iFixChildWidth, $FixChild.outerWidth(), "Width is not changed");
+		strictEqual(iFixChildHeight, $FixChild.outerHeight(), "Height is not changed");
+		strictEqual(iFlexChildWidth, $FlexChild.outerWidth(), "Width is not changed");
+		strictEqual(iFlexChildHeight, $FlexChild.outerHeight(), "Height is not changed");
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.layout.FixFlex</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+
+	<div id="qunit-fixture"></div>
+</body>
+</html>

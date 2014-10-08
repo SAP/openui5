@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.HorizontalDivider">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control HorizontalDivider HR Layout" />
+		<title>HorizontalDivider - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<style>
+			.sapUiBtn.CustomMargin{
+				margin-right: 10px;
+			}
+		</style>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='HorizontalDividerScript1'>
+//Create 2 divider instances
+var oDivider1 = new sap.ui.commons.HorizontalDivider("divider1");
+oDivider1.setWidth("50%");
+oDivider1.setHeight(sap.ui.commons.HorizontalDividerHeight.Large);
+oDivider1.setType(sap.ui.commons.HorizontalDividerType.Area);
+
+var oDivider2 = new sap.ui.commons.HorizontalDivider("divider2", {width: "70%", type: "Page", height: "Small"});
+
+// Attach the dividers to the page
+oDivider1.placeAt("sample1");
+oDivider2.placeAt("sample1");
+</script>
+
+<script id='HorizontalDividerScript2'>
+//Create a matrix layout with 2 columns
+var oMatrix = new sap.ui.commons.layout.MatrixLayout({layoutFixed: true, width: '300px', columns: 2});
+oMatrix.setWidths('100px', '200px');
+
+//Create a header
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({colSpan: 2});
+oCell.addContent(new sap.ui.commons.TextView({text: 'Contact Data', design: sap.ui.commons.TextViewDesign.H1}));
+oMatrix.createRow(oCell);
+
+//Create a form
+var oLabel = new sap.ui.commons.Label({text: 'Name'});
+var oInput = new sap.ui.commons.TextField({value: 'Mustermann', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+oLabel = new sap.ui.commons.Label({text: 'First Name'});
+oInput = new sap.ui.commons.TextField({value: 'Max', width: '100%'});
+oLabel.setLabelFor(oInput);
+oMatrix.createRow(oLabel, oInput);
+
+//Create a standard divider
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({colSpan: 2});
+oCell.addContent(new sap.ui.commons.HorizontalDivider());
+oMatrix.createRow(oCell);
+
+//Create a button row
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({colSpan: 2});
+var oButton = new sap.ui.commons.Button({text: 'Save'});
+oButton.addStyleClass("CustomMargin"); //Add some additional left margin 
+oCell.addContent(oButton);
+oButton = new sap.ui.commons.Button({text: 'Cancel'});
+oCell.addContent(oButton);
+oMatrix.createRow(oCell);
+
+// Attach the layout to the page
+oMatrix.placeAt("sample2");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Green" icon="images/ctrls/horizontaldivider-icon.png">HorizontalDivider</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The HorizontalDivider control is used to visually segment the Web application screen by displaying a horizontal line.
+	It is possible to make settings for the width in CSS notation, for the height (pre-defined top/bottom margin via type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDividerHeight.html">HorizontalDividerHeight</a>), 
+	and for the appearance (type <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDividerType.html">HorizontalDividerType</a>).
+	</p>
+
+	<h2>Examples</h2>
+	<p>
+	The following examples shows how to use the HorizontalDivider. The first area contains a HorizontalDivider with two divider instances containing different settings for the visual display. 
+	The second area contains a form and buttons, and the buttons are visually separated from the form. 
+	</p>
+	<br><br>
+	<div code-sample="sample1" script="HorizontalDividerScript1"></div>
+	<div code-sample="sample2" script="HorizontalDividerScript2"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.HorizontalDivider.html">API documentation</a>
+	</p>
+</body>
+</html>

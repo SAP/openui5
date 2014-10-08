@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>MenuButton - sap.ui.commons</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<script type="text/javascript">
+			var bUsePressEvent = true;
+
+			var alertEvent = function(oEvent, bWithPressEvent){
+				alert((bWithPressEvent ? "Press" : "ItemSelected") + " Event: Item \"" + oEvent.getParameter("itemId") + "\" was selected.");
+			};
+
+			var createMenuButton = function(sText, sIcon, bIconFirst, iIdx, oMenu, bDoNotPlaceAt, sStyle, bLite, bStyled){
+				var oMenuButton = new sap.ui.commons.MenuButton("menuButton"+iIdx);
+				oMenuButton.setText(sText);
+				oMenuButton.setTooltip(sText);
+				oMenuButton.setIcon(sIcon);
+				oMenuButton.setIconFirst(bIconFirst);
+				oMenuButton.setStyle(sStyle);
+				oMenuButton.setLite(bLite);
+				oMenuButton.setStyled(bStyled);
+
+				if(!oMenu){
+					var oMenu1 = new sap.ui.commons.Menu("menu-"+iIdx+"-1");
+					oMenu1.setAriaDescription("Menu 1");
+					var oMenuItem;
+					for(var i=1; i<3; i++){
+						oMenuItem = new sap.ui.commons.MenuItem("menuitem-"+iIdx+"-1-"+i, {text:"MenuButton "+iIdx+", Item "+i});
+						oMenu1.addItem(oMenuItem);
+					}
+					var oMenu2 = new sap.ui.commons.Menu("menu-"+iIdx+"-2");
+					oMenu2.setAriaDescription("Menu 2");
+					oMenuItem.setSubmenu(oMenu2);
+					for(var i=1; i<3; i++){
+						oMenuItem = new sap.ui.commons.MenuItem("menuitem-"+iIdx+"-2-"+i, {text:"MenuButton "+iIdx+", SubItem "+i});
+						oMenu2.addItem(oMenuItem);
+					}
+					oMenuButton.setMenu(oMenu1);
+				}else{
+					oMenuButton.setMenu(oMenu);
+				}
+
+				if(bUsePressEvent){
+					oMenuButton.attachPress(function(oEvent){alertEvent(oEvent, true);});
+				}else{
+					oMenuButton.attachItemSelected(function(oEvent){alertEvent(oEvent, false);});
+				}
+				bUsePressEvent = !bUsePressEvent; 
+
+				if(!bDoNotPlaceAt)
+					oMenuButton.placeAt("target"+iIdx);
+
+				return oMenuButton;
+			};
+
+			//createMenuButton(sText, sIcon, bIconFirst, iIdx, oMenu);
+
+			var oMenuButton = createMenuButton("Menu Button", null, true, 1); //No Image
+			oMenuButton.setTooltip(new sap.ui.commons.Callout({content: [new sap.ui.commons.Button({text: "Content"})]}));
+			
+			createMenuButton("Image Before", "images/backtotop.gif", true, 2); //Image before
+			createMenuButton("Image After", "images/backtotop.gif", false, 3); //Image after
+
+			createMenuButton("Disabled Menu Button", null, true, 4).setEnabled(false); //Disabled, No Image
+			createMenuButton("Disabled Image Before", "images/help.gif", true, 5).setEnabled(false); //Disabled, Image before
+			createMenuButton("Disabled Image After", "images/help.gif", false, 6).setEnabled(false); //Disabled, Image after
+
+			//Long Texts
+			var oMenu = new sap.ui.commons.Menu("menu-7-1");
+			oMenu.setAriaDescription("Menu 7");
+			var oMenuItem = new sap.ui.commons.MenuItem("menuitem-7-1-1", {text: "Another long text in the first menu item to test it"});
+			oMenu.addItem(oMenuItem);
+			oMenuItem = new sap.ui.commons.MenuItem("menuitem-7-1-2", {text: "Yet Another long text in the second menu item to test it again"});
+			oMenu.addItem(oMenuItem);
+
+			//Long Text and different docking position
+			oMenuButton = createMenuButton("This is a really long text in the Menu Button", null, true, 7, oMenu);	
+			oMenuButton.setDockButton(sap.ui.core.Popup.Dock.EndBottom);
+			oMenuButton.setDockMenu(sap.ui.core.Popup.Dock.EndTop);
+
+			//Image before, No Text
+			oMenuButton = createMenuButton(null, "images/help.gif", true, 8); //Disabled, Image before
+			oMenuButton.setTooltip("Some tooltip to test ARIA.");
+
+			//Usage within toolbar
+			var oToolbar = new sap.ui.commons.Toolbar("tb1", {design: sap.ui.commons.ToolbarDesign.Standard});
+			var oMenuButton = createMenuButton("Menu Button", null, true, 9, null, true);
+			oToolbar.addItem(oMenuButton);
+			oToolbar.placeAt("target9");
+
+			//Emphasized
+			createMenuButton("Emphasized", null, true, 10, null, false, sap.ui.commons.ButtonStyle.Emph, false, true); 
+
+			//Accept
+			createMenuButton("Accept", null, true, 11, null, false, sap.ui.commons.ButtonStyle.Accept, false, true); 
+
+			//Reject
+			createMenuButton("Reject", null, true, 12, null, false, sap.ui.commons.ButtonStyle.Reject, false, true); 
+
+			//Lite
+			createMenuButton("Lite", null, true, 13, null, false, sap.ui.commons.ButtonStyle.Default, true, true); 
+
+			//unstyled
+			createMenuButton("unstyled", null, true, 14, null, false, sap.ui.commons.ButtonStyle.Default, false, false); 
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.MenuButton</h1>
+		<div style="margin-left: 10px; margin-right: 10px;">
+			<div id="target1"></div>
+			<br>
+			<div id="target2"></div>
+			<br>
+			<div id="target3"></div>
+			<br>
+			<div id="target4"></div>
+			<br>
+			<div id="target5"></div>
+			<br>
+			<div id="target6"></div>
+			<br>
+			<div id="target7" style="margin-left:100px;margin-right:100px;"></div>
+			<br>
+			<div id="target8"></div>
+			<br>
+			<div id="target9"></div>
+			<br>
+			<div id="target10"></div>
+			<br>
+			<div id="target11"></div>
+			<br>
+			<div id="target12"></div>
+			<br>
+			<div id="target13"></div>
+			<br>
+			<div id="target14"></div>
+		</div>
+	</body>
+</html>

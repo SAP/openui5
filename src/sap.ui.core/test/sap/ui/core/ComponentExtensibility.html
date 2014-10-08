@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Customizing/Extensibility Test Page</title>
+	
+	<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal" 
+		data-sap-ui-libs="sap.ui.commons">
+	
+	</script>
+	
+	<script type="text/javascript">
+	
+		sap.ui.localResources("samples"); // handles both, SAP and customer content, in this example
+	
+		// load and start the customized application
+		var oComp = sap.ui.component({
+			name: "samples.components.ext.customer"
+		});
+		var oCompCont = new sap.ui.core.ComponentContainer({
+			component: oComp
+		});
+		oCompCont.placeAt("content");
+		
+		if (sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+			alert("Customizing is now disabled.");
+		}
+		
+	</script>
+	
+	
+	<style type="text/css">
+		.sapUiComponentContainer {
+			border: 2px solid red;
+			box-sizing: border-box;
+		}
+		.sapUiView {
+			border: 2px solid blue;
+			margin: 8px;
+			padding: 4px;
+			box-sizing: border-box;
+			width: auto !important;
+		}
+	</style>
+
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Customizing/Extensibility Test Page</h1>
+	<div id="content"></div>
+</body>
+</html>

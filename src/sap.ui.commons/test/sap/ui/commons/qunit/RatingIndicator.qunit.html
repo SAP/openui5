@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.RatingIndicator
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>RatingIndicator - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.RatingIndicator.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-language=en>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	jQuery.sap.require("sap.ui.commons.RatingIndicator");
+
+	var oRatings = {};
+	
+	var fnOnLoad = function() {
+		
+		var initRating = function(idx, iMax, fVal, bVisible, bEditable, sVisual, bCustomIcons, sTooltip, fAveragrValue){
+			var sId = "oRating" + idx;
+			var sAreaId = "uiArea" + idx;
+			var oBody = document.getElementsByTagName("body")[0];
+			var oUiArea = document.createElement("div");
+			oUiArea.id = sAreaId;
+			oBody.appendChild(oUiArea);
+			
+			var oRating = new sap.ui.commons.RatingIndicator(sId);
+			if(iMax != -1) oRating.setMaxValue(iMax);
+			if(fVal != -1) oRating.setValue(fVal);
+
+			if(fAveragrValue != -1) oRating.setAverageValue(fAveragrValue);
+			
+			if(bVisible != -1) oRating.setVisible(bVisible);
+			if(bEditable != -1) oRating.setEditable(bEditable);
+			if(sVisual) oRating.setVisualMode(sVisual);
+			if(sTooltip) oRating.setTooltip(sTooltip);
+			if(bCustomIcons){
+				oRating.setIconSelected("../images/rating/star_selected.png");
+				oRating.setIconUnselected("../images/rating/star_unselected.png");
+				oRating.setIconHovered("../images/rating/star_hover.png");
+			}
+			
+			sap.ui.setRoot(sAreaId, oRating);
+			oRatings[sId] = oRating;
+		};
+
+		var nV = sap.ui.commons.RatingIndicator.NoValue;
+		
+		//         id mx  val visible  edit   visual  customIcons    tooltip      average
+		initRating(1, -1,  -1,    -1,    -1, null,         false, false,            -1); //
+		initRating(2,  6,   3,  true, false, "Half",       true,  false,            -1); //
+		initRating(3, -1,  -1, false,    -1, null,         false, false,            -1); //
+		initRating(4,  6, 3.7,    -1,    -1, "Full",       false, "Custom Tooltip", -1);
+		initRating(5,  6, 3.7,    -1,    -1, "Half",       false, false,            -1);
+		initRating(6,  6, 3.7,    -1,    -1, "Continuous", true,  false,            -1);
+		initRating(7,  6,  nV,    -1,    -1, "Continuous", true,  false,           3.5);
+		initRating(8,  6,  nV,    -1,    -1, "Continuous", true,  false,           3.1);
+		initRating(9,  6,  nV,    -1,    -1, "Continuous", true,  false,           2.7);
+	};
+	jQuery(fnOnLoad);
+
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+	qutils.delayTestStart();
+
+	module("Properties");
+
+	test("Default Values", function() {
+		var oRating = oRatings["oRating1"];
+		equals(oRating.getValue(), 0, "Default 'value':");
+		equals(oRating.getAverageValue(), 0, "Default 'averageValue':");
+		equals(oRating.getMaxValue(), 5, "Default 'maxValue':");
+		equals(oRating.getVisible(), true, "Default 'visible':");
+		equals(oRating.getEditable(), true, "Default 'editable':");
+		equals(oRating.getIconSelected(), "", "Default 'iconSelected':");
+		equals(oRating.getIconUnselected(), "", "Default 'iconUnselected':");
+		equals(oRating.getIconHovered(), "", "Default 'iconHovered':");
+		equals(oRating.getVisualMode(), "Half", "Default 'visualMode':");
+		equals(oRating.getTooltip(), null, "Default 'tooltip':");
+	 });
+
+	test("Custom Values", function() {
+		var oRating = oRatings["oRating2"];
+		equals(oRating.getValue(), 3, "Custom 'value':");
+		equals(oRating.getMaxValue(), 6, "Custom 'maxValue':");
+		equals(oRating.getVisible(), true, "Custom 'visible':");
+		equals(oRating.getEditable(), false, "Custom 'editable':");
+		equals(oRating.getIconSelected(), "../images/rating/star_selected.png", "Custom 'iconSelected':");
+		equals(oRating.getIconUnselected(), "../images/rating/star_unselected.png", "Custom 'iconUnselected':");
+		equals(oRating.getIconHovered(), "../images/rating/star_hover.png", "Custom 'iconHovered':");
+		equals(oRating.getVisualMode(), "Half", "Custom 'visualMode':");
+		equals(oRatings["oRating4"].getTooltip(), "Custom Tooltip", "Custom 'tooltip':");
+	});
+
+
+	module("Interaction");
+
+	test("Keyboard", function() {
+		var oRating = oRatings["oRating1"];
+		jQuery("#oRating1").focus();
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_LEFT");
+		qutils.triggerKeyboardEvent("oRating1", "SPACE");
+		equals(oRating.getValue(), 2, "Value after saved keyboard input:");
+
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_RIGHT");
+		qutils.triggerKeyboardEvent("oRating1", "ESCAPE");
+		equals(oRating.getValue(), 2, "Value after reset keyboard input:");
+
+		qutils.triggerKeyboardEvent("oRating1", "END");
+		qutils.triggerKeyboardEvent("oRating1", "SPACE");
+		equals(oRating.getValue(), oRating.getMaxValue(), "Value after saved keyboard input:");
+
+		qutils.triggerKeyboardEvent("oRating1", "HOME");
+		qutils.triggerKeyboardEvent("oRating1", "SPACE");
+		equals(oRating.getValue(), 1, "Value after saved keyboard input:");
+
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_DOWN");
+		var oEvent = jQuery.Event("focusout");
+		oEvent.target = oRating.getDomRef();
+		oRating.onfocusout(oEvent);
+		equals(oRating.getValue(), 2, "Value after saved keyboard input:");
+	});
+
+	test("Click", function() {
+		var oRating = oRatings["oRating1"];
+		qutils.triggerEvent("click", "oRating1-itm-3");
+		equals(oRating.getValue(), 3, "Value after click:");
+	});
+
+	asyncTest("Change Event - Keyboard SPACE", function() {
+		var oRating = oRatings["oRating1"];
+		var handler = function(oControlEvent){
+			start();
+			equals(oControlEvent.getParameter("value"), 4, "Value of change event after keyboard SPACE:");
+			oRating.detachChange(handler);
+		};
+		oRating.attachChange(handler);
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_UP");
+		qutils.triggerKeyboardEvent("oRating1", "SPACE");
+	});
+
+	asyncTest("Change Event - Keyboard BLUR", function() {
+		var oRating = oRatings["oRating1"];
+		var handler = function(oControlEvent){
+			start();
+			equals(oControlEvent.getParameter("value"), 3, "Value of change event after keyboard BLUR:");
+			oRating.detachChange(handler);
+		};
+		oRating.attachChange(handler);
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_DOWN");
+		qutils.triggerKeyboardEvent("oRating1", "ARROW_DOWN");
+		var oEvent = jQuery.Event("focusout");
+		oEvent.target = oRating.getDomRef();
+		oRating.onfocusout(oEvent);
+	});
+
+	asyncTest("Change Event - Click (Value changed)", function() {
+		var oRating = oRatings["oRating1"];
+		var handler = function(oControlEvent){
+			start();
+			equals(oControlEvent.getParameter("value"), 4, "Value of change event after click:");
+			oRating.detachChange(handler);
+		};
+		oRating.attachChange(handler);
+		qutils.triggerEvent("click", "oRating1-itm-4");
+	});
+
+	asyncTest("Change Event - Click (Value not changed)", function() {
+		var oRating = oRatings["oRating1"];
+		var handlerCalled = false;
+		oRating.attachChange(function(oControlEvent){
+			handlerCalled = true;
+		});
+		start();
+		qutils.triggerEvent("click", "oRating1-itm-4");
+		ok(!handlerCalled, "Event should not be triggered.");
+	});
+	
+
+	module("Visual Appearence");
+
+	test("Visibility", function() {
+		equals(jQuery("#oRating3").get(0), undefined, "Invisible:");
+		ok(jQuery("#oRating1").get(0), "Visible: expected defined");
+	});
+
+	test("#Symbols", function() {
+		equals(jQuery("#oRating1").children().size(), 5, "#Symbols:");
+		equals(jQuery("#oRating2").children().size(), oRatings["oRating2"].getMaxValue(), "#Symbols:");
+	});
+
+	test("ItemValue Properties", function() {
+		var oSymbols = jQuery("#oRating1").children();
+		oSymbols.each(function(index){
+			equals(jQuery(this).attr("itemvalue"), ""+(index+1), "Item Value of item "+(index+1)+":");
+		});
+	});
+
+	test("Visualization FULL", function() {
+		var oSymbols = jQuery("#oRating4").children();
+		oSymbols.each(function(index){
+			var oChilds = jQuery(this).children();
+			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			var oOverflow = jQuery(oChilds.get(1));
+			var overflowStyle = oOverflow.attr("style");
+			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "FULL - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
+			if(index == 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "FULL - Overflow width of partially selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
+			if(index > 3) ok(overflowStyle.toLowerCase().indexOf("width: 100%") != -1 || overflowStyle.toLowerCase().indexOf("width:100%") != -1, "FULL - Overflow width of unselected symbol "+(index+1)+" ("+overflowStyle+"): expected 100%");
+		});
+	});
+
+	test("Visualization HALF", function() {
+		var oSymbols = jQuery("#oRating5").children();
+		oSymbols.each(function(index){
+			var oChilds = jQuery(this).children();
+			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			var oOverflow = jQuery(oChilds.get(1));
+			var overflowStyle = oOverflow.attr("style");
+			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "HALF - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
+			if(index == 3) ok(overflowStyle.toLowerCase().indexOf("width: 50%") != -1 || overflowStyle.toLowerCase().indexOf("width:50%") != -1, "HALF - Overflow width of partially selected symbol "+(index+1)+" ("+overflowStyle+"): expected 50%");
+			if(index > 3) ok(overflowStyle.toLowerCase().indexOf("width: 100%") != -1 || overflowStyle.toLowerCase().indexOf("width:100%") != -1, "HALF - Overflow width of unselected symbol "+(index+1)+" ("+overflowStyle+"): expected 100%");
+		});
+	});
+
+	test("Visualization CONT", function() {
+		var oSymbols = jQuery("#oRating6").children();
+		oSymbols.each(function(index){
+			var oChilds = jQuery(this).children();
+			equals(oChilds.size(), 2, "# DOM Childs of Symbol:");
+			var oOverflow = jQuery(oChilds.get(1));
+			var overflowStyle = oOverflow.attr("style");
+			if(index < 3) ok(overflowStyle.toLowerCase().indexOf("width: 0%") != -1 || overflowStyle.toLowerCase().indexOf("width:0%") != -1, "CONT - Overflow width of full selected symbol "+(index+1)+" ("+overflowStyle+"): expected 0%");
+			if(index == 3) ok(overflowStyle.toLowerCase().indexOf("width: 30%") != -1 || overflowStyle.toLowerCase().indexOf("width:30%") != -1, "CONT - Overflow width of partially selected symbol "+(index+1)+" ("+overflowStyle+"): expected 30%");
+			if(index > 3) ok(overflowStyle.toLowerCase().indexOf("width: 100%") != -1 || overflowStyle.toLowerCase().indexOf("width:100%") != -1, "CONT - Overflow width of unselected symbol "+(index+1)+" ("+overflowStyle+"): expected 100%");
+		});
+	});
+
+	test("Hover Effect", function() {
+		qutils.triggerEvent("mouseover", "oRating1-itm-4");
+		var oSymbols = jQuery("#oRating1").children();
+		oSymbols.each(function(index){
+			equals(jQuery(this).hasClass("sapUiRatingItmHov"), true, "HOVER: Symbol "+(index+1)+" hovered:");
+			ok(jQuery.sap.endsWith(jQuery(this).children("img").attr("src"), index<4 ? "hover.png" : "unselected.png"), "HOVER: Correct Hover Symbol for "+(index+1)+": "+jQuery(this).children("img").attr("src"));
+		});
+		qutils.triggerEvent("mouseout", "oRating1-itm-4");
+		oSymbols = jQuery("#oRating1").children();
+		oSymbols.each(function(index){
+			equals(jQuery(this).hasClass("sapUiRatingItmHov"), false, "UNHOVER: Symbol "+(index+1)+" not hovered:");
+		});
+	});
+
+	test("Custom Symbols", function() {
+		var oSymbols = jQuery("#oRating6").children();
+		oSymbols.each(function(index){
+			var oSymbol = jQuery(this);
+			equals(oSymbol.children("img").attr("src"), "../images/rating/star_selected.png", "Custom icon set on symbol "+(index+1)+":");
+			var oOverflow = jQuery(oSymbol.children().get(1));
+			equals(oOverflow.children("img").attr("src"), "../images/rating/star_unselected.png", "Custom icon set on symbol overflow "+(index+1)+":");
+		});
+
+		qutils.triggerEvent("mouseover", "oRating6-itm-1");
+		var oSymbol = jQuery("#oRating6-itm-1");
+		equals(oSymbol.children("img").attr("src"), "../images/rating/star_hover.png", "Custom hover icon set on symbol 1:");
+		qutils.triggerEvent("mouseout", "oRating6-itm-1");
+	});
+
+	test("Tooltip", function() {
+		var attr = function($Obj, sAtt) { //see changes of jQuery.attr under http://api.jquery.com/attr/
+			var sValue = $Obj.attr(sAtt);
+			return !sValue ? "" : sValue;
+		};
+		var checkTooltip = function(sControlId, sText, sExpectedOnRoot, fExpectedOnSymbolCallback){
+			equals(attr(jQuery("#"+sControlId), "title"), sExpectedOnRoot, sText+" on root tag:");
+			var oSymbols = jQuery("#"+sControlId).children();
+			oSymbols.each(function(index){
+				var oSymbol = jQuery(this);
+				equals(attr(oSymbol, "title"), fExpectedOnSymbolCallback(oRatings[sControlId], index, oSymbol) , sText+" on symbol tag "+(index+1)+":");
+			});
+		};
+
+		checkTooltip("oRating1", "Default Tooltip (editable control)", "", function(oRating, iIdx){return (iIdx+1)+" out of "+oRating.getMaxValue();});
+		checkTooltip("oRating2", "Default Tooltip (readonly control)", ""+oRatings["oRating2"].getValue(), function(){return "";});
+		checkTooltip("oRating4", "Custom Tooltip (editable control)", "Custom Tooltip", function(){return "";});
+	});
+
+	
+	
+	test("Average Value", function() {
+		
+		fnTestAverage(oRatings["oRating7"]);
+		fnTestAverage(oRatings["oRating8"]);
+		fnTestAverage(oRatings["oRating9"]);
+		
+		
+		function fnTestAverage(oRating) {
+			
+			var oRating = oRatings["oRating7"];
+			var $Dom = oRating.$();
+			
+			var fAverageValue = oRating.getAverageValue();
+			
+			
+			ok(oRating.getValue() == sap.ui.commons.RatingIndicator.NoValue, "No value set.");
+			ok(fAverageValue == 3.5, "Average value set.");
+			
+			var $children = $Dom.children(".sapUiRatingItm");
+			$children.each(function(iIndex, oChild) {
+				
+				var fRest = fAverageValue - iIndex;
+				if (fRest > 1) {
+					fRest = 1;
+				} else if (fRest < 0) {
+					fRest = 0;
+				}
+				fRest = 1 - fRest;
+				
+				var fPercent = Math.round(100 * fRest);
+				
+				var $OverflowItem = jQuery(oChild).children(".sapUiRatingItmOvrflw");
+				ok(fPercent + "%" == $OverflowItem[0].style.width, "Correct star percentage");
+			});
+		}
+		
+		
+		
+	});
+
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.RatingIndicator</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+</body>
+</html>

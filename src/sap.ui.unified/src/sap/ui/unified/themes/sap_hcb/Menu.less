@@ -1,0 +1,184 @@
+@sapUiMnuItmHeight: 1.25rem;
+@sapUiMnuItmPadding: 0.5rem;
+
+@sapUiMnuItmDfltFontsize_IE8: 16px;
+@sapUiMnuItmHeight_IE8: 1.25 * @sapUiMnuItmDfltFontsize_IE8;
+@sapUiMnuItmPadding_IE8: 0.5 * @sapUiMnuItmDfltFontsize_IE8;
+@sapUiMnuItmFontsize: 0.6875rem;
+@sapUiMnuItmFontsize_IE8: @sapUiMnuItmDfltFontsize_IE8 - 5px;
+
+.sapUiMnu {
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiMnuItmFontsize_IE8;
+	font-size: @sapUiMnuItmFontsize;
+	padding: 1px;
+	min-width: 5 * @sapUiMnuItmDfltFontsize_IE8;
+	min-width: 5rem;
+	background-color: @sapUiExtraLightBG;
+	border: 1px solid @sapUiMediumBorder;
+	color: @sapUiBaseText;
+}
+
+.sapUiMnu.sapUiMnuScroll {
+	overflow-x: none;
+	overflow-y: auto;
+}
+
+.sapUiMnu.sapUiMnuScroll .sapUiMnuItmR {
+	width: @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
+	width: @sapUiMnuItmPadding + 1rem;
+}
+
+.sapUiMnuItm {
+	height: @sapUiMnuItmHeight_IE8;
+	height: @sapUiMnuItmHeight;
+	line-height: @sapUiMnuItmHeight_IE8;
+	line-height: @sapUiMnuItmHeight;
+}
+
+.sapUiMnuLst {
+	color: @sapUiBaseText;
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiMnuItmFontsize_IE8;
+	font-size: @sapUiMnuItmFontsize;
+}
+
+.sapUiMnuItm.sapUiMnuItmHov,
+.sapUiMnuItm.sapUiMnuItmHov:active {
+	color: @sapUiTextSelection;
+	background-color: @sapUiHighlight;
+}
+
+.sapUiMnuItm.sapUiMnuItmDsbl.sapUiMnuItmHov,
+.sapUiMnuItm.sapUiMnuItmDsbl.sapUiMnuItmHov:active {
+	color: @sapUiContentDisabledTextColor;
+	background-color: darken(@sapUiBlackBG, 24.7);
+}
+
+.sapUiMnuItmL {
+	width: 1px;
+}
+
+.sapUiMnuItmR,
+.sapUiMnuNoIco .sapUiMnuItmL {
+	width: @sapUiMnuItmPadding_IE8;
+	width: @sapUiMnuItmPadding;
+}
+
+.sapUiMnuItmIco {
+	width: @sapUiMnuItmHeight_IE8;
+	width: @sapUiMnuItmHeight;
+	margin-right: 2px;
+}
+
+.sapUiMnuItm.sapUiMnuItmDsbl .sapUiMnuItmIco {
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiMnuItm.sapUiMnuItmDsbl.sapUiMnuItmHov:active .sapUiMnuItmIco {
+	color: @sapUiContentDisabledTextColor;
+}
+
+.sapUiMnuItmIco > img {
+	padding-left: 0;
+	max-height: @sapUiMnuItmDfltFontsize_IE8;
+	max-width: 1rem;
+	max-height: @sapUiMnuItmDfltFontsize_IE8;
+	max-width: 1rem;
+	padding-bottom: 2px;
+}
+
+.sapUiMnuDiv > hr {
+	left: @sapUiMnuItmPadding_IE8;
+	right: @sapUiMnuItmPadding_IE8;
+	left: @sapUiMnuItmPadding;
+	right: @sapUiMnuItmPadding;
+	border-color: @sapUiMediumBorder;
+}
+
+.sapUiMnuItmTxt {
+	padding-right: @sapUiMnuItmHeight_IE8 + @sapUiMnuItmPadding_IE8;
+	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding;
+}
+
+.sapUiMnu.sapUiMnuScroll .sapUiMnuItmTxt {
+	padding-right: @sapUiMnuItmHeight_IE8 + @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
+	padding-right: @sapUiMnuItmHeight + @sapUiMnuItmPadding + 1rem;
+}
+
+.sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
+.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
+	padding-right: @sapUiMnuItmPadding_IE8;
+	padding-right: @sapUiMnuItmPadding;
+}
+
+.sapUiMnu.sapUiMnuScroll .sapUiMnuNoSbMnu > .sapUiMnuItm > .sapUiMnuItmTxt,
+.sapUiMnu.sapUiMnuScroll .sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt {
+	padding-right: @sapUiMnuItmPadding_IE8 + @sapUiMnuItmDfltFontsize_IE8;
+	padding-right: @sapUiMnuItmPadding + 1rem;
+}
+
+.sapUiMnuNoIco .sapUiMnuItmTxt {
+	padding-left: 0;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm > .sapUiMnuItmTxt > .sapUiMnuTfItemWrppr {
+	right: @sapUiMnuItmPadding_IE8;
+	right: @sapUiMnuItmPadding;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf {
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiMnuItmFontsize_IE8;
+	font-size: @sapUiMnuItmFontsize;
+	padding: 0.0625*@sapUiMnuItmDfltFontsize_IE8 0.1875*@sapUiMnuItmDfltFontsize_IE8 0.0625*@sapUiMnuItmDfltFontsize_IE8 0.1875*@sapUiMnuItmDfltFontsize_IE8;
+	padding: 0.0625rem 0.1875rem 0.0625rem 0.1875rem;
+	margin-top: 0.0625 * @sapUiMnuItmDfltFontsize_IE8;
+	margin-top: 0.0625rem;
+	height: @sapUiMnuItmHeight_IE8 - 0.125*@sapUiMnuItmDfltFontsize_IE8;
+	height: @sapUiMnuItmHeight - 0.125rem;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf:focus {
+	outline:1px solid @sapUiMediumBorder;
+	border-color: @sapUiMediumBorder;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf.sapUiMnuTfItemTfEnbl.sapUiMnuTfItemTfErr {
+	font-style: italic;
+	font-weight: bold;
+	border-style: dashed;
+	border-color: @sapUiMediumBorder;
+	background-color: @sapUiMediumBG;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf.sapUiMnuTfItemTfEnbl.sapUiMnuTfItemTfErr:focus {
+	border-color: @sapUiMediumBorder;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemTf.sapUiMnuTfItemTfEnbl.sapUiMnuTfItemTfWarn {
+	font-style: italic;
+	border-style: dashed;
+	background-color: @sapUiFieldBackground;
+}
+
+.sapUiMnuItm.sapUiMnuTfItm .sapUiMnuTfItemLbl {
+	line-height: @sapUiMnuItmHeight_IE8;
+	line-height: @sapUiMnuItmHeight;
+	font-family: @sapUiFontFamily;
+	font-size: @sapUiMnuItmFontsize_IE8;
+	font-size: @sapUiMnuItmFontsize;
+	margin-right: @sapUiMnuItmPadding_IE8;
+	margin-right: @sapUiMnuItmPadding;
+	color: @sapUiBaseText;
+}
+
+.sapUiMnuItmSbMnu {
+	right: @sapUiMnuItmPadding_IE8 / 2;
+	right: @sapUiMnuItmPadding / 2;
+	width: @sapUiMnuItmHeight_IE8;
+	width: @sapUiMnuItmHeight;
+	text-align: center;
+	font-size: @sapUiMnuItmFontsize_IE8;
+	font-size: @sapUiMnuItmFontsize;
+}

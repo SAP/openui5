@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding Calculated Fields test page</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+	    try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+			sap.ui.getCore().loadLibrary("sap.ui.table");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' and 'sap.ui.table' which is not available.");
+			throw(e);
+		}
+
+    	sap.ui.getCore().attachInitEvent(doIt);
+
+    	var oModel = new sap.ui.model.json.JSONModel();
+    	oModel.setData({
+    		firstName: "John", 
+    		lastName: "Doe", 
+    		birthday: {day:1,month:4,year:1970}, 
+    		amount: 6000.94,
+    		address:[{city:"Walldorf"}], 
+    		enabled: true
+    	});
+    	sap.ui.getCore().setModel(oModel);
+    	
+    	var oModel2 = new sap.ui.model.json.JSONModel();
+    	oModel2.setData({
+		   amount : 3000.53, 
+		   currency : "$"
+    	});
+    	sap.ui.getCore().setModel(oModel2, "model2");
+
+    	function doIt(){
+
+
+			var oText = new sap.ui.commons.TextField("source",{change:update});			
+			oText.placeAt("target1");
+			var oBtn = new sap.ui.commons.Button({
+				id: "btn", 
+				text: "Trigger Change",
+				press: update
+			});			
+			oBtn.placeAt("target2");
+
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("TextField:");
+			oText.placeAt("target3");
+    		var oText = new sap.ui.commons.TextField("txt");
+			oText.bindValue({ parts: [{path: "/firstName"}, {path: "/lastName"}], formatter : function (sFirstName, sLastName) { return "Dear " + sFirstName + " " + sLastName} });
+			oText.placeAt("target4");
+
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("TextView:");
+			oText.placeAt("target5");
+    		var oText = new sap.ui.commons.TextView();
+			oText.bindText({ parts: ["/firstName", "/lastName"] });
+			oText.placeAt("target6");
+
+    		var oText = new sap.ui.commons.Label();
+			oText.setText("ComboBox:");
+			oText.placeAt("target7");
+    		var oCombo = new sap.ui.commons.ComboBox();
+            oCombo.addItem(new sap.ui.core.ListItem("i1",{text:"first item", additionalText: "(1)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i2",{text:"second item", additionalText: "(2)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i3",{text:"third item", additionalText: "(3)"}));
+            oCombo.bindValue({ parts: ["/firstName"], formatter: function(sFirstName) {return "Hello " + sFirstName} });
+            oCombo.placeAt("target8");
+
+			var oChkBx = new sap.ui.commons.CheckBox({id:"box", change:handleCheckBoxChange});
+			oChkBx.bindChecked("/enabled");
+			oChkBx.placeAt("target9");
+
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+
+			var oTxt = new sap.ui.commons.TextField("birthday", {
+				value : { parts: ["/birthday/day", "/birthday/month", "/birthday/year"], 
+					formatter : function (iDay, iMonth, iYear) {						
+						return iDay + "/" + iMonth + "/" + iYear;
+					}},
+				enabled : { path: "/enabled" }
+			});
+			var oLbl = new sap.ui.commons.Label({text:"Birthday", labelFor:"birthday"});
+			oML.createRow(oLbl, oTxt);
+
+			oTxt = new sap.ui.commons.TextField("balance");
+			oLbl = new sap.ui.commons.Label({text:"Balance", labelFor:"balance"});
+			oML.createRow(oLbl,	oTxt);
+			oTxt.bindValue({ parts: [
+			                     {path: "/amount", type: new sap.ui.model.type.Float()}, // type should be ignored because we want raw values
+			                     {path: "model2>/amount"}],
+			                     useRawValues : true,
+								 formatter: function(amount1, amount2){ // value parameters come as raw values
+									 var result = amount1 + amount2;
+								 	 // format output
+								     result = sap.ui.core.format.NumberFormat.getFloatInstance().format(result);
+								 	 return result + " EUR";
+								 }
+						});
+			oTxt.bindProperty("enabled", "/enabled");
+			oTxt = new sap.ui.commons.TextField("balance2");
+			oLbl = new sap.ui.commons.Label({text:"Balance", labelFor:"balance2"});
+			oML.createRow(oLbl,	oTxt);
+			oTxt.bindValue({ parts: [
+			                     {path: "model2>/amount", type: new sap.ui.model.type.Float()}, // single type of property binding
+			                     {path: "model2>/currency", type: new sap.ui.model.type.String()}], // single type of property binding
+			                     formatter: function(amount, currency) { // values are of type string because they are formatted
+									return amount + " " + currency;
+								 }
+						});
+			oTxt.bindProperty("enabled", "/enabled");
+
+			oML.placeAt("target10");
+
+    	};
+
+    	function update(){
+			oModel.setProperty("/firstName", sap.ui.getCore().byId("source").getValue());
+    	};
+
+    	function handleCheckBoxChange(oEvent){
+    		var bEnabled = oEvent.getParameter("checked");
+    		//oModel.setProperty("enabled", bEnabled);
+    		oModel.setProperty("/enabled", bEnabled);
+    	};
+    	
+    	// table
+    	var tableData = {
+	  		"teamMembers":[
+				{"firstName":"Andreas", "lastName":"Klark", "gender":"male"},
+				{"firstName":"Peter", "lastName":"Miller", "gender":"male"},
+				{"firstName":"Gina", "lastName":"Rush", "gender":"female"},
+				{"firstName":"Steave", "lastName":"Ander", "gender":"male"},
+				{"firstName":"Michael", "lastName":"Spring", "gender":"male"},
+				{"firstName":"Marc", "lastName":"Green", "gender":"male"},
+				{"firstName":"Frank", "lastName":"Wallace", "gender":"male"}
+	   		]
+    	};
+    	
+    	var oModel3 = new sap.ui.model.json.JSONModel(tableData);
+    	
+		var oTable = new sap.ui.table.Table({
+			columns: [
+					   //calc fields binding
+		               new sap.ui.table.Column({
+		                   label: new sap.ui.commons.Label({ text: "Full Name" }),
+		                   template: new sap.ui.commons.TextView({ text: {
+							 parts: [
+		       						{path: "firstName"},
+		       						{path: "lastName"},
+		       						{path: "gender"}
+		       				 ],
+		                   	formatter: function (firstName, lastName, gender){
+		                   		if (firstName && lastName && gender) {
+		                   			if (gender == "male") {
+		                   				return "Mr. " + firstName + " " + lastName;	                    			
+		                   			} else {
+		                   				return "Ms. " + firstName + " " + lastName;
+		                   			}
+		                   		}
+		                   		return null;
+		                   	}
+		                   } 
+		                   })
+		               }),
+		               // single property binding
+		               new sap.ui.table.Column({
+		            	   label: new sap.ui.commons.Label({ text: "First Name" }),
+		            	   template: new sap.ui.commons.TextView({ text: "{firstName}" })
+		               }),
+		               // single property binding
+		               new sap.ui.table.Column({
+		            	   label: new sap.ui.commons.Label({ text: "Last Name" }),
+		            	   template: new sap.ui.commons.TextView({ text: "{lastName}" })
+		               })
+		           ]
+		});
+  
+       oTable.setModel(oModel3);
+	   oTable.bindRows("/teamMembers");
+	   oTable.placeAt("target11");
+    	
+    	
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>Data binding calculated fields with multiple bindings test page</h1>
+      </div>
+      <div id="target1"></div>
+      <div id="target2"></div>
+      <hr/>
+      <div id="target3"></div>
+      <div id="target4"></div>
+      <hr/>
+      <div id="target5"></div>
+      <div id="target6"></div>
+      <hr/>
+      <div id="target7"></div>
+      <div id="target8"></div>
+      <hr/>
+      <div id="target9"></div>
+      <div id="target10"></div>
+      <hr/>
+      <div id="target11"></div>
+    </div>
+
+  </body>
+
+</html>

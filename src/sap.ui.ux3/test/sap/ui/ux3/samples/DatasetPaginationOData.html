@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<title>DataSet Demokit</title>
+
+<script src="../../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+
+<style>
+.CustomItemLayout {
+	position: relative;
+	padding: 3px;
+	min-width: 200px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.CustomItemLayoutInner {
+	position: relative;
+	border: 1px solid #DDDDDD;
+	padding: 5px;
+}
+
+.CustomItemLayoutTitle {
+	position: relative;
+}
+
+.CustomItemLayoutCntnt {
+	position: relative;
+	display: inline-block;
+}
+
+.sapUiUx3DSSVFloating > .sapUiUx3DSSVItem > .CustomItemLayout {
+	width: 200px;
+}
+
+/*Small*/
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle {
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 40px;
+	top: 8px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	right: 40px;
+	left: auto;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > img {
+	width: 31px;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutCntnt {
+	width: 100%;
+}
+
+/*Large*/
+
+.CustomItemLayout.CustomItemLayoutLarge > .CustomItemLayoutInner {
+	height: 65px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	position: absolute;
+	left: 255px;
+	right: 3px;
+	top: 0;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	right: 255px;
+	left: 3px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle {
+	width: 250px;
+	margin-top: 4px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > img {
+	width: 50px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle a {
+	font-size: 14px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 60px;
+	top: 18px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	right: 60px;
+	left: auto;
+}
+
+</style>
+
+<script>
+
+sap.ui.core.Control.extend("ItemLayout", {
+    metadata : {
+        aggregations : {
+			"link" : {type : "sap.ui.commons.Link", multiple : false},
+			"image" : {type : "sap.ui.commons.Image", multiple : false},
+			"form" : {type : "sap.ui.commons.form.Form", multiple : false},
+        }
+    },
+
+	renderer: function(rm, ctrl){
+		rm.write("<div");
+		rm.writeControlData(ctrl);
+		rm.writeAttribute("class", "CustomItemLayout");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutInner");
+		rm.write("><div");
+		rm.writeAttribute("class", "CustomItemLayoutTitle");
+		rm.write(">");
+		rm.renderControl(ctrl.getImage());
+		rm.write("<div>");
+		rm.renderControl(ctrl.getLink());
+		rm.write("</div></div><div");
+		rm.writeAttribute("class", "CustomItemLayoutCntnt");
+		rm.write(">");
+		rm.renderControl(ctrl.getForm());
+		rm.write("</div></div></div>");
+    },
+    
+    onBeforeRendering : function(){
+    	if(this.resizeTimer){
+    		clearTimeout(this.resizeTimer);
+    		this.resizeTimer = null;
+    	}
+    },
+    
+    onAfterRendering : function(){
+    	var $This = this.$();
+    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+    		this._resize();
+    	}else{
+    		$This.addClass("CustomItemLayoutSmall");
+    	}
+    },
+    
+    _resize: function(){
+    	if(!this.getDomRef()){
+    		return;
+    	}
+    	var $This = this.$();
+    	if($This.outerWidth() >= 440){
+    		$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
+    	}else{
+    		$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
+    	}
+    	setTimeout(jQuery.proxy(this._resize, this), 300);
+    }
+});
+
+// Initialize the Model
+
+//the root URL of the OData service - prefixed with a local URL to a proxy which forwards the request, circumventing cross-domain restrictions
+// IMPORTANT: this proxy must be available for the code example to run!
+var url = "../../../../../proxy/http/services.odata.org/Northwind/Northwind.svc";
+
+// create an ODataModel from URL
+var oModel = new sap.ui.model.odata.ODataModel(url, true);
+
+
+//Initialize the Dataset
+
+function createTemplate(){
+	var c = sap.ui.commons;
+	return new ItemLayout({
+		form: new c.form.Form({
+			width: "100%",
+			layout: new c.form.GridLayout(),
+			formContainers: [
+				new c.form.FormContainer({
+					formElements: [
+						new c.form.FormElement({
+							label: new c.Label({text: "Name", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{ProductName}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Category", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{CategoryID}", editable: false})]
+						}),
+						new c.form.FormElement({
+							label: new c.Label({text: "Price", layoutData: new c.form.GridElementData({hCells: "5"})}),
+							fields: [new c.TextField({value: "{UnitPrice}", editable: false})]
+						})
+					]
+				})
+			]
+		})
+	});
+}
+
+var oDataSet = new sap.ui.ux3.DataSet({
+	items: {
+		path: "/Products",
+		template: new sap.ui.ux3.DataSetItem({
+			title : "{title}",
+			iconSrc : "{image}"
+		})
+	},
+	views: [
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, non-responsive Card View",
+			icon: "../images/thumbnails.png",
+			iconHovered: "../images/thumbnails_hover.png",
+			iconSelected: "../images/thumbnails_hover.png",
+			floating: true,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createTemplate(),
+			initialItemCount: 10,
+			reloadItemCount: 5,
+			height: "250px"
+		}),
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Floating, responsive Card View",
+			icon: "../images/tiles.png",
+			iconHovered: "../images/tiles_hover.png",
+			iconSelected: "../images/tiles_hover.png",
+			floating: true,
+			responsive: true,
+			itemMinWidth: 200,
+			template: createTemplate()
+		}),
+		new sap.ui.ux3.DataSetSimpleView({
+			name: "Single Row Card View",
+			icon: "../images/list.png",
+			iconHovered: "../images/list_hover.png",
+			iconSelected: "../images/list_hover.png",
+			floating: false,
+			responsive: false,
+			itemMinWidth: 0,
+			template: createTemplate(),
+			initialItemCount: 15,
+			reloadItemCount: 10,
+			height: "400px"
+		})
+	],
+	search: function search(oEvent) {
+		var sQuery = oEvent.getParameter("query");
+		var oBinding = oDataSet.getBinding("items");
+		oBinding.filter(!sQuery ? [] : [new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sQuery)]);
+		oDataSet.setLeadSelection(-1);
+	},
+	selectionChanged: function search(oEvent) {
+		var idx = oEvent.getParameter("newLeadSelectedIndex");
+		alert("Product '"+oDataSet.getItems()[idx].getTitle()+"' selected.'");
+	}
+});
+oDataSet.setModel(oModel);
+oDataSet.placeAt("content");
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

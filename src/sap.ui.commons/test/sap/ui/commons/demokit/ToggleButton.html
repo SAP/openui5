@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.ToggleButton">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>ToggleButton - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='ToggleButton'>
+// create a pressed ToggleButton with some text and a tooltip only
+var oToggleButton1 = new sap.ui.commons.ToggleButton({
+	text : "ToggleButton",
+	tooltip : "This is a test tooltip",
+	pressed : true,
+	press : function() {alert('Alert from ' + oToggleButton1.getText() + ' with pressed state : ' + oToggleButton1.getPressed());}
+});
+// attach it to some element in the page
+oToggleButton1.placeAt("sample1");
+</script>
+
+<script id='LiteToggleButton'>
+// create a lite ToggleButton with an icon and a text
+var oToggleButton2 = new sap.ui.commons.ToggleButton({
+	text : "lite ToggleButton",
+	icon : "images/save-icon.gif",
+	lite: true,
+	press : function() {alert('Alert from ' + oToggleButton2.getText() + ' with pressed state : ' + oToggleButton2.getPressed());}
+}).placeAt("sample2");
+</script>
+
+<style>
+.myButton{
+	border: 1px solid red;
+	background-color: yellow;
+	font-style: italic;
+}
+.myButton:hover,
+.myButton:focus{
+	border-color: yellow;
+	background-color: red;
+}
+.myButton:active{
+	border: 2px solid black;
+	background-color: blue;
+	color: white;
+}
+</style>
+
+<script id='UnstyledToggleButton'>
+// create an unstyled ToggleButton
+var oToggleButton3 = new sap.ui.commons.ToggleButton({
+	text : "unstyled ToggleButton",
+	styled: false,
+	press : function() {alert('Alert from ' + oToggleButton3.getText() + ' with pressed state : ' + oToggleButton3.getPressed());}
+}).placeAt("sample3");
+//create an unstyled ToggleButton with own style class
+var oToggleButton4 = new sap.ui.commons.ToggleButton({
+	text : "styled ToggleButton",
+	tooltip: "This ToggleButton has its own style",
+	styled: false,
+	press : function() {alert('Alert from ' + oToggleButton4.getText() + ' with pressed state : ' + oToggleButton4.getPressed());}
+}).addStyleClass("myButton").placeAt("sample3");
+</script>
+
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/togglebutton-icon.png">ToggleButton</h1>
+
+  <h2>Introduction</h2>
+		<p>
+		The ToggleButton control represents a button with two states, pressed and non-pressed.
+		It displays text, icon, or both in the same manner as a simple button. Users can use ToggleButton as a switch to turn a setting on or off. ToggleButton can also be used to represent an independent choice similar to a CheckBox. 
+		By applying additional custom CSS-styling classes, applications can give a different style to any ToggleButton.
+		</p>
+
+	<h2>Examples</h2>
+
+	<h3>ToggleButton With Text and Tooltip</h3>
+	<div code-sample="sample1" script="ToggleButton"></div>
+
+	<h3>Lite ToggleButton</h3>
+		<p>
+		The ToggleButton can be displayed in lite-button style by using the <code>lite</code> property. Depending on the used theme the button is displayed less prominent.
+		</p>
+	<div code-sample="sample2" script="LiteToggleButton"></div>
+
+	<h3>Unstyled ToggleButtons</h3>
+		<p>
+		ToggleButtons can be displayed "native" without any own CSS-styling using the <code>styled</code> property. 
+		This is useful for applications which need a special application-dependent style for ToggleButtons. Using the function <code>addStyleClass</code> applications can add their own style to the ToggleButton.
+		</p>
+	<div code-sample="sample3" script="UnstyledToggleButton"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ToggleButton.html">API documentation</a>
+	</p>
+	</body>
+</html>

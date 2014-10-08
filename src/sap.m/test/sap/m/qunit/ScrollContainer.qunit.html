@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.m.ScrollContainer
+  Author: d046011
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>qUnit Page for sap.m.ScrollContainer</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+		
+		var eventX, eventY;
+
+		var oSC = new sap.m.ScrollContainer("sc1", {
+
+		});
+
+		var oSC2 = new sap.m.ScrollContainer("sc2",{
+			content:[
+			         new sap.m.Image({src: "../images/SAPLogo.jpg"}),
+			         new sap.m.Image({src: "../images/SAPUI5.png", densityAware: false}),
+			         new sap.m.Image({src: "../images/SAPLogo.jpg"}),
+			         new sap.m.Image({src: "../images/SAPUI5.png", densityAware: false}),
+			         new sap.m.Image({src: "../images/SAPLogo.jpg"}),
+			         new sap.m.Image({src: "../images/SAPUI5.png", densityAware: false}),
+			         new sap.m.Image({src: "../images/SAPLogo.jpg"}),
+			         new sap.m.Image({src: "../images/SAPUI5.png", densityAware: false}),
+			         ],
+			         height: "128px",
+			         width: "350px"
+		});
+
+		var oSC3 = new sap.m.ScrollContainer("sc3", {
+			visible: false
+		});
+
+		var app = new sap.m.App("app", {
+			initialPage: "page1",
+			pages: [ 
+			        new sap.m.Page("page1", {
+			        	title: "Page 1",
+			        	content: [oSC, oSC2, oSC3]
+			        })
+			        ]
+		});
+		app.placeAt("content");
+
+
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+
+
+		test("ScrollContainer rendered", function() {
+			ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
+			ok(jQuery.sap.domById("sc2"), "ScrollContainer 2 should be rendered");
+			ok(!jQuery.sap.domById("sc3"), "ScrollContainer 3 should not be rendered");
+		});
+
+		function getScrollPos(){
+			var s,
+				scrollEnablement = oSC2.getScrollDelegate();
+			
+			if (scrollEnablement._scroller) { // iScroll
+				if (sap.ui.Device.browser.mozilla) {
+					s = jQuery.sap.byId("sc2-scroll").css("-moz-transform").split(" ")[4]; // "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
+				} else if (sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome) {
+					s = jQuery.sap.byId("sc2-scroll").css("-webkit-transform").split(" ")[4];
+				} else if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9) {
+					s = jQuery.sap.byId("sc2-scroll").css("left");
+				}
+				return Math.round(parseFloat(s));
+			
+			} else { // NativeMouseScroller
+				s = oSC2.getDomRef().scrollLeft;
+				return -s;
+			}
+		}
+
+		if (sap.ui.Device.browser.mozilla || sap.ui.Device.browser.safari || sap.ui.Device.browser.chrome || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 9)) {
+
+			test("Scrolling - immediate", function() {
+				expect(4);
+
+				equal(getScrollPos(), 0, "ScrollContainer 2 should be scrolled to position 0");
+				oSC2.scrollTo(100,0,0);
+
+				equal(getScrollPos(), -100, "ScrollContainer 2 should be scrolled to position 100");
+				equal(oSC2._oScroller._scrollX, 100, "Internally stored x scrolling position should be 100");
+				equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
+			});
+
+
+			/*
+			asyncTest("Scrolling - delayed", function() {
+				expect(3);
+
+				oSC2.scrollTo(50, 0, 300);
+
+				window.setTimeout(function(){
+					equal(getScrollPos(), -50, "ScrollContainer 2 should be scrolled to position 50");
+					equal(oSC2._oScroller._scrollX, 50, "Internally stored x scrolling position should be 50"); // TODO: this only checks iScroll's internal state; the ScrollContainer may have a different value, but this does not hurt
+					equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
+					start();
+				}, 350);
+			});
+			*/
+
+
+			test("Scrolling - wrong direction", function() {
+				expect(3);
+
+				oSC2.scrollTo(110,50,0);
+
+				equal(getScrollPos(), -110, "ScrollContainer 2 should be scrolled to position 110");
+
+				equal(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
+				equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0"); // no y scrolling possible, so 0 should be the position
+			});
+
+			test("Rerendering after scrolling", function() {
+				expect(3);
+
+				oSC2.rerender();
+
+				equal(getScrollPos(), -110, "ScrollContainer 2 should be scrolled to position 110");
+				equal(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
+				equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
+
+			});
+
+
+			asyncTest("Scroll to end", function() {
+				expect(3);
+				
+				oSC2.scrollTo(9999,0,0); // try to scroll way beyond the end of the content
+				
+				window.setTimeout(function(){
+					equal(getScrollPos(), -650, "ScrollContainer 2 should be scrolled to position 650");
+					equal(oSC2._oScroller._scrollX, 650, "Internally stored x scrolling position should be 650");
+					equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
+					
+					start();
+				}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
+			});
+
+			
+			asyncTest("Scrolling after resize", function() {
+				expect(3);
+
+				jQuery.sap.byId("sc2-scroll").width("1100px"); // resize the content
+				
+				window.setTimeout(function(){ // allow some time for the ResizeHandler to notice and for iscroll to be notified and to adapt
+					oSC2.scrollTo(9999,0,0);  // again try to scroll way beyond the end of the content - but this time the content is a bit larger, iscroll should have noticed
+					
+					window.setTimeout(function(){
+						equal(getScrollPos(), -750, "ScrollContainer 2 should be scrolled to position 750");
+
+						equal(oSC2._oScroller._scrollX, 750, "Internally stored x scrolling position should be 750");
+						equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
+						
+						start();
+					}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
+				}, 300);
+			});
+
+		} // end of if-block that excludes IE8
+		
+	    </script>
+	
+		<style>
+			#sc2 {
+				white-space: nowrap;
+				border: 1px solid red;
+			}
+			#sc2-scroll {
+				width: 1000px;
+			}
+		</style>
+		
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.ScrollContainer</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

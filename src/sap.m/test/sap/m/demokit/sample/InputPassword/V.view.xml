@@ -1,0 +1,14 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+			<Label text="Password" />
+			<Input
+				type="Password"
+				placeholder="Enter password ..." />
+		</items>
+	</VBox>
+</mvc:View>

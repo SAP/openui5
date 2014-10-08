@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Input - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.m.MessageBox");
+		jQuery.sap.require("sap.m.Tokenizer");
+		jQuery.sap.require("sap.m.Token");		
+		jQuery.sap.require("sap.m.Table");	
+		
+		//*******************************
+		var oEventList = new sap.m.List();
+		var fEventWriter = function(eventArgs){
+			var type = eventArgs.getParameter("type");
+			var item = new sap.m.StandardListItem({title: "token: " + type});
+			oEventList.addItem(item);
+		};
+		
+		//*******************************
+		var oTokenizer1 = new sap.m.Tokenizer({
+			tokens: [
+			         new sap.m.Token({text: "Token 1", key: "0001"}),
+			         new sap.m.Token({text: "Token 2", key: "0002"}),
+			         new sap.m.Token({text: "Token 3", key: "0003"}),
+			         new sap.m.Token({text: "Token 4 - long text example", key: "0004"}),
+			         new sap.m.Token({text: "Token 5", key: "0005"}),
+			         new sap.m.Token({text: "Token 6", key: "0006"}),
+			         new sap.m.Token({text: "Token 7", key: "0007"}),
+			         new sap.m.Token({text: "Token 8", key: "0008"}),
+			         new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
+			         new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
+			         new sap.m.Token({text: "Token 11", key: "0011"}),
+			         new sap.m.Token({text: "Token 12", key: "0012"})			         
+			         ],			
+			         tokenChange: fEventWriter,
+		});
+		//*******************************
+		var oTokenizer2 = new sap.m.Tokenizer({
+			tokens: [
+			         new sap.m.Token({text: "Token 1", key: "0001"}),
+			         new sap.m.Token({text: "Token 2", key: "0002"}),
+			         new sap.m.Token({text: "Token 3", key: "0003"}),
+			         new sap.m.Token({text: "Token 4 - long text example", key: "0004"}),
+			         new sap.m.Token({text: "Token 5", key: "0005"}),
+			         new sap.m.Token({text: "Token 6", key: "0006"}),
+			         new sap.m.Token({text: "Token 7", key: "0007"}),
+			         new sap.m.Token({text: "Token 8", key: "0008"}),
+			         new sap.m.Token({text: "Token 9 - ABCDEF", key: "0009"}),
+			         new sap.m.Token({text: "Token 10 - ABCDEFGHIKL", key: "0010"}),
+			         new sap.m.Token({text: "Token 11", key: "0011"}),
+			         new sap.m.Token({text: "Token 12", key: "0012"})
+			         ],
+			         editable: false,
+			         tokenChange: fEventWriter,
+		});
+		//*******************************
+		
+		var app = new sap.m.App("myApp");		
+		
+		var page1 = new sap.m.Page("page1", {
+			title:"Mobile MultiInput Control",
+			content : [		
+					new sap.m.Label({ text : "Tokenizer.editable = true", width:"100%"}),
+					oTokenizer1,										
+					new sap.m.Label({ text : "Tokenizer.editable = false", width:"100%"}),
+					oTokenizer2,					
+					new sap.m.Label({ text : "Token events:", width: "100%"}),
+					oEventList
+			]			
+		});
+
+		app.addPage(page1);
+		
+		app.placeAt("body");
+		
+</script>
+	<style>
+	body {
+		margin: 0;
+	}
+	.sapMPageScroll {
+		padding: 1rem;
+	}
+	.sapMILI-CTX .sapMInputValHelp {
+		margin-right: 0rem;
+	}
+	</style>
+
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

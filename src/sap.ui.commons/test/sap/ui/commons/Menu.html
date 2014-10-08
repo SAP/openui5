@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>Menu - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Menu.gif">
+		<script src="../../../../resources/sap-ui-core.js"
+				type="text/javascript" id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<script type="text/javascript">	
+			var alertSelected = function(sId){
+				alert("You selected menu item '" + sId +"'.");
+			};
+
+			var createMenu = function(iIdx){
+				var oMenu = new sap.ui.commons.Menu("menu"+iIdx);
+				oMenu.setAriaDescription("Menu "+iIdx);
+				return oMenu;
+			};
+
+			var createAndAddMenuItem = function(oMenu, iIdx, sText, sIcon, bAlertSelected){
+				var sId = "menuitem"+iIdx;
+				var oMenuItem = new sap.ui.commons.MenuItem(sId, {text: sText});
+				if(sIcon) oMenuItem.setIcon(sIcon);
+				if(bAlertSelected) oMenuItem.attachSelect(function(){alertSelected(sId);});
+				oMenu.addItem(oMenuItem);
+				return oMenuItem;
+			};
+
+			//Menus with item eventing
+			var oMenu1 = createMenu(1);
+			var oMenu2 = createMenu(2);
+			var oMenu3 = createMenu(3);
+			var oMenu4 = createMenu(4);
+
+			createAndAddMenuItem(oMenu1, 11, "This is an item with a very long text", "images/icon.gif", true);
+			createAndAddMenuItem(oMenu1, 12, "This is another item with an even longer text", "images/save-icon.png", true).setStartsSection(true);
+			createAndAddMenuItem(oMenu1, 13, "E-Test Item1-3").setEnabled(false);
+			createAndAddMenuItem(oMenu1, 14, "P-Test Item1-4").setSubmenu(oMenu2);
+			var item5 = createAndAddMenuItem(oMenu1, 15, "Item5");
+			item5.setEnabled(false);
+			item5.setSubmenu(oMenu4);
+
+			createAndAddMenuItem(oMenu2, 21, "Item2-1").setEnabled(false);
+			createAndAddMenuItem(oMenu2, 22, "Item2-2", null, true).setStartsSection(true);
+			createAndAddMenuItem(oMenu2, 23, "Item2-3", null, true);
+			createAndAddMenuItem(oMenu2, 24, "Item2-4", null, true).setSubmenu(oMenu3);
+
+			createAndAddMenuItem(oMenu3, 31, "Item3-1", null, true);
+
+			//Menus with menu eventing
+			var oMenu1a = createMenu(5);
+			var oMenu2a = createMenu(6);
+			var oMenu3a = createMenu(7);
+			var oMenu4a = createMenu(8);
+
+			createAndAddMenuItem(oMenu1a, 51, "This is an item with a very long text", "images/icon.gif");
+			createAndAddMenuItem(oMenu1a, 52, "This is another item with an even longer text", "images/save-icon.png");
+			createAndAddMenuItem(oMenu1a, 53, "E-Test Item1-3").setEnabled(false);
+			createAndAddMenuItem(oMenu1a, 54, "P-Test Item1-4").setSubmenu(oMenu2a);
+			var item5 = createAndAddMenuItem(oMenu1a, 55, "Item5");
+			item5.setEnabled(false);
+			item5.setSubmenu(oMenu4a);
+
+			createAndAddMenuItem(oMenu2a, 61, "Item2-1", "icon.gif").setEnabled(false);
+			createAndAddMenuItem(oMenu2a, 62, "Item2-2", null);
+			createAndAddMenuItem(oMenu2a, 63, "Item2-3", null);
+			createAndAddMenuItem(oMenu2a, 64, "Item2-4", null).setSubmenu(oMenu3a);
+
+			createAndAddMenuItem(oMenu3a, 71, "Item3-1", null);
+
+			oMenu1a.attachItemSelect(function(oEvent){
+				var oItem = oEvent.getParameter("item");
+				if(!oItem.getSubmenu()){
+					alertSelected(oItem.getId());
+				}
+			});
+
+
+			var oButton1 = new sap.ui.commons.Button();
+			oButton1.setText("Open Menu (Mouse, Item eventing)");
+			oButton1.attachPress(function(){
+				var eDock = sap.ui.core.Popup.Dock;
+				oMenu1.open(false, oButton1.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, oButton1.getDomRef());
+			});
+			oButton1.placeAt("target1");
+
+			var oButton2 = new sap.ui.commons.Button();
+			oButton2.setText("Open Menu (Keyboard, Item eventing)");
+			oButton2.attachPress(function(){
+				var eDock = sap.ui.core.Popup.Dock;
+				oMenu1.open(true, oButton2.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, oButton2.getDomRef());
+			});
+			oButton2.placeAt("target2");
+
+			var oButton1a = new sap.ui.commons.Button();
+			oButton1a.setText("Open Menu (Mouse, Menu eventing)");
+			oButton1a.attachPress(function(){
+				var eDock = sap.ui.core.Popup.Dock;
+				oMenu1a.open(false, oButton1a.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, oButton1a.getDomRef());
+			});
+			oButton1a.placeAt("target3");
+
+			var oButton2a = new sap.ui.commons.Button();
+			oButton2a.setText("Open Menu (Keyboard, Menu eventing)");
+			oButton2a.attachPress(function(){
+				var eDock = sap.ui.core.Popup.Dock;
+				oMenu1a.open(true, oButton2a.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, oButton2a.getDomRef());
+			});
+			oButton2a.placeAt("target4");
+
+			var oButton3 = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection"});
+			var bIsTopMenu = false;
+			var fToggleDesign = function(){
+				bIsTopMenu = !bIsTopMenu;
+				oMenu1.setRootMenuTopStyle(bIsTopMenu);
+				oMenuButton4.getMenu().setRootMenuTopStyle(bIsTopMenu);
+				oMenuButton5.getMenu().setRootMenuTopStyle(bIsTopMenu);
+			};
+			oButton3.attachPress(fToggleDesign);
+			oButton3.placeAt("target5");
+
+			sap.ui.getCore().attachThemeChanged(function(){
+				oButton3.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection");
+				bIsTopMenu = true;
+				fToggleDesign();
+			});
+
+			//Code for ACC Demo
+			
+			function fillMenuButtonMenu(oMenuButton, bIcon) {
+				var aItems = [
+					{text: "Meat", items: []},
+					{text: "Fish", items: []},
+					{text: "Cheese", items: []},
+					{text: "Fruits", divider: true, items: [
+						{text: "Strawberries", items: []},
+						{text: "Bananas", items: []},
+						{text: "Kiwis", items: []},
+						{text: "Grapes", items: [
+						    {text: "red", tooltip: "Red Grapes", items: []},
+						    {text: "white", tooltip: "White Grapes", items: []}
+						]}
+					]},
+					{text: "Vegetables", items: []}
+				];
+				/*for(var i=0; i<40; i++){
+					aItems.push({text: "Item "+i, items: []});
+				}*/
+	
+				var fillMenu = function(aItems, oMenu){
+					for(var i=0; i<aItems.length; i++){
+						var sTooltip = aItems[i].tooltip ? aItems[i].tooltip : "Our offer of "+aItems[i].text;
+						var oMenuItem = new sap.ui.commons.MenuItem({text: aItems[i].text, tooltip: sTooltip, startsSection: !!aItems[i].divider, icon: aItems[i].icon});
+						oMenu.addItem(oMenuItem);
+						if(aItems[i].items.length > 0){
+							var oSubMenu = new sap.ui.commons.Menu(); 
+							oMenuItem.setSubmenu(oSubMenu);
+							fillMenu(aItems[i].items, oSubMenu);
+						}else{
+							var f = function(sText){
+								return function(){alertSelected(sText);};
+							};
+							oMenuItem.attachSelect(f(oMenuItem.getTooltip()));
+						}
+					}
+				};
+	
+				var oMenu = new sap.ui.commons.Menu({ariaDescription: "Demo Menu"});
+				fillMenu(aItems, oMenu);
+				oMenu.addItem(new sap.ui.commons.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: bIcon ? "images/filter.gif" : null, select: function(oEvent){
+					alert("Filter: "+oEvent.getParameter("item").getValue());
+				}}));
+				oMenu.addItem(new sap.ui.commons.MenuTextFieldItem({value: "FilterValue", label: "Another Filter:", enabled: false, select: function(oEvent){
+					alert("Filter: "+oEvent.getParameter("item").getValue());
+				}}));
+				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Clear Filter", select: function(oEvent){
+					alert("Clear Filter triggered");
+				}}));
+				oMenuButton.setMenu(oMenu);
+			}
+			
+			var oMenuButton4 = new sap.ui.commons.MenuButton("demoButton", {text: "Demo", tooltip: ""});
+			fillMenuButtonMenu(oMenuButton4);
+			oMenuButton4.placeAt("target6");
+			oMenuButton5 = new sap.ui.commons.MenuButton("demoButton2", {text: "Demo", tooltip: ""});
+			fillMenuButtonMenu(oMenuButton5, true);
+			oMenuButton5.placeAt("target6");
+			
+			
+			var fnCreateTooltip = function () {
+				return new sap.ui.commons.RichTooltip({
+	                text : "some text",
+	                title: "tooltip"
+				});
+			};
+			
+			var btn = new sap.ui.commons.MenuButton({
+				text: "Click to open menu",
+				menu: new sap.ui.commons.Menu({
+					items: [
+						new sap.ui.commons.MenuItem({
+							text: "item 1",
+							tooltip: fnCreateTooltip()
+						}),
+						new sap.ui.commons.MenuItem({
+							text: "item 2",
+							tooltip: fnCreateTooltip()
+						}),
+						new sap.ui.commons.MenuItem({
+							text: "item 3",
+							tooltip: fnCreateTooltip()
+						}),
+						new sap.ui.commons.MenuTextFieldItem({
+							text: "item 4",
+							tooltip: fnCreateTooltip()
+						}),
+						new sap.ui.commons.MenuItem({
+							text: "item 5",
+							tooltip: fnCreateTooltip()
+						})
+					]
+				})
+			});
+			btn.placeAt('target7');
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.Menu</h1>
+		<span id="target1" style="margin-right:10px;"></span><span id="target2"></span>
+		<br><br>
+		<span id="target3" style="margin-right:10px;"></span><span id="target4"></span>
+		<br><br>
+		<div id="target5"></div>(Top or Standard Design (currently only relevant for GoldReflection Theme))
+		<br><br>
+		<hr>
+		<div id="target6"></div>
+		<br><br>
+		<hr>
+		<div id="target7"></div>
+	</body>
+</html>

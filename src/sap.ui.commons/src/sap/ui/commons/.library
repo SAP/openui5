@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.commons</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+
+  <documentation>Common basic controls, mainly intended for desktop scenarios</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.layout</libraryName>
+    </dependency>
+  </dependencies>
+  
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.commons" />
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+        <exclude name="sap.ui.commons.js." />
+        <exclude name="sap.ui.commons.DatePicker*" />
+    </jscoverage>
+  </appData>
+  
+</library>

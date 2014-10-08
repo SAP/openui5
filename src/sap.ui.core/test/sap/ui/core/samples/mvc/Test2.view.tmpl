@@ -1,0 +1,28 @@
+<!-- UI5:Template type=text/x-handlebars-template controller=sap.ui.core.mvctest.Test -->
+{{#control sap-ui-type="sap.ui.commons.Panel" id="myPanel"}}
+	{{control sap-ui-type="sap.ui.commons.Label" id="Label1" labelFor="Button1" text="Label"}}
+	{{control sap-ui-type="sap.ui.commons.Button" id="Button1" text="Hello" press="doIt"}}
+	{{control sap-ui-type="sap.ui.commons.Button" id="Button2" text="Hello again"}}
+
+	{{#control sap-ui-type="sap.ui.commons.Panel" id="myPanel2"}}
+
+		{{control sap-ui-type="sap.ui.commons.Label" id="Label2" labelFor="Button1" text="Label"}}
+		{{control sap-ui-type="sap.ui.commons.Button" id="Button21" text="Hello" press="doIt"}}
+		{{control sap-ui-type="sap.ui.commons.Button" id="Button22" text="Hello again"}}
+
+	{{/control}}
+{{/control}}
+<table id="htmlEmbeddedTable">
+	<tr><td>1</td></tr>
+	<tr><td>2</td></tr>
+	<tr><td><button onclick="handlePress()">Click Me!</button></td></tr>
+	<tr><td>4</td></tr>
+	<tr><td>5</td></tr>
+	<tr><td>{{control sap-ui-type="sap.ui.commons.Button" id="htmlContentButton" text="Click me!"}}</td></tr>
+	<tr><td>
+		{{#control sap-ui-type="sap.ui.commons.Panel" id="htmlContentPanel"}}
+			{{control sap-ui-aggregation="title" sap-ui-type="sap.ui.core.Title" text="SAPUI5 Content in HTML Table in SAPUI5 Panel"}}
+			<a href="http://www.sap.com" target="_blank">www.sap.com</a>
+		{{/control}}
+	</td></tr>
+</table>

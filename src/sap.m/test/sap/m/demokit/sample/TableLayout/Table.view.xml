@@ -1,0 +1,43 @@
+<mvc:View
+	controllerName="sap.m.sample.TableLayout.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<headerToolbar>
+			<Toolbar>
+				<Label text="Products"/>
+				<ToolbarSpacer/>
+				<CheckBox text="Fixed Layout" selected="true" select="onCheckBoxSelect"/>
+				<Button text="Open Dialog" press="onOpenPressed"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column>
+				<Text text="Product Name" />
+			</Column>
+			<Column>
+				<Text text="Supplier Name" />
+			</Column>
+			<Column>
+				<Text text="Description" />
+			</Column>
+			
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle" type="Navigation">
+				<cells>
+					<Text text="{Name}" wrapping="false" />
+					<Text text="{SupplierName}" wrapping="false"/>
+					<Text text="{Description}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.MenuButton,sap.ui.commons.Menu,sap.ui.commons.MenuItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control MenuButton Menu Button" />
+		<title>MenuButton - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='MenuButtonScript'>
+//Create a MenuButton Control
+var oMenuButton = new sap.ui.commons.MenuButton({text: "File", icon: "images/file.gif", tooltip: "File related actions"}); 
+
+//Create the menu
+var oMenu1 = new sap.ui.commons.Menu("menu1", {ariaDescription: "File Menu", tooltip: "Menu containing file related actions"});
+//Create the items and add them to the menu
+var oMenuItem1 = new sap.ui.commons.MenuItem("item1-1",{text: "New", icon: "images/new.gif"}); //Icon must be not larger than 16x16 px
+oMenu1.addItem(oMenuItem1);
+var oMenuItem2 = new sap.ui.commons.MenuItem("item1-2",{text: "Delete"});
+oMenu1.addItem(oMenuItem2);
+var oMenuItem3 = new sap.ui.commons.MenuItem("item1-3",{text: "Properties", enabled: false});
+oMenu1.addItem(oMenuItem3);
+
+//Create a sub menu for item 1
+var oMenu2 = new sap.ui.commons.Menu("menu2", {ariaDescription: "New File Menu"});
+oMenuItem1.setSubmenu(oMenu2);
+//Create the items and add them to the sub menu
+var oMenuItem4 = new sap.ui.commons.MenuItem("item2-1",{text: "New TXT file", tooltip: "Creates a new TXT file."});
+oMenu2.addItem(oMenuItem4);
+var oMenuItem5 = new sap.ui.commons.MenuItem("item2-2",{text: "New RAR file", tooltip: "Creates a new RAR file."});
+oMenu2.addItem(oMenuItem5);
+
+//Attach the Menu to the MenuButton
+oMenuButton.setMenu(oMenu1);
+
+//Attach an event to raise an alert when an item is selected.
+oMenuButton.attachItemSelected(function (oEvent){
+	alert("Items \"" + oEvent.getParameter("itemId") + "\" was selected.");
+});
+
+//Attach the MenuButton to the page
+oMenuButton.placeAt("sample1");
+</script>
+		
+	</head>
+	
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/menubutton-icon.png">MenuButton</h1>
+		
+		<h2>Introduction</h2>
+		
+		<p>
+		The MenuButton control is a button that opens a menu upon user's click. MenuButton is a composition of the <a class="sapUiDemokitSrcLink" href="Menu.html" >Menu</a> control and the <a class="sapUiDemokitSrcLink" href="Button.html" >Button</a>
+		control and thus inheriting all features. When a menu item is selected by the user, MenuButton throws an event called <code>itemSelected</code>.  
+		The event transfers the <code>itemId</code> of the selected item. As an alternative, the button <code>press</code> event can be used which has a 
+		similar behavior.
+		</p>
+		
+		<h2>Example</h2>
+		
+		<div code-sample="sample1" script="MenuButtonScript"></div>
+		
+		<h3>Keyboard Support</h3>
+		<p>
+		When the MenuButton control has mode <code>enabled</code>, it is possible to open the menu using the <code>Enter</code>, the <code>Space</code>, or the key combination <code>Alt + Arrow down</code>. For information on the keyboard support for the menu,
+		see <a class="sapUiDemokitSrcLink" href="Menu.html">Menu</a>.
+		</p>
+		
+		<h2>ARIA Support</h2>
+		<p>
+		The MenuButton control implements the ARIA role <code>button</code> with extension <code>haspopup</code>. For the ARIA support of the menu
+		refer the <a class="sapUiDemokitSrcLink" href="Menu.html">Menu</a> page.
+		</p>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.MenuButton.html">API documentation</a>
+		</p>
+	</body>
+</html>

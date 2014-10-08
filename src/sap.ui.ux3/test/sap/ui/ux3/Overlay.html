@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Overlay - sap.ui.ux3</title>
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		
+		<script><!--
+			var c = sap.ui.commons; /* shorthand */    
+			
+		    var oOverlay = new sap.ui.ux3.Overlay({openButtonVisible:true, closeButtonVisible:true});
+		    
+		    var oInspectButton = new c.Button({text:"open Overlay"});
+		    oInspectButton.attachPress(function(oControlEvent) {
+		    	oOverlay.open();
+		   	});
+		    
+		    oOverlay.attachClose(function(oControlEvent) { 
+		    	var id = oControlEvent.getParameters().id;
+		    	alert("Thing \""+ id+ "\"closed");
+		    });
+		    oOverlay.attachOpen(function(oControlEvent) {
+				var id = oControlEvent.getParameters().id;
+				alert("Thing \"" + id + "\"open triggered");
+			});
+		    oOverlay.attachOpenNew(function(oControlEvent) {
+				var id = oControlEvent.getParameters().id;
+				alert("Thing \"" + id + "\"openNew triggered");
+			});
+		    oInspectButton.placeAt("TIArea");
+			
+		--></script>
+		
+	</head>
+	<body  class="sapUiBody">
+		<div id="TIArea">Some Text or controls - should be covered by Overlay</div>
+	</body>
+</html>

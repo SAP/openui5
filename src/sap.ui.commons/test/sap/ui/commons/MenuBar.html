@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+ <html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>MenuBar - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.MenuBar.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+			var oMenuBar1 = new sap.ui.commons.MenuBar("menubar1",{tooltip: "Menubar Tooltip"});
+			var oMenuItem1 = new sap.ui.commons.MenuItem("menuitem1",{text:"Item1", tooltip: "Item1 Tooltip"});
+			var oMenuItem2 = new sap.ui.commons.MenuItem("menuitem2",{text:"�ag�yfox"});
+			oMenuItem2.setEnabled(false);
+			var oMenu1 = new sap.ui.commons.Menu("menu1");
+			oMenu1.setAriaDescription("Menu 1");
+			var oMenuItem3 = new sap.ui.commons.MenuItem("menuitem3",{text:"This is an item with a very long text"});
+			oMenuItem3.setIcon("images/icon.gif");
+			oMenuItem3.attachSelect(function () {
+				alert("You selected oMenuItem3");
+			});
+			var oMenuItem4 = new sap.ui.commons.MenuItem("menuitem4",{text:"This is another item with an even longer text"});
+			oMenuItem4.setIcon("images/save-icon.png");
+			oMenuItem4.attachSelect(function () {
+				alert("You selected oMenuItem4");
+			});
+			var oMenuItem5 = new sap.ui.commons.MenuItem("menuitem5",{text:"E-Test Item5"});
+			var oMenuItem6 = new sap.ui.commons.MenuItem("menuitem6",{text:"P-Test Item6"});
+			var oMenuItem7 = new sap.ui.commons.MenuItem("menuitem7",{text:"Item7"});
+			var oMenu2 = new sap.ui.commons.Menu("menu2");
+			oMenu2.setAriaDescription("Menu 2");
+			var oMenu3 = new sap.ui.commons.Menu("menu3");
+			oMenu3.setAriaDescription("Menu 3");
+			var oMenu4 = new sap.ui.commons.Menu("menu4");
+			oMenu4.setAriaDescription("Menu 4");
+			var oMenuItem8 = new sap.ui.commons.MenuItem("menuitem8",{text:"Item8"});
+			oMenuItem8.setIcon("images/icon.gif");
+			oMenuItem8.setEnabled(false);
+			var oMenuItem9 = new sap.ui.commons.MenuItem("menuitem9",{text:"Item9"});
+			oMenuItem9.attachSelect(function () {
+				alert("You selected oMenuItem9");
+			});
+			var oMenuItem10 = new sap.ui.commons.MenuItem("menuitem10",{text:"Item10"});
+			oMenuItem10.attachSelect(function () {
+				alert("You selected oMenuItem10");
+			});
+			var oMenuItem11 = new sap.ui.commons.MenuItem("menuitem11",{text:"Item11"});
+			oMenuItem11.attachSelect(function () {
+				alert("You selected oMenuItem11");
+			});
+			var oMenuItem40 = new sap.ui.commons.MenuItem("menuitem40",{text:"Item40"});
+			oMenuItem40.attachSelect(function () {
+				alert("You selected oMenuItem40");
+			});
+			oMenuItem11.setSubmenu(oMenu4);
+			oMenu4.addItem(oMenuItem40);
+
+			oMenu2.addItem(oMenuItem8);
+			oMenu2.addItem(oMenuItem9);
+			oMenu2.addItem(oMenuItem10);
+			oMenu2.addItem(oMenuItem11);
+			oMenuItem5.setEnabled(false);
+			oMenuItem6.setSubmenu(oMenu2);
+			oMenuItem7.setEnabled(false);
+			oMenuItem7.setSubmenu(oMenu3);
+
+			oMenuBar1.addItem(oMenuItem1);
+			oMenuBar1.addItem(oMenuItem2);
+			oMenuItem1.setSubmenu(oMenu1);
+			oMenu1.addItem(oMenuItem3);
+			oMenu1.addItem(oMenuItem4);
+			oMenu1.addItem(oMenuItem5);
+			oMenu1.addItem(oMenuItem6);
+			oMenu1.addItem(oMenuItem7);
+
+			for(var i=2; i<9; i++){
+				var oItem = new sap.ui.commons.MenuItem({text: "Item"+i, tooltip: "Item"+i+" Tooltip"});
+				oItem.setEnabled(i%2==0);
+				oMenuBar1.addItem(oItem);
+				var oMenu = new sap.ui.commons.Menu();
+				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Item"+i+"-1"}));
+				oMenu.addItem(new sap.ui.commons.MenuItem({text: "Item"+i+"-2"}));
+				oItem.setSubmenu(oMenu);
+			}
+
+			new sap.ui.commons.TextField().placeAt("target1");
+			oMenuBar1.placeAt("target1");
+			new sap.ui.commons.TextField().placeAt("target1");
+
+			var oButton = new sap.ui.commons.Button("BTypeSwitch", {text:"Switch Type", enabled: sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection"});
+			var bIsTopMenubar = false;
+			var fToggleDesign = function(){
+				oMenuBar1.setDesign(bIsTopMenubar ? "Standard" : "Header");
+				jQuery("#bg").attr("style", bIsTopMenubar ? "" : "background-color:black;color:white;")
+				bIsTopMenubar = !bIsTopMenubar;
+			};
+			oButton.attachPress(fToggleDesign);
+			oButton.placeAt("target2");
+
+			sap.ui.getCore().attachThemeChanged(function(){
+				oButton.setEnabled(sap.ui.getCore().getConfiguration().getTheme() == "sap_goldreflection");
+				bIsTopMenubar = true;
+				fToggleDesign();
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.MenuBar</h1>
+		<div id="bg">
+			<div id="target1"></div>
+			<br><br>
+			<div id="target2"></div>(Top or Standard Design (currently only relevant for GoldReflection Theme))
+		</div>
+
+	</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.LocaleData
+  Author: d040216
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	var aLocales = [
+					"ar_SA",
+					"de_AT",
+					"de_CH",
+					"de_DE",
+					"da_DK",
+					"en_AU",
+					"en_CA",
+					"en_GB",
+					"en_US",
+					"en_ZA",
+					"es_MX",
+					"es_ES",
+					"fr_FR",
+					"fr_CA",
+					"fr_BE",
+					"ja_JP",
+					"id_ID",
+					"it_IT",
+					"ru_RU",
+					"pt_BR",
+					"pt_PT",
+					"hi_IN",
+					"he_IL",
+					"tr_TR",
+					"nl_BE",
+					"nl_NL",
+					"pl_PL",
+					"ko_KR",
+					"zh_SG",
+					"zh_TW",
+					"zh_CN",
+					"de_XX",
+					"xx_XX"
+	];
+
+	// Run generic test for all supported locales, run custom tests where it is defined
+	jQuery.each(aLocales, function(i, sLocale) {
+		test("Locale " + sLocale, function() {
+			var oLocale = new sap.ui.core.Locale(sLocale),
+				oLocaleData = new sap.ui.core.LocaleData(oLocale),
+				fnCustomTests = window["customTests_" + sLocale];
+			genericTests(oLocaleData);
+			if (fnCustomTests) fnCustomTests(oLocaleData);
+		});
+	});
+	
+	
+	/*
+	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods", 
+	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
+	*/
+	function genericTests(oLocaleData) {
+		equal(typeof oLocaleData.getOrientation(), "string", "getOrientation()");
+		equal(typeof oLocaleData.getLanguages(), "object", "getLanguages()");
+		equal(typeof oLocaleData.getScripts(), "object", "getLanguages()");
+		equal(typeof oLocaleData.getTerritories(), "object", "getLanguages()");
+		equal(oLocaleData.getMonths("narrow") && oLocaleData.getMonths("narrow").length, 12, "getMonths(\"narrow\")");
+		equal(oLocaleData.getMonths("abbreviated") && oLocaleData.getMonths("abbreviated").length, 12, "getMonths(\"abbreviated\")");
+		equal(oLocaleData.getMonths("wide") && oLocaleData.getMonths("wide").length, 12, "getMonths(\"wide\")");
+		equal(oLocaleData.getDays("narrow") && oLocaleData.getDays("narrow").length, 7, "getDays(\"narrow\")");
+		equal(oLocaleData.getDays("abbreviated") && oLocaleData.getDays("abbreviated").length, 7, "getDays(\"abbreviated\")");
+		equal(oLocaleData.getDays("wide") && oLocaleData.getDays("wide").length, 7, "getDays(\"wide\")");
+		equal(oLocaleData.getQuarters("narrow") && oLocaleData.getQuarters("narrow").length, 4, "getQuarters(\"narrow\")");
+		equal(oLocaleData.getQuarters("abbreviated") && oLocaleData.getQuarters("abbreviated").length, 4, "getQuarters(\"abbreviated\")");
+		equal(oLocaleData.getQuarters("wide") && oLocaleData.getQuarters("wide").length, 4, "getQuarters(\"wide\")");
+		equal(oLocaleData.getDayPeriods("narrow") && oLocaleData.getDayPeriods("narrow").length, 2, "getDayPeriods(\"narrow\")");
+		equal(oLocaleData.getDayPeriods("abbreviated") && oLocaleData.getDayPeriods("abbreviated").length, 2, "getDayPeriods(\"abbreviated\")");
+		equal(oLocaleData.getDayPeriods("wide") && oLocaleData.getDayPeriods("wide").length, 2, "getDayPeriods(\"wide\")");
+		equal(typeof oLocaleData.getDatePattern("short"), "string", "getDatePattern(\"short\")");
+		equal(typeof oLocaleData.getDatePattern("medium"), "string", "getDatePattern(\"medium\")");
+		equal(typeof oLocaleData.getDatePattern("long"), "string", "getDatePattern(\"long\")");
+		equal(typeof oLocaleData.getDatePattern("full"), "string", "getDatePattern(\"full\")");
+		equal(typeof oLocaleData.getTimePattern("short"), "string", "getTimePattern(\"short\")");
+		equal(typeof oLocaleData.getTimePattern("medium"), "string", "getTimePattern(\"medium\")");
+		equal(typeof oLocaleData.getTimePattern("long"), "string", "getTimePattern(\"long\")");
+		equal(typeof oLocaleData.getTimePattern("full"), "string", "getTimePattern(\"full\")");
+		equal(typeof oLocaleData.getDateTimePattern("short"), "string", "getTimePattern(\"short\")");
+		equal(typeof oLocaleData.getDateTimePattern("medium"), "string", "getTimePattern(\"medium\")");
+		equal(typeof oLocaleData.getDateTimePattern("long"), "string", "getTimePattern(\"long\")");
+		equal(typeof oLocaleData.getDateTimePattern("full"), "string", "getTimePattern(\"full\")");
+		equal(typeof oLocaleData.getNumberSymbol("decimal"), "string", "getNumberSymbol(\"decimal\")");
+		equal(typeof oLocaleData.getNumberSymbol("group"), "string", "getNumberSymbol(\"group\")");
+		equal(typeof oLocaleData.getNumberSymbol("plusSign"), "string", "getNumberSymbol(\"plusSign\")");
+		equal(typeof oLocaleData.getNumberSymbol("minusSign"), "string", "getNumberSymbol(\"minusSign\")");
+		equal(typeof oLocaleData.getFirstDayOfWeek(), "number", "getFirstDayOfWeek()");
+		ok(oLocaleData.getFirstDayOfWeek() >= 0 && oLocaleData.getFirstDayOfWeek() <7, "getFirstDayOfWeek()");
+		equal(typeof oLocaleData.getWeekendStart(), "number", "getWeekendStart()");
+		ok(oLocaleData.getWeekendStart() >= 0 && oLocaleData.getWeekendStart() <7, "getWeekendStart()");
+		equal(typeof oLocaleData.getWeekendEnd(), "number", "getWeekendEnd()");
+		ok(oLocaleData.getWeekendEnd() >= 0 && oLocaleData.getWeekendEnd() <7, "getWeekendEnd()");
+	}
+	
+	function customTests_de_AT(oLocaleData) {
+		equal(oLocaleData.getMonths("wide")[0], "Jänner", "1st month");
+	}
+
+	function customTests_de_DE(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getLanguages()["de"], "Deutsch", "language");
+		equal(oLocaleData.getScripts()["Latn"], "Lateinisch", "scripts");
+		equal(oLocaleData.getTerritories()["DE"], "Deutschland", "territories");
+		equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "Jan", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
+		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
+		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
+		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+	}
+
+	function customTests_de_XX(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "Jan", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "Sonntag", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "So.", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
+	}
+
+	function customTests_en_GB(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getLanguages()["de"], "German", "language");
+		equal(oLocaleData.getScripts()["Latn"], "Latin", "scripts");
+		equal(oLocaleData.getTerritories()["DE"], "Germany", "territories");
+		equal(oLocaleData.getMonths("wide")[0], "January", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "Jan", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "Sunday", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "Sun", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "S", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
+		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
+		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
+		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+	}
+	
+	function customTests_en_ZA(oLocaleData) {
+		equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+	}
+	
+	function customTests_en_US(oLocaleData) {
+		equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
+	}
+
+	function customTests_he_IL(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "right-to-left", "orientation");
+	}
+
+	function customTests_fr_FR(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getLanguages()["de"], "allemand", "language");
+		equal(oLocaleData.getScripts()["Latn"], "latin", "scripts");
+		equal(oLocaleData.getTerritories()["DE"], "Allemagne", "territories");
+		equal(oLocaleData.getMonths("wide")[0], "janvier", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "janv.", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "J", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "dimanche", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "dim.", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "D", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+	}
+
+	function customTests_ja_JP(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getLanguages()["de"], "ドイツ語", "language");
+		equal(oLocaleData.getScripts()["Latn"], "ラテン文字", "scripts");
+		equal(oLocaleData.getTerritories()["DE"], "ドイツ", "territories");
+		equal(oLocaleData.getMonths("wide")[0], "1月", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "1月", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "1", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "日曜日", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "日", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "日", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1}{0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
+	}
+
+	function customTests_nl_BE(oLocaleData) {
+		equal(oLocaleData.getDatePattern("medium"), "d-MMM-y", "date pattern \"medium\"");
+	}
+
+	function customTests_ru_RU(oLocaleData) {
+		equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
+		equal(oLocaleData.getLanguages()["de"], "немецкий", "language");
+		equal(oLocaleData.getScripts()["Latn"], "Латиница", "scripts");
+		equal(oLocaleData.getTerritories()["DE"], "Германия", "territories");
+		equal(oLocaleData.getMonths("wide")[0], "января", "1st month");
+		equal(oLocaleData.getMonths("abbreviated")[0], "янв", "1st month abbreviated");
+		equal(oLocaleData.getMonths("narrow")[0], "Я", "1st month narrow");
+		equal(oLocaleData.getDays("wide")[0], "воскресенье", "1st day");
+		equal(oLocaleData.getDays("abbreviated")[0], "вс", "1st day abbreviated");
+		equal(oLocaleData.getDays("narrow")[0], "В", "1st day narrow");
+		equal(oLocaleData.getDatePattern("medium"), "dd.MM.yyyy", "date pattern \"medium\"");
+		equal(oLocaleData.getTimePattern("medium"), "H:mm:ss", "time pattern \"medium\"");
+		equal(oLocaleData.getDateTimePattern("long"), "{1} {0}", "datetime pattern \"long\"");
+		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
+		equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+	}
+	
+	function customTests_pt_BR(oLocaleData) {
+		equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
+		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
+		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+	}
+	
+	function customTests_pt_PT(oLocaleData) {
+		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
+		equal(oLocaleData.getWeekendStart(), 6, "weekend start");
+		equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+	}
+	
+	
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: LocaleData / CLDR generation</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

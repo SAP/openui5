@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+  Tested class: sap.ui.core.ws.SapPcpWebSocket
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.ws.SapPcpWebSocket</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.core.ws.SapPcpWebSocket");
+
+			test("Serialize Pcp-Fields", 1, function() {
+
+				var _serializePcpFields = sap.ui.core.ws.SapPcpWebSocket.prototype._serializePcpFields,
+					_escape = sap.ui.core.ws.SapPcpWebSocket.prototype._escape;
+
+				// mock instance object
+				var ws = {
+					_escape: _escape
+				};
+
+				var serializedFields = _serializePcpFields.call(ws, {
+					test: true,
+					foo: 'bar',
+					count: 3,
+					empty: ""
+				}, typeof "", sap.ui.core.ws.SapPcpWebSocket._MESSAGE);
+
+				equals(serializedFields,
+					"pcp-action:MESSAGE\n" +
+					"pcp-body-type:text\n" +
+					"test:true\n" +
+					"foo:bar\n" +
+					"count:3\n" +
+					"empty:\n" +
+					"\n", "Output string equals expected string");
+			});
+
+			test("Extract Pcp-Fields", 6, function() {
+
+				var _extractPcpFields = sap.ui.core.ws.SapPcpWebSocket.prototype._extractPcpFields,
+					_unescape = sap.ui.core.ws.SapPcpWebSocket.prototype._unescape;
+
+				// mock instance object
+				var ws = {
+					_unescape: _unescape
+				};
+
+				var pcpFields = _extractPcpFields.call(ws,
+					"pcp-action:MESSAGE\n" +
+					"pcp-body-type:text\n" +
+					"test:true\n" +
+					"empty:\n" +
+					"foo:bar\n" +
+					"count:3\n" +
+					"\n");
+
+				equals(pcpFields["count"], "3", "'count' field has the correct value");
+				equals(pcpFields["test"], "true", "'test' field has the correct value");
+				equals(pcpFields["empty"], "", "'empty' field has the correct value");
+				equals(pcpFields["foo"], "bar", "'foo' field has the correct value");
+				equals(pcpFields["pcp-action"], "MESSAGE", "'pcp-action' field has the correct value");
+				equals(pcpFields["pcp-body-type"], "text", "'pcp-body-type' field has the correct value");
+			});
+
+			// Excluded tests which require a WebSocket connection (no server running yet)
+			/*
+			asyncTest("Protocol", function() {
+
+				if (sap.ui.Device.support.websocket) {
+					expect(1);
+				} else {
+					// skip test if browser doesn't support WebSockets
+					expect(0);
+					start();
+					return;
+				}
+
+				var ws = new sap.ui.core.ws.SapPcpWebSocket("ws://localhost:3001", sap.ui.core.ws.SapPcpWebSocket.SUPPORTED_PROTOCOLS.v10);
+
+				ws.attachOpen(function(oEvent) {
+					equals(ws.getProtocol(), sap.ui.core.ws.SapPcpWebSocket.SUPPORTED_PROTOCOLS.v10, "protocol is correct");
+					start();
+				});
+
+			});
+
+			asyncTest("Wrong protocol", function() {
+
+				if (sap.ui.Device.support.websocket) {
+					expect(2);
+				} else {
+					// skip test if browser doesn't support WebSockets
+					expect(0);
+					start();
+					return;
+				}
+
+				var ws = new sap.ui.core.ws.SapPcpWebSocket("ws://localhost:3001", [ "custom", "protocols" ]);
+
+				ws.attachClose(function(oEvent) {
+					equals(oEvent.getParameter("reason"), "", "close reason is correct");
+					equals(oEvent.getParameter("code"), 1000, "close code is correct");
+					start();
+				});
+
+			});
+			*/
+
+		</script>
+	</head>
+	<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.ws.SapPcpWebSocket</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="main"></div>
+</html>

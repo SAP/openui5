@@ -1,0 +1,49 @@
+.invisible {
+	display: none;
+}
+
+.welcomeText {
+	font-size: 1.0rem;
+	margin: 2rem;
+}
+
+.welcomeIcon {
+
+	margin: 0.5rem;
+	color: #DDDDDD;
+	opacity: 1;
+
+	/* transition: IE10, Opera, Firefox, Chrome 26  */
+	transition:
+		color 2.5s ease-in-out,
+		transform 2.5s ease-in-out,
+		-webkit-transform 2.5s ease-in-out,
+		opacity 5s ease-in-out;
+	
+	/* -webkit-transition: Safari, Android Browser, BB Browser, Chrome 25 */
+	-webkit-transition:
+		color 2.5s ease-in-out,
+		-webkit-transform 2.5s ease-in-out,
+		opacity 8s ease-in-out;
+}
+
+.welcomeIconRotateForward {
+	
+	color: rgb(51,51,51);
+	
+	/* transform: IE10, Opera, Firefox */
+	transform: rotate(360deg);
+	
+	/* -webkit-transform: Chrome, Safari, Android Browser, BB Browser */
+	-webkit-transform: rotate(360deg);
+}
+
+.welcomeIconRotateBackward {
+	color: #009de0;
+	transform: rotate(-360deg);
+	-webkit-transform: rotate(-360deg);
+}
+
+.welcomeIconFade {
+	opacity: 0;
+}

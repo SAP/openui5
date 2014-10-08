@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>HTMLView - sap.ui.core.mvc</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+
+		<script>
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+
+			jQuery(function() {
+				// set application namespace. Views and controller are loaded relative to this page
+				jQuery.sap.registerModulePath("sap.ui.core.mvctest", "./");
+
+				new sap.ui.commons.Button({text:"Destroy View",press:function(){
+					view.destroy();
+					view2.destroy();
+				}}).placeAt("functions");
+
+				new sap.ui.commons.Button({text:"Create View",press:function(){
+					var view = sap.ui.view({id:"myView",viewName:"sap.ui.core.mvctest.Test",type:sap.ui.core.mvc.ViewType.HTML});
+					view.placeAt("content");
+					var view2 = sap.ui.view({id:"id2",viewContent:html, type:sap.ui.core.mvc.ViewType.HTML});
+					view2.placeAt("content2");
+				}}).placeAt("functions");
+
+				new sap.ui.commons.Button({text:"Re-render View",press:function(){
+					view.invalidate();
+					view2.invalidate();
+				}}).placeAt("functions");
+
+				// define View and place it onto the page
+				var view = sap.ui.view({id:"myView",viewName:"sap.ui.core.mvctest.Test",type:sap.ui.core.mvc.ViewType.HTML});
+				view.placeAt("content");
+
+				var html = '<template data-controller-name="sap.ui.core.mvctest.Test">	<div id="htmlRoot">THIS IS A TEST</div>	<div>		<div id="htmlNested">NESTED WORKS AS WELL</div>		<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">			<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>			<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello"></div>			<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="sap.ui.core.mvctest.Test2"></div>		</div>	</div></template>';
+				var view2 = sap.ui.view({id:"id2",viewContent:html, type:sap.ui.core.mvc.ViewType.HTML});
+				view2.placeAt("content2");
+			});
+			
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.core.HTMLView</h1>
+		<hr/>
+		<div id="functions"></div>
+		<hr/>
+		<div id="content"></div>
+		<br/>
+		<hr/>
+		<div id="content2"></div>
+	</body>
+</html>

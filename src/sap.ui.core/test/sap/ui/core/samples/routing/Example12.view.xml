@@ -1,0 +1,3 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.commons" controllerName="sap.ui.core.samples.routing.Example12" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Button text="Example 1-2"/>
+</mvc:View>

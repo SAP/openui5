@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+	    data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.table" >
+    </script>
+    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    
+    <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+    <script  language="javascript">
+
+    var oData = {
+    	root: {
+    		0: {
+   				name: "item1",
+       			description: "item1 description",
+   				0: {
+   					name: "subitem1-1",
+           			description: "subitem1-1 description",
+   					0: {
+   						name: "subsubitem1-1-1",
+  		        		description: "subsubitem1-1-1 description"
+   					},
+   					1: {
+   						name: "subsubitem1-1-2",
+		        		description: "subsubitem1-1-2 description"
+   					}
+   				},
+   				1: {
+   					name: "subitem1-2",
+        			description: "subitem1-2 description",
+   					0: {
+   						name: "subsubitem1-2-1",
+		        		description: "subsubitem1-2-1 description"
+   					}
+   				}
+   				
+   			},
+   			1: {
+   				name: "item2",
+       			description: "item2 description",
+   				0: {
+   					name: "subitem2-1",
+        			description: "subitem2-1 description"
+   				}
+   			},
+   			2: {
+   				name: "item3",
+       			description: "item3 description"
+   			}
+   		}
+    };
+    
+    var oModel = new sap.ui.model.json.JSONModel();
+    oModel.setData(oData);
+    
+	var oTable = new sap.ui.table.TreeTable({
+		columns: [
+			new sap.ui.table.Column({label: "Name", template: "name", filterProperty: "name"}),
+			new sap.ui.table.Column({label: "Description", template: "description"})
+		]
+	});
+	oTable.bindRows("/root");
+	oTable.setModel(oModel);
+	
+	oTable.placeAt("target1");
+
+
+	// *************************************************************************
+	// QUNIT TEST CODE
+	// *************************************************************************
+
+	qutils.delayTestStart();
+
+	module("Basic checks");
+
+	test("InitialOk", 1, function() {
+		equal(oTable.getBinding("rows").getLength(), 3,	"Row count is correct!");
+	});
+
+	test("ExpandFirstLevelOk", 2, function() {
+		// check the behavior of the expand first level property (only used intially)
+		oTable.setExpandFirstLevel(true);
+		oTable.unbindRows().bindRows("/root");
+		equal(oTable.getBinding("rows").getLength(), 6,	"Row count is correct!");
+		oTable.setExpandFirstLevel(false);
+		oTable.unbindRows().bindRows("/root");
+		equal(oTable.getBinding("rows").getLength(), 3,	"Row count is correct!");
+	});
+	
+	test("ExpandRow", 2, function() {
+		oTable.expand(0);
+		equal(oTable.getBinding("rows").getLength(), 5, "Row count is correct!");
+		equal(oTable.isExpanded(0), true, "Expanded state is correct!");
+	});
+	
+	test("CollapseRow", 2, function() {
+		oTable.collapse(0);
+		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
+		equal(oTable.isExpanded(0), false, "Expanded state is correct!");
+	});
+	
+	test("InsertRow", 1, function() {
+		jQuery.extend(oData.root, {
+			3: {
+				name: "new item",
+    			description: "new item description"
+			}
+		});
+		oTable.getModel().setData(oData);
+		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
+	});
+	
+	test("RemoveRow", 1, function() {
+		delete oData.root[3];
+		oTable.getModel().setData(oData);
+		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
+	});
+	
+	test("InsertChildRow", 3, function() {
+		jQuery.extend(oData.root[2], {
+			0: {
+				name: "new child item",
+    			description: "new child item description"
+			}
+		});
+		oTable.getModel().setData(oData);
+		equal(oTable.getBinding("rows").getLength(), 3, "Row count is correct!");
+		oTable.expand(2);
+		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
+		equal(oTable.isExpanded(2), true, "Expanded state is correct!");
+	});
+	
+	test("ApplyFilter", 1, function() {
+		oTable.filter(oTable.getColumns()[0], "new");
+		equal(oTable.getBinding("rows").getLength(), 2, "Row count is correct!");
+	});
+	
+	test("RemoveFilter", 1, function() {
+		oTable.filter(oTable.getColumns()[0], "");
+		equal(oTable.getBinding("rows").getLength(), 4, "Row count is correct!");
+	});
+	
+	test("FilterSaveExpandedState", 3, function() {
+		oTable.expand(0);
+		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
+		oTable.filter(oTable.getColumns()[0], "new");
+		equal(oTable.getBinding("rows").getLength(), 2, "Row count is correct!");
+		oTable.filter(oTable.getColumns()[0], "");
+		equal(oTable.getBinding("rows").getLength(), 6, "Row count is correct!");
+	});
+	
+	</script>
+  </head>
+  <body class="sapUiBody">
+    <h1 id="qunit-header">qUnit Page for sap.ui.table.TreeTable</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup, will be hidden</div>
+    <div id="target1"></div>
+  </body>
+</html>

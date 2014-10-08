@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>MessageToast - sap.m</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script>
+
+			// app
+			var oApp = new sap.m.App("myApp", {
+				initialPage: "page1"
+			}),
+
+			// duration
+			oInput0 = new sap.m.Input({
+				value: 3000,
+				type: "Number",
+				placeholder: "Duration"
+			}),
+
+			// width
+			oInput1 = new sap.m.Input({
+				value: "15em",
+				type: "Text",
+				placeholder: "Width"
+			}),
+
+			// offset
+			oInput2 = new sap.m.Input({
+				value: "0 0",
+				type: "Text",
+				placeholder: "Offset"
+			}),
+
+			// auto close
+			oCheckBox0 = new sap.m.CheckBox({
+				selected: true
+			}),
+
+			// message
+			oTextArea0 = new sap.m.TextArea({
+				value: "The message to be displayed",
+				width: "100%"
+			}),
+
+			// button to show the message toast notification
+			oButton0 = new sap.m.Button({
+				text: "Show",
+				press: function() {
+					var sKey;
+
+					// message toast
+					sap.m.MessageToast.show(oTextArea0.getValue(), {
+						duration: Number(oInput0.getValue()),
+						width: oInput1.getValue(),
+						my: sKey = oSelect0.getSelectedItem().getKey(),
+						at: sKey,
+						offset: oInput2.getValue(),
+						autoClose: oCheckBox0.getSelected(),
+						onClose: function() {
+							sap.m.MessageToast.show("The onClose callback function was called", {
+								width: "100%",
+								my: "center bottom",
+								at: "center bottom"
+							});
+						}
+					});
+				}
+			}),
+
+			// select
+			oSelect0 = new sap.m.Select({
+				items: [
+					oItem0 = new sap.ui.core.Item({
+						key: "begin bottom",
+						text: "begin bottom"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "begin center",
+						text: "begin center"
+					}),
+
+					oItem2 = new sap.ui.core.Item({
+						key: "begin top",
+						text: "begin top"
+					}),
+
+					oItem3 = new sap.ui.core.Item({
+						key: "center bottom",
+						text: "center bottom",
+					}),
+
+					oItem4 = new sap.ui.core.Item({
+						key: "center center",
+						text: "center center"
+					}),
+
+					oItem5 = new sap.ui.core.Item({
+						key: "center top",
+						text: "center top"
+					}),
+
+					oItem6 = new sap.ui.core.Item({
+						key: "end bottom",
+						text: "end bottom"
+					}),
+
+					oItem7 = new sap.ui.core.Item({
+						key: "end center",
+						text: "end center"
+					}),
+
+					oItem8 = new sap.ui.core.Item({
+						key: "end top",
+						text: "end top",
+					}),
+
+					oItem9 = new sap.ui.core.Item({
+						key: "left bottom",
+						text: "left bottom"
+					}),
+
+					oItem10 = new sap.ui.core.Item({
+						key: "left center",
+						text: "left center"
+					}),
+
+					oItem11 = new sap.ui.core.Item({
+						key: "left top",
+						text: "left top"
+					}),
+
+					oItem12 = new sap.ui.core.Item({
+						key: "right bottom",
+						text: "right bottom"
+					}),
+
+					oItem13 = new sap.ui.core.Item({
+						key: "right center",
+						text: "right center"
+					}),
+
+					oItem14 = new sap.ui.core.Item({
+						key: "right top",
+						text: "right top"
+					})
+				],
+
+				selectedItemId: "__item4"
+			}),
+
+			// list
+			oList = new sap.m.List({
+				inset : false,
+				width : "100%",
+				items : [
+							new sap.m.InputListItem({
+								label : "Position",
+								content : oSelect0
+							}),
+
+							new sap.m.InputListItem({
+								label : "Duration",
+								content : oInput0
+							}),
+
+							new sap.m.InputListItem({
+								label : "Width",
+								content : oInput1
+							}),
+
+							new sap.m.InputListItem({
+								label : "Offset",
+								content : oInput2
+							}),
+
+							new sap.m.InputListItem({
+								label : "Auto close",
+								content : oCheckBox0
+							}),
+				]
+			}),
+
+			// page
+			oPage1 = new sap.m.Page("page1", {
+				title: "Mobile MessageToast control",
+				enableScrolling : true,
+				content : [ oList, oTextArea0, oButton0 ]
+			});
+
+			oApp.addPage(oPage1);
+			oApp.placeAt("body");
+
+			jQuery(function() {	// $(document).ready(handler);
+				jQuery.sap.require("sap.m.MessageToast");
+
+				// To show a message toast on Android 2.3 inside a document ready callback,
+				// a wrapping setTimeout() function is required to avoid centering problems.
+				setTimeout(function() {
+
+					// message toast basic example
+					sap.m.MessageToast.show("Message toast control test page.");
+
+				}, 0);
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

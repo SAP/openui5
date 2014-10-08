@@ -1,0 +1,49 @@
+.navigationExamples h2 {
+	margin: 2em 5% 0;
+}
+.navigationExamples .code {
+	margin: 0 5%;
+	font-family: Consolas, Courier, monospace;
+}
+.navigationExamples .ne-flexbox1 {
+	margin: 0.4em 5%;
+	padding: 1em 0;
+	width: auto;
+	min-height: 3em;
+}
+.navigationExamples .ne-flexbox1 li{
+	margin: 0.4em;
+	padding: 0.4em 1.3em;
+	list-style-type: none;
+	text-align: center;
+	background-color: #193441;
+}
+.navigationExamples .ne-flexbox1 li:hover {
+	background-color: orange;
+}
+.navigationExamples .ne-flexbox2 {
+	margin: 0.4em 5%;
+	padding: 1em 0;
+	width: auto;
+	min-height: 3em;
+}
+.navigationExamples .ne-flexbox2 li {
+	margin: 0.5em;
+	width: 25%;
+	min-width: 15%;
+	list-style-type: none;
+	text-align: center;
+	background-color: #193441;
+	padding: 0.4em;
+	-webkit-transition: width 0.5s ease-out, background-color 0.5s ease-out;
+}
+.navigationExamples .ne-flexbox2 li:hover {
+	width: 35%;
+	background-color: orange;
+}
+.navigationExamples .ne-flexbox1 li a,
+.navigationExamples .ne-flexbox2 li a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 0.7em;
+}

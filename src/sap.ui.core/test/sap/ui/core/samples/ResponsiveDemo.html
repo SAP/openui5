@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>ResponsiveDemo</title>
+
+<script src="../../../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap"></script>
+
+<style>
+.CustomItemLayout {
+	position: relative;
+	padding: 3px;
+	min-width: 200px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.CustomItemLayoutInner {
+	position: relative;
+	border: 1px solid #DDDDDD;
+	padding: 5px;
+	background-color: white;
+}
+
+.CustomItemLayoutTitle {
+	position: relative;
+}
+
+.CustomItemLayoutCntnt {
+	position: relative;
+	display: inline-block;
+}
+
+.sapUiUx3DSSVFloating > .sapUiUx3DSSVItem > .CustomItemLayout {
+	width: 200px;
+}
+
+/*Small*/
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle {
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 40px;
+	top: 8px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	right: 40px;
+	left: auto;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > img {
+	width: 31px;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutCntnt {
+	width: 100%;
+}
+
+/*Large*/
+
+.CustomItemLayout.CustomItemLayoutLarge > .CustomItemLayoutInner {
+	height: 65px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	position: absolute;
+	left: 255px;
+	right: 3px;
+	top: 0;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	right: 255px;
+	left: 3px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle {
+	width: 250px;
+	margin-top: 4px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > img {
+	width: 50px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle a {
+	font-size: 14px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 60px;
+	top: 18px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	right: 60px;
+	left: auto;
+}
+
+</style>
+
+<script>
+
+//Initialize the Model
+var data = {selectionIdx: -1, filter: "", products:[]};
+var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
+for(var i=0; i<aTitles.length; i++){
+	var sTitle = aTitles[i];
+	var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
+			title: sTitle, rating: Math.floor((Math.random()*5))+1, selected: false};
+	if(sTitle.indexOf("Notebook") >= 0){
+		oProduct.category = "Notebook";
+	}else if(sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0){
+		oProduct.category = "Mobile";
+	}
+	oProduct.image = "../images/"+oProduct.category+".png";
+	data.products.push(oProduct);
+}
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(data);
+
+//Some helper functions 
+function select(idx){
+	for(var i=0; i<data.products.length; i++){
+		data.products[i].selected = false;
+	}
+	data.selectionIdx = -1;
+	
+	if(idx >=0 && idx < data.products.length){
+		data.products[idx].selected = true;
+		data.selectionIdx = idx;
+	}
+	
+	oModel.setData(data);
+};
+
+function loadLib(sLib){
+	try{
+		sap.ui.getCore().loadLibrary(sLib);
+	}catch(e){
+		alert("This test page requires the library '"+sLib+"' which is not available.");
+		throw(e);
+	}
+};
+
+function doFilter(oEvent){
+	var sQuery = oEvent.getParameter("query");
+	currentFilter = !sQuery ? [] : [new sap.ui.model.Filter("title", sap.ui.model.FilterOperator.Contains, sQuery)];
+	select(-1);
+	currentControl.__refresh();
+};
+
+//Attach Media-Handler
+sap.ui.Device.media.attachHandler(function(mParams){
+	initialize(mParams.from);
+}, null, 'myPoints');
+
+
+//Initialization Code
+var oTable, oDataSet, oApp, oShell;
+
+var currentFilter = [];
+var currentControl;
+var currentMobile = null;
+
+var aPoints = [420, 750, 1130];
+
+function initialize(from){
+	var aInfo;
+	if(from >= aPoints[2]){
+		aInfo = initializeTable();
+	}else if(from >= aPoints[1]){
+		aInfo = initializeDataset(false);
+	}else if(from >= aPoints[0]){
+		aInfo = initializeDataset(true);
+	}else{
+		aInfo = initializeList();
+	}
+	
+	var mobile = aInfo[1];
+	
+	function init(){
+		sap.ui.getCore().detachThemeChanged(init);
+		currentControl = aInfo[0];
+		var ctrl;
+		if(!currentMobile){
+			ctrl = initializeShell();
+			ctrl.removeAllContent();
+			ctrl.addContent(currentControl);
+		}else{
+			ctrl = oApp;
+		}
+		
+		var uiArea = sap.ui.getCore().getUIArea("root");
+		if(!uiArea || uiArea.getContent()[0] != ctrl){
+			ctrl.placeAt("root", "only");
+		}
+	};
+	
+	if(currentMobile === null || currentMobile != mobile){
+		sap.ui.getCore().attachThemeChanged(init);
+		
+		if(!currentMobile && oShell){
+			oShell._getSearchTool().close();
+		}
+		
+		currentMobile = mobile;
+		jQuery("#root").html("");
+		sap.ui.getCore().applyTheme(mobile ? "sap_bluecrystal" : "sap_goldreflection");
+	}else{
+		init();
+	}
+};
+
+
+function initializeTable(){
+	if(oTable){
+		oTable.__refresh();
+		return [oTable, false];
+	}
+	
+	loadLib("sap.ui.table");
+	
+	oTable = new sap.ui.table.Table({
+		selectionMode: "Single",
+		rowSelectionChange: function(oEvent){
+			if(!oTable.__ignoreSelectionChange){
+				select(oEvent.getParameter("rowIndex"));
+			}
+		},
+		columns: [
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text: "Product Name"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "title")
+			}),
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text: "Category"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "category")
+			}),
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text: "Price"}),
+				template: new sap.ui.commons.TextView().bindProperty("text", "price")
+			}),
+			new sap.ui.table.Column({
+				label: new sap.ui.commons.Label({text: "Rating"}),
+				template: new sap.ui.commons.RatingIndicator({editable: false}).bindProperty("value", "rating")
+			})
+		],
+		rows: {path: "/products"}
+	});
+	oTable.setModel(oModel);
+	
+	oTable.__refresh = function(){
+		oTable.__ignoreSelectionChange = true;
+		this.getBinding("rows").filter(currentFilter);
+		oTable.__ignoreSelectionChange = false;
+		this.setSelectedIndex(data.selectionIdx);
+	};
+	
+	oTable.__refresh();
+	
+	return [oTable, false];
+};
+
+
+function initializeDataset(bSingleRow){
+	if(oDataSet){
+		oDataSet.__refresh(true, bSingleRow);
+		return [oDataSet, false];
+	}
+
+	loadLib("sap.ui.commons");
+	loadLib("sap.ui.ux3");
+	
+	sap.ui.core.Control.extend("ItemLayout", {
+	    metadata : {
+	        aggregations : {
+				"link" : {type : "sap.ui.commons.Link", multiple : false},
+				"image" : {type : "sap.ui.commons.Image", multiple : false},
+				"form" : {type : "sap.ui.commons.form.Form", multiple : false},
+	        }
+	    },
+
+		renderer: function(rm, ctrl){
+			rm.write("<div");
+			rm.writeControlData(ctrl);
+			rm.writeAttribute("class", "CustomItemLayout");
+			rm.write("><div");
+			rm.writeAttribute("class", "CustomItemLayoutInner");
+			rm.write("><div");
+			rm.writeAttribute("class", "CustomItemLayoutTitle");
+			rm.write(">");
+			rm.renderControl(ctrl.getImage());
+			rm.write("<div>");
+			rm.renderControl(ctrl.getLink());
+			rm.write("</div></div><div");
+			rm.writeAttribute("class", "CustomItemLayoutCntnt");
+			rm.write(">");
+			rm.renderControl(ctrl.getForm());
+			rm.write("</div></div></div>");
+	    },
+	    
+	    onBeforeRendering : function(){
+	    	if(this.resizeTimer){
+	    		clearTimeout(this.resizeTimer);
+	    		this.resizeTimer = null;
+	    	}
+	    },
+	    
+	    onAfterRendering : function(){
+	    	var $This = this.$();
+	    	if($This.parent().parent().hasClass("sapUiUx3DSSVSingleRow")){
+	    		this._resize();
+	    	}else{
+	    		$This.addClass("CustomItemLayoutSmall");
+	    	}
+	    },
+	    
+	    _resize: function(){
+	    	if(!this.getDomRef()){
+	    		return;
+	    	}
+	    	var $This = this.$();
+	    	if($This.outerWidth() >= 440){
+	    		$This.removeClass("CustomItemLayoutSmall").addClass("CustomItemLayoutLarge");
+	    	}else{
+	    		$This.removeClass("CustomItemLayoutLarge").addClass("CustomItemLayoutSmall");
+	    	}
+	    	setTimeout(jQuery.proxy(this._resize, this), 300);
+	    }
+	});
+	
+	function createTemplate(){
+		var c = sap.ui.commons;
+		return new ItemLayout({
+			link: new c.Link({text: "{title}"}),
+			image: new c.Image({src: "{image}"}),
+			form: new c.form.Form({
+				width: "100%",
+				layout: new c.form.GridLayout(),
+				formContainers: [
+					new c.form.FormContainer({
+						formElements: [
+							new c.form.FormElement({
+								label: new c.Label({text: "Category", layoutData: new c.form.GridElementData({hCells: "5"})}),
+								fields: [new c.TextField({value: "{category}", editable: false})]
+							}),
+							new c.form.FormElement({
+								label: new c.Label({text: "Price", layoutData: new c.form.GridElementData({hCells: "5"})}),
+								fields: [new c.TextField({value: "{price}", editable: false})]
+							}),
+							new c.form.FormElement({
+								label: new c.Label({text: "Rating", layoutData: new c.form.GridElementData({hCells: "5"})}),
+								fields: [new c.RatingIndicator({value: "{rating}", editable: false})]
+							})
+						]
+					})
+				]
+			})
+		});
+	};
+
+	var oResponsiveView = new sap.ui.ux3.DataSetSimpleView({
+		floating: true,
+		responsive: true,
+		itemMinWidth: 200,
+		template: createTemplate()
+	});
+	var oRowView = new sap.ui.ux3.DataSetSimpleView({
+		floating: false,
+		responsive: false,
+		itemMinWidth: 0,
+		template: createTemplate()
+	});
+
+	oDataSet = new sap.ui.ux3.DataSet({
+		items: {
+			path: "/products",
+			template: new sap.ui.ux3.DataSetItem({
+				title : "{title}",
+				iconSrc : "{image}"
+			})
+		},
+		views: [oResponsiveView, oRowView],
+		showToolbar: false,
+		selectionChanged: function(oEvent){
+			select(oEvent.getParameter("newLeadSelectedIndex"));
+		}
+	});
+	oDataSet.setModel(oModel);
+	
+	oDataSet.__refresh = function(bChangeCurrentView, bSingleRow){
+		if(bChangeCurrentView){
+			this.setSelectedView(bSingleRow ? oDataSet.getViews()[1] : oDataSet.getViews()[0]);
+		}
+		this.getBinding("items").filter(currentFilter);
+		this.setLeadSelection(data.selectionIdx);
+	};
+	
+	oDataSet.__refresh(true, bSingleRow);
+	
+	return [oDataSet, false];
+};
+
+
+function initializeList(){
+	if(oApp){
+		oApp.__refresh();
+		return [oApp, true];
+	}
+
+	loadLib("sap.m");
+	
+	var oList = new sap.m.List({
+		inset : true,
+		showUnread: false,
+		mode: sap.m.ListMode.SingleSelect,
+		items: {
+			path: "/products",
+			template: new sap.m.StandardListItem({
+				type : "Active",
+				title : "{title}",
+				icon : "{image}",
+				selected : "{selected}"
+			})
+		},
+		"select": function(oEvent){
+			select(oList.indexOfItem(oEvent.getParameter("listItem")));
+		}
+	});
+
+	oList.setModel(oModel);	
+	
+	var oSearchField = new sap.m.SearchField({
+		value: "{/filter}",
+		search: doFilter
+	});
+	
+	oSearchField.setModel(oModel);
+	
+	oApp = new sap.m.App({
+		pages: [new sap.m.Page({
+			title : "Products",
+			content : [oList],
+			footer: new sap.m.Bar({
+				contentRight: [oSearchField]
+			})
+		})]
+	});
+			
+	oApp.__refresh = function(){
+		var oList = oApp.getPages()[0].getContent()[0];
+		oList.getBinding("items").filter(currentFilter);
+	};
+	
+	oApp.__refresh();
+	
+	return [oApp, true];
+};
+
+
+function initializeShell(){
+	if(oShell){
+		return oShell;
+	}
+	
+	loadLib("sap.ui.ux3");
+	
+	oShell = new sap.ui.ux3.Shell({
+		appTitle: "Products",
+		showFeederTool: false,
+		fullHeightContent: true,
+		worksetItems: [new sap.ui.ux3.NavigationItem({
+			text: "Products"
+		})] 
+	});
+
+	var oSearchField = oShell.getSearchField();
+	oSearchField.setModel(oModel);
+	oSearchField.setEnableListSuggest(false);
+	oSearchField.setEnableClear(true);
+	oSearchField.setEnableFilterMode(true);
+	oSearchField.bindProperty("value", "/filter");
+	oSearchField.attachSearch(function(oEvent){
+		doFilter(oEvent);
+		oShell._getSearchTool().close();
+	});
+	
+	return oShell;
+};
+sap.ui.Device.media.initRangeSet('myPoints', aPoints);
+
+</script>
+
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="root"></div>
+</body>
+</html>

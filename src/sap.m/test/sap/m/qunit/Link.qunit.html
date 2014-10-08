@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Test Page for sap.m.Link</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		var sText = "Hello World";
+		
+		var oLink1 = new sap.m.Link("l1", {
+			text : sText,
+			href: "x.html",
+			target: "_blank",
+			width : "200px",
+			press:function() {
+				ok(true, "This should be executed when the link is triggered");
+			}
+		}).placeAt("uiArea1");
+		
+		// test property accessor methods 
+
+		test("Text in HTML", function() {
+			equal(oLink1.$().text(), sText, "oLink1 text should be correct");
+		});
+
+		test("Width", function() {
+			strictEqual(oLink1.getDomRef().offsetWidth, 200, "oLink1 width should be correct");
+		});
+		
+		test("href", function() {
+			var href = oLink1.getDomRef().href;
+			strictEqual(href.indexOf("x.html"), href.length - "x.html".length, "oLink1 href should be correct");
+		});
+		
+		test("Target", function() {
+			strictEqual(oLink1.getDomRef().target, "_blank", "oLink1 target should be correct");
+		});
+		
+		test("Press event", function(){
+			expect(1); // verifies the event handler was executed
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
+		});
+		
+		test("Disabled", function(){
+			expect(0); // verifies the event handler was NOT executed
+			oLink1.setEnabled(false);
+			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
+		});
+		
+		test("When width is not set max-width should apply to control", function() {
+			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();			
+			ok(sut.$().hasClass("sapMLnkMaxWidth"), "Link has max width restriction for the trunctation.");
+			
+			sut.setWidth("100px");
+			sap.ui.getCore().applyChanges();
+			ok(!sut.$().hasClass("sapMLnkMaxWidth"), "Link has width and does not have max width restriction.");
+		});
+
+		test("Subtle", function() {
+			oLink1.setSubtle(true);
+			sap.ui.getCore().applyChanges();
+			ok(oLink1.$().hasClass('sapMLnkSubtle'), "Link is subtle.");
+			
+		});
+		
+		test("Emphasized", function() {
+			oLink1.setEmphasized(true);
+			sap.ui.getCore().applyChanges();
+			ok(oLink1.$().hasClass('sapMLnkEmphasized'), "Link is emphasized.");
+			
+		});
+		
+		test("Link should be shrinkable", function() {
+			var oLink = new sap.m.Link;
+			ok(oLink.getMetadata().isInstanceOf("sap.ui.core.IShrinkable"), "Link control implements IShrinkable interface");
+			oLink.destroy();
+		});
+		</script>
+
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">QUnit page for sap.ui.m.Link</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<ol id="qunit-tests"></ol>	
+		
+		<div id="uiArea1"></div>
+	</body>
+</html>

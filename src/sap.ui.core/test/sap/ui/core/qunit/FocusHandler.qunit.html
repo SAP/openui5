@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.FocusHandler
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+		var oFocusHandler = null;
+		var oPlugin = {};
+		oPlugin.startPlugin = function(oCore, bInit){
+			oFocusHandler = oCore.oFocusHandler;
+		};
+		oPlugin.stopPlugin = function(oCore){};
+		sap.ui.getCore().registerPlugin(oPlugin);
+	</script>
+	
+	<!-- Control initialization -->
+	<script language="javascript">
+		var oControls = {};
+
+		var initControl = function(idx){
+			var sId = "oControl"+idx;
+			var oControl = new sap.ui.commons.TextField(sId);
+			sap.ui.setRoot("uiArea"+idx, oControl);
+			oControls[sId] = oControl;
+		};
+
+		initControl(1);
+		initControl(2);
+		initControl(3);
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+	
+		module("Basic");
+	
+		test("Check FocusHandler initialized", function() {
+			ok(oFocusHandler, "FocusHandler initialized");
+		});
+
+		test("Check FocusHandler initial state", function() {
+			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
+			equal(oFocusHandler.oLast, null, "Initial Value 'Last':");
+		});
+
+		test("Check FocusHandler.getCurrentFocusedControlId", function() {
+			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current not available:");
+			oControls["oControl1"].focus();
+			equal(oFocusHandler.oCurrent, oFocusHandler.getCurrentFocusedControlId(), "Current available:");
+			jQuery("#customInput").get(0).focus(); //Reset for next test
+		});
+
+		module("Focus Tracking");
+
+		test("Check Focus Tracking", function() {
+			equal(oFocusHandler.oCurrent, null, "Initial Value 'Current':");
+			oControls["oControl1"].focus();
+			equal(oFocusHandler.oCurrent, "oControl1", "Value 'Current' after control focus:");
+			oControls["oControl2"].focus();
+			equal(oFocusHandler.oCurrent, "oControl2", "Value 'Current' after control focus:");
+			jQuery("#customInput").get(0).focus();
+			equal(oFocusHandler.oCurrent, null, "Value 'Current' after outer focus:");
+			oControls["oControl3"].focus(); 
+			equal(oFocusHandler.oCurrent, "oControl3", "Value 'Current' after control focus:");
+		});
+
+		test("Check sapfocusleave Event - Focus to Control", function() {
+			oControls["oControl1"].focus();
+			var bHandlerCalled = false;
+			oControls["oControl1"].onsapfocusleave = function(oEvent){
+				bHandlerCalled = true;
+				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				equal(oEvent.relatedControlId, "oControl2", "Related Control ID of sapfocusleave Event");
+				var oFocusInfo = oEvent.relatedControlFocusInfo;
+				ok(oFocusInfo, "Focus Info available");
+				if(oFocusInfo)
+					equal(oFocusInfo.id, "oControl2", "Related Control FocusInfo ID of sapfocusleave Event");
+			};
+			oControls["oControl2"].focus();
+			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+		});
+
+		test("Check sapfocusleave Event - Focus to outer HTML", function() {
+			oControls["oControl1"].focus();
+			var bHandlerCalled = false;
+			oControls["oControl1"].onsapfocusleave = function(oEvent){
+				bHandlerCalled = true;
+				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
+				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+			};
+			jQuery("#customInput").get(0).focus();
+			ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+		});
+
+		asyncTest("Check sapfocusleave Event - Focus lost", function() {
+			oControls["oControl1"].focus();
+			var bHandlerCalled = false;
+			oControls["oControl1"].onsapfocusleave = function(oEvent){
+				bHandlerCalled = true;
+				equal(oEvent.type, "sapfocusleave", "Type of sapfocusleave Event:");
+				equal(oEvent.relatedControlId, null, "Related Control ID of sapfocusleave Event");
+				ok(!oEvent.relatedControlFocusInfo, "Focus Info not available");
+			};
+			//Change the focus handler temporarily
+			var onfocusEvent_ORIG = oFocusHandler.onfocusEvent;
+			oFocusHandler.onfocusEvent = function(sControlId){
+				//Do nothing to simulate a window blur
+			};
+
+			var checker = {};
+			checker.check = function(){
+				start();
+				ok(bHandlerCalled, "Sapfocusleave Handler 'oControl1' should be called");
+
+				//Revert the temporary changes
+				oFocusHandler.onfocusEvent = onfocusEvent_ORIG;
+				jQuery("#customInput").get(0).focus();
+			}
+
+			jQuery.sap.delayedCall(100, checker, "check");
+			oControls["oControl2"].focus();
+		});
+
+		test("Check Custom Changes Reverted", function() {
+			//This test should only check whether the changes in the focus handler in the last test
+			//are successfully reverted.
+			var bOk = true;
+			bOk = bOk && oFocusHandler.oCurrent == null;
+			oControls["oControl2"].focus();
+			bOk = bOk && oFocusHandler.oCurrent == "oControl2";
+			oControls["oControl3"].focus();
+			bOk = bOk && oFocusHandler.oCurrent == "oControl3";
+			jQuery("#customInput").get(0).focus();
+			bOk = bOk && oFocusHandler.oCurrent == null;
+			ok(bOk, "Changes successfully reverted");
+		});
+
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.FocusHandler</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<input id="customInput" type="text"></input>
+</body>
+</html>

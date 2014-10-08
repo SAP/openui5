@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
+		<title>Properties</title>		
+		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+		<script>
+		window.onresize = resizePage;
+		window.onload = loadPage;
+
+		function loadPage() {
+			setTimeout(resizePage, 10);
+		};
+		
+		function resizePage() {
+			var h = document.body.clientHeight;
+			h -= 9; // 2*2px padding + 2 * 1px border + 2px margin
+			h -= document.getElementById("title").offsetHeight;
+			if ( h > 0 ) 
+				document.getElementById("sap-ui-PropertyWindowRoot").style.height = h + "px";
+		};
+		</script>
+	</head>
+	<body class="right">
+		<div class="border left top bottom" >	
+			<div id="title" class="title">Properties</div>
+			<div id="sap-ui-PropertyWindowRoot" class="scrollpanel" style="border:1px solid buttonshadow;padding:2px;font-size:8pt"></div>
+		</div>
+	</body>
+</html>

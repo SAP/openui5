@@ -1,0 +1,188 @@
+{
+	"explored" : {
+		"entitiesDefaults" : {
+			"appComponent" : "CA-UI5"
+		},
+		"samplesRef" : {
+			"namespace" : "sap.ui.layout.sample",
+			"ref" : "test-resources/sap/ui/layout/demokit/sample"
+		},
+		"entities" : [
+			{
+				"id" : "sap.ui.layout.form.Form",
+				"name" : "Form",
+				"category" : "Layout",
+				"since" : "1.10",
+				"formFactors" : "SML",
+				"samples" : [
+					"sap.ui.layout.sample.Form354",
+					"sap.ui.layout.sample.FormToolbar"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.form.SimpleForm",
+				"name" : "Simple Form",
+				"category" : "Layout",
+				"since" : "1.12",
+				"formFactors" : "SML",
+				"samples" : [
+					"sap.ui.layout.sample.SimpleForm354",
+					"sap.ui.layout.sample.SimpleForm471",
+					"sap.ui.layout.sample.SimpleForm480"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.FixFlex",
+				"name" : "Fix Flex",
+				"category" : "Layout",
+				"since" : "1.26",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.FixFlexVertical",
+					"sap.ui.layout.sample.FixFlexHorizontal",
+					"sap.ui.layout.sample.FixFlexFixedSize",
+					"sap.ui.layout.sample.FixFlexInFixFlex"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.Grid",
+				"name" : "Grid",
+				"category" : "Layout",
+				"since" : "1.12",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.GridInfo",
+					"sap.ui.layout.sample.GridTasks",
+					"sap.ui.layout.sample.GridTiles"
+				]
+			},
+			{
+				"id" : "sap.ui.layout.HorizontalLayout",
+				"name" : "Horizontal Layout",
+				"category" : "Layout",
+				"since" : "1.10",
+				"formFactors" : "-",
+				"samples" : [ "sap.ui.layout.sample.HorizontalLayout" ]
+			},
+			{
+				"id" : "sap.ui.layout.VerticalLayout",
+				"name" : "Vertical Layout",
+				"category" : "Layout",
+				"formFactors" : "-",
+				"since" : "1.10",
+				"samples" : [ "sap.ui.layout.sample.VerticalLayout" ]
+			},
+			{
+				"id" : "sap.ui.layout.Splitter",
+				"name" : "Splitter Layout",
+				"category" : "Layout",
+				"formFactors" : "-",
+				"since" : "1.22",
+				"samples" : [ 
+					"sap.ui.layout.sample.Splitter",
+					"sap.ui.layout.sample.Splitter2",
+					"sap.ui.layout.sample.Splitter3",
+					"sap.ui.layout.sample.Splitter4",
+					"sap.ui.layout.sample.SplitterNested1"
+				]
+			}
+		],
+		"samples" : [
+			{
+				"id": "sap.ui.layout.sample.Form354",
+				"name": "Form - Single 3:5:4",
+				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 3:5:4 layout (label:input:emptyspace) using the Form control"
+			},
+			{
+				"id": "sap.ui.layout.sample.HorizontalLayout",
+				"name": "Horizontal Layout",
+				"description": "The Horizontal Layout control is a simple way to align multiple controls horizontally. By default the contained controls are not wrapped. If you want more sophisticated layout options, consider Grid or Flex Box based layouts."
+			},
+			{
+				"id": "sap.ui.layout.sample.VerticalLayout",
+				"name": "Vertical Layout",
+				"description": "The Vertical Layout control is a simple way to align multiple controls vertically. If you want more sophisticated layout options, consider Grid or Flex Box based layouts."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm354",
+				"name": "Simple Form - Single 3:5:4",
+				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 3:5:4 layout (label:input:emptyspace) using the SimpleForm control"
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm471",
+				"name": "Simple Form - Single 4:7:1",
+				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a single-column 4:7:1 layout (label:input:emptyspace) using the SimpleForm control"
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm480",
+				"name": "Simple Form - Dual 4:8:0",
+				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a dual-column 4:8:0 layout (label:input:emptyspace) using the SimpleForm control"
+			},
+			{
+				"id": "sap.ui.layout.sample.FormToolbar",
+				"name": "Form With Toolbar",
+				"description": "Unfortunately the form control has no toolbar. As remedy you can put the form inside a Panel that carries the toolbar."
+			},
+			{
+				"id": "sap.ui.layout.sample.FixFlexVertical",
+				"name": "Fix Flex - Vertical Direction",
+				"description": "Shows a FixFlex control with a vertical layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.FixFlexHorizontal",
+				"name": "Fix Flex - Horizontal Direction",
+				"description": "Shows a FixFlex control with a horizontal layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.FixFlexFixedSize",
+				"name": "Fix Flex - Fix container size",
+				"description": "Shows a FixFlex control where fixContentSize is set to a specific value(200px) and sap.m.scrollContainer is enabling vertical scrolling."
+			},
+			{
+				"id": "sap.ui.layout.sample.FixFlexInFixFlex",
+				"name": "Fix Flex - Nested",
+				"description": "Shows two FixFlex controls nested in a parent FixFlex control."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridInfo",
+				"name": "Grid - Info Layout",
+				"description": "You can use the Grid control to make responsive table-free layouts; here we are using a default indent and span, and specifying the Small settings such that the image and text will stack on a small display."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridTiles",
+				"name": "Grid - Tile-based Layout",
+				"description": "There is a lot of flexibility with the Grid control's content; here we are using Object List Items to represent products, with some being third/half-width, and others being half/full-width, depending on the available screen size."
+			},
+			{
+				"id": "sap.ui.layout.sample.GridTasks",
+				"name": "Grid - Task Display",
+				"description": "Using the Grid control, with appropriate values for the Large/Medium/Small span settings, you can set some elements to be fixed (like the Active, Inactive and Failed titles here) and some to flow."
+			},
+			{
+				"id": "sap.ui.layout.sample.Splitter",
+				"name": "Splitter Layout",
+				"description": "Splitter where you can change contentAreas and their sizes live"
+			},
+			{
+				"id": "sap.ui.layout.sample.Splitter2",
+				"name": "Splitter Layout - 2 areas",
+				"description": "Simple splitter example with two content areas"
+			},
+			{
+				"id": "sap.ui.layout.sample.Splitter3",
+				"name": "Splitter Layout - 2 non-resizable areas",
+				"description": "Simple splitter example with two content areas that cannot be resized"
+			},
+			{
+				"id": "sap.ui.layout.sample.Splitter4",
+				"name": "Splitter Layout - 3 areas",
+				"description": "Simple splitter example with with three content areas"
+			},
+			{
+				"id": "sap.ui.layout.sample.SplitterNested1",
+				"name": "Nested Splitter Layouts - 7 Areas",
+				"description": "Nested Splitter example with 7 content areas"
+			}
+		]
+	}
+}

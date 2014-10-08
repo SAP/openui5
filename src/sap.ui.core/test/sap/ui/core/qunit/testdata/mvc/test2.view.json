@@ -1,0 +1,24 @@
+{	"Type": "sap.ui.core.JSONView",
+	"controllerName":"example.mvc.test",
+	"content": [{
+		"Type":"sap.ui.commons.Panel",
+		"id":"myPanel",
+		"content":[		{
+			"Type":"sap.ui.commons.Label",
+			"id":"Label1",
+			"text":"Label",
+			"labelFor":"Button1"
+		},
+		{
+			"Type":"sap.ui.commons.Button",
+			"id":"Button1",
+			"text":"Hallo",
+			"press": "doIt"
+		},
+		{
+			"Type":"sap.ui.commons.Button",
+			"id":"Button2",
+			"text":"Hallo auch"
+		}]
+	}]
+}

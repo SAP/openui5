@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <script id="sap-ui-bootstrap" 
+      type="text/javascript"
+      src="../../../../../resources/sap-ui-core.js"
+      data-sap-ui-theme="sap_bluecrystal"
+      data-sap-ui-noConflict="true"
+      data-sap-ui-libs="sap.ui.commons" >
+    </script>
+    <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    
+    <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+    
+    
+    <script language="javascript">
+    try{
+  		/****************************************************
+  		* CREATION OF MESSAGES
+  		*****************************************************/
+	      var meliError   = new sap.ui.commons.Message("meliError",   {type:sap.ui.commons.MessageType.Error, text:"Error 5", longText:"Error 5 Details"});      	  
+	      var meliWarning = new sap.ui.commons.Message("meliWarning", {type:sap.ui.commons.MessageType.Warning, text:"Warning 5", longText:"Warning 5 Details"});
+	      var meliSuccess = new sap.ui.commons.Message("meliSuccess", {type:sap.ui.commons.MessageType.Success, text:"Success 5", longText:"Success 5 Details"});
+	
+	      var aMeliMelos = new Array();
+		      aMeliMelos.push(meliError);
+		      aMeliMelos.push(meliWarning);
+		      aMeliMelos.push(meliSuccess);
+	      var aMeliMeloIdsB = new Array();
+		      aMeliMeloIdsB.push("meliError");
+		      aMeliMeloIdsB.push("meliWarning");
+		      aMeliMeloIdsB.push("meliSuccess");
+  		
+  		/****************************************************
+  		* CREATION OF THE MESSAGEBAR
+  		*****************************************************/
+	      var msgBar = new sap.ui.commons.MessageBar("msgBar");
+	      // There is no "sap.ui.setRoot()", as the MessageBar positions itself!
+	      //sap.ui.setRoot("message", msgBar);
+	      msgBar.setAnchorID("uiArea1");
+	      msgBar.setRelativeAnchorPosition("0 0"); // Allows for fine corrections if needed...
+	      
+	      
+    }catch(err){
+    	// This should allow us to recognize environment context errors!
+    	alert(err);
+    }
+  
+    qutils.delayTestStart();
+    module("MessageBar Control");
+    test("1. Initial Conditions", function() {
+    	equals(msgBar.getAnchorID()              ,"uiArea1","AnchorID");
+    	equals(msgBar.getRelativeAnchorPosition(),"0 0"    ,"RelativeAnchorPosition");
+    	equals(msgBar.getVisible()               ,true     ,"Visible");
+    	equals(msgBar.getMaxToasted()            ,3        ,"MaxToasted");
+    	equals(msgBar.getMaxListed()             ,7        ,"MaxListed");
+    	
+    	// The "uiArea1" anchor should be visible, but not the Bar nor the List:
+		var jAnchor = jQuery.sap.byId("uiArea1");
+		var jBar    = jQuery.sap.byId("msgBar");
+		var jList   = jQuery.sap.byId("msgBar__List");
+    	equals((jAnchor.css('display')=="block") ,true   ,"Anchor displayed");
+    	equals((jBar.css('display')=="block")    ,false  ,"Bar not displayed");
+    	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
+    });
+    
+    test("2. Messages added", function() {
+    	// Injecting Messages:
+		msgBar.addMessages(aMeliMelos);  
+  		// Anchor and Bar should be visible, but not the List:
+		var jAnchor = jQuery.sap.byId("uiArea1");
+		var jBar    = jQuery.sap.byId("msgBar");
+		var jList   = jQuery.sap.byId("msgBar__List");
+	  	equals((jAnchor.css('display')=="block") ,true   ,"Anchor displayed");
+	  	equals((jBar.css('display')=="block")    ,true   ,"Bar displayed");
+	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
+    	
+    	// Can't simulate a click-open of the List with some code like
+    	// since JavaScript checks for the "pointer" cursor being rendered!
+    	jQuery("msgBar__arrowImg").focus().click();
+	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
+    }); 
+
+    test("3. Messages removed", function() {
+    	// Removing the previous Messages:
+		msgBar.deleteMessages(aMeliMeloIdsB);
+  		// The "uiArea1" anchor should be visible, but not the Bar nor the List:
+		var jAnchor = jQuery.sap.byId("uiArea1");
+		var jBar    = jQuery.sap.byId("msgBar");
+		var jList   = jQuery.sap.byId("msgBar__List");
+	  	equals((jAnchor.css('display')=="block") ,true   ,"Anchor displayed");
+	  	equals((jBar.css('display')=="block")    ,false  ,"Bar not displayed");
+	  	equals((jList.css('display')=="block")   ,false  ,"List not displayed");
+    }); 
+	
+	</script>
+  </head>
+  <body>
+    <h1 id="qunit-header">qUnit Page for sap.ui.commons.MessageBar</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture">test markup, will be hidden</div>
+    <div id="uiArea1"></div>    
+    <div id="uiArea2"></div>    
+    <div id="uiArea3"></div>    
+  </body>
+</html>

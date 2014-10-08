@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: jQuery.sap.storage
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+		jQuery.sap.require("jquery.sap.storage");
+		
+		var SUPPORTED_CHECK_INACTIVE = 0;
+		var SUPPORTED_CHECK_EXPECT_SUPPORT = 1;
+		var SUPPORTED_CHECK_EXPECT_NO_SUPPORT = -1;
+		
+		function testStorage(oStorage, sIdPrefix, iCheckSupported){
+			var store = jQuery.sap.storage(oStorage, sIdPrefix);
+			
+			var type = jQuery.sap.storage.Type.session;
+			if(typeof(oStorage) == "string"){
+				type = oStorage;
+			}else if(oStorage){
+				if(oStorage.getType){
+					type = oStorage.getType();
+				}else{
+					type = "unknown";
+				}
+			}
+			
+			equal(type, store.getType(), "Storage is of requested type");
+			
+			var supported = store.isSupported();
+
+			if(supported){
+				if(iCheckSupported != SUPPORTED_CHECK_INACTIVE){
+					ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_SUPPORT, "Store is supported as expected");
+				}
+				
+				var val = store.get("testkey");
+				ok(!val, "Value initally not defined");
+				
+				var res = store.put("testkey", "testvalue");
+				ok(res, "put returns true when storage is supported");
+				
+				val = store.get("testkey");
+				equal(val, "testvalue", "Value correct after put");
+				
+				res = store.put("Testkey2", "testvalue2");
+				val = store.get("Testkey2");
+				equal(val, "testvalue2", "Value correct after put");
+				
+				res = store.put("testkey3", "testvalue3");
+				val = store.get("testkey3");
+				equal(val, "testvalue3", "Value correct after put");
+				
+				res = store.removeAll("Test");
+				ok(res, "removeAll returns true when storage is supported");
+				
+				val = store.get("testkey");
+				equal(val, "testvalue", "Value still there after removeAll");
+				
+				val = store.get("Testkey2");
+				ok(!val, "Value not there after removeAll");
+				
+				val = store.get("testkey3");
+				equal(val, "testvalue3", "Value still there after removeAll");
+				
+				res = store.remove("testkey3");
+				ok(res, "remove returns true when storage is supported");
+				
+				val = store.get("testkey3");
+				ok(!val, "Value not there after remove");
+				
+				val = store.get("testkey");
+				equal(val, "testvalue", "Value still there after remove");
+				
+				res = store.removeAll();
+				ok(res, "removeAll returns true when storage is supported");
+				
+				val = store.get("testkey");
+				ok(!val, "Value not there after removeAll");
+			}else{
+				if(iCheckSupported != SUPPORTED_CHECK_INACTIVE){
+					ok(iCheckSupported == SUPPORTED_CHECK_EXPECT_NO_SUPPORT, "Store is not supported as expected");
+				}
+				
+				var val = store.get("testkey");
+				ok(!val, "Value initally not defined");
+				
+				var res = store.put("testkey", "testvalue");
+				ok(!res, "put returns false when storage is not supported");
+				
+				val = store.get("testkey");
+				ok(!val, "Value still not set after put");
+				
+				res = store.remove("testkey");
+				ok(!res, "remove returns false when storage is not supported");
+				
+				res = store.removeAll();
+				ok(!res, "removeAll returns false when storage is not supported");
+			}
+			
+			store.clear();
+		};
+		
+		function testCache(oStorage, sIdPrefix, bCachingExpected){
+			var store1 = jQuery.sap.storage(oStorage, sIdPrefix);
+			var store2 = jQuery.sap.storage(oStorage, sIdPrefix);
+			var store3 = jQuery.sap.storage(oStorage, sIdPrefix+"Something");
+			
+			if(bCachingExpected){
+				ok(store1 === store2, "Storage cached: "+store1.getType());
+			}else{
+				ok(store1 != store2, "Storage not cached "+store1.getType());
+			}
+			
+			ok(store1 != store3, "Cache is prefix aware "+store1.getType());
+		};
+		
+		function testPrefix(sIdPrefix){
+			var s = new SimpleStorage("custom3");
+			var store = jQuery.sap.storage(s, sIdPrefix);
+			var txt = sIdPrefix ? sIdPrefix : "DEFAULT";
+			
+			store.put("testkey0", "testvalue0");
+			store.put("testkey1", "testvalue1");
+			
+			equal(s.length, 2, txt + ": 2 items added");
+			for(var i=0; i<s.length; i++){
+				equal(s.key(i), (sIdPrefix ? sIdPrefix : "state.key_") + "-testkey" + i, txt + ": correct key '"+s.key(i)+"'");
+			}
+			
+			store.clear();
+			
+			equal(s.length, 0, txt + ": All items removed");
+		};
+		
+		//*******************************
+		
+		var SimpleStorage = function(sType){
+			this._type = sType;
+			this._supported = true;
+			this._values = {};
+			this._keys = [];
+			
+			this._updateLength = function(){
+				this.length = this._keys.length;
+			}
+		};
+		
+		SimpleStorage.prototype.getType = function(){
+			return this._type;
+		};
+		
+		SimpleStorage.prototype.isSupported = function(){
+			return this._supported;
+		};
+		
+		SimpleStorage.prototype.clear = function(){
+			this._values = {};
+			this._keys = [];
+			this._updateLength();
+		};
+		
+		SimpleStorage.prototype.setItem = function(sId, sStateToStore){
+			var bHasItem = !!this._values[sId];
+			this._values[sId] = sStateToStore;
+			if(!bHasItem){
+				this._keys.push(sId);
+				this._updateLength();
+			}
+		};
+		
+		SimpleStorage.prototype.removeItem = function(sId){
+			delete this._values[sId];
+			var newKeys = [];
+			for(var i=0; i<this._keys.length; i++){
+				if(sId != this._keys[i]){
+					newKeys.push(this._keys[i]);
+				}
+			}
+			this._keys = newKeys;
+			this._updateLength();
+		};
+		
+		SimpleStorage.prototype.getItem = function(sId){
+			return this._values[sId];
+		};
+		
+		SimpleStorage.prototype.key = function(idx){
+			if(idx >= this.length || idx < 0){
+				return null;
+			}
+			return this._keys[idx];
+		};
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+	
+		module("Basic");
+		
+		test("Default Storage", function(){
+			testStorage(null, null, SUPPORTED_CHECK_EXPECT_SUPPORT);
+		});
+		
+		test("Session Storage", function(){
+			testStorage(jQuery.sap.storage.Type.session, "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
+		});
+		
+		test("Local Storage", function(){
+			testStorage(jQuery.sap.storage.Type.local, "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
+		});
+		
+		test("Global Storage", function(){
+			testStorage(jQuery.sap.storage.Type.global, "myprefix", SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
+		});
+		
+		test("Custom Storage", function(){
+			testStorage(new SimpleStorage("custom1"), "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
+		});
+		
+		test("Not Supported", function(){
+			var s = new SimpleStorage("not supported");
+			s._supported = false;
+			testStorage(s, "myprefix", SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
+		});
+		
+		test("Cache", function(){
+			testCache(jQuery.sap.storage.Type.session, "myprefix", true);
+			testCache(jQuery.sap.storage.Type.local, "myprefix", true);
+			testCache(jQuery.sap.storage.Type.global, "myprefix", true);
+			testCache(new SimpleStorage("custom2"), "myprefix", false);
+		});
+		
+		test("Prefixes", function(){
+			testPrefix(null);
+			testPrefix("myprefix");
+		});
+		
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: jQuery.sap.storage</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

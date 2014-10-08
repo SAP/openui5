@@ -1,0 +1,60 @@
+@sapUiLocalBusyIndicatorBG: fade(@sapUiExtraLightBG, 72%); 
+@sapUiLocalBusyIndicatorBG_IE: @sapUiExtraLightBG;
+@sapUiLocalBusyIndicatorBoxSize: 8px;
+
+@sapUiLocalBusyIndicatorBoxColor: @sapUiMediumBG;
+@sapUiLocalBusyIndicatorBoxColorActive: @sapUiBlackBG;
+@sapUiLocalBusyIndicatorBoxTransitionDuration: ~"380ms";
+
+.sapUiLocalBusyIndicator {
+	background-color: @sapUiLocalBusyIndicatorBG;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
+	background-color: @sapUiLocalBusyIndicatorBG_IE;
+}
+
+.sapUiLocalBusyIndicatorAnimation {
+	position: absolute;
+	width: 50px;
+	top: 50%;
+	left: 50%;
+	margin: -(@sapUiLocalBusyIndicatorBoxSize / 2) 0 0 -(@sapUiLocalBusyIndicatorBoxSize * 5 / 2);
+}
+
+.sapUiLocalBusyIndicatorBox {
+	width: @sapUiLocalBusyIndicatorBoxSize;
+	height : @sapUiLocalBusyIndicatorBoxSize;
+	background-color: @sapUiLocalBusyIndicatorBoxColor;
+	float: left;
+	display: block;
+	margin-left: @sapUiLocalBusyIndicatorBoxSize;
+	
+	-moz-border-radius: 1px;
+	-webkit-border-radius: 1px;
+	border-radius: 1px;
+	
+	-moz-transition-property: background-color;
+	-moz-transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
+	-moz-transition-timing-function: ease-in;
+	
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
+	-webkit-transition-timing-function: ease-in;
+	
+	transition-property: background-color;
+	transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
+	transition-timing-function: ease-in;
+}
+
+.sapUiLocalBusyIndicatorBox.active {
+	background-color: @sapUiLocalBusyIndicatorBoxColorActive;
+}
+
+.sapUiLocalBusyIndicatorBox:first-child {
+	margin-left: 0; 
+}

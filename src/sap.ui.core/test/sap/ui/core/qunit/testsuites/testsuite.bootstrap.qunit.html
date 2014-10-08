@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<title>TestSuite for sap.ui.core: GTP testcase CORE/BOOTSTRAP</title>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script language="javascript">
+
+		/**
+		 * Add test pages to this test suite function.
+		 * Please order alphabetically
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite();
+			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Bootstrap.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreload.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAsync.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAuto.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithCustomBootTask.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinBody.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinHead.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgDefaults.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromConfigAttribute.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromGlobalObject.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromTagAttributes.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Configuration.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/PegasusEnvironment.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ConfiguratorURL.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_Standard.qunit.html");
+			// TODO: check why the following tests do not work
+			if (window["sap-ui-bootstrap-tests"]) {
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_ResOnly.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiBootURL.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiBootWithExtURL.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiCoreURL.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiCoreWithExtURL.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiCustomURL.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_SapUiCustomWithExtURL.qunit.html");
+			}
+			return suite;
+		}
+		  
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

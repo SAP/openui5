@@ -1,0 +1,9 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+		controllerName="NavigationWithoutMasterDetailPattern.view.DetailDetail" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page title="DetailDetail">
+		<content>
+		   <Text text=" DetailDetail view ..." id="text"></Text>
+	       <Button text="toView1" press="handleBtn1Press"></Button>
+		</content>
+	</Page>
+</mvc:View>

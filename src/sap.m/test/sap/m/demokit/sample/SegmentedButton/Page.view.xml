@@ -1,0 +1,46 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false"
+		class="marginBoxContent" >
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<SegmentedButton selectedButton="kids">
+					<Button text="Kids" id="kids" />
+					<Button text="Adults" />
+					<Button text="Seniors" />
+				</SegmentedButton>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+		<content>
+			<VBox width="100%" alignItems="Center">
+				<SegmentedButton selectedButton="satellite">
+					<Button text="Map" />
+					<Button text="Satellite" id="satellite" />
+					<Button text="Hybrid" />
+				</SegmentedButton>
+				<SegmentedButton selectedButton="competitor"
+					class="marginOnlyTop">
+					<Button icon="sap-icon://taxi" />
+					<Button icon="sap-icon://lab" />
+					<Button icon="sap-icon://competitor" id="competitor" />
+				</SegmentedButton>
+			</VBox>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<SegmentedButton selectedButton="small">
+					<Button text="Small" id="small" />
+					<Button text="Medium" />
+					<Button text="Large" />
+				</SegmentedButton>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>

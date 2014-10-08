@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Image - sap.ui.commons - qUnit test</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+		var sSrc = "../images/SAPLogo.gif",
+		 	sTooltip = "tooltip",
+		 	sAlt = "alternative text",
+			sWidth = "111px",
+			sHeight = "55px",
+			bVisible = true,
+			sMessage = "foo";
+		
+		var oRawImage = new Image();
+		oRawImage.src = sSrc;
+	
+		function handleEvent() {
+			ok(true); // just for counting
+		}
+		
+		var i1 = new sap.ui.commons.Image("i1");
+		i1.setSrc(sSrc);
+		i1.setWidth(sWidth);
+		i1.setHeight(sHeight);
+		i1.setAlt(sAlt);
+		i1.setVisible(bVisible);
+		i1.setTooltip(sTooltip);
+		i1.placeAt("uiArea1");
+
+		var i2 = new sap.ui.commons.Image("i2", {
+			src : sSrc,
+			width : sWidth,
+			height : sHeight,
+			alt : sAlt,
+			visible : bVisible,
+			tooltip : sTooltip,
+			decorative: false,
+			press : handleEvent
+		});
+		i2.placeAt("uiArea2");
+		
+		var i3noSourceNoHeight = new sap.ui.commons.Image("imageNoSourceNoHeight");
+		i3noSourceNoHeight.placeAt("uiArea3");
+		
+		var i4noSource = new sap.ui.commons.Image("imageNoSource");
+		i4noSource.setWidth("100px");
+		i4noSource.setHeight("100px");
+		i4noSource.placeAt("uiArea3");
+
+		/* tests */
+		
+		test("Initial Check", function() {
+			i1 = sap.ui.getCore().byId("i1");
+			i2 = sap.ui.getCore().byId("i2");
+			
+			ok((i1 !== undefined) && (i1 != null), "i1 should not be null");
+			ok((i2 !== undefined) && (i2 != null), "i2 should not be null");
+		});
+		
+		test("Alt text and tooltip", function() {
+			// i1 is decorative, i2 not
+			
+			// read alt attribute from DOM
+			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
+			
+			// read title attribute from DOM
+			equal(jQuery.sap.byId(i1.getId()).attr("title"), sTooltip, "tooltip text of i1 should be rendered");
+			equal(jQuery.sap.byId(i2.getId()).attr("title"), sTooltip, "tooltip text of i2 should be rendered");
+			
+			i1.setAlt("");
+			i2.setAlt("");
+			sap.ui.getCore().applyChanges();
+			
+			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sTooltip, "alt text of i2 should have the tooltip when alt is not set, but tooltip is");
+			
+			i1.setTooltip("");
+			i2.setTooltip("");
+			sap.ui.getCore().applyChanges();
+			
+			equal(jQuery.sap.domById(i1.getId()).getAttribute("alt"), "", "alt attribute of i1 should be an empty string because the image is decorative");
+			equal(jQuery.sap.domById(i2.getId()).getAttribute("alt"), null, "alt attribute of i2 should NOT be rendered");
+			equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+			
+			i1.setAlt(sAlt);
+			i2.setAlt(sAlt);
+			sap.ui.getCore().applyChanges();
+			
+			equal(jQuery.sap.byId(i1.getId()).attr("alt"), "", "alt text of i1 should be an empty string because the image is decorative");
+			equal(jQuery.sap.byId(i2.getId()).attr("alt"), sAlt, "alt text of i2 should be rendered");
+			equal(jQuery.sap.domById(i1.getId()).getAttribute("title"), null, "title attribute of i1 should NOT be rendered");
+			equal(jQuery.sap.domById(i2.getId()).getAttribute("title"), null, "title attribute of i2 should NOT be rendered");
+		});
+		
+		test("Offset Dimensions", function() {
+			// test the initial dimensions
+			var oDomRef = jQuery.sap.domById("i1");
+			equals(oDomRef.offsetWidth, parseInt(i1.getWidth()), "i1.offsetWidth should equal parseInt(i1.getWidth())");
+			equals(oDomRef.offsetHeight, parseInt(i1.getHeight()), "i1.offsetHeight should equal parseInt(i1.getHeight())");
+		});
+		
+		
+		test("Empty Source No Height", function() {
+			// test the initial dimensions
+			var oImage = jQuery.sap.byId("imageNoSourceNoHeight");
+			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSourceNoHeight has the right class 'sapUiImgNoSource' set");
+			var oDomRef = jQuery.sap.domById("imageNoSourceNoHeight");
+			equals(oDomRef.offsetWidth, 0, "imageNoSourceNoHeight has the right width of 0px");
+			equals(oDomRef.offsetHeight, 0, "imageNoSourceNoHeight has the right height of 0px");
+		});
+
+		
+		test("Empty Source", function() {
+			// test the initial dimensions
+			var oImage = jQuery.sap.byId("imageNoSource");
+			ok(oImage.hasClass("sapUiImgNoSource"), "imageNoSource has the right class 'sapUiImgNoSource' set");
+			var oDomRef = jQuery.sap.domById("imageNoSource");
+			equals(oDomRef.offsetWidth, 100, "imageNoSource has the right width of 100px");
+			equals(oDomRef.offsetHeight, 100, "imageNoSource has the right height of 100px");
+		});
+		
+		asyncTest("Dimension Changes", function() {
+			// test changed dimensions
+			i2.setWidth("292px");
+			i2.setHeight("292px");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oDomRef = window.document.getElementById("i2");
+				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+				equals(oDomRef.offsetHeight, 292, "i2.offsetHeight should equal 292");
+				start();
+			}, 10);
+		});
+		
+		asyncTest("Aspect Ratio", function() {
+			// test aspect ratio after changed dimensions
+			i2.setWidth("292px");
+			i2.setHeight("");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oDomRef = window.document.getElementById("i2");
+				equals(oDomRef.offsetWidth, 292, "i2.offsetWidth should equal 292");
+				equals(oDomRef.offsetHeight, 144, "i2.offsetHeight should equal 144");
+				start();
+			}, 10);
+		});
+
+		asyncTest("Original Width", function() {
+			// test original width
+			i2.setWidth("");
+			i2.setHeight("");
+			sap.ui.getCore().applyChanges();
+			setTimeout(function() {
+				oDomRef = window.document.getElementById("i2");
+				equals(oDomRef.offsetWidth, 73, "i2.offsetWidth should equal 73");
+				equals(oDomRef.offsetHeight, 36, "i2.offsetHeight should equal 36");	
+				start();
+			}, 10);
+		});
+		
+		</script>
+	</head>
+	<body>
+		
+		<h1 id="qunit-header">qUnit Page for sap.ui.commons.Image</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>
+		
+	</body>
+</html>

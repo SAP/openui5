@@ -1,0 +1,57 @@
+/* ============================================= */
+/* CSS for control sap.m/Panel.control           */
+/* ============================================= */
+.sapMPanelHdr {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-text-size-adjust: none;
+	/* To improve readability Mobile Safari automatically increases the size of small text so let's disable this */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-transform: none;
+}
+
+.sapMPanelExpandablePart {
+	clear: both;
+}
+
+.sapMPanelExpandableIcon {
+	position : absolute;
+	top: 50%;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	/* 400ms is standard jQuery duration */
+	-webkit-transition: -webkit-transform 0.4s ease-out;
+	transition: transform 0.4s ease-out;
+}
+
+.sapMPanelExpandableIconExpanded {
+	display: inline-block;
+	-webkit-transform: translateY(-50%) rotate(90deg);
+	-ms-transform: translateY(-50%) rotate(90deg);
+	transform: translateY(-50%) rotate(90deg);
+	/* 400ms is standard jQuery duration */
+	-webkit-transition: all 0.4s ease-out;
+	transition: all 0.4s ease-out;	
+}
+
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanelExpandableIcon {
+	-webkit-transform: translateY(-50%) scale(-1, 1);
+	-ms-transform: translateY(-50%) scale(-1, 1);
+	transform: translateY(-50%) scale(-1, 1);
+}
+
+/* rotate(90deg) will be mirrored to rotate(-90deg) for RTL */
+html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanelExpandableIconExpanded {
+	-webkit-transform: translateY(-50%) rotate(90deg) scale(-1, 1);
+	-ms-transform: translateY(-50%) rotate(90deg) scale(-1, 1);
+	transform: translateY(-50%) rotate(90deg) scale(-1, 1);
+}
+
+.sapMPanelWrappingDiv,
+.sapMPanelWrappingDivTb {
+	position: relative;
+}

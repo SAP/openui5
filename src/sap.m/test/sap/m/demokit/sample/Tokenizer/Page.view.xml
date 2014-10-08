@@ -1,0 +1,11 @@
+<mvc:View height="100%" controllerName="sap.m.sample.Tokenizer.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Tokenizer width="100%"
+		tokens="{
+                                        path: '/ProductCollection',
+                                        sorter: { path: 'Name' }
+                                  }">
+		<Token key="{ProductId}" text="{Name}" />
+	</Tokenizer>
+</mvc:View>

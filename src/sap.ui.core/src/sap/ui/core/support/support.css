@@ -1,0 +1,636 @@
+/* ============================================= */
+/* CSS for support popup window                  */
+/* ============================================= */
+
+.sapUiSupportBody {
+	background-color: #F2F2F2;
+	color: #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+	min-width: 700px;
+}
+
+.sapUiSupportHidden {
+	display: none;
+}
+
+.sapUiSupportHdr {
+	position: relative;
+	border-top: 5px solid #F0AB00;
+	background-color: #646464;
+	height: 30px;
+    margin: 0;
+}
+
+.sapUiSupportHdr > img {
+	position: absolute;
+	left: 10px;
+	height: 29px;
+}
+
+.sapUiSupportHdr > div {
+	color: #999999;
+	font-size: 18px;
+	font-weight: bold;
+	left: 105px;
+    position: absolute;
+    top: 5px;
+}
+
+.sapUiSupportPnl {
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+}
+
+.sapUiSupportCntnt {
+	position: absolute;
+	top: 40px;
+	bottom: 0;
+	overflow: auto;
+	width: 100%;
+	min-width: 700px;
+}
+
+.sapUiSupportPnlHdr {
+	margin-top: 0;
+	margin-bottom: 5px;
+	color: #444444;
+	border-bottom: 2px solid #007DC0;
+	height: 25px;
+	font-weight: bold;
+	font-size: 18px;
+	padding-left: 5px;
+	padding-right: 5px;
+	position: relative;
+}
+
+.sapUiSupportPnlHdrHdl {
+	border-color: #444444;
+    border-right: 1px solid #444444;
+    border-style: solid;
+    border-width: 3px 1px 1px;
+    cursor: pointer;
+    height: 7px;
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    width: 10px;
+}
+
+.sapUiSupportPnlHdrHdl.sapUiSupportPnlHdrHdlClosed {
+	border-width: 3px 0px 0px;
+	width: 12px;
+}
+
+.sapUiSupportPnlCntnt {
+	margin-bottom: 5px;
+}
+
+.sapUiSupportPnlCntntPad {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.sapUiSupportPlugin {
+	overflow: auto;
+	height: 200px;
+	position: relative;
+}
+
+.sapUiSupportLink,
+.sapUiSupportLink:active,
+.sapUiSupportLink:focus,
+.sapUiSupportLink:visited,
+.sapUiSupportLink:hover{
+	color: #0078BB;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.sapUiSupportLink:hover{
+	text-decoration: underline;
+}
+
+.sapUiSupportLink.sapUiSupportLinkDsbl,
+.sapUiSupportLink.sapUiSupportLinkDsbl:active,
+.sapUiSupportLink.sapUiSupportLinkDsbl:focus,
+.sapUiSupportLink.sapUiSupportLinkDsbl:visited,
+.sapUiSupportLink.sapUiSupportLinkDsbl:hover{
+	color: #999999;
+	text-decoration: underline;
+	cursor: default;
+}
+
+.sapUiSupportLabel {
+	font-weight: bold;
+}
+
+.sapUiSupportToolbar {
+	background-color: #F9F9F9;
+    height: 28px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.sapUiSupportTxtFld,
+.sapUiSupportBtn {
+	border: 1px solid #BFBFBF;
+	font-size: 14px;
+	height: 22px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapUiSupportTxtFld {
+	background-color: #FFFFFF;
+	padding: 1px;
+}
+
+.sapUiSupportTxtFld:hover,
+.sapUiSupportTxtFld:focus {
+	border-color: #007DC0;
+}
+
+.sapUiSupportBtn {
+	background-color: #E2E2E2;
+	border-color: #A3A3A3;
+	padding-bottom: 3px;
+	cursor: pointer;
+}
+
+.sapUiSupportBtn:hover,
+.sapUiSupportBtn:focus,
+.sapUiSupportBtn.active {
+	color: #FFFFFF;
+	border-color: #00689E;
+	background-color: #007DC0;
+}
+
+.sapUiSupportBtn.active {
+	cursor: default;
+}
+
+.sapUiSupportToolbar > .sapUiSupportBtn,
+.sapUiSupportToolbar > .sapUiSupportTxtFld {
+	margin-top: 3px;
+	vertical-align: top;
+}
+
+.sapUiSupportToolbar > .sapUiSupportLink {
+	margin-top: 6px;
+	vertical-align: top;
+}
+
+.sapUiSupportToolbar > .sapUiSupportLabel {
+	position: relative;
+	top: 6px;
+	vertical-align: top;
+}
+
+
+/** Plugins **/
+
+
+#sapUiSupportTechInfo {
+	height: 350px;
+}
+
+#sapUiSupportTechInfo > table {
+	width: 100%;
+}
+
+#sapUiSupportTechInfo-tggleDbgSrc,
+#sapUiSupportTechInfo-tggleStatistics {
+	margin-left: 15px;
+}
+
+#sapUiSupportTechInfo-Refresh {
+	position: absolute;
+    right: 5px;
+}
+
+.sapUiSupportTechInfoBorder {
+	border: 1px solid #E2E2E2;
+}
+
+#sapUiSupportTrace,
+#sapUiSupportMessageTest {
+	overflow: hidden;
+}
+
+#sapUiSupportMessageTest > .sapUiSupportToolbar > button {
+	margin-left: 5px;
+}
+
+#sapUiSupportPerf .sapUiSupportPerfCntnt,
+#sapUiSupportTechInfo .sapUiSupportTechInfoCntnt,
+#sapUiSupportTrace .sapUiSupportTraceCntnt,
+#sapUiSupportMessageTest .sapUiSupportMessageCntnt {
+	overflow: auto;
+	position: absolute;
+	top: 33px;
+	left: 5px;
+	right: 5px;
+	bottom: 0;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryTime,
+#sapUiSupportTrace .sapUiSupportTraceEntryLevel {
+	font-weight: bold;
+	display: inline-block;
+	vertical-align: top;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryMessage {
+	display: inline-block;
+	vertical-align: top;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryLevel {
+	width: 70px;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntry {
+	border-bottom: 1px solid #BFBFBF;
+}
+
+#sapUiSupportTrace .sapUiSupportTraceEntryTime {
+	width: 100px;
+}
+
+#sapUiSupportTrace > .sapUiSupportToolbar > .sapUiSupportLabel {
+	margin-left: 10px;
+	font-weight: normal;
+}
+
+#sapUiSupportTrace > .sapUiSupportToolbar > select,
+#sapUiSupportTrace > .sapUiSupportToolbar > input {
+	margin-left: 5px;
+}
+
+#sapUiSupportControlTree {
+	height: 400px;	
+	overflow: hidden;
+}
+
+.sapUiSupportDottedContainer,
+#sapUiSupportControlTreeArea,
+#sapUiSupportControlPropertiesArea {
+	height: 378px;
+	width: 48%;
+	border: 1px dotted black;
+	background-color: white;
+	padding: 5px;
+	overflow: auto;
+	float: left;
+	position: relative;
+}
+
+#sapUiSupportControlPropertiesArea {
+	float: right;
+	height: 347px;
+}
+
+ul.sapUiSupportControlTreeList, ul.sapUiSupportControlTreeList ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.sapUiSupportControlTreeList li {
+	margin: 2px 0 2px 11px;
+	padding: 0;
+}
+
+#sapUiSupportControlTreeArea li {
+	/*position: relative;*/
+	overflow: hidden;
+	cursor: pointer;
+}
+
+
+#sapUiSupportControlTreeArea li img.sapUiControlTreeIcon,
+#sapUiSupportControlTreeArea li img.sapUiControlPicture {
+	float: left;
+}
+
+#sapUiSupportControlTreeArea li img.sapUiControlTreeIcon {
+	margin-top: 7px;
+	margin-right: 4px;
+}
+
+#sapUiSupportControlTreeArea li img.sapUiControlPicture {
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+#sapUiSupportControlTreeArea li div {
+	overflow: hidden;
+	margin-left: 35px;
+	padding: 7px;
+}
+
+#sapUiSupportControlTreeArea li.sapUiControlTreeLink span {
+	color: gray;
+	text-decoration: underline;
+} 
+
+#sapUiSupportControlTreeArea .sapUiSupportControlTreeSelected {
+	background-color: #007DC0;
+	color: white;
+}
+
+#sapUiSupportControlTreeArea .sapUiSupportControlTreeBreakpointCount {
+	float: right;
+}
+
+#sapUiSupportControlTreeArea .sapUiSupportControlTreeBreakpointCount {
+	color: black;
+}
+
+#sapUiSupportControlTreeArea .sapUiSupportControlTreeSelected .sapUiSupportControlTreeBreakpointCount {
+	color: white;
+}
+
+#sapUiSupportControlTabs {
+	width: 48%;
+	height: 22px;
+	padding: 3px 12px 6px 0;
+	overflow: auto;
+	float: right;
+}
+
+#sapUiSupportControlPropertiesArea ul.sapUiSupportControlTreeList li span {
+	display: inline-block;
+	padding: 5px 0; 
+	vertical-align: top; 
+}
+
+#sapUiSupportControlPropertiesArea ul.sapUiSupportControlTreeList li {
+	position: relative;
+}
+
+.sapUiSupportControlProperties {
+	padding: 5px;
+}
+
+.sapUiSupportControlProperties table {
+	width: 100%;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.sapUiSupportControlProperties tr {
+	height: 30px;
+}
+
+.sapUiSupportControlProperties tr:nth-child(even) {
+	background-color: #F9F9F9;
+}
+
+.sapUiSupportControlProperties td {
+	border: 1px solid #BFBFBF;
+	padding: 0 6px;
+}
+
+.sapUiSupportControlProperties td div {
+	/*padding: 0 5px;*/
+}
+
+.sapUiSupportControlProperties input[type="text"],
+.sapUiSupportControlProperties select {
+	width: 100%;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+#sapUiSupportPerf > .sapUiSupportToolbar > .sapUiSupportLabel {
+	font-weight: normal;
+}
+
+#sapUiSupportPerf > .sapUiSupportToolbar > button {
+	margin-right: 5px;
+}
+
+.sapUiSupportToolbar > input[type="checkbox"] {
+	margin-top: 7px;
+}
+
+.sapUiSupportControlProperties td.methodLabel {
+	vertical-align: middle;
+	padding-left: 7px;
+}
+
+.sapUiSupportControlProperties td.methodLabel label {
+	padding: 6px 0 6px 0;
+	width: 100%;
+	display: inline-block;
+}
+
+#sapUiSupportControlPropertiesArea ul li .get,
+#sapUiSupportControlPropertiesArea ul li .set {
+	position: absolute;
+	top: 12px;
+	font-weight: bold;
+}
+
+#sapUiSupportControlPropertiesArea ul li .get {
+	right: 50px;
+}
+
+html[data-sap-ui-browser^="sf"] #sapUiSupportControlPropertiesArea ul li .get {
+	right: 45px;
+}
+
+#sapUiSupportControlPropertiesArea ul li .set {
+	right: 18px;
+}
+
+html[data-sap-ui-browser^="sf"] #sapUiSupportControlPropertiesArea ul li .set {
+	right: 16px;
+}
+
+.sapUiSupportControlMethods {
+	padding: 5px 2px 0 2px;
+}
+
+select.sapUiSupportAutocomplete {
+	width: 198px;
+	height: 22px;
+	padding: 1px;
+}
+
+input[type="text"].sapUiSupportAutocomplete {
+	margin-left: -197px;
+	padding: 0 5px;
+	width: 168px;
+	height: 18px;
+	border: none;
+}
+
+html[data-sap-ui-browser^="sf"] input[type="text"].sapUiSupportAutocomplete {
+	height: 14px;
+}
+
+.sapUiSupportControlMethods button {
+	margin-left: 28px;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiSupportControlMethods button {
+	margin-left: 26px;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiSupportControlMethods button {
+	margin-left: 24px;
+}
+
+html[data-sap-ui-browser^="sf"] .sapUiSupportControlMethods select.sapUiSupportAutocomplete {
+	width: 189px;
+}
+
+html[data-sap-ui-browser^="sf"] .sapUiSupportControlMethods input[type="text"].sapUiSupportAutocomplete {
+	width: 159px;
+	margin-left: -188px;
+}
+
+hr.no-border {
+	border-style: solid;
+	border-color: #BFBFBF;
+	border-bottom: none;
+	margin: 10px 0 0 0;
+}
+
+ul.sapUiSupportList {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+ul.sapUiSupportList li {
+	position: relative;
+}
+
+ul.sapUiSupportBreakpointList li {
+	border-bottom: 1px solid #BFBFBF;
+}
+
+ul.sapUiSupportBreakpointList li:last-child {
+	border-bottom: none;
+}
+
+ul.sapUiSupportBreakpointList li:hover {
+	background-color: #F9F9F9;
+}
+
+ul.sapUiSupportBreakpointList li span {
+	font-weight: bold;
+	padding: 7px 0 7px 10px;
+	display: inline-block;
+}
+
+ul.sapUiSupportBreakpointList li img {
+	position: absolute;
+	display: none;
+	right: 10px;
+	top: 7px;
+}
+
+ul.sapUiSupportBreakpointList li:hover img {
+	display: inline;
+}
+
+#sapUiSupportControlTabProperties,
+#sapUiSupportControlTabBindingInfos {
+	margin-right: 3px;
+}
+
+#sapUiSupportDebugging {
+	height: 300px;
+}
+
+#sapUiSupportDebugging .sapUiSupportDottedContainer {
+	height: 278px;
+}
+
+#sapUiSupportDebuggingMethodContainer {
+	float: right;
+}
+
+#sapUiSupportDebuggingClassSelect {
+	width: 228px;
+}
+
+#sapUiSupportDebuggingClassInput {
+	margin-left: -227px;
+	width: 198px;
+}
+
+#sapUiSupportDebuggingMethodSelect {
+	width: 150px;
+}
+
+html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodSelect {
+	width: 140px;
+}
+
+#sapUiSupportDebuggingMethodInput {
+	margin-left: -149px;
+	width: 120px;
+}
+
+html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodInput {
+	margin-left: -139px;
+	width: 110px;
+}
+
+#sapUiSupportDebuggingAddClass,
+#sapUiSupportDebuggingAddBreakpoint {
+	margin-left: 32px;
+}
+
+html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddClass,
+html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddBreakpoint {
+	margin-left: 30px;
+}
+
+html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddClass,
+html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
+	margin-left: 28px;
+}
+
+#sapUiSupportDebuggingClassList li div {
+	padding: 7px 0 7px 10px;
+	margin-right: 35px;
+	font-weight: bold;
+}
+
+#sapUiSupportDebuggingClassList li img.remove-class {
+	top: 7px;
+	right: 10px;
+	position: absolute;
+	display: none;
+}
+
+#sapUiSupportDebuggingClassList li.selected div,
+#sapUiSupportDebuggingClassList li div:hover {
+	color: #fff;
+	background-color: #007dc0;
+	cursor: pointer;
+}
+
+#sapUiSupportDebuggingClassList li:hover img.remove-class {
+	display: inline;
+}
+
+#sapUiSupportDebuggingClassList li span.breakpoints {
+	float: right;
+	margin-right: 10px;
+}

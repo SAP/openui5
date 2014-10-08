@@ -1,0 +1,99 @@
+{
+
+	"items": [
+		{
+			"type": "Account",
+			"name": "Moonlight",
+			"href": "#",
+			"description": "The Sunny Long Long Long Named corp.",
+			"icon": "images/feeder/m_01.png",
+			"accountData": [
+				{ "label": "Opportunity ID",
+					"text": "4102346" },
+				{ "label": "Description",
+				"text": "Delivery postponed Delivery postponed Delivery postponed" },
+				{ "label": "Priority",
+				"text": "High" },
+				{ "label": "Name",
+				"text": "This is a very long long link",
+				"href": "http://www.google.com" },
+				{ "label": "Status",
+				"text": "Open" },
+				{ "label": "Sales Unit",
+				"text": "New York Office" },
+				{ "label": "Some Very Long Item Total Value",
+				"text": "$1,000.00" }
+			]
+		},
+		{
+			"type": "Account",
+			"name": "Saturn is a very big planet far away from the Earth",
+			"description": "The Funny corp.",
+			"icon": "images/feeder/w_01.png", 
+			"accountData": [
+				{ "label": "Opportunity ID",
+					"text": "4102378" },
+				{ "label": "Description",
+				"text": "Due delivery" },
+				{ "label": "Priority",
+				"text": "Medium" },
+				{ "label": "Name",
+				"text": "Christmas Balls" },
+				{ "label": "Status",
+				"text": "Open" },
+				{ "label": "Sales Unit",
+				"text": "Atlanta Office" },
+				{ "label": "Item Total Value",
+				"text": "$1,500.00" }
+			]
+		},
+		{
+			"type": "Account",
+			"name": "Plutos",
+			"href": "#",
+			"description": "The Very Dark corp.",
+			"icon": "images/feeder/m_02.png",
+			"accountData": [
+				{ "label": "Opportunity ID",
+					"text": "45645564" },
+				{ "label": "Description",
+				"text": "Everything is OK" },
+				{ "label": "Priority",
+				"text": "Low" },
+				{ "label": "Name",
+				"text": "This is another link",
+				"href": "http://www.google.com" },
+				{ "label": "Status",
+				"text": "Open" },
+				{ "label": "Sales Unit",
+				"text": "New York Office" },
+				{ "label": "Item Total Value",
+				"text": "$2,000.00" }
+			]
+		},
+		{
+			"type": "Account",
+			"name": "The Prophet",
+			"href": "#",
+			"description":  "The Prophet corp.",
+			"icon": "images/feeder/m_03.png",
+			"accountData": [
+				{ "label": "Opportunity ID",
+					"text": "4547466" },
+				{ "label": "Description",
+				"text": "Delivered" },
+				{ "label": "Priority",
+				"text": "Medium" },
+				{ "label": "Name",
+				"text": "προφήτης",
+				"href": "http://www.google.com" },
+				{ "label": "Status",
+				"text": "Open" },
+				{ "label": "Sales Unit",
+				"text": "The Sky Office" },
+				{ "label": "Item Total Value",
+				"text": "priceless" }
+			]
+		}
+	]
+}

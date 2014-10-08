@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.ui.suite.TaskCircle
+  Author: D030758
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for TaskCircle - sap.ui.suite </title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons, sap.ui.suite">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Control initialization -->
+		<script language="javascript">
+			/****************************************************
+			* PREPARATIONS
+			*****************************************************/
+			//declare variables
+			var sPressMessage = "Control 1: press event OK!",
+				sTooltip      = "Control 4: tooltip OK!";
+
+			//simulate event
+			function pressEventHandler() {
+				throw sPressMessage;
+				}
+
+
+  			/****************************************************
+  			* CREATION OF CONTROLS
+  			*****************************************************/
+			// Prefix for Control ID
+			var sCtrlId   = "TaskCircle";
+
+			// Control 1 = Default values
+			var oTaskCircle1 =  new sap.ui.suite.TaskCircle(sCtrlId + "1");
+			oTaskCircle1.attachPress(pressEventHandler);
+			oTaskCircle1.placeAt("uiArea1");
+
+			// Control 2 = Set Value to 30 percent
+			var oTaskCircle2 =  new sap.ui.suite.TaskCircle(sCtrlId + "2");
+			oTaskCircle2.setProperty('value', 30);
+			oTaskCircle2.placeAt("uiArea2");
+
+			// Control 3 = Set Value to 0 percent
+			var oTaskCircle3 =  new sap.ui.suite.TaskCircle(sCtrlId + "3");
+			oTaskCircle3.setProperty('value', 0);
+			oTaskCircle3.placeAt("uiArea3");
+
+			// Control 4 = Set Value to 100 percent
+			var oTaskCircle4 =  new sap.ui.suite.TaskCircle(sCtrlId + "4");
+			oTaskCircle4.setProperty('value', 100);
+			oTaskCircle4.setTooltip(sTooltip);
+			oTaskCircle4.placeAt("uiArea4");
+
+			// Control 5 = Set Value to <0
+			var oTaskCircle5 =  new sap.ui.suite.TaskCircle(sCtrlId + "5");
+			oTaskCircle5.setProperty('value', -30);
+			oTaskCircle5.placeAt("uiArea5");
+
+			// Control 6 = Set Value to >100
+			var oTaskCircle6 =  new sap.ui.suite.TaskCircle(sCtrlId + "6");
+			oTaskCircle6.setProperty('value', 111);
+			oTaskCircle6.placeAt("uiArea6");
+
+		</script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+			/****************************************************
+			* QUINIT TESTS - PREPARATIONS
+			*****************************************************/
+			qutils.delayTestStart();
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'PROPERTIES'
+			*****************************************************/
+			// Set a Test Module for module "Properties"
+			module("Properties");
+
+			//Testcase 1: Default values
+			test("Default Values [Control 1]: ", function() {
+				expect(4);
+				equals(oTaskCircle1.getValue(), 0 , "Default value: ");
+				equals(oTaskCircle1.getMaxValue(), 100 , "Default maximum value: ");
+				equals(oTaskCircle1.getMinValue(), 0 , "Default minimum value: ");
+				equals(oTaskCircle1.getColor(), sap.ui.suite.TaskCircleColor.Gray , "Default color: ");	  	
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'EVENTS'
+			*****************************************************/
+			// Set a Test Module for module "Events"
+			module("Events");
+
+			//Testcase 7: Press Event
+			test("Press Event [Control 1]: ", function() {
+				expect(1);
+				try {
+						oTaskCircle1.firePress();
+						fail("exception should have been thrown!");
+				} catch (e) {
+						equals(sPressMessage, e, "Press Event triggered");
+				}
+			});
+
+			//Testcase 8: DetachPress Event
+			test("Detach Press Eventhandler [Control 1]: ", function() {
+				expect(1);
+				oTaskCircle1.detachPress(pressEventHandler);
+				try {
+						oTaskCircle1.firePress();
+						ok(true, "No event and thus no exception should be triggered!");
+				} catch (e) {
+						fail("should not occur");
+				}
+				// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
+				oTaskCircle1.attachPress(pressEventHandler);
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'TOOLTIPS'
+			*****************************************************/
+			// Set a Test Module for module "Tooltips"
+			module("Tooltips");
+
+			//Testcase 9: Manually set Tooltip
+			test("Manual Tooltip [Control 4]: ", function() {
+				expect(1);
+				equals(sTooltip, oTaskCircle4.getTooltip(), "Manual Tooltip");
+			});
+
+			//Testcase 10: Automatic Tooltip
+			test("Automatic Tooltip [Control 2]: ", function() {
+				expect(1);
+				if(!this.oThis){
+								this.oThis = jQuery.sap.byId(sCtrlId + "2");
+								}
+				AriaValue = this.oThis.attr('aria-valuenow');
+				Tooltip   = this.oThis.attr('title');
+				equals(AriaValue, Tooltip, "Automatic Tooltip");
+			});
+
+
+			/****************************************************
+			* QUINIT TESTS MODULE 'ARIA'
+			*****************************************************/
+			module("ARIA");
+
+			//Testcase 11: Default ARIA-Value
+			test("Default ARIA-Values [Control 1]: ", function() {
+				expect(3);
+				if(!this.oThis){
+								this.oThis = jQuery.sap.byId(sCtrlId + "1");
+								}
+				ValueNow = this.oThis.attr('aria-valuenow');
+				ValueMax = this.oThis.attr('aria-valuemax');
+				ValueMin = this.oThis.attr('aria-valuemin');
+				equals(ValueNow, "0",   "Default ARIA-value: ");
+				equals(ValueMax, "100",   "Maximum ARIA-value: ");
+				equals(ValueMin, "0",     "Minimum ARIA-value: ");
+			});
+
+			//Testcase 12: ARIA-Value for positive values
+			test("ARIA-Value for positive values [Controls 2,4,6]: ", function() {
+				expect(3);
+				this.oThis2 = jQuery.sap.byId(sCtrlId + "2");
+				this.oThis4 = jQuery.sap.byId(sCtrlId + "4");
+				this.oThis6 = jQuery.sap.byId(sCtrlId + "6");
+				ValueNow2   = this.oThis2.attr('aria-valuenow');
+				ValueNow4   = this.oThis4.attr('aria-valuenow');
+				ValueNow6   = this.oThis6.attr('aria-valuenow');
+				equals(ValueNow2, "30",   "ARIA-value for 30 percent: ");
+				equals(ValueNow4, "100",   "ARIA-value for 100 percent: ");
+				equals(ValueNow6, "111",   "ARIA-value for 111 percent: ");
+			});
+
+
+			//Testcase 13: ARIA-Value for negative values
+			test("ARIA-Value for negative values [Control 5]: ", function() {
+				expect(1);
+				this.oThis5 = jQuery.sap.byId(sCtrlId + "5");
+		      	ValueNow5   = this.oThis5.attr('aria-valuenow');
+		      	equals(ValueNow5, "0",   "ARIA-value for -30 percent: ");
+			});
+
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.suite.TaskCircle</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<br>
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>
+		<div id="uiArea4"></div>
+		<div id="uiArea5"></div>
+		<div id="uiArea6"></div>
+	</body>
+</html>

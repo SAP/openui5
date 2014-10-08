@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>CustomizingConfiguration and Customizing in general - sap.ui.core (customizing disabled)</title>
+	
+	<script id="sap-ui-bootstrap" 
+			type="text/javascript" 
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" 
+			data-sap-ui-noConflict="true"
+			data-sap-ui-xx-disableCustomizing="true">
+	</script>
+	
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<script>
+	
+	
+	// Event handler functions
+	var iStandardSub2ControllerCalled = 0;
+	function standardSub2ControllerCalled() {
+		iStandardSub2ControllerCalled++;
+	}
+	
+	var iCustomSub2ControllerCalled = 0;
+	function customSub2ControllerCalled() {
+		iCustomSub2ControllerCalled++;
+	}
+	
+	var aLifeCycleCalls = [];
+	
+	
+	
+	// UI Construction
+
+	sap.ui.localResources("testdata"); // handles both, SAP and customer content, in this example
+	
+	// load and start the customized application
+	var oComp = sap.ui.component({
+		name: "testdata.customizing.customer"
+	});
+	var oCompCont = new sap.ui.core.ComponentContainer({
+		component: oComp
+	});
+	oCompCont.placeAt("content");
+
+	
+	
+	// TESTS
+
+	test("sap.ui.core.CustomizingConfiguration available", function() {
+		expect(1);
+		
+		ok(sap.ui.core.CustomizingConfiguration, "sap.ui.core.CustomizingConfiguration should be available now without requiring it");
+	});
+	
+	test("sap.ui.core.CustomizingConfiguration returning no customizing data", function() {
+		expect(4);
+		
+		strictEqual(sap.ui.core.CustomizingConfiguration.getViewReplacement("samples.components.ext.sap.Sub1"), 
+				undefined, 
+				"sap.ui.core.CustomizingConfiguration should return no View replacement data");
+		strictEqual(sap.ui.core.CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2"), 
+				undefined, 
+				"sap.ui.core.CustomizingConfiguration should return no View extension data");
+		strictEqual(sap.ui.core.CustomizingConfiguration.getControllerExtension("testdata.customizing.sap.Sub2"), 
+				undefined, 
+				"sap.ui.core.CustomizingConfiguration should return no Controller extension data");
+		strictEqual(sap.ui.core.CustomizingConfiguration.getCustomProperties("testdata.customizing.sap.Sub3", "customizableText"), 
+				undefined, 
+				"sap.ui.core.CustomizingConfiguration should return no View modification data");
+	});
+
+	
+	// View Replacement
+	
+	test("View Replacement", function() {
+		ok(!jQuery.sap.domById("mainView--sub1View--customTextInCustomSub1"), "Replacement View should not be rendered");
+		ok(jQuery.sap.domById("mainView--sub1View--originalSapTextInSub1"), "Original View should be rendered");
+	});
+	
+	
+	// View Extension
+	
+	test("View Extension", function() {
+		ok(!jQuery.sap.domById("mainView--sub2View--customFrag1BtnWithCustAction"), "View Extension should not be rendered");
+	});
+	
+	
+	// Controller Extension
+	
+	test("Controller Extension", function() {
+
+		// check lifecycle methods
+		equal(aLifeCycleCalls.length, 3, "3 lifecycle methods should be called");
+		// check calling order
+		equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
+		equal(aLifeCycleCalls[1], "Sub2 Controller onBeforeRendering()", "1st lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
+		equal(aLifeCycleCalls[2], "Sub2 Controller onAfterRendering()", "2nd lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
+		
+		strictEqual(iStandardSub2ControllerCalled, 0, "Standard Controller should not have been called yet");
+		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should not have been called yet");
+		// trigger standard action
+		qutils.triggerEvent("click", "mainView--sub2View--standardBtnWithStandardAction");
+		strictEqual(iStandardSub2ControllerCalled, 1, "Standard Controller should have been called now");
+		strictEqual(iCustomSub2ControllerCalled, 0, "Custom Controller should still not have been called");
+		
+		// check members
+		var oController = sap.ui.getCore().byId("mainView--sub2View").getController();
+		ok(oController, "Extended Sub2 View should have a Controller");
+		ok(oController.originalSAPAction, "Extended Sub2 controller should have an originalSAPAction method");
+		ok(!oController.customerAction, "Extended Sub2 controller should have no customerAction method");
+		equal(oController.originalSAPAction(), "ori", "originalSAPAction method of extended controller should return 'ori'");
+	});
+	
+	
+	// View/Property Modifications
+	
+	test("Property Modifications", function() {
+		var oControl = sap.ui.getCore().byId("mainView--sub3View--customizableText");
+		strictEqual(oControl.getVisible(), true, "'visible' property should not be customized");
+		strictEqual(oControl.getEnabled(), true, "'enabled' property should not be customized");
+	});
+	
+	
+	// ExtensionPoint default content
+	
+	test("ExtensionPoint default content", function() {
+		var oFirstItem = sap.ui.getCore().byId("__item0-mainView--sub2View--lb-0");
+		
+		ok(oFirstItem, "First ListItem should exist");
+		ok(oFirstItem.getDomRef(), "First ListItem should be rendered");
+		equal(oFirstItem.getAdditionalText(), "(Original SAP ListItem)", "First ListItem should be the default one");
+	});
+	
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.CustomizingConfiguration and Customizing in general (customizing disabled)</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<div id="content"></div>
+</body>
+</html>

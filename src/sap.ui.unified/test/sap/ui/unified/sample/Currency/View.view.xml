@@ -1,0 +1,30 @@
+<mvc:View
+	controllerName="sap.ui.unified.sample.Currency.Controller"
+	xmlns:l="sap.ui.layout"
+	xmlns:u="sap.ui.unified"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout>
+		<Text text="Various currencies with and without decimals"/>
+		<u:Currency value="2300.12" currency="EUR" useSymbol="true" />
+		<u:Currency value="38" currency="EUR" useSymbol="false" />
+		<u:Currency value="1928472" currency="JPY" useSymbol="true" />
+		<u:Currency value="233.9385763" currency="JPY" useSymbol="false" />
+		<u:Currency value="125.02" currency="USD" useSymbol="true" />
+		<u:Currency value="2125.02843" currency="USD" useSymbol="false" />
+		<u:Currency value="9283" currency="TND" useSymbol="true" />
+		<u:Currency value="235.0298" currency="TND" useSymbol="false" />
+
+		<Text text="Currency without decimals"/>
+		<u:Currency value="2300.12" currency="JPY" useSymbol="true" />
+		<u:Currency value="38" currency="JPY" useSymbol="true" />
+		<u:Currency value="1928472" currency="JPY" useSymbol="true" />
+		<u:Currency value="233" currency="JPY" useSymbol="true" />
+
+		<Text text="Currency without decimals using maxPrecision"/>
+		<u:Currency value="2300.12" currency="JPY" useSymbol="true" maxPrecision="0" />
+		<u:Currency value="38" currency="JPY" useSymbol="true" maxPrecision="0" />
+		<u:Currency value="1928472" currency="JPY" useSymbol="true" maxPrecision="0" />
+		<u:Currency value="233" currency="JPY" useSymbol="true" maxPrecision="0" />
+	</l:VerticalLayout>
+</mvc:View>

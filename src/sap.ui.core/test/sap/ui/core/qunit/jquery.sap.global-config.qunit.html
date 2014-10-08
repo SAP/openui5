@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+		<title>Test Page for SAPUI5 jQuery.sap.global functionality (external configuration)</title>
+		<script>
+			window["sap-ui-config"] = "sap-ui-config.json"
+		</script>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+			
+			module("Basic");
+			
+			test("ExternalConfig", function() {
+				
+				var oConfig = sap.ui.getCore().getConfiguration();
+				
+				equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
+				ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
+				ok(sap.m === undefined, "sap.m must not preloaded");
+				
+			});
+			
+		</script>
+		
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItem.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="ShortProductList"
+		headerText="Products"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<items>
+			<StandardListItem
+				title="{Name}" />
+		</items>
+	</List>
+</mvc:View>

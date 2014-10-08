@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.ListBox,sap.ui.core.ListItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Selection ListBox Items" />
+		<title>ListBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		
+<script id='SimpleListBox'>
+// Create the ListBox
+var oSimpleListBox = new sap.ui.commons.ListBox({
+	items : [
+	 		new sap.ui.core.ListItem({text : 'Spring'}),
+			new sap.ui.core.ListItem({text : 'Summer'}),
+			new sap.ui.core.ListItem({text : 'Autumn'}),
+			new sap.ui.core.ListItem({text : 'Winter'})
+  ],
+  select : function(e) {
+	  var a=["Your favorite season(s): "];
+	  jQuery.each(oSimpleListBox.getSelectedItems(), function(idx,item) { a.push(item.getText(), ",");});
+	  oTextSummary.setText(a.join(""));
+  }
+}).placeAt("sample1");
+var oTextSummary = new sap.ui.commons.TextView().placeAt("sample1");
+var oMultiSelectionCheckBox = new sap.ui.commons.CheckBox({
+		text: "MultiSelection",
+		checked : false,
+		change : function(e) { oSimpleListBox.setAllowMultiSelect(e.getSource().getChecked()); } 
+}).placeAt("sample1");
+</script>
+
+<script id='HugeListBox'>
+// Create a ListBox
+var oHugeListBox = new sap.ui.commons.ListBox({
+items : jQuery.map("Berlin|Walldorf|London|Dresden|New York|Paris|Amsterdam|Leipzig|Hamburg|München|Stuttgart|Moskau|Peking|Tokio|Rio de Janeiro|Rom|St. Ingbert|St. Leon-Rot".split("|").sort(), function(v,i) {
+			return new sap.ui.core.ListItem({text: i + ": " + v});
+		}),
+	visibleItems : 5
+}).placeAt("sample2");
+var oButton = new sap.ui.commons.Button({
+	text : "Random",
+	press : function() {
+		var iItem = Math.floor(Math.random() * oHugeListBox.getItems().length);
+		oHugeListBox.setSelectedIndex(iItem);
+		oHugeListBox.scrollToIndex(iItem, true);
+	}
+}).placeAt("sample2");
+</script>
+
+<script id='HeightOfListBox'>
+function makeIconItems() {
+	return [
+		new sap.ui.core.ListItem({text:'CheckBox', icon:'images/ctrls/checkbox-icon.png'}),
+		new sap.ui.core.ListItem({text:'ComboBox', icon:'images/ctrls/combobox-icon.png'}),
+		new sap.ui.core.ListItem({text:'DatePicker', icon:'images/ctrls/datepicker-icon.png'}),
+		new sap.ui.core.ListItem({text:'DropdownBox', icon:'images/ctrls/dropdownbox-icon.png'}),
+		new sap.ui.core.ListItem({text:'RadioButton', icon:'images/ctrls/radiobutton-icon.png'}),
+		new sap.ui.core.ListItem({text:'RadioButtonGroup', icon:'images/ctrls/radiobuttongroup-icon.png'}),
+		new sap.ui.core.ListItem({text:'RatingIndicator', icon:'images/ctrls/ratingindicator-icon.png'}),
+		new sap.ui.core.ListItem({text:'Slider', icon:'images/ctrls/slider-icon.png'}),
+		new sap.ui.core.ListItem({text:'TextArea', icon:'images/ctrls/textarea-icon.png'}),
+		new sap.ui.core.ListItem({text:'TextField', icon:'images/ctrls/textfield-icon.png'}),
+		new sap.ui.core.ListItem({text:'PasswordField', icon:'images/ctrls/passwordfield-icon.png'}),
+	];
+}
+var oIconListBox1 = new sap.ui.commons.ListBox({
+	displayIcons:true,
+	items : makeIconItems()
+}).placeAt("sample3");
+var oIconListBox2 = new sap.ui.commons.ListBox({
+	displayIcons:true,
+	items : makeIconItems(),
+	visibleItems : 5
+}).placeAt("sample3");
+var oIconListBox3 = new sap.ui.commons.ListBox({
+	displayIcons:true,
+	items : makeIconItems(),
+	height: "200px"
+}).placeAt("sample3");
+</script>
+
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Yellow" icon="images/ctrls/listbox-icon.png">ListBox</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The ListBox control allows displaying a list of items, each with some text and an icon. The area size for displaying the items
+  	can be limited by configuration. In the case that there are more items than fit into the predefined area, the ListBox provides a scroll bar.
+  	Users can select one or several items in one step (keyboard support available).
+  	</p>
+
+	<h2>Examples</h2>
+	<h3>Selection</h3>
+	<p>
+	This first example shows a straight forward use case of the ListBox. The box contains the four seasons, and you can select your favorite one.
+	Instead of choosing a season, you can flag the <i>MultiSelection</i> check box.
+	For multiple choice, use the <code>shift</code> or <code>ctrl</code> modifier keys.
+  	Whenever the selection is modified, the text of the TextView is updated with the currently selected item(s).
+  	</p>
+  	<br><br>
+	<div code-sample="sample1" script="SimpleListBox"></div>
+
+	<h3>Visible Items, Scrolling, Selection</h3>
+	<p>
+	In the case of a large number of list box items, you would have the need to restrict the space 
+	regarding the number of displayed items at the same time. Using the <code>visibleItems </code> property you can limit the number of 
+	displayed items. A scrollbar appears in the list box, and you can scroll through the items.      
+	</p>
+	<p>
+	Sometimes you have the requirement to make a specific item visible in the ListBox that might occur - without doing further settings -
+	at the end of the item list. For this purpose you use the <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ListBox.html#scrollToIndex">scrollToIndex</a> method.
+	Its first argument is an integer that specifies the item that shall become visible. The second, optional argument
+	<code>bLazy</code> is a boolean flag that checks whether the specified item shall appear at the top of the list
+	(value <code>false</code>). It is also possible to make the setting that way that an item becomes visible with minimal scrolling effort (value <code>true</code>).
+	</p> 
+	<p>
+	The following example shows a larger list of items. Five items are always visible at the same time. Whenever the <i>Random</i> button
+	is pressed, an item is chosen randomly; it is selected and made visible using the <code>scrollToIndex</code> method.
+	Play around a little bit and modify the value of the <code>bLazy</code> parameter to see its effect.
+	</p>
+	<br><br>
+	<div code-sample="sample2" script="HugeListBox"></div>
+
+	<h3>Icons, Height, and Item Height Calculation</h3>
+	<p>
+	List items can contain icons, and by this the heights of the single item entries in the list might differ. There are several ways to handle the height of the whole list box.
+	</p>
+
+	<table>
+	<tr><td><h4>No Height</h4></td>
+	<td><p>When the properties <code>height</code> and <code>visibleItems</code> are not set, the ListBox occupies
+	the necessary space to display all items. The browser calculates this height and if, as a result, the page
+	becomes higher than the current window, the window gets a scroll bar.
+	</p></td>
+	</tr>
+	<tr><td><h4>Height in Items</h4></td>
+	<td><p>When only the <code>visibleItems</code> property is set, but no <code>height</code>, the ListBox control determines the
+	height of the first item (or of a dummy item if there are currently no items available), multiplies it with the number of
+	visible items, and uses the result as the height of its content area. So, if your items all have the same size,
+	the resulting height will exactly match the height of <code>visibleItems</code> items. If the items have different
+	sizes, the number of visible items varies.
+	</p></td>
+	</tr>
+	<tr><td><h4>Fixed Height</h4></td>
+	<td><p>Using the <code>height</code> property, a fixed height can be specified.</p>
+  </td>
+  </tr>
+	</table>
+
+  	<p>Note: The height of individual items cannot be configured; their height is always determined from their content.</p>
+
+	Following you see the different ways to deal with the height of a ListBox. 
+	For the ListBox representing the "Height in Items" variant, the value for <code>visibleItems</code> is set to "5". 
+	But the items have differing heights, and therefore the resulting height does not exactly match the number of visible items.
+	</p>
+	<br><br>
+	<div code-sample="sample3" script="HeightOfListBox" ></div>
+
+  <br>
+
+  <p>
+  <h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ListBox.html">ListBox API Documentation</a><br>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.ListItem.html">ListItem API documentation </a><br>
+  </p>
+
+	</body>
+</html>

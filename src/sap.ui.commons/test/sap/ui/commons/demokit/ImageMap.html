@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.ImageMap">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>ImageMap - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='sample1-script'>
+var oImage = new sap.ui.commons.Image("i1");
+oImage.setSrc("images/FlowersAndWesp.jpg");
+oImage.setAlt("alternative image text for i1");
+oImage.setUseMap("Map1");
+oImage.placeAt("sample1");
+
+var oMap = new sap.ui.commons.ImageMap();
+oMap.setName("Map1");
+var aArea1 = new sap.ui.commons.Area ("Area1", {shape: "rect", alt: "Bee", href: "http://www.sap.com", coords: "40,20,100,80"}); 
+var aArea2 = new sap.ui.commons.Area ("Area2", {shape: "circle", alt: "Flower", href: "http://www.sap.com", coords: "170,60,30"}); 
+oMap.addArea(aArea1);
+oMap.addArea(aArea2);
+oMap.placeAt("sample1");
+</script>
+
+<script id='sample2-script'>
+var oImage2 = new sap.ui.commons.Image("Image2", {
+	src: "http://www.sap.com/global/images/SAPLogo.gif",
+	alt: "alternative image text for image",
+	useMap: "Map2"
+	}).placeAt("sample2");
+
+var oMap2 = new sap.ui.commons.ImageMap("Map2", {name:"Map2"}).placeAt("sample2");
+oMap2.createArea({shape: "poly", alt: "A", href: "http://www.sap.com", coords: "15,30,23,7,30,7,38,30"});
+var aArea3 = new sap.ui.commons.Area ("Area3", {shape: "poly", alt: "Nothing", href: "http://www.sap.com", coords: "37,36,73,0,73,36"}); 
+oMap2.createArea(aArea3);
+</script>
+
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/image-icon.png">ImageMap</h1>
+
+  <h2>Introduction</h2>
+		<p>The <code>ImageMap</code> control extends the <code>Image</code> control with a map functionality. 
+		   So there can be different links in different areas of the image. 
+		   <br>
+		   The areas are defined via the <code>areas</code> aggregation. An area can have different styles: 
+		   <ul>
+		   	<li><code>rect</code>: rectangle</li>
+		   	<li><code>poly</code>: polygon</li>
+		   	<li><code>circle</code>: circle</li>
+		   </ul> 
+		   The styles are defined with the <code>shape</code> property of the area. 
+		   With the <code>coords</code> property the coordinates of the shape are defined. Depending on the shape-type there are different properties:
+		   <ul>
+		   	<li><code>rect</code>: Left upper edge pixel from left, left upper edge pixel from top, right bottom edge pixel from left, right bottom edge pixel from top </li>
+		   	<li><code>poly</code>: X and Y coordinates from an edge. As much edges as needed can be defined</li>
+		   	<li><code>circle</code>: Left and top pixels of the middle, radius in pixel</li>
+		   </ul> 
+		   <br>
+		   The <code>href</code> property defines the link URL of the area. The <code>alt</code> property defines the alternative text if the area can not be displayed.   
+		  <br><br>
+		  Alternatively, the areas can be added using the <code>createArea</code> method. Here an <code>area</code> or only the properties can be filled in. 
+
+		  <br><br>
+		  The <code>name</code> property of the <code>ImageMap</code> defines the anchor for the map in the <code>Image</code> control. 
+		  This name must be used in the <code>useMap</code> property of the <code>Image</code> control.
+		  </p>
+
+	<h2>Examples</h2>
+
+	<h3>Image With Different Areas Using <code>addArea</code></h3>
+
+		<div code-sample="sample1"></div>
+		<br>
+
+	<h3>Image With Different Areas Using <code>createArea</code></h3>
+
+		<div code-sample="sample2"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ImageMap.html">API documentation</a>
+		</p>		
+	</body>
+</html>

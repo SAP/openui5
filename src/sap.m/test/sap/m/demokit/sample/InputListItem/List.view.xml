@@ -1,0 +1,47 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Input" >
+		<InputListItem label="WLAN">
+			<Switch state="true" />
+		</InputListItem>
+		<InputListItem label="Flight Mode">
+			<CheckBox state="true" />
+		</InputListItem>
+		<InputListItem label="High Performance">
+			<RadioButton
+				groupName="GroupInputListItem"
+				selected="true" />
+		</InputListItem>
+		<InputListItem label="Battery Saving">
+			<RadioButton
+				groupName="GroupInputListItem" />
+		</InputListItem>
+		<InputListItem label="Price (EUR)">
+			<Input
+				placeholder="Price"
+				value="799"
+				type="Number" />
+		</InputListItem>
+		<InputListItem label="Address">
+			<Input
+				placeholder="Address"
+				value="Main Rd, Manchester" />
+		</InputListItem>
+		<InputListItem label="Country">
+			<Select>
+				<core:Item key="GR" text="Greece" />
+				<core:Item key="MX" text="Mexico" />
+				<core:Item key="NO" text="Norway" />
+				<core:Item key="NZ" text="New Zealand" />
+				<core:Item key="NL" text="Netherlands" />
+			</Select>
+		</InputListItem>
+		<InputListItem label="Volume">
+			<Slider min="0" max="10" value="7" width="200px" />
+		</InputListItem>
+	</List>
+</mvc:View>

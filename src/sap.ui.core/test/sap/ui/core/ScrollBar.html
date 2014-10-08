@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ScrollBar - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_goldreflection">
+	</script>
+
+
+	<script type="text/javascript">
+
+	   	// Vertical Scrollbar
+		var oVSB = new sap.ui.core.ScrollBar("vertSB");
+		oVSB.setVertical(true);
+		oVSB.setSize("200px");
+		oVSB.setScrollPosition(0);
+		oVSB.setSteps(100);
+		oVSB.attachScroll(function(oEvent) {
+			jQuery.sap.log.debug("vertical scroll position: " + oVSB.getScrollPosition());
+	    	jQuery("#owner").scrollTop(oVSB.getScrollPosition());
+		});
+
+
+		oVSB.placeAt("target1");
+
+
+		// Horizontal Scrollbar
+		var oHSB = new sap.ui.core.ScrollBar("horiSB");
+		oHSB.setVertical(false);
+		oHSB.setSize("200px");
+		oHSB.setScrollPosition(50);
+		oHSB.attachScroll(function(oEvent) {
+			jQuery.sap.log.debug("horizontal scroll position: " + oHSB.getScrollPosition());
+			jQuery("#owner").scrollLeft(oHSB.getScrollPosition());
+		});
+		oHSB.placeAt("target2");
+
+
+		jQuery(function() {
+			var $owner = jQuery("#owner");
+			oVSB.setContentSize($owner[0].scrollHeight +'px').bind($owner[0]);
+			oHSB.setContentSize($owner[0].scrollWidth +'px').bind($owner[0]);
+			$owner.scrollTop(oVSB.getScrollPosition()).scrollLeft(oHSB.getScrollPosition());
+
+		//	jQuery("#vertSB-sb").bind("scroll",function(){jQuery("#owner").scrollTop(oVSB.getScrollPosition());});
+			//alert(jQuery("#owner").scrollTop());
+		//	jQuery("#testResult").html("StepSize (FF only): " + jQuery("#vertSB-ffsize").outerHeight());
+		});
+
+	</script>
+
+</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>sap.ui.core.ScrollBar</code></h1>
+		<br> <h2>ScrollBar Control</h2>
+		<br>
+		<table cellspacing="0" cellpadding="0"><tr><td>
+			<div id="owner" style="overflow:hidden; width: 200px; height: 200px;">
+<pre>
+  if (jQuery.browser.mozilla) {
+		stepSize = jQuery('#' + this.getId() + "-ffsize").outerHeight();
+	}
+
+	if  (jQuery.browser.webkit) {
+		stepSize = 40 / (document.height / jQuery(document).height());
+	}
+
+	if (this.getVertical()) {
+		this._iFactor = jQuery.browser.mozilla ? stepSize :	jQuery.browser.webkit ? stepSize : Math.floor(iScrollBarSize  * 0.125);
+		this._iFactorPage = jQuery.browser.mozilla ? iScrollBarSize - stepSize : Math.floor(iScrollBarSize * 0.875)
+	} else {
+		this._iFactor = jQuery.browser.mozilla ? 10 : jQuery.browser.webkit ? stepSize :  7 ;
+		this._iFactorPage = jQuery.browser.mozilla ? Math.floor(iScrollBarSize * 0.8) : jQuery.browser.webkit ? Math.floor(iScrollBarSize  * 0.875) : iScrollBarSize-14;
+	}
+</pre>
+<span style="white-space:pre">
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna
+  aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  Duis aute irure dolor in reprehenderit in voluptate velit
+  esse cillum dolore eu fugiat nulla pariatur. Excepteur
+  sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna
+  aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  Duis aute irure dolor in reprehenderit in voluptate velit
+  esse cillum dolore eu fugiat nulla pariatur. Excepteur
+  sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum.
+  Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+  sed do eiusmod tempor incididunt ut labore et dolore magna
+  aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+  ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  Duis aute irure dolor in reprehenderit in voluptate velit
+  esse cillum dolore eu fugiat nulla pariatur. Excepteur
+  sint occaecat cupidatat non proident, sunt in culpa qui
+  officia deserunt mollit anim id est laborum.
+</span>
+			</div> </td>
+			<td>
+			   <div id="target1"> </div>
+			</td></tr>
+		    <tr><td colSpan=1>
+			<div id="target2"></div></td>
+			</tr>
+			</table>
+
+			<span id="testResult"></span>
+
+	</body>
+</html>

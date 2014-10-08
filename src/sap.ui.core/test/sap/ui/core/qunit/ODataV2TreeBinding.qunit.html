@@ -1,0 +1,962 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.util.MockServer");
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	sinon.config.useFakeTimers = false;
+
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+	
+	//Initialize mock servers
+	
+	//Mock server for use with navigation properties
+	var oNavPropMockServer = new sap.ui.core.util.MockServer({
+		rootUri: '/navprop/'
+	});
+	oNavPropMockServer.simulate("model/metadata_odtb.xml", "model/odtb/");
+	
+	//MockServer for use with annotated tree
+	var oAnnotationMockServer = new sap.ui.core.util.MockServer({
+		rootUri: '/metadata/'
+	});
+	oAnnotationMockServer.simulate("model/metadata_odtbmd.xml", "model/odtbmd/");
+
+	// create a dummy AMD fdefine to check if shim works for datajs
+	window.define = function() {
+		throw Error("define should not be called");
+	}
+	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
+
+	var oModel, oBinding;
+
+	function createTreeBinding(sPath, oContext, aFilters, mParameters){
+		// create binding
+		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters).initialize();
+	};
+
+	module("ODataTreeBinding with navigation properties", {
+		setup: function() {
+			oNavPropMockServer.start();
+			oModel = new sap.ui.model.odata.v2.ODataModel('/navprop/', {useBatch:false});
+		},
+		teardown: function() {
+			oNavPropMockServer.stop();
+			delete oModel;
+		}
+	});
+
+	test("Properties", function(){
+		createTreeBinding("/Employees(2)", null, [], {
+			navigation: {}
+		});
+		equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
+		equal(oBinding.getModel(), oModel, "TreeBinding model");
+		ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+	});
+
+	asyncTest("getRootContexts getNodeContexts", function(){
+		oModel.attachMetadataLoaded(function() {	
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				}
+			});
+	
+			var oContext;
+			var iHandleCounter = 0;
+	
+			var handler1 = function(oEvent) {
+				iHandleCounter++;
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				if (iHandleCounter < 2) return;
+				
+				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				oBinding.detachChange(handler1);
+	
+				oBinding.attachChange(handler2);
+				oContext = aContexts[3];
+				oBinding.getNodeContexts(oContext);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext);
+	
+				equal(aContexts.length, 3, "TreeBinding nodeContexts length");
+				equal(oBinding.getChildCount(oContext), 3, "TreeBinding childcount");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Michael", "TreeBinding node content");
+				equal(oModel.getProperty("LastName", oContext), "Suyama", "TreeBinding node content");
+	
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Robert", "TreeBinding node content");
+				equal(oModel.getProperty("LastName", oContext), "King", "TreeBinding node content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding node content");
+				equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding node content");
+	
+				oBinding.detachChange(handler2);
+				start();
+			}
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Display root node", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+	
+			var oContext;
+	
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Fuller", "TreeBinding root content");
+	
+				oBinding.detachChange(handler1);
+	
+				oBinding.attachChange(handler2);
+				oBinding.getNodeContexts(oContext);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext);
+	
+				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				oBinding.detachChange(handler2);
+				start();
+			}
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Number of expanded levels", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+	
+			var oContext;
+			var handler1 = function(oEvent) {
+	
+				oBinding.detachChange(handler1);
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				var aSubContexts;
+	
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+	
+				//Level 0
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Fuller", "TreeBinding root content");
+	
+				//Level 0.0
+				aContexts = oBinding.getNodeContexts(oContext);
+				equal(aContexts.length, 5, "TreeBinding nodeContexts length");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				//Level 0.0.0
+				aSubContexts = oBinding.getNodeContexts(oContext);
+				equal(aSubContexts.length, 0, "TreeBinding nodeContexts length");
+				
+				//Level 0.1
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				aSubContexts = oBinding.getNodeContexts(oContext);
+				equal(aSubContexts.length, 3, "TreeBinding nodeContexts length");
+				
+				oContext = aSubContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Michael", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Suyama", "TreeBinding root content");
+				
+				oContext = aSubContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding root content");
+				
+				start();
+			};
+	
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
+	asyncTest("Bind an aggregation", function(){
+		oModel.attachMetadataLoaded(function() {	
+			createTreeBinding("/Employees", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+	
+			var oContext;
+	
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				equal(aContexts.length, 9, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Fuller", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[5];
+				equal(oModel.getProperty("FirstName", oContext), "Michael", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Suyama", "TreeBinding root content");
+				
+				oContext = aContexts[6];
+				equal(oModel.getProperty("FirstName", oContext), "Robert", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "King", "TreeBinding root content");
+				
+				oContext = aContexts[7];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+				
+				oContext = aContexts[8];
+				equal(oModel.getProperty("FirstName", oContext), "Anne", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Dodsworth", "TreeBinding root content");
+	
+				oBinding.detachChange(handler1);
+	
+				oContext = aContexts[1];
+				oBinding.attachChange(handler2);
+				oBinding.getNodeContexts(oContext);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext);
+	
+				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				oBinding.detachChange(handler2);
+				start();
+			}
+	
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
+	asyncTest("Refresh", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				}
+			});
+	
+			var oContext;
+			var iHandleCounter = 0;
+	
+			var handler1 = function(oEvent) {
+				iHandleCounter++;
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				if (iHandleCounter < 2) return;
+				
+				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				deepEqual(oBinding.oKeys, {
+					"/Employees(1)": [],
+					"/Employees(2)": [],
+					"/Employees(2)/Employees1": [
+						"Employees(1)",
+						"Employees(3)",
+						"Employees(4)",
+						"Employees(5)",
+						"Employees(8)"
+					],
+					"/Employees(3)": [],
+					"/Employees(4)": [],
+					"/Employees(5)": [],
+					"/Employees(8)": []
+				}, "Keys object has value for root");
+				deepEqual(oBinding.oLengths, {
+					"/Employees(1)": 0,
+					"/Employees(2)": 0,
+					"/Employees(2)/Employees1": 5,
+					"/Employees(3)": 0,
+					"/Employees(4)": 0,
+					"/Employees(5)": 0,
+					"/Employees(8)": 0
+				}, "Lengths object has value for root");
+				deepEqual(oBinding.oFinalLengths, {
+					"/Employees(1)": true,
+					"/Employees(2)": true,
+					"/Employees(2)/Employees1": true,
+					"/Employees(3)": true,
+					"/Employees(4)": true,
+					"/Employees(5)": true,
+					"/Employees(8)": true
+				}, "FinalLengths object has value for root");
+	
+				oBinding.detachChange(handler1);
+	
+				oBinding.attachChange(handler2);
+				oBinding.refresh();
+				deepEqual(oBinding.oKeys, {}, "Keys object has been reset");
+				deepEqual(oBinding.oLengths, {}, "Lengths object has value for root");
+				deepEqual(oBinding.oFinalLengths, {}, "FinalLengths object has value for root");
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				equal(aContexts.length, 0, "No contexts are avilable data has been reset");
+	
+				oBinding.detachChange(handler2);
+	
+				oBinding.attachChange(handler3);
+			}
+			
+			var handler3 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				
+				equal(aContexts.length, 5, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Davolio", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				deepEqual(oBinding.oKeys, {
+					"/Employees(1)": [],
+					"/Employees(2)/Employees1": [
+						"Employees(1)",
+						"Employees(3)",
+						"Employees(4)",
+						"Employees(5)",
+						"Employees(8)"
+					],
+					"/Employees(3)": [],
+					"/Employees(4)": [],
+					"/Employees(5)": [],
+					"/Employees(8)": []
+				}, "Keys object has value for root");
+				deepEqual(oBinding.oLengths, {
+					"/Employees(1)": 0,
+					"/Employees(2)/Employees1": 5,
+					"/Employees(3)": 0,
+					"/Employees(4)": 0,
+					"/Employees(5)": 0,
+					"/Employees(8)": 0
+				}, "Lengths object has value for root");
+				deepEqual(oBinding.oFinalLengths, {
+					"/Employees(1)": true,
+					"/Employees(2)/Employees1": true,
+					"/Employees(3)": true,
+					"/Employees(4)": true,
+					"/Employees(5)": true,
+					"/Employees(8)": true
+				}, "FinalLengths object has value for root");
+	
+				oBinding.detachChange(handler3);
+				start();
+			}
+	
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
+	asyncTest("No navigation object specified", function() {
+		var that = this;
+		oModel.attachMetadataLoaded(function() {
+			var iErrorCount = 0,
+				sErrorMessage = "";
+			that.stub(jQuery.sap.log, "error", function(sMsg) {
+				iErrorCount++;
+				sErrorMessage = sMsg;
+			});
+			createTreeBinding("/Employees(2)");
+		
+		
+			equal(iErrorCount, 1, "TreeBinding one error should have occured");
+			equal(sErrorMessage, "A navigation paths parameter object has to be defined", "TreeBinding navigation error was thrown");
+			jQuery.sap.log.error.restore();
+			start();
+		});
+	});
+
+	asyncTest("Tried filtering", function() {
+		var that = this;
+		oModel.attachMetadataLoaded(function() {
+			var iWarningCount = 0,
+				sMessage = "";
+			
+			that.stub(jQuery.sap.log, "warning", function(sMsg) {
+				iWarningCount++;
+				sMessage = sMsg;
+			});
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {}
+			});
+		
+			oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
+
+			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
+			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
+			jQuery.sap.log.warning.restore();
+			start();
+		});
+	});
+	
+	asyncTest("Paging", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+			
+			var oContext;
+	
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(1, 4);
+	
+				equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Andrew", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Fuller", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Janet", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Leverling", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[3];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+	
+				oBinding.detachChange(handler1);
+	
+				oContext = aContexts[0];
+				oBinding.attachChange(handler2);
+				oBinding.getNodeContexts(oContext, 2, 3);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
+	
+				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Margaret", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Peacock", "TreeBinding root content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FirstName", oContext), "Steven", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Buchanan", "TreeBinding root content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FirstName", oContext), "Laura", "TreeBinding root content");
+				equal(oModel.getProperty("LastName", oContext), "Callahan", "TreeBinding root content");
+	
+				oBinding.detachChange(handler2);
+				start();
+			}
+	
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(1, 4);
+		});
+	});
+	
+	module("ODataTreeBinding with annotations", {
+		setup: function() {
+			oAnnotationMockServer.start();
+			oModel = new sap.ui.model.odata.v2.ODataModel('/metadata/', {useBatch:false});
+		},
+		teardown: function() {
+			oAnnotationMockServer.stop();
+			delete oModel;
+		}
+	});
+	
+	asyncTest("Properties", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				navigation: {}
+			});
+			ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+			equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
+			equal(oBinding.getModel(), oModel, "TreeBinding model");
+			equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
+			start();
+		});
+	});
+	
+	asyncTest("TreeBinding getRootContexts getNodeContexts", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+	
+			var oContext;
+			var iHandleCounter = 0;
+	
+			var handler1 = function(oEvent) {
+				iHandleCounter++;
+	
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				
+				if (iHandleCounter == 2) {
+		
+					equal(aContexts.length, 9, "TreeBinding rootContexts length");
+		
+					oContext = aContexts[0];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+		
+					oContext = aContexts[1];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+					
+					oContext = aContexts[8];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+					
+					oBinding.detachChange(handler1);
+		
+					start();
+				}
+			};
+		
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Display root node", function(){
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true
+			});
+	
+			var oContext;
+			var iHandleCounter = 0;
+	
+			var handler1 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+	
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				
+				oBinding.detachChange(handler1);
+	
+				oBinding.attachChange(handler2);
+				oContext = aContexts[0];
+				oBinding.getNodeContexts(oContext);
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext);
+	
+				equal(aContexts.length, 9, "TreeBinding nodeContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(oContext), 9, "TreeBinding childcount");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+	
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+				
+				oContext = aContexts[8];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+	
+				oBinding.detachChange(handler2);
+				start();
+			}
+	
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Number of expanded levels", function(){
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+			
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				var aSubContexts;
+	
+				equal(aContexts.length, 1, "TreeBinding rootContexts length");
+	
+				//Level 0
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "TreeBinding root content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "TreeBinding root content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "INT", "TreeBinding root content");
+				
+				//Level 0.0
+				aContexts = oBinding.getNodeContexts(oContext);
+				equal(aContexts.length, 8, "TreeBinding nodeContexts length");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1000000", "TreeBinding node content");
+				
+				//Level 0.0.0
+				aSubContexts = oBinding.getNodeContexts(oContext);
+				equal(aSubContexts.length, 7, "TreeBinding nodeContexts length");
+				
+				oContext = aSubContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000003", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1010000", "TreeBinding node content");
+				
+				oContext = aSubContexts[6];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000360", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000002", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1070000", "TreeBinding node content");
+				
+				//Level 0.1
+				oContext = aContexts[7];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001180", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "1", "TreeBinding node content");
+				
+				aSubContexts = oBinding.getNodeContexts(oContext);
+				equal(aSubContexts.length, 8, "TreeBinding nodeContexts length");
+				
+				start();
+			};
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("Paging", function() {
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			var iHandleCounter = 0;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+	
+			var handler1 = function(oEvent) {
+				iHandleCounter++;
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts(1, 4);
+	
+				if (iHandleCounter == 2) {
+					equal(aContexts.length, 4, "TreeBinding returned rootContexts length");
+					//Wait for fix of Mock Server
+					//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+		
+					oContext = aContexts[0];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "000362", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "2000000", "TreeBinding node content");
+					
+					oContext = aContexts[1];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "000682", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "3000000", "TreeBinding node content");
+					
+					oContext = aContexts[2];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "001073", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "4000000", "TreeBinding node content");
+					
+					oContext = aContexts[3];
+					equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "TreeBinding node content");
+					equal(oModel.getProperty("HierarchyNode", oContext), "001131", "TreeBinding node content");
+					equal(oModel.getProperty("ParentNode", oContext), "000001", "TreeBinding node content");
+					equal(oModel.getProperty("FinancialStatementItem", oContext), "5000000", "TreeBinding node content");
+		
+					oBinding.detachChange(handler1);
+		
+					oContext = aContexts[0];
+					oBinding.attachChange(handler2);
+					oBinding.getNodeContexts(oContext, 2, 3);
+				}
+			};
+	
+			var handler2 = function(oEvent) {
+				// contexts should be now loaded
+				var aContexts = oBinding.getNodeContexts(oContext, 2, 3);
+	
+				equal(aContexts.length, 3, "TreeBinding rootContexts length");
+				//Wait for fix of Mock Server
+				//equal(oBinding.getChildCount(oContext), 5, "TreeBinding actual rootContexts length");
+	
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000413", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2030000", "TreeBinding node content");
+				
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000447", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2040000", "TreeBinding node content");
+				
+				oContext = aContexts[2];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "TreeBinding node content");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000680", "TreeBinding node content");
+				equal(oModel.getProperty("ParentNode", oContext), "000362", "TreeBinding node content");
+				equal(oModel.getProperty("FinancialStatementItem", oContext), "2050000", "TreeBinding node content");
+
+				oBinding.detachChange(handler2);
+				start();
+			}
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(1, 4);
+		});
+	});
+	
+	asyncTest("Tried filtering", function() {
+		var that = this;
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result");
+			var iWarningCount = 0,
+				sMessage = "";
+			
+			that.stub(jQuery.sap.log, "warning", function(sMsg) {
+				iWarningCount++;
+				sMessage = sMsg;
+			});
+			
+			oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
+			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
+			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
+			jQuery.sap.log.warning.restore();
+			start();
+		});
+	});
+
+	</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: ODataTreeBinding</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

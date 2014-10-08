@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <title>HorizontalLayout - sap.ui.layout</title>
+
+    <script id='sap-ui-bootstrap' type='text/javascript'
+        src='../../../../resources/sap-ui-core.js'
+        data-sap-ui-theme='sap_goldreflection'
+        data-sap-ui-libs='sap.ui.layout,sap.ui.commons'></script>
+
+
+		<style>
+
+		/* the application could add padding between the items like this 
+
+		.sapUiHLayout > * {
+			margin-right: 3px;
+		}
+
+		*/
+
+		</style>
+
+		<script>
+		var c = sap.ui.commons;
+
+		// create a HorizontalLayout with some initial content
+    var layout = new sap.ui.layout.HorizontalLayout("myLayout", {content:[
+			new c.Button({text:"Hello World 1"}),
+			new c.Button({text:"Hello World 2"}),
+			new c.Panel({width:"200px", text:"A Panel",content:[
+				new c.Button({text:"Hello World a"}),
+				new c.Button({text:"Hello World b"}),
+				new sap.ui.core.HTML({content:"<div style='width:40px;'>as df rg eth et het h erj rzj rjz </div>"})
+			]})
+    ]});
+
+		// add some more content in a quite verbose manner
+    var btn3 = new c.Button({text:"Hello World 3"});
+    layout.addContent(btn3);
+
+    // put the layout into the page
+    layout.placeAt('content');
+
+		</script>
+
+	</head>
+	<body class='sapUiBody'>
+		<h1>Testcase for sap.ui.layout.HorizontalLayout</h1>
+    <div id='content'></div>
+	</body>
+</html>

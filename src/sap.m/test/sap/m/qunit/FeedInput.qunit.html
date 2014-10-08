@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.m.FeedInput</title>
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+	
+			var oInput = new sap.m.FeedInput("input", {
+				post : function (oEvt) {
+					strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
+				}
+			}).placeAt("uiArea");
+	
+			test("Defaults", function() {
+				strictEqual(oInput.getValue(), "", "value is ''");
+				strictEqual(oInput.getEnabled(), true, "enabled is true");
+				strictEqual(oInput.getMaxLength(), 0, "maxLength is 0");
+				strictEqual(oInput.getVisible(), true, "visible is true");
+			});
+	
+			test("Value property", function() {
+				oInput.setValue("asdf");
+				strictEqual(oInput.getValue(), "asdf", "getValue() should return 'asdf'");
+				strictEqual(oInput._getTextArea().getValue(), "asdf", "getValue() should return 'asdf'");
+			});
+	
+			test("Placeholder property", function() {
+				oInput.setPlaceholder("asdf");
+				strictEqual(oInput.getPlaceholder(), "asdf", "getPlaceholder() should return 'asdf'");
+				strictEqual(oInput._getTextArea().getPlaceholder(), "asdf", "_getTextArea().getPlaceholder() should return 'asdf'");
+			});
+	
+			test("MaxLength property", function() {
+				oInput.setMaxLength(1001);
+				strictEqual(oInput.getMaxLength(), 1001, "getMaxLength() should return '1001'");
+				strictEqual(oInput._getTextArea().getMaxLength(), 1001, "_getTextArea().getMaxLength() should return '1001'");
+			});
+
+			test("Enabled property", function() {
+				oInput.setEnabled(true);
+				strictEqual(oInput.getEnabled(), true, "getEnabled() should return true");
+				oInput.setEnabled(false);
+				strictEqual(oInput.getEnabled(), false, "getEnabled() should return false");
+				oInput.setEnabled(true);
+				oInput.setValue(" ");
+				strictEqual(oInput.getEnabled(), true, "still enabled even though only whitespace chars");
+				oInput.setEnabled(false);
+				strictEqual(oInput._getPostButton().getEnabled(), false, "_getPostButton().getEnabled() should return 'false'");
+				strictEqual(oInput._getTextArea().getEnabled(), false, "_getTextArea().getEnabled() should return 'false'");
+			});
+	
+			test("Visible property", function(){
+				oInput.setVisible(true);
+				ok(jQuery.sap.domById("input"), "input should be rendered");
+				oInput.setVisible(false);
+				ok(jQuery.sap.domById("input"), "input should not be rendered");
+				oInput.setVisible(true);
+				ok(jQuery.sap.domById("input"), "input should be rendered");
+			});
+	
+			test("CSS", function(){
+				ok(jQuery.sap.byId("input").hasClass("sapMFeedIn"), "input should have class sapMFeedIn");
+			});
+	
+			test("Post event: fired with correct param", function() {
+				expect(1); // verifies the event handler was executed
+				oInput.setValue("firedValue");
+				oInput.setEnabled(true);
+				qutils.triggerEvent("tap", "input-button");
+			});
+	
+			test("Post event : not fired if disabled", function() {
+				expect(0); // verifies the event handler was NOT executed
+				oInput.setEnabled(false);
+				qutils.triggerEvent("tap", "input-button");
+			});
+			
+			test("Post event : not fired if value contains only whitespaces", function() {
+				expect(0); // verifies the event handler was NOT executed
+				oInput.setEnabled(true);
+				oInput.setValue(" ");
+				qutils.triggerEvent("tap", "input-button");
+			});
+	
+			test("Post event : not fired if enabled BUT value contains only whitespaces", function() {
+				expect(0); // verifies the event handler was NOT executed
+				oInput.setValue(" ");
+				oInput.setEnabled(true);
+				qutils.triggerEvent("tap", "input-button");
+			});
+	
+			test("Post event : value is empty afterwards", function() {
+				expect(2); // verifies the event handler was executed
+				oInput.setValue("firedValue");
+				oInput.setEnabled(true);
+				qutils.triggerEvent("tap", "input-button");
+				strictEqual(oInput.getValue(), "", "value should be empty");
+			});
+			
+			test("Post event : fired when pressing ENTER", function() {
+				expect(1); //verifies the event handler was executed
+				oInput.setValue("firedValue");
+				oInput.setEnabled(true);
+				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.ENTER);
+				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.ENTER);
+			});
+			
+			test("Post event : fired when pressing SPACE", function() {
+				expect(1); //verifies the event handler was executed
+				oInput.setValue("firedValue");
+				oInput.setEnabled(true);
+				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.SPACE);
+				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.SPACE);
+				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.SPACE);
+			});
+			
+			test("Post event : not fired when pressing a", function() {
+				expect(0); //verifies the event handler was NOT executed
+				oInput.setValue("firedValue");
+				oInput.setEnabled(true);
+				qutils.triggerKeydown("input-button", jQuery.sap.KeyCodes.A);
+				qutils.triggerKeyEvent("keypress", "input-button", jQuery.sap.KeyCodes.A);
+				qutils.triggerKeyup("input-button", jQuery.sap.KeyCodes.A);
+			});
+
+
+		</script>
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">QUnit page for sap.m.FeedInput</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea"></div>
+	</body>
+</html>

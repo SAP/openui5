@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.MenuItemBase (other Menu functionality tested with unit test in library sap.ui.unified)
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Menu - sap.ui.commons</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+
+		test("Type check: sap.ui.commons.MenuItemBase", function() {
+			var oItem1 = new sap.ui.commons.MenuItem();
+			var oItem2 = new sap.ui.commons.MenuTextFieldItem();
+			
+			ok(sap.ui.commons.MenuItemBase === sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItemBase = sap.ui.unified.MenuItemBase");
+			ok(oItem1 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.commons.MenuItemBase");
+			ok(oItem1 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuItem is a sap.ui.unified.MenuItemBase");
+			ok(oItem2 instanceof sap.ui.commons.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.commons.MenuItemBase");
+			ok(oItem2 instanceof sap.ui.unified.MenuItemBase, "sap.ui.commons.MenuTextFieldItem is a sap.ui.unified.MenuItemBase");
+		 });
+
+	</script>
+  
+</head>
+<body>
+	<div id="menuDockRef" style="width:20px;height:20px;display:inline-block;position:absolute;left:10px;top:10px;"></div>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.MenuItemBase</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

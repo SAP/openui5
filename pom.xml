@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.openui5</groupId>
+	<artifactId>reactor</artifactId>
+	<version>1.25.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>${project.artifactId}</name>
+	<description>OpenUI5 Reactor</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Modules Settings
+	***************************************************************************-->
+
+	<modules>
+
+		<!-- UI libraries -->
+		<module>src/sap.ui.core</module>
+		<module>src/sap.ui.unified</module>
+		<module>src/sap.ui.layout</module>
+		<module>src/sap.m</module>
+		<module>src/sap.ui.commons</module>
+		<module>src/sap.ui.table</module>
+		<module>src/sap.ui.ux3</module>
+		<module>src/sap.ui.suite</module>
+
+		<!-- theme libraries -->
+		<!-- TODO <module>src/themelib_sap_hcb</module> -->
+		<module>src/themelib_sap_bluecrystal</module>
+		<module>src/themelib_sap_goldreflection</module>
+
+		<!-- testsuite -->
+		<module>src/testsuite</module>
+
+	</modules>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- default encoding is UTF-8 -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- default compiler level is 1.6 -->
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+
+		<!-- filtering properties -->
+		<version>${project.version}</version>
+		<copyright><![CDATA[SAP UI development toolkit for HTML5 (SAPUI5/OpenUI5)
+ * (c) Copyright 2009-2014 SAP AG or an SAP affiliate company.
+ * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+]]></copyright>
+		<buildtime>${maven.build.timestamp}</buildtime>
+		<lastchange></lastchange><!-- TODO: fill via build parameter -->
+
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+
+		<plugins>
+
+			<!-- specify the delimiters for the filtering -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<!-- list of used binary types (must not be filtered) -->
+					<nonFilteredFileExtensions>
+						<extension>ttf</extension>
+						<extension>eot</extension>
+						<extension>gif</extension>
+						<extension>png</extension>
+						<extension>ico</extension>
+						<extension>properties</extension><!-- excluded as those files don't use UTF-8 encoding and as no filtering is needed -->
+					</nonFilteredFileExtensions>
+					<delimiters>
+						<delimiter>${*}</delimiter>
+					</delimiters>
+					<useDefaultDelimiters>false</useDefaultDelimiters>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Profile Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<!-- internal build related plugins & configuration -->
+		<profile>
+
+			<id>internal.build</id>
+
+			<properties>
+				<sap.ui5.translationArea>027001</sap.ui5.translationArea>
+				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
+				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
+				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
+			</properties>
+
+			<build>
+				<pluginManagement>
+					<plugins>
+
+						<!-- legacy migration helper (for internal use) -->
+						<plugin>
+							<groupId>com.sap.ui5.tools.build</groupId>
+							<artifactId>ui5builder-maven-plugin</artifactId>
+							<version>1.25.0-SNAPSHOT</version>
+						</plugin>
+
+						<!-- translation support (for internal use) -->
+						<plugin>
+							<groupId>com.sap.ldi</groupId>
+							<artifactId>translation-plugin</artifactId>
+							<version>0.19.1</version>
+							<configuration>
+								<languages>${sap.ui5.translationLanguages}</languages>
+							</configuration>
+						</plugin>
+
+					</plugins>
+				</pluginManagement>
+			</build>
+
+		</profile>
+
+		<profile>
+
+			<id>eslint.build</id>
+
+			<properties>
+
+				<!-- skip eslint validation -->
+				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
+				
+				<!-- fail on eslint error -->
+				<sap.ui5.eslint.failonerror>false</sap.ui5.eslint.failonerror>
+
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.sap.eslint</groupId>
+						<artifactId>eslint-maven-plugin</artifactId>
+						<version>0.1.0-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>eslint</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<skip>${sap.ui5.eslint.skip.validation}</skip>
+							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<includes>
+								<include>src/**</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
+
+</project>

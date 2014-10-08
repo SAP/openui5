@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Generic Event Binding - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<script>
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+		
+			function scream() {
+				alert("Help! I'm blurred!");
+			}
+			function scream2() {
+				alert("HEEEEEEELP! I'M BLURRED!");
+			}
+
+			var oTf1 = new sap.ui.commons.TextField("tf1").attachBrowserEvent("blur", function(){alert("Help! I'm blurred!");});
+			oTf1.placeAt("uiArea1");
+
+			var oLayout = new sap.ui.commons.layout.MatrixLayout().setWidth("auto");
+			var oBtn = new sap.ui.commons.Button("btn1", {text : "Bind blur event to TextField"});
+			oBtn.attachPress(function(){
+				oTf2.attachBrowserEvent("blur", scream);
+			});
+
+			var oBtn2 = new sap.ui.commons.Button("btn2", {text : "Bind another, more INTENSE, blur event to TextField"});
+			oBtn2.attachPress(function(){
+				oTf2.attachBrowserEvent("blur", scream2);
+			});
+
+			var oBtn3 = new sap.ui.commons.Button("btn3", {text : "Unbind blur event from TextField"});
+			oBtn3.attachPress(function(){
+				oTf2.detachBrowserEvent("blur", scream);
+			});
+
+			var oBtn4 = new sap.ui.commons.Button("btn4", {text : "Unbind INTENSE blur event from TextField"});
+			oBtn4.attachPress(function(){
+				oTf2.detachBrowserEvent("blur", scream2);
+			});
+
+			oLayout.createRow(oBtn, oBtn2);
+			oLayout.createRow(oBtn3, oBtn4);
+			oLayout.placeAt("uiArea2");
+
+			var oTf2 = new sap.ui.commons.TextField("tf2");
+			oTf2.placeAt("uiArea3");
+
+			var oBtnR = new sap.ui.commons.Button("btnR", {text : "Re-Render the TextFields", press : function(){
+				oTf1.invalidate();
+				oTf2.invalidate();
+				sap.ui.getCore().applyChanges();
+			}});
+			oBtnR.placeAt("uiArea4")
+
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Generic Event Binding Test</h1>
+
+		This TextField has a blur event bound initially:
+		<div id="uiArea1"></div>
+
+		<br> <br>
+		Click the button to bind a blur event to the below TextField:
+		<div id="uiArea2"></div>
+
+		<br>
+		This TextField only has a blur event once the Button is clicked:
+		<div id="uiArea3"></div>
+
+		<br> <br>
+		Click the button to force a re-rendering of the TextFields:
+		<div id="uiArea4"></div>
+
+	</body>
+</html>

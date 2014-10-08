@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>Feed - sap.ui.ux3</title>
+ 	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Feed.gif">
+
+  <script 
+				src="../../../../resources/sap-ui-core.js" 
+        type="text/javascript" 
+        id="sap-ui-bootstrap"            
+        data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+				data-sap-ui-theme="sap_goldreflection" 
+				data-sap-ui-areas="target1" >
+  </script>
+
+ 	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+		function handleDeleted(oEvent){
+			alert("Chunk "+ oEvent.oSource.getId() + " deleted");
+		}
+
+		function handleSenderClicked(oEvent){
+			alert("Chunk "+ oEvent.oSource.getId() + ": click on sender");
+		}
+
+		function handleReferenceClicked(oEvent){
+			alert("Reference "+ oEvent.getParameter('text') + " clicked");
+		}
+
+		function handleCommentAdded(oEvent){
+			var oComment = oEvent.getParameter('comment');
+			alert("Comment --"+ oComment.getText() + "-- added");
+			oComment.attachDeleted(handleDeleted);
+			oComment.attachSenderClicked(handleSenderClicked);
+			oComment.attachReferenceClicked(handleReferenceClicked);
+		}
+
+		function handleChunkAdded(oEvent){
+			var oChunk = oEvent.getParameter('chunk');
+			alert("Chunk --"+ oChunk.getText() + "-- added");
+			oChunk.attachDeleted(handleDeleted);
+			oChunk.attachSenderClicked(handleSenderClicked);
+			oChunk.attachReferenceClicked(handleReferenceClicked);
+		}
+
+		function handleFilterChange(oEvent){
+			alert("Filter changed: "+ oEvent.getParameter('newValue'));
+		}
+
+		function handleSearch(oEvent){
+			alert("Search triggered: "+ oEvent.getParameter('query'));
+		}
+
+		function handleToolsItemSelected(oEvent){
+			alert("Tools item "+ oEvent.getParameter('itemId') + ' selected!');
+		}
+
+		function handleToggleLive(oEvent){
+			alert("Live : "+ oEvent.getParameter('live'));
+		}
+
+		var oFeed = new sap.ui.ux3.Feed("Feed1",{
+			feederThumbnailSrc: 'images/feeder/w_01.png',
+			feederSender: 'D Bugger',
+			filterItems: [ new sap.ui.core.ListItem('FilterItem1',{
+											key: 'item1',
+											text: 'Filter1'
+											}),
+										 new sap.ui.core.ListItem('FilterItem2',{
+											key: 'item2',
+											text: 'Filter2'
+											})],
+			filterChange: handleFilterChange,
+			search: handleSearch,
+			chunkAdded: handleChunkAdded,
+			toggleLive: handleToggleLive,
+			toolsMenuItems: [ new sap.ui.commons.MenuItem('MenuItem1',{
+													text: 'Item1'
+												}),
+												new sap.ui.commons.MenuItem('MenuItem2',{
+													text: 'Item2'
+												})],
+			toolsItemSelected: handleToolsItemSelected,												
+			chunks: [ new sap.ui.ux3.FeedChunk("Chunk1", {
+									thumbnailSrc: "images/feeder/m_01.png",
+					  			sender: "Donald Duck", 
+			    				text: "Hello world!!!\nLine1\nLine2\nLine4\nLine5", 
+									timestamp: "today",
+									flagged: true,
+									favorite: true,
+									shared: true,
+									deleted: handleDeleted,
+									senderClicked: handleSenderClicked,
+									referenceClicked: handleReferenceClicked,
+									commentAdded: handleCommentAdded}),
+								new sap.ui.ux3.FeedChunk("Chunk2", {
+									//thumbnailSrc: "images/feeder/male.jpg",
+					  			sender: "James Bond", 
+			    				text: "The world is not enough...", 
+									timestamp: "yesterday",
+									flagged: false,
+									favorite: true,
+									shared: false,
+									deletionAllowed: true,
+									deleted: handleDeleted,
+									senderClicked: handleSenderClicked,
+									referenceClicked: handleReferenceClicked,
+									commentAdded: handleCommentAdded,
+									comments: [ new sap.ui.ux3.FeedChunk("commentChunk1", {
+										 						sender: "Gaius Julius Caesar", 
+									    					text: "Veni, vidi, vici", 
+									    					timestamp: "long ago", 
+									    					deleted: handleDeleted,
+																senderClicked: handleSenderClicked,
+																referenceClicked: handleReferenceClicked,
+																commentAdded: handleCommentAdded})
+									           ]
+									})
+			         ]
+			}).placeAt("target1");
+
+	</script>
+
+</head>
+
+<body class="sapUiBody" id="body">
+	<h1>Test Page for sap.ui.ux3.Feed</h1>
+
+	<div id="target1" style="width:80%;"> </div>
+</body>
+
+</html>

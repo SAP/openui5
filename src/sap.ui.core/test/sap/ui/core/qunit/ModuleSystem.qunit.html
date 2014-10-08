@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+		<title>Test Page for Module Loading (require/declare)</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		module('old syntax APIs');
+		
+		test("getModulePath", function(){
+			jQuery.sap.registerModulePath("", "resources/");
+			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/sap/ui/Global.js", "standard case 'sap.ui.Global'"); 
+			equal(jQuery.sap.getModulePath("jquery.sap.xml", ".js"), "resources/jquery.sap.xml.js", "special case 'jquery.sap.xml'");
+			equal(jQuery.sap.getModulePath("sap.ui.core", "/"), "resources/sap/ui/core/", "folder case"); 
+			equal(jQuery.sap.getModulePath("sap.ui.core", ""), "resources/sap/ui/core", "no suffix"); 
+			
+			jQuery.sap.registerModulePath("sap.ui.Global", "resources/Global/");
+			equal(jQuery.sap.getModulePath("sap.ui.Global", ".js"), "resources/Global.js", "special case base name mapping"); 
+			jQuery.sap.registerModulePath("sap.ui.Global", "resources/sap/ui/Global/");
+			
+		});
+		
+		module('new syntax APIs');
+		
+		test("getResourcePath(r)", function(){
+
+			jQuery.sap.registerResourcePath("", "resources/");
+			equal(jQuery.sap.getResourcePath("sap/ui/Global.js"), "resources/sap/ui/Global.js", "standard case with extension .js: 'sap/ui/Global.js'"); 
+			equal(jQuery.sap.getResourcePath("sap/ui/Global.view.js"), "resources/sap/ui/Global.view.js", "standard case with extension .view.js: 'sap/ui/Global.view.js'"); 
+
+			jQuery.sap.registerResourcePath("sap/ui/Global", "resources/Global");
+			equal(jQuery.sap.getResourcePath("sap/ui/Global", ".js"), "resources/Global.js", "special case: mapping of the base name"); 
+			jQuery.sap.registerResourcePath("sap/ui/Global");
+
+			jQuery.sap.registerResourcePath("sap.ext", "resources/some/");
+			equal(jQuery.sap.getResourcePath("sap.ext/Global", ".js"), "resources/some/Global.js", "special case folder with dots in folder and single name"); 
+			jQuery.sap.registerResourcePath("sap.ext", "resources/sap.ext/");
+			
+			jQuery.sap.registerResourcePath("sap/ui.ext", "resources/some/");
+			equal(jQuery.sap.getResourcePath("sap/ui.ext/Global", ".js"), "resources/some/Global.js", "special case: mapping with dots in folder"); 
+			equal(jQuery.sap.getResourcePath("sap/ui.ext.js"), "resources/some.js", "special case: base name mapping with dots in folder"); 
+			equal(jQuery.sap.getResourcePath("sap/ui.ext.view.js"), "resources/some.view.js", "special case: base name mapping with dots in folder and complex extension"); 
+			equal(jQuery.sap.getResourcePath("sap/ui.ext", ".js"), "resources/some.js", "special case base name mapping with dots in folder"); 
+			jQuery.sap.registerResourcePath("sap/ui.ext");
+			
+		});
+		
+		</script>
+		
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+	</body>
+</html>

@@ -1,0 +1,56 @@
+
+/* ============================================= */
+/* CSS for controlsap.m/BusyIndicator.control    */
+/* ============================================= */
+
+.sapMBusyIndicator, .sapMBusyIndicatorLight, .sapMBusyIndicatorDark{
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.sapMBsyIndLabel{
+	vertical-align: middle;
+	padding-left: .5em;
+}
+
+.sapMBsyIndAnimation(@name) {
+	-webkit-animation: @name 2s linear 0 infinite normal none;
+	animation:         @name 2s linear 0 infinite normal none;
+}
+
+html[dir='rtl'] .sapMBsyIndIcon {
+	.sapMBsyIndAnimation(sapMBsyIndRotateRTL);
+}
+
+.sapMBsyIndIcon{
+	vertical-align: middle;
+
+	-webkit-transform:rotate(0deg) translateZ(0);
+	-webkit-transition-duration:0ms;
+	-ms-transform:rotate(0deg) translateZ(0);
+	-ms-transition-duration:0ms;
+	transform:rotate(0deg) translateZ(0);
+	transition-duration:0ms;
+	
+	.sapMBsyIndAnimation(sapMBsyIndRotate);
+}
+
+@-webkit-keyframes sapMBsyIndRotate {
+	from { -webkit-transform:rotate(0deg) translateZ(0); }
+	to { -webkit-transform:rotate(360deg) translateZ(0); }
+}
+
+@keyframes sapMBsyIndRotate {
+	from { transform:rotate(0deg) translateZ(0); }
+	to { transform:rotate(360deg) translateZ(0); }
+}
+
+@-webkit-keyframes sapMBsyIndRotateRTL {
+	from { -webkit-transform:rotate(0deg) translateZ(0); }
+	to { -webkit-transform:rotate(-360deg) translateZ(0); }
+}
+
+@keyframes sapMBsyIndRotateRTL {
+	from { transform:rotate(0deg) translateZ(0); }
+	to { transform:rotate(-360deg) translateZ(0); }
+}

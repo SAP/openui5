@@ -1,0 +1,427 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>ComboBox - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ComboBox.gif">
+
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="false"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../resources/sap-ui-core.js"
+			>
+		</script>
+
+		<script type="text/javascript">
+			var bACCOn = sap.ui.getCore().getConfiguration().getAccessibility();
+			if(bACCOn){
+				document.title += " - Accessibility-Mode ON";
+			}
+
+			function createAndAddRowAndCell(oLyt) {
+				var iIdx = oLyt.getRows().length;
+				var oRow = new sap.ui.commons.layout.MatrixLayoutRow("myrow" + iIdx);
+				var oCell = new sap.ui.commons.layout.MatrixLayoutCell("mycell" + iIdx);
+				oRow.addCell(oCell);
+				oLyt.addRow(oRow);
+				return oRow;
+			}
+
+			function populateComboWithEntries(/**sap.ui.commons.ComboBox*/oCombo, iFinalLength, aValues) {
+				var finalLength = typeof(iFinalLength) == "number" ? iFinalLength : 3;
+				var iCnt = 0;
+				var createLevel = function(sPrefix, aChars, oCombo){
+					var oItem,
+							sCmbId = oCombo.getId();
+					for(var i in aChars){
+						if(sPrefix.length < finalLength-1) {
+							createLevel(sPrefix + aChars[i], aChars, oCombo);
+						} else {
+							oItem = new sap.ui.core.ListItem(sCmbId + "_it_" + iCnt++, {text: sPrefix + aChars[i], tooltip: "Some tooltip", key: "key"+iCnt});
+							oCombo.addItem(oItem);
+						}
+					}
+				};
+				if(!(aValues && aValues.length))
+					aValues = ['a','b'];
+					createLevel('', aValues, oCombo);
+			};
+
+			function toggleEditable(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oCombo = sap.ui.getCore().getControl("myCombo1");
+				oCombo.setEditable( !oCheckBox.getChecked() );
+			};
+
+			function toggleEnabled(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oCombo = sap.ui.getCore().getControl("myCombo1");
+				oCombo.setEnabled( !oCheckBox.getChecked() );
+			};
+
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("mylyt");
+			oLyt.setLayoutFixed(false);
+			oLyt.setColumns(4);
+
+			var oListBox = new sap.ui.commons.ListBox("myList");
+
+			var oCombo = new sap.ui.commons.ComboBox("myCombo1");
+			oCombo.setListBox(oListBox);
+			populateComboWithEntries(oCombo, 4, ['a', 'b']);
+			var iEventCount = 0;
+			oCombo.attachChange(function(oControlEvent){
+				sap.ui.getCore().getControl("myText").setText("Event " + ++iEventCount + ": " + oControlEvent.getParameter("newValue"));
+			});
+			oCombo.setTooltip("This is a ComboBox");
+
+			var oLabel = new sap.ui.commons.Label("Label1",{ text: "First ComboBox", labelFor: oCombo});
+
+			var oTextView = new sap.ui.commons.TextView("TV1",{ text: oCombo.getValue() });
+			oCombo.attachLiveChange(function(oEvent){sap.ui.getCore().getControl("TV1").setText(oEvent.getParameter("liveValue"));});
+
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_Combo", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c1", {content:oLabel}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c2", {content:oCombo}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c3", {content:oTextView})
+				]}));
+
+			var oCheckBox1 = new sap.ui.commons.CheckBox("CB1");
+			oCheckBox1.setText("ReadOnly");
+			oCheckBox1.setChecked(false);
+			oCheckBox1.attachChange(toggleEditable);
+
+			var oCheckBox2 = new sap.ui.commons.CheckBox("CB2");
+			oCheckBox2.setText("Disabled");
+			oCheckBox2.setChecked(false);
+			oCheckBox2.attachChange(toggleEnabled);
+
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_prop", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c4", {content:oCheckBox1}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c5", {content:oCheckBox2})
+				]}));
+
+			var oTextField = new sap.ui.commons.TextField("KeyInput1", {
+				change: function(oEvent) {
+					var oCombo = sap.ui.getCore().getControl("myCombo1");
+					oCombo.setSelectedKey( oEvent.getParameter("newValue") );
+				}});
+			oLabel = new sap.ui.commons.Label("LabelKey1",{ text: "selectedKey:", labelFor: oTextField});
+			var oButton = new sap.ui.commons.Button("ButtonKey",{
+				text: "getSelectedKey", 
+				press: function(oEvent){ 
+					sap.ui.getCore().byId("KeyInput1").setValue(sap.ui.getCore().byId("myCombo1").getSelectedKey());
+				}});
+
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_key", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c6", {content:oLabel}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c7", {content:oTextField}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c8", {content:oButton})
+				]}));
+
+			oTextField = new sap.ui.commons.TextField("ItemInput1", {
+				change: function(oEvent) {
+					var oCombo = sap.ui.getCore().getControl("myCombo1");
+					oCombo.setSelectedItemId( oEvent.getParameter("newValue") );
+				}});
+			oLabel = new sap.ui.commons.Label("LabelItem1",{ text: "selectedItemId:", labelFor: oTextField});
+			oButton = new sap.ui.commons.Button("ButtonItem",{
+				text: "getSelectedItemId", 
+				press: function(oEvent){ 
+					var sId = sap.ui.getCore().byId("myCombo1").getSelectedItemId();
+					sap.ui.getCore().byId("ItemInput1").setValue(sId);
+				}});
+
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_item", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c9", {content:oLabel}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c10", {content:oTextField}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c11", {content:oButton})
+				]}));
+
+			var oText = new sap.ui.commons.TextView("myText");
+			var oLabel = new sap.ui.commons.Label("myLabel", {text:"This TextView that will be updated on comboBox changes:", design:sap.ui.commons.LabelDesign.Bold, labelFor: oText});
+			oText.setText("No output so far!");
+			oLyt.addRow(new sap.ui.commons.layout.MatrixLayoutRow("mlr_info", {cells:[
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c12", {content:oLabel, colSpan: 3}),
+				new sap.ui.commons.layout.MatrixLayoutCell("mlr_info_c13", {content:oText})
+				]}));
+			oLyt.placeAt("target1");
+
+			// second, disabled combobox
+			var oCombo2 = new sap.ui.commons.ComboBox("myCombo2");
+			oCombo2.setListBox(oListBox);
+			oCombo2.setEnabled(false);
+			oCombo2.placeAt("target2");
+			oLabel = new sap.ui.commons.Label({ text: "Disabled ComboBox: ", labelFor: oCombo2});
+			oLabel.placeAt("label2");
+
+			// third, read-only combobox
+			var oCombo3 = new sap.ui.commons.ComboBox("myCombo3");
+			oCombo3.setListBox(oListBox);
+			oCombo3.setValue("Read-only Combo");
+			oCombo3.setEditable(false);
+			oCombo3.placeAt("target3");
+			oLabel = new sap.ui.commons.Label({ text: "Read-only ComboBox: ", labelFor: oCombo3});
+			oLabel.placeAt("label3");
+
+			// fourth combobox, value state error
+			var oCombo4 = new sap.ui.commons.ComboBox("myCombo4");
+			oCombo4.setListBox(oListBox);
+			oCombo4.setWidth("200px");
+			oCombo4.setTooltip("This combo has a width of 200px and initially ValueState error");
+			oCombo4.setValueState(sap.ui.core.ValueState.Error);
+			oCombo4.placeAt("target4");
+			oLabel = new sap.ui.commons.Label({ text: "ComboBox in error state: ", labelFor: oCombo4});
+			oLabel.placeAt("label4");
+
+			// fifth combobox, no ListBox assigned from the outside
+			var oCombo5 = new sap.ui.commons.ComboBox("myCombo5");
+			oCombo5.setTooltip(new sap.ui.commons.RichTooltip({
+				title: "ComboBox",
+				imageSrc: "images/ui5_small.png",
+				text: "This is a ComboBox with no ListBox assigned from the outside."
+			}));
+//			oCombo5.attachChange(function(oEvent){
+//				var oItem = oEvent.getParameter("selectedItem");
+//				debugger;
+//			});
+			populateComboWithEntries(oCombo5, 2, ["x","y","z"]);
+			oCombo5.setValue("xy");
+			oCombo5.placeAt("target5");
+			oLabel = new sap.ui.commons.Label({ text: "ComboBox w/o ListBox assigned from outside: ", labelFor: oCombo5});
+			oLabel.placeAt("label5");
+
+			// ComboBox using new enhanced constructor
+			var jEventCount = 0;
+			var oCombo6 = new sap.ui.commons.ComboBox("myCombo6", {tooltip:"This combobox is created using the new constructor",
+				valueState: sap.ui.core.ValueState.Warning,
+				displaySecondaryValues: true,
+				items : [new sap.ui.core.ListItem("fi",{text:"first item", additionalText: "(1)", enabled: false}),
+					new sap.ui.core.ListItem("si",{text:"second item", additionalText: "(2)"}),
+					new sap.ui.core.ListItem("ti",{text:"third item", additionalText: "(3)"})],
+				change : function(oControlEvent) {sap.ui.getCore().getControl("cmb6And7Target").setText("Event " + ++jEventCount + ": " + "Value for combobox '" + oControlEvent.getSource().getId() + "' is '" + oControlEvent.getSource().getValue() +"'");}
+				});
+			oCombo6.placeAt("target6");
+			oLabel = new sap.ui.commons.Label({ text: "ComboBox using new enhanced constructor, separate ListItems: ", labelFor: oCombo6});
+			oLabel.placeAt("label6");
+
+			// ComboBox using new enhanced constructor
+			var kEventCount = 0;
+			var oCombo7 = new sap.ui.commons.ComboBox("myCombo7", {tooltip:"This combobox is created using the new constructor",
+				valueState: sap.ui.core.ValueState.Success,
+				"association:listBox" : oListBox,
+				"event:change" : [function(oControlEvent) {sap.ui.getCore().getControl("cmb6And7Target").setText("Event " + ++kEventCount + ": " + "Value for combobox '" + oControlEvent.getSource().getId() + "' is '" + oControlEvent.getSource().getValue() +"'");}]
+				});
+			oCombo7.placeAt("target7");
+			oLabel = new sap.ui.commons.Label({ text: "ComboBox using new enhanced constructor, provided ListBox: ", labelFor: oCombo7});
+			oLabel.placeAt("label7");
+
+			// some TextView that will be used as debug output
+			oTV = new sap.ui.commons.TextView("cmb6And7Target", {design: 'Bold', text: "Target for output of ComboBoxes above"}).placeAt("target8");
+
+			var oHandleCombo9 = function(oControlEvent){
+				var oCombo = oControlEvent.getSource();
+				for (var item in oCombo.getItems()){
+					// do not add if already in list of entries
+					if(oCombo.getItems()[item].getText() === oControlEvent.getParameter("newValue"))
+						return;
+				}
+				var oItem = new sap.ui.core.ListItem(oCombo.getId() + "_li_" + oCombo.getItems().length, {text:oControlEvent.getParameter("newValue")});
+				oCombo.addItem(oItem);
+
+				if(oControlEvent.getParameter("newValue") === "qunit"){
+					jQuery("#target9").after("<a href=\"qunit/ComboBox.qunit.html\">qunit test page</a>");
+				}
+			};
+			oCombo9 = new sap.ui.commons.ComboBox("cmb9", {change:oHandleCombo9,enter:oHandleCombo9});
+			oCombo9.placeAt("target9");
+			oLabel = new sap.ui.commons.Label({ text: "The ComboBox's change event handler will add entered text to the list of items.: ", labelFor: oCombo9});
+			oLabel.placeAt("label9");
+
+			// databinding test
+			jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+			var oModel = new sap.ui.model.json.JSONModel({
+				items:[{text: "Item 1", key: "I1"},
+				       {text: "Item 2", key: "I2"},
+				       {text: "Item 3", key: "I3"}],
+				key: "I2"
+				});
+			sap.ui.getCore().setModel(oModel);
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("text", "text").bindProperty("key", "key");
+
+			oLabel = new sap.ui.commons.Label({ text: "Databinding test: "}).placeAt("target10");
+			var oCombo10 = new sap.ui.commons.ComboBox("cmb10",{required:true}).placeAt("target10");
+			oLabel.setLabelFor(oCombo10);
+
+			oCombo10.bindProperty("selectedKey", "/key");
+			oCombo10.bindAggregation("items", "/items", oItemTemplate);
+
+			oButton = new sap.ui.commons.Button("BtnUpdModel",{
+				text: "update model",
+				press: function(oEvent){
+					oModel.setProperty("/key", "IC");
+					oModel.oData.items = [{text: "Item A", key: "IA"},
+					                      {text: "Item B", key: "IB"},
+					                      {text: "Item C", key: "IC"}];
+					oModel.checkUpdate();
+				}}).placeAt("target10");
+
+			// Test cloning
+			var iClone = 1;
+			var oButton = new sap.ui.commons.Button("ButtonClone",{
+				text: "Clone",
+				press: function(oEvent){
+					var oClone = sap.ui.getCore().byId("myCombo5").clone("clone"+iClone);
+					oClone.placeAt("target11");
+					iClone++;
+				}}).placeAt("target11");
+
+			oLabel = new sap.ui.commons.Label({ text: "Double texts with different key: ", labelFor: "Combo11"});
+			oLabel.placeAt("target12");
+			var oCombo11 = new sap.ui.commons.ComboBox("Combo11", {
+				tooltip: "name list",
+				displaySecondaryValues: true,
+				items: [
+					new sap.ui.core.ListItem("N1",{text:"Axel", additionalText: "Rose", key: "A"}),
+					new sap.ui.core.ListItem("N2",{text:"Bob", additionalText: "Marley", key: "B"}),
+					new sap.ui.core.ListItem("N3",{text:"Bob", additionalText: "Dylan", key: "C"}),
+					new sap.ui.core.ListItem("N4",{text:"Jimi", additionalText: "Hendrix", key: "D"}),
+					new sap.ui.core.ListItem("N5",{text:"John", additionalText: "Lennon", key: "E"}),
+					new sap.ui.core.ListItem("N6",{text:"John", additionalText: "Miles", key: "F"})],
+				selectedKey: ("C"),
+				change: function(oEvent) {
+					sap.ui.getCore().getControl("TV11").setText("Event : Change, item:" + oEvent.getSource().getSelectedItemId() + ", key: " + oEvent.getSource().getSelectedKey() + " Value: " + oEvent.getSource().getValue());
+					},
+				liveChange: function(oEvent) {
+					sap.ui.getCore().getControl("TV11").setText("Event : LifeChange, selectedIndex of ListBox:" + oEvent.getSource()._getListBox().getSelectedIndex() + " liveValue: " + oEvent.getParameter("liveValue"));
+					}
+				}).placeAt("target12");
+			oTextView = new sap.ui.commons.TextView("TV11",{ text: "initial: item: N3, key: C, value: Bob" }).placeAt("target12");
+
+
+			// test for placeholder
+			oLabel = new sap.ui.commons.Label({ text: "ComboBox with placeholder: ", labelFor: "Combo12"}).placeAt("target13");
+			var oCombo12 = new sap.ui.commons.ComboBox("Combo12", {
+				tooltip: "Test",
+				placeholder: "Placeholder",
+				items: [
+					new sap.ui.core.ListItem({text:"Sun", key: "A"}),
+					new sap.ui.core.ListItem({text:"Earth", key: "B"}),
+					new sap.ui.core.ListItem({text:"Moon", key: "C"})]
+				}).placeAt("target13");
+
+			// 2 ComboBoxes using the same Lisbox bound to a model
+			var oModel2 = new sap.ui.model.json.JSONModel({
+				items2:[{text: "Item X", key: "I1"},
+				        {text: "Item Y", key: "I2"},
+				        {text: "Item Z", key: "I3"}]
+				});
+			var oListBox13 = new sap.ui.commons.ListBox("List13");
+			oListBox13.bindAggregation("items", "/items2",
+				new sap.ui.core.ListItem({
+					key : "{key}",
+					text : "{text}"
+			}));
+
+			var oHLayout = new sap.ui.commons.layout.HorizontalLayout({
+				content: [ new sap.ui.commons.Label({ text: "ComboBox using ListBox with Databinding: ", labelFor: "Combo13"}),
+				           new sap.ui.commons.ComboBox("Combo13",{listBox: oListBox13}),
+				           new sap.ui.commons.Label({ text: "ComboBox using same ListBox with Databinding: ", labelFor: "Combo14"}),
+				           new sap.ui.commons.ComboBox("Combo14",{listBox: oListBox13})
+				          ]
+			}).placeAt("target14");
+			oHLayout.setModel(oModel2);
+
+			// model change only changes order of items
+			var oModel3 = new sap.ui.model.json.JSONModel({
+				items3:[{text: "Item 1"},
+				        {text: "Item 2"},
+				        {text: "Item 3"}],
+				value: "Item 1"
+				});
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("text", "text").bindProperty("key", "key");
+
+			oLabel = new sap.ui.commons.Label({ text: "Databinding (change order of items): ", labelFor: "Combo12"}).placeAt("target15");
+			var oCombo15 = new sap.ui.commons.ComboBox("Combo15").placeAt("target15");
+			oCombo15.setModel(oModel3);
+
+			oCombo15.bindProperty("value", "/value");
+			oCombo15.bindAggregation("items", "/items3",
+					new sap.ui.core.ListItem({
+						key : "{key}",
+						text : "{text}"
+					}));
+
+			oButton = new sap.ui.commons.Button("BtnUpdModel2",{
+				text: "update model",
+				press: function(oEvent){
+					oModel3.setProperty("/value", "Item 3");
+					oModel3.oData.items3 = [{text: "Item 2"},
+					                        {text: "Item 3"},
+					                        {text: "Item 1"}];
+					oModel3.checkUpdate();
+				}}).placeAt("target15");
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.ComboBox</h1>
+
+		<div id="target1"></div>
+
+		<br><!-- Disabled ComboBox: -->
+		<div id="label2"></div>
+		<div id="target2"></div>
+
+		<br><!-- Read-only ComboBox: -->
+		<div id="label3"></div>
+		<div id="target3"></div>
+
+		<br><!-- ComboBox in error state: -->
+		<div id="label4"></div>
+		<span>Some text in front </span><span id="target4"></span><span> And continued after the ComboBox.</span>
+
+		<br><!-- ComboBox w/o ListBox assigned from outside: -->
+		<div id="label5"></div>
+		<div id="target5"></div>
+
+		<br><!-- ComboBox using new enhanced constructor, separate ListItems:  -->
+		<div id="label6"></div>
+		<div id="target6"></div>
+
+		<br><!-- ComboBox using new enhanced constructor, provided ListBox: -->
+		<div id="label7"></div>
+		<div id="target7"></div>
+
+		<div id="target8"></div>
+
+		<br><!-- The ComboBox's change event handler will add entered text to the list of items.: -->
+		<div id="label9"></div>
+		<div id="target9"></div>
+
+		<br>
+		<div id="target10"></div>
+
+		<br>
+		<div id="target11"></div>
+
+		<br>
+		<div id="target12"></div>
+
+		<br>
+		<div id="target13"></div>
+
+		<br>
+		<div id="target14"></div>
+
+		<br>
+		<div id="target15"></div>
+
+		<div id="currentElement" style="position:absolute;bottom:0px;left:0px;"></div>
+	</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>SimpleForm - sap.ui.layout.form</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.Form.gif">
+	<script id="sap-ui-bootstrap" type="text/javascript"
+	        data-sap-ui-theme="sap_bluecrystal"
+	        data-sap-ui-libs="sap.ui.layout, sap.m"
+	        src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<style type="text/css">
+	body {
+		overflow: auto;
+	}
+	</style>
+
+	<script type="text/javascript">
+		var oButton1 = new sap.m.Button("B1",{
+			text: "ResponsiveLayout",
+			press: function(oEvent){
+					var oSimpleForm = sap.ui.getCore().byId("SF1");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
+					oSimpleForm = sap.ui.getCore().byId("SF2");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
+				}
+			}).placeAt("button");
+		var oButton2 = new sap.m.Button("B2",{
+			text: "Grid layout",
+			press: function(oEvent){
+					var oSimpleForm = sap.ui.getCore().byId("SF1");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
+					oSimpleForm = sap.ui.getCore().byId("SF2");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
+				}
+			}).placeAt("button");
+		var oButton3 = new sap.m.Button("B3",{
+			text: "Grid",
+			press: function(oEvent){
+					var oSimpleForm = sap.ui.getCore().byId("SF1");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
+					oSimpleForm = sap.ui.getCore().byId("SF2");
+					oSimpleForm.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
+				}
+			}).placeAt("button");
+
+		var oSimpleForm = new sap.ui.layout.form.SimpleForm(
+				"SF1",
+				{
+					minWidth : 1024,
+					maxContainerCols: 2,
+					editable: true,
+					content:[
+						    new sap.ui.core.Title({text:"Editable SimpleForm"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input("I1",{value:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Input("I2",{value:"Value 2/1"}),
+					        new sap.m.Input("I3",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "L2 M2 S2"})]})}),
+					        new sap.ui.core.Title({text:"Title 2"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Input({value:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Input({value:"Value 2/1"}),
+					        new sap.m.Input({value:"Value 2/2"})
+					]
+				});
+
+		oSimpleForm.placeAt('content');
+
+		var oSimpleForm = new sap.ui.layout.form.SimpleForm(
+				"SF2",
+				{
+					minWidth : 1024,
+					maxContainerCols: 2,
+					editable: false,
+					content:[
+						    new sap.ui.core.Title({text:"Non-Editable SimpleForm"}),
+					        new sap.m.Label({text:"Label 1"}),
+					        new sap.m.Text("T1",{text:"Value 1"}),
+					        new sap.m.Label({text:"Label 2"}),
+					        new sap.m.Text("T2",{text:"Value 2/1"}),
+					        new sap.m.Text("T3",{text:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "L2 M2 S2"})]})}),
+					        new sap.ui.core.Title({text:"Title 2"}),
+					        new sap.m.Label({text:"Label 1", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.GridData({span: "L4 M2 S5", linebreak: true})]})}),
+					        new sap.m.Text({text:"Value 1"}),
+					        new sap.m.Label({text:"Label 2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.GridData({span: "L4 M2 S5", linebreak: true})]})}),
+					        new sap.m.Text({text:"Value 2/1"}),
+					        new sap.m.Text({text:"Value 2/2"})
+					]
+				});
+
+		oSimpleForm.placeAt('content2');
+
+		</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="header">Test Page for <code>sap.ui.layout.form.SimpleForm</code> using Mobile controls</h1>
+
+	<div id="button"></div>
+	<br>
+	<div id="content"></div>
+	<br>
+	<div id="content2"></div>
+
+</body>
+</html>

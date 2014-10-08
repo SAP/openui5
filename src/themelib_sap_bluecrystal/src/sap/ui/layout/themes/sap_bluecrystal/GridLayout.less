@@ -1,0 +1,108 @@
+/* ===================================================== */
+/* CSS for control sap.ui.layout/form/GridLayout.control */
+/* Bluecrystal                                           */
+/* ===================================================== */
+
+.sapUiGrid{
+	font-family: @sapUiDesktopFontFamily;
+	font-size: @sapUiDesktopFontSize;
+}
+
+.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:first-child{
+	background-color: transparent;
+}
+
+.sapUiGrid > tbody > tr{
+	background-color: fade(@sapUiLightestBG, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiGrid > tbody > tr > td:first-child{
+	padding-left: 16px;
+}
+
+.sapUiGrid > tbody > tr:first-child > td, /* if no title */
+.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
+	padding-top: 16px;
+}
+
+.sapUiGrid > tbody > tr > td:last-child{
+	padding-right: 16px;
+}
+
+.sapUiGrid > tbody > tr:last-child > td{
+	padding-bottom: 16px;
+}
+
+.sapUiGrid > tbody > tr > td{
+	padding: 4px 0 4px 8px;
+}
+
+.sapUiFormM > .sapUiGrid > tbody > tr > td{
+	padding: 0 0 0 8px;
+}
+
+.sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-right: 4px;
+}
+
+.sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
+	padding-bottom: 2px;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 16px;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 15px;
+}
+
+.sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 8px;
+}
+
+html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel,
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 7px;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
+	padding-top: 0;
+}
+
+.sapUiGrid .sapUiGridHeader{
+	padding: 0;
+}
+
+.sapUiGrid th > .sapUiFormTitle{
+	height: 48px;
+	line-height: 48px;
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+	padding: 0 16px 0 16px;
+	text-shadow: 0em 0.0625em 0em fade(@sapUiTextInverted, 100%);
+}
+
+.sapUiGrid > tbody > tr > td > .sapUiFormTitle{
+	border: none;
+	margin-bottom: 16px;
+	margin-top: 32px;
+}
+
+.sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no title */
+.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
+	margin-top: 0;
+}
+
+.sapUiGridSpace{
+	width: 32px;
+}
+
+.sapUiGrid .sapUiFormTitle > img,
+.sapUiGrid .sapUiFormTitle > span{
+	margin-right: 4px;
+}
+
+.sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
+	bottom: 5px;
+}

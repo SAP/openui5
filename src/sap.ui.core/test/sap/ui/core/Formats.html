@@ -1,0 +1,373 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Localization/Formatting - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-xx-bindingSyntax="complex" >
+	</script>
+
+	<style>
+		.padding {
+			margin-right: 5px;
+		}
+		.sapUiTfBrd.sapUiTfCombo.padding {
+			margin-right: 5px;
+		}
+	</style>
+	<script>
+	try{
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	}catch(e){
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw(e);
+	}
+
+	var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+	var oParams = jQuery.sap.getUriParameters();
+	var v;
+	if ( v = oParams.get("sap-ui-legacy-date-format") ) {
+		oFormatSettings.setLegacyDateFormat(v);
+	}
+	if ( v = oParams.get("sap-ui-legacy-time-format") ) {
+		oFormatSettings.setLegacyTimeFormat(v);
+	}
+	if ( v = oParams.get("sap-ui-legacy-number-format") ) {
+		oFormatSettings.setLegacyNumberFormat(v);
+	}
+
+	jQuery.sap.require("sap.ui.core.LocaleData");
+	var aLocales = [
+		"ar_SA",
+		"de_AT",
+		"de_CH",
+		"de_DE",
+		"da_DK",
+		"en_AU",
+		"en_CA",
+		"en_GB",
+		"en_US",
+		"en_ZA",
+		"es_MX",
+		"es_ES",
+		"fr_FR",
+		"fr_CA",
+		"fr_BE",
+		"ja_JP",
+		"id_ID",
+		"it_IT",
+		"ru_RU",
+		"pt_BR",
+		"hi_IN",
+		"he_IL",
+		"tr_TR",
+		"nl_BE",
+		"nl_NL",
+		"pl_PL",
+		"ko_KR",
+		"zh_SG",
+		"zh_TW",
+		"zh_CN",
+		"de_XX",
+		"xx_XX"
+	];
+	
+	var oData = {
+		
+		locales: jQuery.map(aLocales, function(sLocale, i) {
+			return {
+				key : sLocale,
+				locale : new sap.ui.core.Locale(sLocale)
+			};
+		}),
+		
+		legacyDateFormats: [ 
+			{ key: "", caption: "(none)" },
+			{ key: "1", caption: "dd.MM.yyyy" },
+			{ key: "2", caption: "MM/dd/yyyy" },
+			{ key: "3", caption: "MM-dd-yyyy" },
+			{ key: "4", caption: "yyyy.MM.dd" },
+			{ key: "5", caption: "yyyy/MM/dd" },
+			{ key: "6", caption: "yyyy-MM-dd" },
+			{ key: "7", caption: "Gyy.MM.dd" },
+			{ key: "8", caption: "Gyy/MM/dd" },
+			{ key: "9", caption: "Gyy-MM-dd" },
+			{ key: "A", caption: "yyyy/MM/dd" },
+			{ key: "B", caption: "yyyy/MM/dd" },
+			{ key: "C", caption: "yyyy/MM/dd" }
+		],
+
+		legacyTimeFormats: [
+			{ key: "", caption: "(none)" },
+			{ key: "0", caption: "HH:mm:ss (no AM/PM)" },
+			{ key: "1", caption: "hh:mm:ss a (AM/PM)" },
+			{ key: "2", caption: "hh:mm:ss a (am/pm)" },
+			{ key: "3", caption: "KK:mm:ss a (AM/PM)" },
+			{ key: "4", caption: "KK:mm:ss a (am/pm)" }
+		],
+
+		legacyNumberFormats : [
+			{ key: "", caption: "(none)" },
+			{ key: " ", caption: "1.234,56" },
+			{ key: "X", caption: "1,234.56" },
+			{ key: "Y", caption: "1234,56" }
+		],
+
+		language : null,
+		locale : null,
+		formatLanguage : null,
+		formatLocale : null,
+		
+		dateValue: new Date(1642342342323),
+		intValue: 234234234,
+		floatValue: 2342234.234,
+		
+	};
+
+	var oModel = new sap.ui.model.json.JSONModel();
+		sap.ui.getCore().setModel(oModel);
+
+	function adaptModelToCurrentLocale() {
+		var oCurrentLocale = sap.ui.getCore().getConfiguration().getLocale();
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(oCurrentLocale);
+		var mLanguages = oLocaleData.getLanguages();
+		var mTerritories = oLocaleData.getTerritories();
+
+		function caption(vLocale) {
+			var oLocale = (typeof vLocale === "string") ? new sap.ui.core.Locale(vLocale) : vLocale; 
+			var sLanguage = mLanguages[oLocale.getLanguage()] || oLocale.getLanguage(); 
+			var sTerritory = oLocale.getRegion() ? mTerritories[oLocale.getRegion()] || oLocale.getRegion() : "";
+			return sLanguage + (sTerritory ? " (" + sTerritory + ")" : "");
+		}
+		
+		oData.language = sap.ui.getCore().getConfiguration().getLanguage();
+		oData.locale = oCurrentLocale;
+		oData.localeCaption = caption(oCurrentLocale);
+		oData.formatLanguage = sap.ui.getCore().getConfiguration().getFormatLocale();
+		oData.formatLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
+		oData.useCustomSettings = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().hasPrivateUseSubtag("sapufmt");
+		
+		for (var i=0; i<oData.locales.length; i++) {
+			oData.locales[i].caption = caption(oData.locales[i].locale);
+		}
+		
+		oModel.setData(oData);
+	}
+	
+	adaptModelToCurrentLocale();
+	
+	sap.ui.getCore().attachLocalizationChanged(function() {
+		adaptModelToCurrentLocale();
+	});
+	
+	var oLink, oText;
+
+	var oLabel = new sap.ui.commons.Label({
+		text : "Locales",
+		labelFor: "localesContainer"
+		}).addStyleClass("padding").placeAt("locales");
+	var oLocalesContainer = new sap.ui.layout.HorizontalLayout("localesContainer");
+	oLocalesContainer.bindAggregation("content", { path : "/locales", 
+		template : new sap.ui.commons.Link({
+			text: "{key}",
+			tooltip : "{caption}",
+			helpId : "{key}", // misuse of help id
+			href :"javascript:void(0)", 
+			press: function() {
+				var sLocale = this.getHelpId(),
+					bRTL = sLocale == "he_IL" || sLocale == "ar_SA";
+				sap.ui.getCore().getConfiguration().setLanguage(sLocale);
+			}
+		}).addStyleClass("padding")
+	});
+	oLocalesContainer.placeAt("locales");
+	
+	function select(sCaption, sBindingPath, sInitialValue, fnChange, bAllowEditing) {
+		var fnClass = bAllowEditing ? sap.ui.commons.ComboBox : sap.ui.commons.DropdownBox;
+		var oSelect = new fnClass({
+			items: { path: sBindingPath, 
+				template: new sap.ui.core.ListItem({
+					key : "{key}",
+					text: "{key} - {caption}"
+				})
+			},
+			value : sInitialValue,
+			change : fnChange		
+		}).addStyleClass("padding");
+		
+		var oLabel = new sap.ui.commons.Label({
+			text : sCaption,
+			labelFor: oSelect
+		}).addStyleClass("padding");
+		
+		oLabel.placeAt("settings");
+		oSelect.placeAt("settings");
+		sap.ui.getCore().attachInitEvent(function() {
+			oSelect.setSelectedKey(sInitialValue);
+		});
+		return oSelect;
+	}
+	
+	select("Locale", '/locales', "", 
+		function(oEvent) {
+			sap.ui.getCore().getConfiguration().setLanguage(oEvent.getParameter("selectedItem").getKey());
+		}, true
+	).bindValue("/localeCaption");	
+	
+	select("Legacy Date Format", '/legacyDateFormats', "", 
+		function(oEvent) {
+			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyDateFormat(oEvent.getParameter("selectedItem").getKey());
+		}
+	);	
+	select("Legacy Time Format", '/legacyTimeFormats', "", 
+		function(oEvent) {
+			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyTimeFormat(oEvent.getParameter("selectedItem").getKey());
+		}
+	);	
+	select("Legacy Number Format", '/legacyNumberFormats', "",
+		function(oEvent) {
+			sap.ui.getCore().getConfiguration().getFormatSettings().setLegacyNumberFormat(oEvent.getParameter("selectedItem").getKey());
+		}
+	);	
+	
+	
+	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
+	oMatrixLayout.setLayoutFixed(false);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "language"}), 
+			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/language"}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "formatLanguage"}), 
+			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/formatLanguage"}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "formatLocale"}), 
+			new sap.ui.commons.TextField({width:"200px", editable:false, value:{path:"/formatLocale"}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "Use custom settings"}), 
+			new sap.ui.commons.CheckBox({width:"200px", editable:false, checked:{path:"/useCustomSettings"}})
+	);
+	oMatrixLayout.placeAt("locale");
+
+	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
+	oMatrixLayout.setLayoutFixed(false);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "short"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"short"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "medium"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"medium"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "long"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"long"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "full"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Date({style:"full"})}})
+	);
+	oMatrixLayout.placeAt("date");
+
+	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
+	oMatrixLayout.setLayoutFixed(false);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "short"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"short"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "medium"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"medium"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "long"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"long"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "full"}), 
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/dateValue", type:new sap.ui.model.type.Time({style:"full"})}})
+	);
+	oMatrixLayout.placeAt("time");
+
+	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout({width:"500px"});
+	oMatrixLayout.setLayoutFixed(false);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "integer"}),
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/intValue", type:new sap.ui.model.type.Integer({groupingEnabled:true})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "integer, style: short"}),
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/intValue", type:new sap.ui.model.type.Integer({groupingEnabled:true, style: "short"})}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "float"}),
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/floatValue", type:new sap.ui.model.type.Float()}})
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "float, style: long"}),
+			new sap.ui.commons.TextField({width:"200px", value:{path:"/floatValue", type:new sap.ui.model.type.Float({style: "long"})}})
+	);
+	oMatrixLayout.placeAt("number");
+
+
+	var oResourceModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"resources/i18n.properties"});
+	var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
+	oMatrixLayout.setModel(oResourceModel, "i18n");
+	oMatrixLayout.setLayoutFixed(false);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}) 
+	);
+	oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}), 
+			new sap.ui.commons.TextField()
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "{i18n>firstname}"}), 
+			new sap.ui.commons.TextField()
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "{i18n>street}"}), 
+			new sap.ui.commons.TextField()
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "{i18n>zip}"}), 
+			new sap.ui.commons.TextField()
+	);
+	oMatrixLayout.createRow(
+			new sap.ui.commons.Label({text: "{i18n>city}"}), 
+			new sap.ui.commons.TextField()
+	);
+	oMatrixLayout.placeAt("resourcemodel");
+	
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1>CLDR - Test Page</h1>
+	<h2>Locale and Format settings:</h2>
+	<div id="locales"></div>
+	<div id="settings" style="margin-top:10px;"></div>
+	<h2>Locale information</h2>
+	<div id="locale"></div>
+	<h2>Date Formats</h2>
+	<div id="date"></div>
+	<h2>Time Formats</h2>
+	<div id="time"></div>
+	<h2>Number Formats</h2>
+	<div id="number"></div>
+	<h2>Resourcemodel</h2>
+	<div id="resourcemodel"></div>
+	
+</body>
+</html>

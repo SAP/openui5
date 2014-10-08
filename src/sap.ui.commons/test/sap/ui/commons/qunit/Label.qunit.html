@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- 
+  JSUNIT:
+    Tested control/class: sap.ui.commons.Label
+    Author: SAP
+ -->
+
+		<title>Test Page for sap.ui.commons.Label</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		var oTextField = new sap.ui.commons.TextField("t1");
+
+		var sText = "Hello",
+			sIcon = "../images/open.png",
+			sWidth = "111px",
+			bVisible = true,
+			oTextAlign = sap.ui.core.TextAlign.End,
+			bWrapping = false, 
+			oTextDirection = sap.ui.core.TextDirection.RTL, 
+			oDesign = sap.ui.commons.LabelDesign.Bold;
+
+		var oLabel1 = new sap.ui.commons.Label("l1");
+		oLabel1.setText(sText);
+		oLabel1.setIcon(sIcon);
+		oLabel1.setWidth(sWidth);
+		oLabel1.setVisible(bVisible);
+		oLabel1.setTextAlign(oTextAlign);
+		oLabel1.setWrapping(bWrapping);
+		oLabel1.setTextDirection(oTextDirection);
+		oLabel1.setDesign(oDesign);
+		oLabel1.setLabelFor(oTextField); 
+		sap.ui.setRoot("uiArea1", oLabel1);
+
+		var oLabel2 = new sap.ui.commons.Label("l2", {
+			text : sText,
+			icon : sIcon, 
+			width : sWidth,			
+			visible : bVisible,
+			textAlign : oTextAlign,
+			wrapping : bWrapping, 
+			textDirection : oTextDirection,  
+			design : oDesign,
+			labelFor : "t1"
+		});
+		sap.ui.setRoot("uiArea2", oLabel2);
+
+		var l1, l2;
+
+		module("Basic", {		 
+			setup : function() {
+				l1 = sap.ui.getCore().getControl("l1");
+				l2 = sap.ui.getCore().getControl("l2");
+
+				l1.setDesign(oDesign);
+				l1.setTextDirection(oTextDirection);
+
+				l2.setWidth(sWidth);
+
+				sap.ui.getCore().applyChanges();
+
+				ok(l1, "l1 should not be null");
+				ok(l2, "l2 should not be null");
+			},
+			teardown : function() {
+				l1 = null;
+				l2 = null;
+			}
+		});
+
+		// test property accessor methods 
+
+		test("TextOk", function() {
+			strictEqual(l1.getText(), sText, "l1.getText() returns wrong result");
+			strictEqual(l2.getText(), sText, "l2.getText() returns wrong result");
+		});
+
+		test("IconOk", function() {
+			strictEqual(l1.getIcon(), sIcon, "l1.getIcon() returns wrong result");
+			strictEqual(l2.getIcon(), sIcon, "l2.getIcon() returns wrong result");
+		});
+
+		test("WidthOk", function() {
+			strictEqual(l1.getWidth(), sWidth, "l1.getWidth() returns wrong result");
+			strictEqual(l2.getWidth(), sWidth, "l2.getWidth() returns wrong result");
+		});
+
+		test("WrappingOk", function() {
+			strictEqual(l1.getWrapping(), bWrapping, "l1.getWrapping() returns wrong result");
+			strictEqual(l2.getWrapping(), bWrapping, "l2.getWrapping() returns wrong result");
+		});
+
+		test("VisibleOk", function() {
+			strictEqual(l1.getVisible(), bVisible, "l1.getVisible() returns wrong result");
+			strictEqual(l2.getVisible(), bVisible, "l2.getVisible() returns wrong result");
+		});
+
+		test("TextAlignOk", function() {
+			strictEqual(l1.getTextAlign(), oTextAlign, "l1.getTextAlign() returns wrong result");
+			strictEqual(l2.getTextAlign(), oTextAlign, "l2.getTextAlign() returns wrong result");
+		});
+
+		test("TextDirectionOk", function() {
+			strictEqual(l1.getTextDirection(), oTextDirection, "l1.getTextDirection() returns wrong result");
+			strictEqual(l2.getTextDirection(), oTextDirection, "l2.getTextDirection() returns wrong result");
+		});
+
+		test("DesignOk", function() {
+			strictEqual(l1.getDesign(), oDesign, "l1.getDesign() returns wrong result");
+			strictEqual(l2.getDesign(), oDesign, "l2.getDesign() returns wrong result");
+		});
+
+		// test events
+
+		// nothing to do here
+
+
+		// test methods
+
+		// TODO 
+
+		// test misc (control interaction, metadata, styles, etc.)	
+
+		test("CssClassesOk", function() {
+			var sClasses = window.document.getElementById("l1").className;
+			notStrictEqual(sClasses, null, "sClasses is null");
+			ok(sClasses.indexOf("sapUiLbl") > -1, "l1 className is missing 'sapUiLbl'");
+			ok(sClasses.indexOf("sapUiLblEmph") > -1, "l1 className is missing 'sapUiLblEmph'");
+		});
+
+		test("CssClassesAfterSetDesignStandardOk", function() {		
+			l1.setDesign(sap.ui.commons.LabelDesign.Standard);
+			sap.ui.getCore().applyChanges();
+			var sClasses = window.document.getElementById("l1").className;
+			ok(sClasses.indexOf("sapUiLblEmph") == -1, "l1 className still contains 'sapUiLblEmph'");
+		});
+
+		function isEmpty(oObject) {
+			for(var i in oObject){ return false;}
+			return true;
+		}
+
+		test("MetadataOk", function() {
+			var oMetadata = l1.getMetadata();
+			ok(oMetadata !== null, "l1.getMetadata() should not be null");
+			ok(oMetadata.getParent() != null, "l1.getMetadata().getParent() should not be null");
+			ok(sap.ui.core.Control.getMetadata() === oMetadata.getParent());
+			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			ok(isEmpty(oMetadata.getAggregations()));
+			ok(oMetadata.getAssociations() !== undefined);
+			ok(oMetadata.getAssociations()["labelFor"] !== undefined); 
+		});
+
+		test("DirectionStyleOk", function() {
+			var sDir = l1.$().css("direction");
+			strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l1 dir is not 'RTL'");
+
+			sDir = l2.$().css("direction");
+			strictEqual(sDir && sDir.toUpperCase(), oTextDirection, "l2 dir is not 'RTL'");
+		});
+
+		test("TextDirectionChangeOk", function() {
+			l1.setTextDirection(sap.ui.core.TextDirection.LTR);
+			sap.ui.getCore().applyChanges();
+			var sDir = l1.$().css("direction");
+			strictEqual(sDir && sDir.toUpperCase(), sap.ui.core.TextDirection.LTR, "l1 dir is not 'LTR'");
+		});
+
+		test("OffsetWidthOk", function() {
+			//test the pixel perfect width of the control
+			var oDomRef = window.document.getElementById("l1");
+			strictEqual(oDomRef.offsetWidth, parseInt(l1.getWidth()), "l1.offsetWidth should equal parseInt(l1.getWidth())");
+
+			l2.setWidth("1000px");
+			sap.ui.getCore().applyChanges();
+			oDomRef = window.document.getElementById("l2");
+			strictEqual(oDomRef.offsetWidth, 1000, "l2.offsetWidth should equal 1000");
+		});
+
+		test("RequiredIndicatorOk", function() {
+			ok(!l1.$().hasClass("sapUiLblReq"), "l1 has no class 'sapUiLblReq'");
+			oTextField.setRequired(true);
+			l1.invalidate(); // can we somehow detect changes in the associated control?
+			sap.ui.getCore().applyChanges();
+			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
+			l1.setRequired(true);
+			sap.ui.getCore().applyChanges();
+			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
+			oTextField.setRequired(false);
+			l1.invalidate(); // can we somehow detect changes in the associated control?
+			sap.ui.getCore().applyChanges();
+			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
+			ok(l1.$().hasClass("sapUiLblReqEnd"), "l1 has class 'sapUiLblReqEnd'");
+			ok(!l1.$().hasClass("sapUiLblReqBeg"), "l1 has no class 'sapUiLblReqBeg'");
+			l1.setRequired(false);
+			sap.ui.getCore().applyChanges();
+			ok(!l1.$().hasClass("sapUiLblReq"), "l1 has no class 'sapUiLblReq'");
+			ok(!l1.$().hasClass("sapUiLblReqBeg"), "l1 has no class 'sapUiLblReqBeg'");
+			ok(!l1.$().hasClass("sapUiLblReqEnd"), "l1 has no class 'sapUiLblReqEnd'");
+			l1.setRequired(true);
+			l1.setRequiredAtBegin(true);
+			sap.ui.getCore().applyChanges();
+			ok(l1.$().hasClass("sapUiLblReq"), "l1 has class 'sapUiLblReq'");
+			ok(l1.$().hasClass("sapUiLblReqBeg"), "l1 has class 'sapUiLblReqBeg'");
+			ok(!l1.$().hasClass("sapUiLblReqEnd"), "l1 has no class 'sapUiLblReqEnd'");
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.commons.Label</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>	
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+	</body>
+</html>

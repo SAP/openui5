@@ -1,0 +1,163 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="panelBoxContainer sapUiFioriObjectPage"
+		width="100%" >
+		<l:content>
+			<Panel class="visibleFlexItemSizes">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Equal flexibility and content" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel class="visibleFlexItemSizes">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Different flexibility, equal content" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png">
+							<layoutData>
+								<FlexItemData growFactor="2" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png">
+							<layoutData>
+								<FlexItemData growFactor="3" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel class="visibleFlexItemSizes">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Equal flexibility, different content" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel class="visibleFlexItemSizes">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Equal flexibility, different content, width 0" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					class="zeroWidthItems"
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+
+			<Panel class="visibleFlexItemSizes">
+				<headerToolbar>
+					<Toolbar>
+						<Label text="Different flexibility and content, width 0" />
+					</Toolbar>
+				</headerToolbar>
+
+				<FlexBox
+					class="zeroWidthItems"
+					alignItems="Start">
+					<items>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark1.png">
+							<layoutData>
+								<FlexItemData growFactor="3" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark2.png" width="64px">
+							<layoutData>
+								<FlexItemData growFactor="2" />
+							</layoutData>
+						</Image>
+						<Image src="test-resources/sap/ui/demokit/explored/img/mark3.png" width="96px">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Image>
+					</items>
+				</FlexBox>
+
+			</Panel>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

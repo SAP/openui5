@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>QUnit ProgressIndicator</title>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<!-- QUnit libraries -->
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	var oProgInd = new sap.m.ProgressIndicator("pi1", {
+		width : "50%",
+		percentValue : 30,
+		displayValue : "display 30%",
+		showValue : true,
+		barColor : "POSITIVE"
+	});
+	oProgInd.placeAt("content");
+
+	var oProgInd2 = new sap.m.ProgressIndicator("pi2", {
+		width : "50%",
+		percentValue : 70,
+		displayValue : "display 10%",
+		showValue : false,
+		barColor : "NEGATIVE"
+	});
+	oProgInd2.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	//deferment
+	QUnit.config.autostart = false;
+	jQuery(document).ready(function() {
+		QUnit.start();
+	});
+
+	//basic rendering
+	test("basic rendering", function() {
+		var oDomRefPI = jQuery.sap.domById("pi1");
+		equal(oDomRefPI.style.width, "50%", "width should be the same");
+		var oDomRefPIBar = jQuery.sap.domById("pi1" + "-bar");
+		equal(oDomRefPIBar.style.width, "30%", "width should be the same");
+	});
+
+	test("percentValue greater half", function() {
+		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+	});
+
+	test("showValue", function() {
+		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
+		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
+
+		var sDomRefPIText2Left = jQuery.sap.domById("pi2-textLeft").firstChild;
+		var sDomRefPIText2Right = jQuery.sap.domById("pi2-textRight").firstChild;
+		equal(sDomRefPIText2Left, null, "textValue should not be shown");
+		equal(sDomRefPIText2Right, null, "textValue should not be shown");
+	});
+
+	//test of overwritten method setPercentValue()
+	test("setPercentValue wrong input (int out of range, too big)", function() {
+		var iPercentTest = 120;
+		oProgInd.setPercentValue(iPercentTest);
+		var iPercentAfter = oProgInd.getPercentValue();
+		equal(iPercentAfter, 30, "we expect value to be the same as before");
+	});
+
+	test("setPercentValue wrong input (int out of range, too small)",
+			function() {
+				var iPercentTest = -20;
+				oProgInd.setPercentValue(iPercentTest);
+				var iPercentAfter = oProgInd.getPercentValue();
+				equal(iPercentAfter, 30,
+						"we expect value to be the same as before");
+			});
+</script>
+
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.ui.m.ProgressIndicator</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+
+</body>
+</html>

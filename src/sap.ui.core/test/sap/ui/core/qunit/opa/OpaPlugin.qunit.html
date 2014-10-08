@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.test.OpaPlugin</title>
+
+<script
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.ui.commons">
+	
+</script>
+
+<script>
+jQuery.sap.require("sap.ui.qunit.qunit-css");
+jQuery.sap.require("sap.ui.thirdparty.qunit");
+jQuery.sap.require("sap.ui.qunit.qunit-junit");
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+jQuery.sap.require("sap.ui.test.OpaPlugin");
+jQuery.sap.require("sap.ui.test.opaQunit");
+var OpaPlugin = sap.ui.test.OpaPlugin;
+
+module("getControlByGlobalId");
+
+test("Should retrieve a control by a global id", function() {
+	// Arrange
+	var sId = "myId",
+		oButton = new sap.ui.commons.Button(sId);
+
+	oButton.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+
+	// Assert
+	strictEqual(oRetrievedButton, oButton);
+
+	//Cleanup
+	oButton.destroy();
+});
+
+test("Should not retrieve a control by a global id - if control is not rendered", function() {
+	// Arrange
+	var sId = "myId",
+		oButton = new sap.ui.commons.Button(sId);
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+
+	// Assert
+	strictEqual(oRetrievedButton, null);
+
+	//Cleanup
+	oButton.destroy();
+});
+
+
+test("Should not retrieve a control by a global id - if control is destroyed", function() {
+	// Arrange
+	var sId = "myId",
+		oButton = new sap.ui.commons.Button(sId);
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	oButton.destroy();
+	var oRetrievedButton = oPlugin.getMatchingControls({ id : sId });
+
+	// Assert
+	strictEqual(oRetrievedButton, null);
+});
+
+
+test("Should retrieve a control by a global id - if visible is set to false", function() {
+	// Arrange
+	var sId = "myId",
+		oButton = new sap.ui.commons.Button(sId);
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var oRetrievedButton = oPlugin.getMatchingControls({ 
+		id : sId,
+		visible : false
+	});
+
+	// Assert
+	strictEqual(oButton, oRetrievedButton);
+
+	//Cleanup
+	oButton.destroy();
+});
+
+test("Should retrieve multiple controls by global id's", function() {
+	// Arrange
+	var oButton = new sap.ui.commons.Button(),
+		oButton2 = new sap.ui.commons.Button();
+
+	oButton.placeAt("qunit-fixture");
+	oButton2.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var aRetrievedButtons = oPlugin.getMatchingControls({ id : [oButton.getId(), oButton2.getId()] });
+
+	// Assert
+	strictEqual(aRetrievedButtons.length, 2, "did contain 2 buttons");
+	strictEqual(aRetrievedButtons[0], oButton, "did contain first button");
+	strictEqual(aRetrievedButtons[1], oButton2, "did contain second button");
+
+	//Cleanup
+	oButton.destroy();
+	oButton2.destroy();
+});
+
+test("Should retrieve multiple controls by global id's with regexp", function() {
+	// Arrange
+	var oButton = new sap.ui.commons.Button(),
+		oButton2 = new sap.ui.commons.Button();
+
+	oButton.placeAt("qunit-fixture");
+	oButton2.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var aRetrievedButtons = oPlugin.getMatchingControls({ id : /.*button.*/ });
+
+	// Assert
+	strictEqual(aRetrievedButtons.length, 2, "did contain 2 buttons");
+	strictEqual(aRetrievedButtons[0], oButton, "did contain first button");
+	strictEqual(aRetrievedButtons[1], oButton2, "did contain second button");
+
+	//Cleanup
+	oButton.destroy();
+	oButton2.destroy();
+});
+
+test("Should get an empty array if no control was found searching by regexp", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var aRetrievedButtons = oPlugin.getControlByGlobalId({ id : /.*button.*/ });
+
+	// Assert
+	strictEqual(aRetrievedButtons.length, 0, "did not contain buttons");
+});
+
+test("Should get an empty array if no control was found searching multiple ids", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var aRetrievedButtons = oPlugin.getControlByGlobalId({ id : ["myId" , "bar"] });
+
+	// Assert
+	strictEqual(aRetrievedButtons.length, 0, "did not contain buttons");
+});
+
+test("Should get null when no control is found with single id", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var oRetrievedButtons = oPlugin.getMatchingControls({ id : "myId" });
+
+	// Assert
+	strictEqual(oRetrievedButtons, null, "did return null");
+});
+
+test("Should get null when nothing is provided", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	// Act
+	var oRetrievedButtons = oPlugin.getMatchingControls({});
+
+	// Assert
+	strictEqual(oRetrievedButtons, null, "did return null");
+});
+
+module("Controls in a view");
+
+test("Should get a single control of a view", function() {
+	// Arrange
+	var sView = [
+			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<Button id="foo">',
+				'</Button>',
+			'</core:View>'
+		].join('');
+
+	var oView = sap.ui.xmlview("view", { viewContent : sView });
+	oView.setViewName("bar");
+	oView.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	//Act
+	var oRetrievedButton = oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		id : "foo"
+	});
+
+	// Assert
+	ok(oRetrievedButton, "did return the button");
+
+	//Cleanup
+	oView.destroy();
+	oPlugin.destroy();
+});
+
+test("Should get multiple controls of a view", function() {
+	// Arrange
+	var sView = [
+			'<core:View xmlns:core="sap.ui.core" xmlns="sap.ui.commons">',
+				'<Button id="foo">',
+				'</Button>',
+				'<Button id="bar">',
+				'</Button>',
+				'<Button id="baz">',
+				'</Button>',
+			'</core:View>'
+		].join('');
+
+	var oView = sap.ui.xmlview("view", { viewContent : sView });
+	oView.setViewName("bar");
+	oView.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	//Act
+	var aRetrievedButtons = oPlugin.getMatchingControls({
+		viewNamespace : "",
+		viewName : "bar",
+		id : ["foo","bar"]
+	});
+
+	// Assert
+	strictEqual(aRetrievedButtons.length, 2, "did return all the buttons");
+	strictEqual(aRetrievedButtons[0].getId(), "view--foo", "did return the foo button as first element");
+	strictEqual(aRetrievedButtons[1].getId(), "view--bar", "did return the bar button as second element");
+
+	//Cleanup
+	oView.destroy();
+	oPlugin.destroy();
+});
+
+test("Should not throw an exception if the core is not defined", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	//Arrange
+	oPlugin.oCore = undefined;
+
+	//Act
+	oPlugin.getMatchingControls({ id : "foo" });
+	oPlugin.getMatchingControls({
+		controlType : "anything"
+	});
+
+	// Assert
+	ok(true, "did not throw an exception");
+
+	//Cleanup
+	oPlugin.destroy();
+});
+
+test("Should not throw an exception if the elements of core are not defined", function() {
+	// System under Test
+	var oPlugin = new OpaPlugin();
+
+	//Arrange
+	oPlugin.oCore = {};
+
+	//Act
+	oPlugin.getMatchingControls({ id : "foo" });
+	oPlugin.getMatchingControls({
+		controlType : "anything"
+	});
+
+	// Assert
+	ok(true, "did not throw an exception");
+
+	//Cleanup
+	oPlugin.destroy();
+});
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.test.OpaPlugin</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+
+</body>
+</html>

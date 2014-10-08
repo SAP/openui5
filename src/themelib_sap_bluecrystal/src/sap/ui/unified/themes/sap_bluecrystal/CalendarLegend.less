@@ -1,0 +1,85 @@
+/* =============================================== */
+/* CSS for control sap.ui.unified/CalendarLegend.control */
+/* Bluecrystal                                     */
+/* =============================================== */
+.sapUiUnifiedLegend {
+	background-color: @sapUiLightestBG;
+	font-size: @sapMFontSmallSize;
+}
+
+/*** compact mode (desktop size) ***/
+
+.sapUiSizeCompact .sapUiUnifiedLegend,
+.sapUiSizeCompact.sapUiUnifiedLegend {
+	padding: 8px;
+	column-gap: 6px;
+	-moz-column-gap: 6px; /* Firefox */
+	-webkit-column-gap: 6px; /* Safari and Chrome */
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendItem {
+	display: inline-block;
+	width: 100%;
+	margin: 2px;
+}
+
+/*** items and colors ***/
+
+.sapUiUnifiedLegendToday {
+	height: 10px;
+	width: 10px;
+	background: white;
+	border: 2px solid@sapUiPurple;
+}
+
+.sapUiUnifiedLegendSelected {
+	background: @sapUiHighlight;
+}
+
+.sapUiUnifiedLegendNormalDay {
+	background: @sapUiExtraLightBG;
+}
+
+.sapUiUnifiedLegendNonWorkingDay {
+	background: lighten(@sapBaseColor, 39.7);
+}
+
+.sapUiCalLegDayType01 {
+	background: @sapUiAccent1;
+}
+
+.sapUiCalLegDayType02 {
+	background: @sapUiAccent2;
+}
+
+.sapUiCalLegDayType03 {
+	background: @sapUiAccent3;
+}
+
+.sapUiCalLegDayType04 {
+	background: darken(@sapUiAccent2, 20%);
+}
+
+.sapUiCalLegDayType05 {
+	background: lighten(@sapUiAccent4, 20%);
+}
+
+.sapUiCalLegDayType06 {
+	background: @sapUiAccent6;
+}
+
+.sapUiCalLegDayType07 {
+	background: @sapUiAccent7;
+}
+
+.sapUiCalLegDayType08 {
+	background: @sapUiAccent8;
+}
+
+.sapUiCalLegDayType09 {
+	background: lighten(@sapUiAccent6, 15%);
+}
+
+.sapUiCalLegDayType10 {
+	background: darken(@sapUiAccent4, 10%);
+}

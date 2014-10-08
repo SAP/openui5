@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.MenuButton
+  Author: d046314
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>MenuButton - sap.ui.commons </title>
+
+    	<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Control initialization -->
+		<script language="javascript">
+	  
+			var oMenuButton1 = new sap.ui.commons.MenuButton("menuButton1");
+			oMenuButton1.setText("Menu Button");
+			oMenuButton1.setTooltip("This is a test tooltip");
+			oMenuButton1.setIcon("../images/menu.gif");
+			oMenuButton1.setIconFirst(false);
+			oMenuButton1.setWidth("200px");
+			
+			var oMenu1	= new sap.ui.commons.Menu("menu1");
+			oMenuButton1.setMenu(oMenu1);
+			var oMenuItem1 = new sap.ui.commons.MenuItem("menuitem1", {text:"Item1"});
+			oMenu1.addItem(oMenuItem1);
+			var oMenuItem2 = new sap.ui.commons.MenuItem("menuitem2", {text:"Item2"});
+			oMenu1.addItem(oMenuItem2);
+
+			var oMenuButton2 = new sap.ui.commons.MenuButton("menuButton2");
+
+			oMenuButton1.placeAt("uiArea1");
+
+		</script>
+		
+		<!-- Test functions -->
+		<script language="javascript">
+
+			qutils.delayTestStart();
+			
+			module("Basic");
+			
+			test("Initial Rendering", function(){
+				notEqual(jQuery.sap.domById(oMenuButton1.getId()), null, "MenuButton HTML Element should be rendered");
+				equal(jQuery.sap.domById(oMenu1.getId()), null, "Menu HTML Element is not yet rendered");
+			});
+
+			test("Property - Default Values", function() {
+				equals(oMenuButton2.getVisible(), true, "Default 'visible':");
+				equals(oMenuButton2.getTooltip(), null, "Default 'tooltip':");
+				equals(oMenuButton2.getEnabled(), true, "Default 'enabled':");
+				equals(oMenuButton2.getText(), "", "Default 'text':");
+				equals(oMenuButton2.getIcon(), "", "Default 'icon':");
+				equals(oMenuButton2.getIconFirst(), true, "Default 'iconFirst':");
+				equals(oMenuButton2.getWidth(), "", "Default 'width':");
+				equals(oMenuButton2.getMenu(), null, "Default 'menu':");
+				equals(oMenuButton2.getDockButton(), "", "Default 'dockButton':");
+				equals(oMenuButton2.getDockMenu(), "", "Default 'dockMenu':");
+			 });
+
+			test("Property - Custom Values", function() {
+				equals(oMenuButton1.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
+				equals(oMenuButton1.getText(), "Menu Button", "Custom 'text':");
+				equals(oMenuButton1.getIcon(), "../images/menu.gif", "Custom 'icon':");
+				equals(oMenuButton1.getIconFirst(), false, "Custom 'iconFirst':");
+				equals(oMenuButton1.getWidth(), "200px", "Custom 'width':");
+				equals(oMenuButton1.getMenu().getId(), oMenu1.getId(), "Custom 'menu':");
+			 });
+			
+			
+			module("Menu Open / Close Tests");
+			
+			test("Test Open/Close via Mouse", function(){
+				oMenuButton1.focus();
+				qutils.triggerEvent("click", oMenuButton1.getId());
+				ok(jQuery.sap.byId(oMenu1.getId()).is(":visible"), "Menu is visible after click");
+				
+				qutils.triggerEvent("click", "menuitem1");
+				ok(jQuery.sap.byId(oMenu1.getId()).length == 0, "Menu is hidden after click on a menuitem and DOM is removed");
+				
+			});
+			
+			test("Test Open/Close via Keyboard", function(){
+				oMenuButton1.focus();
+				qutils.triggerKeyboardEvent(oMenuButton1.getId(), "SPACE");
+				qutils.triggerEvent("click", oMenuButton1.getId()); //In real life the space will followed by a click
+				ok(jQuery.sap.byId(oMenu1.getId()).is(":visible"), "Menu is visible after SPACE is pressed");
+
+				qutils.triggerKeyboardEvent(oMenuItem1.getId(), "SPACE"); //keydown
+				qutils.triggerKeyEvent("keyup", oMenuItem1.getId(), "SPACE"); //keyup
+				ok(jQuery.sap.byId(oMenu1.getId()).length == 0, "Menu is hidden after SPACE is pressed on a menuitem and DOM is removed");
+			});
+
+			module("Events");
+
+			asyncTest("Test Press Event", function(){
+				oMenuButton1.focus();
+
+				var handler = function(oControlEvent){
+					start();
+					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of press event:");
+					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of press event:");
+					oMenuButton1.detachPress(handler);
+				};
+				oMenuButton1.attachPress(handler);
+
+				qutils.triggerEvent("click", oMenuButton1.getId());
+				qutils.triggerEvent("click", oMenuItem1.getId());
+			});
+
+			asyncTest("Test ItemSelected Event", function(){
+				oMenuButton1.focus();
+
+				var handler = function(oControlEvent){
+					start();
+					equals(oControlEvent.getParameter("item").getId(), oMenuItem1.getId(), "Parameter 'item' of itemSelected event:");
+					equals(oControlEvent.getParameter("itemId"), oMenuItem1.getId(), "Parameter 'itemId' of itemSelected event:");
+					oMenuButton1.detachItemSelected(handler);
+				};
+				oMenuButton1.attachItemSelected(handler);
+
+				qutils.triggerEvent("click", oMenuButton1.getId());
+				qutils.triggerEvent("click", oMenuItem1.getId());
+			});
+		
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.commons.MenuButton</h1>
+		<h2 id="qunit-banner"></h2>
+ 		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		
+		<div id="uiArea1"></div>
+ 		<div id="uiArea2"></div>
+ 		<div id="uiArea3"></div>
+	</body>
+</html>

@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="sap.m.sample.ListSwipe.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Products"
+		items="{/ProductCollection}" >
+		<StandardListItem
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}" 
+			iconDensityAware="false"
+			iconInset="false" />
+		<swipeContent>
+			<Button
+				text="Delete Item"
+				type="Reject"
+				press="handleReject" />
+		</swipeContent>
+	</List>
+</mvc:View>

@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>MessageBox - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+			jQuery.sap.require("sap.m.MessageBox");
+
+			var app = new sap.m.App("myApp", {initialPage:"page1"}),
+				sMessage = "MessageBox opened!",
+				sTitle = "MessageBox";
+
+			var page1 = new sap.m.Page("page1", {
+				title:"sap.m.MessageBox"
+			});
+
+			var oHL = new sap.ui.layout.HorizontalLayout();
+			var oHL1 = new sap.ui.layout.HorizontalLayout();
+			var oVL = new sap.ui.layout.VerticalLayout();
+
+			oVL.addContent(oHL);
+			oVL.addContent(oHL1);
+			page1.addContent(oVL);
+
+			var aItems = [];
+
+			jQuery.map(sap.m.MessageBox.Icon, function(value, key){
+				var item = new sap.ui.core.Item({
+					key: key,
+					text: value
+				});
+
+				aItems.push(item);
+			});
+
+			var oSelect = sap.m.Select({
+				items: aItems
+			});
+
+			var oSwitch = sap.m.Switch({
+				customTextOn: "CPT",
+				customTextOff: "CZY"
+			});
+
+			jQuery.map(sap.m.MessageBox.Action, function(value, key){
+				oHL.addContent(new sap.m.Button({
+					text: value + "(Action)",
+					press: function(){
+						sap.m.MessageBox.show(sMessage, {
+							icon: oSelect.getSelectedItem().getProperty("key"),
+							title: sTitle,
+							actions: key,
+							styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+						});
+					}
+				}));
+			});
+
+			oHL.addContent(new sap.m.Button({
+				text: "Confirm",
+				press: function(){
+					sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
+						onClose: function(bConfirmed){
+							jQuery.sap.log.info("Dialog is " + (bConfirmed ? "" : "NOT ") + "confirmed");
+						},
+						styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+					});
+				}
+			}));
+
+			oHL.addContent(new sap.m.Button({
+				text: "Alert",
+				press: function(){
+					sap.m.MessageBox.alert("Alert some message", {
+						styleClass: oSwitch.getState() ? "sapUiSizeCompact" : ""
+					});
+				}
+			}));
+
+			oHL1.addContent(oSelect);
+			oHL1.addContent(oSwitch);
+
+			oVL.addContent(new sap.m.Button({
+				text: "MessageBox with Layout",
+				press: function(){
+					var oLayout = new sap.ui.layout.VerticalLayout({
+						width: "100%",
+						content: [
+							new sap.m.Text({
+								text: "Wanna see the status of the CheckBox in an additional MessageBox?",
+							}),
+							new sap.m.CheckBox("checkBoxId", {
+								text: "The CheckBox this is me",
+								checked: false
+							})
+						]
+					});
+
+					// MessageBox.show(message, icon, title, [oActions], fnCallback, oDefaultAaction, sDialogId)
+					sap.m.MessageBox.show(oLayout, 
+			    		sap.m.MessageBox.Icon.WARNING,
+			    	    "Title of first MessageBox",
+			    	    [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+			    	    function(oAction) { 
+							if ( oAction === sap.m.MessageBox.Action.YES ) {
+								var oCheck = sap.ui.getCore().byId("checkBoxId");
+								var sText = "Checkbox is " + (oCheck.getSelected() ? "" : "not ") + "checked";
+
+								// alert(sMessage, fnCallBack, sTitle)
+								sap.m.MessageBox.alert(sText, null, "Result of CheckBox");
+							}
+						},
+						sap.m.MessageBox.Action.NO,
+						"messageBoxId"
+				    );
+				}
+			}));
+
+			app.addPage(page1).placeAt("content");
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

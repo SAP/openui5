@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>RichTooltip - sap.ui.commons</title>
+
+    <!-- ********************************************************************** -->
+		<!-- SAPUI5 Bootstrap:                                                     -->
+		<!-- Extend the "libs" property if you like to import additional libraries  -->
+		<!-- ********************************************************************** -->
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+			oCore.attachInitEvent(function () {
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				var oButton = new sap.ui.commons.Button("b1");
+				oButton.setText("Show the full blown RichTooltip");
+				oButton.setTooltip("this tooltip must be gone");
+				var oRtt = new sap.ui.commons.RichTooltip( "TextRtt1", {title: "Rich Tooltip", imageSrc: "../images/SAPLogo.gif", text:"This is the full blown RichTooltip that has all it can show at the moment:a title, an image and a text"});
+				oButton.setTooltip(oRtt);
+				oButton.placeAt("target1");
+
+				oButton = new sap.ui.commons.Button("b2");
+				oButton.setText("Show RichTooltip with text only");
+				oButton.setTooltip("This tooltip should not be here second button");
+				oRtt = new sap.ui.commons.RichTooltip( "TextRtt2", {text:"This is a smaller RichTooltip that has only the Text"});
+				oButton.setTooltip(oRtt);
+				oButton.placeAt("target2");
+
+
+				var oPanel = new sap.ui.commons.Panel("p1");
+				oPanel.setText("Panel with buttons with different types of tooltips");
+				oPanel.setTooltip("This is Tooltip of the Panel")
+
+
+				var oButton1 = new sap.ui.commons.Button("b3");
+				oButton1.setText("Show RichTooltip");
+				oButton1.setTooltip("This tooltip should not be here");
+				var oRtt1 = new sap.ui.commons.RichTooltip( "TextRtt3", {text:"This is a smaller RichTooltip that has only the Text"});
+				oButton1.setTooltip(oRtt1);
+				oPanel.addContent(oButton1);
+
+				oButton = new sap.ui.commons.Button("b4");
+				oButton.setText("Show parent tooltip, no own one");
+				oButton.setTooltip("");
+				oPanel.addContent(oButton);
+
+				oButton = new sap.ui.commons.Button("b5");
+				oButton.setText("Only standard tooltip");
+				oButton.setTooltip("Standard tooltip of the Button");
+				oPanel.addContent(oButton);
+
+
+				oPanel.placeAt("target3");
+				}
+			);
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.RichTooltip</h1>
+	
+		<p>
+			<div id="target1" style="border:1px black solid;" title="bin tooltip vom native div - gleich Irina melden!!!"></div>
+		</p>
+		<p>
+			<div id="target2"></div>
+		</p>
+		<p>
+			<div id="target3"></div>
+		</p>
+      <p>
+			<!--div id="testRtt"><span id="rtttable"></span></div-->
+		</p>
+	</body>
+</html>

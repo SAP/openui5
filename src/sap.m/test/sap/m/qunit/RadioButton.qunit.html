@@ -1,0 +1,578 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>RadioButton - sap.m - qUnit test</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
+		jQuery.sap.initMobile();
+		
+		module("Rendering");
+		
+		
+		/* ------------------------------ */
+		/* 		tests initial Check       */
+		/* ------------------------------ */
+
+
+		test("Initial Check", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton();
+			oRadioButton1.placeAt("qunit-fixture");
+			var oRadioButton2 = new sap.m.RadioButton({
+				visible:false
+			});
+			oRadioButton2.placeAt("qunit-fixture");
+			
+			sap.ui.getCore().applyChanges()
+			
+			// assertions
+			ok(oRadioButton1.$().hasClass('sapMRb'), true);
+			equal(oRadioButton2.$().hasClass('sapMRb'), false, 'The button should not have class sapMRb');
+			
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+		});
+		
+		/* ------------------------------ */
+		/* 		Group Check     		  */
+		/* ------------------------------ */
+		
+		test("Button Group", function(){
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				groupName:"Gruppe1"
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			equal(oRadioButton1.$("RB").attr("name"), 'Gruppe1', "Group name should be Gruppe1");
+			
+			// cleanup
+			oRadioButton1.destroy();
+			
+		});
+		
+		test("Radio Button style", function(){
+			
+			// arrange
+			var oDisabledRadioButton  = new sap.m.RadioButton({
+				enabled:false
+			});
+			oDisabledRadioButton.placeAt("qunit-fixture");
+			var oEnabledRadioButton = new sap.m.RadioButton({
+				enabled:true
+			});
+			oEnabledRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			equal(oDisabledRadioButton.$().hasClass('sapMRbDis'), true, 'The button should have class sapMRbDis');
+			equal(oEnabledRadioButton.$().hasClass('sapMRbDis'), false, 'The button should not have class sapMRbDis');
+			
+			// cleanup
+			oDisabledRadioButton.destroy();
+			oEnabledRadioButton.destroy();
+
+		});
+		
+		
+		/* =========================================================== */
+		/* API module                                                  */
+		/* =========================================================== */
+		
+		module("API");
+		
+		/* ------------------------------ */
+		/* tests for default values       */
+		/* ------------------------------ */
+
+		test("default values", function() {
+
+			// arrange
+			var oRadioButton = new sap.m.RadioButton();
+
+			// assertions
+			strictEqual(oRadioButton.getGroupName(), "sapMRbDefaultGroup", 'Default name is sapMRbDefaultGroup');
+			strictEqual(oRadioButton.getVisible(), true, "By default the RadioButton control is visible");
+			strictEqual(oRadioButton.getEnabled(), true, "By default the RadioButton control is enabled");
+			strictEqual(oRadioButton.getEditable(), true, "By default the RadioButton control is editable");
+			strictEqual(oRadioButton.getWidth(), "", 'By default the "width" of the RadioButton control is ""');
+			strictEqual(oRadioButton.getSelected(), false, 'By default the RadioButton control is not selected');
+			strictEqual(oRadioButton.getText(), "", 'By default the RadioButton control text is ""');
+			strictEqual(oRadioButton.getTextDirection(), "Inherit", 'By default the RadioButton control text direction is Inherit');
+
+			// cleanup
+			oRadioButton.destroy();
+		});
+		
+	
+		/* ------------------------------ */
+		/* 	   tests for setSelected()    */
+		/* ------------------------------ */
+
+		test("setSelected()", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				selected: false
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			var oRadioButton2 = new sap.m.RadioButton({
+				selected: true
+			});
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			equal(oRadioButton1.getSelected(),false, "The Radio Button should not be selected");
+			equal(oRadioButton2.getSelected(),true, "The Radio Button should be selected");
+			equal(oRadioButton2.$('RB').attr('checked'), 'checked', "The Radio Button should be selected");
+			equal(oRadioButton1.$("RB").attr('checked'), null, "The Radio Button should not be selected");
+			ok(!(oRadioButton1.$().hasClass("sapMRbSel")), "Radio Button should not have class 'sapMRbSel'");
+			ok(oRadioButton2.$().hasClass("sapMRbSel"), "Radio Button should have class 'sapMRbSel'");
+			
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+		});
+		
+		test("setSelected() should check RadioButton and uncheck all other RadioButtons from the same group", function () {
+			expect(5);
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({ selected: true }),
+				oRadioButton2 = new sap.m.RadioButton(),
+				oRadioButton3 = new sap.m.RadioButton(),
+				oRadioButton4 = new sap.m.RadioButton({ selected: true, groupName: "Other" }),
+				oRadioButton5 = new sap.m.RadioButton({ groupName: "Other" });
+			
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			oRadioButton4.placeAt("qunit-fixture");
+			oRadioButton5.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			qutils.triggerEvent("tap", oRadioButton2.getId());
+			
+			// assertions
+			ok(!oRadioButton1.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			ok(!oRadioButton3.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			ok(oRadioButton2.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+
+			ok(oRadioButton4.getSelected(), "RadioButton4 should not be changed because it is in another group");
+			ok(!oRadioButton5.getSelected(), "RadioButton1 from default group name should not be selected after tap on second button from the group");
+			
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+			oRadioButton4.destroy();
+			oRadioButton5.destroy();
+		});
+
+		/* ------------------------------ */
+		/* 		tests for setText()       */
+		/* ------------------------------ */
+
+		test("setText()", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				text: 'Foo'
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();	
+			
+			// assertions
+			strictEqual(oRadioButton1.getText(), 'Foo', "The Radion Button should have text 'Foo' ");
+			strictEqual(oRadioButton1.$('label').text(), 'Foo', "The Radio Button should have text 'Foo'");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		test("setText() change text of the RadioButton after it's initialization", function () {
+			expect(2);
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				text: 'Foo'
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			oRadioButton1.setText("Bar");
+			
+			// assertions
+			strictEqual(oRadioButton1.getText(), 'Bar', "The Radion Button should have text 'Bar'");
+			strictEqual(oRadioButton1.$('label').text(), 'Bar', "The Radio Button Label should have text 'Bar'");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		/* ------------------------------ */
+		/* 		tests for setWidth()       */
+		/* ------------------------------ */
+
+		test("setWidth()", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				width:'10px'
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			strictEqual(oRadioButton1.getWidth(), '10px', 'The width of the Radio Button should be 10px');
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		/* ------------------------------ */
+		/*  tests for setTextDirection()  */
+		/* ------------------------------ */
+
+		test("setTextDirection()", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+				textDirection: "LTR"
+			});
+			oRadioButton1.placeAt("qunit-fixture");
+			var oRadioButton2 = new sap.m.RadioButton({
+			 	textDirection: "RTL"
+			});
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			strictEqual(oRadioButton1.$('label').css('direction'),'ltr','The text is with left ro right direction');
+			strictEqual(oRadioButton2.getTextDirection(), 'RTL', 'The Text Direction should be right to left');
+			equal(oRadioButton2.$('label').css('direction'), 'rtl', 'The Text Direction should be rtl');
+			
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+		});
+
+		test("setTabIndex()", function () {
+			expect(1);
+			
+			// arrange
+			var iTabIndex = 1,
+				oRadioButton1 = new sap.m.RadioButton();
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			oRadioButton1.setTabIndex(iTabIndex);
+			
+			// assertions
+			equal(parseInt(oRadioButton1.$("Button").attr("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		test("setTooltip()", function () {
+			expect(2);
+			
+			// arrange
+			var sTooltip = "Tooltip Text",
+				oRadioButton1 = new sap.m.RadioButton({
+					tooltip: sTooltip
+				});
+				oRadioButton1.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			
+			// assertions
+			strictEqual(oRadioButton1.$().attr("title"), sTooltip, "Tooltip title attribute is set");
+			strictEqual(oRadioButton1.getTooltip(), sTooltip, "Tooltip text is set");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		/* ------------------------------ */
+		/*          tests label           */
+		/* ------------------------------ */
+		
+		test("Label", function() {
+			
+			// arrange
+			var _sLabelText = 'foobar';
+			var oRadioButton1 = new sap.m.RadioButton({text: _sLabelText, width: '20px' });
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			equal(oRadioButton1.$('label').css('width'), '20px', "Label width should be 20px");
+			equal(oRadioButton1.$('label').hasClass('sapMRbBLabel'), true, 'The class sapMRbBLabel should be set to the label');
+			strictEqual(oRadioButton1.$('label').text(), _sLabelText, "Label text should be " + _sLabelText);
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		module("Focus Handling");
+		
+		test("Should get the correct focus domref", function() {
+			
+			// arrange
+			var oRadioButton = new sap.m.RadioButton();
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oFocusDomRef = oRadioButton.getFocusDomRef();
+
+			// assertions
+			strictEqual(oFocusDomRef, oRadioButton.getDomRef("Button"), "The focus domref was the button wrapper");
+
+			// cleanup
+			oRadioButton.destroy();
+		});
+		
+		test("Should apply the focus Info", function() {
+			
+			// arrange
+			var oRadioButton = new sap.m.RadioButton();
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oFocusDomRef = oRadioButton.applyFocusInfo();
+
+			// assertions
+			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+
+			// cleanup
+			oRadioButton.destroy();
+		});
+
+		test("Should handle a tap event", function() {
+			
+			// arrange
+			var oSelectSpy = this.spy()
+			var oRadioButton = new sap.m.RadioButton();
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			oRadioButton.attachSelect(oSelectSpy);
+			oRadioButton.ontap();
+
+			// assertions
+			strictEqual(oSelectSpy.callCount, 0, "The select event was not fired yet");
+			ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+			ok(oRadioButton.getSelected(), "The radio button was selected");
+
+			//trigger timeout
+			this.clock.tick(1);
+
+			// assert
+			strictEqual(oSelectSpy.callCount, 1, "The select event was not fired after 0 ms");
+
+			// cleanup
+			oRadioButton.destroy();
+		});
+		
+		test("Not editable radio button does not select/deselect on tap", function() {
+			
+			// system under test
+			var oRadioButton = new sap.m.RadioButton({editable : false});
+			var oSpy = this.spy();
+			oRadioButton.attachSelect(oSpy);
+			
+			// arrange
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// assertions
+			strictEqual(oRadioButton.$().attr("tabindex"), "0" , "'getTabindex' should return 0");
+			qutils.triggerEvent("tap", oRadioButton.getId());
+			ok(oSpy.notCalled, "Event 'select' should not have been fired");
+			equal(oRadioButton.getSelected(), false, "Radio button should not be selected");
+			
+			// cleanup
+			oRadioButton.destroy();
+		});
+
+		test("Should keep the focus when rerendering in tap event", function() {
+			
+			// arrange
+			var oRadioButton = new sap.m.RadioButton();
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			oRadioButton.attachSelect(function () {
+				oRadioButton.rerender();
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
+
+				// cleanup
+				oRadioButton.destroy();
+			});
+
+			// act
+			oRadioButton.ontap();
+
+			// trigger timeout
+			this.clock.tick(1);
+		});
+		
+		test("Should have class sapMRbBTouched when touchstart event is fired", function () {
+			expect(1);
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton();
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		
+			// assertions
+			ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		test("Should remove class sapMRbBTouched when touchend event is fired", function () {
+			expect(2);
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton();
+			oRadioButton1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oRadioButton1.getDomRef());
+		
+			// assertions
+			ok(oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should have class sapMRbBTouched");
+			
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchend", oRadioButton1.getDomRef());
+		
+			// assertions
+			ok(!oRadioButton1.$().hasClass("sapMRbBTouched"), "RadioButton should not have class sapMRbBTouched");
+			
+			// cleanup
+			oRadioButton1.destroy();
+		});
+		
+		module("Keyboard handling");
+		
+		function checkKeyboardEventhandling(sTestName, oOptions) {
+			test(sTestName, function() {
+				// arrange
+				var oRadioButton1 = new sap.m.RadioButton();
+				
+				oRadioButton1.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+ 				// act
+				var fnFireSelectSpy = this.spy(oRadioButton1, "fireSelect");
+				sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+				this.clock.tick(1);
+
+				// assertions	
+				strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
+				
+				// act
+				sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), oOptions.keyCode);
+				this.clock.tick(1);
+
+				// assertions
+				strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired once");
+				
+
+				// cleanup
+				oRadioButton1.destroy(); 
+				
+			});
+		};
+
+		checkKeyboardEventhandling("Firing ENTER event", {
+			keyCode : jQuery.sap.KeyCodes.ENTER
+		});
+
+		checkKeyboardEventhandling("Firing SPACE event", {
+			keyCode : jQuery.sap.KeyCodes.SPACE
+		}); 
+		
+		module("Event testing");
+		
+		test("Radio Button Select Event", function() {
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({selected:false, groupName:"Group1"});
+			var oRadioButton2 = new sap.m.RadioButton({selected:true, groupName:"Group2"});
+			
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var fnFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect");
+			var fnFireSelectSpy2 = this.spy(oRadioButton2, "fireSelect");
+			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeydown(oRadioButton2.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			this.clock.tick(1);
+			
+			// assertions	
+			strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
+			strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, button is already checked");
+
+			// cleanup
+			oRadioButton1.destroy(); 
+			oRadioButton2.destroy(); 
+		});
+			
+	
+		</script>
+	</head>
+	<body>
+
+		<h1 id="qunit-header">qUnit Page for sap.m.RadioButton</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+
+	</body>
+</html>

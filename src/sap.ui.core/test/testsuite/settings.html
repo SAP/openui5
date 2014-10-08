@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Settings</title>
+		<script>
+
+		/*
+		window.onresize = resizePage;
+		window.onload = loadPage;
+
+		function loadPage() {
+			setTimeout(resizePage, 10);
+		};
+		
+		function resizePage() {
+			return;
+			var h = document.body.clientHeight;
+			h -= 9; // 2*2px padding + 2 * 1px border + 2px margin
+			h -= document.getElementById("title").offsetHeight;
+			if ( h > 0 ) 
+				document.getElementById("content").style.height = h + "px";
+		};
+		*/
+		var testfwk = top.testfwk;
+		
+		function themeDropdownChanged() {
+			var value = document.getElementById("theme_dropdown").value;
+			var input = document.getElementById("theme");
+			input.value = value;
+			testfwk.setTheme(value);
+		}
+
+		function themeInputChanged() {
+			var input = document.getElementById("theme");
+			testfwk.setTheme(input.value);
+		}
+
+		function toggleNode(oNode) {
+	    	var oDiv = oNode.nextSibling;
+	    	while (oDiv && oDiv.nodeType != 1)
+		    	oDiv = oDiv.nextSibling;
+	    	if ( !oDiv )
+		    	return;	
+	        var divclass = oDiv.className; 
+	        var oImg = oNode.getElementsByTagName("IMG")[0];
+	        if (divclass=="showdiv" || divclass=="")
+	        {  
+		        oDiv.className = "hidediv";
+	        	if (oImg) { 
+	        		oImg.src = "images/tree_node_closed.gif";
+	        	}
+	        }
+	        else
+	        {
+	        	oDiv.className = "showdiv";
+	        	if (oImg) {
+	        		oImg.src = "images/tree_node_open.gif";
+	        	}
+	        }
+	    }	
+		</script>
+		
+		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+	</head>
+	<body class="left"> 
+  		<div id="title" class="title">Settings</div>
+		<div class="border right">
+  			<div><button style="margin-left:10px" onclick="testfwk.applySettings();">Apply</button></div>
+  
+			<div class="section" onclick="toggleNode(this);" >
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				Theme
+			</div>	
+			<div style="padding-left:10px" id="theme_div" >
+				<table style="font-size:10pt">
+					<tbody>
+					<tr>
+						<td>
+							<label for="theme_dropdown">Predefined</label>
+						</td>
+						<td>
+							<select id="theme_dropdown" size="1" onchange="themeDropdownChanged();" style="font-family:arial;font-size:8.5pt;width:145px">
+								<option value="base">Base</option>
+								<option value="sap_platinum" selected>Platinum</option>
+								<option value="sap_hcb">High Contrast Black</option>
+								<option value="sap_ux">Ux Target Design</option>
+								<option value="sap_goldreflection">Gold Reflection</option>
+								<option value="sap_tradeshow_plus">Tradeshow Plus</option>
+								<option value="edding">Edding</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="theme">Manual</label>
+						</td>	
+						<td> 
+							<input style="font-family:arial;;font-size:8.5pt;width:145px" type="text" id="theme" value="sap_platinum" onblur="themeInputChanged();"/>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+    		</div>
+    	
+			<div class="section" onclick="toggleNode(this);" >
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				Miscellaneous
+			</div>
+			<div style="padding-left:10px;vertical-align:middle" id="misc_div">
+				<label for="rtl" title="Activate Right-to-Left (RTL)">RTL</label>
+				<input type="checkbox" id="rtl" onclick="testfwk.setRTL(this.checked);" title="Activate Right-to-Left (RTL)" /><br/>
+				<label for="acc" title="Activate Accessibility">Accessibility</label>
+				<input type="checkbox" id="acc" onclick="testfwk.setAccessibilityMode(this.checked);" title="Activate Accessibility" />
+			</div>
+		</div>
+	</body>
+</html>

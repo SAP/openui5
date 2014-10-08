@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		confirm="handleConfirm"
+		cancel="handleCancel"
+		resetFilters="handleResetFilters">
+		<filterItems>
+			<ViewSettingsCustomItem
+				id="idCustomFilterItem"
+				text="Custom Filter"
+				key="myFilter">
+				<customControl>
+					<Slider
+						step="10"
+						change="handleSliderChange" />
+				</customControl>
+			</ViewSettingsCustomItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>

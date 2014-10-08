@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.Shell">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Shell" />
+		<title>Shell - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.demokit">
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script>
+			// if them is changed it must be changed in the iFrame too
+			sap.ui.getCore().attachThemeChanged(function(){
+				var oContentWindow = jQuery("#Example")[0].contentWindow;
+				var sTheme = sap.ui.getCore().getConfiguration().getTheme();
+				oContentWindow.sap.ui.getCore().applyTheme(sTheme);
+			});
+		</script>
+
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Red" icon="images/ctrls/shell-icon.png">Shell</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The Ux3 GoldReflection Shell is an application frame with navigation capabilities.
+	<br>
+	For the main content navigation <code>worksetItems</code> are used. These items can have a subitems. So a two-level navigation is possible.
+	In the content area a control hierarchy (e.g. a MatrixLayout containing form controls) can be displayed.
+	<br>
+	In the header area some <code>headerItems</code> can be used, this can be text, buttons or menu buttons.
+	<br>
+	On the left side of the shell there is a toolbar. It contains a search, inspect and feeder function which can be hidden if needed.
+	Additionally there other <code>ToolPopups</code> can be added to have application dependent functions.
+    Since 1.14, if the ToolPopups added to the toolbar take more space than is available on screen, the toolbar's
+    width automatically increases to accomodate more items.
+	</p>
+    <p>
+    The bar on the right side of the screen is called pane-bar. 
+    <code>paneBarItems</code> can be added to this bar and are displayed as 
+    clickable text. By attaching to the <code>paneBarItemSelected</code>-Event, the
+    application can react to user interactions with these items. One example would 
+    be to set the content of the pane associated with the clicked icon by using
+    <code>setPaneContent</code>.
+    Since 1.14, if more items are added to the pane-bar than fit on screen, these additional items 
+    will be added to a menu and a button is rendered at the bottom of the bar which gives access to 
+    said menu.
+    <br/>
+    The method <code>setPaneContent</code> accepts any control-tree (control or 
+    nested controls), and puts it into the currently active pane in place of the 
+    current content. Please keep the reduced space of the pane in mind when adding
+    content to it.
+    The pane is automatically opened or 
+    closed (based on its current state) when the item is clicked. Before opening of 
+    the pane, the event <code>paneBarItemSelected</code> is fired. After closing the 
+    event <code>paneClosed</code> is fired.
+    </p>
+    <p>
+    <span style="font-style: italic;">
+        Please note, that the following setting may not be implemented in every theme.
+    </span>
+    <br/>
+    The shell can be used with different design options that can be changed via the 
+    <code>designType</code>-property. The standard-design 
+    (<code>sap.ui.ux3.ShellDesignType.Standard</code>) is set as default, the other
+    choices are <code>sap.ui.ux3.ShellDesignType.Light</code> and 
+    <code>sap.ui.ux3.ShellDesignType.Crystal</code>. Changing the designType
+    also influences the header (see <code>headerType</code>-property), as the 
+    standard header of the Light and Crystal designs are smaller than the one of the standard 
+    (dark) design. The other <code>headerType</code>s are currently not influenced by the 
+    design.<br/>
+    When the designType is set to <code>sap.ui.ux3.ShellDesignType.Light</code> or 
+    <code>sap.ui.ux3.ShellDesignType.Crystal</code>, the inverted-state of all 
+    <code>ToolPopup</code>-controls in the shell is set to false, while it is set to true 
+    otherwise. The inverted state of the ToolPopups is overwritten, even if it was explicitly set 
+    before.
+    </p>
+    <p>
+	The shell is supposed to be added to a direct child of the <code>BODY</code> tag of a page and there should be no other parts of the page consuming space outside the Shell.
+	</p>
+
+	<h2>Example</h2>
+	<iframe src="ShellExample.html" width="90%" height="500px" name="Example" id="Example">
+	</iframe>
+	<p>
+	The example shows the possibilities of the shell. Real application surely are much more complex.
+	</p>
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.Shell.html">API documentation</a>
+	</p>
+</body>
+</html>

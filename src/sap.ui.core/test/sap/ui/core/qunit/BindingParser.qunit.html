@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tests binding parser
+  Author: d020684
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-xx-bindingSyntax="complex"
+	data-sap-ui-language="en_US">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script>
+
+	jQuery.sap.require("sap.ui.model.odata.Filter");
+
+	var Global = {
+		type : sap.ui.model.type.String,
+		formatter : function($) { return $; },
+		instancedType : new sap.ui.model.type.Date({
+			pattern : "yyyy-MM-dd"
+		})
+	}
+	
+	var oController = {
+		mytype : sap.ui.model.type.String,
+		myformatter : function($) { return $; },
+		myInstancedType : new sap.ui.model.type.Date({
+			pattern : "yyyy-MM-dd"
+		})
+	}
+	
+	var parse = sap.ui.base.ManagedObject.bindingParser;
+		
+	test("Binding Parser", function(){
+		equal(parse, sap.ui.base.BindingParser.complexParser, "configuration should have set the right binding parser");
+	});
+	
+	test("Single Binding with formatter", function(){
+		var o= parse("{path:'something', formatter: 'Global.formatter'}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.type, undefined, "parse should not return a type name");
+		equal(o.formatter, Global.formatter, "parse should return the global formatter function");
+	});
+	
+	test("Single Binding with type", function(){
+		var o = parse("{path:'something', type: 'Global.type'}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
+		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+	});
+
+	test("Single Binding with constraint regex", function(){
+		var o = parse("{path:'something' , type:'sap.ui.model.type.String', constraints:{search: '@'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.type instanceof sap.ui.model.type.String, "parse should return the global type");
+		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+		deepEqual(o.type.oConstraints.search, /@/, "parse should return the search constraint as regex");
+	});
+
+	test("Single Binding with instanced type", function(){
+		var o = parse("{path:'something', type: 'Global.instancedType'}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.type instanceof sap.ui.model.type.Date, "parse should return the global type");
+		equal(o.formatter, undefined, "parse should return the name of the formatter function");
+	});
+	
+	test("Single Binding with one filter", function(){
+		var o = parse("{path:'something', filters: {path:'someFilterPath', operator:'EQ', value1:'someCompareValue'}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.filters instanceof sap.ui.model.Filter, "parse should return the specified filter");
+		equal(o.filters.sPath, "someFilterPath", "filter path should return the specified path");
+		equal(o.filters.oValue1, "someCompareValue", "compare value should be as defined");
+		equal(o.filters.sOperator, "EQ", "operator should be as defined");
+	});
+	
+	test("Single Binding with multiple filters", function(){
+		var o = parse("{path:'something', filters: [{path:'someFilterPath', operator:'EQ', value1:'someCompareValue'},{path:'someFilterPath2', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.filters.length, 2, "two filters should be defined");
+		ok(o.filters[0] instanceof sap.ui.model.Filter, "parse should return the specified filter");
+		equal(o.filters[0].sPath, "someFilterPath", "filter path should return the specified path");
+		equal(o.filters[0].oValue1, "someCompareValue", "compare value should be as defined");
+		equal(o.filters[0].sOperator, "EQ", "parse should return the name of the formatter function");
+		ok(o.filters[1] instanceof sap.ui.model.Filter, "parse should return the specified filter");
+		equal(o.filters[1].sPath, "someFilterPath2", "filter path should return the specified path");
+		equal(o.filters[1].oValue1, "someCompareValue", "compare value should be as defined");
+		equal(o.filters[1].oValue2, "someOtherCompareValue", "compare value should be as defined");
+	});
+	
+	test("Single Binding with one sorter", function(){
+		var o = parse("{path:'something', sorter: {path:'someSortPath', descending: false}}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		ok(o.sorter instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
+		equal(o.sorter.sPath, "someSortPath", "sorter path should return the specified path");
+		equal(o.sorter.bDescending, false, "sort should not be descending");
+	});
+	
+	test("Single Binding with multiple sorters", function(){
+		var o = parse("{path:'something', sorter: [{path:'someSortPath', descending: false}, {path:'someOtherSortPath', descending: true}]}");
+		equal(typeof o, "object", "parse should return an object");
+		equal(o.parts, undefined, "binding info should not be a composite binding info");
+		equal(o.path, "something", "path should be as specified");
+		equal(o.sorter.length, 2, "two filters should be defined");
+		ok(o.sorter[0] instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
+		equal(o.sorter[0].sPath, "someSortPath", "sorter path should return the specified path");
+		equal(o.sorter[0].bDescending, false, "sort should not be descending");
+		ok(o.sorter[1] instanceof sap.ui.model.Sorter, "parse should return the specified sorter");
+		equal(o.sorter[1].sPath, "someOtherSortPath", "sorter path should return the specified path");
+		equal(o.sorter[1].bDescending, true, "sort should be descending");
+	});
+
+	test("Embedded Binding (single)", function(){
+		var o = parse("Some prefix {path:'something', type: 'Global.type'} and some suffix");
+		equal(typeof o, "object", "parse should return an object");
+		equal(typeof o.parts, "object", "binding info should be a composite binding info");
+		equal(o.parts.length, 1, "binding info should contain a single part");
+		ok(o.parts[0].type instanceof sap.ui.model.type.String, "parse should return the global type");
+		equal(typeof o.formatter, "function", "parse should return a formatter function");
+	});
+	
+	test("Embedded Binding (multiple)", function(){
+		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		equal(typeof o, "object", "parse should return an object");
+		equal(typeof o.parts, "object", "binding info should be a composite binding info");
+		equal(o.parts.length, 3, "binding info should contain three parts");
+		equal(o.parts[0].path, "something", "parse should return the correct path for part 1");
+		ok(o.parts[0].type instanceof sap.ui.model.type.String, "parse should return the global type for part 1");
+		equal(o.parts[0].formatter, undefined, "parse should not return a formatter for part 2");
+		equal(o.parts[1].path, "/lastName", "parse should return the correct path for part 2");
+		equal(o.parts[1].type, undefined, "parse should not return a type for part 2");
+		equal(o.parts[1].formatter, undefined, "parse should not return a formatter for part 2");
+		equal(o.parts[2].path, "address/firstName", "parse should return the correct path for part 3");
+		equal(o.parts[2].type, undefined, "parse should not return a type for part 3");
+		equal(o.parts[2].formatter, undefined, "parse should not return a formatter for part 3");
+		equal(typeof o.formatter, "function", "parse should return a formatter function");
+	});
+	
+	test("Derived Formatter", function(){
+		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		equal(typeof o, "object", "parse should return an object");
+		equal(typeof o.parts, "object", "binding info should be a composite binding info");
+		equal(o.parts.length, 3, "binding info should contain three parts");
+		equal(o.formatter("abc","123","--"), "Some prefix abc, some other 123 and some -- suffix", "formatter should produce the correct string");
+	});
+	
+	test("Keep binding Strings", function() {
+		var o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		ok(!o.bindingString, "binding String should not exist in binding info object");
+		sap.ui.base.BindingParser._keepBindingStrings = true;
+		o = parse("Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix");
+		ok(o.bindingString, "binding String should exist in binding info object");
+		equal(o.bindingString, "Some prefix {path:'something', type: 'Global.type'}, some other {/lastName} and some {address/firstName} suffix", "bindingString stored correctly");	
+	});
+	
+	test("Escaping", function(){
+		var o = parse("Some pre\\{fix {path:'something', type: 'Global.type'}, some\\} other {/lastName} and } some {address/firstName} suffix");
+		equal(typeof o, "object", "parse should return an object");
+		equal(typeof o.parts, "object", "binding info should be a composite binding info");
+		equal(o.parts.length, 3, "binding info should contain three parts");
+		equal(o.formatter("","",""), "Some pre{fix , some} other  and } some  suffix", "formatter should produce the correct string");
+		
+		// without unescaping
+		equal(parse("A simple value string"), undefined, "for a simple string, parse should not return an object");
+		equal(parse("A simple string with an \\{escaped opening brace"), undefined, "for a string with escaped chars, parse still should not return an object");
+		equal(parse("A simple string with an escaped closing \\}brace"), undefined, "for a string with escaped chars, parse still should not return an object");
+		equal(parse("A simple \\\\string with an escaped backslash"), undefined, "for a string with escaped chars, parse still should not return an object");
+		equal(parse("A simple \\\\string with multiple \\{escaped\\\} chars"), undefined, "for a string with escaped chars, parse still should not return an object");
+		
+		// with unescaping
+		equal(parse("A simple value string",null,true), undefined, "for a simple string, parse should not return an unescaped string even when instructed to do so");
+		equal(parse("A simple \\\\string with multiple \\{escaped\\\} chars",null,true), "A simple \\string with multiple {escaped} chars", "for a string with escaped chars, parse should return an unescaped string when instructed to do so");
+	});
+	
+	test("Context Object", function(){
+		var o = parse("Some prefix {path:'something', type: '.mytype'}, some other {path:'/lastName', formatter: '.myformatter'}", oController);
+		equal(o.parts.length, 2, "binding info should contain two parts");
+		ok(o.parts[0].type instanceof sap.ui.model.type.String, "parse should return the controller type for part 1");
+		equal(o.parts[1].formatter.guid, oController.myformatter.guid, "formatter for part 2 should have been resolved to formatter function from controller");
+	});
+
+	test("Context Object with instanced type", function(){
+		var o = parse("{path:'something', type: '.myInstancedType'}", oController);
+		ok(o.type instanceof sap.ui.model.type.Date, "parse should return the controller type");
+	});
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding Calculated Fields</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="txt"></div>
+<div id="txt2"></div>
+<div id="table"></div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.ToggleButton</title>
+<script id="sap-ui-bootstrap"
+	type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+
+<style type="text/css">
+.ButtonSpace {
+	margin-top: 10px;
+}
+</style>
+
+<script type="text/javascript">
+
+	var oToggleButton1,
+		oToggleButton2;
+
+	oToggleButton1 = new sap.m.ToggleButton("testToggleButton_1", {
+		text : "TestButton 1",
+		pressed : true
+	});
+	oToggleButton1.placeAt("uiArea1");
+
+	oToggleButton2 = new sap.m.ToggleButton("testToggleButton_2", {
+		text : "TestButton 2",
+		pressed : false
+	});
+	oToggleButton2.placeAt("uiArea2");
+
+	module("pressed state");
+
+	test("TestGetPressedStateOK", function() {
+		equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
+		equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
+	});
+
+	test("TestPressedToUnpressedOK", function() {
+		qutils.triggerEvent("tap", oToggleButton1.getId());
+		sap.ui.getCore().applyChanges();
+		equal(oToggleButton1.getPressed(), false, "getPressedState");
+	});
+
+	test("TestUnpressedToPressedOK", function() {
+		qutils.triggerEvent("tap", oToggleButton2.getId());
+		sap.ui.getCore().applyChanges();
+		equal(oToggleButton2.getPressed(), true, "getPressedState");
+	});
+
+	test("Should not change the pressed state, from toggled to untoggled, on a tap Event if the toggle button is disabled", function() {
+		// Arrange + System under Test
+		var oToggleButton = new sap.m.ToggleButton({
+				enabled : false,
+				pressed : true
+			}),
+			oTapSpy = this.spy(oToggleButton, "ontap");
+
+		oToggleButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("tap", oToggleButton.getId());
+
+		// Assert
+		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+	});
+
+	test("Should not change the pressed state, from untoggled to toggled, on a tap Event if the toggle button is disabled", function() {
+		// Arrange + System under Test
+		var oToggleButton = new sap.m.ToggleButton({
+				enabled : false,
+				pressed : false
+			}),
+			oTapSpy = this.spy(oToggleButton, "ontap");
+
+		oToggleButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("tap", oToggleButton.getId());
+
+		// Assert
+		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+	});
+
+	test("Should change the pressed state, from toggled to untoggled, if it was called over the API", function() {
+		// Arrange + System under Test
+		var oToggleButton = new sap.m.ToggleButton({
+				enabled : false,
+				pressed : true
+			});
+
+		oToggleButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oToggleButton.setPressed(false);
+
+		// Assert
+		strictEqual(oToggleButton.getPressed(), false, "the pressed state is still false");
+	});
+
+	test("Should change the pressed state, from untoggled to toggled, if it was called over the API", function() {
+		// Arrange + System under Test
+		var oToggleButton = new sap.m.ToggleButton({
+				enabled : false,
+				pressed : false
+			});
+
+		oToggleButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oToggleButton.setPressed(true);
+
+		// Assert
+		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+	});
+
+
+	module("Integration tests");
+
+	test("Should not change the pressed state on a tap Event if the toggle button is in a disabled Toolbar", function() {
+		//Arrange
+		jQuery.sap.require("sap.m.Toolbar");
+		var oToolbar = new sap.m.Toolbar({
+			enabled : false
+		});
+
+		// System under Test
+		var oToggleButton = new sap.m.ToggleButton({
+				pressed : true
+			}),
+			oTapSpy = this.spy(oToggleButton, "ontap");
+		oToolbar.addContent(oToggleButton);
+
+		oToolbar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("tap", oToggleButton.getId());
+
+		// Assert
+		strictEqual(oToggleButton.getEnabled(), false, "the enabled state of the toolbar got propagated");
+		strictEqual(oToggleButton.getPressed(), true, "the pressed state is still true");
+		ok(oToggleButton.$("inner").hasClass("sapMToggleBtnPressed"), "still has the pressed class")
+		strictEqual(oTapSpy.callCount, 1, "tap was fired");
+	});
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for ToggleButton</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+</body>
+</html>

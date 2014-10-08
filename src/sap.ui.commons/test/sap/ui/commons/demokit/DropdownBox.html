@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.DropdownBox,sap.ui.commons.ListBox,sap.ui.core.ListItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control TextField ComboBox DropdownBox" />
+		<title>DropdownBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='DropdownBoxSimple'>
+// Create a DropdownBox
+var oDropdownBox1 = new sap.ui.commons.DropdownBox("DropdownBox1");
+oDropdownBox1.setTooltip("Country");
+oDropdownBox1.setEditable(true);
+oDropdownBox1.setWidth("200px");
+var oItem = new sap.ui.core.ListItem("Country1");
+oItem.setText("Canada");
+oDropdownBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country2");
+oItem.setText("Deutschland");
+oDropdownBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country3");
+oItem.setText("England");
+oDropdownBox1.addItem(oItem);
+oItem = new sap.ui.core.ListItem("Country4");
+oItem.setText("Россия");
+oDropdownBox1.addItem(oItem);
+oDropdownBox1.setValue("Deutschland");
+
+// Attach the DropdownBox to the page
+oDropdownBox1.placeAt("sample1");
+</script>
+
+<script id='DropdownBoxListBox'>
+// Create a ListBox
+var oListBox1 = new sap.ui.commons.ListBox("Cities", {items : [
+			new sap.ui.core.ListItem("City1", {text:"Berlin", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City2", {text:"Heidelberg", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City3", {text:"Walldorf", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City4", {text:"London", additionalText:"England"}),
+			new sap.ui.core.ListItem("City5", {text:"Dresden", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City6", {text:"New York", additionalText:"USA"}),
+			new sap.ui.core.ListItem("City7", {text:"Paris", additionalText:"France"}),
+			new sap.ui.core.ListItem("City8", {text:"Amsterdam", additionalText:"Holland"}),
+			new sap.ui.core.ListItem("City9", {text:"Frankfurt", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City10", {text:"Leipzig", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City11", {text:"Magdeburg", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City12", {text:"Hamburg", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City13", {text:"München", additionalText:"Germany"}),
+			new sap.ui.core.ListItem("City14", {text:"Stuttgart", additionalText:"Germany"})]
+		});
+
+// Create a DropdownBox
+var oDropdownBox2 = new sap.ui.commons.DropdownBox("DropdownBox2", {tooltip:"City", displaySecondaryValues:true, "association:listBox" : oListBox1, value:"Walldorf"});
+
+// Create a Textfield to visalize the CHANGE event
+var oTextField1 = new sap.ui.commons.TextField("TextField1", {tooltip:"Value of Combobox", editable:false, value:oDropdownBox2.getValue()});
+oDropdownBox2.attachChange(function(){oTextField1.setValue(oDropdownBox2.getValue());});
+
+// Attach the DropdownBox to the page
+oDropdownBox2.placeAt("sample2");
+oTextField1.placeAt("sample2");
+</script>
+
+<script id='DropdownBoxDataBinding'>
+// Create JSON data model
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData({
+	hardware:[
+		{device:"PC", enabled:true},
+		{device:"Monitor", enabled:true},
+		{device:"Keyboard", enabled:false},
+		{device:"Mouse", enabled:true},
+		{device:"Speaker", enabled:false},
+		{device:"Printer", enabled:true}],
+	editable: true, 
+	tooltip: "Device"});
+sap.ui.getCore().setModel(oModel);
+
+// Create a DropdownBox
+var oDropdownBox3 = new sap.ui.commons.DropdownBox("DropdownBox3");
+oDropdownBox3.bindProperty("tooltip", "/tooltip");
+oDropdownBox3.bindProperty("editable", "/editable");
+oDropdownBox3.setModel(oModel);
+var oItemTemplate1 = new sap.ui.core.ListItem();
+oItemTemplate1.bindProperty("text", "device");
+oItemTemplate1.bindProperty("enabled", "enabled");
+oDropdownBox3.bindItems("/hardware", oItemTemplate1);
+
+// Attach the DropdownBox to the page
+oDropdownBox3.placeAt("sample3");
+</script>
+
+<script id='DropdownBoxSearchHelp'>
+// Create a ListBox
+var oListBox2 = new sap.ui.commons.ListBox("days", {items : [
+			new sap.ui.core.ListItem("Day1", {text:"Monday"}),
+			new sap.ui.core.ListItem("Day2", {text:"Tuesday"}),
+			new sap.ui.core.ListItem("Day3", {text:"Wednesday"}),
+			new sap.ui.core.ListItem("Day4", {text:"Thursday"}),
+			new sap.ui.core.ListItem("Day5", {text:"Friday"}),
+			new sap.ui.core.ListItem("Day6", {text:"Saturday"}),
+			new sap.ui.core.ListItem("Day7", {text:"Sunday"})]
+		});
+
+// Create dialog for search help
+var oSearchDialog = new sap.ui.commons.Dialog("SearchHelp", {
+	modal: true, 
+	title: "Search Help (example dialog)", 
+	buttons: [new sap.ui.commons.Button("CancelButton", {
+		text: "Cancel", 
+		press: function(oEvent){
+			// close dialog without changing value
+			oEvent.getSource().getParent().close();
+		}})], 
+	content: [new sap.ui.commons.ListBox("SearchList", {
+		width:"100%", 
+		visibleItems: 7, 
+		allowMultiSelect: false, 
+		items : [
+			new sap.ui.core.ListItem("Day-1", {text:"Monday"}),
+			new sap.ui.core.ListItem("Day-2", {text:"Tuesday"}),
+			new sap.ui.core.ListItem("Day-3", {text:"Wednesday"}),
+			new sap.ui.core.ListItem("Day-4", {text:"Thursday"}),
+			new sap.ui.core.ListItem("Day-5", {text:"Friday"}),
+			new sap.ui.core.ListItem("Day-6", {text:"Saturday"}),
+			new sap.ui.core.ListItem("Day-7", {text:"Sunday"})],
+		select: function(oEvent){
+			// close dialog and set value to selected one
+			oEvent.getSource().getParent().close();
+			var oDropdownBox = sap.ui.getCore().byId("DropdownBox4");
+			oDropdownBox.setValue(oEvent.getParameter("selectedItem").getText());
+		}})],
+	initialFocus: "SearchList",
+	closed: function(oEvent){
+		// if dialog is closed set focus back to the DrobdownBox
+		var oDropdownBox = sap.ui.getCore().byId("DropdownBox4");
+		oDropdownBox.focus();}
+	});
+
+// Create a DropdownBox
+var oDropdownBox4 = new sap.ui.commons.DropdownBox("DropdownBox4", {
+	tooltip:"Days",
+	displaySecondaryValues:true,
+	"association:listBox" : oListBox2,
+	// Assign search help to DropdownBox
+	searchHelpEnabled:true,
+	searchHelp: function(oEvent){
+		var oList = oSearchDialog.getContent()[0],
+			aItems = oList.getItems(),
+			oVal = oEvent.getParameter("value");
+		for (var i = 0; i < aItems.length; i++){
+			if(aItems[i].getText() === oVal) {
+				oList.setSelectedIndex(i);
+				break;
+			}
+		}
+		oSearchDialog.open();
+		}
+	});
+
+// Attach the DropdownBox to the page
+oDropdownBox4.placeAt("sample4");
+</script>
+
+<script id='DropdownBoxIdKey'>
+// Create a ComboBox
+var oDropdownBox5 = new sap.ui.commons.DropdownBox("DropdownBox5",{
+	tooltip: "Weekday",
+	items: [new sap.ui.core.ListItem("WeekDay1",{text: "Monday", key: "Mo"}),
+	        new sap.ui.core.ListItem("WeekDay2",{text: "Tuesday", key: "Tu"}),
+	        new sap.ui.core.ListItem("WeekDay3",{text: "Wednesday", key: "Mi"}),
+	        new sap.ui.core.ListItem("WeekDay4",{text: "Thursday", key: "Th"}),
+	        new sap.ui.core.ListItem("WeekDay5",{text: "Friday", key: "Fr"}),
+	        new sap.ui.core.ListItem("WeekDay6",{text: "Saturday", key: "Sa"}),
+	        new sap.ui.core.ListItem("WeekDay7",{text: "Sunday", key: "Su"})],
+	change: function(oEvent){
+		sap.ui.getCore().byId("TextFieldKey").setValue(oEvent.oSource.getSelectedKey());
+		sap.ui.getCore().byId("TextFieldId").setValue(oEvent.oSource.getSelectedItemId());
+		}
+	});
+
+var oLabel1 = new sap.ui.commons.Label("LabelDropdown",{ text: "Weekday:", labelFor: oDropdownBox5});
+
+var oTextField2 = new sap.ui.commons.TextField("TextFieldKey", {
+	tooltip:"selectedKey",
+	value:oDropdownBox5.getSelectedKey(),
+	change: function(oEvent) {
+		var oDropdown = sap.ui.getCore().getControl("DropdownBox5");
+		oDropdown.setSelectedKey( oEvent.getParameter("newValue") );
+		var oText = sap.ui.getCore().getControl("TextFieldId");
+		oText.setValue(oDropdown.getSelectedItemId());
+	}});
+
+var oLabel2 = new sap.ui.commons.Label("LabelKey",{ text: "selectedKey:", labelFor: oTextField2});
+
+var oTextField3 = new sap.ui.commons.TextField("TextFieldId", {
+	tooltip:"selectedItemId",
+	value:oDropdownBox5.getSelectedItemId(),
+	change: function(oEvent) {
+		var oDropdown = sap.ui.getCore().getControl("DropdownBox5");
+		oDropdown.setSelectedItemId( oEvent.getParameter("newValue") );
+		var oText = sap.ui.getCore().getControl("TextFieldKey");
+		oText.setValue(oDropdown.getSelectedKey());
+	}});
+
+var oLabel3 = new sap.ui.commons.Label("LabelId",{ text: "selectedItemId:", labelFor: oTextField3});
+
+var oLayout = new sap.ui.commons.layout.MatrixLayout("Matrix1",{
+	layoutFixed: false,
+	columns: 2,
+	rows: [new sap.ui.commons.layout.MatrixLayoutRow("Row1", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell1", {content:oLabel1}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell2", {content:oDropdownBox5})]}),
+				new sap.ui.commons.layout.MatrixLayoutRow("Row2", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell3", {content:oLabel2}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell4", {content:oTextField2})]}),
+				new sap.ui.commons.layout.MatrixLayoutRow("Row3", {cells:[
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell5", {content:oLabel3}),
+					new sap.ui.commons.layout.MatrixLayoutCell("Cell6", {content:oTextField3})]})
+				]
+	}).placeAt("sample5");
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Red" icon="images/ctrls/dropdownbox-icon.png">DropDownBox</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The DropDownBox control provides a TextField and a list of predefined entries. The DropDownBox control is based on the ComboBox control.
+	Additional features of the DropDownBox control are a history that shows the last-used entries; and the possibility to add a value help.
+	Users can enter values in the text field that are provided by the list. During typing, a possible value is suggested using auto-completion.
+	</p>
+
+	<h2>Examples</h2>
+	<h4>Basic Example</h4>
+	<p>
+	The single items for the DropDownBox are added using the <code>addItem</code> method.
+	</p>
+	<div code-sample="sample1" script="DropdownBoxSimple"></div>
+
+	<h4>A DropdownBox Using a ListBox</h4>
+	<p>
+	The items are added to a ListBox control which also contains additional texts. The ListBox is referenced by the DropDownBox using the <code>setListBox</code> method.
+	Using a ListBox for the DropDownBox allows a reuse of this ListBox in multiple DropDownBoxes. This is useful for tables, for example, where the possible values 
+	are the same in every row.  
+	<br/>
+	The <code>change</code> event is assigned to a function that fills the text field next to the DropDownBox. So you can see when the <code>change</code> event is fired.
+	Control creation as well as property assignment in the following example are done using an alternative constructor syntax. The example also shows the history feature.<br/>
+	</p>
+	<div code-sample="sample2" script="DropdownBoxListBox"></div>
+
+	<h4>Data Binding</h4>
+	<p>
+	The items are filled via data binding. The data is bound to the properties using the <code>bindProperty</code> method.
+	Changes on the data model directly change the DropDownBox content.
+	</p>
+	<div code-sample="sample3" script="DropdownBoxDataBinding"></div>
+
+	<h4>The Search Help Feature</h4>
+	<p>
+	In this example, a search help is implemented using the Dialog control. The search must result in values available in the list.
+	</p>
+	<div code-sample="sample4" script="DropdownBoxSearchHelp"></div>
+
+	<br/><br/>
+	<h4>Using Item Id and Key</h4>
+	<p>
+	The value of a DropdownBox can be set from the application using the properties <code>value</code>, <code>selectedKey</code> and
+	<code>selectedItemId</code>. So instead of using the <code>value</code> property the value can be set to an item of the Dropdownbox.
+	Additionally it can be determines which item is currently selected. If the properties <code>selectedKey</code> and
+	<code>selectedItemId</code> are set to an invalid value they will not be changed and still have their old value.
+	<br>
+	In the example you can see how to set and get the DropdownBox value using <code>selectedKey</code> and <code>selectedItemId</code>.
+	</p>
+	<br/>
+	<div code-sample="sample5" script="DropdownBoxIdKey"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.DropdownBox.html">API documentation</a>
+	</p>
+</body>
+</html>

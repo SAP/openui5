@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Url Validator - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+			
+			try{
+				oCore.loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+			
+			oCore.attachInitEvent(function () {
+
+				function onChange(oEvent){
+					var oInput = oCore.getControl("Input1");
+					var sUrl = oInput.getValue();
+					var sValid = jQuery.sap.validateUrl(sUrl);
+
+					if (sValid){
+						oInput.setValueState(sap.ui.core.ValueState.Success);
+					}else{
+						oInput.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+
+				function onLiveChange(oEvent){
+					var oInput = oEvent.oSource;
+
+					if (oEvent.getParameter("liveValue") != oInput.getValue()){
+						// only during typing
+						oInput.setValueState(sap.ui.core.ValueState.None);
+					}
+				}
+
+				function fillListBox(){
+					var aWhitelist = jQuery.sap.getUrlWhitelist();
+					var oListBox = oCore.getControl("ListBox1");
+					oListBox.removeAllItems();
+
+					if (aWhitelist instanceof Array && aWhitelist.length > 0){
+						for(var i=0; i<aWhitelist.length; i++){
+							if (aWhitelist[i] instanceof Object){
+								oListBox.addItem(new sap.ui.core.ListItem({text: aWhitelist[i].protocol +"|"+ aWhitelist[i].host +"|"+ aWhitelist[i].port +"|"+ aWhitelist[i].path}));
+							}
+						}
+					}
+				}
+
+				function addToWhitelist(oEvent){
+					var oProtocol = oCore.getControl("Protocol");
+					var oHost = oCore.getControl("Host");
+					var oPort = oCore.getControl("Port");
+					var oPath = oCore.getControl("Path");
+					var oListBox = oCore.getControl("ListBox1");
+					var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
+					oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
+					jQuery.sap.addUrlWhitelist(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
+					oProtocol.setValue("");
+					oHost.setValue("");
+					oPort.setValue("");
+					oPath.setValue("");
+					onChange(oEvent);
+				}
+
+				function removeFromWhitelist(oEvent){
+					var oListBox = oCore.getControl("ListBox1");
+					var iIndex = oListBox.getSelectedIndex();
+					var oItem = oListBox.getSelectedItem();
+					oListBox.removeItem(oItem);
+					oItem.destroy();
+					jQuery.sap.removeUrlWhitelist(iIndex);
+					onChange(oEvent)
+				}
+
+				function clearWhitelist(oEvent){
+					var oListBox = oCore.getControl("ListBox1");
+					jQuery.sap.clearUrlWhitelist();
+					oListBox.destroyItems();
+					onChange(oEvent)
+				}
+
+				var oInput = new sap.ui.commons.TextField('Input1',{
+					width: "50em",
+					change: onChange,
+					liveChange: onLiveChange,
+				});
+		    var oLabel = new sap.ui.commons.Label({ text: "URL: ", labelFor: oInput});
+	  	  oLabel.placeAt("target0");
+				oInput.placeAt("target0");
+
+				// whitelist
+		    oLabel = new sap.ui.commons.Label({ text: "Whitelist: "});
+	  	  oLabel.placeAt("target1");
+				var oListBox = new sap.ui.commons.ListBox("ListBox1",{
+					width: "50em",
+					visibleItems: 10,
+					editable: true
+				}).placeAt("target1");
+				fillListBox();
+
+				oLabel.setLabelFor(oListBox);
+				var oButton = new sap.ui.commons.Button("Button1",{
+					text: "Refresh",
+					width: "7em",
+					press: fillListBox
+				});
+				var oButton2 = new sap.ui.commons.Button("Button2",{
+					text: "Remove",
+					width: "7em",
+					style: sap.ui.commons.ButtonStyle.Reject,
+					press: removeFromWhitelist
+				});
+				var oButton3 = new sap.ui.commons.Button("Button3",{
+					text: "Clear",
+					width: "7em",
+					style: sap.ui.commons.ButtonStyle.Reject,
+					press: clearWhitelist
+				});
+				var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
+					content: [oButton, oButton2, oButton3]
+				}).placeAt("target1");
+
+				var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow("Row1");
+				var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow("Row2");
+				var oLyt = new sap.ui.commons.layout.MatrixLayout("WhitelistEntry",{
+					colums: 5,
+					widths: ["6em", "16em", "5em", "31em", "auto"],
+					rows: [oRow1, oRow2]
+					}).placeAt("target2");
+				oInput = new sap.ui.commons.TextField('Protocol',{width: "5em"});
+				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+		    oLabel = new sap.ui.commons.Label({ text: "Protocol:", labelFor: oInput});
+				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+				oInput = new sap.ui.commons.TextField('Host',{width: "15em"});
+				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+		    oLabel = new sap.ui.commons.Label({ text: "Host:", labelFor: oInput});
+				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+				oInput = new sap.ui.commons.TextField('Port',{width: "4em"});
+				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+		    oLabel = new sap.ui.commons.Label({ text: "Port:", labelFor: oInput});
+				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+				oInput = new sap.ui.commons.TextField('Path',{width: "30em"});
+				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+		    oLabel = new sap.ui.commons.Label({ text: "Path:", labelFor: oInput});
+				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+				var oButton = new sap.ui.commons.Button("Button4",{
+					text: "Add",
+					style: sap.ui.commons.ButtonStyle.Accept,
+					press: addToWhitelist
+				});
+				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oButton}));
+
+			});
+
+		</script>
+
+</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for <code>jQuery.sap.validateUrl</code></h1>
+
+		<div id="target0"></div>
+		<br>
+		<div id="target1"></div>
+		<div id="target2"></div>
+
+	</body>
+</html>

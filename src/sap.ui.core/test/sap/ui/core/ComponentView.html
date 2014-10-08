@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Component - sap.ui.core - Experimental </title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" data-sap-ui-libs="sap.ui.commons">
+
+</script>
+
+<script>
+	sap.ui.localResources("samples");
+	
+	var sServiceUrl = "http://epmdemo.corp/sap/bc/sepm_odata_srv/purchase";
+	
+	jQuery.sap.require("sap.ui.core.util.MockServer");
+	var oMockServer = new sap.ui.core.util.MockServer({
+		rootUri: sServiceUrl+"/"
+	});
+	
+	oMockServer.simulate("samples/epmdata/metadata.xml", "samples/epmdata/");
+	oMockServer.start();
+
+	// Data Model
+	var oModel = new sap.ui.model.odata.ODataModel(sServiceUrl, true);
+	sap.ui.getCore().setModel(oModel);
+	new sap.ui.core.ComponentContainer({
+		name: "samples.components.productlist",
+		propagateModel: true
+	}).placeAt("content");
+	
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+       <div id="content"></div>
+</body>
+</html>
+
+

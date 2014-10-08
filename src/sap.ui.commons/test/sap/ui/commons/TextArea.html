@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>TextArea - sap.ui.commons</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextArea.gif">
+
+	<script
+				src="../../../../resources/sap-ui-core.js"
+				type="text/javascript"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout,sap.ui.commons"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-areas="target1,target2,target3,target4,target5,target6" >
+	</script>
+
+	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+			var oCore = sap.ui.getCore();
+
+			function handleChange(oEvent) {
+				var oTextArea = oEvent.oSource;
+				var oTextArea2 = oCore.getControl("TA2");
+				oTextArea2.setValue( oTextArea.getValue());
+				oTextArea2.setCursorPos( oTextArea.getCursorPos());
+			}
+
+			function toggleEnabled(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setEnabled( !oCheckBox.getChecked() );
+			}
+
+			function toggleEditable(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setEditable( !oCheckBox.getChecked() );
+			}
+
+			function toggleDesign(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				if (oCheckBox.getChecked()){
+					oTextArea.setDesign( sap.ui.core.Design.Monospace );
+				}else{
+					oTextArea.setDesign( sap.ui.core.Design.Standard );
+				}
+			}
+
+			function toggleRequired(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setRequired( oCheckBox.getChecked() );
+			}
+
+			function setValueState(oEvent) {
+				var oRBGroup = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				switch(oRBGroup.getSelectedIndex()){
+				case 0:
+					oTextArea.setValueState( sap.ui.core.ValueState.None );
+					break;
+				case 1:
+					oTextArea.setValueState( sap.ui.core.ValueState.Error );
+					break;
+				case 2:
+					oTextArea.setValueState( sap.ui.core.ValueState.Warning );
+					break;
+				case 3:
+					oTextArea.setValueState( sap.ui.core.ValueState.Success );
+					break;
+				}
+			}
+
+			function setWrapping(oEvent) {
+				var oRBGroup = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				switch(oRBGroup.getSelectedIndex()){
+				case 0:
+					oTextArea.setWrapping( sap.ui.core.Wrapping.None );
+					break;
+				case 1:
+					oTextArea.setWrapping( sap.ui.core.Wrapping.Soft );
+					break;
+				case 2:
+					oTextArea.setWrapping( sap.ui.core.Wrapping.Hard );
+					break;
+				case 3:
+					oTextArea.setWrapping( sap.ui.core.Wrapping.Off );
+					break;
+				}
+			}
+
+			function handleTextChange(oEvent) {
+				var oText = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+
+				if(isNaN(oText.getValue())){
+					alert('Please enter a number');
+				}
+
+				oTextArea.setMaxLength( parseInt(oText.getValue()) );
+			}
+
+			oCore.attachInitEvent(function () {
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
+				oLyt.setWidth('1000px');
+				oLyt.setColumns(5);
+				oLyt.setWidths(["100px", "305px", "100px", "100px", "auto"]);
+
+				// 1. TextArea
+				var oTextArea = new sap.ui.commons.TextArea("TA1");
+				oTextArea.setWidth("400px");
+				oTextArea.setHeight("100px");
+				oTextArea.attachChange(handleChange);
+				oTextArea.setTooltip("TextArea 1");
+				oTextArea.setValue("This is a test text.");
+
+				var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell("Cell1");
+				oCell1.addContent(oTextArea);
+				oCell1.setVAlign(sap.ui.commons.layout.VAlign.Top);
+				oCell1.setColSpan(2);
+				oCell1.setRowSpan(2);
+
+				var oLabel1 = new sap.ui.commons.Label("L1");
+				oLabel1.setText("ValueState");
+
+				var oRBGroup1 = new sap.ui.commons.RadioButtonGroup("RBG-ValueState");
+				oRBGroup1.setTooltip("ValueState");
+				oRBGroup1.attachSelect(setValueState);
+				oLabel1.setLabelFor(oRBGroup1);
+
+				var oItem = new sap.ui.core.Item("VS-None");
+				oItem.setText("None");
+				oItem.setTooltip("None");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Error");
+				oItem.setText("Error");
+				oItem.setTooltip("Error");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Warning");
+				oItem.setText("Warning");
+				oItem.setTooltip("Warning");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Success");
+				oItem.setText("Success");
+				oItem.setTooltip("Success");
+				oRBGroup1.addItem(oItem);
+
+				var oMLC0 = new sap.ui.commons.layout.MatrixLayoutCell("Cell-ValueState");
+				oMLC0.setRowSpan(2);
+				oMLC0.setVAlign(sap.ui.commons.layout.VAlign.Top);
+				oMLC0.addContent(oRBGroup1);
+
+				var oLabel2 = new sap.ui.commons.Label("L2");
+				oLabel2.setText("Wrapping");
+
+				var oRBGroup2 = new sap.ui.commons.RadioButtonGroup("RBG-Wrapping");
+				oRBGroup2.setTooltip("Wrapping");
+				oRBGroup2.attachSelect(setWrapping);
+				oLabel2.setLabelFor(oRBGroup2);
+
+				oItem = new sap.ui.core.Item("Wr-None");
+				oItem.setText("None");
+				oItem.setTooltip("None");
+				oRBGroup2.addItem(oItem);
+				oItem = new sap.ui.core.Item("Wr-Soft");
+				oItem.setText("Soft");
+				oItem.setTooltip("Soft");
+				oRBGroup2.addItem(oItem);
+				oItem = new sap.ui.core.Item("Wr-Hard");
+				oItem.setText("Hard");
+				oItem.setTooltip("Hard");
+				oRBGroup2.addItem(oItem);
+				oItem = new sap.ui.core.Item("Wr-Off");
+				oItem.setText("Off");
+				oItem.setTooltip("Off");
+				oRBGroup2.addItem(oItem);
+
+				var oMLC1 = new sap.ui.commons.layout.MatrixLayoutCell("Cell-Wrapping");
+				oMLC1.setRowSpan(2);
+				oMLC1.setVAlign(sap.ui.commons.layout.VAlign.Top);
+				oMLC1.addContent(oRBGroup2);
+
+				var oLabel3 = new sap.ui.commons.Label("L3");
+				oLabel3.setText("Parameter");
+
+				var oCheckBox1 = new sap.ui.commons.CheckBox("CB1");
+				oCheckBox1.setText("ReadOnly");
+				oCheckBox1.setChecked(false);
+				oCheckBox1.attachChange(toggleEditable);
+
+				var oCheckBox2 = new sap.ui.commons.CheckBox("CB2");
+				oCheckBox2.setText("Disabled");
+				oCheckBox2.setChecked(false);
+				oCheckBox2.attachChange(toggleEnabled);
+
+				var oCheckBox3 = new sap.ui.commons.CheckBox("CB3");
+				oCheckBox3.setText("Monospace");
+				oCheckBox3.setChecked(false);
+				oCheckBox3.attachChange(toggleDesign);
+
+				var oCheckBox4 = new sap.ui.commons.CheckBox("CB4");
+				oCheckBox4.setText("Required");
+				oCheckBox4.setChecked(false);
+				oCheckBox4.attachChange(toggleRequired);
+
+				var oMLC2 = new sap.ui.commons.layout.MatrixLayoutCell("Cell-Parameter",{
+					rowSpan: 2,
+					vAlign: sap.ui.commons.layout.VAlign.Top,
+					content: [new sap.ui.layout.VerticalLayout("VerticalLayout", {
+							content: [oCheckBox1, oCheckBox2, oCheckBox3, oCheckBox4]
+					})]
+				});
+
+				var oLabelT = new sap.ui.commons.Label("LabelT");
+				oLabelT.setText("MaxLength");
+
+				var oText = new sap.ui.commons.TextField("TF1");
+				oText.attachChange(handleTextChange);
+				oLabelT.setLabelFor(oText);
+
+				oLyt.createRow(oCell1, oLabel1, oLabel2, oLabel3);
+				oLyt.createRow(oMLC0, oMLC1, oMLC2);
+				oLyt.createRow(oLabelT, oText);
+
+				oLyt.placeAt("target1");
+				var oLabel = new sap.ui.commons.Label({ text: "Fixed width 400px * 100px: ", labelFor: oTextArea});
+				oLabel.placeAt("label1");
+
+				// 2. TextArea
+				oTextArea = new sap.ui.commons.TextArea("TA2");
+				oTextArea.setCols(50); 
+				oTextArea.setRows(5); 
+				oTextArea.setEditable(false); 
+				oTextArea.setTooltip("TextArea 2");
+				oTextArea.setValue("This field gets the changed text");
+				oTextArea.placeAt("target2");
+				oLabel = new sap.ui.commons.Label({ text: "Fixed width 50 cols * 5 rows; ReadOnly: ", labelFor: oTextArea});
+				oLabel.placeAt("label2");
+
+				// 3. TextArea
+				oTextArea = new sap.ui.commons.TextArea("TA3");
+				oTextArea.setCols(100); 
+				oTextArea.setRows(10); 
+				oTextArea.setValueState(sap.ui.core.ValueState.Error); 
+				oTextArea.setTooltip("TextArea 3");
+				oTextArea.setValue("And as we wind on down the road \nOur shadows taller than our soul. \nThere walks a lady we all know \nWho shines white light and wants to show \nHow everything still turns to gold. \nAnd if you listen very hard \nThe tune will come to you at last. \nWhen all are one and one is all \nTo be a rock and not to roll. ");
+
+				oTextArea.placeAt("target3");
+				oLabel = new sap.ui.commons.Label({ text: "Fixed width 100 cols * 10 rows; Error: ", labelFor: oTextArea});
+				oLabel.placeAt("label3");
+
+				var oTextView = new sap.ui.commons.TextView("TV3",{ text: oTextArea.getValue() });
+				oTextArea.attachLiveChange(function(oEvent){oCore.getControl("TV3").setText(oEvent.getParameter("liveValue"))});
+				oTextView.placeAt("target3");
+
+				// 4. TextArea
+				oTextArea = new sap.ui.commons.TextArea("TA4");
+				oTextArea.setCols(50);
+				oTextArea.setRows(5);
+				oTextArea.setValueState(sap.ui.core.ValueState.Error);
+				oTextArea.setEditable(false);
+				oTextArea.setTooltip("TextArea 4");
+				oTextArea.setValue("Ñagçyfox");
+				oTextArea.placeAt("target4");
+				oLabel = new sap.ui.commons.Label({ text: "Fixed width 50 cols * 5 rows; ReadOnly; Error: ", labelFor: oTextArea});
+				oLabel.placeAt("label4");
+
+				// 5. TextArea
+				oTextArea = new sap.ui.commons.TextArea("TA5");
+				oTextArea.setCols(40);
+				oTextArea.setRows(4);
+				oTextArea.setValueState(sap.ui.core.ValueState.Warning);
+				oTextArea.setTooltip("TextArea 5");
+				oTextArea.setWrapping(sap.ui.core.Wrapping.Off);
+				oTextArea.setValue("Woe to you, Oh Earth and Sea, for the Devil sends the beast with wrath, because he knows the time is short...\nLet him who hath understanding reckon the number of the beast\nfor it is a human number, its number is Six hundred and sixty six. ");
+				oTextArea.placeAt("target5");
+				oLabel = new sap.ui.commons.Label({ text: "Fixed width 40 cols * 4 rows; Wrapping Off; Warning: ", labelFor: oTextArea});
+				oLabel.placeAt("label5");
+
+				// 6. TextArea
+				oTextArea = new sap.ui.commons.TextArea("TA6");
+				oTextArea.setCols(50);
+				oTextArea.setRows(5);
+				oTextArea.setValueState(sap.ui.core.ValueState.Warning);
+				oTextArea.setEnabled(false);
+				oTextArea.setTooltip("TextArea 6");
+				oTextArea.setDesign(sap.ui.core.Design.Monospace);
+				oTextArea.setValue("This is a test text.");
+				oTextArea.placeAt("target6");
+				oLabel = new sap.ui.commons.Label({ text: "Fixed width 50 cols * 5 rows; Monospace; Disabled; Warning: ", labelFor: oTextArea});
+				oLabel.placeAt("label6");
+
+				// 7. TextArea with placeholder
+				oLabel = new sap.ui.commons.Label({ text: "TextArea with placeholder: ", labelFor: "TA7"}).placeAt("label7");
+				oTextArea = new sap.ui.commons.TextArea("TA7", {
+					placeholder: "placeholder",
+					width: "400px"
+				}).placeAt("target7");
+			} );
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.TextArea</h1>
+
+		<br> <!-- Fixed width 400px * 100px: -->
+		<div id="label1"></div>
+		<div id="target1"></div>
+		<br> <!-- Fixed width 50 cols * 5 rows; ReadOnly: -->
+		<div id="label2"></div>
+		<div id="target2"></div>
+		<br> <!-- Fixed width 100 cols * 10 rows; Error: -->
+		<div id="label3"></div>
+		<div id="target3"></div>
+		<br> <!-- Fixed width 50 cols * 5 rows; ReadOnly; Error: -->
+		<div id="label4"></div>
+		<div id="target4"></div>
+		<br> <!-- Fixed width 40 cols * 4 rows; Wrapping Off; Warning: -->
+		<div id="label5"></div>
+		<div id="target5"></div>
+		<br> <!-- Fixed width 50 cols * 5 rows; Monospace; Disabled; Warning: -->
+		<div id="label6"></div>
+		<div id="target6"></div>
+		<br>
+		<div id="label7"></div>
+		<div id="target7"></div>
+
+</body>
+</html>

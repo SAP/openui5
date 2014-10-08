@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.odata.ODataModel
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+<link rel="stylesheet" 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" 	media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- This test is not running against the real Northwind service, but a fake service based on
+     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
+<script type="text/javascript" src="ODataModelFakeService.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+	var oLabel = new sap.ui.commons.Label("myLabel");
+	oLabel.placeAt("target1");
+	// create a dummy AMD fdefine to check if shim works for datajs
+	window.define = function() {
+		throw Error("define should not be called");
+	}
+	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
+
+	function initModel(sURI, bJSON){
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);
+		return oModel;
+	}
+
+	asyncTest("test oDataModel - oMetadata shared across models", function(){
+		expect(1);
+		var that = this;
+		var mOptions = {
+				json : true,
+				loadMetadataAsync: true
+			};
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+		var oModel2 = {};
+
+		oModel.oMetadata.attachLoaded(function() {
+			jQuery.sap.log.debug("test 1 - metadata loaded is fired on metadata onload of model1");
+		});
+
+		oModel.attachMetadataLoaded(function(){
+			oModel2 = new sap.ui.model.odata.ODataModel(sURI, mOptions);
+
+			var bFiredAtMetadata = false;
+
+			var metadataDfd = jQuery.Deferred();
+
+			oModel2.oMetadata.attachLoaded(function() {
+				jQuery.sap.log.debug("test 2 - metadata loaded is fired on metadata");
+				bFiredAtMetadata = true;
+			});
+			// attach again and wait for the metadataloaded event at the model itself, 
+			//fail if event is fired at the metadata object
+			oModel2.attachMetadataLoaded(function() {
+				jQuery.sap.log.debug("metadata loaded is fired");
+				if (!bFiredAtMetadata) {
+					metadataDfd.resolve();
+				} else {
+					metadataDfd.reject();
+				}
+			});
+			that.clock.tick(1);
+			jQuery.when(metadataDfd).done(function(e){
+					ok(true, 'Metadata loaded fired at model only');
+					that.clock.restore();
+					start();
+				}).fail(function(e){
+					jQuery.sap.log.debug("metadata promise failed");
+					ok(false, 'Metadata loaded fired at metadata object')
+					that.clock.restore();
+					start();
+				});
+		});
+		this.clock.tick(1);
+	});
+
+	asyncTest("metadata check", function(){
+		expect(7);
+		var that = this;
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "Category", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "CategoryName", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			that.clock.restore();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+		this.clock.tick(1);
+	});
+
+	asyncTest("metadata get entity type check", function(){
+		var that = this;
+		expect(11);
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");
+		var handler = function() { // delay the following test
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products");
+			equal(oResult.name, "Product", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(3)");
+			equal(oResult.name, "Product", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/CategoryName");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/ProductName");
+			equal(oResult.name, "Product", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories(1)/Products(1)/Category");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Supplier");
+			equal(oResult.name, "Supplier", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products/Category/Supplier/Products");
+			equal(oResult.name, "Product", "entity type name check");
+			oResult = {};
+			oResult = oModel.oMetadata._getEntityTypeByPath("/Categories/Products(4)/Category/Supplier('4')/Products/Category(1)");
+			equal(oResult.name, "Category", "entity type name check");
+			oResult = {};
+			oBinding.detachChange(handler);
+			that.clock.restore();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+		this.clock.tick(1);
+	});
+
+	asyncTest("metadata get entity type check with context", function(){
+		expect(1);
+		var that = this;
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)"));	
+		var handler = function() { // delay the following test
+			oResult = oBinding.oEntityType;
+			equal(oResult.name, "Product", "entity type name check");
+			oResult = {};
+			oBinding.detachChange(handler);
+			that.clock.restore();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+		this.clock.tick(1);
+	});
+
+	asyncTest("metadata get property metadata", function(){
+		expect(6);
+		var that = this;
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("/Categories");	
+		var handler = function() { // delay the following test
+			oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+			equal(oResult.name, "CategoryName", "Property type name check");
+			equal(oResult.type, "Edm.String", "Property type name check");
+
+			// check nav property 
+			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "/Products/ProductName/");
+			equal(oResult.name, "ProductName", "Nav Property type name check");
+			equal(oResult.type, "Edm.String", "Nav Property type name check");
+
+			oResult = oModel.oMetadata._getPropertyMetadata(oEntityType, "Products/ProductName");
+			equal(oResult.name, "ProductName", "Nav Property type name check");
+			equal(oResult.type, "Edm.String", "Nav Property type name check");
+
+			oBinding.detachChange(handler);
+			that.clock.restore();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		this.clock.tick(1);
+		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		oBinding.getContexts();
+	});
+	
+
+	asyncTest("async metadata request check", function(){
+		expect(2);
+		var that = this;
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			json: true, 
+			loadMetadataAsync: true
+		});
+
+		var handler = function() {
+			ok(true, "Metadata callback handler called");
+			oModel.detachMetadataLoaded(handler);
+			ok(oModel.getServiceMetadata(), "get metadata check");
+			that.clock.restore();
+			start();
+		}
+		oModel.attachMetadataLoaded(handler);
+		this.clock.tick(30);
+	});
+
+
+	asyncTest("async metadata request check with bindings", function(){
+		expect(9);
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			json: true, 
+			loadMetadataAsync: true
+		});
+		var that = this;
+
+		var handler = function() { 
+			ok(true, "Metadata callback handler called");
+			oModel.detachMetadataLoaded(handler); // handler is undefined at this point. This always causes the assertion inside to fail. 
+			ok(oModel.getServiceMetadata(), "get metadata check");
+			var oBinding = oModel.bindList("/Categories");	
+			var handler2 = function() { // delay the following test
+				ok(oBinding.oEntityType, "entity type binding check");
+				equal(oBinding.oEntityType.name, "Category", "entity type name check");
+				var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+				ok(oEntityType, "get entity type check");
+				equal(oEntityType.name, "Category", "entity type name check");
+				var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+				ok(oPropMeta, "property type check");
+				equal(oPropMeta.name, "CategoryName", "entity type property check");
+				equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+				oBinding.detachChange(handler2);
+				that.clock.restore();
+				start();          // resume normal testing
+			};
+			oBinding.attachChange(handler2);
+			oBinding.attachRefresh(handler2);
+			oBinding.initialize();
+		}
+		oModel.attachMetadataLoaded(handler);
+		this.clock.tick(30);
+	});
+
+	asyncTest("async metadata request check with bindings die zwote", function(){
+		expect(7);
+		var that = this;
+		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
+			json: true, 
+			loadMetadataAsync: true
+		});
+		// when metadata loaded a refresh is called which will trigger the data loading
+		// if not yet happened
+		var oBinding = oModel.bindList("/Categories");	
+		var handler = function() { // delay the following test
+			ok(oBinding.oEntityType, "entity type binding check");
+			equal(oBinding.oEntityType.name, "Category", "entity type name check");
+			var oEntityType = oModel.oMetadata._getEntityTypeByPath("/Categories");
+			ok(oEntityType, "get entity type check");
+			equal(oEntityType.name, "Category", "entity type name check");
+			var oPropMeta = oModel.oMetadata._getPropertyMetadata(oEntityType, "CategoryName");
+			ok(oPropMeta, "property type check");
+			equal(oPropMeta.name, "CategoryName", "entity type property check");
+			equal(oPropMeta.type, "Edm.String", "entity type property check");
+
+			oBinding.detachChange(handler);
+			that.clock.restore();
+			start();          // resume normal testing
+		};
+		oBinding.attachChange(handler);
+		oBinding.attachRefresh(handler);
+		oBinding.initialize();
+		this.clock.tick(30);
+	});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding OData Model</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

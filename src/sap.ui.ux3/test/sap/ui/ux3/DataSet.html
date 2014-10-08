@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<title>DataSet - sap.ui.ux3</title>
+
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.layout,sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+	
+</script>
+
+<script>
+	jQuery.sap.require("sap.ui.ux3.DataSetSimpleView");
+	jQuery.sap.registerModulePath("dataset", "./resources/dataset");
+	
+	// create DataSets
+	var oDataSet = new sap.ui.ux3.DataSet("RootSet");
+	oDataSet.setMultiSelect(true);
+	var oDataSet2 = new sap.ui.ux3.DataSet("ChildSet");
+	// create a simple model
+	var oModel = new sap.ui.model.json.JSONModel();
+	var data = {
+		test : []
+	};
+	for ( var i = 0; i < 5; i++) {
+		var item = {};
+		item.imageSrc = "./images/dataset/img" + (i + 1)
+				+ ".jpg";
+		item.title = "Image: img" + (i + 1) + ".jpg"
+		item.test = []; //data.test;
+		for ( var j = 6; j < 12; j++) {
+			var item2 = {};
+			item2.imageSrc = "./images/dataset/img"
+					+ (j + 1) + ".jpg";
+			item2.title = "Image: img" + (j + 1) + ".jpg"
+			item.test.push(item2);
+		}
+		data.test.push(item);
+	}
+	oModel.setData(data);
+
+	//create SimpleView
+	jQuery.sap.require("sap.ui.ux3.DataSetSimpleView");
+	var oTemplate = new sap.ui.layout.HorizontalLayout();
+	var oImage = new sap.ui.commons.Image({
+		src : "{imageSrc}"
+	}); 
+	var oPanel = new sap.ui.commons.Panel({
+		width : "500px"
+	});
+	oTemplate.addContent(oImage);
+	oTemplate.addContent(oPanel);
+
+	var oDstv = new sap.ui.ux3.DataSetSimpleView({
+		name:"floating view",
+		icon: "images/thumbnails.png",
+		iconHovered: "images/thumbnails_hover.png",
+		iconSelected: "images/thumbnails_hover.png"
+	});
+	
+	var oDstv2 = new sap.ui.ux3.DataSetSimpleView({
+		name:"floating view",
+		icon: "images/list.png",
+		iconHovered: "images/list_hover.png",
+		iconSelected: "images/list_hover.png"
+	});
+	
+	var oView = sap.ui.view({
+		type : "XML",
+		viewName : "dataset.item"
+	});
+	
+	oDstv.setTemplate(oView);
+	oDataSet.addView(oDstv);
+	
+	oDstv2.setFloating(false);
+	oDstv2.setTemplate(oView.clone());
+	oDataSet.addView(oDstv2);
+	
+	var oItem = new sap.ui.ux3.DataSetItem({
+		title : "{title}",
+		iconSrc : "{imageSrc}" 
+	});
+	oDataSet.setModel(oModel);
+	oDataSet.bindItems("/test", oItem);
+	oDataSet.setSelectedView(oDstv);
+	oDataSet.placeAt('content');
+	
+	var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
+	
+	var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
+		title:"Image Name",
+		multiSelect: true,
+		selectedKeys : [ "1" ],
+		items : [
+			new sap.ui.core.ListItem({text:"img1", key:"1"}),
+			new sap.ui.core.ListItem({text:"img2", key:"2"}),
+			new sap.ui.core.ListItem({text:"img3", key:"3"}),
+			new sap.ui.core.ListItem({text:"img4", key:"4"}),
+			new sap.ui.core.ListItem({text:"img5", key:"5"})
+		]
+	});
+	var oFFL2 = new sap.ui.ux3.FacetFilterList("ffl2", {
+		title:"Image Type",
+		multiSelect: true,
+		selectedKeys : [ "1" ],
+		items : [
+			new sap.ui.core.ListItem({text:"png", key:"1"}),
+			new sap.ui.core.ListItem({text:"jpg", key:"2"}),
+			new sap.ui.core.ListItem({text:"bmp", key:"3"}),
+		]
+	});
+	oFacetFilter.addList(oFFL1);
+	oFacetFilter.addList(oFFL2);
+	oDataSet.addFilter(oFacetFilter);
+	
+	var oButton = new sap.ui.commons.Button({text:"New"});
+	var oButton2 = new sap.ui.commons.Button({text:"Copy"});
+	var oButton3 = new sap.ui.commons.Button({
+		text:"Toggle MultiSelect", 
+		press : function() {
+			if (!oDataSet.getMultiSelect()){
+				oDataSet.setMultiSelect(true);
+				alert("MultiSelect on");
+			}else{
+				oDataSet.setMultiSelect(false);
+				alert("MultiSelect off");
+			};}
+	});
+	var oSep = new sap.ui.commons.ToolbarSeparator();
+	oDataSet.addToolbarItem(oSep);
+	oDataSet.addToolbarItem(oButton);
+	oDataSet.addToolbarItem(oButton2);
+	oDataSet.addToolbarItem(oButton3);
+	oDataSet.attachSearch(search);
+	
+	
+	function switchLayout(oEvent) {
+		if(oDstv3.getFloating()) {
+			oDstv3.setFloating(false);
+		} else {
+			oDstv3.setFloating(true);
+		}
+		if(oDstv.getFloating()) {
+			oDstv.setFloating(false);
+		} else {
+			oDstv.setFloating(true);
+		}
+	}
+	
+	function search(oEvent) {
+		var oDataSet = oEvent.getSource();
+		var sFilter = oEvent.getParameters().query;
+		var oBinding = oDataSet.getBinding("items");
+		var oFilter = new sap.ui.model.Filter("imageSrc", "Contains", sFilter);
+		oBinding.filter([ oFilter ]);
+		oDataSet.setLeadSelection(-1);
+		
+	}
+</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id="functions"></div>
+	<div id='content'></div>
+</body>
+</html>

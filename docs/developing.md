@@ -1,0 +1,160 @@
+
+Developing UI5
+==============
+
+Setting up the UI5 development environment
+------------------------------------------
+
+UI5 content is developed in an environment based on node.js, used as server, with a build process based on Grunt. To set up this environment follow these simple steps:
+
+ 1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
+  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line, using the settings required within SAP):
+  ```
+@SET HTTP_PROXY=http://proxy:8080
+@SET HTTPS_PROXY=http://proxy:8080
+@SET FTP_PROXY=http://proxy:8080
+@SET NO_PROXY=localhost,127.0.0.1,.sap.corp,.corp.sap
+```
+ 2. Install grunt-cli globally
+     ```
+npm install grunt-cli -g
+```
+
+ 3. Clone the UI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
+   ```
+git clone https://github.com/SAP/openui5.git
+```
+ 4. Install all npm dependencies locally (execute this inside the "openui5" directory)
+   ```
+cd openui5
+npm install
+```
+ 5. Start the server
+   ```
+ grunt serve
+ ```
+ 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite](http://localhost:8080/testsuite)  - done!
+
+ ```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
+ See the [documentation](https://github.com/SAP/openui5/blob/master/docs/tools.md) for more details.
+
+
+The Development Process
+-----------------------
+
+### Regular development: no build required
+
+Just modify any source file and reload your browser. Now that's simple, no?
+
+This build-free development process does not deliver optimized runtime performance (e.g. there are many small requests, which would not be acceptable for remote connections), but is the most convenient way to modify the UI5 sources. Under the hood there are mainly two mechanisms applied that adapt the sources:
+
+ * The Git repository path contains a folder named like the respective control library (e.g. "sap.ui.commons"), which is omitted at runtime. The node.js-based server is configured to map the locations.
+ * The CSS files are transformed (server-side) by the LESS pre-processor during the first request after a CSS file has been modified. This includes mirroring for right-to-left support. This first request to the respective library.css file after a CSS modification will take some hundred milliseconds, depending on the amount of CSS. This is the LESS processing time.
+
+### Building UI5
+
+Grunt is used to build a production version of UI5. The build result is located inside the directory ```target/openui5```.
+
+Usage:
+```
+grunt build
+```
+
+Optionally, only selected libraries can be built or the copy of the test-resources folder can be skipped, see [the documentation](https://github.com/SAP/openui5/blob/master/docs/tools.md) for details.
+
+**IMPORTANT:** as we are still migrating our build infrastructure from the old Maven-based one, this new Grunt build does not yet have all desired capabilities. Bear with us as we are adding them. This means that currently the build result is not completely optimized for size and performance! When you intend to use UI5 for productive purposes, you should use the runtime binaries provided at <http://openui5.org>.
+
+The build is responsible for the following tasks:
+
+ * Creation of the bundled library.css and library-RTL.css file for all available themes
+ * Minification of CSS
+ * Minification of JavaScript (not yet re-implemented)
+ * Combination of JavaScript control files into a single library-preload.json file
+ * Combination of the most important UI5 core files into sap-ui-core.js (not yet re-implemented)
+
+#### Troubleshooting
+
+If you encounter errors like the one below, re-do the ```npm install``` command: there might be new build tools required which need to be downloaded first.
+
+> jit-grunt: Plugin for the "replace" task not found.
+> If you have installed the plugin already, please setting the static mapping.
+> See https://github.com/shootaroo/jit-grunt#static-mappings
+>
+> Warning: Task "replace:target" not found. Use --force to continue.
+
+
+
+Testing UI5
+-----------
+
+### Running the static code checks (ESLint)
+
+All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/). ESLint can be installed from the command line with:
+```
+npm i -g eslint
+```
+
+To run an ESLint check, navigate to the directory you want to check and execute:
+```
+eslint .
+```
+
+
+### Running the Unit Tests
+
+The UI5 unit tests are implemented using jQuery's qUnit testing framework and run by a Selenium-based infrastructure.
+
+To execute the unit tests, navigate to the root directory of the repository and execute:
+```
+grunt test
+```
+
+NOTE: by default this command runs tests for all libraries in the Chrome browser. But for all browsers except for Firefox, additional Selenium web drivers need to be installed (see the troubleshooting section below), so you may want to try first with Firefox.
+
+By giving parameters you can change this default behavior:
+
+> grunt test --browsers="safari,firefox"   # run tests of all libraries on Safari and Firefox
+
+
+The parameter {{{--coverage=true}}} to also report the test coverage is not yet supported.
+
+#### Troubleshooting proxy issues
+
+```grunt test``` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
+
+> selenium-server-standalone.jar not found. Downloading...
+> >> Error: getaddrinfo ENOTFOUND
+
+
+To solve this issue, set the environment variables for the proxy as described above.
+
+#### Troubleshooting "browser not found" issues
+
+Selenium needs to find the browser executable on the PATH, otherwise you will see the following error message:
+
+> firefox
+> Fatal error: Cannot find firefox binary in PATH. Make sure firefox is installed.
+
+
+Solution: add the Firefox installation folder to the PATH environment variable.
+
+#### Troubleshooting "path to the driver executable" issues with browsers other than Firefox
+
+If you get the following error, remember that for browsers other than Firefox you need to install extra Selenium Web Drivers:
+
+> Fatal error: The path to the driver executable must be set by the webdriver.chrome.driver system property; for more information, see http://code.google.com/p/selenium/wiki/ChromeDriver. The latest version can be downloaded from http://chromedriver.storage.googleapis.com/index.html
+
+
+Solution: download the Selenium driver for the respective browser and make sure the Selenium Web Driver finds it; for Chrome:
+
+ * Download the current chromedriver_*.zip from  [http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)
+ * Extract the executable to a suitable location (e.g. C:\Program Files (x86)\Selenium Drivers)
+ * Include the ChromeDriver location in your PATH environment variable
+
+For Internet Explorer (browser type "ie"), the download location is <http://selenium-release.storage.googleapis.com/index.html>. For other browsers, consult the respective driver documentation. In Internet Explorer you may have to adjust the "protected mode" settings in the Internet Options, tab "Security".
+
+
+
+#### Troubleshooting undeletable folders
+
+If you encounter source folders that cannot be deleted because a process is locking them, one possible cause are the Chrome/IE web drivers. Check whether they are among the active processes.

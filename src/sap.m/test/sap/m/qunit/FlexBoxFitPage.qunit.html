@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.FlexBox with FitContainer set inside a Page</title>
+
+		<script id="sap-ui-bootstrap" 
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<style>
+			#item1 {
+				background-color: #d1dbbd;
+			}
+			#item2 {
+				background-color: #7D8A2E;
+			}
+			#item3 {
+				background-color: #C9D787;
+			}
+			#item4 {
+				background-color: #FFFFFF;
+			}
+			#item5 {
+				background-color: #FFC0A9;
+			}
+			#item6 {
+				background-color: #FF8598;
+			}
+		</style>
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+			var outerhboxWidth,
+				outerhboxHeight,
+				vboxWidth,
+				vboxHeight,
+				innerhboxWidth,
+				innerhboxHeight,
+				item1Width,
+				item1Height,
+				item2Width,
+				item2Height,
+				item3Width,
+				item3Height,
+				item4Width,
+				item4Height,
+				item5Width,
+				item5Height,
+				item6Width,
+				item6Height;
+
+			var oOuterHBox = new sap.m.HBox("outerHBox", {
+				items: [
+					new sap.ui.core.HTML("panel1", {
+						content: "<div></div>",
+						layoutData: new sap.m.FlexItemData({ growFactor: 2, id: "item1" })
+					}),
+					new sap.ui.core.HTML("panel2", {
+						content: "<div></div>",
+						layoutData: new sap.m.FlexItemData({ growFactor: 3, id: "item2" })
+					}),
+					new sap.m.VBox("vbox", {
+						items: [
+							new sap.ui.core.HTML("panel3", {
+								content: "<div></div>",
+								layoutData: new sap.m.FlexItemData({ growFactor: 5, id: "item3" })
+							}),
+							new sap.m.HBox("innerHBox", {
+								items: [
+									new sap.ui.core.HTML("panel4", {
+										content: "<div></div>",
+										layoutData: new sap.m.FlexItemData({ growFactor: 1, id: "item4" })
+									}),
+									new sap.ui.core.HTML("panel5", {
+										content: "<div></div>",
+										layoutData: new sap.m.FlexItemData({ growFactor: 1, id: "item5" })
+									})
+								],
+								fitContainer: true,
+								alignItems: "Stretch",
+								layoutData: new sap.m.FlexItemData({ growFactor: 3 })
+							})
+						],
+						fitContainer: true,
+						layoutData: new sap.m.FlexItemData({ growFactor: 5 })
+					}),
+					new sap.ui.core.HTML("panel6", {
+						content:"<div></div>",
+						layoutData: new sap.m.FlexItemData({ growFactor: 5, id: "item6" })
+					})
+				],
+				fitContainer: true,
+				alignItems: "Stretch"
+			});
+			
+			var app = new sap.m.App();
+			app.placeAt("content");
+			app.addPage(new sap.m.Page("page", {
+				enableScrolling: false,
+				content: [
+					oOuterHBox
+				]
+			}));
+
+			QUnit.config.autostart = false;
+			jQuery(document).ready(function() {
+				setTimeout(function() {
+					// Calculate width and height for the elements
+					outerhboxWidth = jQuery.sap.domById("page-cont").offsetWidth;
+					outerhboxHeight = jQuery.sap.domById("page-cont").offsetHeight;
+					vboxWidth = outerhboxWidth * ( 5 / 15 );
+					vboxHeight = outerhboxHeight;
+					innerhboxWidth = outerhboxWidth * ( 5 / 15 );
+					innerhboxHeight = outerhboxHeight * ( 3 / 8 );
+					item1Width = outerhboxWidth * ( 2 / 15 );
+					item1Height = outerhboxHeight;
+					item2Width = outerhboxWidth * ( 3 / 15 );
+					item2Height = outerhboxHeight;
+					item3Width = outerhboxWidth * ( 5 / 15 );
+					item3Height = outerhboxHeight * ( 5 / 8 );
+					item4Width = outerhboxWidth * ( 5 / 15 ) / 2;
+					item4Height = outerhboxHeight * ( 3 / 8 );
+					item5Width = outerhboxWidth * ( 5 / 15 ) / 2;
+					item5Height = outerhboxHeight * ( 3 / 8 );
+					item6Width = outerhboxWidth * ( 5 / 15 );
+					item6Height = outerhboxHeight;
+
+					QUnit.start();
+					if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
+						test("Dummy Test", function() {
+							ok(true, "At least one test needs to run to avoid test timeouts!");
+						});
+					}
+				}, 1000);
+			});
+
+			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
+				test("Flex Boxes rendered", function() {
+					ok(jQuery.sap.domById("outerHBox"), "Outer HBox should be rendered");
+					ok(jQuery.sap.domById("item1"), "item 1 should be rendered");
+					ok(jQuery.sap.domById("item2"), "Item 2 should be rendered");
+					ok(jQuery.sap.domById("vbox"), "VBox should be rendered");
+					ok(jQuery.sap.domById("item3"), "Item 3 should be rendered");
+					ok(jQuery.sap.domById("innerHBox"), "Inner HBox should be rendered");
+					ok(jQuery.sap.domById("item4"), "Item 4 should be rendered");
+					ok(jQuery.sap.domById("item5"), "Item 5 should be rendered");
+					ok(jQuery.sap.domById("item6"), "Item 6 should be rendered");
+				});
+
+				test("Width and height correct", function() {
+					ok(Math.abs(jQuery.sap.domById("outerHBox").offsetWidth - outerhboxWidth) <= 1, "Outer HBox should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("outerHBox").offsetHeight - outerhboxHeight) <= 1, "Outer HBox should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("vbox").offsetWidth - vboxWidth) <= 1, "VBox should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("vbox").offsetHeight - vboxHeight) <= 1, "VBox should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("innerHBox").offsetWidth - innerhboxWidth) <= 1, "Inner HBox should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("innerHBox").offsetHeight - innerhboxHeight) <= 1, "Inner HBox should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item1").offsetWidth - item1Width) <= 1, "Item 1 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item1").offsetHeight - item1Height) <= 1, "Item 1 should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item2").offsetWidth - item2Width) <= 1, "Item 2 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item2").offsetHeight - item2Height) <= 1, "Item 2 should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item3").offsetWidth - item3Width) <= 1, "Item 3 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item3").offsetHeight - item3Height) <= 1, "Item 3 should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item4").offsetWidth - item4Width) <= 1, "Item 4 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item4").offsetHeight - item4Height) <= 1, "Item 4 should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item5").offsetWidth - item5Width) <= 1, "Item 5 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item5").offsetHeight - item5Height) <= 1, "Item 5 should have the correct height");
+					ok(Math.abs(jQuery.sap.domById("item6").offsetWidth - item6Width) <= 1, "Item 6 should have the correct width");
+					ok(Math.abs(jQuery.sap.domById("item6").offsetHeight - item6Height) <= 1, "Item 6 should have the correct height");
+				});
+			}
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.FlexBox with FitContainer set</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested classes: sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller
+  Author: d046011,d049080
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.mvc.JSView +
+sap.ui.core.mvc.Controller</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons"
+	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="AnyView.qunit.js"></script>
+<script>
+
+	var oConfig = {
+		viewClassName : "sap.ui.core.mvc.JSView",
+		idsToBeChecked : ["myPanel", "Button1"]
+	};
+	
+	testsuite(oConfig, "JSView creation loading from file", function() {
+		return sap.ui.jsview("example.mvc.test");
+	});
+
+	testsuite(oConfig, "JSView creation with local view + controller definition", function() {
+
+		// View definition
+		sap.ui.jsview("example.mvc.testLocal", {
+		
+			getControllerName: function() {
+				return "example.mvc.testLocal";
+			},
+			
+			/**
+			 * 
+			 * @param oController may be null
+			 * @returns {sap.ui.core.Control}
+			 */
+			createContent: function(oController) {
+				var oPanel = new sap.ui.commons.Panel(this.createId("myPanel"));
+				var oButton = new sap.ui.commons.Button(this.createId("Button1"),{text:"Hello JS View"});
+				oButton.attachPress(oController.doIt,oController);
+				oPanel.addContent(oButton);
+				var oButton = new sap.ui.commons.Button(this.createId("Button2"),{text:"Hello"});
+				oPanel.addContent(oButton);
+				var oView1 = sap.ui.jsonview(this.createId("MyJSONView"),"example.mvc.test2");
+				oPanel.addContent(oView1);
+				var oView2 = sap.ui.jsview(this.createId("MyJSView"),"example.mvc.test2");
+				oPanel.addContent(oView2);
+				var oView3 = sap.ui.xmlview(this.createId("MyXMLView"),"example.mvc.test2");
+				oPanel.addContent(oView3);
+				var oView4 = sap.ui.htmlview(this.createId("MyHTMLView"),"example.mvc.test2");
+				oPanel.addContent(oView4);
+				if(this.getViewData()) window.dataCreateView = this.getViewData().test;
+				return [oPanel];
+			}
+		});
+		
+		// controller definition
+		sap.ui.controller("example.mvc.testLocal", {
+			
+			onInit: function() {
+				ok(true, "onInit is called now");
+				window.onInitCalled = true;
+				if(this.getView().getViewData()) window.dataOnInit = this.getView().getViewData().test;
+			},
+		
+			
+			onBeforeRendering: function() {
+				window.onBeforeRenderingCalled = true;
+				if(this.getView().getViewData()) window.dataBeforeRendering = this.getView().getViewData().test;
+			},
+			
+			
+			onAfterRendering: function() {
+				ok(true, "onAfterRendering is called now");
+				window.onAfterRenderingCalled = true;
+				if(this.getView().getViewData()) window.dataAfterRendering = this.getView().getViewData().test;
+			},
+			
+			
+			onExit: function() {
+				window.onExitCalled = true;
+			},
+			
+			doIt: function(oEvent) {
+				ok(true, "Event of "+ oEvent.getSource().getId()+" executed in controller");
+				controller = this;
+				ok(controller instanceof sap.ui.core.mvc.Controller, "context for event handling must be instanceof sap.ui.core.mvc.Controller");
+				if(this.getView().getViewData()) window.dataEventHandler = this.getView().getViewData().test;
+			}
+		
+		});
+		
+		return sap.ui.jsview("example.mvc.testLocal");
+	});
+	
+	testsuite(oConfig, "JSView creation via generic view factory", function() {
+		return sap.ui.view({viewName:"example.mvc.test",type:sap.ui.core.mvc.ViewType.JS, viewData:{test:"testdata"}});
+	}, true);
+	
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+</html>

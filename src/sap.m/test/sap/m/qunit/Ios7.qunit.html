@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.Ios7</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script language="javascript">
+			function stubIos7 (oSinonSandbox) {
+				oSinonSandbox.stub(sap.ui.Device, "os", { ios : true, version : 7 });
+				oSinonSandbox.stub(sap.ui.Device.system, "phone", true);
+				oSinonSandbox.stub(sap.ui.Device.browser, "name", "sf");
+			};
+
+			function stubIos7Ipad (oSinonSandbox) {
+				oSinonSandbox.stub(sap.ui.Device, "os", { ios : true, version : 7 });
+				oSinonSandbox.stub(sap.ui.Device.system, "tablet", true);
+				oSinonSandbox.stub(sap.ui.Device.system, "phone", false);
+				oSinonSandbox.stub(sap.ui.Device.browser, "name", "sf");
+			};
+
+			window.orientation = 0;
+
+			function simulateKeyboardOpen() {
+				jQuery("#input").focus();
+			};
+
+			function simulateKeyboardClose() {
+				jQuery("#button").focus();
+			};
+
+			var fnOrientationHandler;
+
+			function stubOrentationChange (oSinonSandbox) {
+				oSinonSandbox.stub(sap.ui.Device.orientation, "attachHandler", function(fnHandler, oThat) {
+					fnOrientationHandler = jQuery.proxy(fnHandler,oThat);
+				});
+			};
+
+			function simulateOrietationChange(oSinonSandbox, bLandscape) {
+				var iOrientation = bLandscape ? 90 : 0;
+
+				oSinonSandbox.stub(window, "orientation", iOrientation);
+				fnOrientationHandler({
+					landscape: bLandscape
+				});
+			};
+
+			function simulateWindowDifference(oSinonSandbox, iDifference) {
+				oSinonSandbox.stub(window, "outerHeight", 1000);
+				oSinonSandbox.stub(window, "innerHeight", 1000 - iDifference);
+			}
+
+			(function() {
+				//IE 9 cannot stub the window properties.
+				if(sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.firefox) {
+					return;
+				}
+
+				jQuery.sap.require("sap.m.ios7");
+
+				module("initialization");
+
+				test("Should do nothing when not in ios 7", function () {
+					//System under Test + Act
+					var sut = new sap.m._Ios7();
+
+					strictEqual(sut._bIntervallAttached, undefined, "the interval property was not initialized");
+					strictEqual(sut._bInputIsOpen, undefined, "the keyboard property was not initialized");
+					strictEqual(sut._bNavigationBarEventFired, undefined, "the navBar property was not initialized");
+
+					//Cleanup
+					sut.destroy();
+				});
+
+				test("Should have initialized the class", function() {
+					stubIos7(this);
+
+					//System under Test + Act
+					var sut = new sap.m._Ios7();
+
+					//Assert
+					strictEqual(sut._bIntervallAttached, false, "the interval property was initialized");
+					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+					strictEqual(sut._bNavigationBarEventFired, false, "the navBar property was initialized");
+					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+
+					//Cleanup
+					sut.destroy();
+				});
+
+				module("events", {
+					setup : function() {
+						simulateKeyboardClose();
+					}
+				});
+
+				test("Should handle portrait orientation change", function() {
+					stubIos7(this);
+					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
+					var oDetachSpy = this.spy(sap.m._Ios7.prototype, "_detachNavigationBarPolling");
+					var oAttachSpy = this.spy(sap.m._Ios7.prototype, "_attachNavigationBarPolling");
+					var oScrollToSpy = this.spy(window, "scrollTo");
+					stubOrentationChange(this);
+
+					//System under Test
+					var sut = new sap.m._Ios7();
+
+
+					//Act
+					simulateOrietationChange(this, false);
+
+					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					strictEqual(oDetachSpy.callCount, 1, "polling was detached, since we are in portrait");
+					strictEqual(oAttachSpy.callCount, 0, "polling not attached, since we are in portrait");
+
+					//Cleanup
+					sut.destroy();
+				});
+
+				test("Should handle landscape orientation change without keyboard open", function() {
+					//Arrange
+					stubIos7(this);
+					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
+					var oDetachSpy = this.spy(sap.m._Ios7.prototype, "_detachNavigationBarPolling");
+					var oAttachSpy = this.spy(sap.m._Ios7.prototype, "_attachNavigationBarPolling");
+					var oScrollToSpy = this.spy(window, "scrollTo");
+					stubOrentationChange(this);
+					simulateWindowDifference(this, 0); // no navigation bar
+					//System under Test
+					var sut = new sap.m._Ios7();
+
+					//Act
+					simulateOrietationChange(this, true);
+
+					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					strictEqual(oScrollToSpy.callCount, 1, "scroll to was called");
+					strictEqual(oDetachSpy.callCount, 0, "polling was not detached, since we are in landscape");
+					strictEqual(oAttachSpy.callCount, 1, "polling was attached, since we are in landscape and the keyboard was closed");
+
+					//Cleanup
+					sut.destroy();
+				});
+
+				test("Should handle landscape orientation change with keyboard open", function() {
+					//Arrange
+					stubIos7(this);
+					var oOrientationSpy = this.spy(sap.m._Ios7.prototype, "_onOrientationChange");
+					var oDetachSpy = this.spy(sap.m._Ios7.prototype, "_detachNavigationBarPolling");
+					var oAttachSpy = this.spy(sap.m._Ios7.prototype, "_attachNavigationBarPolling");
+					var oScrollToSpy = this.spy(window, "scrollTo");
+					stubOrentationChange(this);
+					simulateWindowDifference(this, 0); // no navigation bar
+
+					//System under Test
+					var sut = new sap.m._Ios7();
+
+					simulateKeyboardOpen();
+
+					//Act
+					simulateOrietationChange(this, true);
+					simulateKeyboardOpen();
+
+					strictEqual(oOrientationSpy.callCount, 1, "the orientation change was registered");
+					strictEqual(oScrollToSpy.callCount, 2, "scroll to was called");
+					strictEqual(oDetachSpy.callCount, 2, "polling was detached, since we are in landscape and the keyboard was open");
+					strictEqual(oAttachSpy.callCount, 1, "polling was attached on orientation change");
+					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape and open keyboard");
+
+					//Cleanup
+					sut.destroy();
+				});
+
+				test("Should attach the intervall properly", function () {
+					stubIos7(this);
+					stubOrentationChange(this);
+					simulateWindowDifference(this, 0); // no navigation bar
+
+					//System under Test
+					var sut = new sap.m._Ios7();
+
+					simulateKeyboardOpen();
+					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+
+					simulateOrietationChange(this, true);
+					simulateKeyboardOpen();
+					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+
+					simulateKeyboardClose();
+					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+
+					simulateKeyboardOpen();
+					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of landscape with keyboard open");
+
+					simulateKeyboardClose();
+					strictEqual(sut._bIntervallAttached, true, "the interval property was attached because of landscape with keyboard close");
+
+					simulateOrietationChange(this, false);
+					strictEqual(sut._bIntervallAttached, false, "the interval property was not attached because of portrait");
+				});
+
+				test("Should fire the navigation bar event", function () {
+					//Arrange
+					stubIos7(this);
+					stubOrentationChange(this);
+					simulateWindowDifference(this, 0); // no navigation bar
+					var oEventSpy = this.spy();
+
+					//System under Test
+					var sut = new sap.m._Ios7();
+					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
+					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+
+					simulateKeyboardOpen();
+					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					simulateOrietationChange(this, true);
+					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					simulateKeyboardOpen();
+					//simulate the nav bar opening
+					simulateWindowDifference(this, 100);
+					this.clock.tick(1000);
+
+					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+
+					simulateKeyboardClose();
+					this.clock.tick(1000)
+					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					strictEqual(oEventSpy.callCount, 1, "event was fired");
+					strictEqual(sut.getNavigationBarHeight(), 100, "the navBar height was 100");
+
+					simulateOrietationChange(this, false);
+					strictEqual(sut.getNavigationBarHeight(), 0, "the navBar height was 0");
+					//Cleanup
+					sut.destroy();
+				});
+
+				test("Should not fire the navigation bar event", function () {
+					//Arrange
+					stubIos7Ipad(this);
+					stubOrentationChange(this);
+					simulateWindowDifference(this, 0); // no navigation bar
+					var oEventSpy = this.spy();
+
+					//System under Test
+					var sut = new sap.m._Ios7();
+					sut.attachEvent("navigationBarShownInLandscape", oEventSpy);
+					strictEqual(sut._bInputIsOpen, false, "the keyboard property was initialized");
+
+					simulateKeyboardOpen();
+					strictEqual(sut._bInputIsOpen, true, "the keyboard was opened");
+					simulateOrietationChange(this, true);
+					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed by the orientation change");
+					simulateKeyboardOpen();
+					//simulate the nav bar opening
+					simulateWindowDifference(this, 100);
+					this.clock.tick(1000);
+
+					strictEqual(oEventSpy.callCount, 0, "event was not fired because the keyboard was opened");
+
+					simulateKeyboardClose();
+					this.clock.tick(1000)
+					strictEqual(sut._bInputIsOpen, false, "the keyboard was closed");
+					strictEqual(oEventSpy.callCount, 0, "event was fired");
+
+					//Cleanup
+					sut.destroy();
+				});
+			})();
+		</script>
+
+	</head>
+
+	<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.Ios7</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+	<input id="input"></input>
+	<button id="button"></button>
+	</body>
+
+</html>

@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Test Page for sap.m.InputBase</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			QUnit.config.autostart = false;
+			sap.ui.test.qunit.delayTestStart();
+
+			var XSS = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
+
+			var fnTestControlProperty = function(mOptions) {
+				var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
+
+				test("method: get" + sProperty + "()", function() {
+					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+				});
+			};
+
+			/* =========================================================== */
+			/* API module                                                  */
+			/* =========================================================== */
+
+			module("API");
+
+			/* ------------------------------ */
+			/* tests for default values       */
+			/* ------------------------------ */
+
+			test("default values", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oInput.getValue(), "", 'The default value is ""');
+				strictEqual(oInput.getWidth(), "", 'The default width is ""');
+				strictEqual(oInput.getEnabled(), true, "By default the input field is enabled");
+				strictEqual(oInput.getVisible(), true, "By default the input field is visible");
+				strictEqual(oInput.getValueState(), "None", 'By default the value state is "None"');
+				strictEqual(oInput.getName(), "", 'The default name is ""');
+				strictEqual(oInput.getPlaceholder(), "", 'The default placeholder value is ""');
+				strictEqual(oInput.getEditable(), true, 'By default the input field is editable');
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			/* ------------------------------ */
+			/* getName()                      */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase(),
+				property: "name",
+				output: "",
+				description: 'The name is ""'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					name: "my-input"
+				}),
+				property: "name",
+				output: "my-input",
+				description: 'The name is "my-input"'
+			});
+
+			/* ------------------------------ */
+			/* getVisible()                   */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					visible: false
+				}),
+				property: "visible",
+				output: false,
+				description: "Is not visible"
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase(),
+				property: "visible",
+				output: true,
+				description: "Is visible"
+			});
+
+			/* ------------------------------ */
+			/* getEnabled()                   */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase(),
+				property: "enabled",
+				output: true,
+				description: "Is enable"
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					enabled: false
+				}),
+				property: "enabled",
+				output: false,
+				description: "Is disabled"
+			});
+
+			/* ------------------------------ */
+			/* getWidth()                     */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "50%"
+				}),
+				property: "width",
+				output: "50%",
+				description: 'The "width" is "50%"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "13rem"
+				}),
+				property: "width",
+				output: "13rem",
+				description: 'The "width" is "13rem"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "200px"
+				}),
+				property: "width",
+				output: "200px",
+				description: 'The "width" is "200px"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "4em"
+				}),
+				property: "width",
+				output: "4em",
+				description: 'The "width" is "4em"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase(),
+				property: "width",
+				output: "",
+				description: 'The "width" is "auto"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "2in"
+				}),
+				property: "width",
+				output: "2in",
+				description: 'The "width" is "2in"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "3cm"
+				}),
+				property: "width",
+				output: "3cm",
+				description: 'The "width" is "3cm"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					width: "125pt"
+				}),
+				property: "width",
+				output: "125pt",
+				description: 'The "width" is "125pt"'
+			});
+
+			/* ------------------------------ */
+			/* getEditable()                  */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase(),
+				property: "editable",
+				output: true,
+				description: "Is editable"
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					editable: false
+				}),
+				property: "editable",
+				output: false,
+				description: "Is not editable"
+			});
+
+			/* ------------------------------ */
+			/* getTextAlign()                     */
+			/* ------------------------------ */
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+				}),
+				property: "textAlign",
+				output: sap.ui.core.TextAlign.Initial,
+				description: '"textAlign" is "Initial"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					textAlign: sap.ui.core.TextAlign.Left
+				}),
+				property: "textAlign",
+				output: sap.ui.core.TextAlign.Left,
+				description: '"textAlign" is "Left"'
+			});
+
+			fnTestControlProperty({
+				control: new sap.m.InputBase({
+					textAlign: sap.ui.core.TextAlign.End
+				}),
+				property: "textAlign",
+				output: sap.ui.core.TextAlign.End,
+				description: '"textAlign" is "End"'
+			});
+
+			/* ------------------------------ */
+			/* setValue()                     */
+			/* ------------------------------ */
+
+			var fnSetValueTestCase1 = function(mSettings) {
+				test("method: setValue() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetValueTestCase1({
+				control: new sap.m.InputBase({
+					value: "Input value"
+				}),
+				output: "Input value"
+			});
+
+			fnSetValueTestCase1({
+				control: new sap.m.InputBase({
+					value: ""
+				}),
+				output: ""
+			});
+			
+			fnSetValueTestCase1({
+				control: new sap.m.InputBase({
+					value: XSS
+				}),
+				output: XSS
+			});
+
+			var fnSetValueTestCase2 = function(mSettings) {
+				test("method: setValue() after the initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+					var fnSetValueSpy = this.spy(oInput, "setValue");
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
+					
+					// act
+					oInput.setValue(mSettings.input);
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
+					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetValueTestCase2({
+				control: new sap.m.InputBase(),
+				input: "Input value",
+				output: "Input value"
+			});
+
+			fnSetValueTestCase2({
+				control: new sap.m.InputBase(),
+				input: "",
+				output: ""
+			});
+			
+			fnSetValueTestCase2({
+				control: new sap.m.InputBase(),
+				input: XSS,
+				output: XSS
+			});
+			
+			var fnSetValueTestCase3 = function(mSettings) {
+				test("method: setValue() initial rendering should respect getMaxLength", function() {
+
+					// arrange - stub for max length before rendering
+					sap.m.InputBase.prototype.getMaxLength = undefined;
+					this.stub(sap.m.InputBase.prototype, "getMaxLength", function() {
+						return mSettings.maxLength;
+ 					});
+
+					// system under test
+					var oInput = new sap.m.InputBase(mSettings.control || {});
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+			
+			fnSetValueTestCase3({
+				maxLength : 0,
+				control: {
+					value : "Test"
+				},
+				output: "Test"
+			});
+			
+			fnSetValueTestCase3({
+				maxLength : 5,
+				control: {
+					value : "Test"
+				},
+				output: "Test"
+			});
+			
+			fnSetValueTestCase3({
+				maxLength : 2,
+				control: {
+					value : "Test"
+				},
+				output: "Te"
+			});
+			
+			var fnSetValueTestCase4 = function(mSettings) {
+				test("method: setValue() after the initial rendering should respect getMaxLength", function() {
+
+					// stub for max length
+					sap.m.InputBase.prototype.getMaxLength = undefined;
+					this.stub(sap.m.InputBase.prototype, "getMaxLength", function() {
+						return mSettings.maxLength;
+ 					});
+
+					// system under test
+					var oInput = new sap.m.InputBase(mSettings.control || {});
+					var fnSetValueSpy = this.spy(oInput, "setValue");
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
+					
+					// act
+					oInput.setValue(mSettings.input);
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+					ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
+					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
+					
+					// cleanup
+					oInput.destroy();
+				});
+			};
+			
+			fnSetValueTestCase4({
+				maxLength : 0,
+				input : "Test",
+				output: "Test"
+			});
+			
+			fnSetValueTestCase4({
+				maxLength : 5,
+				input : "Test",
+				output: "Test"
+			});
+			
+			fnSetValueTestCase4({
+				maxLength : 2,
+				input : "Test",
+				output: "Te"
+			});
+			
+			test("setValue should not update the last value when old and new one is same", function() {
+				// system under test
+				var sInitValue = "init";
+				var sTestValue = "test";
+				var oInput = new sap.m.InputBase({
+					value : sInitValue
+				});
+				
+				// arrange
+				var sLastValue = oInput._lastValue;
+
+				// act as twoway binding does
+				oInput.setProperty("value", sTestValue, true);
+				oInput.setValue(sTestValue);
+				
+				// assertions
+				strictEqual(sLastValue, sInitValue, "Last value did not change");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			test("setValue should update the dom when old and new dom value is not same", function() {
+				// system under test
+				var sValue = "test"
+				var oInput = new sap.m.InputBase({
+					value : sValue
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act - set dom value
+				oInput.getFocusDomRef().value = sValue + sValue;
+				
+				// assertion - before setValue
+				notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before setValue call dom value and value property are not same.");
+
+				// act - set the same value
+				oInput.setValue(sValue);
+				
+				// assertion - after setValue
+				strictEqual(oInput.getFocusDomRef().value, sValue, "Dom value and value property are same after setValue call.");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			/* ------------------------------ */
+			/* setWidth()                     */
+			/* ------------------------------ */
+
+			var fnSetWidthTestCase1 = function(mSettings) {
+				test("method: setWidth() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(oInput.getDomRef().style.width, mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetWidthTestCase1({
+				control: new sap.m.InputBase({
+					width: "200px"
+				}),
+				output: "200px"
+			});
+
+			fnSetWidthTestCase1({
+				control: new sap.m.InputBase({
+					width: "100%"
+				}),
+				output: "100%"
+			});
+
+			fnSetWidthTestCase1({
+				control: new sap.m.InputBase({
+					width: "auto"
+				}),
+				output: "auto"
+			});
+
+			var fnSetWidthTestCase2 = function(mSettings) {
+				test("method: setWidth() after initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// act
+					oInput.setWidth(mSettings.input);
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(oInput.getDomRef().style.width, mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetWidthTestCase2({
+				control: new sap.m.InputBase(),
+				input: "200px",
+				output: "200px"
+			});
+
+			fnSetWidthTestCase2({
+				control: new sap.m.InputBase(),
+				input: "100%",
+				output: "100%"
+			});
+
+			fnSetWidthTestCase2({
+				control: new sap.m.InputBase(),
+				input: "auto",
+				output: "auto"
+			});
+
+			/* ------------------------------ */
+			/* setEnabled()                   */
+			/* ------------------------------ */
+
+			test("method: setEnabled() initial rendering", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setEnabled(false);
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("method: setEnabled()", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase({
+					enabled: false
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			/* ------------------------------ */
+			/* setValueState()                */
+			/* ------------------------------ */
+
+			var fnSetValueStateTestCase1 = function(mSettings) {
+				test("method: setValueState() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					ok(oInput.$().hasClass(mSettings.output));
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetValueStateTestCase1({
+				control: new sap.m.InputBase({
+					valueState: sap.ui.core.ValueState.Error
+				}),
+				output: "sapMInputBaseError"
+			});
+
+			fnSetValueStateTestCase1({
+				control: new sap.m.InputBase({
+					valueState: sap.ui.core.ValueState.Warning
+				}),
+				output: "sapMInputBaseWarning"
+			});
+
+			fnSetValueStateTestCase1({
+				control: new sap.m.InputBase({
+					valueState: sap.ui.core.ValueState.Success
+				}),
+				output: "sapMInputBaseSuccess"
+			});
+
+			fnSetValueStateTestCase1({
+				control: new sap.m.InputBase({
+					valueState: sap.ui.core.ValueState.Error
+				}),
+				output: "sapMInputBaseState"
+			});
+
+			var fnSetValueStateTestCase2 = function(mSettings) {
+				test("method: setValueState() after initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					var fnRerenderSpy = this.spy(oInput.getRenderer(), "render");
+
+					// act
+					oInput.setValueState(mSettings.input);
+
+					// assertions
+					ok(oInput.$().hasClass(mSettings.output), "Input should have the class " + mSettings.output);
+					strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValueState calls");
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetValueStateTestCase2({
+				control: new sap.m.InputBase(),
+				input: sap.ui.core.ValueState.Error,
+				output: "sapMInputBaseError"
+			});
+
+			fnSetValueStateTestCase2({
+				control: new sap.m.InputBase(),
+				input: sap.ui.core.ValueState.Warning,
+				output: "sapMInputBaseWarning"
+			});
+
+			fnSetValueStateTestCase2({
+				control: new sap.m.InputBase(),
+				input: sap.ui.core.ValueState.Success,
+				output: "sapMInputBaseSuccess"
+			});
+
+			/* ------------------------------ */
+			/* setName()                      */
+			/* ------------------------------ */
+
+			test("method: setName() initial rendering", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase({
+					name: "myInput"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("method: setName() after initial rendering", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setName("myInput");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(jQuery(oInput.getFocusDomRef()).attr("name"), "myInput", 'The attribute name is "myInput"');
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			/* ------------------------------ */
+			/* setPlaceholder()               */
+			/* ------------------------------ */
+
+			var fnSetPlaceholderTestCase1 = function(mSettings) {
+				test("method: setPlaceholder() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					if (!oInput._bShowLabelAsPlaceholder) {
+						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
+					}
+					
+					// force to show synthetic placeholder
+					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+					
+					// rerender for synthetic placeholder 
+					oInput.rerender();
+					sap.ui.getCore().applyChanges();
+					
+					// assertions
+					strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output || "");
+					
+					// cleanup
+					oInput.destroy();
+					
+				});
+			};
+
+			fnSetPlaceholderTestCase1({
+				control: new sap.m.InputBase({
+					placeholder: "Input placeholder"
+				}),
+				output: "Input placeholder"
+			});
+
+			fnSetPlaceholderTestCase1({
+				control: new sap.m.InputBase({
+					placeholder: ""
+				}),
+				output: (!sap.ui.Device.support.input.placeholder) ? "" : undefined
+			});
+			
+			fnSetPlaceholderTestCase1({
+				control: new sap.m.InputBase({
+					placeholder: XSS
+				}),
+				output: XSS
+			});
+
+			var fnSetPlaceholderTestCase2 = function(mSettings) {
+				test("method: setPlaceholder() after initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// act
+					oInput.setPlaceholder(mSettings.input);
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					if (!oInput._bShowLabelAsPlaceholder) {
+						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
+					}
+					
+					// force to show synthetic placeholder
+					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+					
+					// rerender for synthetic placeholder 
+					oInput.rerender();
+					sap.ui.getCore().applyChanges();
+					
+					// act
+					oInput.setPlaceholder(mSettings.input);
+					sap.ui.getCore().applyChanges();
+					
+					// assertions
+					strictEqual(oInput.$().find(".sapMInputBasePlaceholder").text(), mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetPlaceholderTestCase2({
+				control: new sap.m.InputBase(),
+				input: "Input placeholder",
+				output: "Input placeholder"
+			});
+
+			fnSetPlaceholderTestCase2({
+				control: new sap.m.InputBase(),
+				input: "",
+				output: ""
+			});
+			
+			fnSetPlaceholderTestCase2({
+				control: new sap.m.InputBase(),
+				input: XSS,
+				output: XSS
+			});
+			
+
+			/* ------------------------------ */
+			/* setEditable()                  */
+			/* ------------------------------ */
+
+			var fnSetEditableTestCase1 = function(mSettings) {
+				test("method: setEditable() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetEditableTestCase1({
+				control: new sap.m.InputBase({
+					editable: true
+				}),
+				output: undefined
+			});
+
+			fnSetEditableTestCase1({
+				control: new sap.m.InputBase({
+					editable: false
+				}),
+				output: "readonly"
+			});
+
+			var fnSetEditableTestCase2 = function(mSettings) {
+				test("method: setEditable() after the initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// act
+					oInput.setEditable(mSettings.input);
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(jQuery(oInput.getFocusDomRef()).attr("readonly"), mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetEditableTestCase2({
+				control: new sap.m.InputBase(),
+				input: true,
+				output: undefined
+			});
+
+			fnSetEditableTestCase2({
+				control: new sap.m.InputBase(),
+				input: false,
+				output: "readonly"
+			});
+
+			/* ------------------------------ */
+			/* setVisible()                   */
+			/* ------------------------------ */
+
+			test("method: setVisible() initial rendering", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase({
+					visible: false
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assertions
+				strictEqual(oInput.$().length, 0);
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			/* ------------------------------ */
+			/* setTextAlign()                     */
+			/* ------------------------------ */
+
+			var fnSetTextAlignTestCase1 = function(mSettings) {
+				test("method: setTextAlign() initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetTextAlignTestCase1({
+				control: new sap.m.InputBase({
+					textAlign: sap.ui.core.TextAlign.Begin
+				}),
+				output: "left"
+			});
+
+			fnSetTextAlignTestCase1({
+				control: new sap.m.InputBase({
+					textAlign: sap.ui.core.TextAlign.Initial
+				}),
+				output: ""
+			});
+
+			var fnSetTextAlignTestCase2 = function(mSettings) {
+				test("method: setTextAlign() after the initial rendering", function() {
+
+					// system under test
+					var oInput = mSettings.control;
+
+					// arrange
+					oInput.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					// act
+					oInput.setTextAlign(mSettings.input);
+					sap.ui.getCore().applyChanges();
+
+					// assertions
+					strictEqual(oInput.getFocusDomRef().style.textAlign, mSettings.output);
+
+					// cleanup
+					oInput.destroy();
+				});
+			};
+
+			fnSetTextAlignTestCase2({
+				control: new sap.m.InputBase(),
+				input: sap.ui.core.TextAlign.End,
+				output: "right"
+			});
+
+			fnSetTextAlignTestCase2({
+				control: new sap.m.InputBase({textAlign: sap.ui.core.TextAlign.End}),
+				input: sap.ui.core.TextAlign.Initial,
+				output: ""
+			});
+
+			/* ------------------------------ */
+			/* destroy()                      */
+			/* ------------------------------ */
+
+			test("method: destroy()", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.destroy();
+
+				// assertions
+				strictEqual(oInput.$().length, 0);
+
+				// cleanup
+				oInput.destroy();
+			});
+
+			test("value state and value state message", function() {
+				sinon.config.useFakeTimers = true;
+				var oErrorInput = new sap.m.InputBase("errorinput", {
+					value : "Error InputBase Test",
+					valueState: "Error",
+					valueStateText: "Error Message"
+				});
+
+				var oWarningInput = new sap.m.InputBase("warninginput",{
+					value : "Warning InputBase Test",
+					valueState: "Warning",
+					valueStateText: "Warning Message"
+				});
+
+				// arrange
+				oErrorInput.placeAt("content");
+				oWarningInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				oErrorInput.focus();
+				this.clock.tick(500);
+				ok(jQuery.sap.domById("errorinput-message"), "error message popup is open when focusin");
+				equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
+
+				oErrorInput.getFocusDomRef().blur();
+ 				this.clock.tick(500);
+				ok(!jQuery.sap.domById("errorinput-message"), "no error message popup is closed when focus is out");
+
+ 				oWarningInput.focus();
+				this.clock.tick(500);
+				ok(jQuery.sap.domById("warninginput-message"), "warning message popup is open when focusin");
+				equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
+
+				oWarningInput.getFocusDomRef().blur()
+ 				this.clock.tick(500);
+				ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
+ 
+ 				oErrorInput.setShowValueStateMessage(false);
+ 				sap.ui.getCore().applyChanges();
+ 				oErrorInput.focus();
+				this.clock.tick(500);
+				ok(!jQuery.sap.domById("errorinput-message"), "no error message popup if showValueStateMessage is set to false");
+
+				oErrorInput.destroy();
+				oWarningInput.destroy();
+			});
+
+			/* =========================================================== */
+			/* Events module                                               */
+			/* =========================================================== */
+
+			module("Events");
+
+			test("method: change() event", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+
+				// act
+				sap.ui.test.qunit.triggerCharacterInput(oInput.getFocusDomRef(), "a");
+				oInput.onChange();
+
+				// assertions
+				strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
+
+				// cleanup
+				oInput.destroy();
+			});
+			
+			test("onChange handler should fire the change event when last known and dom value are not same", function() {
+				// system under test
+				var sInitValue = "Test";
+				var oInput = new sap.m.InputBase({
+					text : sInitValue
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oInputDomRef = oInput.getFocusDomRef();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				
+				// act
+				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+				
+				// assertion
+				strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired because initial value and dom value are same.");
+				
+				// change dom and cursor pos
+				sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+				
+				// act
+				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "ENTER");
+				
+				// assertion
+				strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired because last known value and dom value are not same.");
+				
+				// reset spy
+				fnFireChangeSpy.reset();
+				
+				// retest after change event is fired
+				oInputDomRef.blur();
+				
+				// assertion
+				strictEqual(fnFireChangeSpy.callCount, 0, "Change event is not fired again because last known value and dom value are same");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			test("escape should return the last known value and fire private liveChange event", function() {
+
+				// system under test
+				var sInitValue = "Test";
+				var oInput = new sap.m.InputBase({
+					value : sInitValue
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireEventSpy = this.spy(oInput, "fireEvent");
+				var fnOnEscapeSpy = this.spy(oInput, "onsapescape");
+				
+				// act - set dom value
+				oInput.getFocusDomRef().value = "SomethingThatIsNotSameWithTheInitialValue";
+				
+				// assertion - before escape
+				notEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Before escape call dom value and value property are not same.");
+
+				// act
+				sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+
+				// assertion - after escape
+				strictEqual(oInput.getValue(), sInitValue, "Input value is returned to the inital value after escape.");
+				strictEqual(oInput.getFocusDomRef().value, oInput.getValue(), "Dom value and value property are same after escape.");
+				ok(fnFireEventSpy.calledWith("liveChange"), "Private liveChange event is fired on escape");
+				strictEqual(fnFireEventSpy.callCount, 1, "LiveChange event is fired once");
+				ok(fnOnEscapeSpy.args[0][0].isMarked(), "Escape is marked as handled");
+				
+				// reset spy
+				fnFireEventSpy.reset();
+				
+				// retest while dom and value property are same
+				sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "ESCAPE");
+				
+				// assertion - after 2nd escape
+				strictEqual(fnFireEventSpy.callCount, 0, "LiveChange event is not fired again because dom and value property are same.");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			test("input event delegate should be fired in IE9 when CUT / DELETE / BACKSPACE is hit", function() {
+				// system under test
+				var oInput = new sap.m.InputBase({
+					placeholder : "Test"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oInputDomRef = oInput.getFocusDomRef();
+				var fnInputDelegateSpy = this.spy();
+				var oInputDelegate = {
+					oninput : fnInputDelegateSpy
+				};
+				
+				// do it twice to test 2nd addEventDelegate removes the previous delegate
+				oInput.addEventDelegate(oInputDelegate).addEventDelegate(oInputDelegate);
+				
+				// act
+				oInputDomRef.focus();
+				sap.ui.test.qunit.triggerCharacterInput(oInputDomRef, "a");
+				sap.ui.test.qunit.triggerEvent("input", oInputDomRef);
+				
+				// assertion
+				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with character input");
+				fnInputDelegateSpy.reset();
+				
+				// stub - IE9
+				sap.ui.Device.browser.msie = sap.ui.Device.browser.msie;
+				this.stub(sap.ui.Device.browser, "msie", true);
+				this.stub(sap.ui.Device.browser, "version", 9);
+				
+				// act
+				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "BACKSPACE");
+				this.clock.tick(1);
+				
+				// assertion
+				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with BACKSPACE");
+				fnInputDelegateSpy.reset();
+				
+				// act
+				sap.ui.test.qunit.triggerKeydown(oInputDomRef, "DELETE");
+				this.clock.tick(1);
+				
+				// assertion
+				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with DELETE");
+				fnInputDelegateSpy.reset();
+				
+				// act
+				sap.ui.test.qunit.triggerEvent("cut", oInputDomRef);
+				this.clock.tick(1);
+				
+				// assertion
+				strictEqual(fnInputDelegateSpy.callCount, 1, "input event delegate is called with CUT");
+				fnInputDelegateSpy.reset();
+				
+				// cleanup
+				oInput.destroy();
+
+				
+			})
+			
+			/* =========================================================== */
+			/* Focus And Cursor Position Module                            */
+			/* =========================================================== */
+			module("FocusAndCursorPosition");
+			
+			test("getFocusDomRef should point the input field", function() {
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				
+				// assertion - before escape
+				strictEqual(oInput.getFocusDomRef(), oInput.$().find("input")[0], "getFocusDomRef returns the input field.");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			test("onAfterRendering cursor position and dom values should set to the last known values", function() {
+				// system under test
+				var sTestValue = "Test";
+				var sTestCurPos = sTestValue.length / 2;
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+				
+				// act - set dom value and change cursor position
+				oInput.focus();
+				oInput.updateDomValue(sTestValue);
+				jQuery(oInput.getFocusDomRef()).cursorPos(sTestCurPos);
+
+				// invalidate the control after dom value changes
+				oInput.setWidth("100px");
+				sap.ui.getCore().applyChanges();
+				
+				// assertions
+				strictEqual(fnFireChangeSpy.callCount, 0, "Change event should not be fired during the rendering");
+				
+				// in test environment focus can leave the test page
+				if (document.activeElement == oInput.getFocusDomRef()) {
+					strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
+				}
+
+				// cleanup
+				oInput.destroy();
+			});
+			
+			
+			test("onAfterRendering last dom value should not be reverted when setProperty('value', ..) is called", function() {
+				// system under test
+				var sTestValue = "Test";
+				var sInitValue = "Initial";
+				var sDomValue = "DomValue";
+				var sTestCurPos = sTestValue.length / 2;
+				var oInput = new sap.m.InputBase({
+					value : sInitValue
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				
+				// act - set dom value and set value property and change cursor position
+				oInput.focus();
+				oInput.updateDomValue(sDomValue);
+				oInput.setProperty("value", sTestValue, true);
+				jQuery(oInput.getFocusDomRef()).cursorPos(sTestCurPos);
+			
+				// invalidate the control after dom and property value changes
+				oInput.setWidth("100px");
+				sap.ui.getCore().applyChanges();
+				
+				// assertion
+				strictEqual(jQuery(oInput.getFocusDomRef()).val(), sTestValue, "InputBase respected setProperty value call and did not revert the dom value.");
+				
+				// in test environment focus can leave the test page
+				if (document.activeElement == oInput.getFocusDomRef()) {
+					strictEqual(jQuery(oInput.getFocusDomRef()).cursorPos(), sTestCurPos, "Cursor position reverted to the last know position after rendering.");
+				}
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+
+			test("getFocusInfo and applyFocusInfo", function() {
+				// system under test
+				var sInitValue = "Test";
+				var oInput = new sap.m.InputBase({
+					value : sInitValue
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var $Input = jQuery(oInput.getFocusDomRef());
+				
+				// act - get focus info and change cursor position of the dom element
+				var oFocusInfo = oInput.getFocusInfo();
+				oInput.updateDomValue("SomethingThatIsNotSameWithTheInitialValue");
+				$Input.cursorPos(10);
+				
+				// act - reapply last known focus info
+				oInput.applyFocusInfo(oFocusInfo);
+				
+				// assertion
+				strictEqual($Input.cursorPos(), oFocusInfo.cursorPos, "Cursor position is set to the correct position after apply focus.");
+				
+				// cleanup
+				oInput.destroy();
+			});
+			
+			
+			module("TwowayBindingAndFormatters");
+			test("formatters should be applied for two-way binding formatters", function() {
+				// custom formatter
+				function smile(sValue) {
+					return sValue + " :)";
+				}
+				
+				// custom type
+				jQuery.sap.require("sap.ui.model.type.String");
+				sap.ui.model.type.String.extend("my.model.types.Smile", {
+					formatValue: smile
+				});
+				
+				// model
+				var sInitValue = "init";
+				var sTestValue = "test";
+				var oModel = new sap.ui.model.json.JSONModel({
+					value : sInitValue
+				});
+				sap.ui.getCore().setModel(oModel);
+				
+				// arrange
+				var oInput = new sap.m.InputBase({
+					value:{
+						path: "/value",
+						type: new my.model.types.Smile()
+					}
+				});
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				
+				// assertion
+				strictEqual(oInput.getValue(), smile(sInitValue), "Initial formatter is applied correctly");
+				
+				// in test enviroment focus can leave the test page
+				if (document.activeElement != oInput.getFocusDomRef()) {
+					return oInput.destroy();
+				}
+				
+				// act
+				oInput.getFocusDomRef().focus();
+				oInput.updateDomValue(sTestValue);
+				oInput.getFocusDomRef().blur();
+				
+				// assertion
+				strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change");
+				
+				// set the value again to check last value is correct
+				oInput.getFocusDomRef().focus();
+				oInput.updateDomValue(sTestValue);
+				oInput.getFocusDomRef().blur();
+				
+				// assertion
+				strictEqual(oInput.getValue(), smile(sTestValue), "Test value formatter is applied correctly on change again");
+				
+				// cleanup
+				oInput.destroy();
+			});			
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: sap.m.InputBase</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

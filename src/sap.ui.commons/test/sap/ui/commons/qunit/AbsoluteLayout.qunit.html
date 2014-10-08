@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.layout.AbsoluteLayout
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>AbsoluteLayout - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.layout.AbsoluteLayout.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<style>
+		html, body {
+			height: 100%;
+		}
+			
+		.testUIArea {
+			height: 500px;
+			position: relative;
+			overflow: auto;
+			border: 1px solid black;
+		}
+			
+		.testCtrl{
+			width: 20px;
+			height: 10px;
+			display: inline-block;
+		}
+	</style>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+		var createControl = function(sName, bWithWidth, bWithHeight, sBgColor, sTag){
+			jQuery.sap.declare("test."+sName);
+			jQuery.sap.require("sap.ui.core.Control");
+			
+			window["test"][sName] = function (sId, mSettings) {
+				sap.ui.core.Control.apply(this, arguments);
+			};
+			
+			window["test"][sName].prototype = jQuery.sap.newObject(sap.ui.core.Control.prototype);
+
+			window["test"][sName].prototype.sBgColor = sBgColor;
+			window["test"][sName].prototype.sTag = sTag ? sTag : "div";
+
+			var props = {};
+			var methods = [];
+			if(bWithWidth){
+				methods.push("getWidth", "setWidth");
+				props.width = {name : "width", type : "sap.ui.core.CSSSize", group : "", defaultValue : null};
+				window["test"][sName].prototype.getWidth = function(){
+					return this.getProperty("width");
+				};
+				window["test"][sName].prototype.setWidth = function(arg){
+					this.setProperty("width", arg);
+				};
+			}
+			if(bWithHeight){
+				methods.push("getHeight", "setHeight");
+				props.height = {name : "height", type : "sap.ui.core.CSSSize", group : "", defaultValue : null};
+				window["test"][sName].prototype.getHeight = function(){
+					return this.getProperty("height");
+				};
+				window["test"][sName].prototype.setHeight = function(arg){
+					this.setProperty("height", arg);
+				};
+			}
+			
+			sap.ui.core.Element.defineClass("test."+sName, {
+				baseType : "sap.ui.core.Control",
+				publicMethods : methods,
+				library : "test",
+				properties : props,
+				aggregations : {},
+				associations : {},
+				events : {}
+			});
+			
+			window["test"][sName+"Renderer"] = {
+				render: function(rm, ctrl){
+					rm.write("<", ctrl.sTag);
+					rm.writeControlData(ctrl);
+					rm.addClass("testCtrl");
+					rm.writeClasses();
+					var style = "background-color:" + ctrl.sBgColor + ";";
+					if(ctrl.getWidth && ctrl.getWidth()) style = style + "width:" + ctrl.getWidth() + ";";
+					if(ctrl.getHeight && ctrl.getHeight()) style = style + "height:" + ctrl.getHeight() + ";";
+					rm.writeAttribute("style", style);
+					rm.write("></", ctrl.sTag, ">");
+				}
+			};
+		};
+
+		createControl("NoWidthHeight", false, false, "red");
+		createControl("WidthHeight", true, true, "green");
+		createControl("Input", true, false, "yellow", "input");
+		createControl("Button", true, false, "blue", "button");
+		createControl("TextArea", true, true, "gray", "textarea");
+		createControl("Image", true, true, "black", "img");
+
+		var layout1 = new sap.ui.commons.layout.AbsoluteLayout("layout1");
+		layout1.placeAt("uiArea1");
+		layout1.addContent(new test.NoWidthHeight("test1")); //Defaults
+		layout1.addContent(new test.NoWidthHeight("test2"), {top: "30px", left: "20px", right: "30px", bottom: "40px"});
+		layout1.addContent(new test.NoWidthHeight("test3"), {right: "3px", bottom: "3px"});
+		layout1.addContent(new test.NoWidthHeight("test4"), {right: "3px"});
+		layout1.addContent(new test.NoWidthHeight("test5"), {bottom: "3px"});
+		layout1.addContent(new test.WidthHeight("test6", {width: "40px", height: "20px"}), {top: "60px", left: "20px", right: "30px", bottom: "40px"});
+		layout1.addContent(new test.WidthHeight("test7", {width: "40px", height: "auto"}), {top: "60px", left: "80px", right: "30px", bottom: "40px"});
+		layout1.addContent(new test.WidthHeight("test8", {width: "auto", height: "20px"}), {top: "60px", left: "140px", right: "30px", bottom: "40px"});
+		layout1.addContent(new test.WidthHeight("test9", {width: "auto", height: "auto"}), {top: "100px", left: "140px", right: "30px", bottom: "40px"});
+
+		var layout2 = new sap.ui.commons.layout.AbsoluteLayout("layout2");
+		layout2.placeAt("uiArea2");
+
+		var layout3 = new sap.ui.commons.layout.AbsoluteLayout("layout3");
+		layout3.placeAt("uiArea3");
+		layout3.addContent(new test.Input("test10", {width: "auto"}), {top: "10px", left: "20px", right: "30px"});
+		layout3.addContent(new test.Button("test11", {width: "auto"}), {top: "40px", left: "20px", right: "30px"});
+		layout3.addContent(new test.TextArea("test12", {width: "auto", height: "auto"}), {top: "70px", left: "20px", right: "30px", bottom: "370px"});
+		layout3.addContent(new test.Image("test13"), {top: "140px", left: "20px", right: "30px", bottom: "250px"});
+		
+		var layout4 = new sap.ui.commons.layout.AbsoluteLayout("layout4");
+		layout4.placeAt("uiArea4");
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		var checkControl = function(sId, sExpWidth, sExpHeight, sExpLeft, sExpRight, sExpTop, sExpBottom){
+			var ctrl = jQuery("#"+sId);
+			if(sExpWidth) equal(ctrl.width()+"", sExpWidth, "Check 'width' of child '"+sId+"':");
+			if(sExpHeight) equal(ctrl.height()+"", sExpHeight, "Check 'height' of child '"+sId+"':");
+
+			if(sExpLeft) equal(ctrl.parent().css("left"), sExpLeft+"px", "Check 'left' of child '"+sId+"':");
+			if(sExpRight) equal(ctrl.parent().css("right"), sExpRight+"px", "Check 'right' of child '"+sId+"':");
+			if(sExpTop) equal(ctrl.parent().css("top"), sExpTop+"px", "Check 'top' of child '"+sId+"':");
+			if(sExpBottom) equal(ctrl.parent().css("bottom"), sExpBottom+"px", "Check 'bottom' of child '"+sId+"':");
+		};
+		
+		var setupRerenderingCheck = function(){
+			layout4.destroyPositions();
+			layout4.addPosition(new sap.ui.commons.layout.PositionContainer({top: "10px", left: "10px"}));
+			layout4.addContent(new test.WidthHeight("test14"), {top: "5px", left: "5px"});
+			sap.ui.getCore().applyChanges();
+			layout4._originalRerender = layout4.rerender;
+			layout4.rerender = function() {
+				this._originalRerender.apply(this);
+				ok(false, "Rerender should never be called");
+			}
+			
+			equal(layout4.getContent().length, 2, "Initial # of children:");
+			equal(layout4.getContent()[0], null, "First child is undefined:");
+			equal(layout4.getContent()[1].getId(), "test14", "Id of second child:");
+			checkControl("test14", null, null, "5", null, "5", null);
+			setTimeout(function(){
+				if(layout4._originalRerender) {
+					layout4.rerender = layout4._originalRerender;
+					layout4._originalRerender = undefined;
+				}
+				var oCtrl = sap.ui.getCore().byId("test14");
+				if(oCtrl) {
+					oCtrl.destroy();
+				}
+				start();
+			}, 100);
+		};
+
+		qutils.delayTestStart();
+
+		
+		module("Control API");
+
+		test("Property Defaults", function() {
+			equal(layout2.getVisible(), true, "Default 'visible':");
+			equal(layout2.getWidth(), "100%", "Default 'width':");
+			equal(layout2.getHeight(), "100%", "Default 'height':");
+		});
+
+		test("Property Custom Values", function() {
+			layout2.setVisible(false);
+			layout2.setWidth("300px");
+			layout2.setHeight("20px");
+			equal(layout2.getVisible(), false, "Custom 'visible':");
+			equal(layout2.getWidth(), "300px", "Custom 'width':");
+			equal(layout2.getHeight(), "20px", "Custom 'height':");
+
+			//Reset after test
+			layout2.setVisible(true);
+			layout2.setWidth(null);
+			layout2.setHeight(null);
+		});
+		
+		test("placeAt", function() {
+			equal(layout2.getContent().length, 0, "Default # of children:");
+			var oControl = new test.NoWidthHeight();
+			oControl.placeAt(layout2);
+			equal(layout2.getContent().length, 1, "# of children after placeAt:");
+			layout2.removeAllContent();
+			equal(layout2.getContent().length, 0, "# of children after remove all:");
+		});
+
+		test("Aggregation Content", function() {
+			equal(layout2.getContent().length, 0, "Default # of children:");
+			
+			var oPos = {top: "60px", left: "20px", right: "30px", bottom: "40px"};
+			layout2.addContent(new test.NoWidthHeight("aggCh1"), oPos);
+			var child = new test.NoWidthHeight("aggCh3");
+			layout2.insertContent(child, 0, oPos);
+			var child2 = new test.WidthHeight("aggCh2", {width: "40px", height: "20px"});
+			layout2.addContent(child2, oPos);
+			
+			equal(layout2.getContent().length, 3, "# of children after add:");
+			equal(layout2.indexOfContent(child), 0, "Idx of child after add:");
+
+			equal(layout2.getPositionOfChild(child2).bottom, undefined, "Ignored bottom Position of child with height:");
+			equal(layout2.getPositionOfChild(child2).right, undefined, "Ignored right Position of child with width:");
+
+			layout2.setPositionOfChild(child, {top: "0px"});
+			
+			equal(layout2.getPositionOfChild(child).top, "0px", "Changed Position of child:");
+			
+			layout2.removeContent(0);
+
+			equal(layout2.getContent().length, 2, "# of children after remove:");
+			equal(layout2.indexOfContent(child), -1, "Idx of child after remove:");
+
+			var bErrorThrown = false
+			try{
+				layout2.addContent(new test.NoWidthHeight("aggCh4"), {top: "Karl-Otto"});
+			}catch(e){
+				bErrorThrown = true;
+			}
+			ok(bErrorThrown, "Error thrown when given position attribute is no CSS size.");
+
+			layout2.removeAllContent();
+
+			equal(layout2.getContent().length, 0, "# of children after remove all:");
+		});
+
+		
+		module("Rendering");
+
+		asyncTest("Visibility", function() {
+			equal(jQuery("#layout2").length, 1, "Visible Control is rendered:");
+			
+			layout2.setVisible(false);
+			layout2.rerender();
+			setTimeout(function(){
+				start();
+				equal(jQuery("#layout2").length, 0, "Invisible Control is not rendered:");
+
+				//Reset
+				layout2.setVisible(true);
+			}, 100);
+		});
+
+		test("Controls", function() {
+			checkControl("test1", "20", "10", "0", null, "0", null);
+			checkControl("test2", ""+(jQuery("#layout1").width()-50), "10", "20", null, "30", null);
+			checkControl("test3", "20", "10", null, "3", null, "3");
+			checkControl("test4", "20", "10", null, "3", "0", null);
+			checkControl("test5", "20", "10", "0", null, null, "3");
+			checkControl("test6", "40", "20", "20", null, "60", null);
+			checkControl("test7", "40", "400"/*500-100*/, "80", null, "60", "40");
+			checkControl("test8", ""+(jQuery("#layout1").width()-170), "20", "140", "30", "60", null);
+			checkControl("test9", ""+(jQuery("#layout1").width()-170), "360"/*500-140*/, "140", "30", "100", "40");
+		});
+
+		test("Stretching Form Controls", function() {
+			for(var i=10; i<14; i++){
+				ok(jQuery("#test"+i).width() > jQuery("#layout3").width()-50-50/*left+right+some buffer*/, "Control test"+i+" is stretched: " + jQuery("#test"+i).width());
+			}
+		});
+		
+		asyncTest("Suppressed Rerendering - Position changes", function() {
+			setupRerenderingCheck();
+
+			var oPosition = layout4.getPositions()[1];
+			oPosition.setTop("10px");
+			checkControl("test14", null, null, "5", null, "10", null);
+			oPosition.setLeft("10px");
+			checkControl("test14", null, null, "10", null, "10", null);
+			oPosition.setRight("10px");
+			checkControl("test14", null, null, "10", "10", "10", null);
+			oPosition.setBottom("10px");
+			checkControl("test14", null, null, "10", "10", "10", "10");
+			
+			layout4.setPositionOfChild(sap.ui.getCore().byId("test14"), {top: "20px", left: "20px", right: "20px", bottom: "20px"});
+			checkControl("test14", null, null, "20", "20", "20", "20");
+			
+			var oControl = sap.ui.getCore().byId("test14");
+			oControl.setWidth("200px");
+			oControl.setHeight("100px");
+			sap.ui.getCore().applyChanges();
+			
+			oPosition.setCenterHorizontally(true);
+			var jContainer = jQuery(oPosition.getDomRef());
+			equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
+			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+			
+			oPosition.setCenterVertically(true);
+			equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
+			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+		});
+		
+		asyncTest("Suppressed Rerendering - Container.setControl", function() {
+			setupRerenderingCheck();
+			
+			var oPosition = layout4.getPositions()[1];
+			
+			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(<someControl>)");
+			oPosition.setControl(new test.WidthHeight("test14a"));
+			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
+			checkControl("test14a", null, null, "5", null, "5", null);
+			
+			oPosition = layout4.getPositions()[0];
+			
+			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(null)");
+			oPosition.setControl(null);
+			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
+			
+			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom before setControl(<someControl>)");
+			oPosition.setControl(new test.WidthHeight("test14b"));
+			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom after setControl(<someControl>)");
+			checkControl("test14b", null, null, "10", null, "10", null);
+			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			
+			oPosition = layout4.getPositions()[1];
+			
+			equal(jQuery.sap.byId(oPosition.getId()).length, 1, "Position container is in Dom before setControl(null)");
+			oPosition.setControl(null);
+			equal(jQuery.sap.byId(oPosition.getId()).length, 0, "Position container is not in Dom after setControl(null)");
+		});
+		
+		asyncTest("Suppressed Rerendering - Layout position aggregation", function() {
+			setupRerenderingCheck();
+			
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "Initial # of containers in layout");
+			layout4.removeAllPositions();
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after removeAll");
+			
+			var oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px"});
+			layout4.addPosition(oPosition);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after addPosition with position without control");
+			
+			oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px", control: new test.WidthHeight("test14c")});
+			layout4.addPosition(oPosition);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 1, "# of containers in layout after addPosition with position with control");
+			checkControl("test14c", null, null, "0", null, "5", "5");
+			
+			oPosition = new sap.ui.commons.layout.PositionContainer({top: "10px", bottom: "10px", control: new test.WidthHeight("test14d")});
+			layout4.addPosition(oPosition);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after addPosition with position with control");
+			checkControl("test14d", null, null, "0", null, "10", "10");
+			
+			oPosition = new sap.ui.commons.layout.PositionContainer({top: "5px", bottom: "5px"});
+			layout4.insertPosition(oPosition, 1);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 2, "# of containers in layout after insertPosition with position without control");
+			
+			oPosition = new sap.ui.commons.layout.PositionContainer({top: "15px", bottom: "15px", control: new test.WidthHeight("test14e")});
+			layout4.insertPosition(oPosition, 2);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after insertPosition with position with control");
+			checkControl("test14e", null, null, "0", null, "15", "15");
+			ok(jQuery.sap.byId(layout4.getId()).children()[0] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			
+			oPosition = new sap.ui.commons.layout.PositionContainer({top: "20px", bottom: "20px", control: new test.WidthHeight("test14f")});
+			layout4.insertPosition(oPosition, 3);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after insertPosition with position with control");
+			checkControl("test14f", null, null, "0", null, "20", "20");
+			ok(jQuery.sap.byId(layout4.getId()).children()[1] === jQuery.sap.byId(oPosition.getId())[0], "Position container was added at the right location.");
+			
+			layout4.removePosition(1);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 4, "# of containers in layout after removePosition of position without control");
+			
+			layout4.removePosition(2);
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 3, "# of containers in layout after removePosition of position with control");
+			
+			layout4.destroyPositions();
+			equal(jQuery.sap.byId(layout4.getId()).children().length, 0, "# of containers in layout after destroyAll");
+		});
+		
+		asyncTest("Suppressed Rerendering - Layout attributes", function() {
+			setupRerenderingCheck();
+			
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYHidden"), "Vertical Scrolling Mode 'Hidden' of the layout before setVerticalScrolling");
+			layout4.setVerticalScrolling("Scroll");
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXHidden"), "Horizontal Scrolling Mode 'Hidden' of the layout after setVerticalScrolling");
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setVerticalScrolling");
+			layout4.setHorizontalScrolling("Scroll");
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwXScroll"), "Horizontal Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
+			ok(jQuery.sap.byId(layout4.getId()).hasClass("sapUiLayoutAbsOvrflwYScroll"), "Vertical Scrolling Mode 'Scroll' of the layout after setHorizontalScrolling");
+			
+			equal(jQuery.sap.byId(layout4.getId()).css("width"), jQuery("#uiArea4").css("width"), "Height of the layout before setWidth");
+			equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout before setWidth");
+			layout4.setWidth("100px");
+			equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setWidth");
+			equal(jQuery.sap.byId(layout4.getId()).css("height"), jQuery("#uiArea4").css("height"), "Height of the layout after setWidth");
+			layout4.setHeight("100px");
+			equal(jQuery.sap.byId(layout4.getId()).css("width"), "100px", "Height of the layout after setHeight");
+			equal(jQuery.sap.byId(layout4.getId()).css("height"), "100px", "Height of the layout after setHeight");
+		});
+		
+		asyncTest("Center Positioning", function() {
+			layout4.setWidth(null);
+			layout4.setHeight(null);
+			layout4.setVerticalScrolling("Hidden");
+			layout4.setHorizontalScrolling("Hidden");
+			layout4.destroyPositions();
+			var oControl = new test.WidthHeight("test15", {width: "200px", height:"100px"});
+			layout4.addContent(oControl, {top: "5px", left: "5px"});
+			sap.ui.getCore().applyChanges();
+			var oPosition = layout4.getPositions()[0];
+			var jContainer = jQuery(oPosition.getDomRef());
+			
+			checkControl("test15", "200", "100", "5", null, "5", null);
+			
+			oPosition.setCenterHorizontally(true);
+			equal(jContainer.css("margin-left"), "-100px", "Margin of horizontally centered Position container:");
+			ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+			
+			oPosition.setCenterVertically(true);
+			equal(jContainer.css("margin-top"), "-50px", "Margin of vertically centered Position container:");
+			ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+			
+			oControl.setWidth("400px");
+			oControl.setHeight("200px");
+			
+			setTimeout(function(){
+				equal(jContainer.css("margin-left"), "-200px", "Margin of horizontally centered Position container:");
+				ok(Math.abs(jContainer.parent().width()/2 - jContainer.position().left) <= 1, "Correct top position of horizontally centered Position container.");
+
+				equal(jContainer.css("margin-top"), "-100px", "Margin of vertically centered Position container:");
+				ok(Math.abs(jContainer.parent().height()/2 - jContainer.position().top) <= 1, "Correct top position of vertically centered Position container.");
+				start();
+			}, 1000);
+		});
+
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.layout.AbsoluteLayout</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1" class="testUIArea"></div>
+	<div id="uiArea2" class="testUIArea" style="height:50px;"></div>
+	<div id="uiArea3" class="testUIArea"></div>
+	<div id="uiArea4" class="testUIArea"></div>
+</body>
+</html>

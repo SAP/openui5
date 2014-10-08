@@ -1,0 +1,21 @@
+[{
+	"employeeid": "JSMITH",
+    "type": "Vacation",
+    "entitlement": "53 days",
+    "availablebalance": "41 days",
+    "pendingitems": "1 pending items"
+},
+{
+	"employeeid": "JSMITH",
+    "type": "Sick Leave",
+    "entitlement": "54 days",
+    "availablebalance": "n/a",
+    "pendingitems": "0 pending items"
+},
+{
+	"employeeid": "JSMITH",
+    "type": "Unpaid Leave",
+    "entitlement": "53 days",
+    "availablebalance": "n/a",
+    "pendingitems": "0 pending items"
+}]

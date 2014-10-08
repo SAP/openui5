@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Feeder - sap.ui.ux3</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.ux3.Feeder.gif">
+  <script 
+				src="../../../../resources/sap-ui-core.js" 
+        type="text/javascript" 
+        id="sap-ui-bootstrap"            
+        data-sap-ui-libs="sap.ui.core,sap.ui.ux3,sap.ui.commons"
+				data-sap-ui-theme="sap_goldreflection" 
+				data-sap-ui-areas="target1,target2,target3" >
+  </script>
+
+ 	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+		function handleSubmit(oEvent){
+			alert('Text "'+ oEvent.getParameter('text') + '" submitted');
+		}
+
+		var oFeeder = new sap.ui.ux3.Feeder("oFeeder1", {
+			thumbnailSrc: "images/feeder/m_01.png",
+			submit: handleSubmit,
+			placeholderText: "Post feedback..."
+		}).placeAt("target1");
+		var oLabel = new sap.ui.commons.Label("l1", {
+			text : "Create your placeholder: "
+		}).placeAt("target2");
+		var oTextField = new sap.ui.commons.TextField("oTextField1")
+				.placeAt("target3");
+		var oButton = new sap.ui.commons.Button("oButton1", {
+			text : "Edit",
+			press : function() {
+				sap.ui.getCore().getControl("oFeeder1").setPlaceholderText(
+						oTextField.getValue());
+			},
+		}).placeAt("target3");
+		
+		oFeeder = new sap.ui.ux3.Feeder("Feeder2",{
+			type: sap.ui.ux3.FeederType.Medium,
+			text:"I suggest ",
+			submit: handleSubmit
+		}).placeAt("target4");
+		
+		oFeeder = new sap.ui.ux3.Feeder("Feeder3",{
+			type: sap.ui.ux3.FeederType.Comment,
+			submit: handleSubmit
+		}).placeAt("target5");
+	</script>
+
+
+</head>
+
+<body class="sapUiBody" id="body">
+	<h1>Test Page for sap.ui.ux3.Feeder</h1>
+
+	<br> normal feeder
+	<div id="target1" style="width:80%;"> </div>
+	<div id="target2" style="width:80%;margin-top:20px;"> </div>
+	<div id="target3" style="width:80%;"> </div>
+	<br/>
+	<br> medium feeder
+	<div id="target4" style="width:80%;"> </div>
+	<br/>
+	<br> comment feeder
+	<div id="target5" style="width:80%;"> </div>
+</body>
+
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.ui.core.Control
+  Author: d046011
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Generic Event Binding - sap.ui.core.Control.attachBrowserEvent() - qUnit Test Page</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons">
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+   	
+			
+			var oBtn = new sap.ui.commons.Button("btn", {text:"Button 1"});
+			oBtn.placeAt("uiArea1");
+			var oBtn2 = new sap.ui.commons.Button("btn2", {text:"Button 2"});
+			oBtn2.placeAt("uiArea2");
+			
+			function myHandler1() {
+				ok(true, "check in handler 1");
+			}
+			
+			function myHandler2() {
+				ok(true, "check in handler 2");
+				ok(true, "second check in handler 2");
+			}
+			
+			
+			// make sure the methods exist
+    	test("InitialCheck", 4, function() {
+    		ok(oBtn.attachBrowserEvent, "oBtn.attachBrowserEvent should be an existing function");
+    		equal(typeof(oBtn.attachBrowserEvent), "function", "oBtn.attachBrowserEvent should be an existing function");
+    		ok(oBtn.detachBrowserEvent, "oBtn.detachBrowserEvent should be an existing function");
+    		equal(typeof(oBtn.detachBrowserEvent), "function", "oBtn.detachBrowserEvent should be an existing function");
+    	});
+			
+    	test("Adding Handlers and Return Value", 6, function() {
+    		var result = oBtn.attachBrowserEvent("blur", myHandler1);
+    		
+    		ok(result, "oBtn.attachBrowserEvent must return something");
+    		ok((result === oBtn), "oBtn.attachBrowserEvent must return oBtn"); // equal does not work
+    		
+    		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
+    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
+    		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
+    	});
+    	
+    	test("Removing Handlers and Return Value", 4, function() {
+    		var result = oBtn.detachBrowserEvent("blur", myHandler1);
+    		
+    		ok(result, "oBtn.detachBrowserEvent must return something");
+    		ok((result === oBtn), "oBtn.detachBrowserEvent must return oBtn"); // equal does not work
+    		
+    		ok(oBtn.aBindParameters, "oBtn.aBindParameters should exist");
+    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    	});
+    	
+    	test("Adding Invalid Handlers", 3, function() {
+    		oBtn.attachBrowserEvent("blur", null);
+    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		
+    		oBtn.attachBrowserEvent("blur", false);
+    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    		
+    		oBtn.attachBrowserEvent("blur", "burp");
+    		equal(oBtn.aBindParameters.length, 0, "oBtn.aBindParameters should have no entry");
+    	});
+    	
+    	test("Removing Invalid Handlers", 2, function() {
+    		oBtn.attachBrowserEvent("blur", myHandler1);
+    		
+    		oBtn.detachBrowserEvent("blur", null);
+    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		
+    		oBtn.detachBrowserEvent(null, myHandler1);
+    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    	});
+    	
+    	test("Removing Other Handlers", 4, function() {
+    		oBtn.attachBrowserEvent("blur", myHandler2);
+    		equal(oBtn.aBindParameters.length, 2, "oBtn.aBindParameters should have two entries");
+    		
+    		oBtn.detachBrowserEvent("blur", myHandler2);
+    		equal(oBtn.aBindParameters.length, 1, "oBtn.aBindParameters should have one entry");
+    		equal(oBtn.aBindParameters[0].sEventType, "blur", "oBtn.aBindParameters[0] event name should be 'blur'");
+    		equal(oBtn.aBindParameters[0].fnHandler, myHandler1, "oBtn.aBindParameters[0] handler should be myHandler1");
+    	});
+    	
+    	asyncTest("Execution of a Handler", 1, function() {
+    		oBtn.getDomRef().focus();
+    		oBtn2.getDomRef().focus();
+    		
+    		setTimeout(function() {
+    			start();
+				}, 1);
+    	});
+    	
+    	asyncTest("Execution of multiple Handlers", 3, function() {
+    		oBtn.attachBrowserEvent("blur", myHandler2);
+    		oBtn.getDomRef().focus();
+    		oBtn2.getDomRef().focus();
+    		
+    		setTimeout(function() {
+    			start();
+				}, 1);
+    	});
+    	
+    	asyncTest("Execution of Handlers (no handlers, all removed)", 1, function() {
+    		oBtn.detachBrowserEvent("blur", myHandler1);
+    		oBtn.detachBrowserEvent("blur", myHandler2);
+    		oBtn.getDomRef().focus();
+    		oBtn2.getDomRef().focus();
+    		
+    		ok (true, "Test without success message is boring. There should not be any check after this one.");
+    		
+    		setTimeout(function() {
+    			start();
+				}, 1);
+    	});
+    	
+    	asyncTest("Execution of a Handler after re-rendering", 2, function() {
+    		oBtn2.getDomRef().focus();
+    		
+    		// register handler first
+    		oBtn.attachBrowserEvent("blur", myHandler1);
+    		
+    		// re-render
+    		var oldBtn = oBtn.getDomRef();
+    		oBtn.invalidate();
+				sap.ui.getCore().applyChanges();
+				var newBtn = oBtn.getDomRef();
+				ok(oldBtn != newBtn, "Button should be re-rendered and replaced by a new DOM element");
+				
+				// now trigger the event
+    		newBtn.focus();
+    		oBtn2.getDomRef().focus();
+    		
+    		setTimeout(function() {
+    			oBtn.detachBrowserEvent("blur", myHandler1);
+    			start();
+				}, 1);
+    	});
+    	
+    	var oBtn3;
+    	asyncTest("Event Binding Before Rendering", 1, function() {
+    		// create third button and bind event
+    		oBtn3 = new sap.ui.commons.Button("btn3", {text:"Button 3"});
+    		oBtn3.attachBrowserEvent("blur", myHandler1);
+    		
+    		// place and render button into page
+    		oBtn3.placeAt("uiArea3");
+    		sap.ui.getCore().applyChanges();
+    		
+    		// cause event
+    		oBtn3.getDomRef().focus();
+    		oBtn.getDomRef().focus();
+    		
+	   		setTimeout(function() {
+    			start();
+				}, 1);
+    	});
+
+		  var oLabel;
+		  var oListener1 = { getId : function() { return "l1"; } };
+		  var oListener2 = { getId : function() { return "l2"; } };
+			var clicks, names;
+			function clear() {
+				clicks = 0;
+				names=[];
+			}
+			clear();
+		  function clickHandler() {
+			  clicks++;
+			  names.push(this.getId ? this.getId() : "unknown");
+		  }
+    	
+			module("Context objects (oListener)", {
+				setup : function() {
+					oLabel = new sap.ui.commons.Label({id : "c0", text:"something"});
+				  oLabel.placeAt("uiArea1");
+				  sap.ui.getCore().applyChanges();
+					clear();
+				},
+				teardown : function() {
+					oLabel.destroy();
+					oLabel = undefined;
+				  sap.ui.getCore().applyChanges();
+				}
+			});
+			
+		  test("no (default) context", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler);
+				equals(clicks, 0, "no event handler called so far");
+			  oLabel.$().click();
+				equals(clicks, 1, "event handler called");
+				equals(names.sort().join(","), "c0", "control itself is used as this");
+		  });
+		  
+		  test("specific context", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
+				equals(clicks, 0, "no event handler called so far");
+			  oLabel.$().click();
+				equals(clicks, 1, "event handler called");
+				equals(names.sort().join(","), "l1", "given listener used as this");
+		  });
+		  
+		  test("multiple contexts", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
+			  oLabel.attachBrowserEvent("click", clickHandler);
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener2);
+				equals(clicks, 0, "no event handler called so far");
+			  oLabel.$().click();
+				equals(clicks, 3, "event handler called");
+				equals(names.sort().join(","), "c0,l1,l2", "given listeners are used as this");
+		  });
+		  
+		  test("deregistration with context", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
+			  oLabel.$().click();
+				equals(clicks, 1, "event handler called once");
+			  oLabel.detachBrowserEvent("click", clickHandler, oListener1);
+			  oLabel.$().click();
+				equals(clicks, 1, "event handler only called once");
+		  });
+		  
+		  test("deregistration with different context", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
+			  oLabel.$().click();
+				equals(clicks, 1, "event handler called once");
+			  oLabel.detachBrowserEvent("click", clickHandler, oListener2);
+			  oLabel.$().click();
+				equals(clicks, 2, "event handler called twice");
+		  });
+		  
+		  test("deregistration with multiple contexts", function() {
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener1);
+			  oLabel.attachBrowserEvent("click", clickHandler, oListener2);
+			  oLabel.$().click();
+				equals(clicks, 2, "all registered event handlers called");
+				equals(names.sort().join(","), "l1,l2", "given listeners are used as this");
+			  oLabel.detachBrowserEvent("click", clickHandler, oListener2);
+			  oLabel.$().click();
+				equals(clicks, 3, "only 1 remaining eh is called");
+				equals(names.sort().join(","), "l1,l1,l2", "given listeners are used as this");
+			  oLabel.detachBrowserEvent("click", clickHandler);
+			  oLabel.$().click();
+				equals(clicks, 4, "still 1 remaining eh is called");
+				equals(names.sort().join(","), "l1,l1,l1,l2", "given listeners are used as this");
+		  });
+		  
+    	/*
+    	 * TODO: jQuery.proxy is not supported yet
+    	 
+    	asyncTest("Removing Handlers wrapped with jQuery.proxy()", 2, function() {
+    		equal(oBtn3.aBindParameters.length, 1, "oBtn3.aBindParameters should have one entry");
+
+    		// remove the event, but the handler is wrapped with proxy()
+    		oBtn3.detachBrowserEvent("blur", jQuery.proxy(myHandler1));
+    		
+    		// verify we have removed the handler from the list
+    		equal(oBtn3.aBindParameters.length, 0, "oBtn3.aBindParameters should have no entry");
+    		
+    		// trigger the browser event whose handler was supposedly unbound
+    		oBtn3.getDomRef().focus();
+    		oBtn.getDomRef().focus();
+    		
+    		// wait and verify the handler is not called
+				setTimeout(function() {
+	   			
+	   			// re-render
+	    		oBtn3.invalidate();
+					sap.ui.getCore().applyChanges();
+
+					// trigger event again
+	   			oBtn3.getDomRef().focus();
+    			oBtn.getDomRef().focus();
+    			
+    			// wait and check whether handler is called
+    			setTimeout(function() {
+      			start();
+  				}, 1);
+				}, 1);
+    	});
+    	*/
+    	
+
+    	// TODO unbind with jQuery.proxy
+			
+
+    </script>
+	</head>
+	<body>
+    <h1 id="qunit-header">qUnit Page for sap.ui.core.Control.attachBrowserEvent() -- Generic Event Binding</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="uiArea1"></div>
+    <div id="uiArea2"></div>
+    <div id="uiArea3"></div>
+	</body>
+</html>

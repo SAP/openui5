@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page using List binding</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+    	try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+    	jQuery.sap.require("sap.ui.model.json.JSONModel");
+    	sap.ui.getCore().attachInitEvent(doIt);
+    	var oModel;
+    	function doIt(){
+    		oModel = new sap.ui.model.json.JSONModel();
+	    	oModel.setData({
+
+	    	teamMembers:[
+		   	 	 	 {firstName:"Andreas", lastName:"Klark", enabled:false},
+		     		 {firstName:"Peter", lastName:"Miller", enabled:true},
+		   	         {firstName:"Gina", lastName:"Rush", enabled:true},
+		             {firstName:"Steave", lastName:"Ander", enabled:false},
+		    		 {firstName:"Michael", lastName:"Spring", enabled:true},
+		    		 {firstName:"Marc", lastName:"Green", enabled:true},
+		    	     {firstName:"Frank", lastName:"Wallas", enabled:false}],
+	    	  editable: true,
+	    	  selectedIndex: 0});
+	    	sap.ui.getCore().setModel(oModel);
+
+	    	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
+				oLB.bindProperty("editable", "/editable");
+				oLB.attachSelect(LBSelect);
+	    	var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("text", "firstName").bindProperty("additionalText", "lastName").bindProperty("enabled", "enabled");
+			oLB.bindAggregation("items", "/teamMembers", oItemTemplate);
+			oLB.placeAt("target1");
+
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+			var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow();
+			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oText1 = new sap.ui.commons.TextField("firstName");
+			oText1.setTooltip("First Name");
+			oCell1.addContent(oText1);
+			oRow1.addCell(oCell1);
+			var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oText2 = new sap.ui.commons.TextField("lastName");
+			oText2.setTooltip("Last Name");
+			oCell2.addContent(oText2);
+			oRow1.addCell(oCell2);
+			var oCell3 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCB1 = new sap.ui.commons.CheckBox("CB-enabled");
+			oCB1.setChecked(true);
+			oCB1.setText("Enabled");
+			oCell3.addContent(oCB1);
+			oRow1.addCell(oCell3);
+			oML.addRow(oRow1);
+
+			var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow("myMLRow2");
+			var oCell4 = new sap.ui.commons.layout.MatrixLayoutCell("myMLCell2");
+			var oButton1 = new sap.ui.commons.Button({text: "Add list entry"});
+			oButton1.bindProperty("enabled", "/editable");
+			oButton1.attachPress(addEntry);
+			oCell4.addContent(oButton1);
+			oRow2.addCell(oCell4);
+			var oCell5 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCB2 = new sap.ui.commons.CheckBox("CB-editable");
+			oCB2.setChecked(true);
+			oCB2.setText("Editable");
+			oCB2.bindChecked("/editable");
+			oCB2.attachChange(CBChange);
+			oCell5.addContent(oCB2);
+			oRow2.addCell(oCell5);
+			oML.addRow(oRow2);
+			
+			oML.placeAt("target3");
+
+			//*********************************
+			// ComboBox
+			
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+			
+			var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow();
+			
+			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCombo1 = new sap.ui.commons.ComboBox("Entry");
+			oCombo1.bindProperty("editable", "/editable");
+			var oListBox2 = new sap.ui.commons.ListBox("EntryList");
+			oListBox2.setModel(oModel);
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("key", "firstName");
+			oItemTemplate.bindProperty("text", "firstName");
+			oItemTemplate.bindProperty("enabled", "enabled");
+			oListBox2.bindAggregation("items", "/teamMembers", oItemTemplate);
+			oCombo1.setListBox(oListBox2);
+			oCell1.addContent(oCombo1);
+			oRow1.addCell(oCell1);
+			
+			var oCell4 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oButton1 = new sap.ui.commons.Button();
+			oButton1.setText("Remove list entry");
+			oButton1.attachPress(removeEntryCB);
+			oCell4.addContent(oButton1);
+			oRow1.addCell(oCell4);
+			
+			oML.addRow(oRow1);
+			
+			
+			var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow();
+			
+			var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCombo2 = new sap.ui.commons.ComboBox("Entry1");
+			oCombo2.bindProperty("editable", "/editable");
+			oCombo2.setModel(oModel);
+			var oItemTemplate1 = new sap.ui.core.ListItem();
+			oItemTemplate1.bindProperty("key", "firstName");
+			oItemTemplate1.bindProperty("text", "firstName");
+			oItemTemplate1.bindProperty("enabled", "enabled");
+			oCombo2.bindItems("/teamMembers", oItemTemplate1);
+			oCell2.addContent(oCombo2);
+			oRow2.addCell(oCell2);
+			oML.addRow(oRow2);
+			
+			oML.placeAt("target4");
+			
+			//*********************************
+			// DropdownBox
+			
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+			
+			var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow();
+			
+			var oCell1 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCombo1 = new sap.ui.commons.DropdownBox("DDEntry");
+			oCombo1.bindProperty("editable", "/editable");
+			var oListBox2 = new sap.ui.commons.ListBox("DDEntryList");
+			oListBox2.setModel(oModel);
+			var oItemTemplate = new sap.ui.core.ListItem();
+			oItemTemplate.bindProperty("key", "firstName");
+			oItemTemplate.bindProperty("text", "firstName");
+			oItemTemplate.bindProperty("enabled", "enabled");
+			oListBox2.bindAggregation("items", "/teamMembers", oItemTemplate);
+			oCombo1.setListBox(oListBox2);
+			oCell1.addContent(oCombo1);
+			oRow1.addCell(oCell1);
+			
+			var oCell4 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oButton1 = new sap.ui.commons.Button();
+			oButton1.setText("Remove list entry");
+			oButton1.attachPress(removeEntryDD);
+			oCell4.addContent(oButton1);
+			oRow1.addCell(oCell4);
+			oML.addRow(oRow1);
+			
+			var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow();
+			
+			var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
+			var oCombo2 = new sap.ui.commons.DropdownBox("DDEntry1");
+			oCombo2.bindProperty("editable", "/editable");
+			oCombo2.setModel(oModel);
+			var oItemTemplate1 = new sap.ui.core.ListItem();
+			oItemTemplate1.bindProperty("key", "firstName");
+			oItemTemplate1.bindProperty("text", "firstName");
+			oItemTemplate1.bindProperty("enabled", "enabled");
+			oCombo2.bindItems("/teamMembers", oItemTemplate1);
+			oCell2.addContent(oCombo2);
+			oRow2.addCell(oCell2);
+			oML.addRow(oRow2);
+			
+			oML.placeAt("target5");
+
+			//*********************************
+			// RadioButtonGroup
+			
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+
+			var oRBGroup1 = new sap.ui.commons.RadioButtonGroup("RBGEntry1");
+			oRBGroup1.setModel(oModel);
+			oRBGroup1.bindProperty("editable", "/editable");
+			oRBGroup1.bindProperty("selectedIndex", "/selectedIndex");
+			oRBGroup1.attachSelect(LBSelect);
+			var oItemTemplate1 = new sap.ui.core.Item();
+			oItemTemplate1.bindProperty("key", "firstName");
+			oItemTemplate1.bindProperty("text", "firstName");
+			oItemTemplate1.bindProperty("enabled", "enabled");
+			oRBGroup1.bindItems("/teamMembers", oItemTemplate1);
+			
+			var oButton1 = new sap.ui.commons.Button();
+			oButton1.setText("Remove list entry");
+			oButton1.attachPress(removeEntryRBG);
+
+			oML.createRow(oRBGroup1, oButton1);
+			
+			oML.placeAt("target6");
+			
+    	};
+    	
+    	function addEntry() {
+    		var firstName = sap.ui.getCore().byId("firstName").getValue(),
+    			lastName = sap.ui.getCore().byId("lastName").getValue(),
+    			CBenabled = sap.ui.getCore().byId("CB-enabled").getChecked();
+    		
+    		oModel.oData.teamMembers.push({firstName: firstName, lastName: lastName, enabled: CBenabled});
+    		oModel.checkUpdate();
+    	};
+    	
+    	function removeEntryCB() {
+    		var firstName = sap.ui.getCore().byId("Entry").getValue();
+			removeEntry(firstName);
+		};
+    	
+    	function removeEntryDD() {
+    		var firstName = sap.ui.getCore().byId("DDEntry").getValue();
+	    	removeEntry(firstName);
+		};
+
+    	function removeEntryRBG() {
+    		var firstName = sap.ui.getCore().byId("RBGEntry1").getSelectedItem().getText();
+	    	removeEntry(firstName);
+		};
+		
+    	function removeEntry(firstName) {
+    		var teamMembers = oModel.oData.teamMembers;
+    		
+    		for (var i = 0; i < teamMembers.length; i++) {
+    			if (teamMembers[i].firstName == firstName) {
+    				teamMembers.splice(i, 1);
+    				break;
+    			}	
+    		}
+    		oModel.checkUpdate();
+       	};
+
+    	function CBChange(oEvent){
+				var oCB = oEvent.oSource;
+    		oModel.setProperty("/editable", oCB.getChecked());
+    	};
+
+    	function LBSelect(oEvent){
+    		var iIndex = oEvent.getParameter("selectedIndex");
+				oModel.setProperty("/selectedIndex", iIndex);
+			};
+
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>List data binding test page</h1>
+      </div>
+      <div id="target1"></div>
+      <div id="target2"></div>
+      <hr/>
+      <div id="target3"></div>
+      <hr/>
+      <h2>ComboBox</h2>
+      <div id="target4"></div>
+      <hr/>
+      <h2>DropdownBox</h2>
+      <div id="target5"></div>
+      <hr/>
+      <h2>RadioButtonGroup</h2>
+      <div id="target6"></div>
+    </div>
+
+  </body>
+
+</html>

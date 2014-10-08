@@ -1,0 +1,17 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputValidators.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox>
+		<items>
+			<Label text="MultiInput using 2 validators"/>
+			<HBox>
+				<items>
+					<MultiInput id="multiInput1" width="400px"/>
+					<CheckBox id="checkbox1" text="Validate?" selected="true"/>
+				</items>
+			</HBox>
+			<Label text="MultiInput using asynchronous validator"/>
+			<MultiInput id="multiInput2" width="500px"/>
+		</items>
+	</VBox>	
+</mvc:View>

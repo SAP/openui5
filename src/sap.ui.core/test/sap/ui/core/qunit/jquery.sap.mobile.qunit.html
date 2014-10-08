@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+<!-- 
+  QUNIT: 
+    Tested control/class: jquery.sap.mobile.js
+    Author: Andreas Kunz
+ -->
+		
+		<script>
+		// Fake user-agent
+		
+		// user-agent of iPhone 3GS
+		var uaOri = navigator.userAgent;
+		var ua = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.48 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3";
+		var uaFaked;
+		
+		if (/msie/i.test(navigator.userAgent) || /Firefox\/10\./i.test(navigator.userAgent)) {
+			uaFaked = false; // cannot test some features
+			
+		} else {
+			uaFaked = true;
+			var __originalNavigator = window.navigator;
+			
+			function fakeUserAgent(ua) {
+		 		if (/safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent)) {
+		 			window.navigator = new Object();
+		 			window.navigator.__proto__ = __originalNavigator;
+		 			window.navigator.__defineGetter__('userAgent', function () { 
+		 				return ua; 
+		 			});
+		 		} else {
+		 			window.navigator.__defineGetter__('userAgent', function(){
+		 				return ua;
+		 			});
+		 		}
+		 	}
+			fakeUserAgent(ua);
+		}
+		
+		</script>
+		
+		
+		
+		<title>Test Page for jquery.sap.mobile</title>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="base"
+				data-sap-ui-noConflict="true"
+				>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript">
+
+
+		
+		
+		// TESTS
+		
+		if (uaFaked) {
+			module("Test detection of (faked) user-agent");
+			
+			test("Test faked user-agent", function () {
+				sap.ui.Device._update(true);
+				equal(navigator.userAgent, ua, "navigator.userAgent should return the faked string");
+			});
+			
+			
+			test("Test device detection", function() {
+				if (window.devicePixelRatio < 2) {
+					equal(jQuery.support.retina, false, "Display should not be reported as retina");
+				}
+				equal(sap.ui.Device.os.ios && sap.ui.Device.system.phone, true, "Device should be reported as iPhone");
+				equal(sap.ui.Device.os.ios && sap.ui.Device.system.tablet, false, "Device should not be reported as iPad");
+			});
+		
+			test("Test OS detection", function() {
+				equal(sap.ui.Device.os.ios, true, "OS should be reported as iOS");
+				equal(sap.ui.Device.os.android, undefined, "Device should not be reported as Android");
+				
+				equal(sap.ui.Device.os.versionStr, "5.0.1", "OS version should be reported as 5.0.1");
+				equal(sap.ui.Device.os.version, 5, "OS version should be reported as float: 5");
+			});
+		}
+		
+		
+		module("Test initMobile");
+		
+		test("Test initMobile with default settings", function () {
+			jQuery.sap.initMobile();
+			
+			// check viewport:  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+			var $v = jQuery("meta").filter("[name=viewport]");
+			equal($v.length, 1, "There should be a viewport meta tag");
+			equal($v.attr("content"), "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no", "The viewport meta tag content should be correct");
+			
+			// check <meta name="apple-mobile-web-app-status-bar-style" content="default">
+			if (uaFaked) {
+				var $amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");
+				var $mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
+				equal($amwac.length, 1, "There should be an apple-mobile-web-app-capable meta tag");
+				equal($amwac.attr("content"), "yes", "The apple-mobile-web-app-capable meta tag content should be correct");
+				equal($mwac.length, 0, "There shouldn't be any mobile-web-app-capable meta tag due to compatibility");
+			}
+			
+			// check status bar style: <meta name="apple-mobile-web-app-status-bar-style" content="default">
+			if (uaFaked) {
+				var $sb = jQuery("meta").filter("[name=apple-mobile-web-app-status-bar-style]");
+				equal($sb.length, 1, "There should be an apple-mobile-web-app-status-bar-style meta tag");
+				equal($sb.attr("content"), "default", "The apple-mobile-web-app-status-bar-style meta tag content should be correct");
+			}
+			
+			// no touch icon  <link rel="apple-touch-icon...
+			var $ti = jQuery("link").filter("[rel=apple-touch-icon]");
+			equal($ti.length, 0, "There should be no apple-touch-icon tag");
+		});
+		
+		//TODO test fails with chrome v36. fix pending
+		//Reason: window.navigator is read-only since chrome v36, so 
+		//window.navigator = new Object(); has no impact
+		if (uaFaked) {
+			test("Test reset user-agent", function(){
+				if (/safari/i.test(uaOri) && !/chrome/i.test(uaOri)) {
+		 			window.navigator = new Object();
+		 			window.navigator.__proto__ = __originalNavigator;
+		 			window.navigator.__defineGetter__('userAgent', function () { 
+		 				return uaOri; 
+		 			});
+		 		} else {
+		 			window.navigator.__defineGetter__('userAgent', function(){
+		 				return uaOri;
+		 			});
+		 		}
+				sap.ui.Device._update(false);
+				equal(navigator.userAgent, uaOri, "navigator.userAgent should return the original string again");
+			});
+		}
+
+		test("Test setWebAppCapable ", function(){
+			var oSystem = {
+				tablet: true
+			};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+
+			jQuery.sap.setMobileWebAppCapable(true);
+			var $amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");
+			var $mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
+			equal($amwac.length, 1, "There should be one apple-mobile-web-app-capable meta tag");
+			equal($amwac.attr("content"), "yes", "content is set to yes");
+			equal($mwac.length, 1, "There should be one mobile-web-app-capable meta tag");
+			equal($mwac.attr("content"), "yes", "content is set to yes");
+
+			// call it with the same parameter again
+			jQuery.sap.setMobileWebAppCapable(true);
+			$amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");
+			$mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
+			equal($amwac.length, 1, "There should still be one apple-mobile-web-app-capable meta tag");
+			equal($amwac.attr("content"), "yes", "content is set to yes");
+			equal($mwac.length, 1, "There should still be one mobile-web-app-capable meta tag");
+			equal($mwac.attr("content"), "yes", "content is set to yes");
+
+			// Set the property to false
+			jQuery.sap.setMobileWebAppCapable(false);
+			$amwac = jQuery("meta").filter("[name=apple-mobile-web-app-capable]");
+			$mwac = jQuery("meta").filter("[name=mobile-web-app-capable]");
+			equal($amwac.length, 1, "There should still be one apple-mobile-web-app-capable meta tag");
+			equal($amwac.attr("content"), "no", "content is set to no");
+			equal($mwac.length, 1, "There should still be one mobile-web-app-capable meta tag");
+			equal($mwac.attr("content"), "no", "content is set to no");
+		});
+		</script>
+		</head>
+		
+		<body>
+			<h1 id="qunit-header">QUnit page for jquery.sap.mobile</h1>
+			<h2 id="qunit-banner"></h2>
+		 	<h2 id="qunit-userAgent"></h2>
+			<div id="qunit-testrunner-toolbar"></div>
+			<ol id="qunit-tests"></ol>
+		</body>
+</html>
+			

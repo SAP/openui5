@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Form - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons,sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+		
+		
+			
+			
+			var simpleForm = new sap.ui.layout.form.SimpleForm({
+				minWidth : 1024,
+				maxContainerCols : 2,
+				content : [
+					new sap.ui.core.Title({ // this starts a new group
+						text: "Read-Only Form"
+					}),
+					new sap.m.Label({
+						text: 'sap.m.Link'
+					}),
+					new sap.m.Link({
+						text: 'SAP Germany',
+						target: 'http://www.sap.com'
+					}),
+					new sap.m.Label({
+						text: 'sap.m.Label'
+					}),
+					new sap.m.Label({
+						text: 'Short sap.m.Text'
+					}),
+					new sap.m.Label({
+						text: 'Short sap.m.Text'
+					}),
+					new sap.m.Text({
+						text: '69190 Walldorf'
+					}), 
+					new sap.m.Label({
+						text: 'Long sap.m.Text'
+					}),
+					new sap.m.Text({
+						text: '69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt' + 
+								' eu felis. In hac habitasse platea dictumst. 69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit.' + 
+								' Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst.'
+					}),
+					new sap.m.Label({
+						text: 'sap.m.ObjectStatus 1'
+					}),
+					new sap.m.ObjectStatus({
+						text : "Update by Mary Smith",
+						icon: "sap-icon://inbox"
+					}),
+					new sap.m.Label({
+						text: 'sap.m.ObjectStatus 2'
+					}),
+					new sap.m.ObjectStatus({
+						text : "Update by William Faulkner",
+						icon: "sap-icon://inbox"
+					}),
+					new sap.m.Label({
+						text: 'A label with an extremely long text to see if the truncation works and the : is still visible after the ellipsis'
+					}),
+					new sap.m.ObjectStatus({
+						text : "Something random",
+						icon: "sap-icon://inbox"
+					})
+					
+				]
+			});
+			
+			var editableSimpleForm = new sap.ui.layout.form.SimpleForm({
+				minWidth : 1024,
+				maxContainerCols : 2,
+				editable: true,
+				content : [
+					new sap.ui.core.Title({ // this starts a new group
+						text: "Editable Form"
+					}),
+					new sap.m.Label({
+						text: 'sap.m.Input'
+					}),
+					new sap.m.Input({
+						type: sap.m.InputType.Text,
+						placeholder: 'Enter Name ...'
+					}),
+					new sap.m.Label({
+						text: 'sap.m.CheckBox'
+					}),
+					new sap.m.CheckBox({
+						selected: true,
+					}),
+					new sap.m.Label({
+						text: 'sap.m.Select'
+					}),
+					new sap.m.Select({
+						name: "select-name0",
+						items: [
+							oItem20 = new sap.ui.core.Item({
+								key: "0",
+								text: "item 0"
+							}),
+
+							oItem21 = new sap.ui.core.Item({
+								key: "1",
+								text: "item 1"
+							}),
+
+							oItem22 = new sap.ui.core.Item({
+								key: "2",
+								text: "item 2 is a little long"
+							}),
+
+							oItem23 = new sap.ui.core.Item({
+								key: "3",
+								text: "item 3"
+							})
+						],
+					}),
+					new sap.m.Label({
+						text: 'sap.m.Link'
+					}),
+					new sap.m.Link({
+						text: 'SAP Germany',
+						target: 'http://www.sap.com'
+					}),
+					new sap.m.Label({
+						text: 'sap.m.TextArea'
+					}),
+					new sap.m.TextArea({
+						placeholder : "Please add your comment",
+						rows : 6,
+						maxLength: 255,
+						width: "100%"
+					}),
+					new sap.m.Label({
+						text: 'Short sap.m.Text'
+					}),
+					new sap.m.Text({
+						text: '69190 Walldorf'
+					}), 
+					new sap.m.Label({
+						text: 'Long sap.m.Text'
+					}),
+					new sap.m.Text({
+						text: '69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt' + 
+								' eu felis. In hac habitasse platea dictumst. 69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit.' + 
+								' Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst.'
+					})
+				]
+			});
+			
+			var formPage = new sap.m.Page("formPage", {
+				content: [
+					new sap.m.VBox({
+						width : "100%",
+						items : [
+							simpleForm,
+							editableSimpleForm,
+							/* util.UiFactory.createDescription('With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces', true)*/						]
+					})
+				]
+			}).addStyleClass("sapUiFioriObjectPage");
+
+			var app = new sap.m.App("myApp", {initialPage:"formPage"});
+			app.addPage(formPage).placeAt("content");
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

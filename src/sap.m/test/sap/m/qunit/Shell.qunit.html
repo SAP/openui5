@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.Shell</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
+		<script language="javascript">
+
+		var oShell = new sap.m.Shell("myShell", {
+			title: "Test Shell",
+			headerRightText: "Mr. Right",
+			logo: "../images/SAPLogo.jpg",
+			logout: function(){
+				window.loggedOut = true;
+				ok(true, "Logging out");
+			}
+		});
+		
+		function byIdSuffix(suffix) {
+			return jQuery.sap.byId(oShell.getId() + suffix)
+		}
+		
+		var oApp = new sap.m.SplitApp("myApp", {
+			masterPages: new sap.m.Page("page1", {
+				title: "Some Master"
+			}),
+			detailPages: new sap.m.Page({
+				title: "Some Detail"
+			})
+		});
+		
+		oShell.setApp(oApp);
+		oShell.placeAt("content");
+
+		
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+
+		test("Shell rendered", function() {
+			ok(jQuery.sap.domById("myShell"), "Shell should be rendered");
+			ok(jQuery.sap.domById("myApp"), "App should be rendered");
+			ok(jQuery.sap.domById("page1"), "Initially the first page should be rendered");
+		});
+		
+		
+		// Shell features
+		test("Shell features", function() {
+			equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
+			equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
+			equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
+		});
+
+		
+		// logout event
+		test("Shell logout event", function() {
+			expect(2); // incl. logout handler
+			window.loggedOut = false;
+			qutils.triggerTouchEvent("tap", oShell.getId() + "-logout");
+			equal(window.loggedOut, true, "Logout handler should be called");
+		});
+		
+		
+		if (window.getComputedStyle) { // this excludes IE8 - which is intended!
+			
+			jQuery.sap.require("sap.ui.core.theming.Parameters");
+			var sBgVariant = sap.ui.core.theming.Parameters.get("sapUiGlobalBackgroundVariant");
+			
+			// bg image std
+			test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function() {
+				var bgDiv = byIdSuffix("-BG"),
+					style = window.getComputedStyle(bgDiv[0]);
+				
+				equal(bgDiv.length, 1, "Background image div should be rendered");
+				if(sBgVariant == "Variant1"){
+					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+				}else{
+					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+				}
+				
+				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
+			});
+			
+			// bg image - and make it custom
+			test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function() {
+				oShell.setBackgroundImage("test/x.png");
+				oShell.setBackgroundRepeat(false);
+				oShell.setBackgroundColor("#0f0");
+				oShell.setBackgroundOpacity(0.5);
+				
+				sap.ui.getCore().applyChanges();
+				
+				var bgDiv = byIdSuffix("-BG"),
+					style = window.getComputedStyle(bgDiv[0]);
+				
+				equal(bgDiv.length, 1, "Background image div should be rendered");
+				ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
+				equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
+				equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
+				equal(style.opacity, "0.5", "Background opacity should be set");
+			});
+			
+			// bg image - revert to standard again
+			test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function() {
+				oShell.setBackgroundImage(null);
+				oShell.setBackgroundRepeat(true);
+				oShell.setBackgroundColor(null);
+				oShell.setBackgroundOpacity(1);
+				
+				sap.ui.getCore().applyChanges();
+				
+				var bgDiv = byIdSuffix("-BG"),
+					style = window.getComputedStyle(bgDiv[0]);
+				
+				equal(bgDiv.length, 1, "Background image div should be rendered");
+				if(sBgVariant == "Variant1"){
+					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
+				}else{
+					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
+				}
+				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
+				equal(style.opacity, "1", "Background opacity should be set");
+			});
+		}
+		
+	</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.Shell</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

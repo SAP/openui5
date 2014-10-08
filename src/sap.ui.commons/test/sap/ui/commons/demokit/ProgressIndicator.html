@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.ProgressIndicator">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control ProgressIndicator" />
+		<title>ProgressIndicator - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='ProgressIndicatorSimple'>
+// create ProgressIndicator
+var oProgressIndicator1 = new sap.ui.commons.ProgressIndicator("ProgInd1", {
+	width: "300px", 
+	percentValue: 33, 
+	displayValue: "33%"
+	});
+
+// Attach the ProgressIndicator to the page
+oProgressIndicator1.placeAt("sample1");
+</script>
+
+<script id='ProgressIndicatorChange'>
+// create ProgressIndicator
+var oProgressIndicator2 = new sap.ui.commons.ProgressIndicator("ProgInd2", {
+	width: "25%", 
+	percentValue: 50, 
+	displayValue: "50 Percent"
+	});
+
+// create an input field
+var oInput1 = new sap.ui.commons.TextField('input1', {
+	value : oProgressIndicator2.getPercentValue(),
+	tooltip: 'Value of the ProgressIndicator',
+	width: '4em',
+	change : function(){
+		if(isNaN(oInput1.getValue())){
+			oInput1.setValueState(sap.ui.core.ValueState.Error);
+			return;
+		}else{
+			oInput1.setValueState(sap.ui.core.ValueState.None);
+			oProgressIndicator2.setPercentValue(parseInt(oInput1.getValue()));
+			oProgressIndicator2.setDisplayValue(oInput1.getValue()+" Percent");
+		}
+		}
+	});
+
+// Attach the ProgressIndicator and the input field to the page
+oProgressIndicator2.placeAt("sample2");
+oInput1.placeAt("sample2");
+</script>
+
+<script id='ProgressIndicatorNoValue'>
+// create ProgressIndicator
+var oProgressIndicator3 = new sap.ui.commons.ProgressIndicator("ProgInd3", {
+	width: "300px", 
+	percentValue: 75, 
+	tooltip: "No value displayed",
+	showValue: false,
+	barColor: sap.ui.core.BarColor.POSITIVE
+	});
+
+// create a RadioButtonGroup to change the colors
+var oRBG1 = new sap.ui.commons.RadioButtonGroup({
+	tooltip : "Choose a color",
+	columns : 3,
+	items: [
+		new sap.ui.core.Item({ text : "Positive", key : sap.ui.core.BarColor.POSITIVE}),
+		new sap.ui.core.Item({ text : "Critical", key : sap.ui.core.BarColor.CRITICAL}),
+		new sap.ui.core.Item({ text : "Negative", key : sap.ui.core.BarColor.NEGATIVE})],
+	select : function() {oProgressIndicator3.setBarColor(oRBG1.getSelectedItem().getKey());} 
+	});
+
+// Attach the ProgressIndicator and the RadioButtonGroup to the page
+oProgressIndicator3.placeAt("sample3");
+oRBG1.placeAt("sample3");
+</script>
+
+
+</head>	
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Blue" icon="images/ctrls/progressindicator-icon.png">ProgressIndicator</h1>
+
+	<h2>Introduction</h2>
+	<p>
+	The ProgressIndicator shows the progress of some process in a bar. The progress is shown as a percentage of the filling of the bar where the value can be larger than 100%. By default, the value is shown inside the bar 
+	(<code>displayValue</code> property). The color of the ProgressIndicator can be set using the <code>barColor</code> property. 
+	The possible colors are defined in enumeration <code>sap.ui.core.BarColor</code>. 
+	</p>
+
+	<h2>Examples</h2>		
+	<h3>Basic Progress Indicator Example</h3>
+	<div code-sample="sample1" script="ProgressIndicatorSimple"></div>
+
+	<p>
+	In this example, a simple ProgressIndicator with the basic features is shown. 
+	</p>
+
+	<h3>Interactive Value Changes</h3>		
+	<div code-sample="sample2" script="ProgressIndicatorChange"></div>
+	<p>
+	It is possible to change the value of the ProgressIndicator. The value switch is displayed as an animation starting at the old value and ending at the new one. The value is changed using the <code>setPercentValue</code> method. 
+	</p>
+
+	<h3>Progress Indicator Without Displayed Values</h3>		
+	<div code-sample="sample3" script="ProgressIndicatorNoValue"></div>
+	<p>
+	In this ProgressIndicator example, no value is displayed inside the bar; the display of the value can be ruled using the <code>showValue</code> property. In this example, also the usage of different colors for the value display (<code>barColor</code> property) is shown.
+	</p>	
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ProgressIndicator.html">API documentation</a>
+	</p>
+</body>
+</html>

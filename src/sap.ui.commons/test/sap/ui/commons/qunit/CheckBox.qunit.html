@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	
+<!-- 
+  JSUNIT: 
+    Tested control/class: sap.ui.commons.CheckBox
+    Author: d046011
+ -->
+
+		<title>Test Page for sap.ui.commons.CheckBox</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		var sText = "Hello",
+		 	sTooltip = "tooltip",
+			sWidth = "111px",
+			bEnabled = false,
+			bVisible = true,
+			bChecked = false,
+			sMessage = "foo";
+
+		function foo() {
+			throw sMessage;
+		}
+
+		var oCheckBox1 = new sap.ui.commons.CheckBox("c1");
+		oCheckBox1.setText(sText);
+		oCheckBox1.setWidth(sWidth);
+		oCheckBox1.setEnabled(bEnabled);
+		oCheckBox1.setVisible(bVisible);
+		oCheckBox1.setTooltip(sTooltip);
+		oCheckBox1.setChecked(bChecked);
+		oCheckBox1.attachChange(foo);
+		sap.ui.setRoot("uiArea1", oCheckBox1);
+
+		var oCheckBox2 = new sap.ui.commons.CheckBox("c2", {
+			text : sText,
+			width : sWidth,
+			enabled : bEnabled,
+			visible : bVisible,
+			tooltip : sTooltip,
+			checked : bChecked,
+			change: foo
+		});
+		sap.ui.setRoot("uiArea2", oCheckBox2);
+
+		var c1, c2;
+
+
+		module("Basic", {
+			setup : function() {
+				c1 = sap.ui.getCore().getControl("c1");
+				c2 = sap.ui.getCore().getControl("c2");
+	
+				c1.setVisible(true);
+				c1.setEnabled(bEnabled);
+	
+				c2.setVisible(true);
+				c2.setEnabled(bEnabled);
+				c2.setWidth(sWidth);
+	
+				sap.ui.getCore().applyChanges();
+	
+				ok(c1, "c1 should not be null");
+				ok(c2, "c2 should not be null");
+			},
+			teardown : function() {
+				c1 = null;
+				c2 = null;
+			}
+		});
+		
+		// test control properties
+		
+		test("TextOk", function() {
+			strictEqual(c1.getText(), sText, "c1.getText() returns wrong result");
+			strictEqual(c2.getText(), sText, "c2.getText() returns wrong result");
+		});
+
+		test("WidthOk", function() {
+			strictEqual(c1.getWidth(), sWidth, "c1.getWidth() returns wrong result");
+			strictEqual(c2.getWidth(), sWidth, "c2.getWidth() returns wrong result");
+		});
+
+		test("EnabledOk", function() {
+			strictEqual(c1.getEnabled(), bEnabled, "c1.getEnabled() returns wrong result");
+			strictEqual(c2.getEnabled(), bEnabled, "c2.getEnabled() returns wrong result");
+		});
+
+		test("VisibleOk", function() {
+			strictEqual(c1.getVisible(), bVisible, "c1.getVisible() returns wrong result");
+			strictEqual(c2.getVisible(), bVisible, "c2.getVisible() returns wrong result");
+		});
+
+		test("TooltipOk", function() {
+			strictEqual(c1.getTooltip(), sTooltip, "c1.getTooltip() returns wrong result");
+			strictEqual(c2.getTooltip(), sTooltip, "c2.getTooltip() returns wrong result");
+		});
+
+		test("CheckedOk", function() {
+			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result");
+			strictEqual(c2.getChecked(), bChecked, "c2.getChecked() returns wrong result");
+		});
+
+		
+		// test events
+		
+		// TODO: test event handler with event parameters	
+		
+		test("ChangeOk", function() {
+			try {
+				c1.fireChange();
+				fail("exception should have been thrown when c1.fireChange() was called!");
+			} catch (e) {
+				strictEqual(e, sMessage, "c1.firePress()");
+			}
+
+			try {
+				c2.fireChange();
+				fail("exception should have been thrown when c2.fireChange() was called!");
+			} catch (e) {
+				strictEqual(e, sMessage, "c2.firePress()");
+			}
+		});
+
+		test("DetachChangeOk", function() {
+			c1.detachChange(foo);
+			try {
+				c1.fireChange();
+				ok(true, "No event and thus no exception should be triggered!");
+			} catch (e) {
+ 				fail("should not occur");
+			}
+			// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
+			c1.attachChange(foo);
+		});
+
+		// test methods 
+		
+		// TODO 
+		
+		
+		// test misc (control interaction, metadata, styles, etc.)
+		function isEmpty(oObject) {
+			for(var i in oObject){ return false;}
+			return true;
+		}
+		
+		test("MetadataOk", function() {
+			var oMetadata = c1.getMetadata();
+			ok(oMetadata !== null, "c1.getMetadata() should not be null");
+			ok(oMetadata.getParent() !== null, "c1.getMetadata().getParent() should not be null");
+			ok(sap.ui.core.Control.getMetadata() === oMetadata.getParent());
+			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
+			ok(isEmpty(oMetadata.getAggregations()));
+			var oAssociations = oMetadata.getAssociations();
+			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+		});
+
+		test("OffsetWidthOk", function() {
+			//test the pixel perfect width of the control
+			var oDomRef = window.document.getElementById("c1");
+			strictEqual(oDomRef.offsetWidth, parseInt(c1.getWidth()), "c1.offsetWidth should equal parseInt(c1.getWidth())");
+			c2.setWidth("1000px");
+			sap.ui.getCore().applyChanges();
+			oDomRef = window.document.getElementById("c2");
+			strictEqual(oDomRef.offsetWidth, 1000, "c2.offsetWidth should equal 1000");
+    });
+
+		// toggle back and forth
+		test("ToggleOk", function() {
+			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result");
+			c1.toggle();
+			strictEqual(c1.getChecked(), !bChecked, "c1.getChecked() returns wrong result after toggling");
+			c1.toggle();
+			strictEqual(c1.getChecked(), bChecked, "c1.getChecked() returns wrong result after toggling back");
+		});
+
+		test("CssClassesOk", function() {
+			var sClasses = window.document.getElementById("c1").className;
+			notStrictEqual(sClasses, null, "sClasses is null");
+			ok(sClasses.indexOf("sapUiCb") > -1, "c1 className is missing 'sapUiCb'");
+			ok(sClasses.indexOf("sapUiCbStd") == -1, "c1 className is containing 'sapUiCbStd'");
+			ok(sClasses.indexOf("sapUiCbDis") > -1, "c1 className is missing 'sapUiCbDis'");
+			ok(sClasses.indexOf("sapUiCbRo") == -1, "c1 className is containing 'sapUiCbRo'");
+
+			c1.setEnabled(true);
+			sap.ui.getCore().applyChanges();
+			sClasses = window.document.getElementById("c1").className; // after re-rendering it is a NEW HTML element!!
+			
+			ok(sClasses.indexOf("sapUiCb") > -1, "c1 className is missing 'sapUiCb'");
+			ok(sClasses.indexOf("sapUiCbStd") > -1, "c1 className is missing 'sapUiCbStd'");
+			ok(sClasses.indexOf("sapUiCbDis") == -1, "c1 className is containing 'sapUiCbDis' after being enabled");
+			ok(sClasses.indexOf("sapUiCbRo") == -1, "c1 className is containing 'sapUiCbRo'");
+
+			c1.setEditable(false);
+			sap.ui.getCore().applyChanges();
+			sClasses = window.document.getElementById("c1").className; // after re-rendering it is a NEW HTML element!!
+
+			ok(sClasses.indexOf("sapUiCb") > -1, "c1 className is missing 'sapUiCb'");
+			ok(sClasses.indexOf("sapUiCbStd") == -1, "c1 className is containing 'sapUiCbStd'");
+			ok(sClasses.indexOf("sapUiCbDis") == -1, "c1 className is containing 'sapUiCbDis' after being enabled");
+			ok(sClasses.indexOf("sapUiCbRo") > -1, "c1 className is missing 'sapUiCbRo'");
+		});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for jquery.sap.global</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		<button onclick="javascript:var c1=sap.ui.getCore().getControl('c1');testCssClassesOk()">Trigger class test</button>
+	</body>
+</html>

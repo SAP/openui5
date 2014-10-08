@@ -1,0 +1,354 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.commons.InPlaceEdit
+  Author: SAP
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	var sStartText = "Hello world!";
+	var sTooltip = "Tooltip";
+
+	var oTextField1 = new sap.ui.commons.TextField("TF1", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		required: true
+	});
+
+	var oIPE1 = new sap.ui.commons.InPlaceEdit("IPE1",{
+		content: oTextField1
+	}).placeAt("uiArea1");
+
+	// with simple TextField readonly
+	var oTextField2 = new sap.ui.commons.TextField("TF2", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		enabled: false
+	});
+
+	var oIPE2 = new sap.ui.commons.InPlaceEdit("IPE2",{
+		content: oTextField2
+	}).placeAt("uiArea2");
+
+	// with simple TextField invisible
+	var oTextField3 = new sap.ui.commons.TextField("TF3", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		visible: false
+	});
+
+	var oIPE3 = new sap.ui.commons.InPlaceEdit("IPE3",{
+		content: oTextField3
+	}).placeAt("uiArea3");
+
+	// with ComboBox
+	var oComboBox = new sap.ui.commons.ComboBox("CB1", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		items: [new sap.ui.core.ListItem("Day1",{text: "Monday", key: "Mo"}),
+		        new sap.ui.core.ListItem("Day2",{text: "Tuesday", key: "Tu"}),
+		        new sap.ui.core.ListItem("Day3",{text: "Wednesday", key: "Mi"}),
+		        new sap.ui.core.ListItem("Day4",{text: "Thursday", key: "Th"}),
+		        new sap.ui.core.ListItem("Day5",{text: "Friday", key: "Fr"}),
+		        new sap.ui.core.ListItem("Day6",{text: "Saturday", key: "Sa"}),
+		        new sap.ui.core.ListItem("Day7",{text: "Sunday", key: "Su"})]
+	});
+
+	var oIPE4 = new sap.ui.commons.InPlaceEdit("IPE4",{
+		content: oComboBox
+	}).placeAt("uiArea4");
+
+	// with DropdownBox
+	var oDropdownBox = new sap.ui.commons.DropdownBox("DdB1", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		items: [new sap.ui.core.ListItem("Day1a",{text: "Monday", key: "Mo"}),
+		        new sap.ui.core.ListItem("Day2a",{text: "Tuesday", key: "Tu"}),
+		        new sap.ui.core.ListItem("Day3a",{text: "Wednesday", key: "Mi"}),
+		        new sap.ui.core.ListItem("Day4a",{text: "Thursday", key: "Th"}),
+		        new sap.ui.core.ListItem("Day5a",{text: "Friday", key: "Fr"}),
+		        new sap.ui.core.ListItem("Day6a",{text: "Saturday", key: "Sa"}),
+		        new sap.ui.core.ListItem("Day7a",{text: "Sunday", key: "Su"})]
+	});
+
+	var oIPE5 = new sap.ui.commons.InPlaceEdit("IPE5",{
+		content: oDropdownBox
+	}).placeAt("uiArea5");
+
+	// with Link
+	var oLink1 = new sap.ui.commons.Link("Link1", {
+		text: sStartText,
+		tooltip: sTooltip,
+		href: "http://www.sap.com",
+		width: "200px"
+	});
+
+	var oIPE6 = new sap.ui.commons.InPlaceEdit("IPE6",{
+		content: oLink1
+	}).placeAt("uiArea6");
+
+	// without undo
+	var oTextField4 = new sap.ui.commons.TextField("TF4", {
+		value: sStartText,
+		tooltip: sTooltip,
+		width: "200px",
+		required: true
+	});
+
+	var oIPE7 = new sap.ui.commons.InPlaceEdit("IPE7",{
+		content: oTextField4,
+		undoEnabled: false
+	}).placeAt("uiArea7");
+
+	<!-- Test functions -->
+
+	qutils.delayTestStart();
+
+	module("Rendering");
+
+	test("Visual appearance", function() {
+		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "TextField: Width of the control");
+		equal(jQuery("#IPE1").text(), sStartText, "TextField: Displayed text");
+
+		// disabled
+		ok(jQuery("#IPE2").hasClass("sapUiIpeRo"), "Disabled: ReadOnly Class rendered");
+		ok(jQuery("#IPE2--TV").hasClass("sapUiTvDsbl"), "Disabled text renderes with disabled class");
+
+		// invisible
+		equal(jQuery("#IPE3").length, 0, "Invisible control not rendered");
+
+		// link
+		equal(jQuery("#IPE6").get(0).offsetWidth, 200, "Link: Width of the control");
+		if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
+			// in IE8 there is a strange character at the end
+			equal(jQuery("#IPE6").text().slice(0, sStartText.length), sStartText, "Link: Displayed text");
+		}else {
+			equal(jQuery("#IPE6").text(), sStartText, "Link: Displayed text");
+		}
+		ok(jQuery("#IPE6").find("a").get(0), "Link: rendered as <a>");
+		ok(jQuery("#IPE6--Edit").get(0), "Link: Edit button rendered");
+		equal(jQuery("#IPE6--Edit").css("visibility"), "hidden", "Link: Edit button not visible");
+		// edit button invisible -> visible on focus....
+
+		// tooltip
+		equal(jQuery("#IPE1").find("span").attr("title"), sTooltip, "TextField: Tooltip");
+		equal(jQuery("#IPE6").find("a").attr("title"), sTooltip, "Link: Tooltip");
+
+	});
+
+	test("Value states", function() {
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Normal state: Success CSS-class not rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Normal state: Warning CSS-class not rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Normal state: Error CSS-class not rendered");
+
+		oTextField1.setValueState(sap.ui.core.ValueState.Success);
+		sap.ui.getCore().applyChanges();
+		ok(jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Success state: Success CSS-class rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Success state: Warning CSS-class not rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Success state: Error CSS-class not rendered");
+		equal(oIPE1.getValueState(), sap.ui.core.ValueState.Success, "GetValueState on InPlaceEdit")
+
+		oIPE1.setValueState(sap.ui.core.ValueState.Warning);
+		sap.ui.getCore().applyChanges();
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Warning state: Success CSS-class not rendered");
+		ok(jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Warning state: Warning CSS-class rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeErr"), "Warning state: Error CSS-class not rendered");
+		equal(oTextField1.getValueState(), sap.ui.core.ValueState.Warning, "GetValueState on TextField")
+
+		oTextField1.setValueState(sap.ui.core.ValueState.Error);
+		sap.ui.getCore().applyChanges();
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeSucc"), "Error state: Success CSS-class not rendered");
+		ok(!jQuery("#IPE1").hasClass("sapUiIpeWarn"), "Error state: Warning CSS-class not rendered");
+		ok(jQuery("#IPE1").hasClass("sapUiIpeErr"), "Error state: Error CSS-class rendered");
+
+		oTextField1.setValueState(sap.ui.core.ValueState.None);
+		sap.ui.getCore().applyChanges();
+	});
+
+	module("Functions");
+
+	test("Properties", function() {
+		equal(oIPE1.getRequired(), true, "getRequired");
+	 });
+
+	module("Edit mode");
+
+	test("Visual appearance", function() {
+		oIPE1.focus();
+		ok(jQuery.sap.domById("TF1"), "TextField1 rendered")
+		equal(jQuery("#IPE1").get(0).offsetWidth, 200, "Width of the control");
+
+		oIPE2.focus();
+		ok(!jQuery.sap.domById("TF2"), "TextField2 not rendered");
+
+		oIPE4.focus();
+		ok(jQuery.sap.domById("CB1"), "ComboBox1 rendered")
+
+		oIPE5.focus();
+		ok(jQuery.sap.domById("DdB1"), "DropdownBox1 rendered")
+	});
+
+	test("Link", function() {
+		oIPE6.focus();
+		ok(!jQuery.sap.domById("IPE6--input"), "on focus no TextField rendered")
+		equal(jQuery("#IPE6--Edit").css("visibility"), "visible", "on focus Edit button visible");
+		qutils.triggerEvent("click", "IPE6--Edit");
+		ok(jQuery.sap.domById("IPE6--input"), "Edit mode: TextField rendered")
+		ok(!jQuery("#IPE6--Edit").get(0), "Edit mode: no edit button rendered");
+	 });
+
+	asyncTest("Typing with undo", function() {
+		oIPE1.focus();
+		sap.ui.getCore().applyChanges();
+		setTimeout(function(){
+			equal(jQuery("#IPE1--X").css("visibility"), "hidden", "Undo button invisible");
+			qutils.triggerCharacterInput("TF1", "A");
+			qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
+			equal(jQuery("#TF1").val(), sStartText + "A", "Displayed text");
+			equal(jQuery("#IPE1--X").css("visibility"), "visible", "Undo button visible");
+		start();
+		}, 300);
+	});
+
+	asyncTest("Typing without undo", function() {
+		oIPE7.focus();
+		sap.ui.getCore().applyChanges();
+		setTimeout(function(){
+			ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
+			qutils.triggerCharacterInput("TF4", "A");
+			qutils.triggerKeyup("TF4", jQuery.sap.KeyCodes.A, true, false, false);
+			equal(jQuery("#TF4").val(), sStartText + "A", "Displayed text");
+			ok(!jQuery("#IPE7--X").get(0), "no Undo button rendered");
+		start();
+		}, 300);
+	});
+
+	asyncTest("open ComboBox", function() {
+		oIPE4.focus();
+		sap.ui.getCore().applyChanges();
+		setTimeout(function(){
+			qutils.triggerEvent("click", "CB1-icon");
+			ok(jQuery.sap.domById("CB1-lb-list"), "ListBox rendered")
+			qutils.triggerEvent("click", "Day7");
+			equal(jQuery("#CB1-input").val(), "Sunday", "Displayed text");
+		start();
+		}, 300);
+	});
+
+	module("Display mode");
+
+	asyncTest("Visual appearance", function() {
+		oIPE4.focus(); // to toggle in display mode
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function(){
+			ok(!jQuery.sap.domById("TF1"), "TextField1 not longer rendered")
+			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
+				// in IE8 there is a strange character at the end
+				equal(jQuery("#IPE1").find("span").text().slice(0, sStartText.length + 1), sStartText + "A", "Displayed text");
+			} else {
+				equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text");
+			}
+			ok(jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class rendered");
+			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered")
+			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1");
+			start();
+		}, 300);
+	});
+
+	asyncTest("Undo text change", function() {
+		oIPE1.focus(); // to toggle in display mode
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function(){
+				qutils.triggerKeyEvent("keydown", "TF1", jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeyEvent("keypress", "TF1", jQuery.sap.KeyCodes.ESCAPE);
+				oIPE4.focus(); // to toggle in display mode
+				setTimeout(function(){
+					equal(jQuery("#IPE1").text(), sStartText, "Displayed text");
+					ok(!jQuery("#IPE1").hasClass("sapUiIpeUndo"), "Undo CSS-class not longer rendered");
+					ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
+					equal(oTextField1.getValue(), sStartText, "Value of TextField1 after undo");
+					start();
+			}, 300);
+		}, 300);
+	});
+
+	asyncTest("clearOldText", function() {
+		oIPE1.focus();
+		qutils.triggerCharacterInput("TF1", "A");
+		qutils.triggerKeyup("TF1", jQuery.sap.KeyCodes.A, true, false, false);
+		oIPE4.focus(); // to toggle in display mode
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function(){
+			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
+				// in IE8 there is a strange character at the end
+				equal(jQuery("#IPE1").find("span").text().slice(0, sStartText.length + 1), sStartText + "A", "Displayed text before clearOldText");
+			} else {
+				equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text before clearOldText");
+			}
+			ok(jQuery("#IPE1").find("button").get(0), "Undo Button rendered before clearOldText")
+			oIPE1.clearOldText();
+			equal(jQuery("#IPE1").find("span").text(), sStartText + "A", "Displayed text after clearOldText");
+			ok(!jQuery("#IPE1").find("button").get(0), "Undo Button not longer rendered")
+			equal(oTextField1.getValue(), sStartText + "A", "Value of TextField1 after clearOldText");
+			start();
+		}, 300);
+	});
+
+	module("Cleanup");
+
+	test("internal controls deleted", function() {
+		oIPE6.destroy();
+		ok(!oIPE6._oEditButton, "Edit button not longer exist");
+		ok(!oIPE6._oUndoButton, "Undo button not longer exist");
+		ok(!oIPE6._oTextField, "TextField not longer exist");
+		oIPE7.destroy();
+		ok(!oIPE7._oTextView, "TextView not longer exist");
+	});
+	</script>
+
+	<title>qunit Test for InPlaceEdit</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.InPlaceEdit.gif">
+
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.InPlaceEdit</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
+	<div id="uiArea5"></div>
+	<div id="uiArea6"></div>
+	<div id="uiArea7"></div>
+
+</body>
+</html>

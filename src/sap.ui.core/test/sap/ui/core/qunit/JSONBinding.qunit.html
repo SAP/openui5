@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-language="en_US">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+	var oModel;
+	var testData;
+	var bindings;
+
+	function setup(){
+		// reset bindings
+		bindings = new Array();
+		testData = {
+			teamMembers: [
+				{firstName:"Andreas", lastName:"Klark", gender:"male"},
+				{firstName:"Peter", lastName:"Miller", gender:"male"},
+				{firstName:"Gina", lastName:"Rush", gender:"female"},
+				{firstName:"Steave", lastName:"Ander", gender:"male"},
+				{firstName:"Michael", lastName:"Spring", gender:"male"},
+				{firstName:"Marc", lastName:"Green", gender:"male"},
+				{firstName:"Frank", lastName:"Wallace", gender:"male"}
+			]
+		};
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(testData);
+		sap.ui.getCore().setModel(oModel);
+
+	};
+
+	function createPropertyBindings(sPath, sProperty, oContext){
+		// create bindings
+		for (var i = 0; i < 7; i++){
+			if (typeof sPath === "object") {
+				bindings[i] = oModel.bindList(sPath.path, sPath.context, sPath.sorters, sPath.filters, sPath.parameters, sPath.events);
+			} else {
+				bindings[i] = oModel.bindProperty(sPath + "/" + i + "/" + sProperty, oContext);
+			}
+		};
+
+	};
+	
+	var attach = false;
+	var detach = true;
+
+	function callBackOnChange(){
+		attach = true;
+		detach = false;
+	};
+
+	test("Binding getPath", function(){
+		setup();
+		createPropertyBindings("/teamMembers", "firstName");
+
+		equal(bindings.length, testData.teamMembers.length, "amount of bindings");
+		jQuery(bindings).each(function (i, binding){
+			equal(binding.getPath(), "/teamMembers/" + i + "/firstName", "Binding path");
+		});
+
+	});
+
+	test("Binding getModel", function(){
+		setup();
+		createPropertyBindings("/teamMembers", "lastName");
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			equal(binding.getModel(), oModel, "Binding model");
+		});
+
+	});
+
+	test("Binding set/getContext", function(){
+		setup();
+		var oContext = oModel.getContext("/teamMembers/0"),
+			oNewContext = new sap.ui.model.Context();
+		createPropertyBindings("", "lastName", oContext);
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			equal(binding.getContext(), oContext, "Binding context");
+			binding.setContext(oNewContext);
+			equal(binding.getContext(), oNewContext, "Binding context");
+		});
+	});
+
+	test("Binding changeEvent", function(){
+		setup();
+		createPropertyBindings("/teamMembers", "firstName");
+
+		jQuery(bindings).each(function (i, binding){
+			// check model of each binding...should be the same
+			binding.attachChange(callBackOnChange);
+
+			// model stores the binding first when attach change was called
+			equal(oModel.aBindings.length, 1, "number of model bindings: 1")
+
+			// fire change event
+			binding._fireChange();
+			ok(attach, "call back method was attached");
+			ok(!detach, "call back method was not detached");
+
+			binding.detachChange(callBackOnChange);
+			attach = false;
+			detach = true;
+			//refire change event
+			binding._fireChange();
+			ok(!attach, "call back method was not attached");
+			ok(detach, "call back method was detached");
+			attach = false;
+			detach = true;
+
+			equal(oModel.aBindings.length, 0, "number of model bindings after detach: 0")
+
+		});
+
+	});
+
+
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding JSON Bindings</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol></body>
+</html>

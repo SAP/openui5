@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested class: sap.ui.commons.Dialog
+  Author: d046011/d046329(original tests)
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Dialog - sap.ui.commons - qUnit test page</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
+<script>
+	var oWidth = "300px", oHeight = "350px", iScrollLeft = 0, iScrollTop = 0, bMaximized = true, oTitle = null, bApplyContentPadding = true, bShowCloseButton = true, bResizable = true;
+
+	var iPopupDelay = 500; // Dialog now has a delay of 400ms
+
+	var sClosedMessage = "closed event fired";
+
+	function closedEventHandler() {
+		ok(true, "This text will never be displayed..."); // this test tests by just being counted in the "CloseDialog" test
+	}
+
+	var oDialog1 = new sap.ui.commons.Dialog("Dialog1", {
+		width : oWidth,
+		height : oHeight,
+		scrollLeft : iScrollLeft,
+		scrollTop : iScrollTop,
+		maximized : bMaximized,
+		title : oTitle,
+		applyContentPadding : bApplyContentPadding,
+		showCloseButton : bShowCloseButton,
+		resizable : bResizable
+	});
+
+	//oCtrl = sap.ui.getCore().getControl("Dialog1");		
+	oDialog1.attachClosed(closedEventHandler);
+
+	// make sure the Dialog exists
+	test("InitialCheck", function() {
+		ok(oDialog1, "Dialog does not exist");
+		equals(oDialog1.isOpen(), false, "Dialog should be closed initially!");
+		strictEqual(oDialog1.getWidth(), oWidth);
+		strictEqual(oDialog1.getHeight(), oHeight);
+		strictEqual(oDialog1.getScrollLeft(), iScrollLeft);
+		strictEqual(oDialog1.getScrollTop(), iScrollTop);
+		strictEqual(oDialog1.getTitle(), "");
+		strictEqual(oDialog1.getApplyContentPadding(), bApplyContentPadding);
+		strictEqual(oDialog1.getShowCloseButton(), bShowCloseButton);
+		strictEqual(oDialog1.getResizable(), bResizable);
+	});
+
+	// open the Dialog
+	asyncTest("OpenDialog", function() {
+		oDialog1.open();
+
+		setTimeout(function() {
+			ok(oDialog1.isOpen(), "Dialog should be open after opening!");
+			equals(jQuery("#Dialog1").css("visibility"), "visible", "Dialog should be visible after opening");
+			var oDomRef = oDialog1.getDomRef();
+			strictEqual(oDomRef.offsetWidth, parseInt(oWidth), "Width of the Dialog should be equal to the set value.");
+			var offsetHeight = oDomRef.offsetHeight;
+			if (sap.ui.Device.browser.chrome && offsetHeight == 351) { // a known issue in Chrome that sometimes happens
+				offsetHeight = 350;
+			}
+			strictEqual(offsetHeight, parseInt(oHeight), "Height of the Dialog should be equal to the set value.");
+			start();
+		}, iPopupDelay);
+	});
+
+	// close the Dialog again
+	asyncTest("CloseDialog", function() {
+		expect(3); // needs to include the test in closedEventHandler !!
+		oDialog1.close();
+
+		setTimeout(function() {
+			equals(oDialog1.isOpen(), false, "Dialog should be closed again after closing!");
+			equals(jQuery("#Dialog1").css("visibility"), "hidden", "Dialog should be hidden after closing");
+			start();
+		}, iPopupDelay);
+	});
+
+	asyncTest("DestroyOnClose", function() {
+		var bCloseInProgress = false;
+		function onClosed(e) {
+			start();
+			ok(true, "onClosed called on destroy");
+		}
+		oDialog1.attachClosed(onClosed);
+		oDialog1.open();
+		oDialog1.oPopup.attachOpened(function() {
+			oDialog1.destroy();
+		});
+	});
+	
+	asyncTest("Check XSS in title", function() {
+		expect(1);
+
+		var oDialogXSS = new sap.ui.commons.Dialog("XSSDialog1", {
+			width : oWidth,
+			height : oHeight,
+			scrollLeft : iScrollLeft,
+			scrollTop : iScrollTop,
+			maximized : bMaximized,
+			applyContentPadding : bApplyContentPadding,
+			showCloseButton : bShowCloseButton,
+			resizable : bResizable
+		}); 
+		var sXss = unescape("%3Cscript%3Ealert%28%27xss%20possible%27%29%3C/script%3E");
+		var oBtn = new sap.ui.commons.Button({
+			text : "Open XSS-dialog"
+		});
+
+		oBtn.press = function() {
+			oDialogXSS.open();
+			oDialogXSS.setTitle(sXss);
+				
+			setTimeout(function() {
+				var bXss = oDialogXSS.$("lbl").text() === sXss;
+					
+				ok(bXss, "Text of title was escaped");
+				oDialogXSS.destroy();
+				start();
+			}, iPopupDelay);
+		};
+		oBtn.press();
+	});
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">qUnit Page for sap.ui.commons.Dialog</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.ActionSheet</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<style type="text/css">
+			html {
+				overflow: hidden;
+			}
+		</style>
+
+		<script language="javascript">
+			sinon.config.useFakeTimers = false;
+
+			sap.ui.test.qunit.delayTestStart();
+
+			var oActionSheet = new sap.m.ActionSheet("actionsheet", {
+				showCancelButton: true,
+				buttons: [
+					new sap.m.Button({
+						type: sap.m.ButtonType.Reject,
+						text: "Reject Action"
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Accept,
+						text: "Accept Action"
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						text: "Default Action"
+					})
+				],
+				cancelButtonText: "Cancel",
+				title: "Please choose one action",
+				placement: sap.m.PlacementType.Bottom,
+				cancelButtonPress: function(){
+					jQuery.sap.log.info("sap.m.ActionSheet: cancelButton is pressed");
+				},
+				beforeOpen: function(){
+					ok(jQuery.sap.byId("actionsheet").css("visibility") !== "visible", "ActionSheet should be hidden before it's opened");
+				},
+				afterOpen: function(){
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+					start();
+				},
+				beforeClose: function(){
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "visible", "ActionSheet should be visible after it's opened");
+				},
+				afterClose: function(){
+					equal(jQuery.sap.byId("actionsheet").css("visibility"), "hidden", "ActionSheet should be hidden before it's opened");
+					ok(!oActionSheet.isOpen(), "ActionSheet is already closed");
+					start();
+				}
+			});
+
+			var oButton = new sap.m.Button({
+				text : "Open ActionSheet",
+				press : function() {
+					oActionSheet.openBy(this);
+				}
+			});
+
+			var page = new sap.m.Page("myFirstPage", {
+				title : "ActionSheet Test",
+				showNavButton : true,
+				enableScrolling : true,
+				content: oButton
+			});
+
+			var app = new sap.m.App("myApp", {
+				initPage: "myFirstPage"
+			});
+
+			app.addPage(page).placeAt("content");
+
+			module("Initial Check");
+
+			test("Initialization", function() {
+				ok(!jQuery.sap.domById("actionsheet"), "ActionSheet is not rendered before it's ever opened.");
+			});	
+
+			module("Open and Close - with Title and Cancel Button");
+
+			asyncTest("Open ActionSheet - - with Title and Cancel Button", function(){
+				oButton.firePress();
+				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				setTimeout(function(){
+					var $actionSheet = jQuery.sap.byId("actionsheet"),
+						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+						$header = $parentControl.children("header.sapMBar"),
+						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
+					expect(8);
+					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+
+					if(!sap.ui.Device.system.phone){
+						ok(!($header[0]), "Title is always ignored when doesn't run on phone");
+					}else{
+						ok($header[0], "Title is rendered");
+					}
+					if(!sap.ui.Device.system.phone){
+						ok(!($cancelButton[0]), "Cancel button is never rendered when doesn't run on phone");
+					}else{
+						ok($cancelButton[0], "Cancel button is rendered");
+					}
+					
+				}, 50);
+			});
+
+			asyncTest("Close ActionSheet", function(){
+				expect(3);
+				oActionSheet.close();
+			});
+
+			module("Open and Close - with Title but no Cancel Button");
+
+			asyncTest("Open ActionSheet - - with Title  but no Cancel Button", function(){
+				oActionSheet.setShowCancelButton(false);
+				oButton.firePress();
+				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				setTimeout(function(){
+					var $actionSheet = jQuery.sap.byId("actionsheet"),
+						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+						$header = $parentControl.children("header.sapMBar"),
+						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
+					expect(8);
+					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					
+					if(!sap.ui.Device.system.phone){
+						ok(!($header[0]), "Title is always ignored in iPad");
+					}else{
+						ok($header[0], "Title is rendered");
+					}
+					ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
+				}, 50);
+			});
+
+			asyncTest("Close ActionSheet", function(){
+				expect(3);
+				
+				oActionSheet.close();
+			});
+
+			module("Open and Close - no Title but with Cancel Button");
+
+			asyncTest("Open ActionSheet - - no Title but with Cancel Button", function(){
+				oActionSheet.setShowCancelButton(true);
+				oActionSheet.setTitle(null);
+				oButton.firePress();
+				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				setTimeout(function(){
+					var $actionSheet = jQuery.sap.byId("actionsheet"),
+						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+						$header = $parentControl.children("div.sapMBar"),
+						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
+					expect(8);
+					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					
+					ok(!($header[0]), "There is no title because title property is set to null");
+					
+					if(!sap.ui.Device.system.phone){
+						ok(!($cancelButton[0]), "Cancel button is never rendered in iPad");
+					}else{
+						ok($cancelButton[0], "Cancel button is rendered");
+					}
+				}, 50);
+			});
+
+			asyncTest("Close ActionSheet", function(){
+				expect(3);
+				oActionSheet.close();
+			});
+
+			module("Open and Close - no Title and no Cancel Button");
+
+			asyncTest("Open ActionSheet - - no Title and no Cancel Button", function(){
+				oActionSheet.setShowCancelButton(false);
+				oActionSheet.setTitle(null);
+				oButton.firePress();
+				ok(oActionSheet.isOpen(), "ActionSheet is already open");
+				setTimeout(function(){
+					var $actionSheet = jQuery.sap.byId("actionsheet"),
+						$parentControl = !sap.ui.Device.system.phone ? $actionSheet.closest(".sapMActionSheetPopover") : $actionSheet.closest(".sapMActionSheetDialog"),
+						$header = $parentControl.children("div.sapMBar"),
+						$cancelButton = $actionSheet.children("button.sapMActionSheetCancelButton");
+					expect(8);
+					ok(jQuery.sap.domById("actionsheet"), "ActionSheet is rendered after it's opened.");
+					ok($actionSheet.closest("#sap-ui-static")[0], "ActionSheet should be rendered inside the static uiArea.");
+					ok($parentControl[0], "ActionSheet is wrapped either in Popover or Dialog");
+					
+					ok(!($header[0]), "There is no title because title property is set to null");
+					ok(!($cancelButton[0]), "showCancelButton is set to false, there is no cancel button");
+				}, 50);
+			});
+
+			asyncTest("Close ActionSheet", function(){
+				expect(3);
+				oActionSheet.close();
+			});
+
+			module("Additional Test");
+
+			asyncTest("ActionSheet overwrites the methods from Dialog", function(){
+				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
+					// this test is not supported by IE9
+					expect(0);
+					start();
+					return;
+				}
+
+				var oSystem = {
+						desktop: false,
+						phone: true,
+						tablet: false
+				};
+
+				var oDevice = {
+					ipad: false,
+					iphone: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(jQuery.device, "is", oDevice);
+
+				var oAC = new sap.m.ActionSheet({
+					cancelButtonText: "Cancel",
+					title: "Title",
+					buttons: [
+						new sap.m.Button({
+							text: "Button1"
+						}),
+						new sap.m.Button({
+							text: "Button2"
+						})
+					]
+				});
+
+				oAC.attachAfterOpen(function(){
+					var spyOfReposition = sinon.spy(oAC._parent, "_reposition");
+					var spyOfRepositionProxy = sinon.spy(oAC._parent, "_fnOrientationChange");
+
+					//simulates an orientation change
+					oAC._parent.$().width(oAC._parent.$().width()-10);
+
+					setTimeout(function(){
+						equal(spyOfReposition.callCount, 0, "_reposition method shouldn't be called");
+						equal(spyOfRepositionProxy.callCount, 1, "_reposition method proxy should be called once");
+						oAC.destroy();
+						start();
+					}, 500);
+				});
+
+				oAC.openBy(oButton);
+			});
+
+			asyncTest("Open an ActionSheet which is already aggregated in dependents aggregation", function(){
+				var oAC = new sap.m.ActionSheet({
+					cancelButtonText: "Cancel",
+					title: "Title",
+					buttons: [
+						new sap.m.Button({
+							text: "Button1"
+						}),
+						new sap.m.Button({
+							text: "Button2"
+						})
+					]
+				});
+
+				page.addDependent(oAC);
+
+				var oSpyOfViewInvalidate = sinon.spy(page, "invalidate");
+
+				oAC.attachAfterOpen(function(){
+					equal(oSpyOfViewInvalidate.callCount, 0, "Former parent shouldn't be invalidated");
+
+					oAC.destroy();
+					start();
+				});
+
+				oAC.openBy(oButton);
+
+				equal(oAC._parent.getParent(), page, "Popup of ActionSheet should be aggregated by the former parent of ActionSheet");
+
+			});
+			
+			module("keyboard handling")
+
+			asyncTest('PageDown keyboard handling mobile phone', function(){
+				var oSystem = {
+						desktop: false,
+						phone: true,
+						tablet: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				expect(2);
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+				
+				var oActionSheet = new sap.m.ActionSheet({
+					showCancelButton: true,
+					buttons: [
+						new sap.m.Button({
+							id: 'oButton1',
+							type: sap.m.ButtonType.Reject,
+							text: "Reject Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Accept,
+							text: "Accept Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton6',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton7',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						})
+					]
+				});
+				
+				oButton.placeAt('uiArea');
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+				
+				setTimeout(function(){
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+
+					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+					
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					ok(oActionSheet.$('cancelBtn').is(":focus"), 'The cancel button should be focused');
+					start();
+					oActionSheet.close();
+					
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500)
+			});
+			
+			asyncTest('PageDown keyboard handling desktop', function(){
+				var oSystem = {
+						desktop: true,
+						phone: false
+				};
+				
+				this.stub(sap.ui.Device, "system", oSystem);
+				expect(2);
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+				
+				var oActionSheet = new sap.m.ActionSheet({
+					showCancelButton: true,
+					buttons: [
+						new sap.m.Button({
+							id: 'oButton1',
+							type: sap.m.ButtonType.Reject,
+							text: "Reject Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Accept,
+							text: "Accept Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton6',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton7',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						})
+					]
+				});
+				
+				oButton.placeAt('uiArea');
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+				
+				setTimeout(function(){
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton1')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+
+					ok(jQuery.sap.byId('oButton6').is(":focus"), 'The 6th button should be focused');
+					
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton6')[0], jQuery.sap.KeyCodes.PAGE_DOWN);
+					
+					ok(jQuery.sap.byId('oButton7').is(":focus"), 'The 7th button should be focused');
+					
+					start();
+					oActionSheet.close();
+					
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500)
+			});
+			
+			asyncTest('PageUp keyboard handling', function(){
+				expect(2);
+				var oButton = new sap.m.Button({
+					text : "Open ActionSheet",
+					press : function() {
+						oActionSheet.openBy(this);
+					}
+				});
+				
+				var oActionSheet = new sap.m.ActionSheet({
+					showCancelButton: true,
+					buttons: [
+						new sap.m.Button({
+							id: 'oButton1',
+							type: sap.m.ButtonType.Reject,
+							text: "Reject Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton2',
+							type: sap.m.ButtonType.Accept,
+							text: "Accept Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton6',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						}),
+						new sap.m.Button({
+							id: 'oButton7',
+							type: sap.m.ButtonType.Default,
+							text: "Default Action"
+						})
+					]
+				});
+				
+				oButton.placeAt('uiArea');
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+				
+				setTimeout(function(){
+					jQuery.sap.byId('oButton7').focus();
+					
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton7')[0], jQuery.sap.KeyCodes.PAGE_UP);
+
+					ok(jQuery.sap.byId('oButton2').is(":focus"), 'The 2nd button should be focused');
+					
+					sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
+					sap.ui.test.qunit.triggerKeyup(jQuery.sap.byId('oButton2')[0], jQuery.sap.KeyCodes.PAGE_UP);
+
+					ok(jQuery.sap.byId('oButton1').is(":focus"), 'The first button should be focused');
+					start();
+					oActionSheet.close();
+					
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500)
+		
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="contentHolder"></div>
+		<h1 id="qunit-header">qUnit Page for sap.m.ActionSheet</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea"></div>
+		<div id="content"></div>
+
+	</body>
+</html>

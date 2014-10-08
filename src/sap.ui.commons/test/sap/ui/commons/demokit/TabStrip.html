@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.TabStrip,sap.ui.commons.Tab">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Tab Tabstrip" />
+		<title>TabStrip - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='TabStripSimple'>
+// Create a TabStrip instance
+var oTabStrip1 = new sap.ui.commons.TabStrip("TabStrip1");
+oTabStrip1.setWidth("400px");
+oTabStrip1.setHeight("200px");
+oTabStrip1.attachClose( function (oEvent) {
+	var oTabStrip = oEvent.oSource;
+	oTabStrip.closeTab(oEvent.getParameter("index"));
+});
+
+// 1. tab: general data (use createTab)
+var oLayout1 = new sap.ui.commons.layout.MatrixLayout("Matrix1", {columns: 2, width: "100%"});
+oLayout1.setWidths(['150px']);
+
+var oTF = new sap.ui.commons.TextField("TextField-Name", {tooltip: 'Name', editable: false, value: 'Mustermann', width: '200px'});
+var oLabel = new sap.ui.commons.Label("Label-Name", {text: 'Name', labelFor: oTF});
+oLayout1.createRow(oLabel, oTF);
+oTF = new sap.ui.commons.TextField("TextField-FirstName", {tooltip: 'First name', editable: false, value: 'Max', width: '200px'});
+oLabel = new sap.ui.commons.Label("Label-FirstName", {text: 'First name', labelFor: oTF});
+oLayout1.createRow(oLabel, oTF);
+var oDP = new sap.ui.commons.DatePicker("DatePicker-Birth", {tooltip: 'Date of Birth', editable: false, yyyymmdd: 19800808});
+oLabel = new sap.ui.commons.Label("Label-Birth", {text: 'Date of Birth', labelFor: oDP});
+oLayout1.createRow(oLabel, oDP);
+var oRBG = new sap.ui.commons.RadioButtonGroup("RadioGroup-Gender",{tooltip: 'Gender', columns: 2, editable: false, items:[
+	new sap.ui.core.Item("RB-Male",{text: 'Male', tooltip: 'Gender: male', key: 'male' }),
+	new sap.ui.core.Item("RB-Female",{text: 'Female', tooltip: 'Gender: female',key: 'female' }) ]});
+oLabel = new sap.ui.commons.Label("Label-Gender", {text: 'Gender', labelFor: oRBG});
+oLayout1.createRow(oLabel, oRBG);
+
+oTabStrip1.createTab("General Data",oLayout1);
+
+// 2. tab: address data (use separate tab element)
+oTab2 = new sap.ui.commons.Tab("tab2");
+oTab2.setTooltip("address data");
+oTab2.setTitle(new sap.ui.core.Title("Title2",{text:"Address",icon:"images/address.gif"}));
+
+var oLayout2 = new sap.ui.commons.layout.MatrixLayout("Matrix2", {columns: 2, width: "100%"});
+oLayout2.setWidths(['150px']);
+
+var oTF1 = new sap.ui.commons.TextField("TextField-Street", {tooltip: 'Street', editable: false, value: 'Hauptstraße', width: '150px'});
+var oTF2 = new sap.ui.commons.TextField("TextField-Number", {tooltip: 'Housenumber', editable: false, value: '10', width: '50px'});
+oLabel = new sap.ui.commons.Label("Label-Street", {text: 'Street, Housenumber', labelFor: oTF1});
+oCell = new sap.ui.commons.layout.MatrixLayoutCell({content: [oTF1, oTF2]});
+oLayout2.createRow(oLabel, oCell);
+oTF = new sap.ui.commons.TextField("TextField-City", {tooltip: 'City', editable: false, value: 'Musterstadt', width: '200px'});
+oLabel = new sap.ui.commons.Label("Label-City", {text: 'City', labelFor: oTF});
+oLayout2.createRow(oLabel, oTF);
+oTF = new sap.ui.commons.TextField("TextField-Country", {tooltip: 'Country', editable: false, value: 'Deutschland', width: '200px'});
+oLabel = new sap.ui.commons.Label("Label-Country", {text: 'Country', labelFor: oTF});
+oLayout2.createRow(oLabel, oTF);
+
+oTab2.addContent(oLayout2);
+oTabStrip1.addTab(oTab2);
+
+// 3. tab: long text
+oTA = new sap.ui.commons.TextArea("TA-Text", {tooltip: 'Remarks', editable: false, wrapping: sap.ui.core.Wrapping.Off,
+	value: 'Max Mustermann is a very nice guy. He is very well known.\nEverybody loves him.\nYou would be lucky to meet him.',
+	width: '100%', height: '100%' });
+
+oTab3 = new sap.ui.commons.Tab("tab3", {title: new sap.ui.core.Title("Title3",{text:"Long Text"}), closable: true, content: [oTA]});
+oTabStrip1.addTab(oTab3);
+
+// 4. secret tab (inactive)
+oTab4 = new sap.ui.commons.Tab("tab4", {title: new sap.ui.core.Title("Title4",{text:"Top Secret"}), enabled: false});
+oTabStrip1.addTab(oTab4);
+
+// Attach the TabStrip to the page
+oTabStrip1.placeAt("sample1");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Green" icon="images/ctrls/tabstrip-icon.png">TabStrip</h1>
+
+	<h2>Introduction</h2>
+	<p>The TabStrip control is a container for one or more tabs in one place. 
+	Navigation through the tabs changes the content display of the currently active content area.
+	A tab can be labeled with some text and an icon.
+	</p>
+
+	<h2>Example</h2>
+	<div code-sample="sample1" script="TabStripSimple"></div>
+	<p>
+	This example shows the usage of the TabStrip. The first tab is assigned to the TabStrip control using the <code>createTab</code> method. The other tabs are assigned as tab elements using the <code>addTab</code> method.
+	<br>
+	If an other Tab is clicked and its enabled it will be selected and the <code>select</code> event is fired. A tab can be selected from outside using the <code>selectedIndex</code> property.
+	<br>
+	If a tab is closable and the close icon is clicked the <code>close</code> event is triggered. To close the tab the <code>closeTab</code> method can be called in event handler.
+	</p>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TabStrip.html">API documentation</a>
+	</p>
+</body>
+</html>

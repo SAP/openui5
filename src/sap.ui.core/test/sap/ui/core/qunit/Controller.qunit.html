@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.mvc.Controller
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script>
+		module("getComponent");
+
+		test("Should not overwrite getComponent function", function() {
+			// System under Test
+			sap.ui.controller("getComponentController", {
+				getComponent : function () {
+					return "foo";
+				}
+			});
+
+			var oController = sap.ui.controller("getComponentController");
+
+			// Act
+			var oResult = oController.getOwnerComponent();
+
+			// Assert
+			strictEqual(oResult, "foo", "");
+		});
+
+		test("Should return undefined as component of a controller without view", function() {
+			// System under Test
+			sap.ui.controller("someController", {});
+			var oController = sap.ui.controller("someController");
+
+			// Act
+			var oResult = oController.getOwnerComponent();
+
+			// Assert
+			strictEqual(oResult, undefined);
+		});
+
+		test("Should get undefined as component of a controller with a view without component", function() {
+			//Arrange
+			sap.ui.jsview("myView", {
+				createContent : function() {
+					return null;
+				},
+				getController : function() {
+					return sap.ui.controller("someController");
+				}
+			});
+			var oView = sap.ui.jsview("foo", "myView");
+
+			// System under Test
+			sap.ui.controller("someController", {});
+			var oController = oView.getController();
+			oController.connectToView(oView);
+
+			// Act
+			var oResult = oController.getOwnerComponent();
+
+			// Assert
+			strictEqual(oResult, undefined);
+
+			//Cleanup
+			oView.destroy();
+		});
+
+		test("Should get the component of a controller", function() {
+			//Arrange
+			var oComponent = new sap.ui.core.Component("foo");
+
+			var oView = sap.ui.base.ManagedObject.runWithOwner(function() {
+						sap.ui.jsview("myView", {
+							createContent : function() {
+								return null;
+							},
+							getController : function() {
+								return sap.ui.controller("someController");
+							}
+						});
+
+						return sap.ui.jsview("bar", "myView");
+			}, oComponent);
+
+			// System under Test
+			sap.ui.controller("someController", {});
+
+			// Act
+			var oController = oView.getController();
+			oController.connectToView(oView);
+			var oResult = oController.getOwnerComponent();
+
+			// Assert
+			strictEqual(oResult, oComponent);
+
+			//Cleanup
+			oView.destroy();
+		});
+	</script>
+	</head>
+	<body><h1 id="qunit-header">QUnit tests: sap.ui.core.mvc.Controller</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

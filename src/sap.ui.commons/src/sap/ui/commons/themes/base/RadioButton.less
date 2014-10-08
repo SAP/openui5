@@ -1,0 +1,38 @@
+.sapUiRb {
+	vertical-align: top;
+	line-height: @sapUiLineHeight;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* If control is used on black/dark background */
+.sapUiInverted-CTX .sapUiRb {
+	color: @sapUiTextInverted;
+}
+
+/* Do not invert for table */
+.sapUiInverted-CTX .sapUiTable .sapUiRb {
+	color: @sapUiBaseText;
+}
+
+.sapUiRb > label {
+	vertical-align: top;
+	height: @sapUiLineHeight;
+}
+
+.sapUiRb:hover > label {
+	position: static;  /* IE11 bug: even though "static" is the default, we need to make SOME change to make background-position work */
+}
+
+/* disabled */
+.sapUiRbDis > label {
+	color: @sapUiContentDisabledTextColor;
+}
+
+/* IE10/IE11 bug: it does not show the outline when clicking to focus */
+html[data-sap-ui-browser=ie10] .sapUiRb:focus,
+html[data-sap-ui-browser=ie11] .sapUiRb:focus {
+	outline: 1px dotted @sapUiText;
+}

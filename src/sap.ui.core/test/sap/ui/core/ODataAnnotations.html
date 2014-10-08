@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>OData Annotations - sap.ui.core</title>
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal",
+	data-sap-ui-libs='sap.ui.commons,sap.ui.table'>
+</script>
+
+
+<script>
+
+
+
+var sURI = "http://services.odata.org/Northwind/Northwind.svc/";
+sURI = "../../../../proxy/http/" + sURI.replace("http://","");
+var sAnnotationURI = "http://vecocomst.dhcp.wdf.sap.corp:1080/coco/annotations/NorthWind.xml"
+	sAnnotationURI  = "../../../../proxy/http/" + sAnnotationURI.replace("http://","");
+var mModelOptions = {
+	annotationURI : sAnnotationURI,
+	loadAnnotationsJoined : false,
+	loadMetadataAsync : true,
+	json : true
+};
+jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
+// create OData model from URL
+var oModel = new sap.ui.model.odata.ODataModel(sURI, mModelOptions);
+
+oModel.attachMetadataLoaded(function() { alert("Metadata loaded!"); });
+oModel.attachAnnotationsLoaded(function() { alert("Annotations loaded!"); });
+
+var oTable = new sap.ui.table.Table({ 
+	columns : [{
+		label : "CompanyName",
+		template : "CompanyName",
+		sortProperty : "CompanyName"
+	}, {
+		label : "Address",
+		template : "Address",
+		sortProperty : "Address"
+	}, {
+		label : "City",
+		template : "City",
+		sortProperty : "City"
+	}, {
+		label : "Country",
+		template : "Country",
+		sortProperty : "Country"
+	}]
+});
+
+oTable.setModel(oModel);
+
+oTable.bindRows({
+	path : "/Suppliers",
+});
+oTable.placeAt("content");
+
+</script>
+
+</head>
+<body class='sapUiBody'>
+	<div id='content'></div>
+</body>
+</html>

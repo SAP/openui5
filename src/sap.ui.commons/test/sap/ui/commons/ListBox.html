@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>ListBox - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.ListBox.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+		var oCore = sap.ui.getCore(); 
+
+		jQuery(function(){
+
+			// two empty ones first
+			var oListBox = new sap.ui.commons.ListBox("lb0");
+			oListBox.setWidth("10px");
+			oListBox.setVisibleItems(2);
+			var oListBox2 = new sap.ui.commons.ListBox("lb00");
+			oListBox2.setWidth("10px");
+			oListBox2.setVisibleItems(2);
+			var oLayout = new sap.ui.commons.layout.MatrixLayout({width:"30px"});
+			oLayout.createRow(oListBox, oListBox2);
+			oLayout.placeAt("target0");
+
+			// a readonly ListBox
+	    var oLabel = new sap.ui.commons.Label({ text: "readonly: "}).placeAt("target1");
+			oListBox = new sap.ui.commons.ListBox("lb1");
+			oListBox.setEditable(false);
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Hello"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Second Item"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Disabled Item",enabled:false}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Another Item"}));
+			oListBox.setSelectedIndex(1);
+			oListBox.placeAt("target1");
+			oLabel.setLabelFor(oListBox);
+
+
+			// a disabled ListBox
+			oListBox = new sap.ui.commons.ListBox("lb1b");
+			oListBox.setEnabled(false);
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Hello"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Second Item"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Disabled Item",enabled:false}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Another Item"}));
+			oListBox.setSelectedIndex(1);
+			oListBox.placeAt("target1b");
+
+
+			// a larger ListBox
+			oListBox = new sap.ui.commons.ListBox("lb2");
+			for (var i = 1; i < 15; i++) {
+				oItem = new sap.ui.core.ListItem();
+				oItem.setText("Hallo" + i);
+				if (i == 6 || i == 10) {
+					oListBox.addItem(new sap.ui.core.SeparatorItem());
+				}
+				oListBox.addItem(oItem);
+			}
+			oListBox.setAllowMultiSelect(true);
+			oListBox.setWidth("100px");
+			oListBox.setHeight("200px");
+			oListBox.setScrollTop(30);
+			oListBox.placeAt("target2");
+
+
+			// a ListBox with strange behavior
+			oListBox = new sap.ui.commons.ListBox("lb2b");
+			oListBox.setTooltip("on selection of item it disappears!");
+			for (var i = 1; i < 15; i++) {
+				oItem = new sap.ui.core.ListItem();
+				oItem.setText("select to remove " + i);
+				oListBox.addItem(oItem);
+			}
+			oListBox.setSelectedIndex(2);
+			oListBox.setWidth("130px");
+			oListBox.setHeight("200px");
+			oListBox.scrollToIndex(1);
+			oListBox.placeAt("target2b");
+			oListBox.attachSelect(function(oEvent) {
+				oEvent.getSource().removeItem(oEvent.getParameter("selectedIndex"));
+			});
+
+
+			//
+			oListBox = new sap.ui.commons.ListBox("lb3");
+			oListBox.setDisplaySecondaryValues(true);
+			for (var i = 1; i < 15; i++) {
+				oItem = new sap.ui.core.ListItem();
+				oItem.setText("Hallo" + i);
+				oItem.setAdditionalText("h" + i);
+				oListBox.addItem(oItem);
+			}
+			oListBox.setSelectedIndex(2);
+			oListBox.setAllowMultiSelect(true);
+			oListBox.setWidth("100px");
+			oListBox.setVisibleItems(5);
+			oListBox.placeAt("target3");
+
+
+			// empty one
+			oListBox = new sap.ui.commons.ListBox("lb4");
+			oListBox.setWidth("100px");
+			oListBox.setVisibleItems(5);
+			oListBox.placeAt("target4");
+
+
+			// setVisibleItems(4)
+			oListBox = new sap.ui.commons.ListBox("lb5");
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Hello"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Second Item"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Disabled Item",enabled:false}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Another Item"}));
+			oListBox.setSelectedIndex(1);
+			oListBox.setVisibleItems(4);
+			oListBox.placeAt("target5");
+
+
+			// a ListBox with icons
+			oListBox = new sap.ui.commons.ListBox("lb6", {displayIcons:true,width:"150px"});
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Personalize", icon:"images/personalize.gif"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Close", icon:"images/close.gif"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Menu", icon:"images/menu.gif"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"New", icon:"images/new.png"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Open", icon:"images/open.png"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Save", icon:"sap-icon://save"}));
+			oListBox.addItem(new sap.ui.core.SeparatorItem());
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Cut", icon:"images/cut.png"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Copy", icon:"images/copy.png"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Paste", icon:"images/paste2.png"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"Help", icon:"images/help.gif"}));
+			oListBox.addItem(new sap.ui.core.ListItem({text:"RSS", icon:"images/rss-14x14.gif"}));
+			//oListBox.addItem(new sap.ui.core.ListItem({text:"SAPUI5", icon:"images/ui5_small.png"}));
+			oListBox.setVisibleItems(8);
+			oListBox.placeAt("target6");
+
+
+
+
+			var iCnt = 0;
+			oListBox = new sap.ui.commons.ListBox("lb7");
+			oListBox.setWidth("250px");
+			oListBox.setAllowMultiSelect(false);
+			oListBox.setVisibleItems(5);
+			var oTxtFld = new sap.ui.commons.TextField("txtFld", {
+				tooltip: "change this value and press enter to add a new item to following listBox.",
+				change: function(oControlEvent) {
+					var oLB = sap.ui.getCore().getControl("lb7");
+					oLB.addItem(new sap.ui.core.ListItem("lb7_item" + iCnt++, {text:oControlEvent.getParameter("newValue")}));
+				} 
+			});
+			oTxtFld.placeAt("target7");
+			oListBox.placeAt("target8");
+
+		});
+		</script>
+
+		<style>
+			body > div {
+				display: inline-block;
+			}
+		</style>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.ListBox</h1>
+
+		<div id="target0"></div>
+		<!-- readonly:--> 
+		<div id="target1"></div> 
+		<label for="lb1b-list">disabled:</label> 
+		<div id="target1b"></div> 
+		<label for="lb2-list">unselected:</label>  
+		<div id="target2"></div>
+		<button onclick="javascript:sap.ui.getCore().getElementById('lb2').setSelectedIndex(6);">select item 'Hallo6'</button>
+		<div id="target2b"></div>
+		<br>
+		<label for="lb3-list">Height: 5 items:</label> 
+		<div id="target3"></div>
+		<label for="lb4-list">Height: 5 items (but no items there to measure):</label> 
+		<div id="target4"></div>
+		<label for="lb5-list">ListBox:</label> 
+		<div id="target5"></div>
+		<label for="lb6-list">ListBox with icons:</label>  
+		<div id="target6"></div>
+
+		<br/> <p> <br/>
+		<div id="target7"></div>&nbsp;
+		<div id="target8"></div>
+
+	</body>
+</html>

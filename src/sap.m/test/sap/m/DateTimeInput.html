@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.DateTimeInput</title>
+
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script>
+	var nNow = new Date().getTime(),
+		oModel = new sap.ui.model.json.JSONModel();
+
+	oModel.setData({
+		// same value with different object
+		dateVal1 : new Date(nNow),
+		dateVal2 : new Date(nNow),
+		dateVal3 : new Date(nNow),
+		dateVal4 : new Date(nNow),
+		dateVal5 : new Date(nNow)
+	});
+	sap.ui.getCore().setModel(oModel);
+
+	var page = new sap.m.Page({
+		title : "DateTimeInput Controls",
+		enableScrolling : true,
+		content : [
+			list = new sap.m.List({
+				inset : false,
+				width : "100%",
+				items : [
+					new sap.m.InputListItem({
+						label : "Christmas",
+						content : dti0 = new sap.m.DateTimeInput({
+							placeholder : "Date Picker",
+							change : function(e) {
+								var oDate = e.getParameters().newDateValue;
+								if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
+									dti0.setValueState("None");
+								} else {
+									dti0.setValueState("Error");
+								}
+							}
+						})
+					}), new sap.m.InputListItem({
+						label : "Duration",
+						content : dti1 = new sap.m.DateTimeInput({
+							placeholder : "Time Picker",
+							type : "Time",
+							valueFormat : "HH:mm",
+							value : "11:23",
+							displayFormat : "H'h' m'm'",
+							change : function(e) {
+								page.setTitle(e.getParameters().newValue);
+							}
+						})
+					}), new sap.m.InputListItem({
+						label : "DateTime",
+						content : dti2 = new sap.m.DateTimeInput({
+							placeholder : "DateTime",
+							type : "DateTime",
+							change : function(e) {
+								page.setTitle(e.getParameters().newValue);
+							}
+						})
+					})
+				]
+			}),
+
+			// free style date value assingment according to valueFormat
+			dti3 = new sap.m.DateTimeInput({
+				value : "05-29, 2012",
+				valueFormat : "dd-MM, yyyy",
+				displayFormat : "dd MMMM, yyyy",
+				width : "20%",
+				change : function(e) {
+					console.log(dti3 + " : " + e.getParameters().newValue + " # " + e.getParameters().newDateValue);
+				}
+			}),
+
+			// formats which includes zones "Z" can be used for local date time
+			dti4 = new sap.m.DateTimeInput({
+				width : "99%",
+				type : "DateTime",
+				displayFormat : new sap.ui.model.type.DateTime({style: "long"}).getOutputPattern(),
+				dateValue : new Date(2012, 4, 29, 19, 14, 0),
+				valueState : "Warning",
+				change : function() {
+					console.log(dti4.toString(), dti4.getDateValue(), dti4.getValue());
+				}
+			}),
+
+			// data binding usage
+			dti5 = new sap.m.DateTimeInput({
+				value : {
+					path : "/dateVal1",
+					type : new sap.ui.model.type.Date()
+				}
+			}),
+			di6 = new sap.m.DateTimeInput({
+				value : {
+					path : "/dateVal2",
+					type : new sap.ui.model.type.Date({pattern : "E dd, MMMM yyyy"})
+				},
+				change : function(e) {
+					console.log(di6 + " : " + e.getParameters().newValue + " # " + e.getParameters().newDateValue);
+				}
+			}),
+			dti7 = new sap.m.DateTimeInput({
+				value : {
+					path : "/dateVal3",
+					type : new sap.ui.model.type.Date({style : "short"})
+				}
+			}),
+			dti8 = new sap.m.DateTimeInput({
+				type : "Time",
+				editable : false,
+				value : {
+					path : "/dateVal4",
+					type : new sap.ui.model.type.Time({style : "medium"})
+				}
+			}),
+			dti9 = new sap.m.DateTimeInput({
+				type : "DateTime",
+				enabled : false,
+				value : {
+					path : "/dateVal5",
+					type : new sap.ui.model.type.DateTime({style : "medium"})
+				}
+			})
+		]
+	});
+
+	new sap.m.App().addPage(page).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

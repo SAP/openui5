@@ -1,0 +1,718 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<title>Object Header - sap.m</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	function addToPage(oOH){
+		page.addContent(oOH);
+		page.addContent(new sap.ui.core.HTML({
+			content : "<div style='width:100%;height:2px;background-color:blue'/>"
+		}));
+	}
+
+	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
+
+	var attrs = [ new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Contract #D1234567890"
+	}), new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+	}), new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Created at: April 9, 2013"
+	}) ];
+	var attrs2 = [ new sap.m.ObjectAttribute({
+		text : "Contract #D1234567890 Ñagçyfox",
+		active : true,
+		press : function() {
+
+			attrs2[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectAttribute({
+		text : "Created by: John Doe Ñagçyfox",
+		active : true,
+		press : function() {
+
+			attrs2[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}) ];
+
+	var oh1 = new sap.m.ObjectHeader(
+			"oh1", {
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				number : "3.624,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Success,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+	
+	var oh1Icon = new sap.m.ObjectHeader("oh1-with-icon",{
+				icon : sap.ui.core.IconPool.getIconURI("attachment"),
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				number : "3.624,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Success,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				}) ]
+			});
+	
+	var oh1IconNoNumber = new sap.m.ObjectHeader(
+			"oh1-with-icon-no-number",	{
+				icon : sap.ui.core.IconPool.getIconURI("attachment"),
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				})]
+			});
+
+	var oh2 = new sap.m.ObjectHeader(
+			"oh2",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+
+				statuses : [ new sap.m.ObjectStatus({
+					text : ""
+				}), new sap.m.ObjectStatus({}) ],
+				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ]
+			});
+
+	var oh3 = new sap.m.ObjectHeader(
+			"oh3",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "3.624.000.000,00",
+				numberUnit : "Euro",
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Ñgçy Positive Text Ñgçy",
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+
+	var oh3_1 = new sap.m.ObjectHeader(
+			"oh3_1",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "6,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Error,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+
+	var oh3_2 = new sap.m.ObjectHeader(
+			"oh3_2",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "3.624",
+				numberUnit : "EUR",
+				numberState : sap.ui.core.ValueState.Warning,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Ñgçy Positive Text Ñgçy",
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ],
+				attributes : [ new sap.m.ObjectAttribute({
+					text : "This one is invisible",
+					visible : false
+				}),
+				    new sap.m.ObjectAttribute({
+					text : "Ñagçyfox Contract #D1234567890"
+				}) ],
+				markFavorite : true
+			});
+
+	var oh4PressHandler = function(oEvent) {
+
+		if (oh4.getIcon()) {
+			oh4.setIcon(null);
+		} else {
+			oh4.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
+		}
+	}
+
+	var oh4 = new sap.m.ObjectHeader("oh4", {
+		intro : "On behalf of John Smith Ñagçyfox",
+		title : "Title is Active Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		titleActive : true,
+		titlePress : oh4PressHandler,
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.None,
+		attributes : attrs,
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Ñgçy Positive Text Ñgçy",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy",
+			state : sap.ui.core.ValueState.Error
+		}) ],
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconActive : true,
+		iconPress : oh4PressHandler
+	});
+
+	var oh5 = new sap.m.ObjectHeader(
+			"oh5",
+			{
+				intro : "On behalf of John Smith",
+				introActive : true,
+				introPress : function() {
+
+					oh5
+							.setTitle("Intro pressed. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
+				},
+				title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				titleActive : true,
+				titlePress : function() {
+
+					oh5
+							.setTitle("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.");
+				},
+				number : "999.999.999.999.999.999,00",
+				numberUnit : "EUR",
+				attributes : attrs2,
+				markFlagged : true,
+				showMarkers : true
+			});
+
+	var oh6 = new sap.m.ObjectHeader("oh6", {
+		icon : sap.ui.core.IconPool.getIconURI("attachment")
+	});
+
+	var oh7PressHandler = function(oEvent) {
+
+		jQuery.sap.log.debug(oEvent.getParameter("domRef") && oEvent.getParameter("domRef").id);
+		if (oh7.getIcon() === sap.ui.core.IconPool.getIconURI("attachment")) {
+			oh7.setIcon("images/SAPUI5Icon.png");
+		} else {
+			oh7.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
+		}
+	}
+
+	var oh7 = new sap.m.ObjectHeader("oh7", {
+		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+		titleActive : true,
+		titlePress : oh7PressHandler,
+		number : "3,00",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconActive : true,
+		iconPress : oh7PressHandler,
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh8 = new sap.m.ObjectHeader("oh8", {
+		number : "3,00",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		markFavorite : true,
+		showMarkers : true
+	});
+
+	var oh9 = new sap.m.ObjectHeader("oh9", {
+		title : "First Status and First Attribute",
+		number : "3,00",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		statuses : [ new sap.m.ObjectStatus({
+			text : "First Status",
+		}) ],
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "First Attribute"
+		}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ],
+		markFavorite : true,
+		showMarkers : true
+	});
+
+	var oh10 = new sap.m.ObjectHeader("oh10", {
+		title : "Progress Indicator with First Status and First Attribute",
+		number : "3,00",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Testing progress indicators",
+			state : sap.ui.core.ValueState.Success
+		}),
+		new sap.m.ProgressIndicator("oh10-pi", {
+			visible : true,
+			enabled : true,
+			barColor : sap.ui.core.BarColor.NEUTRAL,
+			displayValue : '80%',
+			percentValue : 80,
+			showValue : true,
+			width : '100%',
+			height : '1.375rem'
+		}),
+		new sap.m.ObjectStatus({
+			text : "The next Progress Indicator is 80% width",
+			state : sap.ui.core.ValueState.Success
+		}),
+		new sap.m.ProgressIndicator("oh10-pi2", {
+			visible : true,
+			enabled : true,
+			barColor : sap.ui.core.BarColor.NEUTRAL,
+			displayValue : '80%',
+			percentValue : 80,
+			showValue : true,
+			width : '80%'
+		})],
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Progress Indicator below"
+		}), new sap.m.ObjectAttribute({
+			text : "Status text"
+		}), new sap.m.ObjectAttribute({
+			text : "Progress Indicator 1"
+		}), new sap.m.ObjectAttribute({
+			text : "Status text"
+		}), new sap.m.ObjectAttribute({
+			text : "Progress Indicator 2 with 80% witdh"
+		})],
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh11 = new sap.m.ObjectHeader({
+		title : "Object that is flagged and favorite",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh12 = new sap.m.ObjectHeader({
+		title : "Object that is favorite",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Success,
+		markFavorite : true,
+		showMarkers : true
+	});
+
+	var oh13 = new sap.m.ObjectHeader({
+		title : "Object that is flagged",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh14 = new sap.m.ObjectHeader({
+		title : "Object that is flagged with attribute",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Attribute number 1"
+		}), new sap.m.ObjectAttribute({
+			text : "Attribute number 2"
+		}) ],
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh15 = new sap.m.ObjectHeader({
+		title : "Object for testing flag and favorite changes",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	//test popover title
+	var domRef = null;
+	var oh16EventHandler = function(oEvent) {
+		domRef = oEvent.getParameters().domRef;
+		var popover = new sap.m.Popover({
+			   placement: sap.m.PlacementType.Bottom,
+			   showHeader: true,
+			   content: new sap.m.List({
+					 mode: "SingleSelectMaster",
+					 includeItemInSelection : true,
+					 select : function (evt) {
+							header.setTitle(evt.getParameter("listItem").getTitle());
+							popover.close();
+					 },
+					 items: [
+							new sap.m.StandardListItem({
+								  title : "Lorem ipsum dolor",
+								  selected : true
+							}),
+							new sap.m.StandardListItem({
+								  title : "Lorem ipsum",
+							}),
+							new sap.m.StandardListItem({
+								  title : "Lorem ipsum dolor sit amet et sineat",
+							}),
+							new sap.m.StandardListItem({
+								  title : "Lorem ipsum",
+							}),
+							new sap.m.ActionListItem({
+								  text : "Lorem ipsum",
+							}),
+							new sap.m.ActionListItem({
+								  text : "Lorem ipsum",
+							})
+					 ] //end of item
+			   }) // end of content
+		}); //end of popover
+		popover.openBy(domRef);
+	}
+
+	var oh16 = new sap.m.ObjectHeader({
+		title : "Object Header for testing title arrow icon",
+		showTitleSelector : true,
+		titleSelectorPress : oh16EventHandler,
+		number : "1.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true,
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconActive : true,
+		iconPress : oh7PressHandler
+	});
+
+	var oh15StatusesId = "oh15Statuses";
+	var oh17 = new sap.m.ObjectHeader(oh15StatusesId, {
+		title : "Object Header with 15 Statuses",
+		showTitleSelector : true,
+		titleSelectorPress : oh16EventHandler,
+		number : "100.00",
+		numberUnit : "EUR",
+		attributes : [ new sap.m.ObjectAttribute(oh15StatusesId + "-attr1", {
+			text : "Attribute # 1"
+		}) ],
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Status # 1",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 2",
+			state : sap.ui.core.ValueState.None
+		}), new sap.m.ObjectStatus({
+			text : "Status # 3",
+			state : sap.ui.core.ValueState.Error
+		}), new sap.m.ObjectStatus({
+			text : "Status # 4",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 5",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 6",
+			state : sap.ui.core.ValueState.Error
+		}), new sap.m.ObjectStatus({
+			text : "Status # 7",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 8",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 9",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 10",
+			state : sap.ui.core.ValueState.Warning
+		}), new sap.m.ObjectStatus({
+			text : "Status # 11",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 12",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 13",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 14",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Status # 15",
+			state : sap.ui.core.ValueState.None
+		}) ],
+		markFavorite : true,
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var oh18 = new sap.m.ObjectHeader("oh18", {
+		title : "Progress Indicator with Flag",
+		number : "3,00",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.Error,
+		showTitleSelector : true,
+		titleSelectorPress : oh16EventHandler,
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Order Shipping slow"
+		}), new sap.m.ProgressIndicator("oh18-pi", {
+			visible : true,
+			enabled : true,
+			barColor : sap.ui.core.BarColor.NEUTRAL,
+			displayValue : '56%',
+			percentValue : 56,
+			showValue : true,
+			height : '22px', //1.375rem
+		}), new sap.m.ObjectStatus({
+			text : "Productivity High"
+		}), new sap.m.ProgressIndicator("oh18-pi2", {
+			visible : true,
+			enabled : true,
+			barColor : sap.ui.core.BarColor.NEUTRAL,
+			displayValue : '90%',
+			percentValue : 90,
+			showValue : true,
+			height : '22px', //1.375rem
+		}), new sap.m.ObjectStatus({
+			text : "Quality Good"
+		}) ],
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Order Shipping Flag"
+		}), new sap.m.ObjectAttribute({
+			text : "Order Shipping Speed"
+		}), new sap.m.ObjectAttribute({
+			text : "Order Shipping Progress Indicator"
+		}), new sap.m.ObjectAttribute({
+			text : "Productivity"
+		}), new sap.m.ObjectAttribute({
+			text : "Productivity Progress Indicator"
+		}), ],
+		markFlagged : true,
+		showMarkers : true
+	});
+
+	var ohCondensedId1 = "ohc1";
+
+	var ohCondensed1 = new sap.m.ObjectHeader(ohCondensedId1, {
+		title : "Ñagçyfox Condensed Object header with attribute, Ñagçyfox number and number unit",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
+		}), new sap.m.ObjectAttribute({
+			text : "This attribute should be invisible"
+		}) ],
+	});
+
+	var ohCondensedId2 = "ohc2";
+
+	var ohCondensed2 = new sap.m.ObjectHeader(ohCondensedId2, {
+		title : "Ñagçyfox Condensed Object header Arrow Icon with attribute, Ñagçyfox number and number unit",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true,
+		showTitleSelector : true,
+		titleSelectorPress : oh16EventHandler,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
+		}), new sap.m.ObjectAttribute({
+			text : "This attribute should be invisible"
+		}) ],
+	});
+
+	var ohCondensedId3 = "ohc3";
+
+	var ohCondensed3 = new sap.m.ObjectHeader(ohCondensedId3, {
+		title : "Condensed Object header Ñagçyfox Arrow Icon without anything else Ñagçyfox",
+		condensed : true,
+		showTitleSelector : true,
+		titleSelectorPress : oh16EventHandler
+	});
+
+	var ohCondensedId4 = "ohc4";
+
+	var ohCondensed4 = new sap.m.ObjectHeader(ohCondensedId4, {
+		title : "Ñagçyfox Condensed Object header with attribute",
+		condensed : true,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
+		})],
+	});
+
+	var ohCondensedId5 = "ohc5";
+
+	var ohCondensed5 = new sap.m.ObjectHeader(ohCondensedId5, {
+		title : "Ñagçyfox Condensed Object header with number and number unit",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true
+	});
+	
+	var ohCondensedId6 = "ohc6";
+	var ohCondensed6 = new sap.m.ObjectHeader(ohCondensedId6, {
+		title : "Ñagçyfox Condensed Object header with attribute, Ñagçyfox number and number unit. The number is long to demonstrate overflow",
+		number : "3.628.000.000.000",
+		numberUnit : "EUR",
+		condensed : true,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox overflow testing."
+		})],
+	});
+	
+	var ohCondensedId7 = "ohc7";
+	var ohCondensed7 = new sap.m.ObjectHeader(ohCondensedId7, {
+		title : "Ñagçyfox short title",
+		number : "3.628.000.000.000",
+		numberUnit : "EUR",
+		condensed : true,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox long attribute description for property display testing."
+		})],
+	});
+	
+	var ohCondensedId8 = "ohc8";
+
+	var ohCondensed8 = new sap.m.ObjectHeader(ohCondensedId8, {
+		title : "Ñagçyfox Condensed Object header with solid background",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		condensed : true,
+		backgroundDesign: sap.m.BackgroundDesign.Solid,
+		attributes : [ new sap.m.ObjectAttribute({
+			text : "Ñagçyfox This is the only attribute in the object header Ñagçyfox"
+		})],
+	});
+	
+	var ohCondensedId9 = "ohc9";
+	
+	var ohCondensed9 = new sap.m.ObjectHeader(ohCondensedId9, {
+		title : "InLayoutNotworkingfineWithSapceInName verrrrrrrryyyyyyyyyyylongggggggggggname",
+        showTitleSelector : true,
+        condensed : true,
+		titleSelectorPress : oh16EventHandler
+	});
+	
+	
+	var objectHeaderLayout = new sap.m.VBox({
+		width : "200px"
+	}
+                                            );
+  	objectHeaderLayout.addItem(ohCondensed9);
+	
+	// put all the testing object header objects on the testing page
+	var app = new sap.m.App();
+	var page = new sap.m.Page({
+		showHeader : false,
+		enableScrolling : true
+	});
+
+	oh1.addStyleClass(marginStyle);
+	oh2.addStyleClass(marginStyle);
+	oh3.addStyleClass(marginStyle);
+	oh3_1.addStyleClass(marginStyle);
+	oh3_2.addStyleClass(marginStyle);
+	oh4.addStyleClass(marginStyle);
+	oh5.addStyleClass(marginStyle);
+	oh6.addStyleClass(marginStyle);
+
+	app.setInitialPage(page.getId());
+	app.addPage(page);
+	page.addContent(new sap.ui.core.HTML({
+		content : "<div style='width:100%;height:2px;background-color:blue'/>"
+	}));
+	addToPage(oh1);
+	addToPage(oh1Icon);
+	addToPage(oh1IconNoNumber);
+	addToPage(oh2);
+	addToPage(oh3);
+	addToPage(oh3_1);
+	addToPage(oh3_2);
+	addToPage(oh4);
+	addToPage(oh5);
+	addToPage(oh6);
+	addToPage(oh7);
+	addToPage(oh8);
+	addToPage(oh9);
+	addToPage(oh10);
+	addToPage(oh11);
+	addToPage(oh12);
+	addToPage(oh13);
+	addToPage(oh14);
+
+	page.addContent(oh15);
+
+	page.addContent(new sap.m.CheckBox({
+		text : "Show Markers",
+		selected : oh15.getShowMarkers(),
+		select : function() {
+
+			oh15.setShowMarkers(this.getSelected());
+		}
+	}));
+
+	page.addContent(new sap.m.Button({
+		id : "flag-button",
+		text : "Flag",
+		press : function() {
+
+			oh15.setMarkFlagged(!oh15.getMarkFlagged());
+		}
+	}));
+	page.addContent(new sap.m.Button({
+		id : "favorite-button",
+		text : "Favorite",
+		press : function() {
+
+			oh15.setMarkFavorite(!oh15.getMarkFavorite());
+		}
+	}));
+	page.addContent(new sap.ui.core.HTML({
+		content : "<div style='width:100%;height:2px;background-color:blue'/>"
+	}));
+	
+	addToPage(oh16);
+	addToPage(oh17);
+	addToPage(oh18);
+	addToPage(ohCondensed2);
+	addToPage(ohCondensed1);
+	addToPage(ohCondensed3);
+	addToPage(objectHeaderLayout);
+	addToPage(ohCondensed4);
+	addToPage(ohCondensed5);
+	addToPage(ohCondensed6);
+	addToPage(ohCondensed7);
+	addToPage(ohCondensed8);
+	
+	
+	app.placeAt('body');
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Others" data-sap-ui-dk-controls="sap.ui.commons.RichTooltip">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>RichTooltip - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id="sample1-script">
+
+/*
+ * Helper function that decorates a given control with a RichTooltip showing a quick help text 
+ */
+function quickhelp(oControl, sText, bCustomize) {
+	// create the RichTooltip control 
+	var oRichTooltip = new sap.ui.commons.RichTooltip({
+		text : sText,
+		title: "Quick Help",
+		imageSrc : "images/Tip.gif"
+	});
+	//Change position and durations if required 
+	if (bCustomize) {
+		oRichTooltip.setMyPosition("begin top");
+		oRichTooltip.setAtPosition("end top");
+		oRichTooltip.setOpenDuration(300);
+		oRichTooltip.setCloseDuration(300);
+	}
+	// add it to the control
+	oControl.setTooltip(oRichTooltip);
+	// return the control itself (makes this function a decorator function)
+	return oControl;
+};
+
+// create a sample form with two fields, using the quickhelp() from above
+var oLayout = new sap.ui.commons.layout.MatrixLayout({layoutFixed:false});
+oLayout.createRow(
+	new sap.ui.commons.Label({text : "First name:", labelFor:"firstname"}),
+	quickhelp(new sap.ui.commons.TextField({id:"firstname", required:true, value:"John"}),
+			"Enter the first name of the contact. As this is a mandatory information, you can not leave the field empty.")
+);
+oLayout.createRow(
+	new sap.ui.commons.Label({text : "Last name:", labelFor:"lastname"}),
+	quickhelp(new sap.ui.commons.TextField({id:"lastname", required:true, value:"Doe"}),
+			"Enter the last name of the contact. As this is a mandatory information, you can not leave the field empty.", true)
+);
+
+// display it
+oLayout.placeAt("sample1");
+</script>
+
+<script id="sample2-script">
+
+// Note: this code re-uses the quickhelp() function from the first example
+
+// create a sample form with two fields, using the quickhelp() from above
+var oLayout = new sap.ui.commons.layout.MatrixLayout({layoutFixed:false});
+oLayout.createRow(
+	new sap.ui.commons.Label({text : "First name:", labelFor:"firstname2"}),
+	quickhelp(new sap.ui.commons.TextField({id:"firstname2", required:true, value:"John"}), "Enter the first name of the contact. As this a mandatory information, you can not leave the field empty.")
+);
+oLayout.createRow(
+	new sap.ui.commons.Label({text : "Last name:", labelFor:"lastname2"}),
+	quickhelp(new sap.ui.commons.TextField({id:"lastname2", required:true, value:"Doe"}), "Enter the last name of the contact. As this a mandatory information, you can not leave the field empty.")
+);
+
+// add a third field to the form that doesn't have its own tooltip
+oLayout.createRow(
+	new sap.ui.commons.Label({text : "Street:", labelFor:"street2"}),
+	new sap.ui.commons.TextField({id:"street2", required:true, value:"Yordan Crossing"})
+);
+
+// wrap the form with a panel that has a tooltip
+var oPanel = new sap.ui.commons.Panel({
+	content : [oLayout],
+	title : new sap.ui.core.Title({text:"Contact Information"}),
+	tooltip : "Enter contact information (first and last name), then press save"
+});
+
+// render the whole panel
+oPanel.placeAt("sample2");
+</script>
+
+<script type="text/javascript" id="sample3-script">
+	var oTextField = new sap.ui.commons.TextField({
+		valueState : sap.ui.core.ValueState.Error
+	}).placeAt("sample3");
+	
+	var sHtml = "The rating specifies the trustworthiness of the account. You can choose between the following values:<br>";
+	sHtml += "<ul>";
+	sHtml += "<li><strong>A:</strong> Highly trustworthy</li>";
+	sHtml += "<li><strong>B:</strong> In generel trustworthy but some weak moments</li>";
+	sHtml += "<li><strong>C:</strong> Ambiguous trustworthiness</li>";
+	sHtml += "<li><strong>D:</strong> Trustworthiness beneath contempt</li>";
+	sHtml += "</ul>";
+	
+	var oRttTextField = new sap.ui.commons.RichTooltip({
+		text : sHtml
+	});
+	
+	oTextField.setTooltip(oRttTextField);
+</script>
+
+<script type="text/javascript" id="sample4-script">
+	var oTextField2 = new sap.ui.commons.TextField({
+		valueState : sap.ui.core.ValueState.Error
+	}).placeAt("sample4");
+	
+	var sHtml = "The rating specifies the trustworthiness of the account. You can choose between the following values:<br>";
+	sHtml += "<ul>";
+	sHtml += "<li><strong>A:</strong> Highly trustworthy</li>";
+	sHtml += "<li><strong>B:</strong> In generel trustworthy but some weak moments</li>";
+	sHtml += "<li><strong>C:</strong> Ambiguous trustworthiness</li>";
+	sHtml += "<li><strong>D:</strong> Trustworthiness beneath contempt</li>";
+	sHtml += "</ul>";
+	
+	var sValueState = "There is an error. <strong>Do the needful</strong>";
+	
+	var oRttTextField = new sap.ui.commons.RichTooltip({
+		text : sHtml,
+		valueStateText : sValueState
+	});
+	
+	oTextField2.setTooltip(oRttTextField);
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+	<h1 color="Pink" icon="images/ctrls/richtooltip-icon.png">RichTooltip</h1>
+
+	<h2>Introduction</h2>
+    <p>Most SAPUI5 controls allow to set a simple tooltip text. The text is usually rendered as title attribute of one of the DOM elements rendered for the control. It is then up to the user agent when and how the tooltip is displayed. The tooltip design is provided by the RichToolTip control.
+	The RichTooltip can have a text, a title displayed above the tooltip text with a more emphasized font (depending on the theme, for example bold and larger); and it can have an icon next to the text.
+	</p>
+	<p>For further details see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RichTooltip.html" >API documentation</a></p>
+
+	<p><strong>Since version 1.11.1</strong> it is possible set an individual ValueState-text to the RichTooltip. Additionally a corresponding image depending on the ValueState is shown next to the ValueState-text.<br /> 
+    Additionally using HTML text for the RichTooltip is possible. Instead of a simple text, the text can contain all valid HTML-tags of the 
+    <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.FormattedTextView">FormattedTextView</a>. Please see API-documentation accordingly.</p> 
+    
+    <p><strong>ADVICE:</strong> Since the Tooltip itself (which the RichTooltip inherits from) has a default offset, it's recommended to set the offset individually
+    for a RichToolip. Otherwise the RichTooltip would be positioned slightly above the opening element</p>
+
+    <h2>Basic Example</h2>
+
+    <p>A RichTooltip is created like any other control by calling its constructor and providing the necessary settings, either as object literal in the constructor, or by calling the set methods. It is attached to a control in the same way a simple tooltip text is, using the <code>setTooltip()</code> method of the control  
+    (see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Element.html#setTooltip">API Documentation</a>).  
+    <code>setTooltip()</code> can either be called with a simple text string, or via a control inheriting from TooltipBase, for example RichTooltip. 
+    </p>
+    <p>The following sample attaches a RichTooltip to each of the two input fields:</p>
+
+    <div code-sample="sample1" script="sample1-script"></div>
+
+    <p>The position and duration for opening and closing the tooltip on the second input field are customized. The corresponding control properties are related to
+	<code>sap.ui.core.Popup</code> (see <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.html#setPosition">sap.ui.core.Popup#setPosition</a>
+	and <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.Popup.html#setDurations">sap.ui.core.Popup#setDurations</a> for further information).</p> 
+
+    <h2>Coexistence With Simple Tooltips ('title')</h2>
+    <span style="font-size:90%;font-style:italic;">(Note: In the following text, the terms 'title attribute' 
+    and 'tooltip' are used interchangeably)</span><br>
+
+    <br>
+    <br>
+    When the user hovers over some HTML element and if that HTML element does not have an own title attribute, browsers are checking all parent elements for a title. If they find any, they will display them as tooltip, even for the original element without title.
+
+	The benefit is that this reduces the places where titles have to be set to be shown up as tooltips. If a RichTooltip exists but no title, then the browser will execute the above logic. This might result in two tooltips, the RichTooltip as well as any title set on a parent element.
+
+	To avoid this, the framework removes all parent title attributes in the case that a RichTooltip is displayed. 
+	As soon as the RichTooltip is hidden again, the title attributes are restored.
+
+	There is an example available that demonstrates this feature.
+	The form has been enhanced with a third text field 'street' that does not have a tooltip. The form is wrapped by a Panel 
+	that defines a master tooltip. Whenever you hover over the street field, or over any part of the Panel that does not have 
+	its own tooltip, the browser will display the Panel tooltip. When you hover over the first or last name field, 
+	only the RichTooltip will be shown.
+	<br><br>
+    <div code-sample="sample2" script="sample2-script"></div>
+    
+    <h2>Example with a ValueState: error and a FormattedTextView as text</h2>
+    <p>This example shows how to create a RichTooltip that reacts on the ValueState of the TextField. Additionally the text of the RichTooltip is not a
+    common text - it's a sample FormattedTextView.</p>
+    <div code-sample="sample3" script="sample3-script"></div>
+    
+    <h2>ValueState: warning plus an individual message</h2>
+    <p>This example show how to set an individual ValueState message. The rest of the RichTooltip isn't affected at all.</p>
+    <div code-sample="sample4" script="sample4-script"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RichTooltip.html" >API documentation</a>
+	</p>
+	</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.m</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+  
+  <documentation>SAPUI5 library with controls specialized for mobile devices.</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+  </dependencies>
+
+  <appData>
+    <!-- package name for selenium -->
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.mobile" />
+    <!-- excludes for the JSDoc -->
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+        <exclude name="sap.m.js." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+        <exclude name="sap.m.js." />
+    </jscoverage>
+    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+        indexUrl="../../../test-resources/sap/m/demokit/docuindex.json"
+        resolve="lib" />
+  </appData>
+
+</library>

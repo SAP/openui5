@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.P13nColumnsPanel</title>
+<script id="sap-ui-bootstrap" 
+	data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" 
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" 
+	src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript">
+(function() {
+	jQuery.sap.require("sap.m.P13nColumnsPanel");
+	
+	var oP13nColumnsPanel = null;
+	
+	module("Properties", {
+		setup: function() {
+			oP13nColumnsPanel = new sap.m.P13nColumnsPanel(); 
+		},
+		teardown: function() {
+			oP13nColumnsPanel.destroy();
+			oP13nColumnsPanel = null;
+		}
+	});
+
+	test("Shall be instantiable to check conrol existence", function() {
+		ok(oP13nColumnsPanel, "Could not instantiate P13nColumnsPanel");
+	});
+	
+	
+	test("Shall check _ItemMoveToStart", function() {
+		ok(oP13nColumnsPanel._ItemMoveToStart, "Method does not exist");
+		
+		var getItemIndexByItemKeySpy = sinon.stub();
+		var moveItemSpy = sinon.stub();
+		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._moveItem = moveItemSpy;
+		
+		//CUT -> check that the method is not executed as this._oSelectedItem is empty
+		oP13nColumnsPanel._oSelectedItem = null;
+		oP13nColumnsPanel._ItemMoveToStart();
+
+		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		
+		//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
+		getItemIndexByItemKeySpy.returns(0);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveToStart();
+
+		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
+		
+		//CUT -> check that the method _is executed with old and new Indexes
+		getItemIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveToStart();
+
+		strictEqual(moveItemSpy.calledWith(5,0), true, "Item move was done with wrong parameter");		
+	});
+	
+	test("Shall check _ItemMoveUp", function() {
+		ok(oP13nColumnsPanel._ItemMoveUp, "Method does not exist");
+		
+		var getItemIndexByItemKeySpy = sinon.stub();
+		var moveItemSpy = sinon.stub();
+		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._moveItem = moveItemSpy;
+		
+		//CUT -> check that the method is not executed as this._oSelectedItem is empty
+		oP13nColumnsPanel._oSelectedItem = null;
+		oP13nColumnsPanel._ItemMoveUp();
+
+		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		
+		//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
+		getItemIndexByItemKeySpy.returns(0);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveUp();
+
+		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
+		
+		//CUT -> check that the method _is executed with old and new Indexes
+		getItemIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveUp();
+
+		strictEqual(moveItemSpy.calledWith(5,4), true, "Item move was done with wrong parameter");		
+	});
+	
+	test("Shall check _ItemMoveDown", function() {
+		ok(oP13nColumnsPanel._ItemMoveDown, "Method does not exist");
+		
+		var getItemIndexByItemKeySpy = sinon.stub();
+		var moveItemSpy = sinon.stub();
+		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._moveItem = moveItemSpy;
+		
+		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
+		
+		//CUT -> check that the method is not executed as this._oSelectedItem is empty
+		oP13nColumnsPanel._oSelectedItem = null;
+		oP13nColumnsPanel._ItemMoveDown();
+
+		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		
+		//CUT -> check that the method is executed, BUT item will not be moved as maximum boundary is reached
+		getItemIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveDown();
+
+		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
+		
+		//CUT -> check that the method _is executed with old and new Indexes
+		getItemIndexByItemKeySpy.returns(4);
+		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		oP13nColumnsPanel._ItemMoveDown();
+
+		strictEqual(moveItemSpy.calledWith(4,5), true, "Item move was done with wrong parameter");
+	});
+	
+}());
+
+</script>
+
+
+</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.P13nColumnsPanel</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+				
+		<div id="content"></div>
+	</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Carousel">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+<title>Carousel - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.demokit">
+</script>
+<script src="../../../../../js/utils.js"></script>
+
+<script id='CarouselHorizontal'>
+	//Create the Carousel control
+	var oCarousel = new sap.ui.commons.Carousel();
+	oCarousel.setWidth("100%");
+	oCarousel.setOrientation("horizontal");
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG1", {
+		src : "images/carousel/img1.jpg",
+		alt : "sample image",
+		width : "200px",
+		height : "150px"
+	}));
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG2", {
+		src : "images/carousel/img2.jpg",
+		alt : "sample image",
+		width : "100%",
+		height : "100%"
+	}));
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG3", {
+		src : "images/carousel/img3.jpg",
+		alt : "sample image",
+		width : "100%",
+		height : "100%"
+	}));
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG4", {
+		src : "images/carousel/img4.jpg",
+		alt : "sample image",
+		width : "100%",
+		height : "100%"
+	}));
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG5", {
+		src : "images/carousel/img5.jpg",
+		alt : "sample image",
+		width : "100%",
+		height : "100%"
+	}));
+
+	oCarousel.addContent(new sap.ui.commons.Image("IMG6", {
+		src : "images/carousel/img6.jpg",
+		alt : "sample image",
+		width : "100%",
+		height : "100%"
+	}));
+
+	oCarousel.placeAt("sample1");
+</script>
+
+<script id='CarouselVertical'>
+	var oCarousel2 = new sap.ui.commons.Carousel();
+	oCarousel2.setOrientation("vertical");
+	oCarousel2.setVisibleItems(1);
+	oCarousel2.setHeight("250px");
+
+	//Create a panel instance
+	var oPanel = new sap.ui.commons.Panel({
+		width : "350px"
+	});
+
+	//Set the title of the panel
+	oPanel.setTitle(new sap.ui.core.Title({
+		text : "Contact Data",
+		icon : "images/carousel/SAPLogo.gif"
+	}));
+	//As alternative if no icon is desired also the following shortcut might be possible:
+	//oPanel.setText("Contact Data");
+
+	//Create a matrix layout with 2 columns
+	var oMatrix = new sap.ui.commons.layout.MatrixLayout({
+		layoutFixed : true,
+		width : '300px',
+		columns : 2
+	});
+	oMatrix.setWidths('100px', '200px');
+
+	//Create a simple form within the layout
+	var oLabel = new sap.ui.commons.Label({
+		text : 'Name'
+	});
+	var oInput = new sap.ui.commons.TextField({
+		value : 'Mustermann',
+		width : '100%'
+	});
+	oLabel.setLabelFor(oInput);
+	oMatrix.createRow(oLabel, oInput);
+
+	oLabel = new sap.ui.commons.Label({
+		text : 'First Name'
+	});
+	oInput = new sap.ui.commons.TextField({
+		value : 'Max',
+		width : '100%'
+	});
+	oLabel.setLabelFor(oInput);
+	oMatrix.createRow(oLabel, oInput);
+
+	//Add the form to the panels content area
+	oPanel.addContent(oMatrix);
+
+	//Add some buttons to the panel header
+	oPanel.addButton(new sap.ui.commons.Button({
+		text : 'Save'
+	}));
+	oPanel.addButton(new sap.ui.commons.Button({
+		text : 'Cancel'
+	}));
+
+	oCarousel2.addContent(oPanel);
+
+	//Create a panel instance
+	var oPanel2 = new sap.ui.commons.Panel();
+	//Add something to the panel's content area
+	oPanel2.addContent(new sap.ui.commons.TextView({
+		text : "Here comes the content ..."
+	}));
+
+	oCarousel2.addContent(oPanel2);
+
+	oCarousel2.placeAt("sample2");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Blue" icon="images/ctrls/carousel-icon.png">Carousel</h1>
+
+	<h2>Introduction</h2>
+
+	<p>The Carousel is a control that can contain N UI5 controls. The
+		visible sections can be specified. Navigation is done though the arrow
+		buttons or with the keyboard. The Carousel can be displayed either
+		vertical or horizontal.</p>
+
+	<p>
+		Following the list of available keyboard shortcuts:
+		<code>Arrow up</code>
+		or
+		<code>Arrow left</code>
+		: Scroll carousel to the left.
+		<code>Arrow down</code>
+		or
+		<code>Arrow right</code>
+		: Scroll carousel to the right.
+	</p>
+
+	<h2>Examples</h2>
+	
+	<h3>Horizontal carousel with images</h3>
+	<br />
+
+	<div code-sample="sample1" script="CarouselHorizontal"></div>
+
+	<br />
+	<h3>Vertical carousel with different controls and visible items limited to one item</h3>
+	<br />
+
+	<div code-sample="sample2" script="CarouselVertical"></div>
+
+	<br />
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Carousel.html">API documentation</a>
+	</p>
+</body>
+</html>

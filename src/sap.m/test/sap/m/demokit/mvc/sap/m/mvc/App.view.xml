@@ -1,0 +1,9 @@
+<mvc:View controllerName="sap.m.mvc.App" 
+    xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
+	
+    <App id="theApp">
+        <mvc:XMLView id="homePageView" viewName="sap.m.mvc.HomePage"></mvc:XMLView>
+        <mvc:JSView id="detailPageView" viewName="sap.m.mvc.DetailPage"></mvc:JSView>
+    </App>
+
+</mvc:View>

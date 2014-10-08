@@ -1,0 +1,47 @@
+
+/* ============================================= */
+/* CSS for controlsap.m/SegmentedButton.control */
+/* ============================================= */
+
+.sapMSegB {
+	margin: 0; /*To override the native browser margin*/
+	padding: 0;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+	border: none;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+.sapMSegBBtn {
+	list-style: none;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	-webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+	display: inline-block;
+	text-align: center;
+	cursor: pointer;
+}
+
+.sapMSegBBtn:focus {
+	outline: none;
+}
+
+.sapMSegBBtn .sapUiIcon:focus {
+	outline: none;
+}
+
+.sapMSegB img{
+	margin: 0;
+	vertical-align: top;
+	pointer-events: none; /*To disable the save image menu on ios*/
+}
+
+.sapMSegB.sapMSegBHide {
+	visibility: hidden;
+}
+
+.sapMSegBBtn.sapMSegBBtnDis{
+	text-shadow:      none;
+	cursor:           default;
+	opacity:          0.5;
+}

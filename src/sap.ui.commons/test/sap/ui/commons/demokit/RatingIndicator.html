@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.RatingIndicator">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control RatingIndicator Stars Rating Voting Slider" />
+		<title>RatingIndicator - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<style>
+			.CustomMargin{
+				margin-left: 5px;
+			}
+		</style>
+
+<script id='RatingIndicatorScript'>
+var aValues = [1,3,6,4,3]; //Existing Rating values
+
+//Helper function to compute the average rating and to update the controls
+function setRatingValue() {
+	var val = 0;
+	for(var idx in aValues){
+		val = val + aValues[idx];
+	}
+	val = Math.round(val * 100 / aValues.length) / 100;
+	oRating.setAverageValue(val);
+	oRating.setValue(sap.ui.commons.RatingIndicator.NoValue);
+	oResultText.setText(" "+val+" ("+aValues.length+" Votings)");
+};
+//Create a RatingIndicator instance with 6 "stars" and visualization mode "Continuous"
+var oRating = new sap.ui.commons.RatingIndicator("myRating", {
+	maxValue: 6,
+	visualMode: sap.ui.commons.RatingIndicatorVisualMode.Continuous
+});
+//Create a text view to display the number of votings
+var oResultText = new sap.ui.commons.TextView("myResult");
+oResultText.addStyleClass("CustomMargin"); //Add some additional left margin
+
+//Compute the average rating and to update the controls
+setRatingValue();
+
+//React on a voting: Update the values and set the RatingIndicator to readonly
+oRating.attachChange(function(){
+	aValues.push(oRating.getValue());
+	// oRating.setEditable(false); // Use this if only one vote is allowed
+	setRatingValue();
+});
+
+//Place the controls on the UI
+oRating.placeAt("sample1");
+oResultText.placeAt("sample1");
+</script>
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Red" icon="images/ctrls/ratingindicator-icon.png">RatingIndicator</h1>
+
+  <h2>Introduction</h2>
+	<p>
+	The RatingIndicator control is used to let the user do some rating on a certain topic. The graphical control displayes some stars, and the more stars
+	are marked by the user via mouse hovering, the higher the rating is. This is the interactive purpose of the control. Alternatively,
+	it can be used to display some rating values to users, as for example known from hotel booking sites where each hotel got a rating,
+	and the RatingIndicator now shows the average of all the ratings made in the past.
+	</p>
+
+	<h2>Example</h2>
+	<p>
+	In the following example, the RatingIndicator control shows the average of already existing ratings.
+	The visualization mode can be switched between full stars, half stars and continuous.
+	The user can also rate, but only once in this example. After the rating, the values are updated, and the control is set to read-only mode.
+	</p>
+	<div code-sample="sample1" script="RatingIndicatorScript"></div>
+	<p>
+	Note that is is also possible to use custom icons. For this, you would store three icons for the states <code>selected</code>, <code>unselected</code>,
+	and <code>hovered</code> via the corresponding control properties.
+	</p>
+
+	<h2>Keyboard Support</h2>
+	<p>
+	In non-read-only mode it is possible to increase and decrease the values via the <code>Arrow left</code> and <code>right</code> keys step by step;
+	and using the keys <code>Pos1</code> and <code>end</code>, you can directly jump to value 1 or max.
+	<code>Escape</code> cancels the modifications. With <code>space</code> or <code>Enter</code>, a modification is stored.
+	</p>
+
+	<h2>ARIA Support</h2>
+	<p>
+	The RatingIndicator control implements the ARIA role <i>slider</i>.
+	</p>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RatingIndicator.html">API documentation</a>
+	</p>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>TileContainer - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+		function handlePress(oEvent) {
+		    alert('tile ' + oEvent.oSource.getTitle() + ' pressed');
+		}
+		function getTiles(n){
+			var tiles = new Array();
+			sap.ui.controller("my.own.controller", {
+				
+				// implement an event handler in the Controller
+				doSomething: function() {
+					alert("Hello World!");
+				}
+			});
+			
+			sap.ui.jsview("my.own.view", {
+				
+				// define the (default) controller type for this View
+				getControllerName: function() {
+					return "my.own.controller";
+				},
+				
+				// defines the UI of this View
+				createContent: function(oController) {
+					// button text is bound to Model, "press" action is bound to Controller's event handler
+					return new sap.m.StandardTile("tile" + i, {
+		                icon : "images/action.png",
+		                number : 1 + i,
+		                numberUnit : "EUR",
+		                title : "Coming from a view " + i,
+		                info : "1 day ago",
+		                press : handlePress,
+		                removable : i % 2 == 1
+		            })
+				}
+			});
+			
+			for (var i=0; i<n; i++){
+				var oTile = new sap.m.CustomTile({
+						content: sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"})
+				});
+				tiles.push(oTile);
+			}
+			return tiles;
+		}
+		
+		var tc = new sap.m.TileContainer("tc",{});
+
+		tc.addTile(new sap.m.StandardTile("tileEdit", {
+            icon : "images/action.png",
+            number : "Switch To Edit Mode",
+            numberUnit : "Unit",
+            title : "Click to add another tile",
+            info : "1 day ago",
+            press : toggleEdit,
+            removable:false
+        }));
+
+		tc.addTile(new sap.m.StandardTile("tileAdd", {
+            icon : "images/action.png",
+            number : "Add",
+            numberUnit : "Unit",
+            title : "Click to add another tile",
+            info : "1 day ago",
+            press : addTile
+        }));
+		var aTiles = getTiles(20);
+		for (var i=0;i<aTiles.length;i++) {
+			if (i<10) {
+				tc.insertTile(aTiles[i],2);
+			} else {
+				tc.addTile(aTiles[i]);
+			}
+		}
+		tc.addTile(new sap.m.StandardTile("tileAdd2", {
+            icon : "images/action.png",
+            number : "Add",
+            numberUnit : "Unit",
+            title : "Click to add another tile",
+            info : "1 day ago",
+            press : addTile
+        }));
+		var editable = false;
+		function toggleEdit() {
+			var oTile = sap.ui.getCore().byId("tileEdit");
+			oTile.setNumber("Turn off Edit Mode");
+			editable=!editable;
+			tc.setEditable(editable);
+		}
+		
+		var iAdded = 0;
+        function addTile() {
+        	tc.getTiles()[tc.getTiles().length-1].setNumber("Changed");
+    		
+        	iAdded++;
+       		tc.addTile(new sap.m.StandardTile("tileAdded" + iAdded, {
+   			    icon : "images/action.png",
+   	            info : "Added "+iAdded,
+   	            infoUnit : "Unit",
+   	            title : "Click to add another tile",
+   	            description : "1 day ago",
+   	            press : addTile
+   	        }));
+        	         	
+		};
+        var app = new sap.m.App();
+		var page = new sap.m.Page({setShowHeader: true});
+		app.setInitialPage(page.getId());
+		page.setEnableScrolling(false);
+		page.setShowHeader(false);
+		app.addPage(page);
+		page.addContent(tc);
+		app.placeAt('body');
+		
+		tc.attachTileDelete(function(oEvent) {
+			tc.deleteTile(oEvent.getParameter("tile"));
+		});
+		tc.attachTileMove(
+				function (oEvent) {
+					var busyDialog = new sap.m.BusyDialog({
+							showCancelButton : false,
+							close : function() {
+							}
+						}
+						);
+					busyDialog.setTitle("Tile Moved"),
+					busyDialog.open();
+					
+					// close busy dialog after 1 sec
+						setTimeout(function () {busyDialog.close()}, 500);
+					}
+				);
+		
+
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

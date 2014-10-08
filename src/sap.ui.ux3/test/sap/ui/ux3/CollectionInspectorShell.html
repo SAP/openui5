@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>CollectionInspector - sap.ui.ux3</title>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+<script>
+	var oShell = new sap.ui.ux3.Shell(
+			"myShell",
+			{
+				appTitle : "SAPUI5 Gold Reflection Shell with CollectionInspector",
+				paneWidth : 300
+			});
+
+	var WI = sap.ui.ux3.NavigationItem;
+	oShell.addWorksetItem(new WI("wi_home", {key:"wi_home",text:"Home",subItems:[
+		new WI("wi_home_overview", {key:"wi_home_overview",text:"Overview"}),
+		new WI("wi_home_inbox", {key:"wi_home_inbox",text:"Inbox"}),
+		new WI("wi_home_news", {key:"wi_home_news",text:"News"}),
+		new WI("wi_home_dsbl", {key:"wi_home_dsbl",text:"Disabled"}),
+		new WI("wi_home_option", {key:"wi_home_option",text:"Options"})
+	]}));
+
+	var oCollection1 = new sap.ui.ux3.Collection();
+	oCollection1.setTitle("collection1");
+	oCollection1.addItem(new sap.ui.core.Item({'text':'test1'}));
+	oCollection1.addItem(new sap.ui.core.Item({'text':'test2'}));
+	oCollection1.addItem(new sap.ui.core.Item({'text':'test3'}));
+
+	var oCollection2 = new sap.ui.ux3.Collection();
+	oCollection2.setTitle("collection2");
+	oCollection2.setMultiSelection(true);
+	oCollection2.addItem(new sap.ui.core.Item({'text':'test4'}));
+	oCollection2.addItem(new sap.ui.core.Item({'text':'test5'}));
+	oCollection2.addItem(new sap.ui.core.Item({'text':'test6'}));
+
+	var oCollection3 = new sap.ui.ux3.Collection();
+	oCollection3.setTitle("collection3");
+	oCollection3.addItem(new sap.ui.core.Item({'text':'test7'}));
+	oCollection3.addItem(new sap.ui.core.Item({'text':'test8'}));
+	oCollection3.addItem(new sap.ui.core.Item({'text':'test9'}));
+
+	var oContent1 = new sap.ui.ux3.ThingViewer();
+
+	var oContent2 = new sap.ui.commons.Panel();
+
+	var oCollectionInspector = new sap.ui.ux3.CollectionInspector();
+	oCollectionInspector.addCollection(oCollection1);
+	oCollectionInspector.addCollection(oCollection2);
+	oCollectionInspector.addCollection(oCollection3);
+	oCollectionInspector.setSidebarVisible(true);
+	oCollectionInspector.setFitParent(true);
+	oCollectionInspector.attachCollectionSelected(function(oEvent) {
+		oCollectionInspector.removeAllContent();
+		if (oEvent.getParameters().collection == "__collection0") {
+			oCollectionInspector.addContent(oContent1);
+		} else if (oEvent.getParameters().collection == "__collection1") {
+			oCollectionInspector.addContent(oContent2);
+		}
+	});
+
+	//oShell.setContent(oCollectionInspector);
+	var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
+	oOverlayContainer.addContent(oCollectionInspector);
+	oShell.placeAt("target1");
+
+	var oButton = new sap.ui.commons.Button({'text':'Open CollectionInspector in Overlay'});
+	oButton.attachPress(function() {
+		//oShell.setHeaderType(sap.ui.ux3.ShellHeaderType.BrandOnly);
+		oOverlayContainer.open();
+	});
+	oShell.setContent(oButton);
+</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="target1"></div>
+</body>
+</html>

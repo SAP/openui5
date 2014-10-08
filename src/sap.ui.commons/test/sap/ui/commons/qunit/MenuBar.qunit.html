@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.MenuBar
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>MenuBar - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.MenuBar.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	var createMenuBar = function(iIdSuffix, oProps){
+		if(!oProps) oProps = {};
+		var oMenuBar = new sap.ui.commons.MenuBar("menubar"+iIdSuffix, oProps);
+		for(var i=0; i<6; i++){
+			var sItemId = oMenuBar.getId()+"_item"+(i+1);
+			var oMenuItem = new sap.ui.commons.MenuItem(sItemId,
+				{text: "Item "+(i+1),
+				tooltip: "Item "+(i+1)+" Tooltip",
+				enabled: i!=3,
+				visible: i!=2});
+			oMenuBar.addItem(oMenuItem);
+			var oMenu = new sap.ui.commons.Menu(sItemId+"_menu");
+			oMenu.addItem(new sap.ui.commons.MenuItem(sItemId+"_menuitem", {text: "Item "+(i+1)+"-1"}));
+			oMenuItem.setSubmenu(oMenu);
+		}
+		oMenuBar.placeAt("uiArea"+iIdSuffix);
+		return oMenuBar;
+	}
+
+	var oMenuBar1 = createMenuBar(1); //Menubar with default properties
+	var oMenuBar2 = createMenuBar(2, {design: "Header"}); //Menubar with Header design
+	var oMenuBar3 = createMenuBar(3, {visible: false}); //Invisible Menubar
+	var oMenuBar4 = createMenuBar(4, {enabled: false}); //Disabled Menubar
+	var oMenuBar5 = createMenuBar(5, {width: "150px"}); //Menubar with fixed width (Overflow should happen)
+	var oMenuBar6 = createMenuBar(6, {width: "150px", enabled: false}); //Disabled Menubar with fixed width (Overflow should happen)
+	
+	</script>
+	
+	<!-- Test help functions -->
+	<script language="javascript">
+
+	var checkFocus = function(sId, sText){
+		equals(document.activeElement.id, sId, sText);
+	};
+
+	var triggerKeyBoardAndCheckFocus = function(sMenuBarId, sKey, oItem){
+		qutils.triggerKeyboardEvent(sMenuBarId, sKey);
+		var sItemId = sMenuBarId+"_item"+oItem;
+		var sItemName = "Item "+oItem;
+		if(oItem == "ovrflw"){
+			sItemId = sMenuBarId+"-ovrflw";
+			sItemName = "Overflow";
+		}
+		checkFocus(sItemId, sItemName+" is focused after "+sKey);
+	};
+
+	var checkMenuOpenedAndClosed = function(oMenuBar, oItem, bShouldBeOpen, sAction){
+		var oMenu = oItem == "ovrflw" ? oMenuBar.oOvrFlwMnu : oMenuBar.getItems()[oItem-1].getSubmenu();
+		if(bShouldBeOpen){
+			ok(oMenu.bOpen, "Menu is opened on "+sAction);
+			var sId = oItem == "ovrflw" ? oMenuBar.oOvrFlwMnu.getItems()[1].getId() : oMenuBar.getId()+"_item"+oItem+"_menuitem";
+			qutils.triggerKeyboardEvent(sId, "ESCAPE"); //Close the menu
+			ok(!oMenu.bOpen, "Menu is closed on Escape");
+		}else{
+			ok(!oMenu.bOpen, "Menu is not opened on "+sAction);
+		}
+		
+		
+	};
+
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+	
+	qutils.delayTestStart();
+	
+	module("Properties and Aggregations");
+
+	test("Properties - Default Values", function() {
+		equals(oMenuBar1.getDesign(), "Standard", "Default 'design'");
+		equals(oMenuBar1.getWidth(), "100%", "Default 'width'");
+		equals(oMenuBar1.getEnabled(), true, "Default 'enabled'");
+		equals(oMenuBar1.getVisible(), true, "Default 'visible'");
+	});
+
+	test("Properties - Custom Values", function() {
+		equals(oMenuBar2.getDesign(), "Header", "Custom 'design'");
+		equals(oMenuBar5.getWidth(), "150px", "Custom 'width'");
+		equals(oMenuBar4.getEnabled(), false, "Custom 'enabled'");
+		equals(oMenuBar3.getVisible(), false, "Custom 'visible'");
+	});
+
+	test("Aggregation 'Items'", function() {
+		equals(oMenuBar3.getItems().length, 6, "# Items");
+		oMenuBar3.removeItem(5);
+		equals(oMenuBar3.getItems().length, 5, "# Items after remove");
+		oMenuBar3.insertItem(new sap.ui.commons.MenuItem("newmenuitem"), 1);
+		equals(oMenuBar3.getItems().length, 6, "# Items after insert");
+		equals(oMenuBar3.getItems()[1].getId(), "newmenuitem", "Id of inserted Item");
+		oMenuBar3.destroyItems();
+		equals(oMenuBar3.getItems().length, 0, "# Items after destroy");
+	});
+
+	module("Appearance");
+
+	test("Visibility", function() {
+		equals(jQuery("#menubar1").length, 1, "Visible MenuBar is rendered");
+		equals(jQuery("#menubar3").length, 0, "Hidden MenuBar is not rendered");
+
+		equals(jQuery("#menubar1_item3").length, 0, "Hidden Menu item is not rendered");
+	});
+
+	test("Width", function() {
+		equals(jQuery("#menubar1").outerWidth(), jQuery("#uiArea1").width(), "By default the MenuBar has 100% width");
+		equals(jQuery("#menubar5").outerWidth(), 150, "Fixed MenuBar width");
+	});
+
+	test("Enablement", function() {
+		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarDsbl"), "Enabled MenuBar has no special CSS class");
+		ok(jQuery("#menubar4").hasClass("sapUiMnuBarDsbl"), "Disabled MenuBar has special CSS class");
+		//All items (incl. overflow) are disabled
+		var jItems = jQuery("#menubar6-area").children();
+		jItems.each(function(iIdx){
+			ok(jQuery(this).hasClass("sapUiMnuBarItmDsbl"), "Item "+iIdx+" disabled on disabled MenuBar");
+		});
+
+		ok(jQuery("#menubar1_item4").hasClass("sapUiMnuBarItmDsbl"), "Item 4 disabled on enabled MenuBar");
+	});
+
+	test("Design", function() {
+		ok(!jQuery("#menubar1").hasClass("sapUiMnuBarHeader"), "Standard MenuBar has no special CSS class");
+		jQuery("#menubar1").get(0).focus();
+		qutils.triggerKeyboardEvent("menubar1_item1", "SPACE"); //Open the menu
+		ok(!jQuery("#menubar1_item1_menu").hasClass("sapUiMnuBarHeader"), "Standard Menu has no special CSS class");
+		qutils.triggerKeyboardEvent("menubar1_item1_menuitem", "ESCAPE"); //Close the menu
+
+		ok(jQuery("#menubar2").hasClass("sapUiMnuBarHeader"), "Header MenuBar has special CSS class");
+		jQuery("#menubar2").get(0).focus();
+		qutils.triggerKeyboardEvent("menubar2_item1", "SPACE"); //Open the menu
+		ok(jQuery("#menubar2_item1_menu").hasClass("sapUiMnuTop"), "Header Menu has special CSS class");
+		qutils.triggerKeyboardEvent("menubar2_item1_menuitem", "ESCAPE"); //Close the menu
+	});
+
+	test("Overflow", function() {
+		ok(!jQuery("#menubar1-ovrflw").is(":visible"), "Overflow hidden if enough space");
+		ok(jQuery("#menubar5-ovrflw").is(":visible"), "Overflow visible if not enough space");
+		equals(oMenuBar5.oOvrFlwMnu.getItems().length, 4, "# Items in overflow menu");
+	});
+
+	module("Interaction - Mouse");
+
+	test("Click on item", function() {
+		qutils.triggerEvent("click", "menubar1_item5", {});
+		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "click");
+	});
+
+	test("Click on disabled item", function() {
+		qutils.triggerEvent("click", "menubar1_item4", {});
+		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "click");
+	});
+
+	test("Click on overflow", function() {
+		qutils.triggerEvent("click", "menubar5-ovrflw", {});
+		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "click");
+	});
+
+	test("Click on disabled overflow", function() {
+		qutils.triggerEvent("click", "menubar6-ovrflw", {});
+		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "click");
+	});
+
+	module("Interaction - Keyboard");
+
+	asyncTest("Item navigation", function() {
+		jQuery("#menubar1").get(0).focus();
+		setTimeout(function(){
+			checkFocus("menubar1_item1", "First item is focused when entering the MenuBar");
+			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_RIGHT", 2);
+			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_LEFT", 1);
+			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_RIGHT", 2);
+			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_LEFT", 1);
+			triggerKeyBoardAndCheckFocus("menubar1", "ARROW_LEFT", 1);
+			start();
+		}, 0);
+	});
+
+	asyncTest("Item navigation with overflow", function() {
+		jQuery("#menubar5").get(0).focus();
+		setTimeout(function(){
+			checkFocus("menubar5_item1", "First item is focused when entering the MenuBar");
+			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_RIGHT", 2);
+			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_RIGHT", "ovrflw");
+			triggerKeyBoardAndCheckFocus("menubar5", "ARROW_LEFT", 2);
+			start();
+		}, 0);
+	});
+
+	test("Enter on item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item5", "ENTER");
+		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ENTER");
+	});
+
+	test("Enter on disabled item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item4", "ENTER");
+		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ENTER");
+	});
+
+	test("Enter on overflow", function() {
+		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ENTER");
+		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ENTER");
+	});
+
+	test("Enter on disabled overflow", function() {
+		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ENTER");
+		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ENTER");
+	});
+
+	test("Space on item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item5", "SPACE");
+		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "SPACE");
+	});
+
+	test("Space on disabled item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item4", "SPACE");
+		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "SPACE");
+	});
+
+	test("Space on overflow", function() {
+		qutils.triggerKeyboardEvent("menubar5-ovrflw", "SPACE");
+		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "SPACE");
+	});
+
+	test("Space on disabled overflow", function() {
+		qutils.triggerKeyboardEvent("menubar6-ovrflw", "SPACE");
+		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "SPACE");
+	});
+
+	test("Alt+Down on item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item5", "ARROW_DOWN", false, true, false);
+		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ALT+ARROW_DOWN");
+	});
+
+	test("Alt+Down on disabled item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item4", "ARROW_DOWN", false, true, false);
+		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ALT+ARROW_DOWN");
+	});
+
+	test("Alt+Down on overflow", function() {
+		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ARROW_DOWN", false, true, false);
+		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ALT+ARROW_DOWN");
+	});
+
+	test("Alt+Down on disabled overflow", function() {
+		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ARROW_DOWN", false, true, false);
+		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ALT+ARROW_DOWN");
+	});
+
+	test("Down on item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item5", "ARROW_DOWN");
+		checkMenuOpenedAndClosed(oMenuBar1, 5, true, "ARROW_DOWN");
+	});
+
+	test("Down on disabled item", function() {
+		qutils.triggerKeyboardEvent("menubar1_item4", "ARROW_DOWN");
+		checkMenuOpenedAndClosed(oMenuBar1, 4, false, "ARROW_DOWN");
+	});
+
+	test("Down on overflow", function() {
+		qutils.triggerKeyboardEvent("menubar5-ovrflw", "ARROW_DOWN");
+		checkMenuOpenedAndClosed(oMenuBar5, "ovrflw", true, "ARROW_DOWN");
+	});
+
+	test("Down on disabled overflow", function() {
+		qutils.triggerKeyboardEvent("menubar6-ovrflw", "ARROW_DOWN");
+		checkMenuOpenedAndClosed(oMenuBar6, "ovrflw", false, "ARROW_DOWN");
+	});
+	
+	
+	</script>
+  
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.MenuBar</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
+	<div id="uiArea5"></div>
+	<div id="uiArea6"></div>
+</body>
+</html>

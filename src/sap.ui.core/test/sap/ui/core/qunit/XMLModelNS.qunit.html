@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.xml.XMLModel
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	var testdata = "<teamMembers xmlns=\"http://tempuri.org/x\" xmlns:a=\"http://tempuri.org/a\" xmlns:b=\"http://tempuri.org/b\">" + 
+						"<a:member firstName=\"Andreas\" lastName=\"Klark\"></a:member>" +
+						"<a:member firstName=\"Peter\" lastName=\"Miller\"></a:member>" + 
+						"<a:member firstName=\"Gina\" lastName=\"Rush\"></a:member>" + 
+						"<b:member firstName=\"Steave\" lastName=\"Ander\"></b:member>" + 
+						"<b:member firstName=\"Michael\" lastName=\"Spring\"></b:member>" + 
+						"<b:member firstName=\"Marc\" lastName=\"Green\"></b:member>" + 
+						"<b:member firstName=\"Frank\" lastName=\"Wallace\"></b:member>" +
+						"<test a:value=\"Namespace a\" b:value=\"Namespace b\" />" +
+					"</teamMembers>";
+		
+	test("test model namespace same prefix", function(){
+		var oModel = new sap.ui.model.xml.XMLModel();
+		oModel.setNameSpace("http://tempuri.org/x");
+		oModel.setNameSpace("http://tempuri.org/a", "a");
+		oModel.setNameSpace("http://tempuri.org/b", "b");
+		oModel.setXML(testdata);
+		var value = oModel.getProperty("/a:member/1/@lastName");
+		equal(value, "Miller", "model value");
+		var value = oModel.getProperty("/b:member/1/@lastName");
+		equal(value, "Spring", "model value");
+	});
+
+	test("test model namespace custom prefix", function(){
+		var oModel = new sap.ui.model.xml.XMLModel();
+		oModel.setNameSpace("http://tempuri.org/a");
+		oModel.setNameSpace("http://tempuri.org/x", "x");
+		oModel.setNameSpace("http://tempuri.org/b", "y");
+		oModel.setXML(testdata);
+		var value = oModel.getProperty("/member/1/@lastName");
+		equal(value, "Miller", "model value");
+		var value = oModel.getProperty("/y:member/1/@lastName");
+		equal(value, "Spring", "model value");
+	});
+	
+	test("test model namespace attributes", function(){
+		var oModel = new sap.ui.model.xml.XMLModel();
+		oModel.setNameSpace("http://tempuri.org/x");
+		oModel.setNameSpace("http://tempuri.org/a", "a");
+		oModel.setNameSpace("http://tempuri.org/b", "b");
+		oModel.setXML(testdata);
+		var value = oModel.getProperty("/test/@a:value");
+		equal(value, "Namespace a", "model value");
+		var value = oModel.getProperty("/test/@b:value");
+		equal(value, "Namespace b", "model value");
+	});
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding XML Model with NameSpaces</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

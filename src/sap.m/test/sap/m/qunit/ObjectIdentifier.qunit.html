@@ -1,0 +1,522 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<title>ObjectNumber - sap.m</title>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<!-- QUnit libraries -->
+
+<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript">
+	/***********************************************************************************************************************/
+	module("Control Lifecycle");
+
+	test("Render", function() {
+
+		//SUT
+		var sTitle = "My Title";
+		var sText = "My Text";
+		var sut = new sap.m.ObjectIdentifier({
+			title : sTitle,
+			text : sText,
+			badgeNotes : true,
+			badgePeople : true,
+			badgeAttachments : true,
+			visible : true
+		});
+
+		//Act
+		sut.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+
+		var children = $("#" + sut.getId()).children();
+		equal($(children[0]).text(), sTitle, "Title is rendered.");
+		equal($(children[1]).text(), sText, "Text is rendered.");
+
+		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	test("NotVisible", function() {
+		//SUT
+		var sTitle = "My Title";
+		var sText = "My Text";
+		var sut = new sap.m.ObjectIdentifier("NotVisible");
+		sut.setVisible(false);
+
+		//Act
+		sut.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equals(jQuery("#NotVisible").get(0), undefined, "ObjectIdentifier is not being rendered.");
+
+		//Cleanup
+		sut.destroy();
+
+	});
+
+	test("Destroy", function() {
+
+		//SUT
+		var sTitle = "My Title";
+		var sText = "My Text";
+		var sut = new sap.m.ObjectIdentifier({
+			title : sTitle,
+			text : sText,
+			badgeNotes : true,
+			badgePeople : true,
+			badgeAttachments : true
+		});
+
+		//Act
+		sut.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		ok(jQuery.sap.domById(sut.getId()), "ObjectIdentifier should be rendered.");
+
+		var children = $("#" + sut.getId()).children();
+		equal($(children[0]).text(), sTitle, "Title is rendered.");
+		equal($(children[1]).text(), sText, "Text is rendered.");
+
+		ok(jQuery.sap.domById(sut.getId() + "-attachments-icon"), "Attachments icon is rendered.");
+		ok(jQuery.sap.domById(sut.getId() + "-notes-icon"), "Notes icon is rendered.");
+		ok(jQuery.sap.domById(sut.getId() + "-people-icon"), "People icon is rendered.");
+
+		sut.destroy();
+
+		var sDestroyed = " should be destroyed";
+		ok(!sap.ui.getCore().byId(sut.getId() + "-attachments-icon"), "Attachments icon" + sDestroyed);
+		ok(!sap.ui.getCore().byId(sut.getId() + "-notes-icon"), "Notes icon" + sDestroyed);
+		ok(!sap.ui.getCore().byId(sut.getId() + "-people-icon"), "People icon" + sDestroyed);
+
+		//Cleanup
+		sut.destroy();
+	});
+
+	/***********************************************************************************************************************/
+	module("Internals");
+
+	test("Icon Getters", function() {
+
+		//SUT
+		var sTitle = "My Title";
+		var sText = "My Text";
+		var sut = new sap.m.ObjectIdentifier({
+			title : sTitle,
+			text : sText,
+			badgeNotes : true,
+			badgePeople : true,
+			badgeAttachments : true
+		});
+
+		//Assert
+		equal(sut._getAttachmentsIcon().getSrc(), sap.ui.core.IconPool.getIconURI("attachment"),
+				"Attachments icon is returned.");
+		equal(sut._getNotesIcon().getSrc(), sap.ui.core.IconPool.getIconURI("notes"), "Notes icon is returned.");
+		equal(sut._getPeopleIcon().getSrc(), sap.ui.core.IconPool.getIconURI("group"), "People icon is returned.");
+
+		//Cleanup
+		sut.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the title is changed", function() {
+		// Arrange
+		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
+			oRenderSpy,
+			oResult,
+			oConstructor = { title : "not empty text"};
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setTitle(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
+		strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the new  title is empty", function() {
+		// Arrange
+		var sTextToSet = undefined,
+			oRenderSpy,
+			oResult,
+			oConstructor = { title : "not empty text" };
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setTitle(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+	
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the title is empty initially", function() {
+		// Arrange
+		var sTextToSet = "non empty",
+			oRenderSpy,
+			oResult,
+			oConstructor = { };
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setTitle(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+	
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the text is changed", function() {
+		// Arrange
+		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
+			oRenderSpy,
+			oResult,
+			oConstructor = { text : "not empty text"};
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setText(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+		ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
+		strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the new  text is empty", function() {
+		// Arrange
+		var sTextToSet = undefined,
+			oRenderSpy,
+			oResult,
+			oConstructor = { text : "not empty text" };
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setText(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+	
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should not rerender the ObjectIdentifier if the text is empty initially", function() {
+		// Arrange
+		var sTextToSet = "non empty",
+			oRenderSpy,
+			oResult,
+			oConstructor = { };
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
+
+		// Act
+		oResult = oObjectIdentifier.setText(sTextToSet);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
+		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
+	
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	module("API");
+	
+	test("default values", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier();
+
+		// assertions
+		strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
+
+		// cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("setTitleActive()", function() {
+		
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: 'Test title',
+			titleActive: true
+		});
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		// assertions
+		equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
+		equal(oObjectIdentifier.$('title').hasClass("sapMOITitleActive"), true, "The ObjectIdentifier's title should have class 'sapMOITitleActive'");
+		
+		// cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	module("Keyboard handling");
+	
+	function checkKeyboardEventhandling(sTestName, oOptions) {
+		test(sTestName, function() {
+			// arrange
+			var oObjectIdentifier = new sap.m.ObjectIdentifier({
+				titleActive: true
+			});
+			
+			oObjectIdentifier.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+				// act
+			var fnFireSelectSpy = this.spy(oObjectIdentifier, "fireTitlePress");
+			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title')[0], oOptions.keyCode);
+			this.clock.tick(1);
+
+			// assertions	
+			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
+			
+			// cleanup
+			 oObjectIdentifier.destroy(); 
+			
+		});
+	};
+
+	checkKeyboardEventhandling("Firing ENTER event", {
+		keyCode : jQuery.sap.KeyCodes.ENTER
+	});
+
+	checkKeyboardEventhandling("Firing SPACE event", {
+		keyCode : jQuery.sap.KeyCodes.SPACE
+	}); 
+	
+	module("Event testing");
+	
+	test("ObjectIdentifier titlePress Event", function() {
+		
+		// arrange
+		var oObjectIdentifier1 = new sap.m.ObjectIdentifier({
+			titleActive: true
+		});
+		var oObjectIdentifier2 = new sap.m.ObjectIdentifier();
+		
+		oObjectIdentifier1.placeAt("qunit-fixture");
+		oObjectIdentifier2.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		var fnFireSelectSpy1 = this.spy(oObjectIdentifier1, "fireTitlePress");
+		var fnFireSelectSpy2 = this.spy(oObjectIdentifier2, "fireTitlePress");
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title')[0], jQuery.sap.KeyCodes.ENTER);
+		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title')[0], jQuery.sap.KeyCodes.ENTER);
+		this.clock.tick(1);
+		
+		// assertions	
+		strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
+		strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");			
+
+		// cleanup
+		oObjectIdentifier1.destroy(); 
+		oObjectIdentifier2.destroy(); 
+	});
+	
+	/***********************************************************************************************************************/
+	module("Styles");
+	
+	test("Should add separator class if title added at runtime", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oObjectIdentifier.setTitle("not empty title");
+		sap.ui.getCore().applyChanges();
+		
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should add separator class if text added at runtime", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oObjectIdentifier.setText("not empty text");
+		sap.ui.getCore().applyChanges();
+		
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should remove separator class if title removed at runtime", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
+															  text: "not empty text"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oObjectIdentifier.setTitle("");
+		sap.ui.getCore().applyChanges();
+		
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should remove separator class if text removed at runtime", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
+															  text: "not empty text"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oObjectIdentifier.setText("");
+		sap.ui.getCore().applyChanges();
+		
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should have separator class if both title and text nonempty initially", function() {
+
+		// arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title : "not empty title",
+															  text: "not empty text"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should have no separator class if title is empty initially", function() {
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ text: "not empty text"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+	
+	test("Should have no separator class if text is empty initially", function() {
+
+		// System under Test
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({ title: "not empty title"}).placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have no separator class");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+</script>
+</head>
+
+<body class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.ObjectIdentifier</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	</div>
+	<div id="content"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

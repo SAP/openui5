@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>FlexItemData - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+
+			// Create dialogs
+			var oFlexBox = new sap.m.FlexBox();
+			oFlexBox.addItem(new sap.m.Button({
+				text: "My Button",
+				layoutData: new sap.m.FlexItemData({
+					alignSelf: "End",
+					growFactor: 20
+				})
+			}));
+
+			var page1 = new sap.m.Page("page1", {
+				title:"Mobile FlexItemData Control",
+				content:[
+					oFlexBox
+				]
+			});
+
+			app.addPage(page1).placeAt("content");
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

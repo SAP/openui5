@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html> <!-- Removed this page from Demokit content, as it is rather a sample, that should go into TestSuite content -->
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<meta name="keywords" content="Control Shell" />
+		<title>Shell Example - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.ui.demokit">
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script>
+			var oCode = new sap.ui.demokit.CodeSampleContainer("csc1", {
+					scriptElementId : 'Script1',
+					uiAreaId : 'dummy1',
+					sourceVisible: true,
+					apply : function(e) {
+						// remove old content from UIArea
+						sap.ui.getCore().getUIArea("sample1").setRootControl(null);
+						oShell.removeAllContent();
+						oShell.destroy();
+						eval(e.getParameters()['code']);
+					}
+				});
+
+			var oHTML = new sap.ui.core.HTML("myContent",{
+				content: '<div>'+
+			  '<div id="sample1code" ></div>'+
+
+				'</div>'
+			});
+
+			oHTML.addEventDelegate({
+				onAfterRendering: function(){
+					sap.ui.getCore().byId("csc1").placeAt("sample1code");
+				}
+			});
+
+			oText = new sap.ui.commons.TextView("myText",{
+				text: "In the conten area you can place any SAPUI5 control or a control hierarchy.\n You can use a layout to create complex structures."
+			});
+
+			oButton= new sap.ui.commons.Button("myButton",{
+				text: "Click me!",
+				tooltip: "please click me",
+				press: function(oEvent){alert("Thank you for clicking me!");}
+			});
+
+			oImage=  new sap.ui.commons.Image("myImage",{
+				src: "images/SAPLogo.gif",
+				width: "100%",
+				alt: "Hete should be an image.",
+				tooltip: "This is an image",
+				decorative: false
+			});
+
+			var oAPI = new sap.ui.core.HTML("API",{
+				content: '<div>'+
+				'<iframe src="../../../../../docs/api/symbols/sap.ui.ux3.Shell.html" width="100%" height="400px" name="API">'+
+				'</iframe>'+
+				'</div>'
+			});
+		</script>
+
+<script id='Script1'>
+var oShell = new sap.ui.ux3.Shell("myShell", {
+	appTitle: "SAPUI5 Gold Reflection Shell",
+	appIcon: "images/SAPLogo.gif",
+	appIconTooltip: "SAP logo",
+	showLogoutButton: true,
+	showSearchTool: true,
+	showInspectorTool: true,
+	showFeederTool: true,
+	worksetItems: [new sap.ui.ux3.NavigationItem("WI_home",{key:"wi_home",text:"Home"}),
+	               new sap.ui.ux3.NavigationItem("WI_1",{key:"wi_1",text:"Examples", subItems:[
+	                  new sap.ui.ux3.NavigationItem("WI_1_1",{key:"wi_1_1",text:"Text"}),
+	                  new sap.ui.ux3.NavigationItem("WI_1_2",{key:"wi_1_2",text:"Button"}),
+	                  new sap.ui.ux3.NavigationItem("WI_1_3",{key:"wi_1_3",text:"Image"})]}),
+	               new sap.ui.ux3.NavigationItem("WI_API",{key:"wi_api",text:"API Documentation"})],
+	paneBarItems: [ new sap.ui.core.Item("PI_Date",{key:"pi_date",text:"date"}),
+	                new sap.ui.core.Item("PI_Browser",{key:"pi_browser",text:"browser"})],
+	content: oHTML,
+	toolPopups: [new sap.ui.ux3.ToolPopup("contactTool",{
+								title: "New Contact",
+								tooltip: "Create New Contact",
+								icon: "images/Contact_regular.png",
+								iconHover: "images/Contact_hover.png",
+								content:[new sap.ui.commons.TextView({text:"Here could be a contact sheet."})],
+								buttons: [new sap.ui.commons.Button("cancelContactButton", {text:"Cancel",press:function(oEvent){
+									sap.ui.getCore().byId("contactTool").close();
+								}})]
+							})],
+	headerItems: [new sap.ui.commons.TextView({text:"User Name",tooltip:"U.Name"}),
+	              new sap.ui.commons.Button({text:"Personalize",tooltip:"Personalize",press:function(oEvent){alert("Here could open an personalize dialog");}}),
+								new sap.ui.commons.MenuButton({
+									text: "Help",
+									tooltip: "Help Menu",
+									menu: new sap.ui.commons.Menu("menu1",{items:[
+										new sap.ui.commons.MenuItem("menuitem1",{text:"Help"}),
+										new sap.ui.commons.MenuItem("menuitem2",{text:"Report Incident"}),
+										new sap.ui.commons.MenuItem("menuitem3",{text:"About"})]})
+								})],
+	worksetItemSelected: function(oEvent){
+		var sId = oEvent.getParameter("id");
+		var oShell = oEvent.oSource;
+		switch (sId) {
+		case "WI_home":
+			oShell.setContent(oHTML);
+			break;
+		case "WI_1_1":
+			oShell.setContent(oText);
+			break;
+		case "WI_1_2":
+			oShell.setContent(oButton);
+			break;
+		case "WI_1_3":
+			oShell.setContent(oImage);
+			break;
+		case "WI_API":
+			oShell.setContent(oAPI);
+			break;
+		default:
+			break;
+		}
+	},
+	paneBarItemSelected: function(oEvent){
+		var sKey = oEvent.getParameter("key");
+		var oShell = oEvent.oSource;
+		switch (sKey) {
+		case "pi_date":
+			var oDate = new Date();
+			oShell.setPaneContent(new sap.ui.commons.TextView({text:oDate.toLocaleString()}), true);
+			break;
+		case "pi_browser":
+			oShell.setPaneContent(new sap.ui.commons.TextView({text:"You browser provides the following information:\n"+navigator.userAgent}), true);
+			break;
+		default:
+			break;
+		}
+	},
+	logout:function(){
+		alert("Logout Button has been clicked.\nThe application can now do whatever is required.");
+	},
+ 	search:function(oEvent){
+ 		alert("Search triggered: " + oEvent.getParameter("text"));
+ 	},
+ 	feedSubmit:function(oEvent){
+ 		alert("Feed entry submitted: " + oEvent.getParameter("text"));
+ 	},
+ 	paneClosed : function(oEvent) {
+ 	    alert("Pane has been closed: " + oEvent.getParameter("id"));
+ 	}
+}).placeAt("sample1");
+</script>
+
+</head>
+
+<body class="sapUiBody" role="application">
+	<div id="sample1" ></div>
+</body>
+</html>

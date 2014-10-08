@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>RadioButton - sap.m - qUnit test</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m, sap.ui.core" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
+		jQuery.sap.initMobile();
+		
+		module("Rendering");
+		
+
+		/* --------------------------------------- */
+		/* Test: Default Values                    */
+		/* --------------------------------------- */
+		
+		test("Default Values", function(){
+
+			var bEnabled = true;
+			var bEditable = true;
+			var bVisible = true;
+			var bSelected = false;
+			var nColumns = 1;
+			var sName = "";
+			var sText = "";
+			var sTextDirection = sap.ui.core.TextDirection.Inherit;
+			var sWidth = "";
+			var oValueState = sap.ui.core.ValueState.None;
+			var nSelectedIndex = 0;
+
+			// system under test
+			var oRBGroup = new sap.m.RadioButtonGroup();
+			var oRadioButton = new sap.m.RadioButton("option1");
+			oRadioButton.setText("Option 1");
+			oRadioButton.setTooltip("Tooltip 1");
+			oRBGroup.addButton(oRadioButton);
+			
+			oRadioButton = new sap.m.RadioButton("option2");
+			oRadioButton.setText("Option 2");
+			oRadioButton.setTooltip("Tooltip 2");
+			oRBGroup.addButton(oRadioButton);
+
+			// arrange
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oRBGroup.getColumns(), nColumns, "Property 'columns': Default value should be '" + nColumns + "'");
+			strictEqual(oRBGroup.getVisible(), bVisible, "Property 'visible': Default value should be '" + bVisible + "'");
+			strictEqual(oRBGroup.getEditable(), bEditable, "Property 'editable': Default value should be '" + bEditable + "'");
+			strictEqual(oRBGroup.getValueState(), oValueState, "Property 'valueState': Default value should be '" + oValueState + "'");
+			strictEqual(oRBGroup.getSelectedIndex(), nSelectedIndex, "Property 'selectedIndex': Default value should be '" + nSelectedIndex + "'");
+			strictEqual(oRBGroup.getEnabled(), bEnabled, "Property 'enabled': Default value should be '" + bEnabled + "'");
+
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+		
+		/* ----------------------------------------------- */
+		/* Test: 'visible=false'                           */
+		/* ----------------------------------------------- */
+		
+		test("'visible=false'", function(){
+		
+			// system under test
+			var oRBGroup = new sap.m.RadioButtonGroup({visible: false});
+			var oRadioButton = new sap.m.RadioButton("option1");
+			oRadioButton.setText("Option 1");
+			oRadioButton.setTooltip("Tooltip 1");
+			oRBGroup.addButton(oRadioButton);
+			
+			oRadioButton = new sap.m.RadioButton("option2");
+			oRadioButton.setText("Option 2");
+			oRadioButton.setTooltip("Tooltip 2");
+			oRBGroup.addButton(oRadioButton);
+
+			// arrange
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			ok(!oRBGroup.getDomRef(), "visible=true: RadioButtonGroup should not have been rendered");
+
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+		
+		/* ----------------------------------------------- */
+		/* Test: 'enabled=false'                            */
+		/* ----------------------------------------------- */
+
+		test("'enabled=false'", function(){
+
+			// system under test
+			var bEnabled = false;
+			var oRBGroup = new sap.m.RadioButtonGroup({enabled: bEnabled});
+			var oRadioButton = new sap.m.RadioButton("option1");
+			oRadioButton.setText("Option 1");
+			oRadioButton.setTooltip("Tooltip 1");
+			oRBGroup.addButton(oRadioButton);
+			
+			oRadioButton = new sap.m.RadioButton("option2");
+			oRadioButton.setText("Option 2");
+			oRadioButton.setTooltip("Tooltip 2");
+			oRBGroup.addButton(oRadioButton);
+			
+			var aRadioButtons = oRBGroup.getButtons();
+
+			// arrange
+			oRBGroup.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			for (var i = 0; i < aRadioButtons.length; i++) {
+				bEnabled = bEnabled || aRadioButtons[i].getEnabled();
+			}
+			ok(!oRBGroup.getEnabled(), "enabled=" + bEnabled + ": RadioButtonGroup should be disabled");
+			strictEqual(oRBGroup.$().find(".sapMRbDis").length, oRBGroup.getButtons().length, "Disabled radios count should equal all items count");
+
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+		
+		/* -------------------------------- */
+		/* 	   tests for setSelectedIndex() */
+		/* -------------------------------- */
+
+		test("setSelectedIndex()", function() {
+			
+			var oRBGroup = new sap.m.RadioButtonGroup("RBG");
+			var iSelectedIndex = 1;
+			
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton("option1");
+			oRadioButton1.setText("Option 1");
+			oRadioButton1.setTooltip("Tooltip 1");
+			oRBGroup.addButton(oRadioButton1);
+			
+			var oRadioButton2 = new sap.m.RadioButton("option2");
+			oRadioButton2.setText("Option 2");
+			oRadioButton2.setTooltip("Tooltip 2");
+			oRBGroup.addButton(oRadioButton2);
+			
+			sap.ui.getCore().applyChanges();
+			
+			
+			oRBGroup.placeAt("qunit-fixture");
+			oRBGroup.setSelectedIndex(iSelectedIndex);
+			
+			// assertions
+			equal(oRBGroup.getSelectedIndex(), iSelectedIndex, "The selectedIndex should be " + iSelectedIndex);
+			equal(oRBGroup.getSelectedButton(), oRadioButton2, "The second Radio Button should be selected");
+			
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+		
+		/*	--------------------------------------- 	*/
+		/*			tests for keyboard handling			*/
+		/*	--------------------------------------- 	*/
+		test("'keyboard handling'", function() {
+			//setup RadioButtonGroups
+			var iRadiosCount = 4;
+			var columnsCount = 2
+			var oRBGroup = new sap.m.RadioButtonGroup("RBG1", {
+				columns : columnsCount
+			});
+			
+			for(var i = 0; i < iRadiosCount; i++) {
+				var oRadioButton = new sap.m.RadioButton("option1-" + i);
+				oRadioButton.setText("Option " + i);
+				oRadioButton.setTooltip("Tooltip " + i);
+				oRBGroup.addButton(oRadioButton);
+			}
+			
+			sap.ui.getCore().applyChanges();
+			
+			// Focus first radio
+			oRBGroup.placeAt("qunit-fixture");
+			qutils.triggerMouseEvent("RBG1-0", "click");
+			sap.ui.getCore().applyChanges();
+			
+			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			
+			// Test arrow pressing
+			qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
+			
+			qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			
+			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
+			
+			qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			
+			qutils.triggerKeyboardEvent("RBG1", "END");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			
+			qutils.triggerKeyboardEvent("RBG1", "HOME");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
+			
+			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
+			sap.ui.getCore().applyChanges();
+			equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
+			
+			// cleanup
+			oRBGroup.destroyButtons();
+			oRBGroup.destroy();
+		});
+		</script>
+	</head>
+	<body id="body">
+
+		<h1 id="qunit-header">qUnit Page for sap.m.RadioButton</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

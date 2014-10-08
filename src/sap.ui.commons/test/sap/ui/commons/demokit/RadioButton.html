@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.RadioButton">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="RadioButton" />
+		<title>RadioButton - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+
+<script id='RadioButtons'>
+// create 2 simple RadioButtons
+var oLayout = new sap.ui.commons.layout.MatrixLayout("matrix1");
+	oLayout.setLayoutFixed(false);
+	oLayout.setColumns(2);
+
+var oRB1 = new sap.ui.commons.RadioButton({
+	text : 'yes',
+	tooltip : 'Select for Yes',
+	groupName : 'Group1',
+		select : function() {alert('YES');} 
+	});
+
+var oRB2 = new sap.ui.commons.RadioButton({
+	text : 'no',
+	tooltip : 'Select for No',
+	groupName : 'Group1',
+	selected : true,
+	select : function() {alert('NO');} 
+	});
+
+oLayout.createRow(oRB1, oRB2);
+
+// attach it to some element in the page
+oLayout.placeAt("sample1");
+</script>
+
+<script id='RadioButtonStates'>
+// create RadioButtons in different states
+var oLayout = new sap.ui.commons.layout.MatrixLayout("matrix2");
+	oLayout.setLayoutFixed(false);
+	oLayout.setColumns(4);
+
+var oRB1 = new sap.ui.commons.RadioButton({
+	text : 'error',
+	tooltip : 'Select for Error',
+	groupName : 'Group2',
+	valueState : sap.ui.core.ValueState.Error
+	});
+
+var oRB2 = new sap.ui.commons.RadioButton({
+	text : 'warning',
+	tooltip : 'Select for Warning',
+	groupName : 'Group2',
+	valueState : sap.ui.core.ValueState.Warning
+	});
+
+var oRB3 = new sap.ui.commons.RadioButton({
+	text : 'ReadOnly',
+	tooltip : 'This RadioButton is read only',
+	groupName : 'Group2',
+	editable : false,
+	selected : true
+	});
+
+var oRB4 = new sap.ui.commons.RadioButton({
+	text : 'disabled',
+	tooltip : 'This RadioButton is disabled',
+	groupName : 'Group2',
+	enabled : false
+	});
+
+oLayout.createRow(oRB1, oRB2, oRB3, oRB4);
+
+// attach it to some element in the page
+oLayout.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/radiobutton-icon.png">RadioButton</h1>
+		<h2>Overview</h2>
+		<p>The RadioButton control is used either stand alone or in a RadioButtonGroup (<code>groupName</code> property).
+		The purpose of the control is to provide the user a single choice. When a RadioButton within a group is selected,
+		the one that has previously been selected is automatically deselected.
+		When a RadioButton has been clicked by the user, the <code>select</code> event is fired.
+		In the case of stand alone usages of the RadioButton control, the keyboard navigation needs to be implemented manually.
+		</p>
+
+		<p>
+		See also: RadioButtonGroup, CheckBox
+		</p>
+
+		<h2>Examples</h2>
+
+		<h3>Basic Example</h3>
+		<div code-sample="sample1" script="RadioButtons"></div>
+		<br/>
+		<h3>Radio Buttons With Different States</h3>
+		<p>
+		RadioButtons can have different states controlled by the <code>valueState</code> property. The visualization of these states
+		depends on the used theme. Optionally, the RadioButton control can have a disabled or read-only state; in these cases,
+		the selection state cannot be changed via user interaction.
+		</p>
+		<div code-sample="sample2" script="RadioButtonStates"></div>
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.RadioButton.html" >API documentation</a>
+		</p>
+	</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Test Page for sap.m.ActionSelect</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m"
+				src="../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		// app
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page1"
+		});
+
+		// page
+		var oPage = new sap.m.Page("page1", {
+			title: "Mobile ActionSelect Control"
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("actionselect-content");
+
+		QUnit.config.autostart = false;
+		sap.ui.test.qunit.delayTestStart();
+
+		/* =========================================================== */
+		/* API module                                                  */
+		/* =========================================================== */
+
+		/* ------------------------------ */
+		/* getButtons()                   */
+		/* ------------------------------ */
+
+		module("API");
+
+		test("method: getButtons()", function() {
+
+			// system under test
+			var oActionSelect = new sap.m.ActionSelect({
+				buttons: [
+					new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					new sap.m.Button({
+						text: "Action 2"
+					})
+				]
+			});
+
+			// arrange
+			oPage.addContent(oActionSelect);
+			sap.ui.getCore().applyChanges();
+			oActionSelect.open();
+			this.clock.tick(1000);
+
+			var aPopupButtons = oActionSelect.getPicker().getContent().filter(function(oControl) {
+				return oControl.getMetadata().getName() === "sap.m.Button";
+			});
+
+			// assertions
+			strictEqual(oActionSelect.getButtons().length, 2, 'The buttons are added to the association named "buttons"');
+			strictEqual(aPopupButtons.length, 2, 'The buttons are added to the association named "content" in the ActionSelect popup');
+
+			// cleanup
+			oActionSelect.destroy();
+		});
+
+		/* ------------------------------ */
+		/* removeButton()                 */
+		/* ------------------------------ */
+
+		var removeButtonTestCase = function(mOptions) {
+			test("method: removeButton()", function() {
+
+				// system under test
+				var oActionSelect = mOptions.control;
+
+				// arrange + act
+				oPage.addContent(oActionSelect);
+				sap.ui.getCore().applyChanges();
+				mOptions.removeButtons.forEach(function(vButton) {
+					oActionSelect.removeButton(vButton);
+				});
+				sap.ui.getCore().applyChanges();
+				oActionSelect.open();
+				this.clock.tick(1000);
+
+				var aPopupButtons = oActionSelect.getPicker().getContent().filter(function(oControl) {
+					return oControl.getMetadata().getName() === "sap.m.Button";
+				});
+
+				// assertions
+				strictEqual(oActionSelect.getButtons().length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the association named "buttons"');
+				strictEqual(aPopupButtons.length, mOptions.removeButtons.length, 'The button with id or index "' + mOptions.removeButtons + '" was/were removed from the aggregation named "content" in the ActionSelect popup');
+
+				// cleanup
+				oActionSelect.destroy();
+			});
+		};
+
+		// remove the button by its id
+		removeButtonTestCase({
+			control: new sap.m.ActionSelect({
+				buttons: [
+					new sap.m.Button("myButton0", {
+						text: "Action 1"
+					}),
+
+					new sap.m.Button({
+						text: "Action 2"
+					})
+				]
+			}),
+
+			removeButtons: ["myButton0"]
+		});
+
+		// remove the button by its index
+		removeButtonTestCase({
+			control: new sap.m.ActionSelect({
+				buttons: [
+					new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					new sap.m.Button({
+						text: "Action 2"
+					})
+				]
+			}),
+
+			removeButtons: [0]
+		});
+
+		// remove the button given the instance
+		(function() {
+			var oButton = new sap.m.Button({
+				text: "Action 1"
+			});
+
+			removeButtonTestCase({
+				control: new sap.m.ActionSelect({
+					buttons: [
+						oButton,
+
+						new sap.m.Button({
+							text: "Action 2"
+						})
+					]
+				}),
+
+				removeButtons: [oButton]
+			});
+		}());
+
+		// try to remove a button given a faulty argument
+		removeButtonTestCase({
+			control: new sap.m.ActionSelect({
+				buttons: [
+
+					new sap.m.Button({
+						text: "Action 1"
+					})
+				]
+			}),
+
+			removeButtons: [{}]
+		});
+
+		/* ------------------------------ */
+		/* removeAllButtons()             */
+		/* ------------------------------ */
+
+		var removeAllButtonsTestCase = function(mOptions) {
+			test("method: removeAllButtons()", function() {
+
+				// system under test
+				var oActionSelect = mOptions.control;
+
+				// arrange + act
+				oPage.addContent(oActionSelect);
+				sap.ui.getCore().applyChanges();
+				oActionSelect.removeAllButtons();
+				sap.ui.getCore().applyChanges();
+				oActionSelect.open();
+				this.clock.tick(1000);
+
+				var aPopupButtons = oActionSelect.getPicker().getContent().filter(function(oControl) {
+					return oControl.getMetadata().getName() === "sap.m.Button";
+				});
+
+				// assertions
+				strictEqual(oActionSelect.getButtons().length, 0, 'All buttons were removed from the association named "buttons"');
+				strictEqual(aPopupButtons.length, 0, ' All buttons were removed from the aggregation named "content" in the ActionSelect popup');
+
+				// cleanup
+				oActionSelect.destroy();
+			});
+		};
+
+		removeAllButtonsTestCase({
+			control: new sap.m.ActionSelect({
+				buttons: [
+
+					new sap.m.Button({
+						text: "Action 1"
+					}),
+
+					new sap.m.Button({
+						text: "Action 2"
+					})
+				]
+			})
+		});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: sap.m.ActionSelect</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="actionselect-content" class="action-select-content"></div>
+	</body>
+</html>

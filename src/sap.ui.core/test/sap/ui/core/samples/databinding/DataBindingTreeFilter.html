@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding and Filter</title>
+
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+	<script type="text/javascript">
+
+  	 	try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+	    // data has to be tree structured
+	    var oData = {
+	    		root:{
+	    			name: "root",
+	    			0: {
+	    				name: "item1",
+	    				0: {
+	    					name: "subitem1",
+	    					0: {
+	    						name: "subsubitem1"
+	    					},
+	    					1: {
+	    						name: "subsubitem2"
+	    					}
+	    				},
+	    				1: {
+	    					name: "subitem2",
+	    					0: {
+	    						name: "subsubitem3"
+	    					}
+	    				}
+	    				
+	    			},
+	    			1:{
+	    				name: "item2",
+	    				0: {
+	    					name: "subitem3"
+	    				}
+	    			}
+	    			
+	    		}
+	    };
+		  var oModel = new sap.ui.model.json.JSONModel();
+		  // set the data to the model
+		  oModel.setData(oData);
+	      
+	      var oTree = new sap.ui.commons.Tree("tree");
+	      oTree.setWidth("100%");
+	      // set the model to the tree
+	      oTree.setModel(oModel);
+	
+	      var oTreeNodeTemplate = new sap.ui.commons.TreeNode("node");
+	      oTreeNodeTemplate.bindProperty("text", "name");
+	      oTreeNodeTemplate.setExpanded(true);
+	      
+	      oTree.bindAggregation("nodes", "/root", oTreeNodeTemplate);
+	      
+	      oTree.placeAt("targetTree");
+	      
+	      var oLabel = new sap.ui.commons.Label({text: "Filter1"});
+	      oLabel.placeAt("filter1");
+	      var oFilterField = new sap.ui.commons.TextField({value : "name"});
+	      oFilterField.placeAt("filter1");
+	      var oFilterOperator = new sap.ui.commons.TextField({value : "EQ"});
+	      oFilterOperator.placeAt("filter1");
+	      var oFilterValue = new sap.ui.commons.TextField({value : "subsubitem3"});
+	      oFilterValue.placeAt("filter1");
+	      oLabel = new sap.ui.commons.Label({text: "OR"});
+	      oLabel.placeAt("filter1");
+	      
+	      var oLabel = new sap.ui.commons.Label({text: "Filter2"});
+	      oLabel.placeAt("filter2");
+	      var oFilterField2 = new sap.ui.commons.TextField({value : "name"});
+	      oFilterField2.placeAt("filter2");
+	      var oFilterOperator2 = new sap.ui.commons.TextField({value : "Contains"});
+	      oFilterOperator2.placeAt("filter2");
+	      var oFilterValue2 = new sap.ui.commons.TextField({value : "2"});
+	      oFilterValue2.placeAt("filter2");
+	      
+	      var oButton = new sap.ui.commons.Button("button1");
+	      oButton.setText("filter tree");
+	      oButton.attachPress(function() {
+	    		filterModel();
+	      });
+	      
+	      oButton.placeAt("button");
+	
+		function filterModel() {
+			var oFilter = new sap.ui.model.Filter(oFilterField.getValue(),oFilterOperator.getValue(),oFilterValue.getValue());
+			var oFilter2 = new sap.ui.model.Filter(oFilterField2.getValue(),oFilterOperator2.getValue(),oFilterValue2.getValue());
+			var oTreeBinding = oTree.getBinding("nodes");
+			oTreeBinding.filter([oFilter, oFilter2]);
+		}
+	
+	</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Tree data binding test page using JSON Model</h1>
+		<div id="targetTree"></div>
+		<p></p>
+		<p></p>
+		<div id="filter1"></div>
+		<div id="filter2"></div>
+		<div id="button"></div>
+	</body>
+</html>

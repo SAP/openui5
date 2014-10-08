@@ -1,0 +1,69 @@
+/* ============================================= */
+/* CSS for control sap.m/InputBase.control       */
+/* ============================================= */
+
+@sapMInputBaseMsgBG: @sapUiWhite;
+
+.sapMInputBase,
+.sapMInputBaseInner,
+.sapMInputBasePlaceholder {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapMInputBasePlaceholder {
+	cursor: text;
+}
+
+.sapMInputBaseDisabled > .sapMInputBaseReadonly, 
+.sapMInputBaseDisabled > .sapMInputBasePlaceholder {
+	cursor: default;
+}
+
+.sapMInputBase,
+.sapMInputBaseInner {
+	font: inherit;
+}
+
+.sapMInputBaseInner,
+.sapMInputBasePlaceholder {
+	width: 100%;	/* fit the parents(sapMInputBase) width */
+}
+
+.sapMInputBaseInner::-webkit-outer-spin-button,
+.sapMInputBaseInner::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.sapMInputBaseInner {
+	-webkit-appearance: none;
+	border-radius: 0;
+}
+
+.sapMPointer > .sapMInputBaseInner {
+	cursor: pointer;
+}
+
+.sapMInputBaseDisabled {
+	opacity: 0.5;
+	pointer-events: none; /* disable events */
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	text-overflow: ellipsis;
+}
+
+.sapMInputBaseMessage {
+	padding: 0.3125rem;
+	background: @sapMInputBaseMsgBG;
+	display: inline-block;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapMInputBaseMessageText {
+	width: 100%;
+}

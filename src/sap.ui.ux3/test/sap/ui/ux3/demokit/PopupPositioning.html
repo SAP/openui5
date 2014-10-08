@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8"/>
+<meta name="keywords" content="Control NotificationBar" />
+<title>ToolPopup - SAPUI5 Demo Kit</title>
+<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+	data-sap-ui-language="en">
+	
+</script>
+<script>
+sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];
+</script>
+<script src="../../../../../js/utils.js"></script>
+
+<script>
+	window.position = function(my, at, offset, collision) {
+		if (tp.isOpen()) {
+			tp.close();
+			setTimeout(function() {
+				tp.setPosition(my, at, oBtn, offset, collision);
+				tp.open();
+			}, 500);
+		} else {
+			tp.setPosition(my, at, oBtn, offset, collision);
+			tp.open();
+		}
+	};
+
+	var sValue = "Lorem ipsum dolor sit amet.";
+	var oBtn = new sap.ui.commons.Button({
+		text : sValue,
+		press : function() {
+			if (tp.isOpen()) {
+				tp.close();
+			} else {
+				tp.open();
+			}
+		}
+	}).placeAt("parent");
+
+	var tp = new sap.ui.ux3.ToolPopup({
+		opener : oBtn
+	}).addStyleClass("myTP");
+
+</script>
+
+<style type="text/css">
+#parent {
+	width: 60%;
+	margin: 20px auto;
+	text-align: center;
+}
+
+.myTP {
+	opacity: 0.5;
+	height: 50px;
+}
+</style>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h2>
+		RTL mode
+		<script>
+			var bRTL = sap.ui.getCore().getConfiguration().getRTL();
+			(bRTL) ? document.write("ON") : document.write("OFF");
+		</script>
+	</h2>
+	<div id="parent" style="margin-top: 20px;"></div>
+</body>
+</html>

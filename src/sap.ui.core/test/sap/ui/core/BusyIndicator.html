@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>BusyIndicator - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<script>
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+		
+			function hideBusyIndicator() {
+				sap.ui.core.BusyIndicator.hide();
+			}
+
+			function showBusyIndicator(iDuration, iDelay) {
+				sap.ui.core.BusyIndicator.show(iDelay);
+				if (iDuration && iDuration > 0) {
+					window.setTimeout(hideBusyIndicator, iDuration);
+				}
+			}
+
+			var oBtn = new sap.ui.commons.Button("btn1", {
+				text : "Open BusyIndicator for four seconds (default delay, which is 1 second)",
+				press : function(){showBusyIndicator(4000);}
+			});
+			oBtn.placeAt("uiArea1");
+
+			oBtn = new sap.ui.commons.Button("btn2", {
+				text : "Open BusyIndicator for four seconds (zero delay)",
+				press : function(){showBusyIndicator(4000, 0);}
+			});
+			oBtn.placeAt("uiArea2");
+
+			oBtn = new sap.ui.commons.Button("btn3", {
+				text : "Open BusyIndicator for one second (two seconds delay, so it should never appear at all)",
+				press : function(){showBusyIndicator(1000, 2000);}
+			});
+			oBtn.placeAt("uiArea3");
+
+			oBtn = new sap.ui.commons.Button("btn4", {
+				text : "Open BusyIndicator forever (zero delay)",
+				press : function(){showBusyIndicator(-1, 0);}
+			});
+			oBtn.placeAt("uiArea4");
+
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.core.BusyIndicator</h1>
+
+		Click the button to simulate an action that takes some time:
+		<div id="uiArea1"></div>
+
+		<br>
+		<button>Pure HTML button for testing focus behavior</button> <button id="htmlButton">Another one with ID</button>
+
+		<br> <br>
+		Click the button to simulate an action that takes some time:
+		<div id="uiArea2"></div>
+
+		<br>
+		Click the button to simulate an action that takes some time:
+		<div id="uiArea3"></div>
+
+		<br>
+		Click the button to open the BusyIndicator and keep it opened:
+		<div id="uiArea4"></div>
+
+	</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>CustomStyleClassSupport - sap.ui.core</title>
+	
+	<script id="sap-ui-bootstrap" 
+			type="text/javascript" 
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" 
+			data-sap-ui-noConflict="true">
+	</script>
+	
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+	<script>
+
+		var myControl;
+		var myClass = "abc";
+		
+		function rendererCalled() {
+			ok(true, "Renderer was called");
+		}
+
+		test("Extend sap.ui.core.Control", function() {
+			expect(3); // includes rerendering
+			
+			equal(window.my, undefined, "'my' should not be defined yet");
+
+			// define control
+			var result = sap.ui.core.Control.extend("my.lib.MyControl", {
+				metadata : {},
+
+				renderer : function(rm, c) {
+					rendererCalled();
+					rm.write("<span tabindex='0'");
+					rm.writeControlData(c);
+					rm.write(">test</span>");
+				}
+			});
+
+			myControl = new my.lib.MyControl("myControl", {
+				text : "test"
+			});
+			
+			myControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			
+			equal(jQuery.sap.byId("myControl").length, 1, "The control should be rendered");
+		});
+
+
+		test("hasStyleClass", function() {
+			expect(2);
+			
+			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+		});
+
+		test("addStyleClass", function() {
+			expect(2); // this also verifies there is no rerendering
+			
+			myControl.addStyleClass(myClass);
+			
+			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
+		});
+		
+		test("removeStyleClass", function() {
+			expect(2); // this also verifies there is no rerendering
+			
+			myControl.removeStyleClass(myClass);
+			
+			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+			
+			myControl.removeStyleClass(myClass); // should not cause an error or rendering
+		});
+		
+		test("toggleStyleClass (no bAdd)", function() {
+			expect(4); // this also verifies there is no rerendering
+			
+			myControl.toggleStyleClass(myClass);
+			
+			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
+			
+			myControl.toggleStyleClass(myClass);
+			
+			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+		});
+		
+		test("toggleStyleClass (no bAdd)", function() {
+			expect(4); // this also verifies there is no rerendering
+			
+			myControl.toggleStyleClass(myClass, true);
+			
+			equal(myControl.hasStyleClass(myClass), true, "control should now have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), true, "class should now be in HTML");
+			
+			myControl.toggleStyleClass(myClass, false);
+			
+			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+		});
+		
+		test("addStyleClass, called twice", function() {
+			expect(3); // this also verifies there is no rerendering
+			
+			myControl.addStyleClass(myClass);
+			myControl.addStyleClass(myClass);
+
+			equal(jQuery.sap.byId("myControl")[0].className, "abc", "class should be in HTML only once");
+			
+			myControl.removeStyleClass(myClass);
+			
+			equal(myControl.hasStyleClass(myClass), false, "control should not have the class");
+			equal(jQuery.sap.byId("myControl").hasClass(myClass), false, "class should not be in HTML");
+		});
+		
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.CustomStyleClassSupport</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<div id="content"></div>
+</body>
+</html>

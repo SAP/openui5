@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.ToggleButton Test</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+
+</script>
+
+<style type="text/css">
+.ButtonSpace {
+	display: inline;
+	position: relative;
+}
+</style>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.HTML");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	var oHelper,
+		oPage,
+		oApp;
+
+	oHelper = {
+		showStatus : function(oEvt)  {
+			jQuery.sap.require("sap.m.MessageToast");
+			if (oEvt.getSource().getPressed()) {
+				sap.m.MessageToast.show(oEvt.getSource().getId() + " Pressed");
+			} else {
+				sap.m.MessageToast.show(oEvt.getSource().getId() + " Unpressed");
+			};
+		}
+	};
+
+	//Toggle Button 1
+	var oToggleBtn1 = new sap.m.ToggleButton("b1");
+	oToggleBtn1.setText("Enabled");
+	oToggleBtn1.setEnabled(true);
+
+	//Toggle Button 2
+	var oToggleBtn2 = new sap.m.ToggleButton("b2");
+	oToggleBtn2.setText("Disabled");
+	oToggleBtn2.setEnabled(false);
+
+	//Toggle Button 3
+	var oToggleBtn3 = new sap.m.ToggleButton("b3");
+	oToggleBtn3.setIcon("sap-icon://home");
+
+	//Toggle Button 4
+	var oToggleBtn4 = new sap.m.ToggleButton("b4");
+	oToggleBtn4.setIcon("sap-icon://action");
+	oToggleBtn4.setEnabled(false);
+
+	//Toggle Button 21
+	var oToggleBtn21 = new sap.m.ToggleButton("b21");
+	oToggleBtn21.setIcon("sap-icon://action");
+	oToggleBtn21.setText("Pressed & Disabled"),
+	oToggleBtn21.setPressed(true);
+	oToggleBtn21.setEnabled(false);
+
+	//Toggle Button 21a
+	var oToggleBtn21a = new sap.m.ToggleButton("b21a");
+	oToggleBtn21a.setIcon("sap-icon://action");
+	oToggleBtn21a.setText("ToggleButton"),
+	oToggleBtn21a.setPressed(true);
+	oToggleBtn21a.setEnabled(true);
+
+//	customHeaderButtons
+	//Toggle Button 5
+	var oToggleBtn5 = new sap.m.ToggleButton("b5");
+	oToggleBtn5.setText("Enabled");
+	oToggleBtn5.setEnabled(true);
+
+	//Toggle Button 6
+	var oToggleBtn6 = new sap.m.ToggleButton("b6");
+	oToggleBtn6.setText("Disabled");
+	oToggleBtn6.setEnabled(false);
+
+	//Toggle Button 7
+	var oToggleBtn7 = new sap.m.ToggleButton("b7");
+	oToggleBtn7.setIcon("sap-icon://home");
+
+	//Toggle Button 8
+	var oToggleBtn8 = new sap.m.ToggleButton("b8");
+	oToggleBtn8.setIcon("sap-icon://action");
+
+//	subHeaderButtons
+	//Toggle Button 9
+	var oToggleBtn9 = new sap.m.ToggleButton("b9");
+	oToggleBtn9.setText("Enabled");
+	oToggleBtn9.setEnabled(true);
+
+	//Toggle Button 10
+	var oToggleBtn10 = new sap.m.ToggleButton("b10");
+	oToggleBtn10.setText("Disabled");
+	oToggleBtn10.setEnabled(false);
+
+	//Toggle Button 11
+	var oToggleBtn11 = new sap.m.ToggleButton("b11");
+	oToggleBtn11.setText("ToggleButton with icon first");
+	oToggleBtn11.setIcon("sap-icon://action");
+	oToggleBtn11.setIconFirst(true);
+
+	//ToggleButton 11a (transparent)
+	var oToggleBtn11a = new sap.m.ToggleButton("b11a");
+	oToggleBtn11a.setText("Transparent TButton");
+	oToggleBtn11a.setPressed(true);
+	oToggleBtn11a.setEnabled(false);
+	oToggleBtn11a.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11b (transparent)
+	var oToggleBtn11b = new sap.m.ToggleButton("b11b");
+	oToggleBtn11b.setType(sap.m.ButtonType.Transparent);
+	oToggleBtn11b.setIcon("sap-icon://action");
+
+	//ToggleButton 11c (transparent)
+	var oToggleBtn11c = new sap.m.ToggleButton("b11c");
+	oToggleBtn11c.setText("Transparent");
+	oToggleBtn11c.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11d (transparent)
+	var oToggleBtn11d = new sap.m.ToggleButton("b11d");
+	oToggleBtn11d.setIcon("sap-icon://action");
+	oToggleBtn11d.setText("Transparent");
+	oToggleBtn11d.setIconFirst(true);
+	oToggleBtn11d.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11e (transparent)
+	var oToggleBtn11e = new sap.m.ToggleButton("b11e");
+	oToggleBtn11e.setIcon("sap-icon://action");
+	oToggleBtn11e.setText("Transparent/Disabled");
+	oToggleBtn11e.setIconFirst(true);
+	oToggleBtn11e.setEnabled(false);
+	oToggleBtn11e.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11f (transparent)
+	var oToggleBtn11f = new sap.m.ToggleButton("b11f");
+	oToggleBtn11f.setIcon("sap-icon://action");
+	oToggleBtn11f.setEnabled(true);
+	oToggleBtn11f.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11g (transparent)
+	var oToggleBtn11g = new sap.m.ToggleButton("b11g");
+	oToggleBtn11g.setIcon("sap-icon://action");
+	oToggleBtn11g.setText("Transparent/Disabled");
+	oToggleBtn11g.setPressed(true);
+	oToggleBtn11g.setIconFirst(true);
+	oToggleBtn11g.setEnabled(false);
+	oToggleBtn11g.setType(sap.m.ButtonType.Transparent);
+
+	//ToggleButton 11h (transparent)
+	var oToggleBtn11h = new sap.m.ToggleButton("b11h");
+	oToggleBtn11h.setText("Transparent");
+	oToggleBtn11h.setEnabled(true);
+	oToggleBtn11h.setType(sap.m.ButtonType.Transparent);
+
+	//Toggle Button 12
+	var oToggleBtn12 = new sap.m.ToggleButton("b12");
+	oToggleBtn12.setText("ToggleButton with icon last");
+	oToggleBtn12.setIcon("sap-icon://action");
+	oToggleBtn12.setIconFirst(false);
+
+//	FooterButtons
+	//Toggle Button 13
+	var oToggleBtn13 = new sap.m.ToggleButton("b13");
+	oToggleBtn13.setText("Enabled");
+	oToggleBtn13.setEnabled(true);
+
+	//Toggle Button 14
+	var oToggleBtn14 = new sap.m.ToggleButton("b14");
+	oToggleBtn14.setText("Disabled");
+	oToggleBtn14.setEnabled(false);
+
+	//Toggle Button 15
+	var oToggleBtn15 = new sap.m.ToggleButton("b15");
+	oToggleBtn15.setText("ToggleButton with icon first");
+	oToggleBtn15.setIcon("sap-icon://action");
+	oToggleBtn15.setIconFirst(true);
+
+	//Toggle Button 16
+	var oToggleBtn16 = new sap.m.ToggleButton("b16");
+	oToggleBtn16.setText("ToggleButton with icon last");
+	oToggleBtn16.setIcon("sap-icon://action");
+	oToggleBtn16.setIconFirst(false);
+
+	//Toggle Button 17
+	var oToggleBtn17 = new sap.m.ToggleButton("b17");
+	oToggleBtn17.setIcon("sap-icon://home");
+
+	//Toggle Button 18
+	var oToggleBtn18 = new sap.m.ToggleButton("b18");
+	oToggleBtn18.setIcon("sap-icon://home");
+
+	//Toggle Button 19
+	var oToggleBtn19 = new sap.m.ToggleButton("b19");
+	oToggleBtn19.setIcon("sap-icon://home");
+	oToggleBtn19.setEnabled(false);
+
+	//Toggle Button 20
+	var oToggleBtn20 = new sap.m.ToggleButton("b20");
+	oToggleBtn20.setText("Pressed & Disabled");
+	oToggleBtn20.setIcon("sap-icon://action");
+	oToggleBtn20.setPressed(true);
+	oToggleBtn20.setIconFirst(true);
+	oToggleBtn20.setEnabled(false);
+
+	//Toggle Button 22
+	var oToggleBtn22 = new sap.m.ToggleButton("b22");
+	oToggleBtn22.setText("Pressed & Disabled");
+	oToggleBtn22.setPressed(true);
+	oToggleBtn22.setEnabled(false);
+
+	//Toggle Button 23
+	var oToggleBtn23 = new sap.m.ToggleButton("b23");
+	oToggleBtn23.setText("Toggle Button");
+
+	oApp = new sap.m.App("myApp", {initialPage: oPage});
+
+	oPage = new sap.m.Page("myPage", {
+		title: "Mobile Toggle Button Control",
+		showHeader: true,
+		customHeader: new sap.m.Bar({
+			contentLeft: [oToggleBtn5, oToggleBtn7],
+			contentMiddle: [new sap.m.Label("myBarLabel", {text: "ToggleButton Testpage"})],
+			contentRight: [oToggleBtn6, oToggleBtn8],
+		}),
+		subHeader: new sap.m.Bar({
+			contentMiddle: [oToggleBtn9, oToggleBtn10, oToggleBtn11, oToggleBtn12],
+			contentLeft: [oToggleBtn9, oToggleBtn11, oToggleBtn11a, oToggleBtn11b],
+			contentRight: [oToggleBtn22, oToggleBtn10, oToggleBtn12],
+		}),
+		footer: new sap.m.Bar({
+			contentLeft: [oToggleBtn18, oToggleBtn23, oToggleBtn11c],
+			contentMiddle: [oToggleBtn13, oToggleBtn14, oToggleBtn17, oToggleBtn15, oToggleBtn16],
+			contentRight: [oToggleBtn19, oToggleBtn20],
+		}),
+	});
+
+	sap.ui.getCore().byId("b1").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	sap.ui.getCore().byId("b3").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	sap.ui.getCore().byId("b21a").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	sap.ui.getCore().byId("b11d").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	sap.ui.getCore().byId("b11f").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	sap.ui.getCore().byId("b11h").attachPress(function(evt) {
+		oHelper.showStatus(evt);
+	});
+
+	oPage.addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}));
+	oPage.addContent(oToggleBtn1);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn2);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn3);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn4);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn21);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn21a);
+
+	oPage.addContent(new sap.ui.core.HTML("myEmptyLine2", {content: "<br>"}));
+	oPage.addContent(oToggleBtn11d);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn11e);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn11f);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn11g);
+	oPage.addContent(new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}));
+	oPage.addContent(oToggleBtn11h);
+
+	oApp.addPage(oPage);
+
+	oApp.placeAt("body");
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

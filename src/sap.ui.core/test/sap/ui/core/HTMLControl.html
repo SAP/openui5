@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>HTML - sap.ui.core</title>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+		<script type="text/javascript">
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+		
+		    // create the controls in the head
+			var oLayout = new sap.ui.commons.layout.MatrixLayout();
+			oLayout.setLayoutFixed(false);
+			var oButton1 = new sap.ui.commons.Button({
+				text: "Wrap With SAPUI5 Controls",
+				tooltip : "Creates a Control Tree around the existing HTML and places it at the 'target1' div below",
+				press: createOuterControlTree
+			});
+			var oButton2 = new sap.ui.commons.Button({
+				text: "Create Nested Control",
+				tooltip : "Creates a Control and places it within the HTML Container",
+				press: createNestedControlTree
+			});
+			oLayout.createRow(oButton1, oButton2);
+			oLayout.placeAt("controls");
+
+			jQuery(document).ready(
+				function() { 
+					jQuery("#embedded span").click(
+							function(event) {
+								var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
+								var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
+								if ( bRed ) {
+									jQuery("<span>red clicked" + new Date() + "</span><br/>").appendTo(jQuery("#log"));
+								} else {
+									jQuery("<span>yellow clicked" + new Date() + "</span><br/>").appendTo(jQuery("#log"));
+								}
+							}
+					);
+					animate();
+				}
+			);
+
+			function createOuterControlTree() {
+				var oLayout = new sap.ui.commons.layout.MatrixLayout();
+				var oButton = new sap.ui.commons.Button({ text: "Some Button", tooltip : "Just a sample for a SAPUI5 Control", press: function() { oTextField.setValue("" + new Date().getTime()); }});
+				var oTextField = new sap.ui.commons.TextField({ value : "Some Initial Value"});
+				oLayout.createRow(oButton, oTextField);
+				var oHTML = new sap.ui.core.HTML({ id : "embedded" });
+				oLayout.createRow(oHTML);
+
+				/*var oPanel = new sap.ui.commons.Panel({
+					title : new sap.ui.core.Title({text:"A SAPUI5 Panel"}),
+					content : [oLayout]
+				});
+				oPanel.placeAt("target1");*/
+
+				/**/
+				var oDialog = new sap.ui.commons.Dialog({
+					title : "A SAPUI5 Dialog",
+					content: oLayout,
+					buttons : [ new sap.ui.commons.Button({text:"OK"}) ],
+					showCloseButton : true
+				});
+				// oDialog.placeAt("target1")
+				oDialog.open();
+				/**/
+			};
+
+			var delta = 10;
+
+			function createNestedControlTree() {
+				var oButton = new sap.ui.commons.Button({ 
+					text: "Inner Button", tooltip : "Just a sample for a SAPUI5 Control",
+					press: function() {
+						delta = delta <= 2 ? 2 : delta-1; 
+					}});
+				oButton.placeAt(jQuery(".x").get(0));
+			};
+
+			function animate() {
+				var html5 = jQuery("#embedded");
+				html5.css("-webkit-perspective", 500);
+				d = 0.0;
+				setTimeout(step, 50);
+			}
+
+			function step() {
+				var html5 = jQuery("#embedded > div");
+		        html5.css("-webkit-transform", "rotateY(" + d + "deg)");
+		        d = d + delta;
+		        if ( d >= 360 ) d = 0;
+		        setTimeout(step, 50);
+			}
+
+			new sap.ui.core.HTML("myhtml", {content : ""}).placeAt("empty-content");
+			new sap.ui.commons.Button({text:"Set Content As String (red)", press: function() {
+				sap.ui.getCore().byId("myhtml").setContent("<div style='background-color:red;width:16px;height:16px;'></div>");
+			}}).placeAt("empty-content");
+			new sap.ui.commons.Button({text:"Set Content as DOM (green)", press: function() {
+				sap.ui.getCore().byId("myhtml").setDOMContent(jQuery("<div style='background-color:green;width:16px;height:16px;'></div>").get(0));
+			}}).placeAt("empty-content");
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for the HTML Container (sap.ui.core.HTML)</h1>
+
+	    <div id="controls" ></div>
+	    <hr>
+
+	    <span>The area below with the red dotted border is a &lt;div&gt; with id "target1". It represents a potential SAPUI5 UIArea. 
+	    But in the current, initial state of the page it only contains some HTML markup (the red/yellow checkered area). 
+	    Click event handlers have been attached to the red and yellow squares. </span>
+
+		<div id="target1" style="border:4px dotted red;width:512px;height:322px;">
+			<div id="embedded" >
+			<div style="position:relative;border:4px dotted blue;width:256px;height:256px;" >
+				<span style="display:block;position:absolute;left:  0px;top:  0px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left: 64px;top:  0px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:128px;top:  0px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:192px;top:  0px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:  0px;top: 64px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left: 64px;top: 64px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:128px;top: 64px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:192px;top: 64px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:  0px;top:128px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span class="x" style="display:block;position:absolute;left: 64px;top:128px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:128px;top:128px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:192px;top:128px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:  0px;top:192px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left: 64px;top:192px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:128px;top:192px;width:64px;height:64px;background-color:#ffff00" >&nbsp;</span>
+				<span style="display:block;position:absolute;left:192px;top:192px;width:64px;height:64px;background-color:#ff0000" >&nbsp;</span>
+				<!--
+				<div id="bottom" style="display:block;position:absolute;left:  0px;top:256px;border:1px dotted black;" >
+					<span>Placeholder for nested SAPUI5 Controls</span>
+					<span id="embedded2" style="position:absolute;width:16px;height:16px;">
+						<span style="display:block;position:absolute;left:  0px;top:  0px;width:8px;height:8px;background-color:#ff0000" >&nbsp;</span>
+						<span style="display:block;position:absolute;left:  8px;top:  0px;width:8px;height:8px;background-color:#ffff00" >&nbsp;</span>
+						<span style="display:block;position:absolute;left:  0px;top:  8px;width:8px;height:8px;background-color:#ffff00" >&nbsp;</span>
+						<span style="display:block;position:absolute;left:  8px;top:  8px;width:8px;height:8px;background-color:#ff0000" >&nbsp;</span>
+					</span>
+				</div>
+				-->
+			</div>
+			</div>
+		</div>
+
+		<h2>Empty Content</h2>
+    <p>The following HTML control initially has empty content. It renders empty (no HTML), but after setting some 
+    content (as String or as DOM node), it updates correctly.</p>
+
+		<div id="empty-content"></div>
+		<div id="log">
+		</div>
+	</body>
+</html>

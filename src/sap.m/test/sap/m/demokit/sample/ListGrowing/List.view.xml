@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.m.sample.ListGrowing.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		items="{/ProductCollection}"
+		headerText="Products"
+		growing="true"
+		growingThreshold="4"
+		growingScrollToLoad="false">
+		<StandardListItem
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
+	</List>
+</mvc:View>

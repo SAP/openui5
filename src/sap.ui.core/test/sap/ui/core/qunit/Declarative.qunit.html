@@ -1,0 +1,488 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.plugin.DeclarativeSupport
+  Author: Tino Butz
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>QUnit Test for Declarative UI Support</title>
+	<script id="sap-ui-bootstrap" type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons,sap.ui.ux3"
+		data-sap-ui-language="en-US"
+		data-sap-ui-originInfo="true">
+	</script>
+
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+	qutils.delayTestStart();
+	jQuery.sap.require("sap.ui.core.DeclarativeSupport");
+	
+	module("Basic");
+
+	
+	test("Id", 2, function() {
+		var $element = jQuery("#basic-id");
+		var sId = sap.ui.core.DeclarativeSupport._getId($element.find("#basicId"));
+		equal(sId, "basicId", "Id is retrieved right");
+		equal($element.find("#basicId").length, 0, "Id is removed");
+	});
+	
+
+	module("Compile");
+
+
+	test("Simple Button", 3, function() {
+
+	 	var oButton = sap.ui.getCore().byId("simpleButton");
+	 	equal(!!oButton, false, 'No control with id "simpleButton" found.');
+	 	
+	 	sap.ui.core.DeclarativeSupport.compile($("#simple-button"));
+
+	 	var oButton = sap.ui.getCore().byId("simpleButton");
+	 	ok(!!oButton, 'Control with id "simpleButton" found.');
+	 	equal(oButton.getText(), "My Button", "Text is set right");
+	});
+	
+	
+	test("Test special attribute handling", 3, function() {
+		var backup = null;
+		try {
+			backup = sap.ui.core.DeclarativeSupport.attributes["data-tooltip"];
+			sap.ui.core.DeclarativeSupport.attributes["data-tooltip"] = function() {
+			 	ok(true, "Called special attribute handling");
+			};
+		 	var oButton = sap.ui.getCore().byId("buttonWithTooltip");
+		 	equal(!!oButton, false, 'No control with id "buttonWithTooltip" found.');
+		 	sap.ui.core.DeclarativeSupport.compile($("#button-with-tooltip"));
+		 	var oButton = sap.ui.getCore().byId("buttonWithTooltip");
+		 	ok(!!oButton, 'Control with id "buttonWithTooltip" found.');
+		} catch (exc) {
+			throw exc;
+		} finally {
+			if (backup) {
+				sap.ui.core.DeclarativeSupport.attributes["data-tooltip"] = backup;
+			}
+		}
+	});
+
+	
+	test("Button with style and class", 3, function() {
+
+	 	var oButton = sap.ui.getCore().byId("buttonStyleClass");
+	 	equal(!!oButton, false, 'No control with id "buttonStyleClass" found.');
+	 	
+	 	sap.ui.core.DeclarativeSupport.compile($("#button-with-style-and-class"));
+
+	 	var oButton = sap.ui.getCore().byId("buttonStyleClass");
+	 	ok(!!oButton, 'Control with id "buttonStyleClass" found.');
+	 	ok(!!oButton.hasStyleClass("mybutton"), 'Control has right classes.');
+	});
+	
+	
+	test("HTML Content", 4, function() {
+	 	var oButton = sap.ui.getCore().byId("htmlContentButton");
+	 	equal(!!oButton, false, 'No control with id "htmlContentButton" found.');
+	 	
+	 	sap.ui.core.DeclarativeSupport.compile($("#html-content"));
+
+	 	var oButton = sap.ui.getCore().byId("htmlContentButton");
+	 	ok(!!oButton, 'Control with id "htmlContentButton" found.');
+	 	
+	 	var oPanel = sap.ui.getCore().byId("htmlContentPanel");
+	 	ok(!!oPanel, 'Control with id "htmlContentPanel" found.');
+	 	
+	 	equal(oPanel.getTitle().getText(), "SAPUI5 Content in HTML Table in SAPUI5 Panel", "Text is set right");
+	});
+
+	
+	test("Panel aggregation", 4, function() {
+	 	var oPanel = sap.ui.getCore().byId("panelAggregation");
+	 	equal(!!oPanel, false, 'No control with id "panelAggregation" found.');
+
+	 	sap.ui.core.DeclarativeSupport.compile($("#panel-aggregation"));
+
+	 	var oPanel = sap.ui.getCore().byId("panelAggregation");
+	 	ok(!!oPanel, 'Control with id "panelAggregation" found.');
+
+	 	equal(oPanel.getTitle().getText(), "Panel Aggregation", "Text is set right");
+	 	equal(oPanel.getContent().length, 6, "Number of child controls is right");
+	});
+	
+	
+	test("Panel with default aggregation", 4, function() {
+	 	var oPanel = sap.ui.getCore().byId("panelWithDefaultAggregation");
+	 	equal(!!oPanel, false, 'No control with id "panelWithDefaultAggregation" found.');
+
+	 	sap.ui.core.DeclarativeSupport.compile($("#panel-with-default-aggregation"));
+
+	 	var oPanel = sap.ui.getCore().byId("panelWithDefaultAggregation");
+	 	ok(!!oPanel, 'Control with id "panelWithDefaultAggregation" found.');
+
+	 	equal(oPanel.getTitle().getText(), "Panel With Default Aggregation", "Text is set right");
+	 	equal(oPanel.getContent().length, 6, "Number of child controls is right");
+	});
+
+	test("Panel with association", 6, function() {
+	 	var oPanel = sap.ui.getCore().byId("panelWithAssociation");
+	 	equal(!!oPanel, false, 'No control with id "panelWithAssociation" found.');
+
+	 	sap.ui.core.DeclarativeSupport.compile($("#panel-with-association"));
+
+	 	var oPanel = sap.ui.getCore().byId("panelWithAssociation");
+	 	ok(!!oPanel, 'Control with id "panelWithAssociation" found.');
+
+	 	equal(oPanel.getContent().length, 3, "Number of child controls is right");
+	 	var oLabel = oPanel.getContent()[0];
+	 	equal(oLabel.getLabelFor(), "message", "Assocation id is set right");
+	 	var oNavigationBar = oPanel.getContent()[2];
+	 	equal(oNavigationBar.getAssociatedItems().length, 3, "Number of associated controls is right");
+	 	deepEqual(oNavigationBar.getAssociatedItems(), ["navitem1", "navitem2", "navitem3"],"Number of associated controls is right", "Assocation IDs are set right");
+	});
+	
+	
+	
+	test("UIArea", 7, function() {
+	 	var oUIArea = sap.ui.getCore().getUIArea("uiAreaSimple");
+	 	equal(!!oUIArea, false, 'No control with id "uiAreaSimple" found.');
+	 	
+	 	var oButton1 = sap.ui.getCore().byId("uiAreaSimpleButton2");
+	 	equal(!!oButton1, false, 'No control with id "uiAreaSimpleButton2" found.');
+
+	 	var oButton2 = sap.ui.getCore().byId("uiAreaSimpleButton2");
+	 	equal(!!oButton2, false, 'No control with id "uiAreaSimpleButton2" found.');
+
+	 	sap.ui.core.DeclarativeSupport.compile($("#ui-area-simple"));
+
+	 	var oUIArea = sap.ui.getCore().getUIArea("uiAreaSimple");
+	 	ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
+	 	
+	 	var oButton1 = sap.ui.getCore().byId("uiAreaSimpleButton2");
+	 	ok(!!oButton1, 'Control with id "uiAreaSimpleButton2" found.');
+	 	
+	 	var oButton2 = sap.ui.getCore().byId("uiAreaSimpleButton2");
+	 	ok(!!oButton2, 'Control with id "uiAreaSimpleButton2" found.');
+
+	 	equal(oButton2.getUIArea().getId(), "uiAreaSimple", "UI Areas are the same");
+	});
+
+	
+	test("Complex Declaration", 8, function() {
+	 	var oUIArea = sap.ui.getCore().getUIArea("complexDeclarationUIArea");
+	 	equal(!!oUIArea, false, 'No control with id "complexDeclarationUIArea" found.');
+	 	
+	 	var oPanel1 = sap.ui.getCore().byId("complexDeclarationPanel1");
+	 	equal(!!oPanel1, false, 'No control with id "complexDeclarationPanel1" found.');
+	 	
+	 	var oPanel2 = sap.ui.getCore().byId("complexDeclarationPanel2");
+	 	equal(!!oPanel2, false, 'No control with id "complexDeclarationPanel2" found.');
+	 	
+	 	var oPanel3 = sap.ui.getCore().byId("complexDeclarationPanel3");
+	 	equal(!!oPanel2, false, 'No control with id "complexDeclarationPanel3" found.');
+
+	 	sap.ui.core.DeclarativeSupport.compile($("#complex-declaration"));
+
+	 	var oUIArea = sap.ui.getCore().getUIArea("complexDeclarationUIArea");
+	 	ok(!!oUIArea, 'Control with id "complexDeclarationUIArea" found.');
+	 	
+	 	var oPanel1 = sap.ui.getCore().byId("complexDeclarationPanel1");
+	 	ok(!!oPanel1, 'Control with id "complexDeclarationPanel1" found.');
+	 	
+	 	var oPanel2 = sap.ui.getCore().byId("complexDeclarationPanel2");
+	 	ok(!!oPanel2, 'Control with id "complexDeclarationPanel2" found.');
+	 	
+	 	var oPanel3 = sap.ui.getCore().byId("complexDeclarationPanel3");
+	 	ok(!!oPanel3, 'Control with id "complexDeclarationPanel3" found.');
+	});
+	
+	test("Events", 3, function() {
+	 	var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
+	 	equal(!!oButton1, false, 'No control with id "buttonWithEvent" found.');
+		
+		sap.ui.core.DeclarativeSupport.compile($("#events"));
+		
+	 	var oButton1 = sap.ui.getCore().byId("buttonWithEvent");
+	 	ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
+	 	var executeDefault = oButton1.firePress();
+	});
+
+	
+	test("AltType", 3, function() {
+		var oForm = sap.ui.getCore().byId("form");
+	 	equal(!!oForm, false, 'No control with id "form" found.');
+		
+		sap.ui.core.DeclarativeSupport.compile($("#altType"));
+		
+		var oForm = sap.ui.getCore().byId("form");
+		ok(!!oForm, 'Control with id "form" found.');
+
+		equal(oForm.getTitle(), "Alt type works", "Title is set right");
+	});
+	
+	
+	test("Events Undefined Error", 1, function() {
+		var bThrown = false;
+		try {
+			sap.ui.core.DeclarativeSupport.compile($("#events-error"));
+		} catch (exc) {
+			bThrown = true;
+		}
+		ok(bThrown, "Undefined event handler throws error");
+		$("#events-error").remove();
+	});
+	
+	/* TODO: Add this test once the deprecation warnings are removed
+	test("Data Attributes", 1, function() {
+		var bThrown = false;
+		try {
+			sap.ui.core.DeclarativeSupport.compile($("#data-attributes"));
+		} catch (exc) {
+			debugger;
+			bThrown = true;
+		}
+		ok(bThrown, "Missing data-* prefix for attributes throws error");
+		$("#data-attributes").remove();
+	});
+	*/
+
+	
+	test("DataBinding", 8, function() {
+	 	var oButton1 = sap.ui.getCore().byId("buttonDataBinding");
+	 	equal(!!oButton1, false, 'No control with id "buttonDataBinding" found.');
+	 	
+	 	var oCarousel = sap.ui.getCore().byId("aggregationDataBinding");
+	 	equal(!!oCarousel, false, 'No control with id "aggregationDataBinding" found.');
+
+		var oModel1 = new sap.ui.model.json.JSONModel({
+			booleanValue : true,
+			stringValue : 'Text1'
+		});
+
+		var oModel2 = new sap.ui.model.json.JSONModel({
+			booleanValue : true,
+			stringValue : 'Text1',
+			buttons : [{title:"button1"}, {title:"button2"}]
+		});
+
+		sap.ui.core.DeclarativeSupport.compile($("#databinding"));
+		
+	 	var oButton1 = sap.ui.getCore().byId("buttonDataBinding");
+	 	ok(!!oButton1, 'Control with id "buttonWithEvent" found.');
+
+	 	oButton1.setModel(oModel1);
+	 	oButton1.setModel(oModel2, "model2");
+		equal(oButton1.getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'buttonDataBinding'");
+		equal(oButton1.getText(), oModel1.getData().stringValue, "Check 'text' property of button 'buttonDataBinding'");
+		
+		
+		var oCarousel = sap.ui.getCore().byId("aggregationDataBinding");
+		
+		var oCarousel = sap.ui.getCore().byId("aggregationDataBinding");
+	 	ok(!!oCarousel, 'Control with id "aggregationDataBinding" found.');
+		
+	 	
+		oCarousel.setModel(oModel2);
+		
+		equal(oCarousel.getContent().length, 2, "Two controls found in content");
+		equal(oCarousel.getContent()[0].getText(), "button1", "Title is set right");
+		
+	});
+
+	
+	test("No Polution", 3, function() {
+	 	equal(jQuery.find("[data-sap-ui-type]").length, 0, 'No elements with attribute "data-sap-ui-type" found"');
+	 	equal(jQuery.find("[data-sap-ui-aggregation]").length, 0, 'No elements with attribute "data-sap-ui-aggregation" found"');
+	 	equal(jQuery.find("[data-sap-ui-default-aggregation]").length, 0, 'No elements with attribute "data-sap-ui-default-aggregation" found"');
+	});
+
+	test("Custom Data", 2, function() {
+		var oButton = sap.ui.getCore().byId("simpleButton");
+	 	equal(oButton.data("customData1"), "customvalue", 'Custom Data not applied!');
+	 	equal(oButton.data("CustomData2"), "customvalue", 'Custom Data not applied!');
+	});
+
+	</script>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.plugin.DeclarativeSupport</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+
+	<br>
+
+	<div id="simple-button">
+		<div data-sap-ui-type="sap.ui.commons.Button" id="simpleButton" data-text="My Button" data-custom-data:custom-data1="customvalue" data-custom-data:-custom-data2="customvalue"></div>
+	</div>
+	
+	<div id="button-with-tooltip">
+		<div data-sap-ui-type="sap.ui.commons.Button" id="buttonWithTooltip" data-tooltip="aNiceTooltip"></div>
+	</div>
+
+
+	<div id="button-with-style-and-class">
+		<div data-sap-ui-type="sap.ui.commons.Button" id="buttonStyleClass" style="border-color:red;" class="mybutton"></div>
+	</div>
+	
+	
+	<div id="html-content">
+		<div data-sap-ui-type="sap.ui.commons.Panel">
+	
+			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
+	
+			<table>
+				<tr><td>1</td></tr>
+				<tr><td>2</td></tr>
+				<tr><td><button onclick="handlePress()">Click Me!</button></td></tr>
+				<tr><td>4</td></tr>
+				<tr><td>5</td></tr>
+				<tr><td><div data-sap-ui-type="sap.ui.commons.Button" id="htmlContentButton" data-text="Click me!"></div></td></tr>
+				<tr><td>
+	
+				<div data-sap-ui-type="sap.ui.commons.Panel" id="htmlContentPanel">
+					<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+					<a href="http://www.sap.com" target="_blank">www.sap.com</a>
+				</div>
+	
+				</td></tr>
+			</table>
+		</div>
+	</div>
+
+
+	<div id="panel-aggregation">
+		<div data-sap-ui-type="sap.ui.commons.Panel" id="panelAggregation">
+			<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="Panel Aggregation"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+		</div>
+	</div>
+
+
+	<div id="panel-with-default-aggregation">
+		<div data-sap-ui-type="sap.ui.commons.Panel"  id="panelWithDefaultAggregation" data-sap-ui-default-aggregation="title">
+			<div data-sap-ui-type="sap.ui.core.Title" data-text="Panel With Default Aggregation"></div>
+			<div data-sap-ui-aggregation="content">
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div id="panel-with-association">
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem1" data-text="navitem1"></div>
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem2" data-text="navitem2"></div>
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem3" data-text="navitem3"></div>
+
+		<div data-sap-ui-type="sap.ui.commons.Panel"  id="panelWithAssociation" data-sap-ui-default-aggregation="title">
+			<div data-sap-ui-type="sap.ui.core.Title" data-text="Panel With Default Aggregation"></div>
+			<div data-sap-ui-aggregation="content">
+				<div data-sap-ui-type="sap.ui.commons.Label" data-text="Message:" data-label-for="message"></div>
+				<div data-sap-ui-type="sap.ui.commons.TextField" id="message"></div>
+				<div data-sap-ui-type="sap.ui.ux3.NavigationBar" id="navbar" data-associated-items="navitem1 ,  navitem2       navitem3"></div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div id="ui-area-simple">
+		<div id="uiAreaSimple" data-sap-ui-type="sap.ui.core.UIArea">
+			<div data-sap-ui-type="sap.ui.commons.Button" id="uiAreaSimpleButton1" data-text="My Button"></div>
+			<div data-sap-ui-type="sap.ui.commons.Button" id="uiAreaSimpleButton2" data-text="My Button"></div>
+		</div>
+	</div>
+	
+	
+	<div id="complex-declaration">
+		<div id="complexDeclarationUIArea" data-sap-ui-type="sap.ui.core.UIArea">
+			<div id="complexDeclarationPanel1" data-sap-ui-type="sap.ui.commons.Panel">
+				<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="My Panel"></div>
+				<div data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
+				<div data-sap-ui-type="sap.ui.commons.Image" data-src="http://www.sap.com/global/images/SAPLogo.gif"></div>
+			</div>
+	
+			<div id="complexDeclarationPanel2" data-sap-ui-type="sap.ui.commons.Panel">
+			
+				<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="HTML Content in Panel"></div>
+		
+				<table>
+					<tr><td>1</td></tr>
+					<tr><td>2</td></tr>
+					<tr><td><button onclick="handlePress()">Click Me!</button></td></tr>
+					<tr><td>4</td></tr>
+					<tr><td>5</td></tr>
+					<tr><td><div data-sap-ui-type="sap.ui.commons.Button" data-text="Click me!"></div></td></tr>
+					<tr><td>
+		
+					<div id="complexDeclarationPanel3" data-sap-ui-type="sap.ui.commons.Panel">
+						<div data-sap-ui-aggregation="title" data-sap-ui-type="sap.ui.core.Title" data-text="SAPUI5 Content in HTML Table in SAPUI5 Panel"></div>
+						<a href="http://www.sap.com" target="_blank">www.sap.com</a>
+					</div>
+		
+					</td></tr>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div id="altType">
+		<div id="form" data-sap-ui-type="sap.ui.commons.form.Form" data-title="Alt type works"></div>
+	</div>
+	
+	
+	<script>
+		function handlePress(evt) {
+		 	ok(true, "Handler is called");
+		};
+	</script>
+	<div id="events">
+		<div id="buttonWithEvent" data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="handlePress"></div>
+	</div>
+
+	<div id="events-error">
+		<div id="buttonWithUndefinedEvent" data-sap-ui-type="sap.ui.commons.Button" data-text="Test" data-enabled="true" data-press="notDefinedHandler"></div>
+	</div>
+	
+	<!--
+	TODO: Add this test once the deprecation warnings are removed 
+	<div id="data-attributes">
+		<div id="buttonDataAttributes" data-sap-ui-type="sap.ui.commons.Button" text="Test" data-enabled="true"></div>
+	</div>
+	
+	 -->
+
+	<div id="basic-id">
+		<div id="basicId"></div>
+	</div>
+	
+	<div id="databinding">
+		<div id="buttonDataBinding" data-sap-ui-type="sap.ui.commons.Button" data-text="{model2>/stringValue}" data-enabled="{/booleanValue}"></div>
+
+		<div id="aggregationDataBinding" data-sap-ui-type="sap.ui.commons.Carousel" data-content="{/buttons}">
+			<div data-sap-ui-type="sap.ui.commons.Button" data-text="{title}"></div>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<mvc:View
+	controllerName="sap.m.sample.ListLoading.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		growing="true"
+		growingThreshold="10"
+		busyIndicatorDelay="500"
+		enableBusyIndicator="true"
+		noDataText="No products available"
+		items="{productmodel>/Products}">
+		<headerToolbar>
+			<Toolbar>
+				<Label text="Products" />
+				<ToolbarSpacer />
+				<Button
+					icon="sap-icon://refresh"
+					press="refreshDataFromBackend" />
+			</Toolbar>
+		</headerToolbar>
+		<StandardListItem
+			title="{productmodel>Name}"
+			info="{productmodel>Price} EUR"
+			description="{productmodel>ShortDescription}" />
+	</List>
+</mvc:View>

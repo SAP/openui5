@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Others">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>LocalBusyIndicatorSupport - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit,sap.ui.table"
+				>
+		</script>
+		<script>
+		try {
+			
+			// try to load chart library - will fail in OpenUI5 delivery 
+			sap.ui.getCore().loadLibrary("sap.viz");
+			
+		} catch (e) {
+			
+			// provide dummies so that the ChartBusy script doesn't fail
+			sap.ui.core.Element.extend("sap.viz.ui5.data.FlattenedDataset");
+			sap.ui.core.Control.extend("sap.viz.ui5.Bar", {
+				placeAt: function() {}
+			});
+			
+			// hide the chart sample when document is ready
+			jQuery(function() {
+				jQuery(".requiresCharts").css("display", "none");
+			});
+		}
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		<script id='TableBusy'>
+
+		var oMyTable = new sap.ui.table.Table();
+		
+		// define the Table columns
+		var oControl = new sap.ui.commons.TextView({text:"{lastName}"}); // short binding notation
+		oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Last Name"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "100px"}));
+		oControl = new sap.ui.commons.TextField().bindProperty("value", "name"); // more verbose binding notation
+		oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "First Name"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "80px"}));
+		oControl = new sap.ui.commons.CheckBox({checked:"{checked}"});
+		oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Checked"}), template: oControl, sortProperty: "checked", filterProperty: "checked", width: "75px", hAlign: "Center"}));
+		oControl = new sap.ui.commons.Link({text:"{linkText}", href:"{href}"});
+		oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Web Site"}), template: oControl, sortProperty: "linkText", filterProperty: "linkText"}));
+		oControl = new sap.ui.commons.RatingIndicator({value:"{rating}"});
+		oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Rating"}), template: oControl, sortProperty: "rating", filterProperty: "rating"}));
+		
+		
+		// create some local data
+		var aData = [
+			{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
+			{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
+			{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
+		];
+		
+		// create a JSONModel, fill in the data and bind the Table to this model
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({modelData: aData});
+		oMyTable.setModel(oModel);
+		oMyTable.bindRows("/modelData");
+		
+		//Create a button to toggle busy mode
+		var oBtn1 = new sap.ui.commons.Button({
+			text : "set loading-mode: on",
+			press : function() {
+				var bBusy = !oMyTable.isBusy();
+				bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+				oMyTable.setBusy(bBusy);
+			}
+		}).placeAt("sample1");
+		
+		oMyTable.placeAt("sample1");
+
+		</script>
+
+		<script id='ChartBusy'>
+	    // some business data 
+		var oModel = new sap.ui.model.json.JSONModel({
+			businessData : [
+				{Country :"Canada",revenue:410.87,profit:-141.25, population:34789000},
+				{Country :"China",revenue:338.29,profit:133.82, population:1339724852},
+				{Country :"France",revenue:487.66,profit:348.76, population:65350000},
+				{Country :"Germany",revenue:470.23,profit:217.29, population:81799600},
+				{Country :"India",revenue:170.93,profit:117.00, population:1210193422},
+				{Country :"United States",revenue:905.08,profit:609.16, population:313490000}
+			]
+		});		
+
+	    // A Dataset defines how the model data is mapped to the chart 
+		var oDataset = new sap.viz.ui5.data.FlattenedDataset({
+
+			// a Bar Chart requires exactly one dimension (x-axis) 
+			dimensions : [ 
+				{
+					axis : 1, // must be one for the x-axis, 2 for y-axis
+					name : 'Country', 
+					value : "{Country}"
+				} 
+			],
+
+			// it can show multiple measures, each results in a new set of bars in a new color 
+			measures : [ 
+			    // measure 1
+				{
+					name : 'Profit', // 'name' is used as label in the Legend 
+					value : '{profit}' // 'value' defines the binding for the displayed value   
+				},
+				{
+					name : 'Revenue', 
+					value : '{revenue}'
+				} 
+			],
+			
+			// 'data' is used to bind the whole data collection that is to be displayed in the chart 
+			data : {
+				path : "/businessData"
+			}
+			
+		});
+
+	    // create a Bar chart
+	    // you also might use Combination, Line, StackedColumn100, StackedColumn or Column
+	    // for Donut and Pie please remove one of the two measures in the above Dataset.  
+		var oBarChart = new sap.viz.ui5.Bar({
+			width : "80%",
+			height : "400px",
+			plotArea : {
+			//'colorPalette' : d3.scale.category20().range()
+			},
+			title : {
+				visible : true,
+				text : 'Profit and Revenue By Country'
+			},
+			dataset : oDataset
+		});
+
+	    // attach the model to the chart and display it
+		oBarChart.setModel(oModel);
+	    oBarChart.setBusyIndicatorDelay(0);
+		
+		//Create a button to toggle busy mode
+		var oBtn2 = new sap.ui.commons.Button({
+			text : "set loading-mode: on",
+			press : function() {
+				var bBusy = !oBarChart.isBusy();
+				bBusy ? oBtn2.setText("set loading-mode: off") : oBtn2.setText("set loading-mode: on")
+				oBarChart.setBusy(bBusy);
+			}
+		}).placeAt("sample2");
+
+		oBarChart.placeAt("sample2");
+		</script>
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/localbusyindicator-icon.png">LocalBusyIndicator</h1>
+
+  <h2>Introduction</h2>
+		<p>
+		The LocalBusyIndicator can be used to disable single controls. It prevents the
+		user from interacting with the control. This can be used if new data is loaded
+		from the backend.
+		</p>
+		<p>
+		The LocalBusyIndicator is automatically added to Controls. It can be displayed by calling 
+		setBusy(true) on the control or element. It shows up after one second (standard behaviour).
+		 The delay can be changed by calling setBusyIndicatorDelay(ms) on the control.
+		</p>
+	<h2>Example</h2>
+
+	<h3>LocalBusyIndicator used in table</h3>
+	<div code-sample="sample1" script="TableBusy"></div>
+
+	<h3 class="requiresCharts">LocalBusyIndicator for viz chart (no delay)</h3>
+	<div class="requiresCharts" code-sample="sample2" script="ChartBusy"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.core.LocalBusyIndicator.html">API documentation</a>
+	</p>
+	</body>
+</html>

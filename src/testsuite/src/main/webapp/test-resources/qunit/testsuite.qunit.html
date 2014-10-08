@@ -1,0 +1,26 @@
+<html>
+ <head>
+  <title>Global QUnit TestSuite</title>
+ </head>
+ <body>
+  <script language="javascript">
+
+  /**
+   * Method that is called by the Selenium/QUnit framework to retrieve the test suites.  
+   */
+  function suite() {
+    var suite = new top.jsUnitTestSuite();
+    var contextPath = "/" + window.location.pathname.split("/")[1];
+    // marker to determine that the global test suite is executed (skips the core test in the mobile suite)
+    top.globalQUnitTestSuite = true;
+    // first we execute all the Core QUnit tests
+    suite.addTestPage(contextPath + "/test-resources/qunit/testsuite.desktop.qunit.html");
+    // finally we execute all the Mobile QUnit tests (due to user agent adoptions)
+    suite.addTestPage(contextPath + "/test-resources/qunit/testsuite.mobile.qunit.html");
+    return suite;
+  }
+
+  </script>
+ </body>
+</html>
+

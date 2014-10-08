@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Localization/Resource Bundles - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-originInfo="true"
+			>
+	</script>
+
+	<script>
+	
+		try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+		function showInfo() {
+			var mInfo = this.getOriginInfo("text"),
+				sText = "Info:\n";
+
+			if (mInfo) {
+				jQuery.each(mInfo, function(key, value) {
+					sText += key + ": " + value + "\n";
+				});
+			} else {
+				sText += "Not available!";
+			}
+			alert(sText);
+		}
+
+		jQuery.sap.require("jquery.sap.resources");
+
+		var sLocale = sap.ui.getCore().getConfiguration().getLanguage();
+		var oBundle = jQuery.sap.resources({url : "resources/i18n.properties", locale: sLocale, includeInfo: sap.ui.getCore().getConfiguration().getOriginInfo()});
+
+		var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
+		oMatrixLayout.setLayoutFixed(false);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.TextView({text: oBundle.getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo) 
+		);
+		oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: oBundle.getText("lastname"), tooltip: oBundle.getText("lastname")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: oBundle.getText("firstname")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: oBundle.getText("street")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: oBundle.getText("zip")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: oBundle.getText("city")}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.placeAt("resourcebundle");
+
+		var oResourceModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"resources/i18n.properties"});
+		var oMatrixLayout = new sap.ui.commons.layout.MatrixLayout();
+		oMatrixLayout.setModel(oResourceModel, "i18n");
+		oMatrixLayout.setLayoutFixed(false);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.TextView({text: oResourceModel.getResourceBundle().getText("welcome", ["Administrator"])}).attachBrowserEvent("click", showInfo) 
+		);
+		oMatrixLayout.getRows()[0].getCells()[0].setColSpan(2);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: "{i18n>lastname}", tooltip: "{i18n>lastname}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: "{i18n>firstname}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: "{i18n>street}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: "{i18n>zip}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.createRow(
+				new sap.ui.commons.Label({text: "{i18n>city}"}).attachBrowserEvent("click", showInfo) , 
+				new sap.ui.commons.TextField()
+		);
+		oMatrixLayout.placeAt("resourcemodel");
+
+		jQuery(function(){
+			var url = jQuery.sap.getModulePath("sap.ui.commons", '/') + "messagebundle.properties";
+			var oBundle = jQuery.sap.resources({url:url});
+			jQuery("#locale").html(oBundle ? oBundle.sLocale : "--");
+		});
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+
+	<h1>Localization - Test Page</h1>
+
+	<h2>Resource Bundle</h2>
+
+	<div id="resourcebundle"></div>
+
+	<h2>Resource Model</h2>
+
+	<div id="resourcemodel"></div>
+	
+	<hr>
+	<div id="locale"></div>
+
+</body>
+</html>

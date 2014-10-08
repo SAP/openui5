@@ -1,0 +1,475 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.json.JSONModel
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.layout,sap.ui.commons">
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+
+	var testdata = {
+  		teamMembers:[
+   		            {firstName:"Andreas", lastName:"Klark"},
+   		            {firstName:"Peter", lastName:"Miller"},
+   		            {firstName:"Gina", lastName:"Rush"},
+   		            {firstName:"Steave", lastName:"Ander"},
+   		            {firstName:"Michael", lastName:"Spring"},
+   		            {firstName:"Marc", lastName:"Green"},
+   		            {firstName:"Frank", lastName:"Wallace"}]
+	};
+	
+	var testdataChild = {
+	  		pets:[
+	   		            {type:"ape", age:"1"},
+	   		            {type:"bird", age:"2"},
+	   		            {type:"cat", age:"3"},
+	   		            {type:"fish", age:"4"},
+	   		            {type:"dog", age:"5"}]
+		};
+	
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData(testdata);
+	sap.ui.getCore().setModel(oModel);
+	
+	var oModelChild = new sap.ui.model.json.JSONModel();
+	oModelChild.setData(testdataChild);
+	
+	var oLayout = new sap.ui.layout.VerticalLayout();
+	
+	var oLabel = new sap.ui.commons.Label("myLabel");
+	oLabel.setText("testText");
+	oLabel.placeAt("target1");
+	
+	test("test model getProperty with context", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		var value = oModel.getProperty("6/lastName", oContext);
+		equal(value, "Wallace", "model value");
+	});
+	
+	test("test model getProperty", function(){
+		var value = oModel.getProperty("/teamMembers/6/lastName");
+		equal(value, "Wallace", "model value");
+	});
+	
+	test("test model setProperty", function(){
+		oModel.setProperty("/teamMembers/4/lastName", "Jackson");
+		var value = oModel.getProperty("/teamMembers/4/lastName");
+		equal(value, "Jackson", "model value");
+	});
+	
+	test("test getProperty on label", function(){
+		equal(oLabel.getText(),"testText", "old text value");
+		oLabel.bindProperty("text", "/teamMembers/4/firstName");
+		equal(oLabel.getText(), "Michael", "text value from model");
+	});
+	
+	test("test model setProperty onlabel", function(){
+		oLabel.setText("test");
+		equal(oLabel.getText(),"test", "old text value");		
+		oLabel.bindProperty("text", "/teamMembers/1/firstName");
+		equal(oLabel.getText(), "Peter", "text value from model");
+		// modify model value
+		oModel.setProperty("/teamMembers/1/firstName", "Petre");
+		equal(oLabel.getText(), "Petre", "new text value from model");
+	});
+	
+	test("test model setProperty with invalid bindingContext and relative path", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers/HorstDerGrosse", null, function(context){
+			oContext = context;
+		});
+		oModel.setProperty("firstName", "Peter", oContext);
+		expect(0);
+	});
+
+	test("test model setProperty onlabel with bindingContext and relative path", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		oLabel.setBindingContext(oContext);
+		oLabel.bindProperty("text", "1/firstName");
+		equal(oLabel.getText(), "Petre", "text value from model");
+		// modify model value
+		oModel.setProperty("1/firstName", "Petri", oLabel.getBindingContext());
+		equal(oLabel.getText(), "Petri", "new text value from model");
+	});
+	
+	test("test model setProperty onlabel with bindingContext and relative path (legacySyntax = true)", function(){
+		oModel.setLegacySyntax(true);
+		var oContext;
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		oLabel.setBindingContext(oContext);
+		oLabel.bindProperty("text", "1/firstName");
+		equal(oLabel.getText(), "Petri", "text value from model");
+		// modify model value
+		oModel.setProperty("1/firstName", "Petro", oLabel.getBindingContext());
+		equal(oLabel.getText(), "Petro", "new text value from model");
+		oModel.setLegacySyntax(false);
+	});
+	
+	test("test model setProperty onlabel without bindingContext and relative path (legacySyntax = true)", function(){
+		oModel.setLegacySyntax(true);
+		oLabel.setBindingContext(undefined);
+		oLabel.bindProperty("text", "teamMembers/1/firstName");
+		equal(oLabel.getText(), "Petro", "text value from model");
+		// modify model value
+		oModel.setProperty("teamMembers/1/firstName", "Petre", oLabel.getBindingContext());
+		equal(oLabel.getText(), "Petre", "new text value from model");
+		oModel.setLegacySyntax(false);
+	});
+	
+	test("test model setProperty onlabel with bindingContext and absolute path (legacySyntax = true)", function(){
+		oModel.setLegacySyntax(true);
+		var oContext;
+		oModel.createBindingContext("/teamMembers/HorstDerGrosse", null, function(context){
+			oContext = context;
+		});
+		oLabel.setBindingContext(oContext);
+		oLabel.bindProperty("text", "/teamMembers/1/firstName");
+		equal(oLabel.getText(), "Petre", "text value from model");
+		// modify model value
+		oModel.setProperty("/teamMembers/1/firstName", "Petra", oLabel.getBindingContext());
+		equal(oLabel.getText(), "Petra", "new text value from model");
+		oModel.setLegacySyntax(false);
+	});
+	
+	test("test model setProperty onlabel with bindingContext and absolute path", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers/HorstDerGrosse", null, function(context){
+			oContext = context;
+		});
+		oLabel.setBindingContext(oContext);
+		oLabel.bindProperty("text", "/teamMembers/1/firstName");
+		equal(oLabel.getText(), "Petra", "text value from model");
+		// modify model value
+		oModel.setProperty("/teamMembers/1/firstName", "Peter");
+		equal(oLabel.getText(), "Peter", "new text value from model");
+	});
+
+	test("test model getProperty with bindingContext and path = null", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		equal(oModel.getProperty(null, oContext).length, 7, "array of teammembers");
+	});
+	
+	test("test createBindingContext with two models", function(){
+		var oContext;
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		oLayout.addContent(oLabel);
+		oLayout.setModel(oModel);
+		oLayout.setBindingContext(oContext);
+		oLabel.setModel(oModelChild);
+		oLabel.bindProperty("text", "/pets/0/type");
+		equal(oLabel.getText(), "ape", "text value from model");
+		oModelChild.setProperty("/pets/0/type", "hamster");
+		equal(oLabel.getText(), "hamster", "new text value from model");
+	});
+	
+	var oLB = new sap.ui.commons.ListBox("myLb", {displaySecondaryValues:true, height:"200px"});
+	var oItemTemplate = new sap.ui.core.ListItem();	
+	oLB.placeAt("target2");
+	
+	test("test model bindAggregation on Listbox", function(){
+	
+		oItemTemplate.bindProperty("text", "firstName").bindProperty("additionalText", "lastName");
+		oLB.bindAggregation("items", "/teamMembers", oItemTemplate);
+		
+		var listItems = oLB.getItems(); 
+		equal(listItems.length, 7, "length of items");
+		
+		jQuery(listItems).each( function(i, item){
+			equal(item.getText(), testdata.teamMembers[i].firstName, "firstName");
+			equal(item.getAdditionalText(), testdata.teamMembers[i].lastName, "lastName");
+		});
+		
+	});
+	
+	test("test JSONModel JSON constructor", function(){
+		
+		var testModel = new sap.ui.model.json.JSONModel({
+			"foo": "The quick brown fox jumps over the lazy dog.",
+			"bar": "ABCDEFG",
+			"baz": [52, 97]
+		});
+		equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+		equal(testModel.getProperty("/bar"), "ABCDEFG");
+		equal(testModel.getProperty("/baz")[1], 97);
+		
+	});
+	
+	test("test create binding context", function(){
+		oModel.createBindingContext("/root/test/subtest/name", null, function(context){
+			equal(context.getPath(), "/root/test/subtest/name", "newContext");
+		});
+		oModel.createBindingContext("root/test/subtest/name", null, function(context){
+			ok(context == null, "newContext");
+		});
+		var oContext = new sap.ui.model.Context(oModel, "/myContext");
+		// if spath starts with / ... context will be ignored, because path is absolute
+		oModel.createBindingContext("/root/test/subtest/name", oContext, function(context){
+			equal(context.getPath(), "/root/test/subtest/name", "newContext");
+		});
+		var oContext = new sap.ui.model.Context(oModel, "/myContext");
+		oModel.createBindingContext("root/test/subtest/name", oContext, function(context){
+			equal(context.getPath(), "/myContext/root/test/subtest/name", "newContext");
+		});
+	});
+	
+	test("test inheritance of context", function(){
+		var oContext;
+		oLabel.setBindingContext(undefined);
+		oModel.createBindingContext("/teamMembers", null, function(context){
+			oContext = context;
+		});
+		oLayout.setModel(oModel);
+		oLayout.setBindingContext(oContext);
+		oLabel.setModel(oModelChild);
+		oLabel.bindProperty("text", "/pets/0/type");
+		oLayout.addContent(oLabel);
+		ok(oLabel.getBindingContext() == undefined, "context undefined");
+		var oContext;
+		oModel.createBindingContext("/pets", null, function(context){
+			oContext = context;
+		});
+		oLabel.setBindingContext(oContext);
+		equal(oLabel.getBindingContext().getPath(), "/pets", "context set correctly");
+		oModelChild.setProperty("0/type", "rat",oLabel.getBindingContext());
+		equal(oLabel.getText(), "rat", "new text value from model");
+	});
+	
+	asyncTest("test JSONModel loadData",function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		testModel.loadData("testdata.json");
+		testModel.attachRequestCompleted(function() {
+			start();          // resume normal testing
+			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			equal(testModel.getProperty("/bar"), "ABCDEFG");
+			equal(testModel.getProperty("/baz")[1], 97);
+		});
+	});
+	
+	asyncTest("test JSONModel loadData constructor",function(){
+		var testModel = new sap.ui.model.json.JSONModel("testdata.json");
+		testModel.attachRequestCompleted(function() {
+			start();          // resume normal testing
+			equal(testModel.getProperty("/foo"), "The quick brown fox jumps over the lazy dog.");
+			equal(testModel.getProperty("/bar"), "ABCDEFG");
+			equal(testModel.getProperty("/baz")[1], 97);
+		});
+	});
+
+	test("test JSONListBinding context calculation", function() {
+		var oModel = new sap.ui.model.json.JSONModel(),
+			oArrayData = [1, 2, 3],
+			aContexts;
+		oModel.setData(oArrayData);
+		aContexts = oModel.bindList("/").getContexts();
+		equal(aContexts[0].getPath(), "/0");
+		equal(aContexts[1].getPath(), "/1");
+		equal(aContexts[2].getPath(), "/2");
+		aContexts = oModel.bindList("", null).getContexts();
+		equal(aContexts.length, 0);
+		aContexts = oModel.bindList("/", oModel.getContext("/0")).getContexts();
+		equal(aContexts[0].getPath(), "/0");
+		equal(aContexts[1].getPath(), "/1");
+		equal(aContexts[2].getPath(), "/2");
+		aContexts = oModel.bindList("", oModel.getContext("/")).getContexts();
+		equal(aContexts[0].getPath(), "/0");
+		equal(aContexts[1].getPath(), "/1");
+		equal(aContexts[2].getPath(), "/2");
+		aContexts = oModel.bindList("/", oModel.getContext("/")).getContexts();
+		equal(aContexts[0].getPath(), "/0");
+		equal(aContexts[1].getPath(), "/1");
+		equal(aContexts[2].getPath(), "/2");
+		var oNestedArrayData = {
+			"array" : oArrayData,
+			"complex" : [1, 2, 3]
+		};
+		oModel.setData(oNestedArrayData);
+		aContexts = oModel.bindList("/array", "").getContexts();
+		equal(aContexts[0].getPath(), "/array/0");
+		equal(aContexts[1].getPath(), "/array/1");
+		equal(aContexts[2].getPath(), "/array/2");
+		aContexts = oModel.bindList("array", null).getContexts();
+		equal(aContexts.length, 0);
+		aContexts = oModel.bindList("/array", oModel.getContext("/complex")).getContexts();
+		equal(aContexts[0].getPath(), "/array/0");
+		equal(aContexts[1].getPath(), "/array/1");
+		equal(aContexts[2].getPath(), "/array/2");
+		aContexts = oModel.bindList("", oModel.getContext("/array")).getContexts();
+		equal(aContexts[0].getPath(), "/array/0");
+		equal(aContexts[1].getPath(), "/array/1");
+		equal(aContexts[2].getPath(), "/array/2");
+		aContexts = oModel.bindList("array/", oModel.getContext("/")).getContexts();
+		equal(aContexts[0].getPath(), "/array/0");
+		equal(aContexts[1].getPath(), "/array/1");
+		equal(aContexts[2].getPath(), "/array/2");
+	});
+	
+	test("test JSON setJSON", function() {
+		var oModel = new sap.ui.model.json.JSONModel();
+		var sJSON = '{"name":"John"}';
+		oModel.setJSON(sJSON,false);
+		equal(oModel.getProperty("/name"), "John" , "parse test");
+	});
+	
+	test("test JSON setJSON error", function() {
+		var oModel = new sap.ui.model.json.JSONModel();
+		var sJSON = '{"name":John}';
+		var error = false;
+		oModel.attachParseError(sJSON, function(oEvent){
+			error = true;
+			equal(oEvent.sId, "parseError", "event type");
+		});
+		oModel.setJSON(sJSON,false);
+		ok(error, "error occurred");
+
+	});
+	
+	test("test JSON getJSON", function() {
+		var oModel = new sap.ui.model.json.JSONModel();
+		var sJSON = '{"name":"John"}';
+		oModel.setJSON(sJSON,false);
+		equal(oModel.getJSON(), sJSON, "get JSON test");
+	});
+	
+	test("test JSON getData", function() {
+		var oModel = new sap.ui.model.json.JSONModel();
+		var sJSON = '{"name":"John"}';
+		oModel.setJSON(sJSON,false);
+		equal(oModel.getData().name, "John", "get Data test");
+	});
+
+	test("test JSON compatible syntax", function() {
+		var oModel = new sap.ui.model.json.JSONModel(testdata);
+		oModel.setLegacySyntax(true);
+		var value = oModel.getProperty("teamMembers/6/lastName");
+		equal(value, "Wallace", "model value");
+		oModel.setProperty("teamMembers/4/lastName", "Jackson");
+		var value = oModel.getProperty("/teamMembers/4/lastName");
+		equal(value, "Jackson", "model value");
+		var oContext;
+		oModel.createBindingContext("teamMembers/6", null, function(context){
+			oContext = context;
+		});
+		var value = oModel.getProperty("lastName", oContext);
+		equal(value, "Wallace", "model value");
+	});
+
+	test("test JSON compatible syntax fail", function() {
+		var oModel = new sap.ui.model.json.JSONModel(testdata);
+		oModel.setLegacySyntax(false);
+		var value = oModel.getProperty("teamMembers/6/lastName");
+		equal(value, undefined, "model value");
+		oModel.setProperty("/teamMembers/4/lastName", "Ander");
+		try {
+			oModel.setProperty("teamMembers/4/lastName", "Jackson");
+		} catch (e) {}
+		var value = oModel.getProperty("/teamMembers/4/lastName");
+		equal(value, "Ander", "model value");
+		var oContext;
+		oModel.createBindingContext("teamMembers/6", null, function(context){
+			oContext = context;
+		});
+		equal(oContext, undefined, "model value");
+	});
+
+	test("test JSONModel destroy", function(){
+		var testModel = new sap.ui.model.json.JSONModel();
+		testModel.attachRequestCompleted(function() {
+			ok(false, "Request should be aborted!");
+		});
+		testModel.attachRequestFailed(function() {
+			ok(false, "Error handler should not be called when request is aborted via destroy!");
+		});
+		var spy = this.spy(jQuery, "ajax");
+		testModel.loadData("testdata.json");
+		testModel.destroy();
+		ok(testModel.bDestroyed, "Model should be destroyed");
+		equal(spy.callCount, 1, "number of requests should be still 1");
+		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		
+	});
+
+	
+	test("test JSONModel loadData after destroy", function(){
+		//var server = this.sandbox.useFakeServer();
+		//server.respondWith("data.json", function(xhr, id) {
+			//ok(false, "Request should not be sent after calling destroy!");
+			//xhr.respond(200, { "Content-Type": "application/json" }, '{ "test": "data" }');
+		//});
+
+		var spy = this.spy(jQuery, "ajax");
+		var testModel = new sap.ui.model.json.JSONModel();
+		
+		testModel.attachRequestCompleted(function() {
+			ok(false, "Request should be aborted!");
+		});
+		testModel.attachRequestFailed(function() {
+			ok(false, "Error handler should not be called when request is aborted via destroy!");
+		});
+		
+		testModel.loadData("testdata.json", null, true);
+		testModel.destroy();
+		ok(testModel.bDestroyed, "Model should be destroyed");
+		equal(spy.callCount, 1, "number of requests");
+		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+		
+		// call loaddata again
+		testModel.loadData("testdata.json", null, true);
+		
+		ok(testModel.bDestroyed, "Model should be destroyed");
+		equal(spy.callCount, 1, "number of requests should be still 1");
+		equal(spy.getCall(0).returnValue.statusText, "abort", "should be abort");
+
+	});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding JSON Model</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="target1"></div>
+<div id="target2"></div>
+</body>
+</html>

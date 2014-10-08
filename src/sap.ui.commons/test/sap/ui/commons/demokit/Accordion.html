@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Accordion,sap.ui.commons.AccordionSection">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Accordion - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+		
+		<script id='Accordion'>
+		
+//Create the Accordion control
+var oAccordion = new sap.ui.commons.Accordion("accordionA"); 
+			
+//Building Section 1
+var oSection1 = new sap.ui.commons.AccordionSection( "section1" );		
+  oSection1.setTitle("Section 1");		
+  oSection1.setTooltip("Section 1");
+  oSection1.setMaxHeight("100px");
+  for (var i=0 ; i < 5 ; i++){		  		  
+var oCheckBox1 = new sap.ui.commons.CheckBox( "CheckBox1"+i );
+  oCheckBox1.setText("CheckBox1 "+i);
+  oSection1.addContent( oCheckBox1);		  
+var oLabel1 = new sap.ui.commons.Label( "Label1"+i );
+  oLabel1.setText("Label 1 "+i);			  		 
+  oSection1.addContent( oLabel1);
+  }						
+  oAccordion.addSection( oSection1 );
+			
+//Building Section 2
+var oSection2 = new sap.ui.commons.AccordionSection( "section2");
+  oSection2.setTitle("Section 2");		
+  for (var i=0 ; i < 5 ; i++){		  
+var oCheckBox2 = new sap.ui.commons.CheckBox( "CheckBox2"+i );
+  oCheckBox2.setText("CheckBox2 "+i);
+  oSection2.addContent( oCheckBox2);
+  }		
+  oAccordion.addSection( oSection2 );		
+			
+//Building Section 3
+var oSection3 = new sap.ui.commons.AccordionSection( "section3");		
+  oSection3.setTitle("Section 3");
+  oSection3.setEnabled(false);	
+var oCheckBox3 = new sap.ui.commons.CheckBox( "CheckBox3" );
+  oSection3.addContent( oCheckBox3);
+  oAccordion.addSection( oSection3 );	
+			
+//Building Section 4
+var oSection4 = new sap.ui.commons.AccordionSection( "section4");
+  oSection4.setTitle("Section 4");		
+var oCheckBox4 = new sap.ui.commons.CheckBox( "CheckBox4" );		
+  oSection4.addContent( oCheckBox4);					
+			
+//Accordion properties settings
+  oAccordion.addSection( oSection4 );							
+  oAccordion.setWidth("200px");
+						
+  oAccordion.placeAt("sample1");
+			
+</script>
+		
+</head>
+	
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/accordion-icon.png">Accordion</h1>
+		
+		<h2>Introduction</h2>
+		
+		<p>
+		The Accordion is a control that can contain N sections into which you can embed any control. Each section is represented by a title and the content.
+		Always one section can be opened at the same time. You can react on section opening and closing. If no default section is provided, the
+		firstly enabled section will be set as the default one and will be re-opened once the user closes another section.
+		The user can drag and drop sections with the mouse or using keyboard shortcuts.
+		</p>
+		
+		<p>
+		Following the list of available keyboard shortcuts: 
+		<code>Arrow up</code> or <code>Arrow left</code>: Navigate to the section title which was previously enabled.
+		<code>Arrow down</code> or <code>Arrow right</code>: Navigate to the next section title which is enabled.
+		<code>Ctrl + up</code>: Drag and drop a section above.
+		<code>Ctrl + down</code>: Drag and drop a section below.
+		<code>Ctrl + pageUp</code>: Move the focus to the first focusable element of the previous section which is focusable.
+		<code>Ctrl + pageDown</code>: Move the focus to the first focusable element of the next section which is focusable.
+		</p>
+		
+		<p>
+		In the program, applications using the Accordion control can also call <code>openSection</code> to open a specific section and <code>closeSection</code> 
+		to close the given section and re-open the default section.
+		</p>
+		
+		<h2>Example</h2>
+		
+		<div code-sample="sample1" script="Accordion"></div>
+		
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Accordion.html" >API documentation</a>
+		</p>
+	</body>
+</html>

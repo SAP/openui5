@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- Initialization -->
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons"	
+		>
+	</script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+    <script language="javascript">
+
+    	// Lock the Core. 
+    	// This can be done anywhen after the Core has been loaded and executed, potentially
+    	// before it has been initialized
+		sap.ui.getCore().lock();
+
+		// create some UI that shows whether lock/unlock works or not
+		var oButton = new sap.ui.commons.Button({
+			id : "button",
+			text : "Click",
+			tooltip : "This SAPUI5 Button should be 'locked' until the Core is explicitly unlocked",
+		})
+		oButton.placeAt("uiArea1");
+	
+		/* 
+		 * the following is a workaround that applications can implement 
+		  
+		sap.ui.getCore().attachInitEvent(function() { 
+			// we have to use setTimeout as the unanted unlock happens just after init events have been processed 
+			setTimeout(function() {
+				sap.ui.getCore().lock();
+			}, 10);
+		} );
+		
+		/* */
+		
+		qutils.delayTestStart();
+		
+		module("Check for Unlocked Core");
+		
+		test("Control Events should be blocked depending on Core lock", function() {
+			var pressed = false;
+			oButton.attachPress(function() {
+				pressed = true;
+			});	
+
+			ok(!pressed, "Button must not have fired 'press' yet");
+			jQuery("#button").focus().click(); 
+			ok(!pressed, "Button still must not have fired 'press'");
+			
+			sap.ui.getCore().unlock();
+
+			ok(!pressed, "Button still must not have fired 'press'");
+			jQuery("#button").focus().click();
+			ok(pressed, "Button should have fired 'press'");
+		});
+			
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit test for Trac ticket #1238: Core unlocks unconditionally itself upon load/init</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	
+	<br/>
+	
+	<!-- For details see Trac Ticket 1238 -->
+</body>
+</html>

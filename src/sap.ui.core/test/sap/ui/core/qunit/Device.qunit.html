@@ -1,0 +1,180 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested class: sap.ui.Device
+-->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Test Page for sap.ui.Device</title>
+		
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="">
+		</script>
+		
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		<script type="text/javascript">
+		var BROWSER = {
+			"INTERNET_EXPLORER": "ie",
+			"FIREFOX": "ff",
+			"CHROME": "cr",
+			"SAFARI": "sf",
+			"ANDROID": "an"
+		};
+		
+		
+		var aUserAgentsAndResults = [
+			{
+				name: "IE9",
+				ua: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; .NET4.0C; .NET4.0E; InfoPath.3",
+				expected: {
+					msie: true,
+					webkit: undefined,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: undefined,
+					firefox: undefined,
+					version: 9,
+					versionStr: "9"
+				}
+			},
+			{
+				name: "IE10",
+				ua: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)",
+				expected: {
+					msie: true,
+					webkit: undefined,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: undefined,
+					firefox: undefined,
+					version: 10,
+					versionStr: "10"
+				}
+			},
+			{
+				name: "IE11",
+				ua: "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
+				expected: {
+					msie: true,
+					webkit: undefined,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: undefined,
+					firefox: undefined,
+					version: 11,
+					versionStr: "11"
+				}
+			},
+			{
+				name: "Chrome 32",
+				ua: "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					version: 32,
+					versionStr: "32"
+				}
+			},
+			{
+				name: "Firefox 27",
+				ua: "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0",
+				expected: {
+					msie: undefined,
+					webkit: undefined,
+					mozilla: true,
+					chrome: undefined,
+					safari: undefined,
+					firefox: true,
+					version: 27,
+					versionStr: "27"
+				}
+			},
+			{
+				name: "Safari 7",
+				ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9) AppleWebKit/537.71 (KHTML, like Gecko) Version/7.0 Safari/537.71",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: true,
+					firefox: undefined,
+					version: 7,
+					versionStr: "7"
+				}
+			},
+			{
+				name: "iOS 6 (iPhone)",
+				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: true,
+					firefox: undefined,
+					version: 6,
+					versionStr: "6"
+				}
+			},
+			{
+				name: "Android 4.0.x",
+				ua: "Mozilla/5.0 (Linux; U; Android 4.0.1; en-us; sdk Build/ICS_MR0) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30 ",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: undefined,
+					firefox: undefined,
+					name: "an",
+					version: 4,
+					versionStr: "4"
+				}
+			}
+		];
+		
+		test("Test user agents", function() {
+			var actualResult, prop, currentTest;
+			for (var i = 0; i < aUserAgentsAndResults.length; i++) {
+				currentTest = aUserAgentsAndResults[i];
+				actualResult = sap.ui.Device._testUserAgent(currentTest.ua);
+				
+				// redo additional settings normally done later
+				if(actualResult.name){
+					for(var b in BROWSER){
+						if(BROWSER[b] === actualResult.name){
+							actualResult[b.toLowerCase()] = true;
+						}
+					}
+				}
+				
+				for (var prop in currentTest.expected) {
+					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+				}
+			}
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit tests: sap.ui.Device</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

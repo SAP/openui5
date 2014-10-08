@@ -1,0 +1,67 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent nestedFlexboxes"
+		width="95%" >
+		<l:content>
+			<HBox
+				fitContainer="true"
+				alignItems="Stretch">
+				<items>
+					<core:HTML content="&lt;h2&gt;1&lt;/h2&gt;">
+						<core:layoutData>
+							<FlexItemData growFactor="2" styleClass="item1" />
+						</core:layoutData>
+					</core:HTML>
+					<core:HTML content="&lt;h2&gt;2&lt;/h2&gt;">
+						<core:layoutData>
+							<FlexItemData growFactor="3" styleClass="item2" />
+						</core:layoutData>
+					</core:HTML>
+					<VBox
+						fitContainer="true">
+						<layoutData>
+							<FlexItemData growFactor="7" />
+						</layoutData>
+						<items>
+							<core:HTML content="&lt;h2&gt;3&lt;/h2&gt;">
+								<core:layoutData>
+									<FlexItemData growFactor="5" styleClass="item3" />
+								</core:layoutData>
+							</core:HTML>
+							<HBox
+								fitContainer="true"
+								alignItems="Stretch">
+								<layoutData>
+									<FlexItemData growFactor="3" />
+								</layoutData>
+								<items>
+									<core:HTML content="&lt;h2&gt;4&lt;/h2&gt;">
+										<core:layoutData>
+											<FlexItemData growFactor="1" styleClass="item4" />
+										</core:layoutData>
+									</core:HTML>
+									<core:HTML content="&lt;h2&gt;5&lt;/h2&gt;">
+										<core:layoutData>
+											<FlexItemData growFactor="1" styleClass="item5" />
+										</core:layoutData>
+									</core:HTML>
+								</items>
+							</HBox>
+						</items>
+					</VBox>
+					<core:HTML content="&lt;h2&gt;6&lt;/h2&gt;">
+						<core:layoutData>
+							<FlexItemData growFactor="5" styleClass="item6" />
+						</core:layoutData>
+					</core:HTML>
+				</items>
+			</HBox>
+
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

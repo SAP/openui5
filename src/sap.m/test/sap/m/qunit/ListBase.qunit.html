@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Test Page for sap.m.select</title>
+		<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+
+		/*******************************************************************************
+		 * Helper variables & functions
+		 *******************************************************************************/
+
+		// requires
+		jQuery.sap.require("sap.m.ListBaseRenderer");
+
+		// helper variables
+		var iItemCount = 0,
+			data1 = { // 0 items
+				items : [ ]
+			},
+			data2 = { // 3 items
+					items : [ {
+						Title : "Title1",
+						Description: "Description1"
+					}, {
+						Title : "Title2",
+						Description: "Description2"
+					}, {
+						Title : "Title3",
+						Description: "Description3"
+					} ]
+			},
+			data3 = { // 10 items
+					items : [ {
+						Title : "Title1",
+						Description: "Description1"
+					}, {
+						Title : "Title2",
+						Description: "Description2"
+					}, {
+						Title : "Title3",
+						Description: "Description3"
+					}, {
+						Title : "Title4",
+						Description: "Description4"
+					}, {
+						Title : "Title5",
+						Description: "Description5"
+					}, {
+						Title : "Title6",
+						Description: "Description6"
+					}, {
+						Title : "Title7",
+						Description: "Description7"
+					}, {
+						Title : "Title8",
+						Description: "Description8"
+					}, {
+						Title : "Title9",
+						Description: "Description9"
+					}, {
+						Title : "Title10",
+						Description: "Description10"
+					} ]
+			},
+			data4 = {
+					items : [ {
+						Title : "Table",
+						Description: "This is a table"
+					}, {
+						Title : "Window",
+						Description: "This is a window"
+					}, {
+						Title : "Room",
+						Description: "This is a room"
+					}, {
+						Title : "Lamp",
+						Description: "This is a lamp"
+					}, {
+						Title : "Attic",
+						Description: "This is an attic"
+					}, {
+						Title : "House",
+						Description: "This is a house"
+					}, {
+						Title : "Ceiling",
+						Description: "This is a ceiling"
+					}, {
+						Title : "Wall",
+						Description: "This is a wall"
+					}, {
+						Title : "Door",
+						Description: "This is a door"
+					}, {
+						Title : "Flower",
+						Description: "This is a flower"
+					} ]
+			};
+
+
+		// create a static list item
+		function createListItem() {
+			iItemCount ++;
+			return new sap.m.StandardListItem({
+				title : "Title" + iItemCount,
+				description: "Description" + iItemCount
+			});
+		};
+
+		function createTemplateListItem() {
+			return new sap.m.StandardListItem({
+				title: "{Title}",
+				description: "{Description}",
+			});
+		};
+
+		// bind list with data
+		function bindListData(oList, oData, sPath, oItemTemplate) {
+			var oModel = new sap.ui.model.json.JSONModel();
+			// set the data for the model
+			oModel.setData(oData);
+			// set the model to the list
+			oList.setModel(oModel);
+			// bind Aggregation
+			oList.bindAggregation("items", sPath, oItemTemplate);
+		}
+		
+		var createListWithBinding = function () {
+			
+		};
+		
+		function testRemeberSelections(oList, oRenderSpy) {
+			var oSelectionItem,
+			bIncludeItemInSelection,
+			oSorterAsc = new sap.ui.model.Sorter("Title", false, function(oContext){
+				return oContext.getProperty("Title").charAt(0); // sort ascending by first letter of title
+			}),
+			oSorterDesc = new sap.ui.model.Sorter("Title", true, function(oContext){
+				return oContext.getProperty("Title").charAt(0); // sort descending by first letter of title
+			}),
+			vSelectionMode,
+			vSelectedItemsNumber;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+		
+			vSelectionMode = oList.getMode();
+			// call method & do tests
+			if (vSelectionMode == "SingleSelect") {
+				oList.getItems()[0].setSelected(true);
+				vSelectedItemsNumber = 1;
+			}
+			else if (vSelectionMode == "MultiSelect") {
+				oList.getItems()[0].setSelected(true);
+				oList.getItems()[1].setSelected(true);
+				oList.getItems()[5].setSelected(true);
+				vSelectedItemsNumber = 3;
+			}
+		
+			oList.setRememberSelections(true);
+			strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of ' + vSelectedItemsNumber + ' on ' + oList);
+			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' item ' + oList);
+		
+			// filter 2 items ("Title1" and "Title10")
+			oList.getBinding("items").filter([new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1")]);
+			strictEqual(oList.getSelectedItems().length, 1, 'The selection contains 1 item ' + oList);
+
+			// reset filter
+			oList.getBinding("items").filter([]);
+			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + 'item ' + oList);
+		
+			oList.setRememberSelections(false);
+			strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array is empty on ' + oList);
+
+			// filter 2 items ("Title1" and "Title10")
+			oList.getBinding("items").filter([new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1")]);
+			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+
+			// reset filter
+			oList.getBinding("items").filter([]);
+			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setRememberSelections(), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+		
+			oList.setGrowing(true);
+			strictEqual(oList.getGrowing(), true, 'The property "growing" is "true" on ' + oList);
+			
+			oList.setRememberSelections(true);
+			
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			// remember the selected items in oListSelected
+			if (vSelectionMode == "SingleSelect") {
+				oList.getItems()[5].setSelected(true);
+				oListSelected = oList.getItems()[5].getTitle();
+			}
+			else if (vSelectionMode == "MultiSelect") {
+				oList.getItems()[0].setSelected(true);
+				oList.getItems()[1].setSelected(true);
+				oList.getItems()[5].setSelected(true);
+				oListSelected = [];
+				oListSelected[0] = oList.getItems()[0].getTitle();
+				oListSelected[1] = oList.getItems()[1].getTitle();
+				oListSelected[2] = oList.getItems()[5].getTitle();
+				oListSelected.sort();
+			}
+	
+			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of' +vSelectedItemsNumber +' on ' + oList);
+			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' +vSelectedItemsNumber+ ' items ' + oList);
+		
+			oList.setGrowing(false);
+			strictEqual(oList.getGrowing(), false, 'The property "growing" is "false" on ' + oList);
+		
+			// sort ascending
+			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", false, oSorterAsc) ] );
+		
+			if (vSelectionMode == "SingleSelect") {
+				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
+				strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
+			}
+			else if (vSelectionMode == "MultiSelect") {
+				oListSelectedAfterSorting = [];
+				oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
+				oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
+				oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
+				oListSelectedAfterSorting.sort();
+				strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
+			}
+		
+			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of' + vSelectedItemsNumber +' on ' + oList);
+			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
+		
+			oList.setRememberSelections(false);
+			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array is empty on ' + oList);
+		
+			// sort descending
+			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );	
+			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array has length of 0 on ' + oList);
+			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+		
+			//rebinding
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+		
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		};
+		
+		// app
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oApp = new sap.m.App("myApp", { initialPage: "myFirstPage" }),
+			oPage = new sap.m.Page("myFirstPage", {
+				title : "ListBase Test Page"
+			});
+
+		// init app
+		oApp.addPage(oPage).placeAt("content");
+
+		/********************************************************************************/
+		module("Basic Control API checks");
+		/********************************************************************************/
+
+		
+		
+		test("Properties", function() {
+			var oList = new sap.m.List({}),
+				oProperties = oList.getMetadata().getAllProperties();
+
+			ok(oProperties.inset, 'Property "inset" exists');
+			ok(oProperties.visible, 'Property "visible" exists');
+			ok(oProperties.headerText, 'Property "headerText" exists');
+			ok(oProperties.headerDesign, 'Property "headerDesign" exists');
+			ok(oProperties.footerText, 'Property "footerText" exists');
+			ok(oProperties.mode, 'Property "mode" exists');
+			ok(oProperties.width, 'Property "width" exists');
+			ok(oProperties.includeItemInSelection, 'Property "includeItemInSelection" exists');
+			ok(oProperties.showUnread, 'Property "showUnread" exists');
+			ok(oProperties.showNoData, 'Property "showNoData" exists');
+			ok(oProperties.noDataText, 'Property "noDataText" exists');
+			ok(oProperties.modeAnimationOn, 'Property "modeAnimationOn" exists');
+			ok(oProperties.showSeparators, 'Property "showSeparators" exists');
+			ok(oProperties.swipeDirection, 'Property "swipeDirection" exists');
+			ok(oProperties.growing, 'Property "growing" exists');
+			ok(oProperties.growingThreshold, 'Property "growingThreshold" exists');
+			ok(oProperties.growingTriggerText, 'Property "growingTriggerText" exists');
+			ok(oProperties.growingScrollToLoad, 'Property "growingScrollToLoad" exists');
+
+			// cleanup
+			oList.destroy();
+		});
+
+		test("Events", function() {
+			var oList = new sap.m.List({}),
+				oEvents = oList.getMetadata().getAllEvents();
+
+			ok(oEvents.select, 'Event "select" exists');
+			ok(oEvents.selectionChange, 'Event "selectionChange" exists');
+			ok(oEvents.delete, 'Event "delete" exists');
+			ok(oEvents.swipe, 'Event "swipe" exists');
+			ok(oEvents.growingStarted, 'Event "growingStarted" exists');
+			ok(oEvents.growingFinished, 'Event "growingFinished" exists');
+			ok(oEvents.updateStarted, 'Event "updateStarted" exists');
+			ok(oEvents.updateFinished, 'Event "updateFinished" exists');
+
+			// cleanup
+			oList.destroy();
+		});
+
+		test("Aggregations", function() {
+			var oList = new sap.m.List({}),
+				oAggregations = oList.getMetadata().getAllAggregations();
+
+			ok(oAggregations.items, 'Aggregation "items" exists');
+			ok(oAggregations.swipeContent, 'Aggregation "swipeContent" exists');
+			ok(oAggregations.headerToolbar, 'Aggregation "headerToolbar" exists');
+			ok(oAggregations.infoToolbar, 'Aggregation "infoToolbar" exists');
+
+			// cleanup
+			oList.destroy();
+		});
+
+		test("Methods", function() {
+			var oList = new sap.m.List({});
+
+			ok(oList.getSelectedItem, 'Method "getSelectedItem" exists');
+			ok(oList.setSelectedItem, 'Method "setSelectedItem" exists');
+			ok(oList.getSelectedItems, 'Method "getSelectedItems" exists');
+			ok(oList.setSelectedItemById, 'Method "setSelectedItemById" exists');
+			ok(oList.removeSelections, 'Method "removeSelections" exists');
+			ok(oList.selectAll, 'Method "selectAll" exists');
+			ok(oList.getSwipedItem, 'Method "getSwipedItem" exists');
+			ok(oList.swipeOut, 'Method "swipeOut" exists');
+			ok(oList.getGrowingInfo, 'Method "getGrowingInfo" exists');
+
+			// cleanup
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		module("Initialization");
+		/********************************************************************************/
+
+		test("Constructor behaviour", function() {
+			var oList = new sap.m.List({});
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._aSelectedPaths.length, 0, "Internal selected path array is empty after initialization of " + oList);
+			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after initialization of " + oList);
+
+			oList.destroy();
+		});
+
+		test("Default values", function() {
+			var sAddText = " (state: before rendering)",
+				oList = new sap.m.List({}),
+				fAssertions = function(sAddText) {
+					strictEqual(oList.getInset(), false, 'The default value of property "inset" should be "false" on ' + oList + sAddText);
+					strictEqual(oList.getVisible(), true, 'The default value of property "visible" should be "true" on ' + oList + sAddText);
+					strictEqual(oList.getHeaderText(), "", 'The default value of property "headerText" should be "" on ' + oList + sAddText);
+					strictEqual(oList.getHeaderDesign(), sap.m.ListHeaderDesign.Standard, 'The default value of property "headerDesign" should be "' + sap.m.ListHeaderDesign.Standard + '" on ' + oList + sAddText);
+					strictEqual(oList.getFooterText(), "", 'The default value of property "footerText" should be "" on ' + oList + sAddText);
+					strictEqual(oList.getMode(), sap.m.ListMode.None, 'The default value of property "mode" should be "' + sap.m.ListMode.None + '" on ' + oList + sAddText);
+					strictEqual(oList.getWidth(), "100%", 'The default value of property "width" should be "100%" on ' + oList + sAddText);
+					strictEqual(oList.getIncludeItemInSelection(), false, 'The default value of property "includeItemInSelection" should be "false" on ' + oList + sAddText);
+					strictEqual(oList.getShowUnread(), false, 'The default value of property "showUnread" should be "false" on ' + oList + sAddText);
+					strictEqual(oList.getShowNoData(), true, 'The default value of property "showNoData" should be "true" on ' + oList + sAddText);
+					strictEqual(oList.getModeAnimationOn(), true, 'The default value of property "modeAnimationOn" should be "true" on ' + oList + sAddText);
+					strictEqual(oList.getShowSeparators(), sap.m.ListSeparators.All, 'The default value of property "showSeparators" should be "' + sap.m.ListSeparators.All + '" on ' + oList + sAddText);
+					strictEqual(oList.getSwipeDirection(), sap.m.SwipeDirection.Both, 'The default value of property "swipeDirection" should be "' + sap.m.SwipeDirection.Both + '" on ' + oList + sAddText);
+					strictEqual(oList.getGrowing(), false, 'The default value of property "growing" should be "false" on ' + oList + sAddText);
+					strictEqual(oList.getGrowingThreshold(), 20, 'The default value of property "growingThreshold" should be "20" on ' + oList + sAddText);
+					strictEqual(oList.getGrowingTriggerText(), "", 'The default value of property "growingTriggerText" should be "" on ' + oList + sAddText);
+					strictEqual(oList.getGrowingScrollToLoad(), false, 'The default value of property "growingScrollToLoad" should be "false" on ' + oList + sAddText);
+					strictEqual(oList.getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The update value of property "noDataText" should be "' + oRB.getText("LIST_NO_DATA") + '"  on ' + oList + sAddText);
+				};
+
+			// check before rendering
+			fAssertions(sAddText);
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// check again after rendering
+			sAddText = " (state: after rendering)";
+			fAssertions(sAddText);
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		module("Destruction");
+		/********************************************************************************/
+
+		test("Destructor behaviour", function() {
+			var oList = new sap.m.List({});
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call destructor
+			oList.destroy();
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oList.getItems().length, 0, "Items aggregation is empty after destroying " + oList.getId());
+			if (oList.getSwipeContent()) {
+				strictEqual(oList.getSwipeContent().length, 0, "SwipeContent aggregation is empty after destroying " + oList.getId());
+			}
+			if (oList.getHeaderToolbar()) {
+				strictEqual(oList.getHeaderToolbar().length, 0, "HeaderTooblar aggregation is empty after destroying " + oList.getId());
+			}
+			if (oList.getInfoToolbar()) {
+				strictEqual(oList.getInfoToolbar().length, 0, "InfoToolbar aggregation is empty after destroying " + oList.getId());
+			}
+			strictEqual(oList.getDomRef(), null, "Domref does not exist anymore after destroying " + oList.getId());
+
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._aSelectedPaths.length, 0, "Internal selected path array is empty after destroying " + oList.getId());
+			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after destroying " + oList.getId());
+		});
+
+		/********************************************************************************/
+		module("Rendering");
+		/********************************************************************************/
+
+		test("HTML Tags & CSS Classes for a list with default values and no items", function() {
+			var oList = new sap.m.List({}),
+				$list,
+				$listUl,
+				$listLi;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			$listUl = $list.children("ul");
+			$listLi = $list.children("ul").children("li");
+
+			// HTML & DOM checks
+			ok($list.length, "The HTML div container element exists on " + oList.getId());
+			ok($listUl.length, "The HTML ul element exists on " + oList.getId());
+			strictEqual($listUl[0].getAttribute("id"), oList.getId() + "-listUl", 'The id of the HTML ul element is "' + oList.getId() + '"-listUl" on ' + oList);
+			strictEqual($listUl[0].getAttribute("tabindex"), "0", 'The tabindex is "0" for the HTML ul element on ' + oList);
+			strictEqual($listLi[0].getAttribute("id"), oList.getId() + "-nodata", 'The id of the HTML li no data element is "' + oList.getId() + '"-nodat" on ' + oList);
+
+			// CSS checks
+			ok($list.hasClass("sapMList"), 'The HTML div container for the list has class "sapMList" on ' + oList);
+			ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
+			ok($listUl.hasClass("sapMListUl"), 'The HTML ul element has class "sapMListUl" on ' + oList);
+			ok($listUl.hasClass("sapMListModeNone"), 'The HTML ul element has class "sapMListModeNone" on ' + oList);
+			ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML ul element has class "sapMListShowSeparatorsAll" on ' + oList);
+			ok($listLi.hasClass("sapMLIB"), 'The HTML no data li element has class "sapMLIB" on ' + oList);
+			ok($listLi.hasClass("sapMListNoData"), 'The HTML no data li element has class "sapMListNoData" on ' + oList);
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		module("Getter/Setter methods");
+		/********************************************************************************/
+
+		/* setter */
+
+		test("setInset", function() {
+			var sAddText = " (state: before rendering)",
+				oList = new sap.m.List({ inset: false}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				$list;
+
+			// check before rendering
+			oList.setInset(); // default
+			strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+
+			oList.setInset(true);
+			strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
+
+			oList.setInset(false);
+			strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+
+			// check again after rendering
+			sAddText = " (state: after rendering)";
+			oList.setInset(true);
+			strictEqual(oList.getInset(), true, 'The property "inset" is "true" on ' + oList + sAddText);
+			ok($list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has class "sapMListInsetBG" on ' + oList + sAddText);
+
+			oList.setInset(false);
+			strictEqual(oList.getInset(), false, 'The property "inset" is "false" on ' + oList + sAddText);
+			ok(!$list.hasClass("sapMListInsetBG"), 'The HTML div container for the list has no class "sapMListInsetBG" on ' + oList + sAddText);
+
+			// standard setter tests
+			strictEqual(oList.setInset(false), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setMode", function() {
+			var oListItem = createListItem().setSelected(true),
+				oList = new sap.m.List({
+					mode: sap.m.ListMode.None,
+					
+					items: [
+						oListItem
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			strictEqual(oList.setMode(sap.m.ListMode.None).getMode(), sap.m.ListMode.None, 'The property "mode" is "None" on ' + oList);
+			strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after setting mode "None" twice on ' + oList);
+			strictEqual(oList.setMode(sap.m.ListMode.SingleSelect).getMode(), sap.m.ListMode.SingleSelect, 'The property "mode" is "None" on ' + oList);
+			strictEqual(oList.getSelectedItem(), oListItem, 'The selection is still there after switching the mode to "SingleSelect" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelect" on ' + oList);
+			strictEqual(oList.setMode(sap.m.ListMode.MultiSelect).getMode(), sap.m.ListMode.MultiSelect, 'The property "mode" is "None" on ' + oList);
+			strictEqual(oList.getSelectedItems().length, 1, 'One selection should be keepts after switching the mode to "MultiSelect" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "MultiSelect" on ' + oList);
+			strictEqual(oList.setMode(sap.m.ListMode.Delete).getMode(), sap.m.ListMode.Delete, 'The property "mode" is "None" on ' + oList);
+			strictEqual(oList.setMode(sap.m.ListMode.SingleSelectMaster).getMode(), sap.m.ListMode.SingleSelectMaster, 'The property "mode" is "None" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectMaster" on ' + oList);
+			strictEqual(oList.setMode(sap.m.ListMode.SingleSelectLeft).getMode(), sap.m.ListMode.SingleSelectLeft, 'The property "mode" is "None" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._bSelectionMode, true, 'Internal selection mode is true for list mode "SingleSelectLeft" on ' + oList);
+
+			throws(function () {
+				oList.setMode("DoesNotExist");
+			}, "Throws a type exception");
+			strictEqual(oList.getMode(), sap.m.ListMode.SingleSelectLeft, 'The property "mode" is still "SingleSelectLeft" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setMode(sap.m.ListMode.None), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setWidth", function() {
+			var oList = new sap.m.List(),
+				$list,
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sWidth,
+				sWidthPx,
+				iWidth100Percent;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+			iWidth100Percent = $list.width();
+
+			// call method & do tests
+			sWidth = "0px";
+			sWidthPx = 0;
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
+
+			sWidth = "500px";
+			sWidthPx = 500;
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), sWidth, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.width(), sWidthPx, 'The px width is now "' + sWidthPx + '" on ' + oList);
+
+			throws(function () {
+				oList.setWidth("NotaCSSSize");
+			}, "Throws a type exception");
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "NotACSSSize"  on ' + oList);
+
+			throws(function () {
+				oList.setWidth(-666);
+			}, "Throws a type exception");
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "-666"  on ' + oList);
+
+			throws(function () {
+				oList.setWidth(false);
+			}, "Throws a type exception");
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is still "' + sWidth + '" after setting value "false" on ' + oList);
+
+			oList.setWidth("");
+			strictEqual(oList.getWidth(), "", 'The control property "width" is now "" after setting value "" on ' + oList);
+			strictEqual($list.width(), iWidth100Percent, 'The CSS property "width" is now 100% after setting value "" on ' + oList);
+
+			sWidth = "20rem";
+			sWidthPx = "320px";
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.width(), parseInt(sWidthPx.replace("px", "")), 'The px width is now "' + parseInt(sWidthPx.replace("px", "")) + '" on ' + oList);
+
+			sWidth = "50%";
+			sWidthPx = Math.ceil(parseInt($list.parent().css("width"))/2.0) + "px";
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidthPx + '" on ' + oList);
+
+			sWidth = "auto";
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
+
+			sWidth = "inherit";
+			oList.setWidth(sWidth);
+			strictEqual(oList.getWidth(), sWidth, 'The control property "width" is now "' + sWidth + '" on ' + oList);
+			strictEqual($list.css("width"), $list.parent().css("width"), 'The CSS property "width" is now "' + $list.parent().css("width") + '" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setWidth(""), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setNoDataText", function() {
+			var oList = new sap.m.List(),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
+			strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-nodata").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "";
+			strictEqual(oList.setNoDataText(sText).getNoDataText(), oRB.getText("LIST_NO_DATA"), 'The control property "noDataText" is "' + sText + '" on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-nodata-text").text(), oRB.getText("LIST_NO_DATA"), 'The dom element has the text "' + sText + '" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setNoDataText(""), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setGrowing", function() {
+			var oList = new sap.m.List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				bGrowing;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			bGrowing = true;
+			strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._oGrowingDelegate instanceof sap.m.GrowingEnablement, true, 'The growing delegate is initialized');
+
+			bGrowing = false;
+			strictEqual(oList.setGrowing(bGrowing).getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" on ' + oList);
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._oGrowingDelegate, null, 'The growing delegate is null');
+			strictEqual(oRenderSpy.callCount, 1, 'The list should not be rerendered until now');
+
+			bGrowing = true;
+			oList.setGrowing(bGrowing);
+			this.clock.tick(5); // wait for rerendering
+			strictEqual(oList.getGrowing(), bGrowing, 'The control property "growing" is "' + bGrowing + '" on ' + oList);
+			strictEqual(oList.getItems().length, 5, 'The displayed item size is "5" after setting property "growing" to "true" again ' + oList.getId());
+			// TODO: decide if check on internal variables is needed (Cahit)
+			strictEqual(oList._oGrowingDelegate instanceof sap.m.GrowingEnablement, true, 'The growing delegate is initialized');
+			strictEqual(oRenderSpy.callCount, 2, 'The list should be rerendered after setting growing to "true"');
+			
+			// TODO: this should fire an exception because type is boolean
+			//throws(function () {
+				oList.setGrowing("WrongType");
+			//}, "Throws a type exception");
+			strictEqual(oList.getGrowing(), true, 'The control property "growing" is now "true" after setting value "WrongType" on ' + oList);
+			strictEqual(oList.setGrowing("").getGrowing(), false, 'The control property "growing" is now "false" after setting value "" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setGrowing(""), oList, 'Method returns this pointer on ' + oList);
+
+			strictEqual(oRenderSpy.callCount, 2, "The list should be rerendered twice in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setGrowingThreshold", function() {
+			var oList = new sap.m.List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				iThreshold;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+
+			// call method & do tests
+			iThreshold = 5;
+ 			strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
+ 			strictEqual(oList.getItems().length, iThreshold, 'The displayed item size is "' + iThreshold + '" on ' + oList);
+
+			iThreshold = 10;
+			strictEqual(oList.setGrowingThreshold(iThreshold).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is "' + iThreshold + '" on ' + oList);
+			strictEqual(oList.getItems().length, 5, 'The displayed item size is still "5" on ' + oList);
+
+			// TODO: this should not fail (check if it is a bug)
+			//strictEqual(oList.setGrowingThreshold(0).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "0" on ' + oList);
+			//strictEqual(oList.setGrowingThreshold(-99).getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "-99" on ' + oList);
+
+			throws(function () {
+				oList.setGrowingThreshold("WrongType");
+			}, "Throws a type exception");
+			strictEqual(oList.getGrowingThreshold(), iThreshold, 'The control property "growingThreshold" is still "' + iThreshold + '" after setting value "wrongType" on ' + oList);
+			// standard setter tests
+			strictEqual(oList.setGrowingThreshold(), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setGrowingTriggerText", function() {
+			var oList = new sap.m.List({
+					growing: true,
+					growingThreshold: 5
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			
+			// call method & do tests
+			sText = "Test1234567890!\"§$%&/()=?`´@€-_.:,;#'+*~1²³456{[]}\\";
+			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>";
+			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'Javascript code injection is not possible on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			sText = "";
+			strictEqual(oList.setGrowingTriggerText(sText).getGrowingTriggerText(), sText, 'The control property "growingTriggerText" is "' + sText + '" on ' + oList);
+			strictEqual(jQuery.sap.byId(oList.getId() + "-trigger").find(".sapMSLITitle").text(), sText, 'The dom element has the text "' + sText + '" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setGrowingTriggerText(""), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setEnableBusyIndicator", function() {
+			var oList = new sap.m.List;
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oRenderSpy = this.spy(oList.getRenderer(), "render");
+			
+			oList.setEnableBusyIndicator(false);
+			oList.setEnableBusyIndicator(true);
+			sap.ui.getCore().applyChanges();
+			strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered when enableBusyIndicator is changed");
+
+			// cleanup
+			oList.destroy();
+		});
+
+		test("setBackgroundDesign", function() {
+			var oListItem = createListItem(),
+				oList = new sap.m.List({
+					backgroundDesign: sap.m.BackgroundDesign.Solid,
+					items: [
+						oListItem
+					]
+				}),
+				$list,
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+			
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$list = oList.$();
+
+			// call method & do tests
+			strictEqual(oList.getBackgroundDesign(), sap.m.BackgroundDesign.Solid, 'The property "backgroundDesign" is "Solid" on ' + oList);
+			ok($list.hasClass("sapMListBGSolid"), 'The HTML div container for the list has class "sapMListBGSolid" on ' + oList);
+			ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+			ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+			strictEqual(oList.setBackgroundDesign(sap.m.BackgroundDesign.Transparent).getBackgroundDesign(), sap.m.BackgroundDesign.Transparent, 'The property "backgroundDesign" is "Transparent" on ' + oList);
+			ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+			ok($list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list has class "sapMListBGTransparent" on ' + oList);
+			ok(!$list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list does not have class "sapMListBGTranslucent" on ' + oList);
+
+			strictEqual(oList.setBackgroundDesign(sap.m.BackgroundDesign.Translucent).getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, 'The property "backgroundDesign" is "Translucent" on ' + oList);
+			ok(!$list.hasClass("sapMListBGSolid"), 'The HTML div container for the list does not have class "sapMListBGSolid" on ' + oList);
+			ok(!$list.hasClass("sapMListBGTransparent"), 'The HTML div container for the list does not have class "sapMListBGTransparent" on ' + oList);
+			ok($list.hasClass("sapMListBGTranslucent"), 'The HTML div container for the list has class "sapMListBGTranslucent" on ' + oList);
+
+			throws(function () {
+				oList.setBackgroundDesign("DoesNotExist");
+			}, "Throws a type exception");
+			strictEqual(oList.getBackgroundDesign(), sap.m.BackgroundDesign.Translucent, 'The property "backgroundDesign" is still "sap.m.BackgroundDesign.Translucent" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setBackgroundDesign(), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setShowSeparators", function() {
+			var oListItem = createListItem().setSelected(true),
+				oList = new sap.m.List({
+					showSeparators: sap.m.ListSeparators.All,
+					items: [
+						oListItem
+					]
+				}),
+				$listUl,
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			$listUl = jQuery(oList.$().children("ul")[0]);
+
+			// call method & do tests
+			strictEqual(oList.getShowSeparators(), sap.m.ListSeparators.All, 'The property "showSeparators" is "All" on ' + oList);
+			ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list has class "sapMListShowSeparatorsAll" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
+
+			strictEqual(oList.setShowSeparators(sap.m.ListSeparators.Inner).getShowSeparators(), sap.m.ListSeparators.Inner, 'The property "showSeparators" is "Inner" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
+			ok($listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list has class "sapMListShowSeparatorsInner" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsNone" on ' + oList);
+
+			strictEqual(oList.setShowSeparators(sap.m.ListSeparators.None).getShowSeparators(), sap.m.ListSeparators.None, 'The property "showSeparators" is "None" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsAll" on ' + oList);
+			ok(!$listUl.hasClass("sapMListShowSeparatorsInner"), 'The HTML div container for the list does not have class "sapMListShowSeparatorsInner" on ' + oList);
+			ok($listUl.hasClass("sapMListShowSeparatorsNone"), 'The HTML div container for the list has class "sapMListShowSeparatorsNone" on ' + oList);
+
+			throws(function () {
+				oList.setshowSeparators("DoesNotExist");
+			}, "Throws a type exception");
+			strictEqual(oList.getShowSeparators(), sap.m.ListSeparators.None, 'The property "showSeparators" is still "sap.m.showSeparators.None" after setting mode "DoesNotExist" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setShowSeparators(), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("setIncludeItemInSelection", function() {
+			var oListItemTemplate = createListItem(),
+				oList = new sap.m.List({
+					includeItemInSelection: false,
+					mode: sap.m.ListMode.MultiSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				oSelectionItem,
+				bIncludeItemInSelection;
+
+			bindListData(oList, data3, "/items", createTemplateListItem());
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			oSelectionItem = oList.getItems()[3];
+
+			// call method & do tests
+			bIncludeItemInSelection = true;
+			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			oList.getItems().forEach(function (oItem) {
+				// TODO: decide if check on internal variables is needed (Cahit)
+				strictEqual(oItem._includeItemInSelection, true, 'Each item has internal property "_includeItemInSelection" set to true on ' + oList);
+				strictEqual(oItem.$().hasClass("sapMLIBCursor"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
+			});
+
+			// simulate tap & check result
+			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			strictEqual(oList.getSelectedItem(), oSelectionItem, 'Item "' + oSelectionItem + '" should be selected');
+			oSelectionItem.setSelected(false);
+			
+			bIncludeItemInSelection = false;
+			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
+			oList.getItems().forEach(function (oItem) {
+				// TODO: decide if check on internal variables is needed (Cahit)
+				strictEqual(oItem._includeItemInSelection, false, 'Each item has internal property "_includeItemInSelection" set to false on ' + oList);;
+				strictEqual(oItem.$().hasClass("sapMLIBCursor"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);;
+			});
+
+			// simulate tap & check result
+			oSelectionItem.ontap({ srcControl: oSelectionItem });
+			strictEqual(oList.getSelectedItem(), null, 'Item "' + oSelectionItem + '" should not be selected / selection should be empty');
+			oSelectionItem.setSelected(false);
+
+			// TODO: this should fire an exception because type is boolean
+			throws(function () {
+				oList.setIncludeItemInSelection("WrongType");
+			}, "Throws a type exception");
+			strictEqual(oList.getIncludeItemInSelection(), false, 'The control property "includeItemInSelection" is still "false" after setting value "WrongType" on ' + oList);
+
+			// standard setter tests
+			strictEqual(oList.setIncludeItemInSelection(), oList, 'Method returns this pointer on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		
+		
+		test("setRememberSelectionsForMultiSelect", function() {
+			var oListItemTemplate = createListItem().setSelected(true),
+				oList = new sap.m.List({
+					includeItemInSelection: false,
+					mode: sap.m.ListMode.MultiSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+			
+			testRemeberSelections(oList, oRenderSpy);
+		});
+
+		test("setRememberSelectionsForSingleSelect", function() {
+			var oListItemTemplate = createListItem().setSelected(true),
+				oList = new sap.m.List({
+					includeItemInSelection: false,
+					mode: sap.m.ListMode.SingleSelect,
+					items: [
+						oListItemTemplate
+					]
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+			
+			testRemeberSelections(oList, oRenderSpy);
+				
+		});
+
+		
+		/* getter */
+
+		test("getId", function() {
+			var id = "testId",
+				suffix = "testSuffix",
+				oList = new sap.m.List(id, {}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render");
+
+			// call method & do tests
+			strictEqual(oList.getId(), id, 'The id returned by method getId is "' + id + '" on ' + oList);
+			strictEqual(oList.getId(suffix), id + '-' + suffix, 'The id returned by method getId is "' + (id + '-' + suffix) + '" on ' + oList);
+
+			// standard getter tests
+			strictEqual(typeof(oList.getId()), "string", 'Method returns a string type on ' + oList);
+			strictEqual(oRenderSpy.callCount, 0, "The list should not be rerendered in this method");
+		});
+
+		test("getNoDataText", function() {
+			var oList = new sap.m.List({
+					noDataText: "",
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				sText = oRB.getText("LIST_NO_DATA");
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			strictEqual(oList.getNoDataText(), sText, 'The control property "noDataText" is "'+ sText +'" when the property value is empty on ' + oList);
+
+			sText = "Text";
+			strictEqual(oList.setNoDataText(sText).getNoDataText(), sText, 'The control property "noDataText" is "' + sText + '" on ' + oList);
+
+			// standard getter tests
+			strictEqual(typeof(oList.getNoDataText()), "string", 'Method returns a string type on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		test("getMaxItemsCount", function() {
+			var oList = new sap.m.List({
+					mode: sap.m.ListMode.None,
+				}),
+				oRenderSpy = this.spy(oList.getRenderer(), "render"),
+				iCounter;
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// no binding
+			iCounter = 0;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+	
+			oList.addItem(createListItem());
+			iCounter++;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			oList.addItem(createListItem());
+			iCounter++;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			oList.removeAllItems();
+			iCounter = 0;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a static list with ' + iCounter + ' items on ' + oList);
+
+			bindListData(oList, data1, "/items", createTemplateListItem());
+			iCounter = data1.items.length;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+	
+			bindListData(oList, data2, "/items", createTemplateListItem());
+			iCounter = data2.items.length;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+	
+			bindListData(oList, data3, "/items", createTemplateListItem());
+			iCounter = data3.items.length;
+			strictEqual(oList.getMaxItemsCount(), iCounter, 'The item count is ' + iCounter + ' in a dynamic list with ' + iCounter + ' items on ' + oList);
+
+			// standard getter tests
+			strictEqual(typeof(oList.getMaxItemsCount()), "number", 'Method returns a number type on ' + oList);
+			strictEqual(oRenderSpy.callCount, 1, "The list should not be rerendered in this method");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		/********************************************************************************/
+		module("Other API methods");
+		/********************************************************************************/
+		
+		/********************************************************************************/
+		module("Internal methods");
+		/********************************************************************************/
+		
+		test("_isColumnsIncompatible", function() {
+			var oList = new sap.m.List();
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			// call method & do tests
+			strictEqual(oList._isColumnsIncompatible(), false, "method returns false for any version larger than 1.14");
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+		
+		module("KeyboardHandling");
+		
+		test("Test Tab/ShiftTab/F6/ShiftF6 handling", function() {
+			var fnSpy = this.spy();
+			var oVBox = new sap.m.VBox();
+			var oBeforeList = new sap.m.Input();
+			var oAfterList = new sap.m.Input();
+			var oInput = new sap.m.Input();
+			var oListItem = new sap.m.InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oList = new sap.m.List({
+				mode: "MultiSelect",
+				items : [oListItem]
+			});
+			
+			oVBox.addItem(oBeforeList);
+			oVBox.addItem(oList);
+			oVBox.addItem(oAfterList);
+			oVBox.placeAt("content");
+ 			sap.ui.getCore().applyChanges();
+ 			oList.forwardTab = fnSpy;
+			
+ 			// tab key
+			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "TAB", false, false, false);
+			strictEqual(fnSpy.callCount, 1, "List is informed to forward tab when tab is pressed while focus is on last tabbable item");
+			strictEqual(fnSpy.args[0][0], true, "Tab Forward is informed");
+			fnSpy.reset();
+			
+			// shift-tab key
+			sap.ui.test.qunit.triggerKeyboardEvent(oListItem.getFocusDomRef(), "TAB", true, false, false);
+			strictEqual(fnSpy.callCount, 1, "List is informed to forward tab backwards when tab is pressed while focus is on the row");
+			strictEqual(fnSpy.args[0][0], false, "Backwards tab is informed");
+			fnSpy.reset();
+			
+			// shift-F6 key
+			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
+			strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
+			
+			// F6
+			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
+			strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
+			
+			// cleanup
+			oVBox.destroy();
+		});
+		
+		test("Focusing an item in the ListItemBase should change the focus index of item navigation", function() {
+			var oInput = new sap.m.Input();
+			var oListItem0 = new sap.m.InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oListItem1 = oListItem0.clone();
+			var oListItem2 = oListItem0.clone();
+			var oList = new sap.m.List({
+				items : [oListItem0, oListItem1, oListItem2]
+			});
+			
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oListItem1.getTabbables()[0].focus();
+			strictEqual(oList.getItemNavigation().getFocusedIndex(), 1, "Focus index is set correctly");
+
+			// cleanup
+			oList.destroy();
+		});
+		
+		test("Item visible changes should inform the List", function() {
+			var fnSpy = this.spy();
+			var oListItem = new sap.m.StandardListItem({
+				title: "Title"
+			});
+			var oList = new sap.m.List({
+				items : oListItem
+			});
+			
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			
+			// act
+			oList.onItemVisibleChange = fnSpy;
+			
+			oListItem.setVisible(false);
+			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from visible to invisible");
+			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
+			strictEqual(fnSpy.args[0][1], false, "Correct visible parameter is informed");
+			fnSpy.reset();
+			
+			oListItem.setVisible(false);
+			strictEqual(fnSpy.callCount, 0, "Visibility did not changed and list is not informed");
+			fnSpy.reset();
+			
+			oListItem.setVisible(true);
+			strictEqual(fnSpy.callCount, 1, "List is informed when item visibility is changed from invisible to visible");
+			strictEqual(fnSpy.args[0][0], oListItem, "Correct list item is informed");
+			strictEqual(fnSpy.args[0][1], true, "Correct visible parameter item is informed");
+			fnSpy.reset();
+			
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+		
+		
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.ListBase</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>

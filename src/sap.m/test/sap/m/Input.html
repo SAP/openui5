@@ -1,0 +1,977 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Input - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<style>
+			.inputRight {
+				float: right;
+			}
+		</style>
+		<script type="text/javascript">
+
+		jQuery.sap.require("sap.m.MessageBox");
+		
+		//*******************************
+		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
+			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
+			suggestType: "json"
+		});
+
+		var oSuggestInput1 = new sap.m.Input("suginput1", {
+			placeholder: "Suggest starts with 2 letters",
+			showSuggestion: true,
+			startSuggestion: 2,
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedItem");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getText());
+			},
+			suggest: function(oEvent){
+				var that = this;
+				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
+					if(sValue === that.getValue()){
+						that.destroySuggestionItems();
+						for(var i=0; i<aSuggestions.length; i++){
+							that.addSuggestionItem(new sap.ui.core.Item({text: aSuggestions[i]}));
+						}
+					}
+				});
+			}
+		});
+
+		var oSuggestInput5 = new sap.m.Input("suginput5", {
+			placeholder: "Two-value Suggest",
+			showSuggestion: true,
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedItem");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getText());
+			},
+			suggest: function(oEvent){
+				var that = this;
+				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
+					if(sValue === that.getValue()){
+						that.destroySuggestionItems();
+						for(var i=0; i<aSuggestions.length; i++){
+							that.addSuggestionItem(new sap.ui.core.ListItem({text: aSuggestions[i], additionalText: " No." + i }));
+						}
+					}
+				});
+			}
+		});
+		
+		var aData = [
+					{name: "Dente, Al", userid: "U01"},
+					{name: "Friese, Andy", userid: "U02"},
+					{name: "Mann, Anita", userid: "U03"},
+					{name: "Schutt, Doris", userid: "U04"},
+					{name: "Open, Doris", userid: "U05"},
+					{name: "Dewit, Kenya", userid: "U06"},
+					{name: "Zar, Lou", userid: "U07"},
+					{name: "Burr, Tim", userid: "U08"},
+					{name: "Hughes, Tish", userid: "U09"},
+					{name: "Lester, Mo", userid: "U10"},
+					{name: "Case, Justin", userid: "U11"},
+					{name: "Time, Justin", userid: "U12"},
+					{name: "Barr, Gaye", userid: "U13"},
+					{name: "Poole, Gene", userid: "U14"},
+					{name: "Ander, Corey", userid: "U15"},
+					{name: "Early, Brighton", userid: "U16"},
+					{name: "Noring, Constance", userid: "U17"},
+					{name: "Haas, Jack", userid: "U18"},
+					{name: "Tress, Matt", userid: "U19"},
+					{name: "Turner, Paige", userid: "U20"}
+				];
+		
+		//*******************************
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(aData);
+		
+		var oSuggestInput2 = new sap.m.Input("suginput2", {
+			placeholder: "Suggest with JSONModel",
+			showSuggestion: true,
+			showValueHelp: true,
+			valueHelpRequest: function(evt) {
+				sap.m.MessageBox.alert("Value help requested");
+			}
+		});
+		oSuggestInput2.setModel(oModel);
+		oSuggestInput2.bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}));
+
+		//two-value suggest with JSON Model
+		var oSuggestInput6 = new sap.m.Input("suginput6", {
+			placeholder: "Two-value Suggest with JSONModel",
+			showSuggestion: true
+			});
+		oSuggestInput6.setModel(oModel);
+		oSuggestInput6.bindAggregation("suggestionItems", "/", new sap.ui.core.ListItem({text: "{name}", additionalText:"{userid}"})); 
+
+		//*******************************
+		jQuery.sap.require("jquery.sap.strings");
+		var aAlreadyAddedUsers = [];
+		var oSuggestInput3 = new sap.m.Input("suginput3", {
+			placeholder: "Dynamically added from static data",
+			showSuggestion: true,
+			suggest: function(oEvent){
+				var sValue = oEvent.getParameter("suggestValue");
+				for(var i=0; i<aData.length; i++){
+					if(jQuery.inArray(aData[i].userid, aAlreadyAddedUsers) < 0 && jQuery.sap.startsWithIgnoreCase(aData[i].name, sValue)){
+						oSuggestInput3.addSuggestionItem(new sap.ui.core.Item({text: aData[i].name}));
+						aAlreadyAddedUsers.push(aData[i].userid);
+					}
+				}
+			}
+		});
+		
+		//*******************************
+		var oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2.setData(aData);
+		
+		var oSuggestInput4 = new sap.m.Input("suginput4", {
+			placeholder: "Type first letter in uppercase",
+			showSuggestion: true
+		});
+		oSuggestInput4.setModel(oModel);
+		oSuggestInput4.bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}));
+		oSuggestInput4.setFilterFunction(function(sValue, oItem){
+			return oItem.getText().indexOf(sValue) === 0;
+		});
+		
+		//*******************************
+
+		// data for tabular suggestions
+		var oSuggestionData = {
+			tabularSuggestionItems : [{
+				name : "Auch ein gutes Ding",
+				qty : "3 EA",
+				limit : "99.00 EUR",
+				price : "17.00 EUR"
+			}, {
+				name : "Besser ist das",
+				qty : "1 EA",
+				limit : "20.00 EUR",
+				price : "13.00 EUR"
+			}, {
+				name : "Holter-di-polter",
+				qty : "10 EA",
+				limit : "15.00 EUR",
+				price : "12.00 EUR"
+			}, {
+				name : "Ha so was",
+				qty : "10 EA",
+				limit : "5.00 EUR",
+				price : "3.00 EUR"
+			}, {
+				name : "Hurra ein Produkt",
+				qty : "8 EA",
+				limit : "60.00 EUR",
+				price : "45.00 EUR"
+			}, {
+				name : "Hallo du tolles Ding",
+				qty : "2 EA",
+				limit : "40.00 EUR",
+				price : "15.00 EUR"
+			}, {
+				name : "Hier sollte ich zuschlagen",
+				qty : "10 EA",
+				limit : "90.00 EUR",
+				price : "55.00 EUR"
+			},{
+				name : "Hohoho",
+				qty : "18 EA",
+				limit : "29.00 EUR",
+				price : "7.00 EUR"
+			}, {
+				name : "Holla die Waldfee",
+				qty : "3 EA",
+				limit : "55.00 EUR",
+				price : "30.00 EUR"
+			}, {
+				name : "Hau Ruck",
+				qty : "5 EA",
+				limit : "2.00 EUR",
+				price : "1.00 EUR"
+			}, {
+				name : "Haste mal nen Euro?",
+				qty : "29 EA",
+				limit : "99.00 EUR",
+				price : "42.00 EUR"
+			}, {
+				name : "Hol es dir jetzt",
+				qty : "4 EA",
+				limit : "85.00 EUR",
+				price : "10.00 EUR"
+			}, {
+				name : "Durchweg vorteilhaftes Produkt",
+				qty : "1 EA",
+				limit : "119.00 EUR",
+				price : "88.00 EUR"
+			}, {
+				name : "Ziemlich gutes Produkt",
+				qty : "2 EA",
+				limit : "19.00 EUR",				price : "8.00 EUR"
+			}]
+		};
+		var oI18nModel = new sap.ui.model.json.JSONModel();
+		oI18nModel.setData({
+			Name : "Name",
+			Qty : "Qty",
+			Value : "Value",
+			Price : "Price"
+		});
+		sap.ui.getCore().setModel(oI18nModel, "i18n");
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new sap.m.Label({
+					text : "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}",
+					wrapping : true
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		// search provider
+		var oSuggestTableInput1 = new sap.m.Input("sugtableinput1", {
+			placeholder: "Tabular suggest with search provider",
+			showSuggestion: true,
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggest: function(oEvent){
+				var that = this,
+					oSuggestionItem,
+					iMin,
+					iMax,
+					iRandomAmount,
+					iRandomLimit,
+					iRandomPrice;
+
+				oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
+					if(sValue === that.getValue()){
+						that.destroySuggestionRows();
+						for(var i=0; i<aSuggestions.length; i++){
+							oSuggestionRow = oTableItemTemplate.clone();
+							oSuggestionRow.getCells()[0].setText(aSuggestions[i]);
+							// the search provider only returns 1 field, add some random data for the others
+							iMin = 1
+							iMax = 20,
+							iRandomAmount = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
+							oSuggestionRow.getCells()[1].setText(iRandomAmount + " EA");
+							iMin = 1;
+							iMax = 1000;
+							iRandomLimit = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
+							oSuggestionRow.getCells()[2].setText(iRandomLimit + ".00 EUR");
+							iMin = 1;
+							iMax = iRandomLimit;
+							iRandomPrice = Math.floor(Math.random() * (iMax - iMin + 1) + iMin);
+							oSuggestionRow.getCells()[3].setText(iRandomPrice + ".00 EUR");
+							that.addSuggestionRow(oSuggestionRow);
+						}
+					}
+				});
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+
+		//*******************************
+
+		// JSON Model for rows and i18n model for columns
+		// value help and tabular suggestions
+		var oSuggestTableInput2 = new sap.m.Input("sugtableinput2", {
+			placeholder: "Tabular suggest with JSON binding (starts with H)",
+			showValueHelp: true,
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oSuggestTableInput2.setModel(oModel);
+		oSuggestTableInput2.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		//*******************************
+
+		// Dynamically added from static data
+		// value help and tabular suggestions
+		var aAlreadyAddedProducts = [];
+		var oSuggestTableInput3 = new sap.m.Input("sugtableinput3", {
+			placeholder: "Tabular suggest dynamically added from static data with custom result function (starts with H)",
+			showValueHelp: true,
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggest: function(oEvent){
+				var sValue = oEvent.getParameter("suggestValue"),
+					oSuggestionRow;
+
+				for(var i=0; i<oSuggestionData.tabularSuggestionItems.length; i++){
+					if(jQuery.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts) < 0 && jQuery.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
+						oSuggestionRow = oTableItemTemplate.clone();
+						oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
+						oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
+						oSuggestionRow.getCells()[2].setText(oSuggestionData.tabularSuggestionItems[i].limit);
+						oSuggestionRow.getCells()[3].setText(oSuggestionData.tabularSuggestionItems[i].price);
+						oSuggestTableInput3.addSuggestionRow(oSuggestionRow);
+						aAlreadyAddedProducts.push(oSuggestionData.tabularSuggestionItems[i].name);
+					}
+				}
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+		oSuggestTableInput3.setRowResultFunction(function (oColumnListItem) {
+			return "The price is right: " + oColumnListItem.getCells()[3].getText();
+		});
+
+		//*******************************
+
+		// JSON Model for rows and i18n model for columns
+		// value help and tabular suggestions
+		var oSuggestTableInput4 = new sap.m.Input("sugtableinput4", {
+			placeholder: "Tabular suggest with value help and overflow (starts with H) (500px width)",
+			showValueHelp: true,
+			width: "20%",
+			maxSuggestionWidth: "500px",
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oSuggestTableInput4.setModel(oModel);
+		oSuggestTableInput4.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		//*******************************
+
+		// JSON Model for rows and i18n model for columns
+		// value help and tabular suggestions
+		var oSuggestTableInput5 = new sap.m.Input("sugtableinput5", {
+			placeholder: "Tabular suggest with value help and overflow (starts with H) (100px width)",
+			showValueHelp: true,
+			showTableSuggestionValueHelp: false,
+			width: "30%",
+			maxSuggestionWidth: "1000px",
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		}).addStyleClass("inputRight");
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oSuggestTableInput5.setModel(oModel);
+		oSuggestTableInput5.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		//*******************************
+
+		// JSON Model for rows and i18n model for columns
+		// value help and tabular suggestions
+		var oSuggestTableInput6 = new sap.m.Input("sugtableinput6", {
+			placeholder: "Tabular suggest with value help and overflow (starts with H) (500px width)",
+			showValueHelp: true,
+			showTableSuggestionValueHelp: false,
+			width: "50%",
+			maxSuggestionWidth: "500px",
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "{i18n>/Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Qty}"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "{i18n>/Value}"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "{i18n>/Price}"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		}).addStyleClass("inputRight");
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oSuggestTableInput6.setModel(oModel);
+		oSuggestTableInput6.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+
+		//*******************************
+
+		// Dynamic rows and colums in suggest event
+		// value help and tabular suggestions
+		var aAlreadyAddedProducts7 = [];
+		var oSuggestTableInput7 = new sap.m.Input("sugtableinput7", {
+			placeholder: "Tabular suggest with dynamic rows and colums (500ms delay to mimic a real web service)",
+			showValueHelp: true,
+			showTableSuggestionValueHelp: false,
+			showSuggestion: true,
+			valueHelpRequest: function (oEvent) {
+				sap.m.MessageBox.alert("Value help requested");
+			},
+			suggestionItemSelected: function(oEvent){
+				var oItem = oEvent.getParameter("selectedRow");
+				jQuery.sap.log.info("sap.m.Input id " + this.getId() + " with suggestion: selected item text is " + oItem.getCells()[0].getText());
+			},
+			suggest: function(oEvent){
+				var sValue = oEvent.getParameter("suggestValue"),
+					oSuggestionRow;
+
+				// imitate AJAX call (1s delay)
+				
+				setTimeout(function () {
+					// remove old columns
+					oSuggestTableInput7.removeAllSuggestionColumns();
+					oSuggestTableInput7.addSuggestionColumn(new sap.m.Column({
+						styleClass : "name",
+						hAlign : "Begin",
+						header : new sap.m.Label({
+							text : "{i18n>/Name}"
+						})
+					}));
+					oSuggestTableInput7.addSuggestionColumn(new sap.m.Column({
+						hAlign : "Center",
+						styleClass : "qty",
+						popinDisplay : "Inline",
+						header : new sap.m.Label({
+							text : "{i18n>/Qty}"
+						}),
+						minScreenWidth : "Tablet",
+						demandPopin : true
+					}));
+					oSuggestTableInput7.addSuggestionColumn(new sap.m.Column({
+						hAlign : "Center",
+						styleClass : "limit",
+						width : "30%",
+						header : new sap.m.Label({
+							text : "{i18n>/Value}"
+						}),
+						minScreenWidth : "XXSmall",
+						demandPopin : true
+					}));
+					oSuggestTableInput7.addSuggestionColumn(new sap.m.Column({
+						hAlign : "End",
+						styleClass : "price",
+						width : "30%",
+						popinDisplay : "Inline",
+						header : new sap.m.Label({
+							text : "{i18n>/Price}"
+						}),
+						minScreenWidth : "400px",
+						demandPopin : true
+					}));
+					
+					for(var i=0; i<oSuggestionData.tabularSuggestionItems.length; i++){
+						if(jQuery.inArray(oSuggestionData.tabularSuggestionItems[i].name, aAlreadyAddedProducts7) < 0 && jQuery.sap.startsWithIgnoreCase(oSuggestionData.tabularSuggestionItems[i].name, sValue)){
+							oSuggestionRow = oTableItemTemplate.clone();
+							oSuggestionRow.getCells()[0].setText(oSuggestionData.tabularSuggestionItems[i].name);
+							oSuggestionRow.getCells()[1].setText(oSuggestionData.tabularSuggestionItems[i].qty);
+							oSuggestionRow.getCells()[2].setText(oSuggestionData.tabularSuggestionItems[i].limit);
+							oSuggestionRow.getCells()[3].setText(oSuggestionData.tabularSuggestionItems[i].price);
+							oSuggestTableInput7.addSuggestionRow(oSuggestionRow);
+							aAlreadyAddedProducts7.push(oSuggestionData.tabularSuggestionItems[i].name);
+						}
+					}
+				}, 500);
+			}
+		});
+
+		var oValueStateInput1 = new sap.m.Input("vsinput1", {
+			valueState: "Error",
+			valueStateText: "Error Message!!!!!!!!!",
+			placeholder: "Error Input"
+		});
+
+		var oValueStateInput2 = new sap.m.Input("vsinput2", {
+			valueState: "Warning",
+			valueStateText: "Warning Message!!!!!!!!!",
+			placeholder: "Warning Input"
+		});
+
+		//*******************************
+		var app = new sap.m.App("myApp");
+
+		function createFooter(){
+			return new sap.m.Bar({
+				contentMiddle: [new sap.m.Button({
+					text: "Input Control",
+					press: function(){
+						app.to("page1");
+					}
+				}), new sap.m.Button({
+					text: "Input Types",
+					press: function(){
+						app.to("page2");
+					}
+				}), new sap.m.Button({
+					text: "Input in List",
+					press: function(){
+						app.to("page3");
+					}
+				}), new sap.m.Button({
+					text: "Input Data Update",
+					press: function(){
+						app.to("page4");
+					}
+				})]
+			});
+		}
+		
+		var page1 = new sap.m.Page("page1", {
+			title:"Mobile Input Control",
+			content : [
+					new sap.m.Input({placeholder : "Prompt Text"}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Dummy Text"}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Disabled", enabled: false}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Read-Only", editable: false}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Warning", valueState : "Warning"}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Error", valueState : "Error"}).addStyleClass('myInput'),
+					new sap.m.Input({value: "Success", valueState : "Success"}).addStyleClass('myInput'),
+					new sap.m.Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
+					new sap.m.Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Error", valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
+					new sap.m.Input({
+						value: "ValueHelpOnly",
+						showValueHelp: true,
+						valueHelpOnly: true,
+						valueHelpRequest: function(evt) { 
+							sap.m.MessageBox.alert("Value help requested"); 
+						}
+					}),
+					new sap.m.Input({
+						value: "ValueHelpOnly + Status", 
+						showValueHelp: true, 
+						valueHelpOnly: true, 
+						valueState : "Warning", 
+						valueHelpRequest: function(evt) { 
+							sap.m.MessageBox.alert("Value help requested"); 
+						}
+					}),
+					oSuggestInput1,
+					oSuggestInput5, // same as 1 but two value
+					oSuggestInput2,
+					oSuggestInput6, // same as 2 but two value
+					oSuggestInput3,
+					oSuggestInput4,
+					oSuggestTableInput1,
+					oSuggestTableInput2,
+					oSuggestTableInput3,
+					oSuggestTableInput4,
+					oSuggestTableInput5,
+					oSuggestTableInput6,
+					oSuggestTableInput7,
+					oValueStateInput1,
+					oValueStateInput2,
+					new sap.m.Input({
+						value: "10",
+						description: "PC",
+						width:"100px",
+						fieldWidth:"60%"
+					}),
+					new sap.m.Input({
+						value: "EDP_LAPTOP",
+						description: "IT Laptops",
+						width:"200px",
+						fieldWidth:"50%"
+					}),
+					new sap.m.Input({
+						value: "long input long input long input long input",
+						description: "long description long description long description long description long description long description long description long description long description long description long description long description "		
+					}),
+					new sap.m.Input({
+						value: "220",
+						description: "EUR / 5 pieses",
+						fieldWidth: "30%"
+					}),
+					new sap.m.Input({
+						value: "220",
+						description: "EUR",
+						fieldWidth: "30%"
+					}),
+					new sap.m.Input({
+						value: "220",
+						description: "Trinidad and Tobago Dollar",
+						fieldWidth: "30%"
+					}),
+					new sap.m.Input({
+						value: "220",
+						description: "East Caribbean Dollar",
+						fieldWidth: "30%"
+					}),
+					new sap.m.Input({
+						value: "220.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000.000",
+						description: "EUR",
+						fieldWidth: "85%"
+					}),
+					new sap.m.Input({
+						value: "007",
+						description: "Bastian Schweinsteigerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr",
+						fieldWidth: "20%"
+					}),
+					new sap.m.Input({
+						value: "This is the end",
+						placeholder: "placeholder",
+						textAlign: sap.ui.core.TextAlign.End
+					})
+			],
+			footer: createFooter()
+		});
+
+		var page2 = new sap.m.Page("page2",{
+			title: "Input Types",
+			content : [
+				new sap.m.Input({type: "Text", placeholder : "Text"}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Email", placeholder : "Email"}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Number", placeholder : "Number", maxLength : 5}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Tel", placeholder : "Tel"}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Url", placeholder : "Url"}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Password", placeholder : "Password"}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Text", placeholder : "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}).addStyleClass('myInput'),
+				new sap.m.Input({type: "Text", placeholder : "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}),
+			],
+			footer: createFooter()
+		});
+
+		var page3 = new sap.m.Page("page3",{
+			title: "Input in List",
+			footer: createFooter()
+		});
+
+		var list = new sap.m.List({inset: true});
+		list.addItem(new sap.m.InputListItem({label: 'Text', content: [
+			new sap.m.Input({placeholder : "Prompt Text"}),
+		]}));
+		list.addItem(new sap.m.InputListItem({label: 'This is a very long title', content: [
+			new sap.m.Input({value: "Dummy Text"}),
+		]}));
+		list.addItem(new sap.m.InputListItem({label: 'Disabled', content: [
+			new sap.m.Input({value: "Disabled", enabled: false}),
+		]}));
+		list.addItem(new sap.m.InputListItem({label: 'Read-Only', content: [
+			new sap.m.Input({value: "Read-Only", editable: false}),
+		]}));
+		
+		list.addItem(new sap.m.InputListItem({label: 'Warning', content: [
+			new sap.m.Input({value: "Warning", valueState : "Warning"}),
+		]}));
+			
+		list.addItem(new sap.m.InputListItem({label: 'Error', content: [
+			new sap.m.Input({value: "Error", valueState : "Error", valueStateText: "My Custom error message"}),
+		]}));
+
+		list.addItem(new sap.m.InputListItem({label: 'Success', content: [
+			new sap.m.Input({value: "Success", valueState : "Success"}),
+		]}));
+
+		list.addItem(new sap.m.InputListItem({label: 'ValueHelp', content: [
+			new sap.m.Input({value: "ValueHelp", showValueHelp: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}),
+		]}));
+
+		list.addItem(new sap.m.InputListItem({label: 'ValueHelp+Status', content: [
+			new sap.m.Input({value: "ValueHelp + Status", showValueHelp: true, valueState : "Warning", valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}),
+		]}));
+		list.addItem(new sap.m.InputListItem({label: 'ValueHelpOnly', content: [
+			new sap.m.Input({value: "ValueHelpOnly", showValueHelp: true, valueHelpOnly: true, valueHelpRequest: function(evt) { sap.m.MessageBox.alert("Value help requested"); }}),
+		]}));
+		page3.addContent(list);
+		
+		var page4 = new sap.m.Page("page4",{
+			title: "Input Data Update",
+			footer: createFooter()
+		});
+
+		var p4i1 = new sap.m.Input();		
+		p4i1.setModel(oModel2);
+		p4i1.bindValue("/0/name");
+
+		page4.addContent(new sap.m.Label({text: "JSON Model binding"}));
+		page4.addContent(p4i1);
+		page4.addContent(new sap.m.Button({text: "Submit", press: function() {
+			alert(oModel2.getProperty('/0/name'));
+		}}));
+		app.addPage(page1).addPage(page2).addPage(page3).addPage(page4);
+		app.placeAt("body");
+		
+</script>
+	<style>
+	body {
+		margin: 0;
+	}
+	.sapMPageScroll {
+		padding: 1rem;
+	}
+	.sapMILI-CTX .sapMInputValHelp {
+		margin-right: 0rem;
+	}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

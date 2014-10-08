@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>AbsoluteLayout - sap.ui.commons</title>
+		<script src="../../../../../../resources/sap-ui-core.js"
+			type="text/javascript" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			#layoutUIArea {
+				height: 500px;
+				position: relative;
+				overflow: auto;
+				border: 1px solid black;
+			}
+
+			.custPad {
+				padding-left: 5px;
+			}
+
+			.sapUiLayoutAbsPos {
+				border: 1px solid red;
+			}
+		</style>
+
+		<script type="text/javascript">
+		var getUrlParameter = function(name) {
+			var url = document.URL;
+			var paramStr = url.substr((url.indexOf("?")+1));
+			var params = paramStr.split("&");
+			for(index in params){
+				var param = params[index];
+				var parts = param.split("=");
+				if(name == parts[0]){
+					return parts[1];
+				}
+			}
+			return null;
+		};
+
+
+		var oLayout = new sap.ui.commons.layout.AbsoluteLayout();
+		oLayout.placeAt("layoutUIArea");
+		var oPos = new sap.ui.commons.layout.PositionContainer();
+		var oButton = new sap.ui.commons.Button();
+		oButton.attachPress(function(){
+			oButton.setText("X");
+		});
+		oPos.setControl(oButton);
+
+		var setAtt = function(oElement, sUrlParam){
+			var sParam = getUrlParameter(sUrlParam);
+			if(sParam) {
+				sParam = sParam.replace("pct", "%");
+				if(sUrlParam == "centerH"){
+					sUrlParam = "centerHorizontally";
+					sParam = true;
+				}
+				if(sUrlParam == "centerV"){
+					sUrlParam = "centerVertically";
+					sParam = true;
+				}
+				var sFunc = "set" + sUrlParam.substring(0,1).toUpperCase() + sUrlParam.substring(1);
+				oElement[sFunc](sParam);
+			}
+		};
+		setAtt(oPos, "top");
+		setAtt(oPos, "bottom");
+		setAtt(oPos, "left");
+		setAtt(oPos, "right");
+		setAtt(oPos, "centerH");
+		setAtt(oPos, "centerV");
+		setAtt(oButton, "width");
+		setAtt(oButton, "height");
+
+		oLayout.addPosition(oPos);
+
+		</script>
+	</head>
+
+	<body class="sapUiBody">
+		<div id="layoutUIArea"></div>
+	</body>
+</html>

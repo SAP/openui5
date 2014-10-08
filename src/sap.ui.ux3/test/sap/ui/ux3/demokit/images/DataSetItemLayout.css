@@ -1,0 +1,95 @@
+.CustomItemLayout {
+	position: relative;
+	padding: 3px;
+	min-width: 200px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.CustomItemLayoutInner {
+	position: relative;
+	border: 1px solid #DDDDDD;
+	padding: 5px;
+}
+
+.CustomItemLayoutTitle {
+	position: relative;
+}
+
+.CustomItemLayoutCntnt {
+	position: relative;
+	display: inline-block;
+}
+
+.sapUiUx3DSSVFloating > .sapUiUx3DSSVItem > .CustomItemLayout {
+	width: 200px;
+}
+
+/*Small*/
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle {
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 40px;
+	top: 8px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > div {
+	right: 40px;
+	left: auto;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutTitle > img {
+	width: 31px;
+}
+
+.CustomItemLayout.CustomItemLayoutSmall .CustomItemLayoutCntnt {
+	width: 100%;
+}
+
+/*Large*/
+
+.CustomItemLayout.CustomItemLayoutLarge > .CustomItemLayoutInner {
+	height: 65px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	position: absolute;
+	left: 255px;
+	right: 3px;
+	top: 0;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutCntnt {
+	right: 255px;
+	left: 3px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle {
+	width: 250px;
+	margin-top: 4px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > img {
+	width: 50px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle a {
+	font-size: 14px;
+}
+
+.CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	position: absolute;
+	left: 60px;
+	top: 18px;
+}
+
+html[dir="rtl"] .CustomItemLayout.CustomItemLayoutLarge .CustomItemLayoutTitle > div {
+	right: 60px;
+	left: auto;
+}

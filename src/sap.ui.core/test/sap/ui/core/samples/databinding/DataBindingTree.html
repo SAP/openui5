@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Data binding test page with Tree sap.ui.commons.Tree using TreeBinding</title>
+
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+	>
+    </script>
+
+	<script type="text/javascript">
+
+  		 try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+	    // data has to be tree structured
+	    var oData = {
+	    		root:{
+	    			name: "root",
+	    			0: {
+	    				name: "item1",
+	    				0: {
+	    					name: "subitem1",
+	    					0: {
+	    						name: "subsubitem1"
+	    					},
+	    					1: {
+	    						name: "subsubitem2"
+	    					}
+	    				},
+	    				1: {
+	    					name: "subitem2",
+	    					0: {
+	    						name: "subsubitem3"
+	    					}
+	    				}
+	    				
+	    			},
+	    			1:{
+	    				name: "item2",
+	    				0: {
+	    					name: "subitem3"
+	    				}
+	    			}
+	    			
+	    		}
+	    };
+		  var oModel = new sap.ui.model.json.JSONModel();
+		  // set the data to the model
+		  oModel.setData(oData);
+	      
+	      var oTree = new sap.ui.commons.Tree("tree");
+	      oTree.setWidth("100%");
+	      oTree.attachSelect(function(oEvent) {oSimpleForm.getContent()[3].setText("Fired Event: SELECT" + '\n' + oEvent.getParameter("node"))});
+	      oTree.attachSelectionChange(function(oEvent) {oSimpleForm.getContent()[3].setText("Fired Event: SELECTIONCHANGE" + '\n' + oEvent.getParameter("nodes"))});
+	      // set the model to the tree
+	      oTree.setModel(oModel);
+	
+	      var oTreeNodeTemplate = new sap.ui.commons.TreeNode("node");
+	      oTreeNodeTemplate.bindProperty("text", "name");
+	      oTreeNodeTemplate.setExpanded(true);
+	      
+	      oTree.bindAggregation("nodes", "/root", oTreeNodeTemplate);
+	      
+	      oTree.placeAt("targetTree");
+
+	      // Button Line
+	      var oLayout = new sap.ui.commons.layout.MatrixLayout("ml1");
+		  oLayout.setLayoutFixed(false);
+		  oLayout.placeAt("ml");
+
+ 		  var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("ml1_1");
+		  oLayout.addRow(oMLR);
+		  
+		  var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("ml1_1_1");
+	      var oButton = new sap.ui.commons.Button("button1");
+	      oButton.setText("modify model");
+		  oButton.setWidth("100px");
+	      oButton.attachPress(function() {
+	    		modifyModel();
+	      });
+	      oMLC.addContent(oButton);
+		  oMLR.addCell(oMLC);
+		  
+		  oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+	      var oButton = new sap.ui.commons.Button("button2");
+	      oButton.setText("refresh model");
+	  	  oButton.setWidth("100px");
+	      oButton.attachPress(function() {
+	    		oModel.refresh(oData);
+	      });
+	      oMLC.addContent(oButton);
+		  oMLR.addCell(oMLC);
+
+        // Multi Selection area
+		var oSimpleForm = sap.ui.layout.form.SimpleForm("sf1", {
+			layout:sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+			content : [ new sap.ui.core.Title({text : "Multi Selection"}),
+			            new sap.ui.commons.Label({text : "Selection Mode:"}),
+			            new sap.ui.commons.RadioButtonGroup({
+			            	items : [ new sap.ui.core.Item({text : "Single", key : "Single"}),
+			            	          new sap.ui.core.Item({text : "Multi",	key : "Multi"}),
+			            	          new sap.ui.core.Item({text : "None", key : "None"})
+			               	        ],
+			                layoutData: new sap.ui.layout.GridData({span: "L1 M2 S12"}),
+			                select: function(oEvent){oTree.setSelectionMode(oEvent.oSource.getSelectedItem().getKey())},
+			            }),
+			  			new sap.ui.commons.TextView({text : "Test"}),
+			          ]});
+		oSimpleForm.placeAt("multisel");
+
+		function modifyModel() {
+			if (!oModel)
+				return;
+			var oNewData = {
+				root : {
+					name : "root",
+					0 : {
+						name : "1",
+						0 : {
+							name : "1.1",
+							0 : {
+								name : "1.1.1"
+							},
+							1 : {
+								name : "1.1.2"
+							},
+							2 : {
+								name : "1.1.3"
+							}
+						},
+						1 : {
+							name : "1.2",
+						}
+
+					},
+					1 : {
+						name : "2",
+						0 : {
+							name : "2.1"
+						}
+					}
+
+				}
+			};
+			oModel.setData(oNewData);
+		}
+	</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Tree data binding test page</h1>
+		<div id="targetTree"></div>
+		<p></p>
+		<p></p>
+		<div id="ml"></div>
+		<p></p>
+		<p></p>
+		<div id="multisel"></div>
+	</body>
+</html>

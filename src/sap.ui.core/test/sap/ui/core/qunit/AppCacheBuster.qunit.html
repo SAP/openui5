@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.AppCacheBuster
+  Author: d039071
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" 
+        type="text/javascript" 
+        src="../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-server.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+
+	// some prerequisites ;-)
+	jQuery.sap.require("sap.ui.core.AppCacheBuster");
+
+	// create a control with an URI property to validate URI replacement
+	sap.ui.core.Control.extend("sap.ui.core.UriControl", {
+		metadata : { 
+		  // ---- control specific ----
+		  library : "sap.ui.core",
+		  properties : {
+			src : {type: "sap.ui.core.URI"}
+		  }
+		}
+	});	
+
+	// global variables
+	var sTimestamp = "1234567890";
+	var sTimestampComp1 = sTimestamp;
+	var sTimestampComp2 = "0987654321";
+	
+	module("intercept", {
+		setup : function() {
+		},
+		teardown : function() {
+		}
+	});
+
+	test("check method interception", function() {
+		
+		var fnAjaxOrig = jQuery.ajax,
+			fnIncludeScript = jQuery.sap.includeScript,
+			fnIncludeStyleSheet = jQuery.sap.includeStyleSheet,
+			fnValidateProperty = sap.ui.base.ManagedObject.prototype.validateProperty;
+		
+		sap.ui.core.AppCacheBuster.init();
+		
+		notEqual(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is intercepted");
+		notEqual(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is intercepted");
+		notEqual(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is intercepted");
+		notEqual(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is intercepted");
+		
+		sap.ui.core.AppCacheBuster.exit();
+		
+		equal(fnAjaxOrig, jQuery.ajax, "jQuery.ajax is restored");
+		equal(fnIncludeScript, jQuery.sap.includeScript, "jQuery.sap.includeScript is restored");
+		equal(fnIncludeStyleSheet, jQuery.sap.includeStyleSheet, "jQuery.sap.includeStyleSheet is restored");
+		equal(fnValidateProperty, sap.ui.base.ManagedObject.prototype.validateProperty, "sap.ui.base.ManagedObject.prototype.validateProperty is restored");
+		
+	});
+	
+	
+	module("local scenario", {
+		setup : function() {
+
+			// fake the XHR server
+			this.server = sinon.fakeServer.create();
+
+			// fake the cachebuster request
+			this.server.respondWith(/(.*)\/sap-ui-cachebuster-info.json/, function (xhr, url) {
+				var index;
+				if ( /\/comp1\/?$/.test(url) ) {
+					index = '{"my/view/MyView.view.js": "' + sTimestampComp1 + '", ' +
+							'"my/view/MyView.controller.js": "' + sTimestampComp1 + '"}';
+				} else if ( /\/comp2\/?$/.test(url) ) {
+						index = '{"my/view/MyView.view.js": "' + sTimestampComp2 + '", ' +
+								'"my/view/MyView.controller.js": "' + sTimestampComp2 + '"}';
+				} else {
+					index =  '{"my/view/MyView.view.js": "' + sTimestamp + '", ' +
+							'"my/view/MyView.controller.js": "' + sTimestamp + '", ' +
+							'"js/script.js": "' + sTimestamp + '", ' +
+							'"css/style.css": "' + sTimestamp + '", ' +
+							'"img/image.png": "' + sTimestamp + '"}';
+ 				}
+				xhr.respond(200, { "Content-Type": "application/json" }, index); 
+			});
+
+			// initialize the cachebuster
+			sap.ui.core.AppCacheBuster.init();
+			sap.ui.core.AppCacheBuster.register("./"); //jQuery.sap.getModulePath("") + "/../");
+			sap.ui.core.AppCacheBuster.register("./comp1/");
+			sap.ui.core.AppCacheBuster.register("./comp2/");
+			
+		},
+		teardown : function() {
+
+			// exits the cachebuster
+			sap.ui.core.AppCacheBuster.exit();
+			
+			// unfake the server
+			this.server.restore();
+			
+		}
+	});
+
+	test("check basic URL handling", function() {
+
+		// check normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView.view.js").indexOf("/~" + sTimestampComp1 + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView.view.js").indexOf("/~" + sTimestampComp2 + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp1/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp1 + "~/") == -1, "URL is correctly ignored!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("comp2/my/view/MyView1.view.js").indexOf("/~" + sTimestampComp2 + "~/") == -1, "URL is correctly ignored!");
+
+		// check ab-normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+		// check relative URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+		// check relative ab-normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+	});
+	
+	test("check AJAX handling", function() {
+
+		// fake the script
+		this.server.respondWith(/.*\/~1234567890~\/js\/script.js/, function (xhr, id) {
+		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+		});
+		// the script1 will not be covered by the AppCacheBuster and therefore not prefixed!
+		this.server.respondWith(/js\/script1.js/, function (xhr, id) {
+		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+		});
+		
+		// check normal URLs
+		var oResult = jQuery.sap.sjax({
+			url: "js/script.js"
+		});
+		ok(oResult.success, "URL is correctly prefixed!");
+		
+		// check normal URLs
+		var oResult = jQuery.sap.sjax({
+			url: "js/script1.js"
+		});
+		ok(oResult.success, "URL is correctly ignored!");
+		
+	});
+	
+	test("check includeScript handling", function() {
+
+		// check script prefixing		
+		jQuery.sap.includeScript("js/script.js", "myjs");
+		var sSource = jQuery.sap.byId("myjs").attr("src");
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+
+	});
+	
+	test("check includeStyleSheet handling", function() {
+
+		// check script prefixing		
+		jQuery.sap.includeStyleSheet("css/style.css", "mycss");
+		var sSource = jQuery.sap.byId("mycss").attr("href");
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+
+	});
+	
+	test("check sap.ui.core.URI.type handling", function() {
+
+		// check script prefixing	
+		var oControl = new sap.ui.core.UriControl({
+			src: "img/image.png"
+		});
+		var sSource = oControl.getSrc();
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		oControl.destroy();
+
+	});
+	
+	module("remote scenario", {
+		setup : function() {
+
+			// fake the XHR server
+			this.server = sinon.fakeServer.create();
+
+			// fake the cachebuster request
+			this.server.respondWith(/http:\/\/anyserver:4711\/anyapp\/sap-ui-cachebuster-info.json/, function (xhr, id) {
+			    xhr.respond(200, { "Content-Type": "application/json" }, 
+			    	'{"my/view/MyView.view.js": "' + sTimestamp + '", ' +
+			    	'"my/view/MyView.controller.js": "' + sTimestamp + '", ' +
+			    	'"js/script.js": "' + sTimestamp + '", ' +
+			    	'"css/style.css": "' + sTimestamp + '", ' +
+			    	'"img/image.png": "' + sTimestamp + '"}');
+			});
+			
+			// initialize the cachebuster
+			sap.ui.core.AppCacheBuster.init();
+			sap.ui.core.AppCacheBuster.register("http://anyserver:4711/anyapp/");
+			
+		},
+		teardown : function() {
+
+			// exits the cachebuster
+			sap.ui.core.AppCacheBuster.exit();
+			
+			// unfake the server
+			this.server.restore();
+			
+		}
+	});
+
+	test("check basic URL handling", function() {
+
+		// check normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+
+		// check ab-normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+		// check relative URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+		// check relative ab-normal URLs
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView.view.js").indexOf("/~" + sTimestamp + "~/") >= 0, "URL is correctly prefixed!");
+		ok(sap.ui.core.AppCacheBuster.convertURL("http://anyserver:4711/anyapp/./my/../my/view/../view/MyView1.view.js").indexOf("/~" + sTimestamp + "~/") == -1, "URL is correctly ignored!");
+		
+	});
+	
+	test("check AJAX handling", function() {
+
+		// fake the script
+		this.server.respondWith(/http:\/\/anyserver:4711\/anyapp\/~1234567890~\/js\/script.js/, function (xhr, id) {
+		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+		});
+		this.server.respondWith(/http:\/\/anyserver:4711\/anyapp\/js\/script1.js/, function (xhr, id) {
+		    xhr.respond(200, { "Content-Type": "text/javascript" }, '');
+		});
+		
+		// check normal URLs
+		var oResult = jQuery.sap.sjax({
+			url: "http://anyserver:4711/anyapp/js/script.js"
+		});
+		ok(oResult.success, "URL is correctly prefixed!");
+		
+		// check normal URLs
+		var oResult = jQuery.sap.sjax({
+			url: "http://anyserver:4711/anyapp/js/script1.js"
+		});
+		ok(oResult.success, "URL is correctly ignored!");
+		
+	});
+	
+	test("check includeScript handling", function() {
+
+		// check script prefixing		
+		jQuery.sap.includeScript("http://anyserver:4711/anyapp/js/script.js", "myjs");
+		var sSource = jQuery.sap.byId("myjs").attr("src");
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+
+	});
+	
+	test("check includeStyleSheet handling", function() {
+
+		// check script prefixing		
+		jQuery.sap.includeStyleSheet("http://anyserver:4711/anyapp/css/style.css", "mycss");
+		var sSource = jQuery.sap.byId("mycss").attr("href");
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+
+	});
+	
+	test("check sap.ui.core.URI.type handling", function() {
+
+		// check script prefixing	
+		var oControl = new sap.ui.core.UriControl({
+			src: "http://anyserver:4711/anyapp/img/image.png"
+		});
+		var sSource = oControl.getSrc();
+		ok(sSource.indexOf("/~" + sTimestamp + "~/") >= 0, "URL \"" + sSource + "\" is correctly prefixed!");
+		oControl.destroy();
+
+	});
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Application CacheBuster</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="content"></div>
+</body>
+</html>

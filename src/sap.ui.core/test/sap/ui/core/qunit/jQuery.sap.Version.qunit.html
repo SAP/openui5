@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>jQuery.sap.Version</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		<!-- Initialization -->
+		<script language="javascript">
+			var _core;
+			sap.ui.getCore().registerPlugin({
+				startPlugin: function(oCore, bInit){
+					_core = oCore;
+				},
+				stopPlugin: function(oCore){}
+			});
+		</script>
+		
+		<!-- Test functions -->
+		<script language="javascript">
+
+		qutils.delayTestStart();
+		
+		var types = [
+			{
+				name : "Param",
+				makeArgs : function(aValues) {
+					return aValues;
+				}
+			},
+			{
+				name : "Instance",
+				makeArgs : function(aValues) {
+					return [new jQuery.sap.Version(aValues.slice(0,3).join(".") + (aValues[3] || ""))];
+				}
+			},
+			{
+				name : "String",
+				makeArgs : function(aValues) {
+					return [aValues.slice(0,3).join(".") + (aValues[3] || "")];
+				}
+			},
+			{
+				name : "Array",
+				makeArgs : function(aValues) {
+					return [aValues];
+				}
+			}
+		];
+		
+		var v1 = new jQuery.sap.Version(3, 5, 7, "b");
+		var part = ["Major", "Minor", "Patch", "Suffix"];
+		var config = sap.ui.getCore().getConfiguration();
+		
+		function genericNew(FNConstructor, aArgs) {
+			var obj = Object.create(FNConstructor.prototype);
+			var ret = FNConstructor.apply(obj, aArgs); 
+			return ret === undefined ? obj : ret;
+		}
+	
+		module("Core Versions");
+		
+		test("Core Version", function() {
+			equal(config.getVersion().toString(), sap.ui.version, "Used UI5 Core version");
+		});
+		
+		test("Compatibility Version", function() {
+			var _origConfig = window["sap-ui-config"];
+			
+			function checkCompat(oConf, sText, sExp1, sExp2){
+				window["sap-ui-config"] = oConf;
+				var _config = new sap.ui.core.Configuration(_core);
+				var dflt = jQuery.sap.Version(sExp1).toString();
+				equal(_config.getCompatibilityVersion("").toString(), dflt, sText+": Default (feature='')");
+				equal(_config.getCompatibilityVersion("xx-test2").toString(), dflt, sText+": Default (undef. feature)");
+				equal(_config.getCompatibilityVersion("xx-test").toString(), jQuery.sap.Version(sExp2).toString(), sText+": Result (avail. feature)");
+			}
+			
+			var currentVersion = jQuery.sap.Version(config.getVersion().getMajor(), config.getVersion().getMinor()).toString();
+
+			checkCompat({"compatversion-xx-test2" : "1.16.0"}, "Feature Default Only (+ Undef. Feature)", "1.14", "1.15");
+			
+			checkCompat({"compatversion" : "1.16.0"}, "Global Only", "1.16", "1.16");
+			checkCompat({"compatversion" : "edge"}, "Global Only (Edge)", currentVersion, currentVersion);
+			checkCompat({"compatversion" : "1.12.1"}, "Global Only (<1.14)", "1.12", "1.12");
+			
+			checkCompat({"compatversion-xx-test" : "1.16"}, "Feature Only", "1.14", "1.16");
+			checkCompat({"compatversion-xx-test" : "edge"}, "Feature Only (Edge)", "1.14", currentVersion);
+			checkCompat({"compatversion-xx-test" : "1.10"}, "Feature Only (<1.14)", "1.14", "1.10");
+			
+			checkCompat({"compatversion-xx-test" : "1.17", "compatversion" : "1.16"}, "Global + Feature", "1.16", "1.17");
+			checkCompat({"compatversion-xx-test" : "edge", "compatversion" : "1.16"}, "Global + Feature (Edge)", "1.16", currentVersion);
+			checkCompat({"compatversion-xx-test" : "1.17", "compatversion" : "edge"}, "Global (Edge) + Feature", currentVersion, "1.17");
+			
+			window["sap-ui-config"] = _origConfig;
+		});
+		
+		
+		module("jQuery.sap.Version - Create");
+		
+		if (!Object.create) { //Object.create polyfill for IE8 
+		    Object.create = (function(){
+		        function F(){};
+
+		        return function(o){
+		            F.prototype = o;
+		            return new F();
+		        };
+		    })();
+		}
+		
+		test("Create", function() {
+			var args, text;
+			var values = [[2, 2, 2], [30, 40, 0], [22, 0, 15, "-SNAPSHOT"]];
+			var result = [[2, 2, 2, ""], [30, 40, 0, ""], [22, 0, 15, "-SNAPSHOT"]];
+			
+			for(var i=0; i<values.length; i++){ 
+				for(var j=0; j<types.length; j++){ // param, instance, string, array 
+					args = types[j].makeArgs(values[i]);
+					text = " - "+values[i].join("/")+" - "+types[j].name;
+					
+					var obj = genericNew(jQuery.sap.Version, args); 
+					equal(obj.getMajor(), result[i][0], "Check create"+text+" (Major)");
+					equal(obj.getMinor(), result[i][1], "Check create"+text+" (Minor)");
+					equal(obj.getPatch(), result[i][2], "Check create"+text+" (Micro)");
+					equal(obj.getSuffix(), result[i][3], "Check create"+text+" (Suffix)");
+				}
+			}
+		});
+		
+		test("Cast", function() {
+			ok(jQuery.sap.Version(v1) === v1, "jQuery.sap.Version(v1) === v1");
+			var v = jQuery.sap.Version(v1.toString());
+			ok(jQuery.sap.Version(v1) != v, "jQuery.sap.Version(v1) != jQuery.sap.Version(v1.toString())");
+			equals(v1.toString(), v.toString(), "jQuery.sap.Version(v1).toString() != jQuery.sap.Version(v1.toString()).toString()");
+		});
+		
+		
+		module("jQuery.sap.Version - Getter");
+		
+		var getter = ["toString", "getMajor", "getMinor", "getPatch", "getSuffix"];
+		
+		for(var i=0; i<getter.length; i++){
+			test(getter[i], (function getterCheck(sName, resIdx){
+				var getter_Values = ["2.5", "34.0.5.Hello", "4", "Hello"];
+				var getter_Results = [[2, 5, 0, ""], [34, 0, 5, ".Hello"], [4, 0, 0, ""], [0, 0, 0, ""]];
+				
+				return function(){
+					for(var j=0; j<getter_Values.length; j++){
+						var expected = resIdx < 0 ? (getter_Results[j][0]+"."+getter_Results[j][1]+"."+getter_Results[j][2]+getter_Results[j][3]) : getter_Results[j][resIdx];
+						var actual = (new jQuery.sap.Version(getter_Values[j]))[sName]();
+						equal(actual, expected, "Check "+sName+": "+getter_Values[j]);
+					}
+				};
+			})(getter[i], i-1));
+		}
+
+		
+		module("jQuery.sap.Version - Compare");
+		
+		test("Equals", function() {
+			var vOk, vWrong, argsOk, argsWrong, text;
+			
+			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
+				vOk = [v1.getMajor(), v1.getMinor(), v1.getPatch(), v1.getSuffix()];
+				vWrong = vOk.slice();
+				vWrong[i] = vWrong[i] + (i==3 ? "a" : 1);
+				
+				for(var j=0; j<types.length; j++){ // param, instance, string 
+					argsOk = types[j].makeArgs(vOk);
+					argsWrong = types[j].makeArgs(vWrong);
+					text = " - "+types[j].name+" - "+part[i];
+					ok(v1.compareTo.apply(v1, argsOk) === 0, "Check = (ok)"+text + JSON.stringify(argsOk));
+					ok(v1.compareTo.apply(v1, argsWrong) != 0, "Check = (not ok)"+text);
+				}
+			}
+		});
+		
+	
+		test("Smaller", function() {
+			var vOk, vWrong, argsOk, argsWrong, text;
+			
+			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
+				vOk = [v1.getMajor(), v1.getMinor(), v1.getPatch(), v1.getSuffix()];
+				vWrong = vOk.slice();
+				vOk[i] = i==3 ? "c" : (vOk[i] + 1);
+				vWrong[i] = i==3 ? "a" : (vWrong[i] - 1);
+				
+				for(var j=0; j<types.length; j++){ // param, instance, string 
+					argsOk=types[j].makeArgs(vOk);
+					argsWrong = types[j].makeArgs(vWrong);
+					text = " - "+types[j].name+" - "+part[i];
+					ok(v1.compareTo.apply(v1, argsOk) < 0, "Check < (ok)"+text);
+					ok(v1.compareTo.apply(v1, argsWrong) > 0, "Check < (not ok)"+text);
+				}
+			}
+		});
+		
+		
+		test("Greater", function() {
+			var vOk, vWrong, argsOk, argsWrong, text;
+			
+			for(var i=0; i<part.length; i++){ // major, minor, patch, suffix
+				vOk = [v1.getMajor(), v1.getMinor(), v1.getPatch(), v1.getSuffix()];
+				vWrong = vOk.slice();
+				vOk[i] = i==3 ? "a" : (vOk[i] - 1);
+				vWrong[i] = i==3 ? "c" : (vWrong[i] + 1);
+				
+				for(var j=0; j<types.length; j++){ // param, instance, string 
+					argsOk=types[j].makeArgs(vOk);
+					argsWrong = types[j].makeArgs(vWrong);
+					text = " - "+types[j].name+" - "+part[i];
+					ok(v1.compareTo.apply(v1, argsOk) > 0, "Check > (ok)"+text);
+					ok(v1.compareTo.apply(v1, argsWrong) < 0, "Check > (not ok)"+text);
+				}
+			}
+		});
+
+
+		test("Range", function() {
+			var start = [3, 5],
+				end = [4, 2],
+				rangeCheck = ["v<min", "v=min", "min<v<max", "v=max", "v>max"],
+				checkVersion = [new jQuery.sap.Version(2), new jQuery.sap.Version(3,5), new jQuery.sap.Version(3,9), new jQuery.sap.Version(4,2), new jQuery.sap.Version(5)],
+				args, isOk, res;
+			
+			for(var i=0; i<rangeCheck.length; i++){ // position in range
+				isOk = i>0 && i<3;
+				
+				for(var j=1; j<types.length; j++){ // array, instance, string 
+					args = [types[j].makeArgs(start)[0], types[j].makeArgs(end)[0]];
+					res = checkVersion[i].inRange.apply(checkVersion[i], args);
+					ok(res && isOk || !res && !isOk, "Test ("+(isOk?"":"Not ")+"Ok): "+types[j].name+" - "+rangeCheck[i]);
+				}
+			}
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit tests: jQuery.sap.Version</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

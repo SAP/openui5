@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.DateTimeInput</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.model.type.Date");
+
+	var oNow = new Date(),
+		oCore = sap.ui.getCore(),
+		sValueFormat = "yyyy-MM-dd",
+		sDateValue1 = "2012-05-29",
+		sDateValue2 = "1984-03-26",
+		sDateValue3 = "1984-03-04",
+		oModel = new sap.ui.model.json.JSONModel(),
+		oFormatter = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern : sValueFormat
+		});
+
+	oModel.setData({
+		dateVal : new Date(+oNow)
+	});
+	sap.ui.getCore().setModel(oModel);
+
+	var dti0 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content"),
+		dti1 = new sap.m.DateTimeInput({
+			type : "Time"
+		}).placeAt("content"),
+		dti2 = new sap.m.DateTimeInput({
+			type : "DateTime",
+			displayFormat : new sap.ui.model.type.DateTime({style: "long"}).getOutputPattern()
+		}).placeAt("content"),
+		dti3 = new sap.m.DateTimeInput({
+			value : {
+				path : "/dateVal",
+				type : new sap.ui.model.type.Date({pattern : sValueFormat})
+			}
+		}).placeAt("content"),
+		dti4 = new sap.m.DateTimeInput("errordti", {
+			displayFormat : "dd MMMM, yyyy",
+			valueState:"Error",
+			valueStateMessage:"Error Message"
+		}).placeAt("content");
+
+
+	qutils.delayTestStart();
+
+	module("Properties");
+
+	test("Set and Get Date Value ", function() {
+
+		var oDateValue1 = oFormatter.parse(sDateValue1);
+		dti0.setValue(sDateValue1);
+		oCore.applyChanges();
+		strictEqual(dti0.getValue(), sDateValue1, "value after setValue: " + sDateValue1);
+		strictEqual(+dti0.getDateValue(), +oDateValue1, "dateValue after setValue : " + oDateValue1 + " " + dti0.getDateValue());
+
+		var oDateValue2 = oFormatter.parse(sDateValue2);
+		dti0.setDateValue(oDateValue2);
+		oCore.applyChanges();
+		strictEqual(dti0.getValue(), sDateValue2, "value after setDateValue: " + sDateValue2);
+		strictEqual(+dti0.getDateValue(), +oDateValue2, "dateValue after setDateValue : " + oDateValue2);
+
+		var oDateValue3 = oFormatter.parse(sDateValue3);
+		oModel.setData({
+			dateVal : oDateValue3
+		});
+		oCore.applyChanges();
+		strictEqual(dti3.getValue(), sDateValue3, "value after oModel.setData: " + sDateValue3);
+		strictEqual(+dti3.getDateValue(), +oDateValue3, "dateValue after oModel.setData : " + oDateValue3);
+	});
+
+	test("Load custom picker", function() {
+		//sinon.config.useFakeTimers = false;
+		dti0.rerender();
+		dti1.rerender();
+		dti2.rerender();
+		dti3.rerender();
+		oCore.applyChanges();
+
+		dti2.focus();
+		dti2._$input.scroller("hide");
+		
+		this.clock.tick(500); 
+
+		ok(jQuery.scroller instanceof Object, "Custom picker is loaded");
+		strictEqual(typeof jQuery.scroller.presets.date, "function", "Custom date picker is loaded");
+		strictEqual(typeof jQuery.scroller.presets.time, "function", "Custom time picker is loaded");
+		strictEqual(typeof jQuery.scroller.presets.datetime, "function", "Custom datetime picker is loaded");
+		strictEqual(typeof sap.m.InstanceManager, "object", "Instance Manager is loaded");
+	});
+
+	test("Change", function() {
+		var sAfterValue = sDateValue1,
+			sBeforeValue = sDateValue2,
+			oEvent = jQuery.Event("change"),
+			fnChangeHandler = function() {
+				strictEqual(this.getValue(), sAfterValue, "value after onchange : " + sAfterValue);
+			};
+
+		dti0.setValue(sBeforeValue);
+		oCore.applyChanges();
+		strictEqual(dti0.getValue(), sBeforeValue, "value before onchange : " + sBeforeValue);
+		dti0.attachChange(fnChangeHandler);
+		dti0.setValue(sAfterValue);
+		oCore.applyChanges();
+		dti0.onChange(oEvent);
+		dti0.detachChange(fnChangeHandler);
+	});
+
+	test("Invalid Value", function() {
+		var sInvalidValue = ":)";
+
+		dti2.setValue(sInvalidValue);
+		oCore.applyChanges();
+
+		strictEqual(dti2.getValue(), "", "value after invalid value set : " + dti2.getValue());
+		strictEqual(dti2.getDateValue(), null, "dateValue after invalid value set : " + dti2.getDateValue());
+	});
+
+	test("Destroy", function() {
+		strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
+		dti1.destroy();
+		strictEqual(dti1.$().length, 0, "DateTimeInput is destroyed");
+	});
+
+	test("value state and value state message", function() {
+		dti4.focus();
+		ok(dti4._popup.isOpen(), "error message is open");
+
+		document.activeElement.blur();
+		this.clock.tick(500);
+
+		ok(!dti4._popup.isOpen(), "error message is closed");
+	});
+
+ 	module("Keyboard handling");
+
+	test("Scroller [PAGE_DOWN] key handling", function() {
+		var dti4 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller and scroll to [2012-06-22]
+		var oDateValue = new Date(2014, 5, 22);
+		dti4._$input.scroller("show");
+		dti4._$input.mobiscroll("setDate", oDateValue, true, 2);
+
+		// Get scroller day column
+		var oDayColumn = jQuery(".dwww")[0];
+
+		// Trigger [PAGE_DOWN] key on scroller day columm
+		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.PAGE_DOWN);
+		this.clock.tick(500);
+
+		// Assert
+		equal(dti4._$input.mobiscroll("getInst").temp[0], "30", "Scroller day column moved to 30.06 (June) successfully.");
+
+		// Close the scroller
+		dti4._$input.scroller("hide");
+		this.clock.tick(500);
+	
+		//Clean up
+		dti4.destroy(); 
+	}); 
+
+	test("Scroller [PAGE_UP] key handling", function() {
+		var dti4 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		// Apply changes
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller and scroll to [2012-06-22]
+		var oDateValue = new Date(2014, 5, 22);
+		dti4._$input.scroller("show");
+		dti4._$input.mobiscroll("setDate", oDateValue, true, 2);
+
+		// Get scroller day column
+		var oDayColumn = jQuery(".dwww")[0];
+
+		// Trigger [PAGE_UP] key on scroller day columm
+		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.PAGE_UP);
+		this.clock.tick(500);
+
+	 	// Assert
+		equal(dti4._$input.mobiscroll("getInst").temp[0], "1", "Scroller day column movedto 01.05 (May) successfully.");
+
+		// Close the scroller
+		dti4._$input.scroller("hide");
+		this.clock.tick(500);
+
+		//Clean up
+		dti4.destroy(); 
+	}); 
+
+	test("Scroller opening with [F4]", function() {
+		var dti4 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller with [F4]
+		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.F4);
+		this.clock.tick(500);
+
+		// Assert
+		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
+
+		// Close the scroller
+		dti4._$input.scroller("hide");
+		this.clock.tick(500);
+
+		//Clean up
+		dti4.destroy();
+	}); 
+
+	test("Scroller opening with [ARROW_UP]", function() {
+		var dti4 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller with [ARROW_UP]
+		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+		this.clock.tick(500);
+
+		// Assert
+		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
+
+		// Close the scroller
+		dti4._$input.scroller("hide");
+		this.clock.tick(500);
+
+		// Clean up
+		dti4.destroy();
+	});  
+
+	test("Scroller opening with [ARROW_DOWN]", function() {
+		var dti4 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller with [ARROW_UP]
+		sap.ui.test.qunit.triggerKeydown(dti4.$(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+		this.clock.tick(500);
+
+		// Assert
+		ok(dti4.$("inner").hasClass("dwtd"), "Scroller is opened");
+
+		// Close the scroller
+		dti4._$input.scroller("hide");
+		this.clock.tick(500);
+
+		// Clean up
+		dti4.destroy();
+	}); 
+
+	test("Scroller closing with [F4]", function() {
+		var dti5 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+  
+		// Open the scroller and scroll to [2012-05-05]
+		var oNewDate = new Date(2014, 4, 5);
+		dti5._$input.scroller("show");
+		dti5._$input.mobiscroll("setDate", oNewDate, true, 2);
+
+		// Get scroller day column
+		var oDayColumn = jQuery(".dwww")[0];
+	
+		// Trigger [F4] and close the scroller
+		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.F4);
+		this.clock.tick(500);
+		var oSelectedDate = dti5._$input.mobiscroll("getDate");
+	
+		// Assert scroller is closed
+		ok(!dti5.$("inner").hasClass("dwtd"), "Scroller is closed");
+
+		// Assert selected date and the date that was scrolled are equal - Closing with [F4] should act like pressing OK button
+		equal(oSelectedDate.getTime(), oNewDate.getTime());
+		this.clock.tick(500);
+
+		//Clean up
+		dti5.destroy(); 
+	});
+
+	test("Scroller closing with [ALT] + [ARROW_UP]", function() {
+		var dti6 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller and scroll to [2012-04-05]
+		var oNewDate = new Date(2014, 3, 5);
+		dti6._$input.scroller("show");
+		dti6._$input.mobiscroll("setDate", oNewDate, true, 2);
+
+		// Get scroller day column
+		var oDayColumn = jQuery(".dwww")[0];
+	
+		// Trigger [ARROW_UP] and close the scroller
+		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+		this.clock.tick(500);
+		var oSelectedDate = dti6._$input.mobiscroll("getDate");
+	
+		// Refreshing the DOM due timing issues with closing and opening animations
+		dti6.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert scroller is closed
+		ok(!dti6.$("inner").hasClass("dwtd"), "Scroller is closed");
+
+		// Assert selected date and the date that was scrolled are equal - Closing with [ALT] + [ARROW_UP] should act like pressing OK button
+		equal(oSelectedDate.getTime(), oNewDate.getTime());
+		this.clock.tick(500);
+
+		//Clean up
+		dti6.destroy(); 
+	});
+	
+	test("Scroller closing with [ALT] + [ARROW_DOWN]", function() {
+		var dti7 = new sap.m.DateTimeInput({
+			displayFormat : "dd MMMM, yyyy",
+			valueFormat : sValueFormat
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Open the scroller and scroll to [2012-03-05]
+		var oNewDate = new Date(2014, 2, 5);
+		dti7._$input.scroller("show");
+		dti7._$input.mobiscroll("setDate", oNewDate, true, 2);
+
+		// Get scroller day column
+		var oDayColumn = jQuery(".dwww")[0];
+
+		// Trigger [ARROW_DOWN] and close the scroller
+		sap.ui.test.qunit.triggerKeydown(oDayColumn, jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+		this.clock.tick(5000);
+		var oSelectedDate = dti7._$input.mobiscroll("getDate");
+
+		// Refreshing the DOM due timing issues with closing and opening animations
+		dti7.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert scroller is closed
+		ok(!dti7.$("inner").hasClass("dwtd"), "Scroller is closed");
+
+		// Assert selected date and the date that was scrolled are equal - Closing with [ALT] + [ARROW_DOWN] should act like pressing OK button
+		equal(oSelectedDate.getTime(), oNewDate.getTime());
+		this.clock.tick(5000);
+
+		//Clean up
+		dti7.destroy(); 
+	}); 
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.m.DateTimeInput</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>

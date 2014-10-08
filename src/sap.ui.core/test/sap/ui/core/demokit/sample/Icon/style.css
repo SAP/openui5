@@ -1,0 +1,33 @@
+.size1 {
+	font-size : 1.5rem;
+}
+.size2 {
+	font-size : 2.5rem;
+}
+.size3 {
+	font-size : 5rem;
+}
+.size4 {
+	font-size : 7.5rem;
+}
+.size5 {
+	font-size : 10rem;
+}
+
+@media (max-width:599px) {
+	.size1 {
+		font-size : 1rem;
+	}
+	.size2 {
+		font-size : 2rem;
+	}
+	.size3 {
+		font-size : 3rem;
+	}
+	.size4 {
+		font-size : 4rem;
+	}
+	.size5 {
+		font-size : 5rem;
+	}
+}

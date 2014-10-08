@@ -1,0 +1,46 @@
+<mvc:View
+	controllerName="sap.m.test.FeedInput"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<Label class="caption" text="FeedInput with an Image" />
+	<FeedInput
+		post="onPostFeedItem"
+		icon="images/Woman_04.png" />
+		
+	<Label class="caption" text="FeedInput with an Image Placeholder (showIcon = true, no icon provided)" />
+	<FeedInput
+		post="onPostFeedItem" />
+
+	<Label class="caption" text="FeedInput without an Image ( showIcon = false)" />
+	<FeedInput
+		post="onPostFeedItem"
+		showIcon="false" />
+
+	<Label class="caption" text="Custom Placeholder text" />
+	<FeedInput
+		post="onPostFeedItem"
+		placeholder="my Placeholder" />
+
+	<Label class="caption" text="Custom Value" />
+	<FeedInput
+		post="onPostFeedItem"
+		value="my Value" />
+
+	<Label class="caption" text="Custom Max Length (30)" />
+	<FeedInput
+		post="onPostFeedItem"
+		value="you cannot enter much here"
+		maxLength="30" />
+
+	<Label class="caption" text="Long Value" />
+	<FeedInput
+		post="onPostFeedItem"
+		value="my very long Value that runs for many lines ... Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+
+	<Label class="caption" text="Disabled" />
+	<FeedInput
+		post="onPostFeedItem"
+		enabled="false" />
+
+</mvc:View>

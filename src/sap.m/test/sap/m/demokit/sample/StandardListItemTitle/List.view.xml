@@ -1,0 +1,41 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemTitle.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="ShortProductList"
+		headerText="Products">
+		<items>
+			<StandardListItem
+				title="{0/Name}"
+				description="{0/ProductId}"
+				icon="{0/ProductPicUrl}" 
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" />
+			<!--  set this item's description be empty -->
+			<StandardListItem
+				title="{1/Name}"
+				description=""
+				icon="{1/ProductPicUrl}" 
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" />
+			<StandardListItem
+				title="{2/Name}"
+				description="{2/ProductId}"
+				icon="{2/ProductPicUrl}"
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" />
+			<!--  don't specify a description for this item -->
+			<StandardListItem
+				title="{3/Name}"
+				icon="{3/ProductPicUrl}"
+				iconDensityAware="false"
+				iconInset="false"
+				adaptTitleSize="false" />
+		</items>
+	</List>
+</mvc:View>

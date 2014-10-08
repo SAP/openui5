@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>InPlaceEdit - sap.ui.commons</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.InPlaceEdit.gif">
+
+	<script
+		src="../../../../resources/sap-ui-core.js" 
+		type="text/javascript" 
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-theme="sap_goldreflection" >
+	</script>
+
+	<script src="../../../../resources/sap-ui-debug.js"></script>
+
+	<script type="text/javascript">
+
+		var oCore = sap.ui.getCore();
+
+		var textChange = function(oEvent){
+			if (oEvent.getParameter('newValue') == "success"){
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.Success);
+				// remove value state after some seconds
+				jQuery.sap.delayedCall(6000, oEvent.oSource, function(){this.setValueState(sap.ui.core.ValueState.None);})
+			}else if (oEvent.getParameter('newValue') == "warning"){
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.Warning);
+			}else if (oEvent.getParameter('newValue') == "error"){
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.Error);
+			}else{
+				oEvent.oSource.setValueState(sap.ui.core.ValueState.None);
+			}
+		};
+
+		var iEventCount = 0;
+
+		var IPEChange = function(oEvent){
+			iEventCount++;
+			sap.ui.getCore().byId("TV-event").setText("Event "+iEventCount+" :\nInPlaceEdit "+oEvent.oSource.getId()+"\nchanged to: "+oEvent.getParameter('newValue'));
+		};
+
+		var IPELiveChange = function(oEvent){
+			sap.ui.getCore().byId("TV-event").setText("LiveChange:\nInPlaceEdit "+oEvent.oSource.getId()+"\nchanged to: "+oEvent.getParameter('liveValue'));
+		};
+
+		var LinkChange = function(oEvent){
+			textChange(oEvent);
+			IPEChange(oEvent);
+		};
+
+		oCore.attachInitEvent(function () {
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("myLayout",{
+				fixed: true,
+				columns: 3,
+				width: "1000px",
+				widths: ["200px", "300px", "auto"]
+			}).placeAt("target1");
+
+			// with simple TextField
+			var oTextField = new sap.ui.commons.TextField("TF1", {
+				value: "Hello world!",
+				tooltip: "edit me",
+				width: "200px",
+				required: true,
+				change: textChange
+			});
+
+			var oIPE = new sap.ui.commons.InPlaceEdit("IPE1",{
+				content: oTextField,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			var oLabel = new sap.ui.commons.Label("Label1",{ text: "TextField", labelFor: oIPE});
+
+			var oButton = new sap.ui.commons.Button("B1",{
+				text: "clearOldText",
+				press: function(oEvent){
+					sap.ui.getCore().byId("TF1").setValueState(sap.ui.core.ValueState.None);
+					sap.ui.getCore().byId("IPE1").clearOldText();
+				}
+			});
+			oLyt.createRow(oLabel, oIPE, oButton);
+
+			// with simple TextField without undo
+			oTextField = new sap.ui.commons.TextField("TF2", {
+				value: "Hello world!",
+				tooltip: "edit me",
+				width: "200px",
+				required: true,
+				change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE2",{
+				content: oTextField,
+				undoEnabled: false,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label2",{ text: "TextField without undo", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with simple TextField readonly
+			oTextField = new sap.ui.commons.TextField("TF3", {
+				value: "Hello world!",
+				tooltip: "edit me",
+				width: "200px",
+				editable: false,
+				change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE3",{
+				content: oTextField,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label3",{ text: "TextField readonly", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with ComboBox
+			var oComboBox = new sap.ui.commons.ComboBox("CB1", {
+				value: "Tuesday",
+				tooltip: "edit me",
+				width: "200px",
+				items: [new sap.ui.core.ListItem("Day1",{text: "Monday", key: "Mo"}),
+				        new sap.ui.core.ListItem("Day2",{text: "Tuesday", key: "Tu"}),
+				        new sap.ui.core.ListItem("Day3",{text: "Wednesday", key: "Mi"}),
+				        new sap.ui.core.ListItem("Day4",{text: "Thursday", key: "Th"}),
+				        new sap.ui.core.ListItem("Day5",{text: "Friday", key: "Fr"}),
+				        new sap.ui.core.ListItem("Day6",{text: "Saturday", key: "Sa"}),
+				        new sap.ui.core.ListItem("Day7",{text: "Sunday", key: "Su"})],
+			change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE4",{
+				content: oComboBox,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label4",{ text: "ComboBox", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with DropdownBox
+			var oDropdownBox = new sap.ui.commons.DropdownBox("DdB1", {
+				value: "Item2",
+				tooltip: "edit me",
+				width: "200px",
+				items: [new sap.ui.core.ListItem("I1",{text: "Item1", key: "I1"}),
+				        new sap.ui.core.ListItem("I2",{text: "Item2", key: "I2"}),
+				        new sap.ui.core.ListItem("I3",{text: "Item3", key: "I3"}),
+				        new sap.ui.core.ListItem("I4",{text: "Item4", key: "I4"}),
+				        new sap.ui.core.ListItem("I5",{text: "Item5", key: "I5"}),
+				        new sap.ui.core.ListItem("I6",{text: "Item6", key: "I6"}),
+				        new sap.ui.core.ListItem("I7",{text: "Item7", key: "I7"})]
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE5",{
+				content: oDropdownBox,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label5",{ text: "DropdownBox", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with Link
+			var oLink = new sap.ui.commons.Link("Link1", {
+				text: "SAP",
+				tooltip: "edit me",
+				href: "http://www.sap.com",
+				width: "200px",
+				enabled: true
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE6",{
+				content: oLink,
+				change: LinkChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label6",{ text: "Link", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with Link readonly
+			oLink = new sap.ui.commons.Link("Link2", {
+				text: "SAP",
+				tooltip: "edit me",
+				href: "http://www.sap.com",
+				width: "200px",
+				enabled: false
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE7",{
+				content: oLink,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label7",{ text: "Link readonly", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with simple TextField and Header1 design
+			oTextField = new sap.ui.commons.TextField("TF4", {
+				value: "Ñagçyfox",
+				tooltip: "edit me",
+				width: "200px",
+				required: true,
+				change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE8",{
+				content: oTextField,
+				design: sap.ui.commons.TextViewDesign.H1,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label8",{ text: "TextField with header1 design", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// with simple TextField and Header2 design
+			oTextField = new sap.ui.commons.TextField("TF5", {
+				value: "Ñagçyfox",
+				tooltip: "edit me",
+				width: "200px",
+				required: true,
+				change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE9",{
+				content: oTextField,
+				design: sap.ui.commons.TextViewDesign.H2,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label9",{ text: "TextField with header2 design", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// Test for RichTooltip
+			oTextField = new sap.ui.commons.TextField("TF10", {
+				value: "Ñagçyfox",
+				tooltip: new sap.ui.commons.RichTooltip( "RTT1", {title: "Rich Tooltip", imageSrc: "images/SAPLogo.gif", text:"Edit me!"}),
+				width: "200px",
+				change: textChange
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE10",{
+				content: oTextField,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label10",{ text: "TextField with RichTooltip", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			oLink = new sap.ui.commons.Link("Link11", {
+				text: "Ñagçyfox",
+				tooltip: new sap.ui.commons.RichTooltip( "RTT2", {title: "Rich Tooltip", imageSrc: "images/SAPLogo.gif", text:"Edit me!"}),
+				href: "http://www.sap.com",
+				width: "200px",
+			});
+
+			oIPE = new sap.ui.commons.InPlaceEdit("IPE11",{
+				content: oLink,
+				change: IPEChange,
+				liveChange: IPELiveChange
+			});
+			oLabel = new sap.ui.commons.Label("Label11",{ text: "Link with RichTooltip", labelFor: oIPE});
+			oLyt.createRow(oLabel, oIPE);
+
+			// Event output
+			var oTextView = new sap.ui.commons.TextView("TV-event", {
+				text: "No event",
+				wrapping: false,
+				width: "100%"
+			});
+			oLabel = new sap.ui.commons.Label("Label-event",{ text: "last event", labelFor: oTextView});
+			oLyt.createRow(oLabel, oTextView);
+
+			// Toolbar for test ItemNavigation
+			var oToolbar = new sap.ui.commons.Toolbar("tb1",{
+				width: "100%",
+				design: sap.ui.commons.ToolbarDesign.Standard,
+				items: [ new sap.ui.commons.InPlaceEdit("IPE-T1",{
+									content: new sap.ui.commons.TextField("TF-T1", {
+														value: "Hello world!",
+														tooltip: "edit me",
+														width: "200px",
+														change: textChange
+													})}),
+									new sap.ui.commons.InPlaceEdit("IPE-T2",{
+										content: new sap.ui.commons.ComboBox("CB-T2", {
+															value: "Hello world!",
+															tooltip: "edit me",
+															width: "200px",
+															items: [new sap.ui.core.ListItem("Day1_T",{text: "Monday", key: "Mo"}),
+															        new sap.ui.core.ListItem("Day2_T",{text: "Tuesday", key: "Tu"}),
+															        new sap.ui.core.ListItem("Day3_T",{text: "Wednesday", key: "Mi"}),
+															        new sap.ui.core.ListItem("Day4_T",{text: "Thursday", key: "Th"}),
+															        new sap.ui.core.ListItem("Day5_T",{text: "Friday", key: "Fr"}),
+															        new sap.ui.core.ListItem("Day6_T",{text: "Saturday", key: "Sa"}),
+															        new sap.ui.core.ListItem("Day7_T",{text: "Sunday", key: "Su"})],
+															change: textChange
+														})}),
+									new sap.ui.commons.InPlaceEdit("IPE-T3",{
+										content: new sap.ui.commons.Link("Link-T3", {
+															text: "SAP",
+															tooltip: "edit me",
+															href: "http://www.sap.com",
+															enabled: true
+														})})
+								]
+			}).placeAt("target2");
+
+		} );
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.InPlaceEdit</h1>
+
+		To test value states of InPlaceEdit just enter "success", "warning" or "error".
+		<br>
+		<div id="target1"></div>
+		<br>
+		To test ItemNavigation use Toolbar:
+		<br><span style="color: red;"> But don't use this in productive because InPlaceEdit is not a ToolbarItem!!!</span>
+		<div id="target2"></div>
+
+</body>
+</html>

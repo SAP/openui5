@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>ResponsivePopover - sap.m</title>
+		
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-compatVersion="1.16">
+		</script>
+		
+		<script type="text/javascript">
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+
+			//create the list
+			var oList = new sap.m.List({
+			});
+			
+			var data = {
+				navigation : [ {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					icon : "images/travel_expend.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					icon : "images/travel_expense_report.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					icon : "images/travel_request.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					icon : "images/wounds_doc.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					icon : "images/settings.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Expend",
+					description : "Access the travel expend workflow",
+					icon : "images/travel_expend.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel and expense report",
+					description : "Access travel and expense reports",
+					icon : "images/travel_expense_report.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Request",
+					description : "Access the travel request workflow",
+					icon : "images/travel_request.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Work Accidents",
+					description : "Report your work accidents",
+					icon : "images/wounds_doc.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				}, {
+					title : "Travel Settings",
+					description : "Change your travel worflow settings",
+					icon : "images/settings.png",
+					iconInset : false,
+					type : "Navigation",
+					press : 'detailPage'
+				} ]
+			};
+			
+			var oItemTemplate1 = new sap.m.StandardListItem({
+				title : "{title}",
+				description : "{description}",
+				icon : "{icon}",
+				iconInset : "{iconInset}",
+				type : "{type}"
+			});
+			
+			function bindListData(data, itemTemplate, list)
+			{
+				var oModel = new sap.ui.model.json.JSONModel();
+				// set the data for the model
+				oModel.setData(data);
+				// set the model to the list
+				list.setModel(oModel);
+
+				// bind Aggregation
+				list.bindAggregation("items", "/navigation", itemTemplate);
+			}
+			
+			bindListData(data, oItemTemplate1, oList)
+//end of the list creation
+
+			var oBeginButton = new sap.m.Button({
+				text: "Action1",
+				type: sap.m.ButtonType.Reject,
+				press: function(){
+					
+				}
+			});
+			
+			var oEndButton = new sap.m.Button({
+				text: "Action2",
+				type: sap.m.ButtonType.Accept,
+				press: function(){
+				}
+			});
+
+			var oResponsivePopover = new sap.m.ResponsivePopover({
+				placement: sap.m.PlacementType.Bottom,
+				title: "I'm Responsive now",
+				showHeader: true,
+				beginButton: oBeginButton,
+				endButton: oEndButton,
+				horizontalScrolling: false,
+				beforeOpen: function(oEvent){
+					jQuery.sap.log.info("before popover opens!!!");
+				},
+				afterOpen: function(oEvent){
+					jQuery.sap.log.info("popover is opened finally!!!");
+				},
+				beforeClose: function(oEvent){
+					jQuery.sap.log.info("before popover closes!!!");
+				},
+				afterClose: function(oEvent){
+					jQuery.sap.log.info("popover is closed properly!!!");
+				},
+				content: [
+					oList
+				]
+			});
+			
+			//uncomment this line when padding is needed in the content area
+			//oResponsivePopover.addStyleClass("sapUiPopupWithPadding");
+
+			var oButton = new sap.m.Button({
+				text : "Popover Bottom",
+				press : function() {
+					oResponsivePopover.openBy(this);
+				}
+			});
+			
+			
+			/* Second ResponsivePopover with NavContainer as content*/
+
+			/*************************************************************************/
+			/*     Create NavContainer with two pages inside and the first page      */
+			/*     contains a footer, there's no footer on the popover.              */
+			/*=======================================================================*/
+			
+			//begin: create the list
+			var oList1 = new sap.m.List({
+			});
+			//end: create the list
+
+			var oItemTemplate2 = new sap.m.StandardListItem({
+				title : "{title}",
+				description : "{description}",
+				icon : "{icon}",
+				iconInset : "{iconInset}",
+				type : "{type}",
+				press: handlePress
+			});
+			
+			bindListData(data, oItemTemplate2, oList1);
+			
+			function handlePress(e) {
+				oNavContainer.to("detailPage");
+			}
+			
+			
+			var footer = new sap.m.Bar({ 
+				contentLeft: [],	
+				contentMiddle: [new sap.m.Button({icon: "sap-icon://globe"}),
+				                new sap.m.Button({icon: "sap-icon://globe"}),
+				                new sap.m.Button({icon: "sap-icon://globe"})],
+				contentRight: []
+			});
+			
+			
+			//begin: creating navContainer
+			var oNavContainer = new sap.m.NavContainer({
+				initialPage: "listPage"
+			});
+			
+			var oPage1 = new sap.m.Page("listPage", {
+				title: "Click on the list (with footer)",
+				showNavButton: false,
+				footer: footer,
+				content: [
+					oList1
+				]
+			});
+			
+			var oPage2 = new sap.m.Page("detailPage", {
+				title: "Detail Page",
+				showNavButton: true,
+				showHeader: true,
+				navButtonText: "listPage",
+				navButtonPress: function(){ oNavContainer.back(); },
+				content: [new sap.m.Button({
+					text: "Finish",
+					press: function(){
+						oNavContainer.back();
+					}
+				})]
+			});
+			
+			oNavContainer.addPage(oPage1).addPage(oPage2);
+		
+			var oButton1 = new sap.m.Button({
+				text: "NavContainer as Content",
+				press: function(){
+					oResponsivePopover1.openBy(this);
+				}
+			});
+			
+			var oResponsivePopover1 = new sap.m.ResponsivePopover({
+				placement: sap.m.PlacementType.Bottom,
+				title: "I'm adaptive now",
+				showHeader: false,
+// 				modal: true,
+				contentWidth: "320px",
+				contentHeight: "400px",
+				beforeOpen: function(oEvent){
+					jQuery.sap.log.info("before popover opens!!!");
+				},
+				afterOpen: function(oEvent){
+					jQuery.sap.log.info("popover is opened finally!!!");
+				},
+				beforeClose: function(oEvent){
+					jQuery.sap.log.info("before popover closes!!!");
+				},
+				afterClose: function(oEvent){
+					jQuery.sap.log.info("popover is closed properly!!!");
+				},
+				content: [
+					oNavContainer
+				]
+			});
+			
+			/* 
+				Third ResponsivePopover with NavContainer as content, but the header is 
+				resposivepopover not in the pages of navcontainer.
+				
+				The close button should be added to the header in responsivepopover not 
+				to the navcontainer.
+			*/
+			
+			var oButton2 = new sap.m.Button({
+				text: "Header in Popover",
+				press: function(){
+					oResponsivePopover2.openBy(this);
+				}
+			});
+			
+			var oPage3 = new sap.m.Page("listPage1", {
+				title: "Click on the list",
+				showNavButton: false,
+				showHeader: false,
+				content: [
+					new sap.m.Button({
+						text: "Next Page",
+						press: function(){
+							oNavContainer1.to("detailPage1");
+						}
+					})
+				]
+			});
+			
+			var oPage4 = new sap.m.Page("detailPage1", {
+				title: "Detail Page",
+				showHeader: false,
+				content: [new sap.m.Button({
+					text: "Finish",
+					press: function(){
+						oNavContainer1.back();
+					}
+				})]
+			});
+			
+			var oNavContainer1 = new sap.m.NavContainer({
+				initialPage: "listPage1",
+				pages: [oPage3, oPage4]
+			});
+			
+			var oResponsivePopover2 = new sap.m.ResponsivePopover({
+				placement: sap.m.PlacementType.Bottom,
+				customHeader: new sap.m.Bar({
+					contentMiddle: new sap.m.Label({
+						text: "Shared title in Pages"
+					})
+				}),
+				contentWidth: "320px",
+				contentHeight: "400px",
+				content: oNavContainer1
+			});
+			
+			var page = new sap.m.Page("page1", {
+				title:"Page 1",
+				content: [
+					oButton, oButton1, oButton2
+				]
+			});
+			
+			app.addPage(page);
+			app.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

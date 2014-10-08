@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.ProgressIndicator
+  Author: D037899
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+		var oProgInds = {};
+		
+		var initProgInd = function(idx, bVisible, bEnabled, xBarColor, sDispVal, iPercentVal, bShowVal, iWidth){			
+			var sId = "oProgInd"+idx;
+			var oProgInd = new sap.ui.commons.ProgressIndicator(sId);
+			if(bVisible != -1) oProgInd.setVisible(bVisible);
+			if(bEnabled != -1) oProgInd.setEnabled(bEnabled);
+			if(xBarColor != -1) oProgInd.setBarColor(xBarColor);
+			if(sDispVal != -1) oProgInd.setDisplayValue(sDispVal);
+			if(iPercentVal != -1) oProgInd.setPercentValue(iPercentVal);
+			if(bShowVal != -1) oProgInd.setShowValue(bShowVal);
+			if(iWidth != -1) oProgInd.setWidth(iWidth);
+			
+			sap.ui.setRoot("uiArea"+idx, oProgInd);
+			oProgInds[sId] = oProgInd;
+		};
+
+		initProgInd(1, -1, -1, -1, -1, -1, -1, -1); // ProgressIndicator with default values
+		initProgInd(2, -1, -1, -1, "30%", 30, -1, "300px"); // ProgressIndicator with 30%
+		initProgInd(3, true, true, -1, "110%", 110, true, "300px"); // ProgressIndicator with 110%
+		initProgInd(4, true, true, "POSITIVE", "50%", 50, true, "300px"); // ProgressIndicator with 50% POSITIVE
+		initProgInd(5, true, true, "NEGATIVE", "50%", 50, true, "300px"); // ProgressIndicator with 50% NEGATIVE
+		initProgInd(6, true, true, -1, "50%", 50, true, "100%"); // ProgressIndicator with 50% NEUTRAL width=100%
+		initProgInd(7, true, true, -1, "200%", 200, false, "10%"); // ProgressIndicator with 200% NEUTRAL width=10% and no value displayed
+		
+	</script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+	qutils.delayTestStart();
+	
+	module("Properties");
+
+	test("Default Values", function() {
+		var oProgInd = oProgInds["oProgInd1"];
+		equals(oProgInd.getVisible(), true, "Default 'visible':");
+		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
+		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		equals(oProgInd.getDisplayValue(), "0%", "Default 'display value':");
+		equals(oProgInd.getPercentValue(), 0, "Default 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Default 'show value':");
+		equals(oProgInd.getWidth(), "100%", "Default 'width':");
+	 });
+
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd2"];
+		equals(oProgInd.getVisible(), true, "Default 'visible':");
+		equals(oProgInd.getEnabled(), true, "Default 'enabled':");
+		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		equals(oProgInd.getDisplayValue(), "30%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 30, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Default 'show value':");
+		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+	});
+
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd3"];
+		equals(oProgInd.getVisible(), true, "Custom 'visible':");
+		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		equals(oProgInd.getDisplayValue(), "110%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 110, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
+		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+	});	
+	
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd4"];
+		equals(oProgInd.getVisible(), true, "Custom 'visible':");
+		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		equals(oProgInd.getBarColor(), "POSITIVE", "Custom 'bar color':");
+		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
+		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+	});
+	
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd5"];
+		equals(oProgInd.getVisible(), true, "Custom 'visible':");
+		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		equals(oProgInd.getBarColor(), "NEGATIVE", "Custom 'bar color':");
+		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
+		equals(oProgInd.getWidth(), "300px", "Custom 'width:");
+	});
+	
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd6"];
+		equals(oProgInd.getVisible(), true, "Custom 'visible':");
+		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		equals(oProgInd.getDisplayValue(), "50%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 50, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), true, "Custom 'show value':");
+		equals(oProgInd.getWidth(), "100%", "Custom 'width:");
+	});
+	
+	test("Properties", function() {
+		var oProgInd = oProgInds["oProgInd7"];
+		equals(oProgInd.getVisible(), true, "Custom 'visible':");
+		equals(oProgInd.getEnabled(), true, "Custom 'enabled':");
+		equals(oProgInd.getBarColor(), "NEUTRAL", "Default 'bar color':");
+		equals(oProgInd.getDisplayValue(), "200%", "Custom 'display value':");
+		equals(oProgInd.getPercentValue(), 200, "Custom 'percent value':");
+		equals(oProgInd.getShowValue(), false, "Custom 'show value':");
+		equals(oProgInd.getWidth(), "10%", "Custom 'width:");
+	});
+	
+	</script>
+
+	<title>qunit Test for ProgressIndicator</title>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.ProgressIndicator</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
+	<div id="uiArea5"></div>
+	<div id="uiArea6"></div>
+	<div id="uiArea7"></div>
+
+</body>
+</html>

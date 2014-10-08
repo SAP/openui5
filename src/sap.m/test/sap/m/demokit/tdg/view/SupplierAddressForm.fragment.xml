@@ -1,0 +1,37 @@
+<core:FragmentDefinition
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<l:Grid
+		defaultSpan="L12 M12 S12"
+		width="auto">
+		<l:content>
+			<f:SimpleForm
+				minWidth="1024"
+				maxContainerCols="2"
+				editable="false"
+				layout="ResponsiveGridLayout"
+				title="{i18n>supplierAddress}"
+				labelSpanL="3"
+				labelSpanM="3"
+				emptySpanL="4"
+				emptySpanM="4"
+				columnsL="1"
+				columnsM="1">
+				<f:content>
+					<Label text="{i18n>supplierAddressName}" />
+					<Text text="{Name}" />
+					<Label text="{i18n>supplierAddressStreet}" />
+					<Text text="{Address/Street}" />
+					<Label text="{i18n>supplierAddressCity}" />
+					<Text text="{Address/City}" />
+					<Label text="{i18n>supplierAddressZIPCode}" />
+					<Text text="{Address/ZipCode}" />
+					<Label text="{i18n>supplierAddressCountry}" />
+					<Text text="{Address/Country}" />
+				</f:content>
+			</f:SimpleForm>
+		</l:content>
+	</l:Grid>
+</core:FragmentDefinition>

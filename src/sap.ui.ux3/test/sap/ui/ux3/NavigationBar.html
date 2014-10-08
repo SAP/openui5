@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>NavigationBar - sap.ui.ux3</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.ux3" >
+		</script>
+    
+		<script language="javascript">
+
+		var n1 = new sap.ui.ux3.NavigationBar("n1", {items:[
+			new sap.ui.ux3.NavigationItem({key:"item1", text:"Item 1"}),
+			new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"}),
+			new sap.ui.ux3.NavigationItem({key:"item3", text:"Item with some text 3"})
+		]});
+		n1.placeAt("uiArea1");
+		
+		var selItem = new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"});
+		var n2 = new sap.ui.ux3.NavigationBar("n2", {items:[
+ 			new sap.ui.ux3.NavigationItem({key:"item1", text:"Item 1"}),
+ 			selItem,
+ 			new sap.ui.ux3.NavigationItem({key:"item3", text:"Item with some text 3"})
+ 		], 
+ 		selectedItem:selItem,
+ 		select:function(oEvent){
+ 			alert("item selected with key: " + oEvent.getParameter("item").getKey());
+ 		}});
+ 		n2.placeAt("uiArea2");
+ 		
+ 		var n3 = new sap.ui.ux3.NavigationBar("n3", {items:[
+ 			new sap.ui.ux3.NavigationItem("n3_1", {key:"item1", text:"i1"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item3", text:"i3"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item4", text:"Item with some text 4"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item5", text:"Item with some text 5"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item6", text:"Item with some text 6"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item7", text:"Item with some text 7"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item8", text:"Item with some text 8"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item9", text:"Item with some text 9"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item10", text:"i10"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item11", text:"Item with some text 11"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item12", text:"Item with some text 12"})
+ 		],selectedItem:"n3_1"});
+ 		n3.placeAt("uiArea3");
+
+ 		var n4 = new sap.ui.ux3.NavigationBar("n4", {associatedItems:[
+ 			new sap.ui.ux3.NavigationItem("n4_1", {key:"item1", text:"Associated Item 1"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item2", text:"Associated Item 2"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item3", text:"Associated Item 3"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item4", text:"Associated Item 4"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item5", text:"Associated Item 5"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item6", text:"Associated Item 6"}),
+ 			new sap.ui.ux3.NavigationItem({key:"item7", text:"Associated Item 7"})
+ 		],selectedItem:"n4_1"});
+ 		n4.placeAt("uiArea4");
+ 		
+		var n5 = new sap.ui.ux3.NavigationBar("n5", {items:[
+  			new sap.ui.ux3.NavigationItem({key:"item1", text:"Item 1"}),
+  			new sap.ui.ux3.NavigationItem({key:"item2", text:"Item with some text 2"}),
+  			new sap.ui.ux3.NavigationItem({key:"item3", text:"Item with some text 3"})
+  		], select: function(oEvent) {
+  			if (oEvent.getParameter("item").getKey() == "item3") {
+  				oEvent.preventDefault();
+  				alert("Navigation to item 3 is not allowed.")
+  			}
+  		}});
+  		n5.placeAt("uiArea5");
+
+		</script>
+		<style>
+		body > div {
+			margin: 14px 0 20px;
+		}
+		</style>
+	</head>
+	<body class="sapUiBody">
+		<h1>Test Page for sap.ui.ux3.NavigationBar</h1>
+
+		
+		A NavigationBar filling 100% of the page width (minus the default margin) and no initial selection:
+		<div id="uiArea1"></div>
+		
+		<br>
+		Another NavigationBar in a container that only has 50% width and the second item selected initially (this one opens an alert box on selection):<br>
+		<div id="uiArea2" style="width: 50%;"></div>
+		
+		<br>
+		Another NavigationBar (in a 500px container) with an enormous amount of items:<br>
+		<div id="uiArea3" style="width: 500px;"></div>
+		
+		<br>
+		NavigationBar not owning the items, but only being associated with them:<br>
+		<div id="uiArea4" style="width: 100%;"></div>
+		
+		<br>
+		NavigationBar where navigation to item 3 is disabled using preventDefault():<br>
+		<div id="uiArea5" style="width: 100%;"></div>
+	</body>
+</html>

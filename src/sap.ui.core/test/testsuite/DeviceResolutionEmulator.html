@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+<title>Mobile Device Resolution Emulator</title>
+
+<script id='sap-ui-bootstrap' src='../sap-ui-core.js' data-sap-ui-theme='sap_goldreflection'
+	data-sap-ui-libs='sap.ui.layout,sap.ui.commons'></script>
+
+
+<script>
+
+ 	// list of known devices
+ 	var aDevices = [
+		/*	{
+ 				name : "Apple iPad2 (iOS 4.3.3)",
+ 				"long" : 1024,
+ 				"short" : 768,
+ 				landscapeDefault : true,
+ 				ua : "Mozilla/5.0 (iPad; U; CPU OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5"
+ 			},*/
+ 			{
+ 				name : "Apple iPad2 (iOS 5.1.1)",
+ 				"long" : 1024,
+ 				"short" : 768,
+ 				landscapeDefault : true,
+ 				ua : "Mozilla/5.0 (iPad; CPU OS 5_1_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Mobile/9B206"
+ 			},
+ 			{
+ 				name : "iPhone 3GS (iOS 4.3.3)",
+ 				"long" : 480,
+ 				"short" : 320,
+ 				ua : "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5"
+ 			},
+ 			{ // pool iPhone 4S, as delivered; may be upgraded
+ 				name : "iPhone 4S (iOS 5.0.1)",
+ 				"long" : 480,
+ 				"short" : 320,
+ 				ua : "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A406 Safari/7534.48.3"
+ 			},
+ 			{ // personal Galaxy S2, as delivered, will be upgraded to ICS
+ 				name : "Samsung Galaxy S2 (Android 2.3.3)",
+ 				"long" : 800,
+ 				"short" : 480,
+ 				ua : "Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; GT-I9100 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"
+ 			},
+ 			{ // our Nokia Lumia 800, as delivered
+ 				name : "Nokia Lumia 800 (Windows Phone 7.5)",
+ 				"long" : 800,
+ 				"short" : 480,
+ 				ua : "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; NOKIA; Lumia 800)"
+ 			},
+ 			{ // our BlackBerry 9900 Bold, as delivered
+ 				name : "BlackBerry 9900 Bold (Blackberry 7)",
+ 				"long" : 640,
+ 				"short" : 480,
+ 				landscapeDefault : true,
+ 				ua : "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; de) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.296 Mobile Safari/534.11+"
+ 			},
+ 			{
+ 				name : "BlackBerry 10 Dev Alpha B (Blackberry 10)",
+ 				"long" : 640, // TODO: verify
+ 				"short" : 384, // TODO: verify
+ 				landscapeDefault : false,
+ 				ua : "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.3+ (KHTML, like Gecko) Version/10.0.9.388 Mobile Safari/537.3+"
+ 			}];
+ 	
+ 	var urlField, lb, rbg, $frame, initialUrl = "../test-resources/sap/m/App.html";
+ 	
+ 	/**
+ 	 * Tries to replace all relative src= and href= URLs in the given HTML code with absolute ones, based on the given document location
+ 	 * Adapts calls to sap.ui.localResources in the same way. 
+ 	 */
+ 	function fixRelativeLinks(html, baseUrl) {
+ 		var iRelativeThreshold = 5;
+ 	
+ 		var relativeLinks = [];
+ 		var localPkgs = [];
+ 	
+ 		function isRelative(url) {
+ 			var trimmedUrl = jQuery.trim(url);
+ 			return !jQuery.sap.startsWith(trimmedUrl, "http:") && !jQuery.sap.startsWith(trimmedUrl, "https:")
+ 					&& !jQuery.sap.startsWith(trimmedUrl, "javascript:") && !jQuery.sap.startsWith(trimmedUrl, "/");
+ 		}
+ 	
+ 		// replace any src="..." URLs 
+ 		html = html.replace(/(src\s*=\s*[\'\"])([^\'\"]+)([\'\"])/gi, function(match, prefix, url, suffix) {
+ 			if (isRelative(url)) {
+ 				relativeLinks.push(url);
+ 				return prefix + baseUrl + url + suffix;
+ 			}
+ 			return match;
+ 		});
+ 	
+ 		// replace any href="..." URLs
+ 		html = html.replace(/(href\s*=\s*[\'\"])([^\'\"]+)([\'\"])/gi, function(match, prefix, url, suffix) {
+ 			if (isRelative(url)) {
+ 				relativeLinks.push(url);
+ 				return prefix + baseUrl + url + suffix;
+ 			}
+ 			return match;
+ 		});
+ 	
+ 		// replace sap.ui.localResource() calls
+ 		html = html.replace(/sap\.ui\.localResources\s*\(\s*[\'\"]([^\'\"]+)[\'\"]\s*\)/gi, function(sMatch, sModule) {
+ 			localPkgs.push(sModule);
+ 			return "jQuery.sap.registerModulePath('" + sModule + "', '" + baseUrl + sModule.replace('.', '/') + "')";
+ 		});
+ 	
+ 		var msg = [];
+ 		if (relativeLinks.length > 0) {
+ 			msg.push("Found ", relativeLinks.length, " relative links and tried to fix them");
+ 			if (relativeLinks.length >= iRelativeThreshold) {
+ 				msg.push(", the first " + iRelativeThreshold + " ones were");
+ 			}
+ 			msg.push(":\n");
+ 			msg.push(relativeLinks.splice(0, iRelativeThreshold).join('\n'));
+ 		}
+ 		if (localPkgs.length > 0) {
+ 			if (msg.length > 0) {
+ 				msg.push("\n\n");
+ 			}
+ 			msg.push("Found ", localPkgs.length, " local resource package declarations and tried to fix them");
+ 			if (localPkgs.length >= iRelativeThreshold) {
+ 				msg.push(", the first " + iRelativeThreshold + " ones were");
+ 			}
+ 			msg.push(":\n");
+ 			msg.push(localPkgs.splice(0, iRelativeThreshold).join('\n'));
+ 		}
+ 	
+ 		if (msg.length > 0) {
+ 			//msg.push("\n\nYou may need to fix more URLs, e.g. image locations supplied to controls.");
+ 			//jQuery.sap.require("sap.ui.commons.MessageBox");
+ 			//sap.ui.commons.MessageBox.show(msg.join(""), sap.ui.commons.MessageBox.Icon.INFORMATION, "Snippet Import From URL: Fixed Relative URLs");
+ 		}
+ 		return html;
+ 	}
+ 	
+ 	function getFakeUserAgentSetter(ua) {
+ 		ua = ua || "MY FAKE BROWSER; Version 1.0";
+ 		
+ 		if (jQuery.browser.safari) {
+ 			return "var __originalNavigator = window.navigator;window.navigator = new Object();window.navigator.__proto__ = __originalNavigator;window.navigator.__defineGetter__('userAgent', function () { return '"
+ 					+ ua + "'; });";
+ 					
+ 		} else if ($.browser.msie) { // does not even work in IE10. But IE is anyway not THE browser for mobile tests...
+ 			return "alert('Overriding the user agent does not work in Internet Explorer. PLEASE consider a different browser.')"
+ 			
+ 		} else {
+ 			return "window.navigator.__defineGetter__('userAgent', function(){return '" + ua + "'});";
+ 		}
+ 	}
+ 	
+ 	var config = "window['sap-ui-config'] = {'xx-test-mobile':true};"; // TODO: could be overwritten
+ 	
+ 	function addFakeUserAgent(html, ua) {
+ 		html = html.replace("<head>", "<head><script>" + config + getFakeUserAgentSetter(ua) + "<" + "/script>");
+ 		return html;
+ 	}
+ 	
+ 	function initialize() {
+ 		// check whether a certain url needs to be loaded
+ 		var urlParts = window.location.href.split("?");
+ 		if ((urlParts.length > 1) && (urlParts[1].length > 4)) {
+ 			// URL of a page is given
+ 			if (jQuery.sap.startsWith(urlParts[1], "url=")) {
+ 				var rawUrl = urlParts[1].substr(4);
+ 				var url = rawUrl.replace(/%23/g, "#").replace(/%26/g, "&").replace(/%3F/g, "?").replace(/%25/g, "%");
+ 				initialUrl = url;
+ 			}
+ 		}
+ 	}
+ 	
+ 	/**
+ 	 * Updates the preview frame according to the selected device
+ 	 */
+ 	function updateFrameConfig() {
+ 		var i = lb.getSelectedIndex();
+ 		if (i > -1) {
+ 			var device = aDevices[i];
+ 			var width = device.landscapeDefault ? device["long"] : device["short"];
+ 			var height = device.landscapeDefault ? device["short"] : device["long"];
+ 			$frame.css({
+ 				"width" : width + "px",
+ 				"height" : height + "px"
+ 			});
+ 			updateFrameUrl(); // TODO: optimize
+ 	
+ 			rbg.setSelectedIndex(device.landscapeDefault ? 1 : 0);
+ 		}
+ 	}
+ 	
+ 	/**
+ 	 * Loads the currently entered URL into the test frame
+ 	 */
+ 	function updateFrameUrl() {
+ 		var i = lb.getSelectedIndex();
+ 		if (i > -1) {
+ 			var device = aDevices[i];
+ 			var url = urlField.getValue();
+ 			window.url = url;
+ 			var hasParameters = (url.indexOf("?") > -1);
+ 			var urlParam = (hasParameters ? "&" : "?") + "sap-ui-xx-test-mobile=true";
+ 			url = url + urlParam;
+ 	
+ 			var result = jQuery.sap.syncGet(url);
+ 			var content = "";
+ 			if (result.success) {
+ 				// great!
+ 				content = result.data;
+ 			} else {
+ 				jQuery.sap.require("sap.ui.commons.MessageBox");
+ 				sap.ui.commons.MessageBox.show("Error when loading the code from URL'" + url
+ 						+ ".\nDoes the file exist? Note: cross-domain URLs cannot be loaded.", sap.ui.commons.MessageBox.Icon.ERROR, "Error");
+ 				return;
+ 			}
+ 	
+ 			if (content == "") {
+ 				jQuery.sap.require("sap.ui.commons.MessageBox");
+ 				sap.ui.commons.MessageBox.show("Error when loading the code from URL'" + url
+ 						+ ".\nDoes the file exist? Note: cross-domain URLs cannot be loaded.", sap.ui.commons.MessageBox.Icon.ERROR, "Error");
+ 			} else {
+ 				// content loaded successfully
+ 				var baseUrl = url.split("?")[0].split("#")[0];
+ 				if (jQuery.sap.endsWithIgnoreCase(baseUrl, ".html") || jQuery.sap.endsWithIgnoreCase(baseUrl, ".htm")
+ 						|| jQuery.sap.endsWithIgnoreCase(baseUrl, ".epx") || jQuery.sap.endsWithIgnoreCase(baseUrl, ".asp")
+ 						|| jQuery.sap.endsWithIgnoreCase(baseUrl, ".aspx") || jQuery.sap.endsWithIgnoreCase(baseUrl, ".jsp")) {
+ 					baseUrl = baseUrl.substr(0, baseUrl.lastIndexOf("/"));
+ 				}
+ 				if (!jQuery.sap.endsWith(baseUrl, "/")) {
+ 					baseUrl += "/";
+ 				}
+ 				content = fixRelativeLinks(content, baseUrl);
+ 				content = addFakeUserAgent(content, device.ua);
+ 	
+ 				recreateIframe();
+ 				var frameDoc = $frame[0].contentDocument;
+ 				frameDoc.open("replace");
+ 				frameDoc.write(content);
+ 				frameDoc.close();
+ 			}
+ 		}
+ 	}
+ 	
+ 	// need to destroy the old iframe, as just re-writing its content does not clear up the JS objects reliably in Webkit
+ 	function recreateIframe() {
+ 		var width = $frame.css("width");
+ 		var height = $frame.css("height");
+ 		$frame.remove();
+ 		$frame = $("<iframe id='theFrame' style='width:" + width + ";height:" + height + ";'></iframe>").appendTo(document.body);
+ 	}
+ 	
+ 	function updateOrientation() {
+ 		var i = lb.getSelectedIndex();
+ 		if (i > -1) {
+ 			var device = aDevices[i];
+ 			var landscape = (rbg.getSelectedIndex() == 1);
+ 			var width = landscape ? device["long"] : device["short"];
+ 			var height = landscape ? device["short"] : device["long"];
+ 			$frame.css({
+ 				"width" : width + "px",
+ 				"height" : height + "px"
+ 			});
+ 		}
+ 	}
+ 	
+ 	function devAvailable() {
+ 		// check the existence of sapui5-internal and register the sap.ui.dev library
+		bDevAvailable = jQuery.sap.syncHead("/sapui5-internal/resources/sap/ui/dev/");
+		if (bDevAvailable) {
+ 			jQuery.sap.registerModulePath("sap.ui.dev", "/sapui5-internal/resources/sap/ui/dev/");
+ 			sap.ui.getCore().loadLibrary("sap.ui.dev");
+		}	
+ 		return bDevAvailable;
+ 	}
+ 	
+ 	function openInMobile() {
+ 		var sWeinreId = jQuery.sap.uid();
+		var sWeinreClientUrl = sap.ui.getCore().getConfiguration().getWeinreServer() + "/client/#" + sWeinreId;
+		
+		var oContainer = new sap.ui.layout.VerticalLayout();
+		//var href = (document.location.href.indexOf("#") > -1) ? document.location.href.split("#")[0] : document.location.href;
+		var oQRCode = new sap.ui.dev.qrcode.QRCode({data:url + "?sap-ui-weinreId=" + sWeinreId,sizeFactor:5});
+		var link = new sap.ui.commons.Link({text:"Remote Web Inspector (webkit only!)",href:sWeinreClientUrl,target:"_blank"});
+		jQuery.sap.require("sap.ui.core.Popup");
+		var oPopup = new sap.ui.core.Popup(oContainer, false, true, true).attachClosed(function(){
+			oContainer.destroy();
+		});
+		oContainer.addContent(oQRCode).addContent(link);
+		oPopup.open();
+ 	}
+ 	
+ 	// UI initialization
+ 	var url;
+ 	$(function() {
+ 		$frame = $("#theFrame");
+ 	
+ 		urlField = new sap.ui.commons.TextField("urlField", {
+ 			width : "100%",
+ 			value : initialUrl,
+ 			change : updateFrameUrl
+ 		});
+ 		url = initialUrl;
+ 		urlField.placeAt("urlFieldHolder");
+ 	
+ 		lb = new sap.ui.commons.ListBox("lb", {
+ 			select : updateFrameConfig,
+ 			visibleItems: 3
+ 		});
+ 		for ( var i = 0; i < aDevices.length; i++) {
+ 			lb.addItem(new sap.ui.core.ListItem("li_" + i, {
+ 				text : aDevices[i].name
+ 			}));
+ 		}
+ 		lb.setSelectedIndex(0).placeAt("configArea");
+ 	
+ 		new sap.ui.commons.Label({
+ 			text : "Orientation:",
+ 			labelFor : "rbg"
+ 		}).placeAt("configArea");
+ 	
+ 		rbg = new sap.ui.commons.RadioButtonGroup("rbg", {
+ 			select : updateOrientation,
+ 			items : [ new sap.ui.core.Item({
+ 				text : "Portrait"
+ 			}), new sap.ui.core.Item({
+ 				text : "Landscape"
+ 			}) ],
+ 			selectedIndex : (aDevices[0].landscapeDefault ? 1 : 0)
+ 		}).placeAt("configArea");
+ 		
+ 		if (devAvailable()) {
+ 			new sap.ui.commons.Link({press:openInMobile,text:"Open in Mobile",tooltip:"Display the QRCode for the embedded page. The user-agent is not overridden anymore, then."}).placeAt("configArea");
+ 		}
+ 	
+ 		updateFrameUrl();
+ 		updateFrameConfig();
+ 	});
+ 	
+ 	initialize();
+
+    </script>
+
+
+<style>
+#urlFieldHolder {
+	margin-bottom: 8px;
+}
+
+#configArea {
+	margin-bottom: 8px;
+}
+
+#lb {
+	margin-right: 8px;
+}
+
+#rbg {
+	margin-left: 4px;
+}
+
+#theFrame {
+	border: 2px solid red;
+}
+
+/* make qrcode more visible */
+canvas[id*=qrcode] {
+	border: 20px solid white;
+}
+</style>
+
+</head>
+<body class='sapUiBody'>
+	<div id="urlFieldHolder"></div>
+	Configuration:
+	<div id="configArea"></div>
+	<iframe id="theFrame"></iframe>
+</body>
+</html>

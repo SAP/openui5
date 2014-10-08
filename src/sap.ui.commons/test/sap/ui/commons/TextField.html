@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<title>TextField - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextField.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script src="../../../../resources/sap-ui-debug.js"></script>
+
+		<script type="text/javascript">
+
+			function toggleTextEditEnabled(oControlEvent){
+				var oInput = sap.ui.getCore().getControl("input2");
+				oInput.setEnabled(!oInput.getEnabled());
+				oInput.setValue('Enabled = ' +  oInput.getEnabled());
+			}
+
+			function toggleTextEditVisibility(oControlEvent){
+				var oInput = sap.ui.getCore().getControl("input4");
+				oInput.setVisible(!oInput.getVisible());
+				oInput.setValue("Visible = " + oInput.getVisible());
+			}
+
+			function toggleSuccess(oControlEvent){
+				var oInput = oCore.getControl("input10");
+				if(oInput && sap.ui.core.ValueState.Success == oInput.getValueState())
+					oInput.setValueState(sap.ui.core.ValueState.None);
+				else if(oInput)
+					oInput.setValueState(sap.ui.core.ValueState.Success);
+			}
+
+			function handleTextFieldChange(oControlEvent) {
+				var oTarget = oCore.getControl("input8")
+				if(oControlEvent.getSource() instanceof sap.ui.commons.TextField) {
+					oTarget.setValue(oControlEvent.getSource().getValue());
+				}
+			}
+
+			function toggleEditable(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextField = oCore.getControl("input11");
+				oTextField.setEditable( !oCheckBox.getChecked() );
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setEditable( !oCheckBox.getChecked() );
+			}
+
+			function toggleEnabled(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextField = oCore.getControl("input11");
+				oTextField.setEnabled( !oCheckBox.getChecked() );
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setEnabled( !oCheckBox.getChecked() );
+			}
+
+			function toggleRequired(oEvent) {
+				var oCheckBox = oEvent.oSource;
+				var oTextField = oCore.getControl("input11");
+				oTextField.setRequired( oCheckBox.getChecked() );
+				var oTextArea = oCore.getControl("TA1");
+				oTextArea.setRequired( oCheckBox.getChecked() );
+			}
+
+			function setValueState(oEvent) {
+				var oRBGroup = oEvent.oSource;
+				var oTextArea = oCore.getControl("TA1");
+				var oTextField = oCore.getControl("input11");
+				switch(oRBGroup.getSelectedIndex()){
+				case 0:
+					oTextField.setValueState( sap.ui.core.ValueState.None );
+					oTextArea.setValueState( sap.ui.core.ValueState.None );
+					break;
+				case 1:
+					oTextField.setValueState( sap.ui.core.ValueState.Error );
+					oTextArea.setValueState( sap.ui.core.ValueState.Error );
+					break;
+				case 2:
+					oTextField.setValueState( sap.ui.core.ValueState.Warning );
+					oTextArea.setValueState( sap.ui.core.ValueState.Warning );
+					break;
+				case 3:
+					oTextField.setValueState( sap.ui.core.ValueState.Success );
+					oTextArea.setValueState( sap.ui.core.ValueState.Success );
+					break;
+				}
+			}
+
+			function changeTheme(sTheme){
+				sap.ui.getCore().applyTheme(sTheme);
+				var oTextArea = oCore.getControl("TA1");
+				switch(sTheme){
+				case ('sap_platinum'):
+					oTextArea.setHeight('20px');
+					break;
+				case ('sap_ux'):
+					oTextArea.setHeight('18px');
+					break;
+				case ('sap_hcb'):
+					oTextArea.setHeight('18px');
+					break;
+				case ('edding'):
+					oTextArea.setHeight('40px');
+					break;
+				case ('sap_goldreflection'):
+					oTextArea.setHeight("22px");
+					break;
+				}
+				oTextArea.rerender();
+			}
+
+			var oCore = sap.ui.getCore();
+			oCore.attachInitEvent(function () {
+
+				var oHelper = {
+					alert: function (sMsg) {
+						jQuery.sap.domById("outputTarget").innerHTML = sMsg;
+					}
+				};
+				var myHandler = function(oControlEvent){oHelper.alert("You modified TextField '" +oControlEvent.getSource().getId() + "' with value '" + oControlEvent.getParameter("newValue") + "'");};
+				var logger = jQuery.sap.domById("sap-ui-TraceWindowRoot");
+				if(logger) logger.style.display = "none";
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+				oLayout.setLayoutFixed(false);
+				oLayout.placeAt("target0");
+
+				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
+				oLayout.addRow(oMLR);
+
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1");
+				var oButton = new sap.ui.commons.Button("btn1");
+				oButton.setText("Toggle Enabled State");
+				oButton.attachPress(toggleTextEditEnabled);
+				oMLC.addContent(oButton);
+				oMLR.addCell(oMLC);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
+				var oToggleVisibilityButton = new sap.ui.commons.Button("btn2");
+				oToggleVisibilityButton.setText("Toggle Visibility State");
+				oToggleVisibilityButton.attachPress(toggleTextEditVisibility);
+				oMLC.addContent(oToggleVisibilityButton);
+				oMLR.addCell(oMLC);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_3");
+				var oToggleSuccessButton  = new sap.ui.commons.Button("btn3");
+				oToggleSuccessButton.setText("Toggle Success State on TextField");
+				oToggleSuccessButton.attachPress(toggleSuccess);
+				oMLC.addContent(oToggleSuccessButton);
+				oMLR.addCell(oMLC);
+
+				var oInput = new sap.ui.commons.TextField('input1');
+				oInput.setValue("MaxLength 12");
+				oInput.setMaxLength(12);
+				oInput.setTooltip("This field will only allow to enter 12 characters");
+				oInput.attachChange(myHandler);
+				var oLabel = new sap.ui.commons.Label({ text: "TextField with length 12: ", labelFor: oInput});
+				oLabel.placeAt("target1");
+				oInput.placeAt("target1");
+				var oTextView = new sap.ui.commons.TextView("TV1",{ text: oInput.getValue() });
+				oInput.attachLiveChange(function(oEvent){
+					oCore.getControl("TV1").setText(oEvent.getParameter("liveValue"))
+					// check live Value method
+					if(oEvent.oSource.getLiveValue() != oEvent.getParameter("liveValue")){ alert("LiveValue wrong!");}
+					});
+				oTextView.placeAt("target1");
+
+				var oInput = new sap.ui.commons.TextField('input2');
+				oInput.setEnabled(false);
+				oInput.setTooltip("Disabled TextField");
+				oInput.setValue('Enabled = ' +  oInput.getEnabled());
+				oInput.placeAt("target2");
+
+				var UIArea3 = oCore.createUIArea("target3");
+				oInput = new sap.ui.commons.TextField('input3');
+				oInput.setValue("Editable = false, width=300px, dir=RTL");
+				oInput.setEditable(false);
+				oInput.setWidth("300px");
+				oInput.setTextDirection(sap.ui.core.TextDirection.RTL);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target3");
+				oLabel = new sap.ui.commons.Label({ text: "Read only field ", labelFor: oInput});
+				oLabel.placeAt("target3");
+
+				oInput = new sap.ui.commons.TextField('input4');
+				oInput.setVisible(false);
+				oInput.setValue("Visible = " + oInput.getVisible);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target4");
+				oLabel = new sap.ui.commons.Label({ text: "invisible field ", labelFor: oInput});
+				oLabel.placeAt("target4");
+
+				oInput = new sap.ui.commons.TextField('input5');
+				oInput.setValue("Error, align=Center");
+				oInput.setValueState(sap.ui.core.ValueState.Error);
+				oInput.setTextAlign(sap.ui.core.TextAlign.Center);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target5");
+				oLabel = new sap.ui.commons.Label({ text: "field with error ", labelFor: oInput});
+				oLabel.placeAt("target5");
+				var oRtt = new sap.ui.commons.RichTooltip( "Rtt1",{
+					title: "Error field",
+					imageSrc: "images/ui5_small.png",
+					text: "This is a TextField with ValueState = Error and TextAlign = Center."
+				});
+				oInput.setTooltip(oRtt);
+
+				oInput = new sap.ui.commons.TextField('input6');
+				oInput.setValue("Error, editable=false, align=End");
+				oInput.setValueState(sap.ui.core.ValueState.Error);
+				oInput.setTextAlign(sap.ui.core.TextAlign.End);
+				oInput.setWidth("200px");
+				oInput.setEditable(false);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target6");
+				oLabel = new sap.ui.commons.Label({ text: "Read only and error ", labelFor: oInput});
+				oLabel.placeAt("target6");
+
+				oInput = new sap.ui.commons.TextField('input7');
+				oInput.setValue("Warning, dir=RTL, align=End");
+				oInput.setValueState(sap.ui.core.ValueState.Warning);
+				oInput.setWidth("250px");
+				oInput.setTextAlign(sap.ui.core.TextAlign.End);
+				oInput.setTextDirection(sap.ui.core.TextDirection.RTL);
+				oInput.attachChange(handleTextFieldChange);
+				oInput.setTooltip("Changing this fields value will change the value of the next TextField with its 'onchange' event.");
+				oInput.placeAt("target7");
+				oLabel = new sap.ui.commons.Label({ text: "field with warning ", labelFor: oInput});
+				oLabel.placeAt("target7");
+
+				oInput = new sap.ui.commons.TextField('input8');
+				oInput.setValue("Warning, editable=false");
+				oInput.setValueState(sap.ui.core.ValueState.Warning);
+				oInput.setEditable(false);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target8");
+				oLabel = new sap.ui.commons.Label({ text: "Read only and warning ", labelFor: oInput});
+				oLabel.placeAt("target8");
+
+				oInput = new sap.ui.commons.TextField('input9');
+				oInput.setValue("Some control with IME = active");
+				oInput.setTooltip("You need to have a special language and additional prerequisites in order to see the editor.");
+				oInput.setImeMode(sap.ui.core.ImeMode.Active);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target9");
+				oLabel = new sap.ui.commons.Label({ text: "IME test ", labelFor: oInput});
+				oLabel.placeAt("target9");
+
+				var oInput = new sap.ui.commons.TextField('input10');
+				oInput.setValue('TextField for Success-ValueState Tests');
+				oInput.setWidth("300px");
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target10");
+				oLabel = new sap.ui.commons.Label({ text: "field with success state ", labelFor: oInput});
+				oLabel.placeAt("target10");
+
+				// compare Textfield vs TexAre classes
+				var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
+				oLyt.setColumns(2);
+				oLyt.setWidth("310px");
+				oLyt.setWidths(["155px", "155px"]);
+
+				var oInput = new sap.ui.commons.TextField('input11');
+				oInput.setValue('TextField');
+				oInput.setWidth("300px");
+
+				var oCell = new sap.ui.commons.layout.MatrixLayoutCell("Cell1"); 
+				oCell.setColSpan(2);
+				oCell.addContent(oInput);
+				oLyt.createRow(oCell);
+
+				var oTA = new sap.ui.commons.TextArea('TA1');
+				oTA.setValue('TextArea');
+				oTA.setWidth("300px");
+				switch( sap.ui.getCore().getConfiguration().getTheme()){
+					case ('sap_platinum'):
+						oTA.setHeight("20px");
+						break;
+					case ('sap_ux'):
+						oTA.setHeight("18px");
+						break;
+					case ('sap_hcb'):
+						oTA.setHeight("18px");
+						break;
+					case ('edding'):
+						oTA.setHeight("40px");
+						break;
+					case ('sap_goldreflection'):
+						oTA.setHeight("22px");
+						break;
+				}
+				oCell = new sap.ui.commons.layout.MatrixLayoutCell("Cell2");
+				oCell.setColSpan(2);
+				oCell.addContent(oTA);
+				oLyt.createRow(oCell);
+
+				var oRBGroup1 = new sap.ui.commons.RadioButtonGroup("RBG-ValueState");
+				oRBGroup1.setTooltip("ValueState");
+				oRBGroup1.attachSelect(setValueState);
+
+				var oItem = new sap.ui.core.Item("VS-None");
+				oItem.setText("None"); 
+				oItem.setTooltip("None");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Error");
+				oItem.setText("Error"); 
+				oItem.setTooltip("Error");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Warning");
+				oItem.setText("Warning"); 
+				oItem.setTooltip("Warning");
+				oRBGroup1.addItem(oItem);
+				oItem = new sap.ui.core.Item("VS-Success");
+				oItem.setText("Success"); 
+				oItem.setTooltip("Success");
+				oRBGroup1.addItem(oItem);
+
+				var oMLC0 = new sap.ui.commons.layout.MatrixLayoutCell("Cell-ValueState");
+				oMLC0.setRowSpan(3);
+				oMLC0.setVAlign(sap.ui.commons.layout.VAlign.Top);
+				oMLC0.addContent(oRBGroup1);
+
+				var oCheckBox1 = new sap.ui.commons.CheckBox("CB1");
+				oCheckBox1.setText("ReadOnly");
+				oCheckBox1.setChecked(false);
+				oCheckBox1.attachChange(toggleEditable);
+				oLyt.createRow(oMLC0, oCheckBox1);
+
+				var oCheckBox2 = new sap.ui.commons.CheckBox("CB2");
+				oCheckBox2.setText("Disabled");
+				oCheckBox2.setChecked(false);
+				oCheckBox2.attachChange(toggleEnabled);
+				oLyt.createRow(oCheckBox2);
+
+				var oCheckBox3 = new sap.ui.commons.CheckBox("CB3");
+				oCheckBox3.setText("Required");
+				oCheckBox3.setChecked(false);
+				oCheckBox3.attachChange(toggleRequired);
+				oLyt.createRow(oCheckBox3);
+
+				oLyt.placeAt("target11");
+
+				var oInput = new sap.ui.commons.TextField('input12');
+				oInput.setValue("Ñagçyfox");
+				oInput.setTooltip("This is an inputfield");
+				oInput.setRequired(true);
+				oInput.attachChange(myHandler);
+				oInput.placeAt("target12");
+				oLabel = new sap.ui.commons.Label({ text: "Test for text allignment ", labelFor: oInput});
+				oLabel.placeAt("target12");
+
+				oInput = new sap.ui.commons.TextField('input13', {
+					value: "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>",
+					tooltip: "~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>",
+					width: "30em",
+					change: myHandler
+				});
+				oLabel = new sap.ui.commons.Label({ text: "Test for escaping ", labelFor: oInput});
+				oLabel.placeAt("target13");
+				oInput.placeAt("target13");
+
+				var oInput = new sap.ui.commons.TextField('input14');
+				oInput.setPlaceholder("Placeholder");
+				oInput.setTooltip("Field with placeholder");
+				var oLabel1 = new sap.ui.commons.Label({ text: "TextField with Placeholder:\u00A0", labelFor: oInput});
+				oLabel1.placeAt("target14");
+				oInput.placeAt("target14");
+
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.TextField</h1>
+
+		<div id="target0"></div>
+		<hr/>
+		<br/>
+		<div id="target1"></div>
+		<br/>
+		<span>Some text in front </span><span id="target2"></span><span>And continued after the input</span>
+		<br/><br/>	
+		<div id="target3"></div>
+		<br/>
+		<div id="target4"></div>
+		<br/>
+		<div id="target5"></div>
+		<br/>
+		<div id="target6"></div>
+		<br/>
+		<div id="target7"></div>
+		<br/>
+		<div id="target8"></div>
+		<br/>
+		<div id="target9"></div>
+		<br/>
+		<div id="target10"></div>
+		<br/>
+		Compare <label for="input11">TextField</label> with <label for="TA1">TextArea</label> of one row. It must look similar.
+		<br/>
+		<div id="target11"></div>
+		<br/>
+		<div id="target12"></div>
+		<br/>
+		<div id="target13"></div>
+		<br/>
+		<span id="target14"></span>
+		<br/>
+		<span id="outputTarget"></span>
+	</body>
+</html>

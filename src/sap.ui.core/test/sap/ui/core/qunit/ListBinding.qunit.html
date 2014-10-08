@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.model.Binding
+  Author: d050084
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" >
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript" charset="utf-8"> // IE needs this :-/
+
+	var oModel, oNamedModel;
+	var testData;
+	var bindings;
+	var control;
+	
+    sap.ui.core.Element.extend("MyListItem", {
+        // the control API:
+        metadata : {
+            properties : {
+                "text" : "string"
+            }
+        }
+    });
+
+    sap.ui.core.Control.extend("MyList", {
+       
+        // the control API:
+        metadata : {
+            aggregations : {
+                "items" : {type: "MyListItem", multiple: true}
+            }
+        },
+       
+        // the part creating the HTML:
+        renderer : function(oRm, oControl) {
+            oRm.write("<ul");
+            oRm.writeControlData(oControl);
+            oRm.writeClasses();
+            oRm.write(">");
+            jQuery.each(oControl.getItems(), function(iIndex, oItem) {
+                oRm.write("<li");
+                if (oItem.getTooltip_AsString()) {
+                	oRm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
+                }
+                oRm.write(">");
+                oRm.writeEscaped(oItem.getText());
+                oRm.write("</li>");
+            });
+            oRm.write("</ul>");
+        }
+       
+    });
+   
+    
+   	
+	function setup(){
+		// reset bindings
+		bindings = new Array();
+		testData = {
+	  		teamMembers:[
+				{firstName:"Andreas", lastName:"Klark", gender:"male"},
+				{firstName:"Peter", lastName:"Miller", gender:"male"},
+				{firstName:"Gina", lastName:"Rush", gender:"female"},
+				{firstName:"Steave", lastName:"Ander", gender:"male"},
+				{firstName:"Michael", lastName:"Spring", gender:"male"},
+				{firstName:"Marc", lastName:"Green", gender:"male"},
+				{firstName:"Frank", lastName:"Wallace", gender:"male"}
+	   		]
+		};
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(testData);
+		sap.ui.getCore().setModel(oModel);
+		
+		oNamedModel = new sap.ui.model.json.JSONModel();
+		oNamedModel.setData(testData);
+		sap.ui.getCore().setModel(oNamedModel,"NamedModel");
+		
+		control = new MyList();
+		control.placeAt("content");
+	
+	};
+
+	test("ListBinding with Template (classical)", function(){
+		setup();
+		control.bindAggregation("items", "/teamMembers", new MyListItem({text:"{lastName}"}));
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("Named model: ListBinding with Template (classical)", function(){
+		setup();
+		control.bindAggregation("items", "NamedModel>/teamMembers", new MyListItem({text:"{NamedModel>firstName}"}));
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("ListBinding with Factory (classical)", function(){
+		setup();
+		control.bindAggregation("items", "/teamMembers", function(sId, oContext) {
+			var gender = oContext.getProperty("gender"),
+				li = new MyListItem(sId, {text:"{lastName}"});
+			if (gender == "female") {
+				li.setTooltip("w");
+			}
+			return li;
+		});
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("Named model: ListBinding with Factory (classical)", function(){
+		setup();
+		control.bindAggregation("items", "NamedModel>/teamMembers", function(sId, oContext) {
+			var gender = oContext.getProperty("gender"),
+				li = new MyListItem(sId, {text:"{NamedModel>firstName}"});
+			if (gender == "female") {
+				li.setTooltip("w");
+			}
+			return li;
+		});
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("ListBinding with Template", function(){
+		setup();
+		control.bindAggregation("items", {
+			path: "/teamMembers",
+			template: new MyListItem({text:"{lastName}"})
+		})
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("ListBinding with Factory", function(){
+		setup();
+		control.bindAggregation("items", {
+			path: "/teamMembers",
+			factory: function(sId, oContext) {
+				var gender = oContext.getProperty("gender"),
+					li = new MyListItem(sId, {text:"{lastName}"});
+				if (gender == "female") {
+					li.setTooltip("w");
+				}
+				return li;
+			}
+		})
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("ListBinding with bindElement", function(){
+		setup();
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({modelData:testData});
+		control.setModel(oModel);
+		control.bindAggregation("items", {
+			path: "teamMembers",
+			template: new MyListItem({text:"{lastName}"})
+		})
+		control.bindElement("/modelData");		
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("Named model: ListBinding with bindElement", function(){
+		setup();
+		oNamedModel = new sap.ui.model.json.JSONModel();
+		oNamedModel.setData({modelData:testData});
+		control.setModel(oNamedModel,"NamedModel");
+		control.bindAggregation("items", {
+			path: "NamedModel>teamMembers",
+			template: new MyListItem({text:"{NamedModel>firstName}"})
+		})
+		control.bindElement("NamedModel>/modelData");		
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+
+	test("ListBinding with Template (constructor)", function(){
+		setup();
+		control.destroy();
+		control = new MyList({
+			items: {
+				path: "/teamMembers",
+				template: new MyListItem({text:"{lastName}"})
+			}
+		});
+		control.placeAt("content");
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	test("ListBinding with Template (constructor, json)", function(){
+		setup();
+		control.destroy();
+		control = new MyList({
+			items: {
+				path: "/teamMembers",
+				template: {
+					Type: "MyListItem",
+					text: "{lastName}"
+				}
+			}
+		});
+		control.placeAt("content");
+				
+		var items = control.getAggregation("items");
+		equal(items.length, testData.teamMembers.length, "number of list items");
+		ok(items[0] instanceof MyListItem, "cloned items are list items");
+	});
+	
+	
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: Data binding JSON Bindings</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<br>
+<div id="content"></div>
+</body>
+</html>

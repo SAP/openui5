@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+    <title>RowRepeater - sap.ui.commons</title>
+
+    <script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_goldreflection"
+			data-sap-ui-trace="true"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../resources/sap-ui-core.js"
+			>
+		</script>
+
+	<script type="text/javascript">
+
+ 	// configuration matrix
+ 	var configMatrix, configRow, configCell, configControl;
+ 	configMatrix = new sap.ui.commons.layout.MatrixLayout("configMatrix");
+
+	// property and aggregation switch row
+	configRow = new sap.ui.commons.layout.MatrixLayoutRow();
+
+	// render title
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.CheckBox({text:"Render Title",checked:true,change:handleRenderTitle});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// render filters
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.CheckBox({text:"Render Filters",checked:true,change:handleRenderFilters});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// render sorters
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.CheckBox({text:"Render Sorters",checked:true,change:handleRenderSorters});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// show more steps
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.CheckBox({text:"Show More",checked:false,change:handleShowMore});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// show more steps
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.CheckBox({text:"Show Alerts",checked:false,change:handleShowAlerts});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// trigger show more
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.Button({text:"Trigger Show More",press:function(){oRowRepeater.triggerShowMore()}});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+
+	// apply 2nd filter
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.Button({text:"Apply 2nd Filter",press:function(){oRowRepeater.applyFilter("second_filter")}});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+	// trigger 2nd sort
+	configCell = new sap.ui.commons.layout.MatrixLayoutCell();
+	configControl = new sap.ui.commons.Button({text:"Trigger 2nd Sorter",press:function(){oRowRepeater.triggerSort("second_sorter")}});
+	configCell.addContent(configControl);
+	configRow.addCell(configCell);
+
+	configMatrix.addRow(configRow);
+
+	// add to page
+	configMatrix.placeAt("config_target");
+	
+	
+	//**********************************************************************************
+	
+	
+	
+
+		// row template
+		var matrix, subMatrix, matrixRow, matrixSubRow, matrixCell, control;
+		// main matrix
+		matrix = new sap.ui.commons.layout.MatrixLayout("theMatrix");
+		matrix.setWidth("70%");
+		// main row
+		matrixRow = new sap.ui.commons.layout.MatrixLayoutRow();
+		//image
+		control = new sap.ui.commons.Image();
+		control.setHeight("60px");
+		control.setWidth("50px");
+		control.bindProperty("src","src");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 1
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","lastName");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 2
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","name");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//label 3
+		control = new sap.ui.commons.Label();
+		control.bindProperty("text","country");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+
+		//link
+		control = new sap.ui.commons.Link();
+		control.bindProperty("text","href");
+		matrixCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		matrixCell.addContent(control);
+		matrixRow.addCell(matrixCell);
+		// add row to matrix
+		matrix.addRow(matrixRow);
+
+		// create test data
+	 	var dataObject = { data : [
+				{lastName: "Platte", name: "Rudolf",  href: "http://www.sap.com", src: "images/persons/male_PlatteR.jpg", gender: "male" , country: "US"},
+				{lastName: "Dwyer", name: "Nora",  href: "http://www.sap.com", src: "images/persons/female_DwyerN.jpg", gender: "female" , country: "US"},
+				{lastName: "Wallace", name: "Alex",  href: "http://www.sap.com", src: "images/persons/male_WallaceA.jpg", gender: "male", country:  "DE"},
+				{lastName: "Wang", name: "Megan",  href: "http://www.sap.com", src: "images/persons/female_WangM.jpg", gender: "female", country: "US"},
+				{lastName: "Ingalls", name: "Barbara",  href: "http://www.sap.com", src: "images/persons/female_IngallsB.jpg", gender: "female" , country: "US"},
+				{lastName: "Wallace", name: "Bruno",  href: "http://www.sap.com", src: "images/persons/male_WallaceA.jpg", gender: "male", country: "US"},
+				{lastName: "Zar", name: "Lou", href: "http://www.sap.com", src: "images/persons/male_FieldJ.jpg", gender: "male", country:  "DE"},
+				{lastName: "Watson", name: "Mary",  href: "http://www.sap.com", src: "images/persons/female_WatsonM.jpg", gender: "female", country: "US"},
+				{lastName: "Spring", name: "Sally", href: "http://www.sap.com", src: "images/persons/female_SpringS.jpg", gender: "female", country: "US"},
+				{lastName: "Schutt", name: "Doris", href: "http://www.sap.com", src: "images/persons/female_BaySu.jpg", gender: "female", country: "US"},
+				{lastName: "Nicols", name: "John", href: "http://www.sap.com", src: "images/persons/male_NicolsJ.jpg", gender: "male", country:  "FR"},
+				{lastName: "Gains", name: "Viola", href: "http://www.sap.com", src: "images/persons/female_GainsV.jpg", gender: "female", country:  "DE"},
+				{lastName: "Bay", name: "Sue",  href: "http://www.sap.com", src: "images/persons/female_BaySu.jpg", gender: "female", country:  "FR"},
+				{lastName: "Smith", name: "John", href: "http://www.sap.com", src: "images/persons/male_SmithJo.jpg", gender: "male", country:  "CH"},
+				{lastName: "Gordon", name: "Randy", href: "http://www.sap.com", src: "images/persons/male_GordonR.jpg", gender: "male", country:  "DE"},
+				{lastName: "Schulz", name: "Justin", href: "http://www.sap.com", src: "images/persons/male_SchulzJ.jpg", gender: "male", country:  "DE"},
+				{lastName: "Time", name: "Tino", href: "http://www.sap.com", src: "images/persons/male_KentC.jpg", gender: "male", country: "US"},
+				{lastName: "East", name: "Jonathan", href: "http://www.sap.com", src: "images/persons/male_EastJ.jpg", gender: "male", country:  "FR"},
+				{lastName: "Poole", name: "Gene", href: "http://www.sap.com", src: "images/persons/female.jpg", gender: "female", country:  "IT"},
+				{lastName: "Ander", name: "Corey", href: "http://www.sap.com", src: "images/persons/male_SchulzJ.jpg", gender: "male", country:  "CH"},
+				{lastName: "Early", name: "Brighton", href: "http://www.sap.com", src: "images/persons/i2.jpg", gender: "male", country:  "FR"},
+				{lastName: "Noring", name: "Constance", href: "http://www.sap.com", src: "images/persons/female_WatsonM.jpg", gender: "female", country: "US"},
+				{lastName: "Miller", name: "Michael", href: "http://www.sap.com", src: "images/persons/male_MillerM.jpg", gender: "male", country:  "DE"},
+				{lastName: "Tress", name: "Matt", href: "http://www.sap.com", src: "images/persons/female.jpg", gender: "female", country: "US"},
+				{lastName: "Turner", name: "Pamela", href: "http://www.sap.com", src: "images/persons/female_RushJ.jpg", gender: "female", country:  "DE"},
+				{lastName: "Dente", name: "Al",  href: "http://www.sap.com", src: "images/persons/i2.jpg", gender: "male", country: "US"},
+				{lastName: "Friese", name: "Andy", href: "http://www.sap.com", src: "images/persons/i3.jpg", gender: "male", country:  "DE"},
+				{lastName: "Mann", name: "Anita", href: "http://www.sap.com", src: "images/persons/i1.jpg", gender: "female", country:  "DE"},
+				{lastName: "Fisher", name: "Richard",  href: "http://www.sap.com", src: "images/persons/male_FisherR.jpg", gender: "male", country: "US"},
+				{lastName: "Fuchs", name: "Peter", href: "http://www.sap.com", src: "images/persons/male_FuchsP.jpg", gender: "male", country:  "DE"},
+				{lastName: "Rush", name: "Joanne", href: "http://www.sap.com", src: "images/persons/female_RushJ.jpg", gender: "female", country:  "DE"},],
+					empty : []
+				};
+
+	  for(var n=1; n<=100; n++) {
+		  dataObject.data.push( { lastName:"LastName"+n, name:"Name"+n, src:"images/persons/male.jpg", country: "DE", href: "http://www.sap.com" } );
+	  }
+
+	  // create JSON model
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(dataObject);
+		sap.ui.getCore().setModel(oModel);
+
+		// create the row repeater control
+		var oRowRepeater = new sap.ui.commons.RowRepeater("rr1",{currentPage:1});
+		oRowRepeater.bindRows("/data",matrix);
+		oRowRepeater.setNoData(new sap.ui.commons.TextView({text: "Sorry, no data available!"}));
+		oRowRepeater.placeAt("rr1_target");
+
+//******************************************************************************************************
+
+		// attach event listener
+		oRowRepeater.attachFilter(displayEventInPopup);
+		oRowRepeater.attachSort(displayEventInPopup);
+		oRowRepeater.attachPage(displayEventInPopup);
+		oRowRepeater.attachResize(displayEventInPopup);
+
+		// title element for row repeater
+		var oTitle = new sap.ui.core.Title({text:"Employees", icon:"images/SAPLogo.gif", tooltip:"Employees"});
+
+		// filters array
+		var aFilters = new Array();
+		aFilters.push(new sap.ui.commons.RowRepeaterFilter("first_filter",{text:"All Countries"}));
+		aFilters.push(new sap.ui.commons.RowRepeaterFilter("second_filter",{text:"Germany",filters:[new sap.ui.model.Filter("country","EQ", "DE")],tooltip:"Show Employees working in Germany"}));
+		aFilters.push(new sap.ui.commons.RowRepeaterFilter("third_filter",{text:"USA",filters:[new sap.ui.model.Filter("country", "EQ","US")],tooltip:"Show Emloyees working in USA"}));
+
+		// sorters array
+		var aSorters = new Array();
+		aSorters.push(new sap.ui.commons.RowRepeaterSorter("third_sorter",{text:"Country",sorter:new sap.ui.model.Sorter("country",true),tooltip:"Sort By Country"}));
+		aSorters.push(new sap.ui.commons.RowRepeaterSorter("first_sorter",{text:"Gender",sorter:new sap.ui.model.Sorter("gender",false),tooltip:"Sort By Gender"}));
+		aSorters.push(new sap.ui.commons.RowRepeaterSorter("second_sorter",{text:"Last Name",sorter:new sap.ui.model.Sorter("lastName",false)}));
+
+		// call all aggregation and property functions
+		handleRenderTitle(new sap.ui.base.Event("event_1",oRowRepeater,{checked:true}));
+		handleRenderFilters(new sap.ui.base.Event("event_2",oRowRepeater,{checked:true}));
+		handleRenderSorters(new sap.ui.base.Event("event_3",oRowRepeater,{checked:true}));
+		handleShowMore(new sap.ui.base.Event("event_4",oRowRepeater,{checked:false}));
+
+		// handle click on "render title" checkbox
+		function handleRenderTitle(e) {
+			if(e.getParameter("checked")) {
+				oRowRepeater.setTitle(oTitle);
+			} else {
+				oRowRepeater.setTitle(null);
+			}
+		}
+
+		// handle click on "render filters" checkbox
+		function handleRenderFilters(e) {
+			if(e.getParameter("checked")) {
+				for(var n=0;n<aFilters.length;n++) {
+					oRowRepeater.addFilter(aFilters[n]);
+				}
+			} else {
+				oRowRepeater.removeAllFilters();
+			}
+		}
+
+		// handle click on "render sorters" checkbox
+		function handleRenderSorters(e) {
+			if(e.getParameter("checked")) {
+				for(var n=0;n<aSorters.length;n++) {
+					oRowRepeater.addSorter(aSorters[n]);
+				}
+			} else {
+				oRowRepeater.removeAllSorters();
+			}
+		}
+
+		// handle click on "show more" checkbox
+		function handleShowMore(e) {
+			if(e.getParameter("checked")) {
+				oRowRepeater.setShowMoreSteps(3);
+			} else {
+				oRowRepeater.setShowMoreSteps(0);
+			}
+		}
+
+		// handle click on "show alerts" checkbox
+		var bShowAlerts = false;
+		function handleShowAlerts(e) {
+			bShowAlerts = e.getParameter("checked");
+		}
+
+		// display an event summary popup if desired
+		function displayEventInPopup(e) {
+			if(!bShowAlerts) return;
+			if(e.getId()=="filter") {
+				alert( "Event: " + e.getId() + "\nID: " + e.getParameter("filterId") );
+			} else if(e.getId()=="sort") {
+				alert( "Event: " + e.getId() + "\nID: " + e.getParameter("sorterId") );
+			} else if(e.getId()=="page") {
+				alert( "Event: " + e.getId() + "\nCurrent Page: " + e.getParameter("currentPage") + "\nPrevious Page: " + e.getParameter("previousPage") );
+			} else if(e.getId("showMore")) {
+				alert( "Event: " + e.getId() + "\nNumber of Rows: " + e.getParameter("numberOfRows") + "\nPrevious Number of Rows: " + e.getParameter("previousNumberOfRows") );
+			}
+		}
+//**************************************************************************************************
+  </script>
+  </head>
+  <body class="sapUiBody" role="application">
+      <h1>Test Page for sap.ui.commons.RowRepeater</h1>
+  		<div id="config_target"></div>
+        <div id="rr1_target"></div>
+
+  </body>
+</html>

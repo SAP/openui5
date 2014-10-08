@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Ios7 detection - sap.m</title>
+		<style type="text/css">
+			label.sapMLabel {
+				display: block;
+				margin: 0.5em 0 0 0;
+			}
+		</style>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons,sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-compatVersion="1.16">
+		</script>
+		<script type="text/javascript">
+			function updateLabel () {
+				label.setText("Keyboard: " + sap.m.ios7._bInputIsOpen + " Intervall: " + sap.m.ios7._bIntervallAttached + " fired: " + sap.m.ios7._bNavigationBarEventFired);
+				labelW.setText("refresh: inner: " + window.innerHeight + " outer: " + window.outerHeight + " or: " +  window.orientation);
+			};
+
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+			var label = new sap.m.Label({text: "Input for testing orientation change with keyboard"});
+			var label2 = new sap.m.Label();
+			var label3 = new sap.m.Label();
+			var label4 = new sap.m.Label();
+			var labelW = new sap.m.Label();
+			var page1 = new sap.m.Page("page1", {
+				title:"Ios 7 feature detection",
+				content : [
+					label,
+					labelW,
+					new sap.m.Input({type: sap.m.InputType.Email, placeholder: "Ios and softkeyboard are dangerous"}),
+					new sap.m.Button({
+						press : function() {
+							updateLabel();
+						},
+						text : "updateLabel"
+					}),
+					new sap.m.Button({
+						press : function() {
+							window.scrollTo(0,0);
+						},
+						text : "scrollTop"
+					}),
+					new sap.ui.core.HTML({ content : "<select><option>foo</option></select>" }),
+					label2,
+					label3,
+					label4
+				], footer : new sap.m.Bar()
+			});
+			app.addPage(page1).placeAt("content");
+
+			var resizeCount = 0;
+			window.addEventListener("resize", function() {
+				label3.setText("resize occured (" + resizeCount + ") inner: " + window.innerHeight + " outer: " + window.outerHeight + " or: " +  window.orientation);
+				resizeCount ++;
+			}, false);
+
+			sap.ui.Device.orientation.attachHandler(function() {
+				updateLabel();
+			});
+			
+			jQuery.sap.require("sap.m.ios7");
+			jQuery.sap.require("sap.m.MessageBox");
+			sap.m.ios7.attachEvent("navigationBarShownInLandscape", function(oEvent) {
+				var iBarHeight = oEvent.getParameter("barHeight");
+				sap.m.MessageBox.alert("Navigation bar popped up height was: " + iBarHeight + "px");
+				window.setTimeout(function() {
+					var $Dialog = jQuery(".sapMDialog");
+					var topBefore = $Dialog.offset().top;
+					label.setText("height: " + $Dialog.height() + " top before: " + topBefore +" top : " + (topBefore - iBarHeight/2));
+					$Dialog.css("top", (window.outerHeight - $Dialog.height() - iBarHeight)/2 + "px")
+				},100);
+
+				label4.setText("navbar: inner: " + window.innerHeight + " outer: " + window.outerHeight + " or: " +  window.orientation);
+				updateLabel();
+			});
+			sap.m.ios7.attachEvent("inputOpened", function() {
+				label2.setText("The keyboard has opened");
+				updateLabel();
+			});
+			sap.m.ios7.attachEvent("inputClosed", function() {
+				label2.setText("The keyboard has closed");
+				updateLabel();
+			});
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

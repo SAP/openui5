@@ -1,0 +1,47 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides enumeration sap.ui.model.FilterOperator
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+
+	/**
+	* @class
+	* Different modes for retrieving the count of collections
+	*
+	* @static
+	* @public
+	* @name sap.ui.model.odata.CountMode
+	*/
+	var CountMode = {
+			/**
+			 * Count is retrieved by sending a separate $count request, before requesting data
+			 * @public
+			 */
+			Request: "Request",
+	
+			/**
+			 * Count is retrieved by adding $inlinecount=allpages and is included in the data request
+			 * @public
+			 */
+			Inline: "Inline",
+	
+			/**
+			 * Count is retrieved by a separate request upfront and inline with each data request
+			 * @public
+			 */
+			Both: "Both",
+	
+			/**
+			 * Count is not requested from the server
+			 * @public
+			 */
+			None: "None"
+	};
+
+	return CountMode;
+
+}, /* bExport= */ true);

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>LocalBusyIndicator - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	
+</script>
+
+<script>
+	try {
+		sap.ui.getCore().loadLibrary("sap.ui.commons");
+	} catch (e) {
+		alert("This test page requires the library 'sap.ui.commons' which is not available.");
+		throw (e);
+	}
+
+	var oMyListBox = new sap.ui.commons.ListBox({
+		tooltip : "Country",
+		editable : false,
+		width : "200px",
+		height : "200px",
+		items : [ new sap.ui.core.ListItem({
+			text : "I'm an item, and you?"
+		}) ]
+	}).placeAt("uiArea1");
+
+	var bBusy;
+	var oBtn1 = new sap.ui.commons.Button({
+		text : "set loading-mode: on",
+		press : function() {
+			bBusy = !oMyListBox.isBusy();
+			bBusy ? oBtn1.setText("set loading-mode: off") : oBtn1.setText("set loading-mode: on")
+			oMyListBox.setBusy(bBusy);
+		}
+	}).placeAt("button1");
+	
+	var oMyTable = new sap.ui.table.Table({
+	}).placeAt("uiArea2");
+	oMyTable.setBusyIndicatorDelay(0);
+	
+	// define the Table columns
+	var oControl = new sap.ui.commons.TextView({text:"{lastName}"}); // short binding notation
+	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Last Name"}), template: oControl, sortProperty: "lastName", filterProperty: "lastName", width: "100px"}));
+	oControl = new sap.ui.commons.TextField().bindProperty("value", "name"); // more verbose binding notation
+	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "First Name"}), template: oControl, sortProperty: "name", filterProperty: "name", width: "80px"}));
+	oControl = new sap.ui.commons.CheckBox({checked:"{checked}"});
+	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Checked"}), template: oControl, sortProperty: "checked", filterProperty: "checked", width: "75px", hAlign: "Center"}));
+	oControl = new sap.ui.commons.Link({text:"{linkText}", href:"{href}"});
+	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Web Site"}), template: oControl, sortProperty: "linkText", filterProperty: "linkText"}));
+	oControl = new sap.ui.commons.RatingIndicator({value:"{rating}"});
+	oMyTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Rating"}), template: oControl, sortProperty: "rating", filterProperty: "rating"}));
+	
+	
+	// create some local data
+	var aData = [
+		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", rating: 4},
+		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", rating: 2},
+		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", rating: 3}
+	];
+	
+	// create a JSONModel, fill in the data and bind the Table to this model
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({modelData: aData});
+	oMyTable.setModel(oModel);
+	oMyTable.bindRows("/modelData");
+	
+	var oBtn2 = new sap.ui.commons.Button({
+		text : "set loading-mode: on",
+		press : function() {
+
+			bBusy = !oMyTable.isBusy();
+			bBusy ? oBtn2.setText("set loading-mode: off") : oBtn2.setText("set loading-mode: on")
+			oMyTable.setBusy(bBusy);
+		}
+	}).placeAt("button2");
+</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="header">
+		Test Page for
+		<code>sap.ui.core.LocalBusyIndicator</code>
+	</h1>
+
+	<div>Call with a delay of 1000ms (default)</div>
+	<div id="button1"></div>
+	<div id="uiArea1"></div>
+	<div id="button2"></div>
+	<div id="uiArea2"></div>
+
+</body>
+</html>

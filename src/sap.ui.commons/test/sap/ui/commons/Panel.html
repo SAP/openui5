@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Panel - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-areas="uiArea1,uiArea2,uiArea3,uiArea4,uiArea5,uiArea6,uiArea12,uiArea11,uiArea10,uiArea13,uiArea14"
+				data-sap-ui-evt-oninit="createControls()"
+				>
+		</script>
+
+		<script>
+			function createControls() {
+				var oPanel1 = new sap.ui.commons.Panel("myPanel1").setText("First Panel").setTooltip("First Panel Tooltip");
+				oPanel1.addButton(new sap.ui.commons.Button({text:"Button 1"}));
+				oPanel1.placeAt("uiArea1");
+
+				var oPanel2 = new sap.ui.commons.Panel("myPanel2", {width:"100px", height:"100px"});
+				oPanel2.setText("Second Panel");
+				oPanel2.setShowCollapseIcon(true);
+				oPanel2.placeAt("uiArea2");
+
+				var oPanel3 = new sap.ui.commons.Panel("myPanel3", {width:"200px", height:"100px"});
+				var oTitle = new sap.ui.core.Title()
+					.setText("Panel with size set")
+					.setIcon("images/ui5_small.png")
+					.setTooltip("Tooltip for Panel with size set");
+				oPanel3.setTitle(oTitle);
+				oPanel3.setCollapsed(true).setApplyContentPadding(false);
+				var oBtn = new sap.ui.commons.Button({text: "Size given for suuuuuuuuuuuuuuerlongButton"});
+				oPanel3.addContent(oBtn);
+				oPanel3.placeAt("uiArea3");
+
+				var oPanel4 = new sap.ui.commons.Panel("myPanel4");
+				oPanel4.setText("Panel (size not set, initially closed) having a long long long long long long long long long long long long long long long long long text");
+				oPanel4.setCollapsed(true);
+				oPanel4.addButton(new sap.ui.commons.Button({text:"Button 2"})).addButton(new sap.ui.commons.Button({text:"Button 3"})).addButton(new sap.ui.commons.Button({text:"Button 4"})).addButton(new sap.ui.commons.Button({text:"Button 5"}));
+				var oBtn = new sap.ui.commons.Button({text: "No size given for suuuuuuuuuuuerlongButton"});
+				oPanel4.addContent(oBtn);
+				oPanel4.placeAt("uiArea4");
+
+				var oPanel5 = new sap.ui.commons.Panel("myPanel5", {width:"200px", height:"100px"});
+				oPanel5.setText("Panel with size set");
+				oPanel5.setAreaDesign(sap.ui.commons.enums.AreaDesign.Plain);
+				for (var i = 0; i < 5; i++) {
+					oBtn = new sap.ui.commons.Button({text: "size given"});
+					oPanel5.addContent(oBtn);
+				}
+				oPanel5.placeAt("uiArea5");
+
+				var oPanel6 = new sap.ui.commons.Panel("myPanel6");
+				oPanel6.setText("Panel with only width set").setWidth("200px");
+				for (var i = 0; i < 5; i++) {
+					oBtn = new sap.ui.commons.Button({text: "width given"});
+					oPanel6.addContent(oBtn);
+				}
+				oPanel6.placeAt("uiArea6");
+
+				var oPanel7 = new sap.ui.commons.Panel("myPanel7");
+				oPanel7.setText("Only width set").setWidth("200px");
+				oLabel = new sap.ui.core.HTML({content: "<span>This<br>is<br>quite<br>tall<br>content<br>here<br>in<br>this<br>very<br>nice<br>panel<br>with<br>only<br>width<br>set.</span>"});
+				oPanel7.addContent(oLabel);
+				oPanel7.placeAt("uiArea7");
+
+				var oPanel8 = new sap.ui.commons.Panel("myPanel8");
+				oPanel8.setTitle(new sap.ui.core.Title({text: "Panel with only height set", icon: "sap-icon://email"})).setHeight("200px");
+				for (var i = 0; i < 5; i++) {
+					oBtn = new sap.ui.commons.Button({text: "height given"});
+					oPanel8.addContent(oBtn);
+				}
+				oPanel8.placeAt("uiArea8");
+
+				var oPanel9 = new sap.ui.commons.Panel("myPanel9");
+				oPanel9.setText("Panel with only height set").setHeight("200px");
+				oLabel = new sap.ui.core.HTML({content: "<span>This<br>is<br>quite<br>tall<br>content<br>here<br>in<br>this<br>very<br>nice<br>panel<br>with<br>no<br>width<br>set.</span>"});
+				oPanel9.addContent(oLabel);
+				oPanel9.placeAt("uiArea9");
+
+				var oPanel12 = new sap.ui.commons.Panel("myPanel12");
+				oPanel12.setText("Panel with NO size set");
+				for (var i = 0; i < 5; i++) {
+					oBtn = new sap.ui.commons.Button({text: "no size given"});
+					oPanel12.addContent(oBtn);
+				}
+				oPanel12.placeAt("uiArea12");
+
+				var oPanel11 = new sap.ui.commons.Panel("myPanel11", {text:"NO size given"});
+				oPanel11.setText("NO size given");
+				oPanel11.setAreaDesign(sap.ui.commons.enums.AreaDesign.Transparent);
+				oLabel = new sap.ui.core.HTML({content: "<span>This<br>is<br>quite<br>tall<br>content<br>here<br>in<br>this<br>very<br>nice<br>panel<br>with<br>no<br>width<br>set.</span>"});
+				oPanel11.addContent(oLabel);
+				oPanel11.placeAt("uiArea11");
+
+				var oPanel10 = new sap.ui.commons.Panel("myPanel10");
+				oPanel10.setText("NO size given");
+				oPanel10.setBorderDesign(sap.ui.commons.enums.BorderDesign.None);
+				oLabel = new sap.ui.core.HTML({content: "<span>This<br>is<br>quite<br>tall, but in this case also slightly wide<br>content<br>here<br>in<br>this<br>very<br>nice<br>panel<br>with<br>no<br>width<br>set.</span>"});
+				oPanel10.addContent(oLabel);
+				oPanel10.placeAt("uiArea10");
+
+				var oPanel13 = new sap.ui.commons.Panel("myPanel13", {width:"100px", height:"200px"});
+				oPanel13.setText("border&area");
+				oPanel13.setBorderDesign(sap.ui.commons.enums.BorderDesign.None);
+				oPanel13.setAreaDesign(sap.ui.commons.enums.AreaDesign.Plain);
+				oPanel13.placeAt("uiArea13");
+
+				var oPanel14 = new sap.ui.commons.Panel("myPanel14", {width:"200px", height:"200px"});
+
+				var oPanel14b = new sap.ui.commons.Panel("myPanel14b").setDimensions("400px","100px");
+				var oButton1 = new sap.ui.commons.Button("sId1",{text:'ScrollLeft', press: function () {
+					oPanel14.setScrollLeft(100);
+				}});
+				var oButton2 = new sap.ui.commons.Button("sId2",{text:'ScrollTop', press: function () {
+					oPanel14.setScrollTop(100);
+				}});
+				oPanel14.addContent(oPanel14b);
+				oPanel14.addContent(oButton1);
+				oPanel14.addContent(oButton2);
+				oPanel14.placeAt("uiArea14");
+			}
+
+			function doSomething() {
+				var oCtrl = sap.ui.getCore().getElementById("myPanel5");
+				oCtrl.setWidth((oCtrl.getDomRef().offsetWidth + 5) + "px");
+				//oCtrl.setEnabled(!oCtrl.getEnabled());
+				sap.ui.getCore().applyChanges();
+			}
+		</script>
+
+		<style>
+		div {
+			display: inline-block;
+			vertical-align: top;
+		}
+		#uiArea1, #uiArea4, #uiArea8, #uiArea9, #uiArea10, #uiArea11, #uiArea12 {
+			width: 100%;
+		}
+		</style>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.Panel</h1>
+
+		<div id="uiArea1"></div><br> <br>
+		<div id="uiArea4"></div><br> <br>
+		<div id="uiArea2"></div><div id="uiArea3"></div><div id="uiArea5"></div><div id="uiArea6"></div><div id="uiArea7"></div><br> <br>
+		<div id="uiArea8"></div><br> <br>
+		<div id="uiArea9"></div><br> <br>
+		<div id="uiArea10"></div><br> <br>
+		<div id="uiArea11"></div><br> <br>
+		<div id="uiArea12"></div><br> <br>
+		<div id="uiArea13"></div><div id="uiArea14"></div><br>
+
+		<p>
+		<a href="javascript:doSomething()">Do Something!</a>
+
+	</body>
+</html>

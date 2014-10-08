@@ -1,0 +1,20 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ToolbarEnabled.Toolbar"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<CheckBox text="Toolbar Enabled" selected="true" select="onCheckBoxSelect"/>
+	
+	<Toolbar id="toolbar">
+		<Button text="Accept" type="Accept"/>
+		<ToolbarSpacer/>
+		<CheckBox text="CheckBox"/>
+		<ToolbarSpacer/>
+		<Input width="100px" value="Input"/>
+		<ToolbarSpacer/>
+		<RadioButton text="RadioButton"/>
+		<ToolbarSpacer/>
+		<Button text="Reject" type="Reject"/>
+	</Toolbar>
+	
+</mvc:View>

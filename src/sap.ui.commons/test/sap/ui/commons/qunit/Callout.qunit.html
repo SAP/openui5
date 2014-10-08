@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.ux3.Callout
+  Author: D036828
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.core,sap.ui.commons">
+</script>
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript"src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Control initialization -->
+<script language="javascript">
+
+	//Create controls
+
+	var oButton,
+		oLink,
+		oLayout,
+		oCallout; 
+
+	jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+	// the anchor
+	oButton = new sap.ui.commons.Button("CButton", {
+		text: "Callout",
+		lite: true,
+		tooltip: "this tooltip should not appear"
+	});
+
+	// contents
+	oLayout = new sap.ui.commons.layout.MatrixLayout({
+		width: "200px",
+		height: "200px"
+	}).addStyleClass("center");
+
+	for(var i = 1; i < 5; i++){
+		oLink = new sap.ui.commons.Link("clink_" + i, {
+			text: "text" + i,
+			href: ""
+		}).addStyleClass("middle");
+		oLayout.createRow(oLink);
+	}
+
+	// callout
+	oCallout = new sap.ui.commons.Callout("callout", {content: [oLayout]});
+
+	// 3. Attach the Callout to a reference control
+	oButton.setTooltip(oCallout);
+	sap.ui.setRoot("uiArea1", oButton);
+
+	// TEST functions
+	qutils.delayTestStart();
+
+	module("Appearance");
+
+	test("Assignment of elements", function() {
+		// Tooltip
+		equal(sap.ui.getCore().getControl("CButton").getTooltip().getId(),
+				"callout", "Callou is assigned as a tooltip to a button");
+	});
+	
+	function isCalloutVisible(){
+		return jQuery("#callout").filter(":visible").size() > 0;
+	}
+
+	module("Callout: open and close");
+	asyncTest("Open Callout", function() {
+		ok(true, "A-sync OK start");
+		qutils.triggerMouseEvent("CButton", "mouseover");
+		setTimeout(function() {
+			ok(isCalloutVisible()==true, "Callout is visible after mouseover");
+			qutils.triggerMouseEvent("callout", "mouseout");
+			setTimeout(function() {
+				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
+				start();
+			}, 500);
+		}, 900);
+	});
+
+	asyncTest("Do not open Callout by fast mouse movement over the parent", function() {
+		ok(true, "A-sync open/close start");
+		qutils.triggerMouseEvent("CButton", "mouseover");
+		setTimeout(function() {
+			ok(isCalloutVisible()==false, "Callout is not visible immediately after mouseover");
+			qutils.triggerMouseEvent("CButton", "mouseout");
+			setTimeout(function() {
+				ok(isCalloutVisible()==false, "Callout is not visible after mouseout");
+				start();
+			}, 500);
+		}, 50);
+	});
+
+	asyncTest("Close using close method", function() {
+		ok(true, "A-sync close() start");
+		qutils.triggerMouseEvent("CButton", "mouseover");
+		setTimeout(function() {
+			ok(isCalloutVisible()==true, "Callout is visible after mouseover");
+			oCallout.close();
+			setTimeout(function() {
+				ok(isCalloutVisible()==false, "Callout is not visible after close()");
+				start();
+			}, 400);
+		}, 700);
+	});
+
+	
+	asyncTest("Opened and closed events", function() {
+		// Randomize number of attempts
+		var iRepetitions = 2 + Math.round(Math.random() * 3);
+		// Delay must be >400 - the events are fired after the animations.
+		var iDelay = 500;
+		
+		// Count the number of times the the open and close events should be triggered and 
+		// how often they were actually triggered.
+		var mCounter = {
+			open   : 0,
+			opened : 0,
+			close  : 0,
+			closed : 0
+		};
+		
+		// Count the number of times the opened-event was fired
+		oCallout.attachOpened(function() {
+			mCounter.opened++;
+		});
+		// Count the number of times the closed-event was fired
+		oCallout.attachClosed(function() {
+			mCounter.closed++;
+		});
+		
+		var iChecked = 0;
+		var bOpen = false;
+		var fnCheck = function() {
+			if (bOpen) {
+				// Trigger Callout close by moving the mouse away from the button
+				qutils.triggerMouseEvent("CButton", "mouseout");
+				mCounter.close++;
+			} else {
+				// Trigger Callout open by moving the mouse onto the button
+				qutils.triggerMouseEvent("CButton", "mouseover");
+				mCounter.open++;
+			}
+			bOpen = !bOpen;
+			
+
+			iChecked++;
+			if (iChecked < iRepetitions * 2) {
+				// Number of repetitions not reached, call this function again.
+				setTimeout(fnCheck, iDelay);
+			} else {
+				// Wait for the last events to be fired, then call the funtion that evaluates
+				// whether the numbers are correct.
+				setTimeout(function() {
+					ok(
+						mCounter.open === iRepetitions, 
+						"Callout was opened " + mCounter.open + " times. (Should be "+ iRepetitions +")"
+					);
+					ok(
+						mCounter.close === iRepetitions, 
+						"Callout was closed " +  mCounter.close + " times. (Should be "+ iRepetitions +")"
+					);
+					
+					ok(
+						mCounter.open === mCounter.opened, 
+						"Opened event fired as often as open occurred. ("+ mCounter.open +"/"+ mCounter.opened +")"
+					);
+					ok(
+						mCounter.close === mCounter.closed, 
+						"Closed event fired as often as close occurred. ("+ mCounter.close +"/"+ mCounter.closed +")"
+					);
+					start();
+				}, iDelay + 10);
+			}
+		};
+		
+		fnCheck();
+	});
+
+	
+	module("Callout: keyboard navigation");
+	asyncTest("Initial Focus", function() {
+		oButton.focus();
+		ok(document.activeElement.id == "CButton", "Focus the button initially");
+		qutils.triggerKeyboardEvent("CButton", jQuery.sap.KeyCodes.I, false, false, true);
+		setTimeout(function(){
+			ok(isCalloutVisible()==true, "Callout is visible after Ctrl-I");
+			equal(document.activeElement.id, "clink_1", "The first link should be focused after the Callout is opened with keyboard");
+			//close it
+			qutils.triggerKeyboardEvent(document.activeElement.id, jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+			setTimeout(function(){
+				ok(isCalloutVisible()==false, "Callout is not visible after Esc");
+				equal(document.activeElement.id, "CButton", "The parent element should be focused after the focused Callout is closed");
+				start();
+			}, 500); // CLOSE
+		}, 500); // OPEN
+	});
+	
+	
+</script>
+
+<title>qUnit test for the Callout control</title>
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.Callout</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="uiArea1"></div>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

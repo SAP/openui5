@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.Tab
+  Author: D039185
+-->
+
+<html>
+
+<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Test Page for sap.ui.commons.Tab</title>
+		<script id="sap-ui-bootstrap" 
+						type="text/javascript"
+						src="../../../../../resources/sap-ui-core.js"
+						data-sap-ui-theme="sap_bluecrystal" 
+						data-sap-ui-noConflict="true"
+						data-sap-ui-libs="sap.ui.commons">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		// ================================================== 
+		//   test fixture for control properties and events 
+		// ================================================== 
+		
+		var sHeight = "300px", sWidth = "500px", iSelectedIndex = 0;
+		
+		var sSelectMessage = "select event fired";
+		
+		function selectEventHandler() {
+		  throw sSelectMessage;
+		}
+		
+		var oTabStrip = new sap.ui.commons.TabStrip("TabStrip", {
+		  height : sHeight,
+		  width : sWidth,
+		  selectedIndex : iSelectedIndex
+		});
+		oTabStrip.attachSelect(selectEventHandler);
+		sap.ui.setRoot("uiArea1", oTabStrip);
+		
+		// --- tab 1 ---
+		
+		var oVerticalScrolling1 = sap.ui.core.Scrolling.Auto, 
+				oHorizontalScrolling1 = sap.ui.core.Scrolling.Scroll, 
+				bEnabled1 = true, 
+				bVisible1 = true, 
+				iScrollLeft1 = 10, 
+				iScrollTop1 = 11, 
+				bClosable1 = true, 
+				bSelected1 = true, 
+				oText1 = "Tab 1", 
+				oTitle1 = new sap.ui.core.Title("title1", {text : oText1});
+		
+		var oTab1 = new sap.ui.commons.Tab("t1", {
+		  verticalScrolling : oVerticalScrolling1,
+		  horizontalScrolling : oHorizontalScrolling1,
+		  enabled : bEnabled1,
+		  visible : bVisible1,
+		  scrollLeft : iScrollLeft1,
+		  scrollTop : iScrollTop1,
+		  closable : bClosable1,
+		  selected : bSelected1
+		});
+		oTab1.setTitle(oTitle1);
+		var oBtn = new sap.ui.commons.Button({"text":"TEST","width":"800px"});
+		oTab1.addContent(oBtn);
+		oTabStrip.addTab(oTab1);
+		
+		// --- tab 2 ---
+		
+		var oVerticalScrolling2 = sap.ui.core.Scrolling.Scroll, 
+				oHorizontalScrolling2 = sap.ui.core.Scrolling.None, 
+				bEnabled2 = true, 
+				bVisible2 = true, 
+				iScrollLeft2 = 1, 
+				iScrollTop2 = 0, 
+				bClosable2 = false,  
+				oTitle2 = new sap.ui.core.Title("title2", { text : "Tab 2" });
+			
+		var ts1, t1;
+
+		module("Basic", {
+	  	setup: function() {
+			  ts1 = sap.ui.getCore().getControl("TabStrip");
+			  ok(ts1);
+		
+			  var tabs = ts1.getTabs();
+			  strictEqual(1, tabs.length);
+		
+			  t1 = tabs[0];
+		  },
+		  teardown: function() {
+			  ts1 = null;
+			  t1 = null;
+		  }
+		});
+		
+	  // ================================================== 
+	  //          test property accessor methods 
+	  // ==================================================          
+	  
+	  /**
+	   * Tests accessor method for property verticalScrolling of control . 
+	   */ 
+	  test("VerticalScrollingOk", function() {
+	     t1.setVerticalScrolling(sap.ui.core.Scrolling.None);
+	     strictEqual(t1.getVerticalScrolling(), sap.ui.core.Scrolling.None);
+	
+	     t1.setVerticalScrolling(oVerticalScrolling1);
+	     strictEqual(t1.getVerticalScrolling(), oVerticalScrolling1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property horizontalScrolling of control . 
+	   */ 
+	  test("HorizontalScrollingOk", function() {
+	    t1.setHorizontalScrolling(sap.ui.core.Scrolling.None);
+	    strictEqual(t1.getHorizontalScrolling(), sap.ui.core.Scrolling.None);
+	
+	    t1.setHorizontalScrolling(oHorizontalScrolling1);
+	    strictEqual(t1.getHorizontalScrolling(), oHorizontalScrolling1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property enabled of control . 
+	   */ 
+	  test("EnabledOk", function() { 	  
+	    strictEqual(t1.getEnabled(), bEnabled1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property visible of control . 
+	   */ 
+	  test("VisibleOk", function() {
+	    strictEqual(t1.getVisible(), bVisible1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property scrollLeft of control . 
+	   */ 
+	  test("ScrollLeftOk", function() {
+	    strictEqual(t1.getScrollLeft(), iScrollLeft1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property scrollTop of control . 
+	   */
+	    
+	  /* TODO:  THIS DOES NOT WORK because the Tab expands its height with the content and never has a scrollbar
+	  test("ScrollTopOk", function() {
+	    assertEquals(iScrollTop1, t1.getScrollTop());
+	  });
+	  */
+	  
+	  /**
+	   * Tests accessor method for property closable of control . 
+	   */ 
+	  test("ClosableOk", function() {
+	    strictEqual(t1.getClosable(), bClosable1);
+	  });
+	  
+	  /**
+	   * Tests accessor method for property selected of control . 
+	   */ 
+	  test("SelectedOk", function() {
+	    strictEqual(t1.getSelected(), bSelected1);
+	  });
+	  
+	
+	  // ================================================== 
+	  //          test control methods 
+	  // ==================================================
+	  
+	  test("TitleOk", function() {
+	    var oTitle = t1.getTitle();
+			strictEqual(oTitle.getText(), oText1);
+			t1.setTitle(null);
+			strictEqual(t1.getTitle(), null);
+	
+			t1.setTitle(oTitle);
+			strictEqual(oTitle.getText(), oText1);		
+	  });
+	
+	  test("ControlsOk", function() {
+			var l1 = new sap.ui.commons.Label("l1", "Foo"),  
+					l2 = new sap.ui.commons.Label("l2", "Goo");
+			t1.addContent(l1);
+			t1.addContent(l2);
+			strictEqual(t1.getContent().length, 3);
+	
+			t1.removeContent(t1.indexOfContent(l1));
+			t1.removeContent(t1.indexOfContent(l2));	
+	
+			strictEqual(t1.getContent().length, 1);	
+	  });
+	
+	  test("CreateTab", function() {
+	  	var oTab = new sap.ui.commons.Tab("t2", {
+	  	  verticalScrolling : oVerticalScrolling2,
+	  	  horizontalScrolling : oHorizontalScrolling2,
+	  	  enabled : bEnabled2,
+	  	  visible : bVisible2,
+	  	  scrollLeft : iScrollLeft2,
+	  	  scrollTop : iScrollTop2,
+	  	  closable : bClosable2
+	  	});
+	  	//oTab.setTitle(oTitle2);
+	  	ts1.addTab(oTab);
+	  	strictEqual(oTab.getTitle(), null);
+	
+	  	ts1.removeTab(ts1.indexOfTab(oTab));
+	  });
+	</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.commons.Tab</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>	
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+	</body>
+</html>

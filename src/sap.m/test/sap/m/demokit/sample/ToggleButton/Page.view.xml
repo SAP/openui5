@@ -1,0 +1,59 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ToggleButton.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		title="Page"
+		class="marginBoxContent" >
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Label text="Title" />
+				</contentMiddle>
+				<contentRight>
+					<ToggleButton icon="sap-icon://edit" press="onPress" />
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<subHeader>
+			<Bar>
+				<contentLeft>
+					<ToggleButton text="Pressed" enabled="true" pressed="true" press="onPress" />
+					<ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true" press="onPress" />
+				</contentLeft>
+				<contentRight>
+					<ToggleButton icon="sap-icon://action" press="onPress" />
+					<ToggleButton icon="sap-icon://home" enabled="false" press="onPress" />
+				</contentRight>
+			</Bar>
+		</subHeader>
+		<content>
+			<HBox>
+				<ToggleButton text="Disabled" enabled="false" press="onPress" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</ToggleButton>
+				<ToggleButton text="Pressed" enabled="true" pressed="true" press="onPress" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</ToggleButton>
+				<ToggleButton  icon="sap-icon://action" enabled="true" press="onPress" >
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</ToggleButton>
+			</HBox>
+		</content>
+		<footer>
+			<Bar>
+				<contentRight>
+					<ToggleButton text="Pressed &amp; Disabled" enabled="false" pressed="true"  press="onPress" />
+					<ToggleButton icon="sap-icon://action" press="onPress" />
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

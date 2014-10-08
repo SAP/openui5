@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.TextView">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>TextView - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit" 
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='TextView1'>
+var oTextView = new sap.ui.commons.TextView();
+oTextView.setText("A simple text to be displayed.");
+oTextView.setTooltip("Some Tooltip");
+
+// attach it to some element in the page
+oTextView.placeAt("sample1");
+</script>
+
+<script id='Wrapping'>
+var oTextView = new sap.ui.commons.TextView({
+	text : 'This is a long text to see if the wrapping property works. If wrapping is set to false it should not wrap automatically. Only defined line breaks should be used. \nThis is a new line.',
+	tooltip : 'This is a Tooltip',
+	wrapping : false,
+	width : '500px',
+	semanticColor: sap.ui.commons.TextViewColor.Positive,
+	design: sap.ui.commons.TextViewDesign.H1
+	});
+
+// attach it to some element in the page
+oTextView.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+    <h1 color="Yellow"  icon="images/ctrls/textview-icon.png">TextView</h1>
+
+		<h2>Introduction</h2>
+
+		<p>The TextView control is a simple control displaying pure text.
+		If the configured text value contains HTML or script tags, those will be escaped.
+		Line breaks (\r\n, \n\r, \r, \n) get replaced by a &lt;BR /&gt; tag.
+		<br><br>	
+		A TextView can be used to display static text, or to display domain data relevant for the execution of the application. 
+		In the second case, it might be necessary to mark the data as valid or invalid or erroneous.
+		Using the <code>semanticColor</code> property, such a tagging is possible.
+		<br><br>
+		Using the <code>design</code> property, different text designs can be used, for example bold or italic.
+
+		<h2>Examples</h2>
+
+		<h3>TextView With Tooltip</h3> 
+
+		<div code-sample="sample1" script="TextView1"></div>
+
+		<h3>Wrapping Texts</h3>
+
+		<p>
+		The automatic wrapping of the text can be disabled using the <code>wrapping</code> property.
+		</p>
+
+		<div code-sample="sample2" script="Wrapping"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextView.html">API documentation</a>
+		</p>
+	</body>
+</html>

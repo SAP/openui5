@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.unified.ShellOverlay
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>ShellOverlay - sap.ui.unified</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.unified"
+		data-sap-ui-language=en>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	
+	function testMultiAggregation(sName, oCtrl){
+		oCtrl.getMetadata()._enrichChildInfos();
+		var oAggMetaData = oCtrl.getMetadata().getAggregations()[sName];
+		var oType = jQuery.sap.getObject(oAggMetaData.type === "sap.ui.core.Control" ? "my.Test" : oAggMetaData.type);
+		
+		function _get(){
+			return oCtrl[oAggMetaData._sGetter]();
+		}
+		
+		function _mutator(bInsert, aArgs){
+			var sMutator = oAggMetaData._sMutator;
+			if(bInsert){
+				sMutator = sMutator.replace("add", "insert");
+			}
+			oCtrl[sMutator].apply(oCtrl, aArgs);
+		}
+		
+		function _removeAll(){
+			var sMutator = oAggMetaData._sGetter;
+			sMutator = sMutator.replace("get", "removeAll");
+			oCtrl[sMutator].apply(oCtrl);
+		}
+		
+		equal(_get().length, 0, "Initial number of "+sName+" controls");
+		_mutator(false, [new oType(sName+"_1")]);
+		equal(_get().length, 1, "Number of "+sName+" controls after add");
+		_mutator(true, [new oType(sName+"_2"), 0]);
+		equal(_get().length, 2, "Number of "+sName+" controls after insert");
+		equals(_get()[0].getId(), sName+"_2", "First "+sName+" control");
+		equals(_get()[1].getId(), sName+"_1", "Second "+sName+" control");
+		oCtrl[oAggMetaData._sRemoveMutator](0);
+		equal(_get().length, 1, "Number of "+sName+" controls after remove");
+		equals(_get()[0].getId(), sName+"_1", "First "+sName+" control");
+		_removeAll();
+		equal(_get().length, 0, "Number of "+sName+" controls after removeAll");
+	};
+	
+	function checkVisibility(){
+		return jQuery.sap.byId("overlay1").is(":visible");
+	};
+	
+	function testCloseOverlay(bViaAPI){
+		var testTimer, eventFired;
+		
+		function finalize() {
+			clearTimeout(testTimer);
+			oShellOverlay1.detachClosed(onClosed);
+			ok(!checkVisibility(), "Overlay initially hidden");
+			ok(!!eventFired, "Closed event was fired");
+			start();
+		}
+		
+		function onClosed(){
+			eventFired = true;
+			finalize();
+		}
+		
+		oShellOverlay1.attachClosed(onClosed);
+		ok(checkVisibility(), "Overlay visible");
+		if(bViaAPI){
+			oShellOverlay1.close();
+		}else{
+			sap.ui.test.qunit.triggerEvent("click", "overlay1-close");
+		}
+		
+		testTimer = setTimeout(finalize, 3000);
+	}
+	
+	
+	sap.ui.core.Control.extend("my.Test", {
+		renderer: function(rm, ctrl){
+			rm.write("<div style='width:10px;height:10px;background-color:gray;'");
+			rm.writeControlData(ctrl);
+			rm.write("></div>");
+		}
+	});
+	
+	var oShell = new sap.ui.unified.Shell("shell", {
+		search: new my.Test("search0")
+	});
+	oShell.placeAt("uiArea1");
+	
+	var oShellOverlay0 = new sap.ui.unified.ShellOverlay("overlay0");
+	
+	var oShellOverlay1 = new sap.ui.unified.ShellOverlay("overlay1", {
+		search: new my.Test("search1"),
+		content: [new my.Test("content")],
+		shell: oShell
+	});
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+	
+		qutils.delayTestStart();
+		
+		
+		module("API");
+		
+		test("Aggregation 'content'", function() {
+			testMultiAggregation("content", oShellOverlay0);
+		});
+		
+		test("Aggregation 'search'", function() {
+			ok(!oShellOverlay0.getSearch(), "Initially no search control");
+			oShellOverlay0.setSearch(new my.Test());
+			ok(!!oShellOverlay0.getSearch(), "Search control available after set");
+			oShellOverlay0.setSearch(null);
+			ok(!oShellOverlay0.getSearch(), "No search control again");
+		});
+		
+		
+		module("Behavior");
+		
+		asyncTest("Open Overlay", function() {
+			ok(!checkVisibility(), "Overlay initially hidden");
+			oShellOverlay1.open();
+			
+			setTimeout(function(){
+				ok(checkVisibility(), "Overlay visible");
+				start();
+			}, 600);
+		});
+		
+		asyncTest("Close Overlay (via function call)", function() {
+			testCloseOverlay(true);
+		});
+		
+		asyncTest("Rendering", function() {
+			ok(!checkVisibility(), "Overlay initially hidden");
+			oShellOverlay1.open();
+			
+			setTimeout(function(){
+				ok(checkVisibility(), "Overlay visible");
+				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-hdr-center"), jQuery.sap.domById("search1")), "Search rendered correctly");
+				ok(jQuery.sap.containsOrEquals(jQuery.sap.domById("overlay1-cntnt"), jQuery.sap.domById("content")), "Content rendered correctly");
+				start();
+			}, 600);
+		});
+
+		asyncTest("Close Overlay (via click)", function() {
+			testCloseOverlay(false);
+		});
+		
+		test("Clear UI", 0, function(){
+			jQuery("#uiArea1").remove();
+		});
+
+	</script>
+  
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.unified.ShellOverlay</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+</body>
+</html>

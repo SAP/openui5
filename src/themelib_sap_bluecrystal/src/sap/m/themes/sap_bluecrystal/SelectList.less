@@ -1,0 +1,81 @@
+/* ====================================================== */
+/* CSS for control sap.m/Select.control BlueCrystal theme */
+/* ====================================================== */
+
+/* ====================================================== */
+/* Select List                                            */
+/* ====================================================== */
+
+/* ------------------------------ */
+/* List                           */
+/* ------------------------------ */
+
+.sapMSelectList {
+	border: 0.0625rem solid @sapUiSelectListBorder;
+	background: @sapUiSelectListLightestBG;
+}
+
+/* ------------------------------ */
+/* Item                           */
+/* ------------------------------ */
+
+.sapMSelectListItem {
+	font-size: @sapMFontMediumSize;
+	padding: 0 1rem 0 1rem;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	cursor: pointer;
+}
+
+/* selected */
+
+.sapMSelectListItemSelected {
+	background: @sapUiSelectListActiveBG;
+}
+
+/* hover */
+
+.sapMSelectListItemHoverable:hover {
+	background: @sapUiSelectListLightestBGHover;
+}
+
+/* pressed */
+
+.sapMSelectListItem.sapMSelectListItemPressed {
+	color: @sapUiSelectListLITextInverted;
+	background: @sapUiSelectListHighlight;
+}
+
+/* disabled */
+
+.sapMSelectListItemDisabled {
+	opacity: 0.5;
+}
+
+/* focus */
+
+.sap-desktop .sapMSelectListItem:focus {
+	outline: none;
+}
+
+/* ------------------------------ */
+/* SeparatorItem                  */
+/* ------------------------------ */
+
+.sapMSelectListSeparatorItem {
+	border: 1px solid @sapUiSelectListMediumBorder;
+}
+
+/* ========================================================================= */
+/* CSS for control sap.m/SelectList.control BlueCrystal theme smaller sizes  */
+/* ========================================================================= */
+
+/* ------------------------------ */
+/* commons styles                 */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMSelectListItem,
+.sapUiSizeCondensed .sapMSelectListItem {
+	height: 2rem;
+	line-height: 2rem;
+}

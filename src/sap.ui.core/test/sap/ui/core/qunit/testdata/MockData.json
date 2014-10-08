@@ -1,0 +1,87 @@
+{
+	"LeaveHeader": [{
+		"employeeid": "JSMITH",
+	    "type": "Vacation",
+	    "entitlement": "53 days",
+	    "availablebalance": "41 days",
+	    "pendingitems": "1 pending items"
+	},
+	{
+		"employeeid": "JSMITH",
+	    "type": "Sick Leave",
+	    "entitlement": "n/a",
+	    "availablebalance": "n/a",
+	    "pendingitems": "0 pending items"
+	},
+	{
+		"employeeid": "JSMITH",
+	    "type": "Unpaid Leave",
+	    "entitlement": "n/a",
+	    "availablebalance": "n/a",
+	    "pendingitems": "0 pending items"
+	}],
+	"LeaveItem": [{
+		"itemid": "1",
+		"employeeid": "JSMITH",
+	    "type": "Vacation",
+		"from": "2012-12-27",
+		"to": "2012-12-27",
+		"length": "1 day",
+		"availablebalance": "41 days",
+		"state": "Rejected"
+	},
+	{
+		"itemid": "2",
+		"employeeid": "JSMITH",
+	    "type": "Vacation",
+		"from": "2012-12-03",
+		"to": "2012-12-04",
+		"length": "3 days",
+		"state": "Approved"
+	},
+	{
+		"itemid": "3",
+		"employeeid": "JSMITH",
+	    "type": "Vacation",
+		"from": "2012-11-19",
+		"to": "2012-11-24",
+		"length": "7 days",
+		"state": "Approved"
+	},
+	{
+		"itemid": "4",
+		"employeeid": "JSMITH",
+	    "type": "Sick Leave",
+		"from": "2012-08-13",
+		"to": "2012-08-17",
+		"length": "5 days",
+		"state": "Approved"
+	},
+	{
+		"itemid": "5",
+		"employeeid": "JSMITH",
+	    "type": "Sick Leave",
+		"from": "2012-04-18",
+		"to": "2012-04-20",
+		"length": "3 days",
+		"state": "Approved"
+	},
+	{
+		"itemid": "6",
+		"employeeid": "JSMITH",
+	    "type": "Sick Leave",
+		"from": "2012-01-09",
+		"to": "2012-01-11",
+		"length": "3 days",
+		"state": "Approved"
+	},
+	{
+		"itemid": "7",
+		"employeeid": "JSMITH",
+	    "type": "Unpaid Leave",
+		"from": "2012-12-28",
+		"to": "2012-12-28",
+		"length": "1 day",
+		"state": "Approved"
+	}]
+}

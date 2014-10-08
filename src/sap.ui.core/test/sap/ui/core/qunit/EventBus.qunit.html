@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.EventBus
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Initialization -->
+	<script language="javascript">
+		var oBus = sap.ui.getCore().getEventBus();
+		
+		function checkNumberOfListeners(oEventProvider, sEventId, iExpected){
+			if(oEventProvider){
+				var aRegisteredListeners = sap.ui.base.EventProvider.getEventList(oEventProvider)[sEventId];
+				if(aRegisteredListeners && jQuery.isArray(aRegisteredListeners)){
+					equal(aRegisteredListeners.length, iExpected, iExpected+" listener(s) subscribed for event "+sEventId);
+				}else{
+					ok(!oEventProvider.hasListeners(sEventId) && iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+				}
+			}else{
+				ok(iExpected == 0, "0 listener(s) subscribed for event "+sEventId);
+			}
+		};
+		
+		function checkHandler(bWithListener, sChannelId, sEventId, oData, oThis, sExpectedChannel, sExpectedEventId, sExpectedData, oListener){
+			equal(sChannelId, sExpectedChannel, "Expected Channel");
+			equal(sEventId, sExpectedEventId, "Expected Event");
+			ok(oThis === (bWithListener ? oListener : oBus), "'this' is set as expected - "+(bWithListener ? "Listener" : "EventBus"));
+			ok(!!oData, "Data object provided");
+			if(sExpectedData){
+				equal(oData.data, sExpectedData, "Expected Data");
+			}
+		};
+	</script>
+		
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+		
+		module("Basics");
+		
+		test("EventBus initialized", function() {
+			ok(!!oBus, "Event Bus initialized");
+		});
+		
+		module("(Un-)subscribe");
+		
+		test("Default channel", 5, function() {
+			var sEventId = "Test1";
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
+			var fHandler1 = function(){};
+			oBus.subscribe(sEventId, fHandler1);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 1);
+			var fHandler2 = function(){};
+			var oObj2 = {};
+			oBus.subscribe(sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 2);
+			oBus.unsubscribe(sEventId, fHandler1);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 1);
+			oBus.unsubscribe(sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
+		});
+		
+		test("Custom channel", 6, function() {
+			var sEventId = "Test2";
+			var sChannelId = "TestChannel2";
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
+			var fHandler1 = function(){};
+			oBus.subscribe(sChannelId, sEventId, fHandler1);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 1);
+			var fHandler2 = function(){};
+			var oObj2 = {};
+			oBus.subscribe(sChannelId, sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 2);
+			oBus.unsubscribe(sChannelId, sEventId, fHandler1);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 1);
+			oBus.unsubscribe(sChannelId, sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
+			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
+		});
+		
+		
+		var oObj11, oObj13, oObj21, oObj23, fHandler11, fHandler12, fHandler13, fHandler14, fHandler21, fHandler22, fHandler23, fHandler24;
+		
+		module("Publish", {
+			setup : function(){
+				oObj11 = {id: "Obj11"};
+				oObj13 = {id: "Obj13"};
+				
+				fHandler11 = function(sChannelId, sEventId, oData){
+					checkHandler(true, sChannelId, sEventId, oData, this, null, "Test11", "data11", oObj11);
+				};
+				fHandler12 = function(sChannelId, sEventId, oData){
+					checkHandler(false, sChannelId, sEventId, oData, this, null, "Test12", "data12", null);
+				};
+				fHandler13 = function(sChannelId, sEventId, oData){
+					checkHandler(true, sChannelId, sEventId, oData, this, null, "Test13", null, oObj13);
+				};
+				fHandler14 = function(sChannelId, sEventId, oData){
+					checkHandler(false, sChannelId, sEventId, oData, this, null, "Test14", null, null);
+				};
+				
+				oObj21 = {id: "Obj21"};
+				oObj23 = {id: "Obj23"};
+				
+				fHandler21 = function(sChannelId, sEventId, oData){
+					checkHandler(true, sChannelId, sEventId, oData, this, "CustomChannel", "Test21", "data21", oObj21);
+				};
+				fHandler22 = function(sChannelId, sEventId, oData){
+					checkHandler(false, sChannelId, sEventId, oData, this, "CustomChannel", "Test22", "data22", null);
+				};
+				fHandler23 = function(sChannelId, sEventId, oData){
+					checkHandler(true, sChannelId, sEventId, oData, this, "CustomChannel", "Test23", null, oObj23);
+				};
+				fHandler24 = function(sChannelId, sEventId, oData){
+					checkHandler(false, sChannelId, sEventId, oData, this, "CustomChannel", "Test24", null, null);
+				};
+				
+				oBus.subscribe("Test11", fHandler11, oObj11);
+				oBus.subscribe("Test12", fHandler12);
+				oBus.subscribe("Test13", fHandler13, oObj13);
+				oBus.subscribe("Test14", fHandler14);
+				oBus.subscribe("CustomChannel", "Test21", fHandler21, oObj21);
+				oBus.subscribe("CustomChannel", "Test22", fHandler22);
+				oBus.subscribe("CustomChannel", "Test23", fHandler23, oObj23);
+				oBus.subscribe("CustomChannel", "Test24", fHandler24);
+			},
+			teardown : function(){
+				oBus.unsubscribe("Test11", fHandler11, oObj11);
+				oBus.unsubscribe("Test12", fHandler12);
+				oBus.unsubscribe("Test13", fHandler13, oObj13);
+				oBus.unsubscribe("Test14", fHandler14);
+				oBus.unsubscribe("CustomChannel", "Test21", fHandler21, oObj21);
+				oBus.unsubscribe("CustomChannel", "Test22", fHandler22);
+				oBus.unsubscribe("CustomChannel", "Test23", fHandler23, oObj23);
+				oBus.unsubscribe("CustomChannel", "Test24", fHandler24);
+			}
+		});
+		
+		test("Default Channel, with Listener, with Data", 5, function() {
+			oBus.publish("Test11", {data: "data11"});
+		});
+		
+		test("Default Channel, no Listener, with Data", 5, function() {
+			oBus.publish("Test12", {data: "data12"});
+		});
+		
+		test("Default Channel, with Listener, no Data", 4, function() {
+			oBus.publish("Test13");
+		});
+		
+		test("Default Channel, no Listener, no Data", 4, function() {
+			oBus.publish("Test14");
+		});
+		
+		test("Custom Channel, with Listener, with Data", 5, function() {
+			oBus.publish("CustomChannel", "Test21", {data: "data21"});
+		});
+		
+		test("Custom Channel, no Listener, with Data", 5, function() {
+			oBus.publish("CustomChannel", "Test22", {data: "data22"});
+		});
+		
+		test("Custom Channel, with Listener, no Data", 4, function() {
+			oBus.publish("CustomChannel", "Test23");
+		});
+		
+		test("Custom Channel, no Listener, no Data", 4, function() {
+			oBus.publish("CustomChannel", "Test24");
+		});
+	</script>
+		  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.EventBus</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

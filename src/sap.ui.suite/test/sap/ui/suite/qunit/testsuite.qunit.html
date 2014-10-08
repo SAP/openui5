@@ -1,0 +1,23 @@
+<html>
+ <head>
+  <title>QUnit TestSuite for sap.ui.table</title>
+  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+  <script language="javascript">
+
+  /**
+   * Add test pages to this test suite function.
+   * Please order alphabetically
+   */
+  function suite() {
+    var suite = new parent.jsUnitTestSuite();
+    var contextPath = "/" + window.location.pathname.split("/")[1];
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/suite/qunit/VerticalProgressIndicator.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/suite/qunit/TaskCircle.qunit.html");
+    return suite;
+  }
+
+  </script>
+ </head>
+ <body>
+ </body>
+</html>

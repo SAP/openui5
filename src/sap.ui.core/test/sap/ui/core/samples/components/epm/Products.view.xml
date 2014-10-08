@@ -1,0 +1,124 @@
+<mvc:View controllerName="sap.ui.epm.Products" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:table="sap.ui.table" xmlns="sap.ui.commons" xmlns:cl="sap.ui.commons.layout" xmlns:html="http://www.w3.org/1999/xhtml" width="100%">
+	
+	<table:Table id="tblProducts" selectionMode="Single" rowSelectionChange="onRowSelect">
+		<table:title>
+			<TextView text="{texts>EPM_PROD_TBL_HDR}" design="H3"></TextView>
+		</table:title>
+		<table:toolbar>
+			<Toolbar>
+				<items>
+					<Button text="Details" press="onOpen"></Button>
+				</items>
+			</Toolbar>
+		</table:toolbar>
+		<table:Column width="100px" sortProperty="ID">
+			<Label text="{texts>EPM_PROD_TBL_COL_ID}"></Label>
+			<table:template>
+				<TextField value="{ProductID}"></TextField>
+			</table:template>
+		</table:Column>
+		<table:Column sortProperty="name">
+			<Label text="{texts>EPM_PROD_TBL_COL_NAME}"></Label>
+			<table:template>
+				<TextField value="{Name}"></TextField>
+			</table:template>
+		</table:Column>
+		<table:Column width="100px" hAlign="End">
+			<Label text="{texts>EPM_PROD_TBL_COL_PRICE}"></Label>
+			<table:template>
+				<TextView id="priceTemplate" text="{Price/Amount}"></TextView>
+			</table:template>
+		</table:Column>
+		<table:Column width="100px">
+			<Label text="{texts>EPM_PROD_TBL_COL_CURR}"></Label>
+			<table:template>
+				<TextView text="{Price/CurrencyCode}"></TextView>
+			</table:template>
+		</table:Column>
+	</table:Table>
+	
+	<html:div style="margin-top: 10px;">
+	
+		<cl:MatrixLayout id="lytDetails">
+			<cl:MatrixLayoutRow>
+				<cl:MatrixLayoutCell rowSpan="2">
+					<Panel>
+						<title>
+							<Title text="{texts>EPM_PROD_DETAIL_HDR}"></Title>
+						</title>
+						<cl:MatrixLayout id="lytProductDetails" layoutFixed="false">
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_LBL_IDNAME}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell padding="End">
+									<TextField editable="false" value="{ProductID}" width="60px"></TextField>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell>
+									<TextField editable="false" value="{Name}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_LBL_PRICE}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="2">
+									<TextField id="productDetailsPrice" editable="false" value="{Price/Amount}"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell vAlign="Top">
+									<Label text="{texts>EPM_PROD_LBL_DESC}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="2">
+									<TextArea editable="false" value="{Description}" height="83px" width="100%"></TextArea>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+						</cl:MatrixLayout>
+					</Panel>
+				</cl:MatrixLayoutCell>
+				<cl:MatrixLayoutCell vAlign="Top">
+					<Panel>
+						<title>
+							<Title text="{texts>EPM_PROD_SUPP_DETAIL_HDR}"></Title>
+						</title>
+						<cl:MatrixLayout id="lytSupplier" layoutFixed="false">
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_COMP}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="3">
+									<TextField editable="false" value="{Name}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_STREET}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell colSpan="3">
+									<TextField editable="false" value="{Address/Street}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+							<cl:MatrixLayoutRow>
+								<cl:MatrixLayoutCell>
+									<Label text="{texts>EPM_PROD_SUPP_LBL_COUNTRYZIPCITY}" width="100%"></Label>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell padding="End">
+									<TextField editable="false" value="{Address/Country}" width="30px"></TextField>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell padding="End">
+									<TextField editable="false" value="{Address/Zip}" width="60px"></TextField>
+								</cl:MatrixLayoutCell>
+								<cl:MatrixLayoutCell>
+									<TextField editable="false" value="{Address/City}" width="100%"></TextField>
+								</cl:MatrixLayoutCell>
+							</cl:MatrixLayoutRow>
+						</cl:MatrixLayout>
+					</Panel>
+				</cl:MatrixLayoutCell>
+			</cl:MatrixLayoutRow>
+		</cl:MatrixLayout>
+	
+	</html:div>
+	
+</mvc:View>

@@ -1,0 +1,820 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.Menu, sap.ui.commons.MenuItem, sap.ui.commons.MenuItemBase, sap.ui.commons.MenuTextFieldItem,
+                        sap.ui.unified.Menu, sap.ui.unified.MenuItem, sap.ui.unified.MenuItemBase, sap.ui.unified.MenuTextFieldItem
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Menu - sap.ui.unified</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.unified">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	
+		try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+		var oMenuItems = {};
+		var oMenus = {};
+		var lastSelectedItemId = null;
+
+		var createMenu = function(idx, bIsSubmenu){
+			var sId = "menu"+idx;
+			var oMenu = new sap.ui.unified.Menu(sId);
+			oMenus[sId] = oMenu;
+			return oMenu;
+		};
+
+		var createMenuItem = function(idx, sText, bIcon, bEnabled, bVisible, oSubMenu){
+			var sId = "item"+idx;
+			var oMenuItem = new sap.ui.unified.MenuItem(sId);
+			if(sText) oMenuItem.setText(sText);
+			if(bIcon) oMenuItem.setIcon("../images/help.gif");
+			if(bEnabled != -1) oMenuItem.setEnabled(bEnabled);
+			if(bVisible != -1) oMenuItem.setVisible(bVisible);
+			if(oSubMenu) oMenuItem.setSubmenu(oSubMenu);
+			oMenuItem.attachSelect(function(oControlEvent){
+				lastSelectedItemId = oControlEvent.getParameter("id");
+			});
+			oMenuItems[sId] = oMenuItem;
+			return oMenuItem;
+		};
+		
+		var toggleMenuItemsEnabling = function(oMenu) {
+			var oMenuItems = oMenu.getItems();
+			for(var i = 0; i< oMenuItems.length; i++) {
+				oMenuItems[i].setEnabled(!oMenuItems[i].getEnabled());
+			}
+		}
+
+		createMenuItem(1, null, false, -1, -1, null); //Default values only
+		createMenuItem(2, "Text", true, false, false, createMenu(1, true)); //All properties set
+
+		var oRootMenu = createMenu(2, false);
+		var oSubMenu = createMenu(3, true);
+		var oSubSubMenu = createMenu(4, true);
+		oRootMenu.addItem(createMenuItem(3, "I3", false, -1, -1, null));
+		oRootMenu.addItem(createMenuItem(4, "I4", true, -1, -1, null));
+		oRootMenu.addItem(createMenuItem(5, "I5", false, false, -1, null));
+		oRootMenu.addItem(createMenuItem(6, "I6", false, true, false, null));
+		oRootMenu.addItem(createMenuItem(7, "I7", false, -1, -1, oSubMenu));
+		oSubMenu.addItem(createMenuItem(8, "I8", false, -1, -1, null));
+		oSubMenu.addItem(createMenuItem(9, "I9", false, -1, -1, null));
+		oSubMenu.addItem(createMenuItem(10, "I10", false, false, -1, oSubSubMenu));
+		
+		var eDock = sap.ui.core.Popup.Dock;
+		
+		var oButton = new sap.ui.commons.Button("button", {text: "Open Menu", press: function(){
+			oRootMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+		}});
+		oButton.placeAt("buttons");
+		
+		var oSpecialMenu = createMenu(5, false);
+		oSpecialMenu.addItem(createMenuItem(11, "I11", false, -1, -1, null));
+		oMenuItems["item12"] = new sap.ui.unified.MenuTextFieldItem("item12", {value: "FilterValue", label: "Filter", select: function(oControlEvent){
+			lastSelectedItemId = oControlEvent.getParameter("id");
+		}});
+		oSpecialMenu.addItem(oMenuItems["item12"]);
+		oSpecialMenu.addItem(createMenuItem(13, "I13", false, -1, -1, null));
+		
+		var oLongMenu = createMenu(14, false);
+		for (var i = 15; i< 115; i++) {
+			oLongMenu.addItem(createMenuItem(i, "I"+i, false, (i%7 > 0), -1, null));
+		} 
+		
+		oButton = new sap.ui.commons.Button("button3", {text: "Open Menu 2", press: function(){
+			oSpecialMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+		}});
+		oButton.placeAt("buttons");
+		
+		oButton = new sap.ui.commons.Button("button4", {text: "Open Menu 3", press: function(){
+			oLongMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
+		}});
+		oButton.placeAt("buttons"); 
+		
+		oButton = new sap.ui.commons.Button("button2", {text: "Toggle Menu Enabling", press: function(){
+			oRootMenu.setEnabled(!oRootMenu.getEnabled());
+			oSpecialMenu.setEnabled(!oSpecialMenu.getEnabled());
+			oLongMenu.setEnabled(!oLongMenu.getEnabled());
+		}});
+		
+		oButton.placeAt("buttons");
+		
+		oButton = new sap.ui.commons.Button("button5", {text: "Toggle Menu Items Enabling", press: function(){
+			toggleMenuItemsEnabling(oRootMenu);
+			toggleMenuItemsEnabling(oSpecialMenu);
+			toggleMenuItemsEnabling(oLongMenu);
+		}});
+		
+		oButton.placeAt("buttons");
+		
+		/* Expected Menu Structure:
+		   ------------------------
+
+		   +-------------+
+		   |   I3        |
+		   | # I4        |
+		   |   I5 (dis.) |
+		   |   I7      > |+----------------+
+		   +-------------+|   I8           |
+		                  |   I9           |
+		                  |   I10 (dis.) > |+----------------+
+		                  +----------------++----------------+
+		   
+		   +--------------+
+		   |   I11        |
+		   |   I12 (TF)   |
+		   |   I13        |
+		   +--------------+
+		   
+		   +--------------+
+		   |   I15        |
+		   |   I16        |
+		   |   I17        |
+		       ...
+		   |   I115       |		   
+		   +--------------+
+
+		*/
+	</script>
+	
+	<!-- Test help functions -->
+	<script language="javascript">
+
+		var checkHoveredItem = function(sExpectedId, oMenu){
+			if(!oMenu){
+				oMenu = oRootMenu;
+			}
+			if(sExpectedId){
+				ok(oMenu.oHoveredItem, "Hovered Item exists");
+				if(oMenu.oHoveredItem)
+					equals(oMenu.oHoveredItem.getId(), sExpectedId, "Correct item '"+sExpectedId+"' hovered:");
+			}else{
+				ok(!oMenu.oHoveredItem, "Hovered Item not exists");
+			}
+		};
+
+		var closeAllMenusAndCheck = function(){
+			oRootMenu.close();
+			oSpecialMenu.close();
+			oLongMenu.close();
+			checkMenusClosed();
+		};
+
+		var checkMenusClosed = function(sText){
+			sText = sText ? " ("+sText+")" : "";
+			ok(!oRootMenu.bOpen, "Rootmenu closed"+sText);
+			ok(!oSubMenu.bOpen, "Submenu closed"+sText);
+			ok(!oSpecialMenu.bOpen, "Menu with special items closed"+sText);
+		};
+
+		var openRootMenu = function(bWithMouse){
+			openMenu(oRootMenu, bWithMouse);
+		};
+		
+		var openMenu = function(oMenu, bWithMouse){
+			var eDock = sap.ui.core.Popup.Dock;
+			var oDomRef = jQuery("#menuDockRef").get(0);
+			oMenu.open(!bWithMouse, oDomRef, eDock.LeftTop, eDock.LeftTop, oDomRef, "5 5");
+			ok(oMenu.bOpen, "Menu opened");
+		};
+		
+		var triggerKey = function(target, sKey){
+			qutils.triggerKeyboardEvent(target, sKey); //keydown
+			qutils.triggerKeyEvent("keyup", target, sKey); //keyup
+		};
+
+		var triggerSpace = function(target){
+			triggerKey(target, "SPACE");
+		};
+	 	
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+	
+		module("Properties");
+
+		test("Item - Default Values", function() {
+			var oItem = oMenuItems["item1"];
+			equals(oItem.getText(), "", "Default 'text':");
+			equals(oItem.getIcon(), "", "Default 'icon':");
+			equals(oItem.getEnabled(), true, "Default 'enabled':");
+			equals(oItem.getVisible(), true, "Default 'visible':");
+			equals(oItem.getSubmenu(), null, "Default 'submenu':");
+		});
+
+		test("Item - Custom Values", function() {
+			var oItem = oMenuItems["item2"];
+			equals(oItem.getText(), "Text", "Custom 'text':");
+			equals(oItem.getIcon(), "../images/help.gif", "Custom 'icon':");
+			equals(oItem.getEnabled(), false, "Custom 'enabled':");
+			equals(oItem.getVisible(), false, "Custom 'visible':");
+			var oItemSubmenu = oItem.getSubmenu();
+			ok(oItemSubmenu, "Submenu available");
+			if(oItemSubmenu)
+				equals(oItem.getSubmenu().getId(), "menu1", "Custom 'submenu':");
+		});
+
+		test("Menu - Default Values", function() {
+			equals(oRootMenu.getEnabled(), true, "Default 'enabled':");
+			equals(oRootMenu.getPageSize(), 5, "Default 'page size':");
+		 });
+
+		test("Menu - Custom Values", function() {
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), false, "Custom 'enabled':");
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
+		});
+		
+	
+		module("Keyboard");
+	
+		/* if menu is opened from keyboard, the first enabled item sould be hovered */
+		test("Check Hover State upon Menu.open", function() {
+		 	openRootMenu();
+			checkHoveredItem("item3");
+			closeAllMenusAndCheck(); 
+			
+			/* try on a menu with the first two items disabled */
+			qutils.triggerEvent("click", "button5", {});
+			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
+			openRootMenu();
+			checkHoveredItem("item5"); /* disabled items I3 and I4 skipped */
+			qutils.triggerEvent("click", "button5", {});
+			closeAllMenusAndCheck();
+
+		});
+		
+		/* ARROW_UP/ARROW_DOWN should hover one item up/down, skipping any disabled items */
+		test("Check Hover State and Arrow up / Arrow down", function() {
+			openRootMenu();
+			checkHoveredItem("item3");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item4");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item7"); /* disabled item I5 skipped */
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item3");
+			closeAllMenusAndCheck();
+		});
+		
+		/* RIGHT key should have no effect on a menu with no submenu */
+		test("Check Hover State and ARROW_RIGHT", function() {
+			openRootMenu(true);
+			checkHoveredItem(undefined); /* no hovered item since opened with mouse */
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem(undefined); /* no change */
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item3");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem("item3"); /* no change */
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item4");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item7");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem("item8", oSubMenu);
+			
+			closeAllMenusAndCheck();
+		});
+		
+		/* LEFT key should have no effect on a menu with no parent menu */
+		test("Check Hover State and LEFT", function() {
+			openRootMenu();
+			checkHoveredItem("item3");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_LEFT");
+			checkHoveredItem("item3"); /* no change */
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item4");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_LEFT");
+			checkHoveredItem("item4"); /* no change */
+			closeAllMenusAndCheck();
+		});
+		
+		/* PAGE_UP/PAGE_DOWN should hover one pageSize up/down, skipping any disabled items */
+		test("Check Hover State and Page up / Page down", function() {
+			openMenu(oLongMenu, false);
+			checkHoveredItem("item15", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item20", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item25", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item30", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item36", oLongMenu); /* disabled item i35 skipped */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item31", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item26", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item20", oLongMenu); /* disabled item I21 skipped */
+			closeAllMenusAndCheck();
+		});
+		
+		/* PAGE_UP/PAGE_DOWN should respect the current "pageSize" value of the menu */
+		test("Custom page size and Page up / Page down", function() {
+			oLongMenu.setPageSize(10);
+			openMenu(oLongMenu, false);
+			checkHoveredItem("item15", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item25", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item36", oLongMenu); /* disabled item I35 skipped */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item26", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item16", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			
+			oLongMenu.setPageSize(200);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item114", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			
+			oLongMenu.setPageSize(0); /* value < 1, 
+			so infinite number of items per page, 
+			so PAGE_UP will behave like HOME 
+			and PAGE_DOW will behave like END */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item114", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			
+			oLongMenu.setPageSize(-1); /* value < 1, 
+			so infinite number of items per page, 
+			so PAGE_UP will behave like HOME 
+			and PAGE_DOW will behave like END */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item114", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item15", oLongMenu);
+			
+			oLongMenu.setPageSize(5); /* restore to default value */
+			closeAllMenusAndCheck();
+		});
+		
+		/* HOME/END should hover to the first/last enabled menu-item [i.e. skipping any disabled items] */
+		test("Check Hover State and Home / End", function() {
+			openMenu(oLongMenu, false);
+			qutils.triggerKeyboardEvent("menu14", "END");
+			checkHoveredItem("item114", oLongMenu);
+			qutils.triggerKeyboardEvent("menu14", "HOME");
+			checkHoveredItem("item15", oLongMenu);
+			closeAllMenusAndCheck();
+			
+			/* try on a menu with the first and last items disabled */
+			qutils.triggerEvent("click", "button5", {});
+			equals(oLongMenu.getEnabled(), true, "Custom 'enabled':");
+			/* setup: first 6 menu-items are disabled */
+			equals(oLongMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[2].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[3].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[4].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[5].getEnabled(), false, "Custom 'enabled':");
+			/* setup: last 2 menu-items are also disabled */
+			equals(oLongMenu.getItems()[98].getEnabled(), false, "Custom 'enabled':");
+			equals(oLongMenu.getItems()[99].getEnabled(), false, "Custom 'enabled':");
+			
+			openMenu(oLongMenu, false);
+			checkHoveredItem("item21", oLongMenu); /* the first enabled item from the list is hovered */
+			
+			qutils.triggerKeyboardEvent("menu14", "END");
+			checkHoveredItem("item112", oLongMenu); /* the last enabled item from the list is hovered */
+			
+			qutils.triggerKeyboardEvent("menu14", "HOME");
+			checkHoveredItem("item21", oLongMenu); /* the first enabled item from the list is hovered */
+			
+			qutils.triggerEvent("click", "button5", {});
+			closeAllMenusAndCheck();
+		});
+		
+		/* ARROW_UP/ARROW_DOWN/PAGE_UP/PAGE_DOWN/HOME/END should not change the hover state 
+		if the menu has only one enabled item */
+		test("Check Hover State on Single Item Menu", function() {
+			/* toggle rootmenu items enabling: only one item will be enabled */
+			qutils.triggerEvent("click", "button5", {});
+			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[0].getEnabled(), false, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[1].getEnabled(), false, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[2].getEnabled(), true, "Custom 'enabled':");
+			equals(oRootMenu.getItems()[3].getEnabled(), false, "Custom 'enabled':");
+			
+			openRootMenu(false);
+			checkHoveredItem("item5");
+			qutils.triggerKeyboardEvent("menu14", "PAGE_DOWN");
+			checkHoveredItem("item5"); /* no change */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_UP");
+			checkHoveredItem("item5"); /* no change */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_RIGHT");
+			checkHoveredItem("item5"); /* no change */
+			qutils.triggerKeyboardEvent("menu14", "PAGE_LEFT");
+			checkHoveredItem("item5"); /* no change */
+			qutils.triggerKeyboardEvent("menu14", "HOME");
+			checkHoveredItem("item5"); /* no change */
+			qutils.triggerKeyboardEvent("menu14", "END");
+			checkHoveredItem("item5"); /* no change */
+			
+			qutils.triggerEvent("click", "button5", {});
+			closeAllMenusAndCheck();
+		});
+		
+		test("Submenu Navigation", function() {
+			openRootMenu();
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("menu3", "ARROW_DOWN");
+			checkHoveredItem("item9", oSubMenu);
+			qutils.triggerKeyboardEvent("menu3", "ARROW_LEFT");
+			ok(oRootMenu.bOpen, "Rootmenu not closed after Arrow Left");
+			ok(!oSubMenu.bOpen, "Submenu closed after Arrow Left");
+			checkHoveredItem("item7");
+			closeAllMenusAndCheck();
+		});
+
+		test("Escape", function() {
+			openRootMenu();
+			lastSelectedItemId = null;
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ESCAPE");
+			checkMenusClosed("after Escape");
+			ok(!lastSelectedItemId, "No Event triggered on Escape");
+			
+			openRootMenu();
+			lastSelectedItemId = null;
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			qutils.triggerKeyboardEvent("menu3", "ESCAPE");
+			ok(oRootMenu.bOpen, "Rootmenu not closed after Escape");
+			ok(!oSubMenu.bOpen, "Submenu closed after Escape");
+			ok(!lastSelectedItemId, "No Event triggered on Escape");
+			checkHoveredItem("item7");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			checkHoveredItem("item3");
+			closeAllMenusAndCheck();
+		 });
+
+		test("Space", function() {
+			openRootMenu();
+			lastSelectedItemId = null;
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			triggerSpace("menu2");
+			checkMenusClosed("after Space");
+			equals(lastSelectedItemId, "item4", "Event triggered on selected item:");
+			
+			openRootMenu();
+			lastSelectedItemId = null;
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_UP");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			triggerSpace("menu3");
+			checkMenusClosed("after Space");
+			equals(lastSelectedItemId, "item8", "Event triggered on selected item:");
+		});
+
+		test("Disabled Menu", function() {
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), false, "Custom 'enabled':");
+			openRootMenu(true);
+			
+			lastSelectedItemId = null;
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			triggerSpace("menu2");
+			equals(lastSelectedItemId, null, "Event not triggered on disabled menu:");
+			
+			qutils.triggerKeyboardEvent("menu2", "END");
+			checkHoveredItem();
+			
+			qutils.triggerKeyboardEvent("menu2", "HOME");
+			checkHoveredItem();
+			
+			qutils.triggerKeyboardEvent("menu2", "PAGE-UP");
+			checkHoveredItem();
+			
+			qutils.triggerKeyboardEvent("menu2", "PAGE-DOWN");
+			checkHoveredItem();
+			
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
+
+			closeAllMenusAndCheck();
+		});
+
+		module("Mouse");
+	
+		test("Select", function() {
+			openRootMenu(true);
+			lastSelectedItemId = null;
+			checkHoveredItem(null);
+			qutils.triggerEvent("mouseover", "item7", {});
+			checkHoveredItem("item7");
+			checkHoveredItem(null, oSubMenu);
+			ok(oRootMenu.bOpen, "Rootmenu open");
+			ok(oSubMenu.bOpen, "Submenu open");
+			qutils.triggerEvent("mouseover", "item8", {});
+			checkHoveredItem("item8", oSubMenu);
+			qutils.triggerEvent("click", "item8", {});
+			equals(lastSelectedItemId, "item8", "Event triggered on item:");
+			closeAllMenusAndCheck();
+		});
+
+		test("Disabled Item", function() {
+			openRootMenu(true);
+			lastSelectedItemId = null;
+			qutils.triggerEvent("mouseover", "item5", {});
+			checkHoveredItem("item5");
+			qutils.triggerEvent("click", "item5", {});
+			equals(lastSelectedItemId, null, "No Event triggered on disabled item:");
+			ok(oRootMenu.bOpen, "Rootmenu still open");
+			closeAllMenusAndCheck();
+		});
+
+		test("Disabled Item with Submenu", function() {
+			openRootMenu(true);
+			lastSelectedItemId = null;
+			checkHoveredItem(null);
+			qutils.triggerEvent("mouseover", "item7", {});
+			checkHoveredItem("item7");
+			checkHoveredItem(null, oSubMenu);
+			ok(oRootMenu.bOpen, "Rootmenu open");
+			ok(oSubMenu.bOpen, "Submenu open");
+			qutils.triggerEvent("mouseover", "item10", {});
+			checkHoveredItem("item10", oSubMenu);
+			qutils.triggerEvent("click", "item10", {});
+			equals(lastSelectedItemId, null, "Event not triggered on disabled item:");
+			ok(oRootMenu.bOpen, "Rootmenu still open");
+			ok(oSubMenu.bOpen, "Submenu still open");
+			ok(!oSubSubMenu.bOpen, "SubSubmenu not open");
+			closeAllMenusAndCheck();
+		});
+
+		test("Disabled Menu", function() {
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), false, "Custom 'enabled':");
+			openRootMenu(true);
+			
+			lastSelectedItemId = null;
+			qutils.triggerEvent("mouseover", "item3", {});
+			qutils.triggerEvent("click", "item3", {});
+			equals(lastSelectedItemId, null, "Event not triggered on disabled menu:");
+
+			lastSelectedItemId = null;
+			qutils.triggerEvent("mouseover", "item4", {});
+			qutils.triggerEvent("click", "item4", {});
+			equals(lastSelectedItemId, null, "Event not triggered on disabled menu:");
+
+			lastSelectedItemId = null;
+			qutils.triggerEvent("mouseover", "item5", {});
+			qutils.triggerEvent("click", "item5", {});
+			equals(lastSelectedItemId, null, "Event not triggered on disabled menu:");
+
+			lastSelectedItemId = null;
+			qutils.triggerEvent("mouseover", "item7", {});
+			qutils.triggerEvent("click", "item7", {});
+			equals(lastSelectedItemId, null, "Event not triggered on disabled menu:");
+			
+			qutils.triggerEvent("click", "button2", {});
+			equals(oRootMenu.getEnabled(), true, "Custom 'enabled':");
+
+			closeAllMenusAndCheck();
+		});
+
+
+		module("Auto-Close");
+
+		test("Focusleave", function() {
+			openRootMenu();
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem("item8", oSubMenu);
+			jQuery("#input").get(0).focus();
+			checkMenusClosed("after focus leave to outer html");
+	
+			openRootMenu();
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem("item8", oSubMenu);
+			oButton.focus();
+			checkMenusClosed("after focus leave to other control");
+
+			closeAllMenusAndCheck();
+		});
+	
+		test("MouseDown", function() {
+			openRootMenu();
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
+			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
+			checkHoveredItem("item8", oSubMenu);
+			qutils.triggerEvent("mousedown", "clickTarget", {});
+			checkMenusClosed("after mousedown");
+
+			closeAllMenusAndCheck();
+		});
+		
+		module("TextField Item");
+		
+		test("Properties - Default Values", function() {
+			var oItem = new sap.ui.unified.MenuTextFieldItem();
+			equals(oItem.getLabel(), "", "Default 'label':");
+			equals(oItem.getIcon(), "", "Default 'icon':");
+			equals(oItem.getValue(), "", "Default 'value':");
+			equals(oItem.getSubmenu(), null, "Default 'submenu':");
+		});
+		
+		test("Properties - Custom Values", function() {
+			var oItem = new sap.ui.unified.MenuTextFieldItem({label: "Hallo", icon: "../images/help.gif", value: "Value", submenu: new sap.ui.unified.Menu()});
+			equals(oItem.getLabel(), "Hallo", "Custom 'label':");
+			equals(oItem.getIcon(), "../images/help.gif", "Custom 'icon':");
+			equals(oItem.getValue(), "Value", "Custom 'value':");
+			equals(oItem.getSubmenu(), null, "Custom 'submenu':");
+		});
+
+		
+		asyncTest("Keyboard - Arrow Down, Arrow Up, Escape", function() {
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			setTimeout(function(){
+				start();
+				openMenu(oSpecialMenu);
+				checkHoveredItem("item11", oSpecialMenu);
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
+				checkHoveredItem("item12", oSpecialMenu);
+				
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+				}
+				
+				qutils.triggerKeyboardEvent(sTfId, "ARROW_DOWN");
+				checkHoveredItem("item13", oSpecialMenu);
+				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
+				checkHoveredItem("item12", oSpecialMenu);
+				
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+				}
+				
+				qutils.triggerCharacterInput(sTfId, "A");
+				qutils.triggerKeyEvent("keyup", sTfId, "A");
+				
+				// use keyooen and keypress because on Firefox keypress is used in TextField
+				qutils.triggerKeyEvent("keydown", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeyEvent("keypress", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+				// 2 times because the undo stops propagation
+				qutils.triggerKeyEvent("keydown", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+				qutils.triggerKeyEvent("keypress", sTfId, jQuery.sap.KeyCodes.ESCAPE);
+				checkMenusClosed("after 2.Escape");
+				ok(!lastSelectedItemId, "No Event triggered on Escape");
+				
+				equals(oMenuItems["item12"].getValue(), "FilterValue", "Value of item after Escape");
+			}, 100);
+		});
+		
+		asyncTest("Keyboard - Page-up, Page-down", function() {
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			setTimeout(function(){
+				start();
+				openMenu(oSpecialMenu);
+				checkHoveredItem("item11", oSpecialMenu);
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
+				checkHoveredItem("item12", oSpecialMenu);
+				
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+				}
+				
+				qutils.triggerKeyboardEvent(sTfId, "PAGE_DOWN");
+				checkHoveredItem("item13", oSpecialMenu);
+				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
+				checkHoveredItem("item12", oSpecialMenu);
+				
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+				}
+				
+				qutils.triggerKeyboardEvent(sTfId, "PAGE_UP");
+				checkHoveredItem("item11", oSpecialMenu);
+			}, 100);
+		});
+		
+		asyncTest("Keyboard - Home, End, Enter", function() {
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			setTimeout(function(){
+				start();
+				openMenu(oSpecialMenu);
+				checkHoveredItem("item11", oSpecialMenu);
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
+				checkHoveredItem("item12", oSpecialMenu);
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+				}
+				
+				jQuery.sap.byId(sTfId).cursorPos(1);
+				qutils.triggerKeyboardEvent(sTfId, "HOME");
+				checkHoveredItem("item12", oSpecialMenu);
+				jQuery.sap.byId(sTfId).cursorPos(0);
+				qutils.triggerKeyboardEvent(sTfId, "HOME");
+				checkHoveredItem("item11", oSpecialMenu);
+				
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
+				checkHoveredItem("item12", oSpecialMenu);
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
+				}
+				
+				jQuery.sap.byId(sTfId).cursorPos(0);
+				qutils.triggerKeyboardEvent(sTfId, "END");
+				checkHoveredItem("item12", oSpecialMenu);
+				jQuery.sap.byId(sTfId).cursorPos(jQuery.sap.byId(sTfId).val().length);
+				qutils.triggerKeyboardEvent(sTfId, "END");
+				checkHoveredItem("item13", oSpecialMenu);
+				
+				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
+				checkHoveredItem("item12", oSpecialMenu);
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					ok(document.activeElement.id == sTfId, "Focus on textfield -3");
+				}
+	
+				qutils.triggerCharacterInput(sTfId, "A");
+				qutils.triggerKeyEvent("keyup", sTfId, "A");
+				
+				triggerKey(sTfId, "ENTER");
+				checkMenusClosed("after Enter");
+				equals(lastSelectedItemId, "item12", "Event triggered on selected item:");
+				
+				equals(oMenuItems["item12"].getValue(), "FilterValueA", "Value of item after Enter");
+			}, 100);
+		});
+		
+		test("Keyboard - Disabled Menu", function() {
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			oSpecialMenu.setEnabled(false);
+			openMenu(oSpecialMenu);
+			checkHoveredItem(null, oSpecialMenu);
+			qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
+			checkHoveredItem(null, oSpecialMenu);
+			ok(document.activeElement.id != sTfId, "Focus not on textfield");
+			
+			qutils.triggerKeyboardEvent(sTfId, "ESCAPE");
+			checkMenusClosed("after Escape");
+			ok(!lastSelectedItemId, "No Event triggered on Escape");
+		});
+		
+	</script>
+  
+</head>
+<body>
+	<div id="menuDockRef" style="width:20px;height:20px;display:inline-block;position:absolute;left:10px;top:10px;"></div>
+	<h1 id="qunit-header">QUnit tests: sap.ui.unified/commons.Menu, ...MenuItem, ...MenuTextFieldItem, ...MenuItemBase</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="buttons"></div>
+	<div id="clickTarget"></div>
+	<input id="input" type="text"></input>
+</body>
+</html>

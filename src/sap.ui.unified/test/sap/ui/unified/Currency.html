@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Currency - sap.ui.unified</title>
+	<script src="../../../../resources/sap-ui-core.js" 
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
+	
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({
+			modelData: [
+				{
+					value: 3000.56,
+					currency: 'JPY'
+				},
+				{
+					value: 33.5,
+					currency: 'EUR'
+				},
+				{
+					value: 33.534,
+					currency: 'USD'
+				},
+				{
+					value: '*',
+					currency: '*'
+				}
+			]
+		});
+		
+		sap.ui.getCore().setModel(oModel);
+		
+		var oTemplate = new sap.ui.unified.Currency({
+			value: {
+				path: 'value',
+				type: new sap.ui.model.type.String()
+			},
+			currency: '{currency}'
+		});
+		
+		var oLayout = new sap.ui.layout.VerticalLayout({
+			content: {
+				path: "/modelData",
+				template: oTemplate
+			}
+		});
+
+		oLayout.placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>ToolPopup - sap.ui.ux3</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.table">
+	
+</script>
+
+<!-- Control initialization -->
+<script type="text/javascript">
+	var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
+	oOverlayContainer.setOpenButtonVisible(false);
+
+	var oButton = new sap.ui.commons.Button({
+		text : "Open Overlay Container",
+		press : function(oEvent) {
+			if (!oOverlayContainer.isOpen()) {
+				oOverlayContainer.open();
+			} else {
+				oOverlayContainer.close();
+			}
+		}
+	});
+
+	var tp1 = new sap.ui.ux3.ToolPopup({
+		modal : true,
+		opener : btn1
+	});
+
+	var btn1 = new sap.ui.commons.Button({
+		text : "Open default",
+		press : function() {
+			tp1.setPosition(sap.ui.core.Popup.Dock.BeginTop, sap.ui.core.Popup.Dock.BeginBottom, btn1.getDomRef(), "-10 -10", "fit");
+			tp1.addContent(popupMainMatrix);
+			tp1.open();
+		}
+	});
+
+	oOverlayContainer.addContent(btn1);
+
+	var popupMainMatrix = new sap.ui.commons.layout.MatrixLayout({
+		width : '300px',
+		columns : 2,
+		widths : [ "25%", "75%" ]
+	});
+
+	var popupSubstLbl = new sap.ui.commons.Label({
+		text : "Date"
+	});
+
+	var popupFromDatePicker = new sap.ui.commons.DatePicker({
+		text : "fromDate",
+		width : '100%',
+	});
+
+	popupSubstLbl.setLabelFor(popupFromDatePicker);
+	popupMainMatrix.createRow(popupSubstLbl, popupFromDatePicker);
+
+	var btn3 = new sap.ui.commons.Button({
+		text : "close",
+		press : function(oEvent) {
+			tp1.close();
+		}
+	});
+	popupMainMatrix.createRow(btn3);
+
+	oButton.placeAt("sample1");
+</script>
+</head>
+<body>
+	<div id="sample1"></div>
+</body>
+</html>

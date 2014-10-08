@@ -1,0 +1,47 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.SplitterNested1.Splitter"
+	xmlns="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:commons="sap.ui.commons">
+	<Splitter height="500px" orientation="Vertical">
+		<Splitter>
+			<layoutData><SplitterLayoutData size="50px" /></layoutData>
+			<contentAreas>
+				<commons:Button height="100%" width="100%" text="Content 1">
+					<commons:layoutData><SplitterLayoutData size="auto" /></commons:layoutData>
+				</commons:Button>
+			</contentAreas>
+		</Splitter>
+		<Splitter>
+			<layoutData><SplitterLayoutData size="auto" /></layoutData>
+			<contentAreas>
+				<commons:Button height="100%" width="100%" text="Content 2">
+					<commons:layoutData><SplitterLayoutData size="300px" /></commons:layoutData>
+				</commons:Button>
+				<Splitter orientation="Vertical">
+					<commons:Button height="100%" width="100%" text="Content 3">
+						<commons:layoutData><SplitterLayoutData size="auto" /></commons:layoutData>
+					</commons:Button>
+					<commons:Button height="100%" width="100%" text="Content 4">
+						<commons:layoutData><SplitterLayoutData size="10%" /></commons:layoutData>
+					</commons:Button>
+				</Splitter>
+				<commons:Button height="100%" width="100%" text="Content 5">
+					<commons:layoutData><SplitterLayoutData size="30%" minSize="200px" /></commons:layoutData>
+				</commons:Button>
+			</contentAreas>
+		</Splitter>
+		<Splitter>
+			<layoutData><SplitterLayoutData size="50px" /></layoutData>
+			<contentAreas>
+				<commons:Button height="100%" width="100%" text="Content 6">
+					<commons:layoutData><SplitterLayoutData size="auto" /></commons:layoutData>
+				</commons:Button>
+				<commons:Button height="100%" width="100%" text="Content 7">
+					<commons:layoutData><SplitterLayoutData size="auto" /></commons:layoutData>
+				</commons:Button>
+			</contentAreas>
+		</Splitter>
+	</Splitter>
+</mvc:View>

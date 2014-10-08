@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.ux3.FacetFilterList, sap.ui.ux3.FacetFilter
+  Author: d029506
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>FacetFilter - sap.ui.ux3</title>
+	<!-- todo: link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.ux3.FacetFilter.gif"-->
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+		data-sap-ui-language=en>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	var oFacetFilter = new sap.ui.ux3.FacetFilter("myFacetFilter");
+
+	var oFFL1 = new sap.ui.ux3.FacetFilterList("ffl1", {
+		title:"Car Brand",
+		selectedKeys : [ "2", "3" ],
+		items : [
+			new sap.ui.core.ListItem({text:"bmw", key:"2"}),
+			new sap.ui.core.ListItem({text:"audi", key:"3"}),
+			new sap.ui.core.ListItem({text:"volvo", key:"4"}),
+			new sap.ui.core.ListItem({text:"skoda", key:"5"}),
+			new sap.ui.core.ListItem({text:"opel", key:"6"})
+		]
+	});
+	oFacetFilter.addList(oFFL1);
+
+	var oFFL2 = new sap.ui.ux3.FacetFilterList("ffl2", {
+		title:"Car Model",
+		multiSelect: false,
+		selectedKeys: ["3", "2"],
+		items : [
+			new sap.ui.core.ListItem({text:"A1"}),
+			new sap.ui.core.ListItem({text:"A3", key:"2"}),
+			new sap.ui.core.ListItem({text:"A5", key:"3"}),
+			new sap.ui.core.ListItem({text:"A4"}),
+			new sap.ui.core.ListItem({text:"A6"}),
+			new sap.ui.core.ListItem({text:"Q3"}),
+			new sap.ui.core.ListItem({text:"Q5"})
+		]
+	});
+	oFacetFilter.addList(oFFL2);
+
+	var oFFL3 = new sap.ui.ux3.FacetFilterList("ffl3", {
+		title:"Type",
+		items : [
+			new sap.ui.core.ListItem({text:"A4 Avant"}),
+			new sap.ui.core.ListItem({text:"A4 Limousine"})
+		]
+	});
+	oFacetFilter.addList(oFFL3);
+
+
+	oFacetFilter.placeAt("uiArea1");
+	</script>
+
+	<!-- Test helper functions -->
+	<script language="javascript">
+
+		function getListItemRefs(oListBox) {
+			return jQuery(jQuery("#"+oListBox.getId()).children()[0]).children();
+		};
+
+		function calculateSelectionCount(oAtt) {
+
+		};
+
+	</script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+		sap.ui.test.qunit.delayTestStart();
+
+		module("Public API");
+
+		test("Title", function() {
+			equals(oFFL1.getTitle(), "Car Brand", "Title is correct:");
+			equals(oFFL2.getTitle(), "Car Model", "Title is correct:");
+			equals(oFFL3.getTitle(), "Type", "Title is correct:");
+		});
+
+		test("Multiselect", function() {
+			equals(oFFL1.getMultiSelect(), true, "Multiselection");
+			equals(oFFL2.getMultiSelect(), false, "Single selection");
+			equals(oFFL3.getMultiSelect(), true, "Multiselection");
+		});
+
+		module("Visual appearence");
+
+		test("Visiblity", function() {
+			ok(oFacetFilter.getDomRef(), "Control is visible");
+		});
+
+		test("Visible Items", function() {
+			equals(oFFL1._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			equals(oFFL2._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+			equals(oFFL3._oListBox.getVisibleItems(), 5, "Number of visible Items is 5");
+		});
+
+
+		test("Lists", function() {
+			equals(oFacetFilter.getLists().length, 3, "There are 3 lists");
+		});
+
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1 id="qunit-header">QUnit tests: sap.ui.ux3.FacetFilter</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+</body>
+</html>

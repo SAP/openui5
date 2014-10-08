@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+<!-- 
+  JSUNIT: 
+    Tested control/class: jquery.sap.dom.js
+    Author: Martin Schaus, Andreas Kunz
+ -->
+
+		<title>Test Page for jquery.sap.dom</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-language="de"
+				data-sap-ui-noConflict="true"
+				>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
+		
+		test("ById", function () {
+			ok(jQuery.sap.domById('control1'), "jQuery.sap.domById('control1') may not be null");
+			equal(jQuery.sap.domById('contro10'), null, "jQuery.sap.domById('control10') should be null");
+
+			//this is a test for the weird IE behavior of getElementById that looks case insensitive for name and id attributes
+			equal(jQuery.sap.domById('control5'), null, "jQuery.sap.domById('control5') should be null");
+			equal(jQuery.sap.domById('CoNtRoL5'), null, "jQuery.sap.domById('CoNtRoL5') should be null");
+			equal(jQuery.sap.domById('CoNtRoL1'), null, "jQuery.sap.domById('CoNtRoL1') should be null");
+			equal(jQuery.sap.domById('CONTROL1'), null, "jQuery.sap.domById('CONTROL1') should be null");
+		});
+		
+		test("focus", function () {
+			expect(1);
+			var invisibleDiv = jQuery.sap.domById("invisibleDiv");
+			var result = jQuery.sap.focus(invisibleDiv);
+			// result will be "false" in IE8 and "true" in other browsers, as they have no error
+			ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
+		});
+
+		test("SetGetCursorPos", function () {
+			jQuery('#textinput').cursorPos(4);
+			equal(jQuery('#textinput').cursorPos(), 4, "wrong cursor position after setting and getting");
+		});
+
+		test("SelectText", function () {
+			if(window.getSelection) {// Firefox, Opera, Safari
+			
+				jQuery('#testsel').selectText(2,5);
+				var start = jQuery('#testsel').get(0).selectionStart;
+				var end = jQuery('#testsel').get(0).selectionEnd;
+				equal(start, 2);
+				equal(end, 5);
+
+				jQuery('#testsel').selectText(-2,50);
+				var start = jQuery('#testsel').get(0).selectionStart;
+				var end = jQuery('#testsel').get(0).selectionEnd;
+				equal(start, 0);
+				equal(end, jQuery('#testsel').get(0).value.length);
+
+				jQuery('#testsel').selectText(2,null);
+				var start = jQuery('#testsel').get(0).selectionStart;
+				var end = jQuery('#testsel').get(0).selectionEnd;
+				equal(start, 0);
+				equal(end, 0);
+			} else {
+				if (document.selection.createRange) {        // Internet Explorer
+
+					jQuery('#testsel').selectText(2,5);
+					seltext = document.selection.createRange().text;						
+					equal(seltext, "lec");
+	
+					jQuery('#testsel').selectText(-2,50);
+					seltext = document.selection.createRange().text;						
+					equal(seltext, "Selection Test");
+	
+					jQuery('#testsel').selectText(2,null);
+					seltext = document.selection.createRange().text;						
+					equal(seltext, "");
+
+				}
+			}
+				
+		});
+
+		test("selectText(): The input element's type 'number' does not support selection", function() {
+
+			// arrange
+			var $DomRef = jQuery("<input>", {
+				type: "number",
+				value: 1000000
+			});
+
+			jQuery(document.body).append($DomRef);
+
+			// act
+			var oReturnValue = $DomRef.selectText(0 , 6);
+
+			// assertions
+			strictEqual(oReturnValue, $DomRef, "No exception is thrown");
+
+			// cleanup
+			$DomRef.remove();
+		});
+
+		test("OuterHTML", function () {
+			function getExpected(bReversAttributeOrder){
+				function att(n, v){
+					var quote = sap.ui.Device.browser.internet_explorer && (document.documentMode == undefined || document.documentMode && document.documentMode < 9) ? "" : "\""; //No '"' in IE8
+					return " " + n + "=" + quote + v + quote;
+				}
+				
+				var sRes = "<DIV";
+				sRes += bReversAttributeOrder ? att("ID", "CONTROL3") : att("TABINDEX", "0");
+				sRes += bReversAttributeOrder ? att("TABINDEX", "0") : att("ID", "CONTROL3");
+				sRes += ">CONTROL 3</DIV>";
+				return sRes;
+			}
+			
+			var sOuterHTML = jQuery("#control3").outerHTML().toUpperCase(); //Uppercase needed for cross browser consistency (IE returns uppercase tags, Firefox lowercase)
+			ok(sOuterHTML === getExpected(false) || sOuterHTML === getExpected(true), "outerHTML is wrong, Current: '"+sOuterHTML+"'")
+		});
+
+		test("ContainsOrEquals", function () {
+			var oDomRef3 = jQuery.sap.domById('control3');
+			var oDomRef1 = jQuery.sap.domById('control1');
+			ok(jQuery.sap.containsOrEquals(oDomRef1,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef1,oDomRef3) control3 is contained in control1");
+			ok(jQuery.sap.containsOrEquals(document.body,oDomRef1), "jQuery.sap.containsOrEquals(document.body,oDomRef1) control1 is contained in body");
+			ok(jQuery.sap.containsOrEquals(oDomRef3,oDomRef3), "jQuery.sap.containsOrEquals(oDomRef3,oDomRef3) control3 is contained in control3");
+			ok(jQuery.sap.containsOrEquals(document.body,document.body), "jQuery.sap.containsOrEquals(document.body,document.body) body is contained in body");
+			// text nodes are no longer supported!  ok(jQuery.sap.containsOrEquals(oDomRef3,oDomRef3.firstChild),"jQuery.sap.containsOrEquals(control3,control3.firstChild) control3s text node is contained in control3");
+			ok(!jQuery.sap.containsOrEquals(oDomRef3,document.body), "jQuery.sap.containsOrEquals(control3,document.body) body is not contained in control3");
+			ok(!jQuery.sap.containsOrEquals(oDomRef3,oDomRef1), "jQuery.sap.containsOrEquals(control3,control1) control1 is not contianed in control3");
+		});
+
+		test("Rect", function () {
+			var oRect = jQuery('#PositionedSpan').rect();
+			equal(oRect.left, 10,"jQuery('#PositionedSpan').rect() left is 10");
+			equal(oRect.top, 10, "jQuery('#PositionedSpan').rect() top is 10");
+			equal(oRect.width, 200, "jQuery('#PositionedSpan').rect() width is 200");
+			equal(oRect.height, 100, "jQuery('#PositionedSpan').rect() height is 100");
+		});
+
+		test("HasTabIndex", function () {
+			ok(!jQuery("#control2").hasTabIndex(), "control2 does actually not have a tabindex");
+			ok(jQuery("#control3").hasTabIndex(), "control3 does actually have a tabindex");
+		});
+
+		test("FirstFocusableDomRef", function () {
+			var oFocusableItem = jQuery('#control1').firstFocusableDomRef();
+			var oDomRef = jQuery.sap.domById('control3');
+			ok(oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() not found");
+			equal(oFocusableItem, oDomRef, "jQuery(oDomRef).firstFocusableDomRef() is not control3");
+		});
+
+		test("LastFocusableDomRef", function () {
+			var oFocusableItem = jQuery('#control1').lastFocusableDomRef();
+			var oDomRef = jQuery.sap.domById('control6');
+			ok(oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() not found");
+			equal(oDomRef, oFocusableItem, "jQuery(oDomRef).firstFocusableDomRef() is not control6");
+		});
+		
+		test("ParentByAttribute", function () {
+			var oDomRef = jQuery.sap.domById('control2');
+			var oParentWithAttribute = jQuery(oDomRef).parentByAttribute("data-sap-ui-test");
+			notEqual(oParentWithAttribute, null, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test') is null)");
+
+			equal(oParentWithAttribute.getAttribute('data-sap-ui-test'), "true", "jQuery(oDomRef).parentByAttribute('data-sap-ui-test').getAttribute('data-sap-ui-test') should be 'true'");
+			
+			var oParentWithAttributeFalse = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "false");
+			ok(!oParentWithAttributeFalse, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'false') should be undefined");
+
+			var oParentWithAttributeTrue = jQuery(oDomRef).parentByAttribute("data-sap-ui-test", "true");
+			ok(oParentWithAttributeTrue, "jQuery(oDomRef).parentByAttribute('data-sap-ui-test', 'true') should be not null");
+		});
+
+		test("OwnerWindow", 0, function () {
+			// tests not easily possible, as there is no defined, stable environment with different windows
+		});
+		
+		test("Focus", function () { // actually tests jQuery itself
+			var oDomRef = jQuery.sap.domById('control3');
+			jQuery(oDomRef).focus();
+			equal(document.activeElement, oDomRef, "jQuery().focus() failed");
+		});
+		
+		
+		test("ScrollbarSize", function () {
+			var size = jQuery.sap.scrollbarSize(true);
+			ok(size, "No size for scroll bar returned")
+			ok(size.width, "No width for scroll bar returned");
+			ok(size.height, "No height for scroll bar returned");
+
+			var size = jQuery.sap.scrollbarSize(null, true);
+			ok(size, "No size for scroll bar returned")
+			ok(size.width, "No width for scroll bar returned");
+			ok(size.height, "No height for scroll bar returned");
+
+			var size = jQuery.sap.scrollbarSize("someclass", true);
+			ok(size, "No size for scroll bar returned")
+			ok(size.width, "No width for scroll bar returned");
+			ok(size.height, "No height for scroll bar returned");
+
+			var size = jQuery.sap.scrollbarSize("someclass");
+			ok(size, "No size for scroll bar returned")
+			ok(size.width, "No width for scroll bar returned");
+			ok(size.height, "No height for scroll bar returned");
+		});
+
+		test("disableSelection", function() {
+
+			// arrange
+			var oDomRef = document.createElement("div");
+			oDomRef.innerHTML = "text";
+			document.body.appendChild(oDomRef);
+
+			// act
+			jQuery(oDomRef).disableSelection();
+
+			// arrange
+			var sEvent = jQuery.support.selectstart ? "selectstart" : "mousedown";
+			var oSelectstarListener = jQuery._data(oDomRef, "events")[sEvent];
+
+			// assertions
+			strictEqual(oSelectstarListener.length, 1);
+
+			// cleanup
+			document.body.removeChild(oDomRef);
+		});
+
+		test("enableSelection", function() {
+
+			// arrange
+			var oDomRef = document.createElement("div");
+			oDomRef.innerHTML = "text";
+			document.body.appendChild(oDomRef);
+
+			// act
+			jQuery(oDomRef).disableSelection();
+			jQuery(oDomRef).enableSelection();
+
+			// assertions
+			strictEqual(jQuery._data(oDomRef, "events"), undefined);
+
+			// cleanup
+			document.body.removeChild(oDomRef);
+		});
+		</script>
+	</head>
+	
+	<body>
+		<h1 id="qunit-header">QUnit page for jquery.sap.dom</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div style="overflow:auto;width:200;height:200">
+		<b data-sap-ui-test="true">
+		Text
+		<div id="control1">
+				Simple Text
+				<span id="control2">Control 2</span>
+				<div id="control3" tabindex="0">Control 3</div>
+				<div id="control4" tabindex="0">Control 4</div>
+				<input id="textinput" type="text" value="hello world" />
+				<a name="control5" href="#">Control 5</a>
+				<a id="control6" href="#">Control 6</a>
+				Simple Text
+		</div>		
+		</b>
+		<input id="testsel" value="Selection Test"></input>
+		</div>
+		<div id="control4" tabIndex="0">Control 4</div>
+		<div style="position:absolute;top:10px;left:10px;height:100px;width:200px" id="PositionedSpan">Position</div>
+		<div id="invisibleDiv" style="display:none"></div>
+	</body>
+</html>

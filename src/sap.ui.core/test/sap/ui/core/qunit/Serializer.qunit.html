@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested sap.ui.core.util.serializer.Serializer
+  Author: d058497
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Serializer qUnit Test</title>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core, sap.ui.commons"
+		data-sap-ui-resourceroots='{"view": "testdata/serializer/"}'>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+		jQuery.sap.require("sap.ui.core.util.serializer.Serializer");
+		jQuery.sap.require("sap.ui.core.util.serializer.delegate.HTML");
+
+		module("Simple", {
+			setup : function() {
+				this.oButton = new sap.ui.commons.Button({id:"myButton"});
+				this.oButton.placeAt("area1");
+			},
+			
+			teardown : function() {
+				this.oButton.destroy();
+			}
+		});
+
+		test("Generate & Call Delegate", function() {
+			var oHTML = new sap.ui.core.util.serializer.delegate.HTML();
+
+			var aCode = [];
+			var aContent = sap.ui.getCore().getUIArea("area1").getContent();
+			for (var i=0; i < aContent.length; i++) {
+				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oHTML, false);
+				aCode.push(oControlSerializer.serialize());
+			}
+			equals(aCode.join(""), '<div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\"></div>', "The generated string is right");
+			
+		});
+
+		module("Complex", {
+			setup : function() {
+				var oTitle = new sap.ui.commons.Title({id:"myTitle", text:"My Panel"});
+				this.oPanel = new sap.ui.commons.Panel({id:"myPanel", title:oTitle});
+				var oButton = new sap.ui.commons.Button({id:"myButton"});
+				oButton.data("myCustomData", "myValue");
+				var oButton2 = new sap.ui.commons.Button({id:"myButton2"});
+				oButton.addAriaDescribedBy(oButton2);
+				this.oPanel.addContent(oButton);
+				this.oPanel.placeAt("area2");
+			},
+			
+			teardown : function() {
+				this.oPanel.destroy();
+			}
+		});
+
+		test("Complex", function() {
+			var oHTML = new sap.ui.core.util.serializer.delegate.HTML();
+			
+			
+			var aCode = [];
+			var aContent = sap.ui.getCore().getUIArea("area2").getContent();
+			for (var i=0; i < aContent.length; i++) {
+				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oHTML, false);
+				aCode.push(oControlSerializer.serialize());
+			}
+			equals(aCode.join(""), '<div id=\"myPanel\" data-sap-ui-type=\"sap.ui.commons.Panel\" data-text=\"My Panel\"><div data-sap-ui-aggregation=\"content\"><div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\" data-aria-described-by=\"myButton2\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"myCustomData\" data-value=\"myValue\"></div></div></div></div><div data-sap-ui-aggregation=\"title\"><div id=\"myTitle\" data-sap-ui-type=\"sap.ui.commons.Title\" data-text=\"My Panel\"></div></div></div>', "The generated string is right");
+		});
+
+	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="area1"></div>
+	<div id="area2"></div>
+</body>
+</html>

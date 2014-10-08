@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<title>HorizontalDivider - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.HorizontalDivider.gif">
+	<script src="../../../../resources/sap-ui-core.js"
+		type="text/javascript" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-theme="sap_goldreflection">
+	</script>
+	<script>
+		var aTypes = ["Area", "Page"];
+		var aSizes = ["Ruleheight", "Small", "Medium", "Large"];
+
+		var oDivider = new sap.ui.commons.HorizontalDivider();
+
+		var oInputWidth = new sap.ui.commons.TextField("oInputWidth", {value : "100%"});
+		var oLabelInputWidth = new sap.ui.commons.Label("oLabelInputWidth");
+		oLabelInputWidth.setText("Width: ");
+		oLabelInputWidth.setLabelFor(oInputWidth);
+
+		var oInputType = new sap.ui.commons.ListBox("oInputType");
+		for(index in aTypes){
+		    var oItem = new sap.ui.core.ListItem();
+		    oItem.setText(aTypes[index]);
+		    oInputType.addItem(oItem);
+		}
+		oInputType.setSelectedIndex(0);
+		var oLabelInputType = new sap.ui.commons.Label("oLabelInputType");
+		oLabelInputType.setText("Type: ");
+		oLabelInputType.setLabelFor(oInputType);
+
+		var oInputHeight = new sap.ui.commons.ListBox("oInputHeight");
+		for(index in aSizes){
+		    var oItem = new sap.ui.core.ListItem();
+		    oItem.setText(aSizes[index]);
+		    oInputHeight.addItem(oItem);
+		}
+		oInputHeight.setSelectedIndex(2);
+		var oLabelInputHeight = new sap.ui.commons.Label("oLabelInputHeight");
+		oLabelInputHeight.setText("Height: ");    
+		oLabelInputHeight.setLabelFor(oInputHeight);
+
+		var oButton = new sap.ui.commons.Button("oButton");
+    oButton.setText("Apply");
+    oButton.attachPress(
+	    		function (oControlEvent) {
+	        		oDivider.setWidth(oInputWidth.getValue()); 
+	        		oDivider.setHeight(oInputHeight.getSelectedItem().getText());
+	        		oDivider.setType(oInputType.getSelectedItem().getText());
+	    	    }
+	    );
+
+		oLabelInputWidth.placeAt("widthlabel");
+		oInputWidth.placeAt("widthinput");
+		oLabelInputHeight.placeAt("heightlabel");
+		oInputHeight.placeAt("heightinput");
+		oLabelInputType.placeAt("typelabel");
+		oInputType.placeAt("typeinput");
+		oButton.placeAt("applybutton");
+		oDivider.placeAt("divider");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+
+<h1 id="header">Test Page for <code>sap.ui.commons.HorizontalDivider</code></h1>
+
+<span id="widthlabel"></span><span id="widthinput"></span><br></br><br></br>
+<span id="heightlabel"></span><span id="heightinput"></span><br></br><br></br>
+<span id="typelabel"></span><span id="typeinput"></span><br></br><br></br>
+<span id="applybutton"></span><br></br><br></br>
+<div style="display:block;width:20%;height:20px;background-color:red;line-height:0px;"></div>
+<div id="divider"></div>
+<div style="display:block;width:20%;height:20px;background-color:red;line-height:0px;"></div>
+
+
+</body>
+</html>

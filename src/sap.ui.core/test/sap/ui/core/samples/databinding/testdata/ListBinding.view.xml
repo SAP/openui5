@@ -1,0 +1,9 @@
+<mvc:View resourceBundleName="testdata.text"  
+		   resourceBundleAlias="i18n" 
+		   xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:ui="sap.ui.commons" xmlns:layout="sap.ui.commons.layout" xmlns:html="http://www.w3.org/1999/xhtml">
+	<layout:VerticalLayout id="myList" class="bulletList" > 
+	    <ui:RowRepeater id="myListRr" design="Transparent" rows="{/listItems}">
+        	<ui:TextView text="{text}"></ui:TextView>
+    	</ui:RowRepeater>
+	</layout:VerticalLayout>
+</mvc:View>

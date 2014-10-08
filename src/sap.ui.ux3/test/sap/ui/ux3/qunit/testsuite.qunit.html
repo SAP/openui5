@@ -1,0 +1,43 @@
+<html>
+ <head>
+  <title>QUnit TestSuite for sap.ui.ux3</title>
+  <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+  <script language="javascript">
+
+  /**
+   * Add test pages to this test suite function.
+   * Please order alphabetically
+   */
+  function suite() {
+    var suite = new parent.jsUnitTestSuite();
+    var contextPath = "/" + window.location.pathname.split("/")[1];
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ActionBar.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/CollectionInspector.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/DataSet.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/DataSetPagination.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/Exact.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ExactAttribute.qunit.html");    
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ExactBrowser.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/FacetFilter.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/Feed.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/FeedChunk.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/Feeder.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/NavigationBar.qunit.html");
+    //suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/NavigationBar_swiping.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/NotificationBar.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/Overlay.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/OverlayContainer.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/OverlayDialog.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/Shell.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ThingInspector.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ThingViewer.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/ToolPopup.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/ux3/qunit/QuickView.qunit.html");
+    return suite;
+  }
+  
+  </script>
+ </head>
+ <body>
+ </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="UTF-8">
+<title>ColumnsPanel - sap.m</title>
+<script id="sap-ui-bootstrap" src="../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-compatVersion="1.20">
+	
+</script>
+<script>
+	jQuery.sap.require("jquery.sap.xml");
+	jQuery.sap.require("sap.m.P13nColumnsPanel");
+	jQuery.sap.require("sap.m.P13nColumnItem");
+
+	var oApp = new sap.m.App("myApp", {
+		initialPage: "page1"
+	});
+
+	this._oModel = new sap.ui.model.json.JSONModel();
+	
+	var _oData = {
+		itemData: [ {
+			key: '4711',
+			selected: true,
+			visible: true,
+			text: "Column1"
+		}, {
+			key: '4712',
+			selected: true,
+			visible: true,
+			text: "Column2"
+		}, {
+			key: '4713',
+			selected: false,
+			visible: true,
+			text: "Column3"
+		},{
+			key: '4714',
+			selected: true,
+			visible: true,
+			text: "Column4"
+		} ]
+	};
+
+	this._oModel.setData(_oData);
+
+	this._oColumnItemTemplate = new sap.m.P13nColumnItem({
+		key: '{key}',
+		cells: [ new sap.m.Text({text: '{text}'})],
+		visible: '{visible}',
+		selected: '{selected}',
+		type: sap.m.ListType.Active
+	});
+
+	var oColumnsPanel = new sap.m.P13nColumnsPanel({
+		items: {
+			path: '/itemData',
+			template: this._oColumnItemTemplate
+		}
+	});
+
+	var oPage = new sap.m.Page("page1", {
+		content: [ oColumnsPanel ]
+	});
+
+	oColumnsPanel.setModel(this._oModel)
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody"></body>
+</html>

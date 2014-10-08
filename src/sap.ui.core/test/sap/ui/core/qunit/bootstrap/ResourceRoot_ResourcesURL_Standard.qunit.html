@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<!--
+  Tests the bootstrap variant where the bootstrap tag is part of the head.
+  
+  @author Frank Weigel    
+  -->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>...</title>
+    		
+		<!-- Initialization -->
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript" 
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.ui.commons" 
+				>
+		</script>    
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			test("Check Resource Root", function() {
+				/* check that SAPUI5 has been loaded */
+				ok(!!window.jQuery, "jQuery has been loaded");
+				ok(!!jQuery.sap, "jQuery.sap namespace exists");
+				ok(!!window.sap, "sap namespace exists");
+				ok(!!sap.ui, "sap.ui namespace exists");
+				ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
+				ok(!!sap.ui.getCore(), "sap.ui.getCore() returns a value");
+				equal(jQuery.sap.getModulePath("", "/"), "../../../../../../resources/");
+			});
+
+		</script>
+		
+	</head>
+	
+  <body class="sapUiBody" role="application">
+		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+  </body>
+</html>

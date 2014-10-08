@@ -1,0 +1,36 @@
+{ "Type": "sap.ui.core.JSONView",
+	"controllerName":"sap.ui.core.mvctest.Test",
+	"content": [{
+		"Type":"sap.ui.commons.layout.MatrixLayout",
+		"rows": [{
+			"Type":"sap.ui.commons.layout.MatrixLayoutRow",
+			"cells": [{
+				"Type":"sap.ui.commons.layout.MatrixLayoutCell",
+				"content": [{
+					"Type":"sap.ui.commons.Button",
+					"text":"Button in Layout",
+					"press":"doIt"
+				}]
+			}]
+		}]
+	},
+	{
+		"Type":"sap.ui.commons.Panel",
+		"id":"myPanel",
+		"content":[{
+			"Type":"sap.ui.commons.Button",
+			"id":"Button1",
+			"text":"Button in Panel",
+			"press": "doIt"
+		},
+		{
+			"Type":"sap.ui.commons.Button",
+			"text":"Another Button for the Panel"
+		}]
+	},
+	{
+		"Type":"sap.ui.core.mvc.XMLView",
+		"id":"myViewEmbedded",
+		"viewName":"sap.ui.core.mvctest.Test2"
+	}]
+}

@@ -1,0 +1,1660 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.IconTabBar</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		
+		
+		<script>
+
+			module("default values");
+			
+			test("IconTabBar", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+				
+				// Assert
+				ok(oIconTabBar.getShowSelection(), "showSelection is set to true");
+				ok(oIconTabBar.getExpandable(), "expandable is set to true");
+				ok(oIconTabBar.getExpanded(), "expanded is set to true");
+				ok(oIconTabBar.getVisible(), "visible is set to true");
+				ok(!oIconTabBar.getUpperCase(), "upperCase is set to false");
+				strictEqual(oIconTabBar.getSelectedKey(), "", "selectedKey is empty string");	
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+ 			test("IconTabFilter", function() {
+				
+				// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter();
+				
+				// Assert
+				strictEqual(oIconTabFilter.getCount(), "", "count is empty string");
+				ok(!oIconTabFilter.getShowAll(), "showAll is set to false");
+				strictEqual(oIconTabFilter.getDesign(), "Vertical", "design is \"Vertical\"");
+				ok(oIconTabFilter.getVisible(), "visible is set to true");
+				strictEqual(oIconTabFilter.getIcon(), "", "icon is empty string");
+				strictEqual(oIconTabFilter.getIconColor(), "Default", "iconColor is \"Default\"");				
+				ok(oIconTabFilter.getIconDensityAware(), "iconDensityAware is set to true");
+				
+				// Clean up
+		    	oIconTabFilter.destroy();
+			});
+ 			
+			test("IconTabSeparator", function() {
+				
+				// Arrange
+				var oIconTabSeparator = new sap.m.IconTabSeparator();
+				
+				// Assert
+				strictEqual(oIconTabSeparator.getIcon(), "", "icon is empty string");
+				ok(oIconTabSeparator.getIconDensityAware(), "iconDensityAware is set to true");
+				
+				// Clean up
+		    	oIconTabSeparator.destroy();
+			});
+ 
+		    module("overwritten Aggregation methods");    
+		    
+		    test("addAggregation()", function() {
+		    	
+		    	// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+				var oIconTabFilter = new sap.m.IconTabFilter ({ icon: "sap-icon://instance" });
+				
+				// Act
+				oIconTabBar.addAggregation("items", oIconTabFilter);
+				
+				// Assert
+				var oFirstItem = oIconTabBar.getItems()[0];
+				deepEqual(oIconTabFilter, oFirstItem, "aggregation is added");
+						
+				// Clean up
+			  	oIconTabBar.destroy();
+			});   
+		       
+		    test("destroyAggregation()", function() {
+		    	
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance"
+						})
+					]
+				});
+				
+				// Act
+				oIconTabBar.destroyAggregation("items");
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is destroyed");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    test("removeAllAggregation()", function() {
+				
+		    	// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance"
+						})
+					]
+				});
+				
+				// Act
+				oIconTabBar.removeAllAggregation("items");
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().length, 0, "aggregation \"items\" is removed");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    test("removeAggregation()", function() {
+				
+		    	// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter();
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [ oIconTabFilter	]
+				});
+				
+				// Act
+				oIconTabBar.removeAggregation("items", oIconTabFilter);
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().length, 0, "removes oIconTabFilter from the aggregation \"items\"");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		      
+		    test("getAggregation()", function() {
+				
+		    	// Arrange
+				var aContent = [new sap.m.Button({ text: "btn1" })];
+				var oIconTabBar = new sap.m.IconTabBar({ content : aContent });		
+				
+				// Assert
+				deepEqual(oIconTabBar.getAggregation("content"), aContent, "aggregation is properly returned");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    test("indexOfAggregation()", function() {
+				
+		    	// Arrange
+				var oButton1 = new sap.m.Button({ text: "btn1" });
+				var oButton2 = new sap.m.Button({ text: "btn2" });
+				var oIconTabBar = new sap.m.IconTabBar({ content : [oButton1] });		
+				
+				// Assert
+				strictEqual(oIconTabBar.indexOfAggregation("content", oButton1), 0, "aggregation \"content\" contains oButton1 at index 0");
+				strictEqual(oIconTabBar.indexOfAggregation("content", oButton2), -1, "aggregation \"content\" does not contain oButton2");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    test("insertAggregation()", function() {
+				
+		    	// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter();
+				
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter (),
+						new sap.m.IconTabFilter ()
+					]
+				});
+		    
+				// Act
+				oIconTabBar.insertAggregation("items", oIconTabFilter, 1);
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), 1, "aggregation is inserted at correct index");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    module("overwritten getter/setter methods");
+		    
+		    test("getSelectedKey()", function() {
+				
+		    	// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1"
+				});
+				
+		    	// Assert
+				strictEqual(oIconTabBar.getSelectedKey(), "key1", "getSelectedKey() is correct");
+				
+		    	// Clean up
+				oIconTabBar.destroy();
+			});	
+		    
+		    test("setSelectedKey()", function() {
+			    
+		    	// Arrange		
+		   		var oIconTabBar = new sap.m.IconTabBar({
+		   			items: [
+		   				new sap.m.IconTabFilter({key: "key1"}),
+		   				new sap.m.IconTabFilter({key: "key2"})
+		   			]
+		   		});
+		       
+		    	// Act
+		   		oIconTabBar.setSelectedKey("key2");
+		
+		    	// Assert
+		   		strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
+		   		
+		    	// Clean up
+		   		oIconTabBar.destroy();
+		   	});
+		    
+		    test("getShowSelection()", function() {
+		
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					showSelection: false
+				});
+				
+				// Assert
+				ok(!oIconTabBar.getShowSelection(), "getShowSelection is correct");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});	
+		    
+		    test("setShowSelection()", function() {
+		
+		    	// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+				
+		    	// Act
+				oIconTabBar.setShowSelection(false);
+				
+		    	// Assert
+				ok(!oIconTabBar.getShowSelection(), "showSelection is set to false");	
+				
+		    	// Clean up
+		    	oIconTabBar.destroy();
+			});
+		    
+		    test("setExpandable()", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+				
+				// Act
+				oIconTabBar.setExpandable(false);
+				
+				// Assert
+				ok(!oIconTabBar.getExpandable(), "expandable is set to false");
+			
+				// Clean up
+		    	oIconTabBar.destroy();
+			});
+		    
+		    test("setExpanded()", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+				
+				// Act
+				oIconTabBar.setExpanded(false);
+				
+				// Assert
+				ok(!oIconTabBar.getExpanded(), "expanded is set to false");
+			
+				// Clean up
+		    	oIconTabBar.destroy();
+			});
+		    
+		    test("setSelectedItem()", function() {
+		    	
+		    	// Arrange
+		   		var oIconTabFilter = new sap.m.IconTabFilter({key: "key2"});
+		   		
+		   		var oIconTabBar = new sap.m.IconTabBar({
+		   			items: [
+		   				new sap.m.IconTabFilter ({key: "key1"}),
+		   				oIconTabFilter
+		   			]
+		   		});
+		       
+		   		// Act
+		   		oIconTabBar.setSelectedItem(oIconTabFilter);
+		
+		   		// Assert
+		   		strictEqual(oIconTabBar.getSelectedKey(), "key2", "selected item is set correctly");
+		   		
+		   		// Clean up
+		   		oIconTabBar.destroy();
+		   	});
+		    
+			module("item aggregation methods");
+			
+			test("add IconTabFilter", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar();
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Add one item
+				oIconTabBar.addItem(
+					 new sap.m.IconTabFilter({
+							icon: "sap-icon://task",
+						})
+				);
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().length, 1, "The IconTabBar contains 1 item");			
+				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "Filter has class sapMITBFilter");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("remove IconTabFilter", function() {
+				
+				// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter({
+					icon: "sap-icon://task",
+		
+				});
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						oIconTabFilter
+					]
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Remove the item
+				oIconTabBar.removeItem(0);
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				strictEqual(oIconTabBar.getItems().length, 0, "The bar contains 0 items");
+				strictEqual(oIconTabBar.getItems().indexOf(oIconTabFilter), -1, "The bar does not contain oIconTabFilter");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		    
+		    module("rendering");
+			
+			test("basic rendering", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						}),
+						new sap.m.IconTabSeparator()			
+					],
+					content: [new sap.m.Label({text: "label"})]
+				});
+			
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok (oIconTabBar.$().hasClass("sapMITB"), "IconTabBar has class sapMITB");
+				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBFilter"), "First IconTabBarFilter has class sapMITBFilter");
+				ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBSep"), "First IconTabBarFilter does not have class sapMITBSep");
+				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "IconTabSeparator has class sapMITBSep");
+				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBFilter"), "IconTabSeparator does not have class sapMITBFilter");
+				ok (oIconTabBar.$("content").hasClass("sapMITBContent"), "IconTabBar content is rendered");
+				
+				// Clean up		
+				oIconTabBar.destroy();
+			});
+			
+			test("icons only", function() {
+				
+				// Arrange
+				var oIconTabBarNoText = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance",
+						}),
+						new sap.m.IconTabFilter ({
+							icon: "sap-icon://instance",
+						})
+					]
+				});
+				
+				// System under Test
+				oIconTabBarNoText.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+		
+				// Assert
+				ok(oIconTabBarNoText.$("-header-head").hasClass("sapMITBNoText"), "should have class for no-text version");
+				ok(!oIconTabBarNoText.$("-header-head").hasClass("sapMITBTextOnly"), "should not have class for text-only version");
+			
+				// Clean up
+				oIconTabBarNoText.destroy();
+			});
+			
+			test("text only", function() {
+				
+				// Arrange
+				var oIconTabBarTextOnly = new sap.m.IconTabBar({
+					items: [
+							new sap.m.IconTabFilter ({
+								text: "text1"
+							}),
+							new sap.m.IconTabFilter ({
+								text: "text2"
+							})
+						]
+				});
+				
+				// System under Test
+				oIconTabBarTextOnly.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok(!oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBNoText"), "should not have class for no-text version");
+				ok(oIconTabBarTextOnly.$("-header-head").hasClass("sapMITBTextOnly"), "should have class for text-only version");
+				
+				// Clean up
+				oIconTabBarTextOnly.destroy();		
+			});
+			
+			test("UpperCase filter text", function() {
+				
+				// Arrange
+				var oIconTabBarTextOnly = new sap.m.IconTabBar({
+					items: [
+							new sap.m.IconTabFilter ({
+								text: "text1"
+							})
+						],
+						upperCase: true
+				});
+				
+				// System under Test
+				oIconTabBarTextOnly.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok(oIconTabBarTextOnly.$("-header").hasClass("sapMITBTextUpperCase"), "IconTabBar has class sapMITBTextUpperCase");
+				
+				// Clean up
+				oIconTabBarTextOnly.destroy();		
+			});
+			
+			test("IconTabFilter without content", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key2"
+						})
+					],
+					content: new sap.m.Label({text: "info info info"}),
+					selectedKey: "key1"
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				//Assert
+				// Verify that a filter without content shows the IconTabBar content
+				var $itbf = oIconTabBar.$("content");
+				equal ($itbf.children(0).text(), "info info info", "showing default IconTabBar content");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("IconTabFilter with content", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							content: new sap.m.Text({text: "icon tab filter content"}),
+							key: "key2"
+						})
+					],
+					content: new sap.m.Label({text: "info info info"}),
+					selectedKey: "key1"
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				//Assert
+				// Verify that the newly added content is rendered and overwrites the IconTabBar content
+				var $itbf = oIconTabBar.$("content");
+				equal ($itbf.children(0).text(), "icon tab filter content", "showing the IconTabFilter content");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("IconTabBar without one content no rerendering of content", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key2"
+						})
+					],
+					content: new sap.m.Label({text: "info info info"}),
+					selectedKey: "key1"
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				var oSelectSpy = sinon.spy(sap.m.IconTabBar.prototype, "_rerenderContent");
+				
+				// Assert
+				strictEqual(oSelectSpy.callCount, 0, "content is not rerendered");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			module("icon color");
+			
+			test("Default", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						})
+					]
+				});
+				
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				var $itbf = oIconTabBar.getItems()[0].$();
+				ok ($itbf.hasClass("sapMITBFilterDefault"), "color should be default");
+				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral");
+				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive"); 
+				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical"); 
+				
+				// Clean up
+				oIconTabBar.destroy();
+				
+			});
+			
+			test("Positive", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task",
+							iconColor: sap.ui.core.IconColor.Positive
+						})
+					]
+				});
+				
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert		
+				var $itbf = oIconTabBar.getItems()[0].$();
+				ok ($itbf.hasClass("sapMITBFilterPositive"), "color should be positive");
+				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical"); 
+				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral"); 
+				
+				// Clean up
+				oIconTabBar.destroy();
+				
+			});
+			
+			test("Negative", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task",
+							iconColor: sap.ui.core.IconColor.Negative
+						})
+					]
+				});
+				
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				var $itbf = oIconTabBar.getItems()[0].$();
+				ok ($itbf.hasClass("sapMITBFilterNegative"), "color should be negative");
+				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive");
+				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical"); 
+				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral"); 
+		
+				// Clean up
+				oIconTabBar.destroy();
+				
+			});
+			
+			test("Neutral", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task",
+							iconColor: sap.ui.core.IconColor.Neutral
+						})
+					]
+				});
+				
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				var $itbf = oIconTabBar.getItems()[0].$();
+				ok ($itbf.hasClass("sapMITBFilterNeutral"), "color should be neutral");
+				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive"); 
+				ok (!$itbf.hasClass("sapMITBFilterCritical"), "color is not critical"); 
+		
+				// Clean up
+				oIconTabBar.destroy();
+				
+			});
+			
+			test("Critical", function() {
+			
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task",
+							iconColor: sap.ui.core.IconColor.Critical
+						})
+					]
+				});
+				
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				var $itbf = oIconTabBar.getItems()[0].$();
+				ok ($itbf.hasClass("sapMITBFilterCritical"), "color should be critical");
+				ok (!$itbf.hasClass("sapMITBFilterNegative"), "color is not negative");
+				ok (!$itbf.hasClass("sapMITBFilterDefault"), "color is not default");
+				ok (!$itbf.hasClass("sapMITBFilterPositive"), "color is not positive"); 
+				ok (!$itbf.hasClass("sapMITBFilterNeutral"), "color is not neutral"); 
+				
+				// Clean up
+				oIconTabBar.destroy();	
+			});
+			
+			module("rerendering");
+			
+			test("filter text changing", function() {
+				
+				// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter({
+					icon: "sap-icon://task",
+					text: "default text"
+				});
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						oIconTabFilter
+					]
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Act
+				// now change the text for IconTabFilter	
+				oIconTabFilter.setText("new text");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				equal(oIconTabFilter.getText(), "new text", "the text is changed");
+				equal(oIconTabFilter.$("text").html(), "new text", "the new text is rendered");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("change content", function() {
+				
+				// Arrange
+				var oButton = new sap.m.Button("button", {text: "click me"});
+					
+				var oIconTabFilter = new sap.m.IconTabFilter({
+					icon: "sap-icon://task",
+					content: oButton,
+					key: "key1"
+				});
+				
+				var oIconTabFilter2 = new sap.m.IconTabFilter({
+					icon: "sap-icon://instance",
+					key: "key2"
+				});
+				
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						oIconTabFilter,
+						oIconTabFilter2
+					],
+					content: new sap.m.Label({text: "info info info"}),
+					selectedKey: "key1"
+				});
+		
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Change the button text
+				oButton.setText("new button");
+				sap.ui.getCore().applyChanges();
+				
+				// Verify that the new text is rendered
+				var $itbf = oIconTabBar.$("content");
+				equal ($itbf.children(0).text(), "new button", "the text is \"new button\"");	
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("change several things", function() {
+				
+				// Arrange
+				var oIconTabFilter = new sap.m.IconTabFilter({
+					icon: "sap-icon://task",
+					iconColor: sap.ui.core.IconColor.Neutral
+				});
+				
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						oIconTabFilter
+					]
+				});
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Act
+				// now change the icon color for one IconTabFilter after it was rendered
+				// add IconTabSeparator		
+				oIconTabFilter.setIconColor(sap.ui.core.IconColor.Positive);
+				oIconTabBar.addItem(new sap.m.IconTabSeparator());		
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok(oIconTabFilter.$().hasClass("sapMITBFilterPositive"), "color is changed to positive");
+				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBSep"), "separator is rendered");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			module("public methods");
+			
+			test("expandable set to false", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: false,
+					expanded: false,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1",
+					content: new sap.m.Label({text:"label"})
+				});
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				// Try to expand the IconTabBar by pressing SPACE key
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+				
+				// Assert
+				// Content shoud remain collapsed because expandable is set to false
+				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");				
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("expandable set to true", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: false,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1",
+					content: new sap.m.Label({text:"label"})
+				});
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				// Try to expand the IconTabBar by pressing SPACE key
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+
+				// Assert
+				// Content shoud collapsed because expandable is set to true
+				ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");				
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("collapse", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1",
+					content: new sap.m.Label({text:"label"})
+				});
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Act
+				// Collapse the IconTabBar by pressing SPACE key
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+				
+				// Assert
+				ok(oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content has class sapMITBContentClosed");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("expand", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: false,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1",
+					content: new sap.m.Label({text:"label"})
+				});
+							
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				// Expand the IconTabBar by pressing SPACE key
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+
+				// Assert
+				ok(!oIconTabBar.$("containerContent").hasClass("sapMITBContentClosed"), "IconTabBar content does not have class sapMITBContentClosed");
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			module("layout");
+			
+			test("vertical / horizontal", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							design: sap.m.IconTabFilterDesign.Horizontal,
+						})
+					]
+				});
+			
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBVertical"), "default design should be vertical")
+				ok(!oIconTabBar.getItems()[0].$().hasClass("sapMITBHorizontal"), "default design should not be horizontal")
+				ok(oIconTabBar.getItems()[1].$().hasClass("sapMITBHorizontal"), "design should be horizontal");
+				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBVertical"), "design should not be vertical")
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("showAll Filter", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							showAll: true
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						})
+					]
+				});
+			
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBAll"), "should have class for showAll property");
+				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBAll"), "should not have class for showAll property");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			module("scrolling");
+
+			test("initial scrolling - scrollable", function() {
+
+				//Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+				var oResizeHandler = sap.ui.core.ResizeHandler;
+				var oResizeHandlerStub = this.stub(oResizeHandler, "register", jQuery.noop);
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "first"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "middle"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "last"
+						})
+					]
+				});
+
+				// System under Test
+				// set width to 200px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("200px");
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oResizeHandlerStub.callArg(1);
+
+				// Assert
+				ok (oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar is scrollable");
+
+				// Clean up
+				oIconTabBar.destroy();
+				oResizeHandler.deregister();
+				
+			});
+
+			test("initial scrolling - not scrollable", function() {
+
+				// Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+				var oResizeHandler = sap.ui.core.ResizeHandler;
+				var oResizeHandlerStub = this.stub(oResizeHandler, "register", jQuery.noop);
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager"
+						})
+					]
+				});
+
+				// System under Test
+				// set width to 200px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("200px");
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oResizeHandlerStub.callArg(1);
+
+				// Assert
+				ok (!oIconTabBar.$("-header").hasClass("sapMITBScrollable"), "IconTabBar2 is not scrollable");
+
+				// Clean up
+				oIconTabBar.destroy();
+				oResizeHandler.deregister();
+			});
+
+			test("first element is selected / scroll forward arrow is shown", function() {
+
+				// Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+				var oResizeHandler = sap.ui.core.ResizeHandler;
+				var oResizeHandlerStub = this.stub(oResizeHandler, "register", jQuery.noop);
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "first"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "middle"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "last"
+						})
+					],
+					selectedKey: "first"
+				});
+		
+				// System under Test
+				// set width to 200px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("200px");
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oResizeHandlerStub.callArg(1);
+
+				var $itbh = oIconTabBar.$("-header");
+
+				// Assert
+				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
+				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+
+				// Clean up
+				oIconTabBar.destroy();
+				oResizeHandler.deregister();
+			});
+
+			test("last element is selected  / scroll back arrow is shown", function() {
+
+				// Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+				var oResizeHandler = sap.ui.core.ResizeHandler;
+				var oResizeHandlerStub = this.stub(oResizeHandler, "register", jQuery.noop);
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "first"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "middle"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "last"
+						})
+					],
+					selectedKey: "last"
+				});
+
+				// System under Test
+				// set width to 200px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("200px");
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oResizeHandlerStub.callArg(1);
+				//if the selected item is outside the view a scrolling takes place after a timeout
+				this.clock.tick(1000);
+
+				var $itbh = oIconTabBar.$("-header");
+				
+				// Assert
+				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (last selected)");
+				ok ($itbh.hasClass("sapMITBNoScrollForward"), "Scroll forward arrow is not shown, (last selected)");
+				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (last selected)");
+				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "hidden", "Right arrow is not visible");
+				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+
+				// Clean up
+				oIconTabBar.destroy();
+				oResizeHandler.deregister();
+			});
+
+			test("middle element is selected / both arrows are shown", function() {
+
+				// Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+				var oResizeHandler = sap.ui.core.ResizeHandler;
+				var oResizeHandlerStub = this.stub(oResizeHandler, "register", jQuery.noop);
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "first"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "middle"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "last"
+						})
+					],
+					selectedKey: "middle"
+				});
+		
+				// System under Test
+				// set width to 200px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("200px");
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oResizeHandlerStub.callArg(1);
+				//if the selected item is outside the view a scrolling takes place after a timeout
+				this.clock.tick(1000);
+
+				var $itbh = oIconTabBar.$("-header");
+				
+				// Assert
+				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (middle selected)");
+				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (middle selected)");
+				ok ($itbh.hasClass("sapMITBScrollBack"), "Scroll back arrow is shown, (middle selected)");
+				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "visible", "Left arrow is visible");
+
+				// Clean up
+				oIconTabBar.destroy();
+				oResizeHandler.deregister();
+			});
+
+			test("a new item is added / scroll forward arrow is shown", function() {
+
+				// Arrange
+				jQuery.sap.require("sap.ui.core.ResizeHandler");
+
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "first"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							key: "middle"
+						})
+					]
+				});
+		
+				// System under Test
+				// set width to 300px, to simulate smaller screen size
+				jQuery("#qunit-fixture").width("300px");
+				oIconTabBar.placeAt("qunit-fixture");
+				// when add a new item the space is not enough
+				oIconTabBar.addItem(new sap.m.IconTabFilter({
+					icon: "sap-icon://manager",
+					key: "middle"
+				}));
+				
+				sap.ui.getCore().applyChanges();
+				var $itbh = oIconTabBar.$("-header");
+
+				// Assert
+				ok ($itbh.hasClass("sapMITBScrollable"), "IconTabBar is scrollable, (first selected)");
+				ok ($itbh.hasClass("sapMITBScrollForward"), "Scroll forward arrow is shown, (first selected)");
+				ok ($itbh.hasClass("sapMITBNoScrollBack"), "Scroll back arrow is not shown, (first selected)");
+				equals(oIconTabBar.$("-header-arrowScrollRight").css("visibility"), "visible", "Right arrow is visible");
+				equals(oIconTabBar.$("-header-arrowScrollLeft").css("visibility"), "hidden", "Left arrow is not visible");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			module("preserve dom");
+			
+			// test case for: [openui5] sap.m.IconTabBar doesn't support PreserveContent functionality (#26)
+			test("preserve dom", function() {
+				
+				// Arrange
+				// prepare dom content
+				var oSpan1 = document.createElement("SPAN");
+				oSpan1.id = "PreserveContent1";
+				oSpan1.innerHTML = "Test1"; 
+				var oHtml1 = new sap.ui.core.HTML();
+				oHtml1.setDOMContent(oSpan1);
+				
+				// prepare dom content
+				var oSpan2 = document.createElement("SPAN");
+				oSpan2.id = "PreserveContent2";
+				oSpan2.innerHTML = "Test2"; 
+				var oHtml2 = new sap.ui.core.HTML();
+				oHtml2.setDOMContent(oSpan2);
+		
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://media-play",
+							content: [oHtml1]
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://media-reverse",
+							content: [oHtml2]
+						})
+					]
+				});
+		
+				// System under test - add item to page & render
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+		
+				// Assert
+				strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent\" is in the DOM");
+				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[1]);
+				sap.ui.getCore().applyChanges();
+				strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[0]);
+				sap.ui.getCore().applyChanges();
+				strictEqual(jQuery.sap.byId("PreserveContent1").length, 1, "The span node \"PreserveContent1\" is in the DOM");
+				strictEqual(jQuery.sap.byId("PreserveContent2").length, 1, "The span node \"PreserveContent2\" is in the DOM");
+		
+				// Clean up
+				oIconTabBar.destroy();
+			});	
+			
+			module("events");
+			
+			test("select", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key2"
+						})
+					],
+					selectedKey: "key1"
+				});
+						
+				var oSelectSpy = sinon.spy(sap.m.IconTabBar.prototype, "fireSelect");
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+										
+				// Press SPACE key on second IconTabFilter to expand
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+				
+				// Assert
+				strictEqual(oSelectSpy.callCount, 1, "select is fired");
+				strictEqual(oSelectSpy.lastCall.args[0].key, "key2", "second filter key is passed as select event arg");
+						
+				// Clean up
+				sap.m.IconTabBar.prototype.fireSelect.restore();		
+				oIconTabBar.destroy();
+			});
+			
+			test("expand: shoud not expand(already expanded)", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key2"
+						})
+					],
+					selectedKey: "key1"
+				});
+						
+				var oExpandSpy = sinon.spy(sap.m.IconTabBar.prototype, "fireExpand");
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+										
+				// Press SPACE key on second IconTabFilter to expand
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[1].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+				
+				// Assert
+				strictEqual(oExpandSpy.callCount, 0, "content is already expanded and expand is not fired");
+				
+				// Clean up
+				sap.m.IconTabBar.prototype.fireExpand.restore();
+				oIconTabBar.destroy();
+			});
+			
+			test("expand after selecting twice", function() {
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key2"
+						})
+					],
+					selectedKey: "key1"
+				});
+						
+				var oExpandSpy = sinon.spy(sap.m.IconTabBar.prototype, "fireExpand");
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+										
+				// Press SPACE key on first IconTabFilter to expand
+				sap.ui.test.qunit.triggerKeydown(oIconTabBar.getItems()[0].$("icon"), jQuery.sap.KeyCodes.SPACE);
+				this.clock.tick(500);
+				
+				// Assert
+				strictEqual(oExpandSpy.callCount, 1, "select first filter again - expand is fired");
+				ok(oExpandSpy.lastCall.args[0].collapse, "collapse = true is passed as expand event arg");
+				ok(!oExpandSpy.lastCall.args[0].expand, "expand = false is passed as expand event arg");
+		
+				// Clean up
+				sap.m.IconTabBar.prototype.fireExpand.restore();
+				oIconTabBar.destroy();
+			});
+			
+			module("keyboard");
+			
+			 function createIconTabBar() {					
+				return new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance"
+						})
+					]
+				}); 
+			}
+			 
+			test("Arrow Right", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab1.focus(); // set focus on first filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on first filter			
+				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus moved on second filter");
+					
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_RIGHT); // trigger Arrow right on second filter
+				ok($tab2.is(":focus"), "ARROW_RIGHT is pressed, focus stay on second (last) filter"); // should not loop
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("Arrow Left", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab2.focus(); // set focus on second filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on second filter
+				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus moved on first filter");
+				
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_LEFT); // trigger Arrow left on first filter
+				ok($tab1.is(":focus"), "ARROW_LEFT is pressed, focus stayed on first filter"); // should not loop
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("Arrow Down", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab1.focus(); // set focus on first filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on first filter
+				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus moved on second filter");
+				
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_DOWN); // trigger Arrow down on second filter
+				ok($tab2.is(":focus"), "ARROW_DOWN is pressed, focus stay on second filter"); // should not loop
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("Arrow Up", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab2.focus(); // set focus on second filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on second filter
+				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus moved on first filter");
+				
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.ARROW_UP); // trigger Arrow up on first filter
+				ok($tab1.is(":focus"), "ARROW_UP is pressed, focus stay on first filter"); // should not loop
+				
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("END", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab1.focus(); // set focus on first filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab1, jQuery.sap.KeyCodes.END); // trigger End on first filter
+				ok($tab2.is(":focus"), "END is pressed, focus moved on last filter");
+								
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("HOME", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab2.focus(); // set focus on second filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.HOME); // trigger Home on second filter
+				ok($tab1.is(":focus"), "HOME is pressed, focus moved on first filter");
+								
+				// Clean up
+				oIconTabBar.destroy();
+			});
+			
+			test("SPACE", function() {
+				
+				//Arrange
+				var oIconTabBar = createIconTabBar();
+				
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				var oSelectSpy = sinon.spy(sap.m.IconTabBar.prototype, "fireSelect");
+				var $tab1 = oIconTabBar.getItems()[0].$("icon");
+				var $tab2 = oIconTabBar.getItems()[1].$("icon");	
+							
+				$tab2.focus(); // set focus on second filter	
+				
+				sap.ui.test.qunit.triggerKeydown($tab2, jQuery.sap.KeyCodes.SPACE); // trigger Space on second filter		
+				strictEqual(oSelectSpy.callCount, 1, "SPACE is pressed, select event was fired");
+				
+				// Clean up
+				sap.m.IconTabBar.prototype.fireSelect.restore();
+				oIconTabBar.destroy();
+			});
+		
+		</script>
+
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.IconTabBar</h1>
+		<h2 id="qunit-banner"></h2>		
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

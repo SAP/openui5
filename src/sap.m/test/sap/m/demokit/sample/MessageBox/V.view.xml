@@ -1,0 +1,18 @@
+<mvc:View
+	controllerName="sap.m.sample.MessageBox.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Button
+				text="Show Confirmation"
+				press="handleConfirmationMessageBoxPress" />
+			<Button
+				text="Show Alert"
+				press="handleAlertMessageBoxPress" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

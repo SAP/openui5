@@ -1,0 +1,336 @@
+<!--
+  Tested control/class:   sap.ui.commons.TextField
+ -->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Test Page for sap.ui.commons.TextField</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.TextField.gif">
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="base"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+		var sValue = "Hello",
+			sTooltip = "abc",
+			oTextDirection = sap.ui.core.TextDirection.RTL,
+			bEnabled = true,
+			bEditable = true,
+			bVisible = true,
+			bRequired = false,
+			sWidth = "111px",
+			iMaxLength = 15,
+			oValueState = sap.ui.core.ValueState.Success,
+			oTextAlign = sap.ui.core.TextAlign.End,
+			oImeMode = sap.ui.core.ImeMode.Disabled,
+			sHelpId = "12345",
+			oAccessibleRole = sap.ui.core.AccessibleRole.Textbox,
+			aAriaDescribedBy = new Array("D1","D2"),
+			aAriaLabelledBy = new Array("L1","L2"),
+			sChangeMessage = "ruckzuck";
+
+		function changeEventHandler() {
+			throw sChangeMessage;
+		}
+
+		var oTextField1 = new sap.ui.commons.TextField("t1");
+		oTextField1.setValue(sValue);
+		oTextField1.setTextDirection(oTextDirection);
+		oTextField1.setTooltip(sTooltip);
+		oTextField1.setEnabled(bEnabled);
+		oTextField1.setEditable(bEditable);
+		oTextField1.setVisible(bVisible);
+		oTextField1.setRequired(bRequired);
+		oTextField1.setWidth(sWidth);
+		oTextField1.setMaxLength(iMaxLength);
+		oTextField1.setValueState(oValueState);
+		oTextField1.setTextAlign(oTextAlign);
+		oTextField1.setImeMode(oImeMode);
+		oTextField1.setHelpId(sHelpId);
+		oTextField1.setAccessibleRole(oAccessibleRole);
+		oTextField1.attachChange(changeEventHandler);
+		oTextField1.placeAt("uiArea1");
+
+		var oTextField2 = new sap.ui.commons.TextField("t2", {
+			value : sValue,
+			textDirection : oTextDirection,
+			tooltip : sTooltip,
+			enabled : bEnabled,
+			editable : bEditable,
+			visible : bVisible,
+			required : !bRequired,
+			width : sWidth,
+			maxLength : iMaxLength,
+			valueState : sap.ui.core.ValueState.Error,
+			textAlign : oTextAlign,
+			imeMode : oImeMode,
+			helpId : sHelpId,
+			accessibleRole : oAccessibleRole,
+			ariaDescribedBy : aAriaDescribedBy,
+			ariaLabelledBy : aAriaLabelledBy,
+			change : changeEventHandler,
+			placeholder: "Hello"
+		}).placeAt("uiArea2");
+
+		var oTextField3 = new sap.ui.commons.TextField("t3").placeAt("uiArea3");
+
+		var t1, t2;
+
+		module("Basic", {
+			setup: function() {
+				t1 = sap.ui.getCore().getControl("t1");
+				t2 = sap.ui.getCore().getControl("t2");
+
+				t2.setWidth(sWidth);
+
+				sap.ui.getCore().applyChanges();
+
+				ok(t1, "t1 should not be null");
+				ok(t2, "t2 should not be null");
+			},
+			teardown: function() {
+				t1 = null;
+				t2 = null;
+			}
+		});
+
+		// test property accessor methods 
+
+		test("ValueOk", function() {
+			strictEqual(t1.getValue(), sValue, "t1.getValue()");
+			strictEqual(t2.getValue(), sValue, "t2.getValue()");
+		});
+
+		test("TextDirectionOk", function() {
+			strictEqual(t1.getTextDirection(), oTextDirection, "t1.getTextDirection()");
+			strictEqual(t2.getTextDirection(), oTextDirection, "t2.getTextDirection()");
+		});
+
+		test("TooltipOk", function() {
+			strictEqual(t1.getTooltip(), sTooltip, "t1.getTooltip()");
+			strictEqual(t2.getTooltip(), sTooltip, "t2.getTooltip()");
+		});
+
+		test("EnabledOk", function() {
+			strictEqual(t1.getEnabled(), bEnabled, "t1.getEnabled()");
+			strictEqual(t2.getEnabled(), bEnabled, "t2.getEnabled()");
+		});
+
+		test("EditableOk", function() {
+			strictEqual(t1.getEditable(), bEditable, "t1.getEditable()");
+			strictEqual(t2.getEditable(), bEditable, "t2.getEditable()");
+		});
+
+		test("VisibleOk", function() {
+			strictEqual(t1.getVisible(), bVisible, "t1.getVisible()");
+			strictEqual(t2.getVisible(), bVisible, "t2.getVisible()");
+		});
+
+		test("RequiredOk", function() {
+			strictEqual(t1.getRequired(), bRequired, "t1.getRequired()");
+			strictEqual(t2.getRequired(), !bRequired, "t2.getRequired()");
+		});
+
+		test("WidthOk", function() {
+			strictEqual(t1.getWidth(), sWidth, "t1.getWidth()");
+			strictEqual(t2.getWidth(), sWidth, "t2.getWidth()");
+		});
+
+		test("MaxLengthOk", function() {
+			strictEqual(t1.getMaxLength(), iMaxLength, "t1.getMaxLength()");
+			strictEqual(t2.getMaxLength(), iMaxLength, "t2.getMaxLength()");
+		});
+
+		test("ValueStateOk", function() {
+			strictEqual(t1.getValueState(), oValueState, "t1.getValueState()");
+			strictEqual(t2.getValueState(), sap.ui.core.ValueState.Error, "t2.getValueState()");
+		});
+
+		test("TextAlignOk", function() {
+			strictEqual(t1.getTextAlign(), oTextAlign, "t1.getTextAlign()");
+			strictEqual(t2.getTextAlign(), oTextAlign, "t2.getTextAlign()");
+		});
+
+		test("ImeModeOk", function() {
+			strictEqual(t1.getImeMode(), oImeMode, "t1.getImeMode()");
+			strictEqual(t2.getImeMode(), oImeMode, "t2.getImeMode()");
+		});
+
+		test("HelpIdOk", function() {
+			strictEqual(t1.getHelpId(), sHelpId, "t1.getHelpId()");
+			strictEqual(t2.getHelpId(), sHelpId, "t2.getHelpId()");
+		});
+
+		test("AccessibleRoleOk", function() {
+			strictEqual(t1.getAccessibleRole(), oAccessibleRole, "t1.getAccessibleRole()");
+			strictEqual(t2.getAccessibleRole(), oAccessibleRole, "t2.getAccessibleRole()");
+		});
+
+		test("ariaDescribedBy", function() {
+			ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
+			deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
+		});
+
+		test("ariaLabelledBy", function() {
+			ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
+			deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
+		});
+
+		// test event handlers 
+
+		// TODO: event handler using Event parameters
+
+		test("ChangeOk", function() {
+			try {
+				t1.fireChange();
+				fail("exception should have been thrown!");
+			} catch (e) {
+				strictEqual(e, sChangeMessage, "t1.fireChange()");
+			}
+
+			try {
+				t2.fireChange();
+				fail("exception should have been thrown!");
+			} catch (e) {
+				strictEqual(e, sChangeMessage, "t2.fireChange()");
+			}
+		});
+
+		test("DetachChangeOk", function() {
+			t1.detachChange(changeEventHandler);
+			try {
+				t1.fireChange();
+				ok(true, "No event and thus no exception should be triggered!");
+			} catch (e) {
+ 				fail("should not occur");
+			}
+			// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
+			t1.attachChange(changeEventHandler);
+		});
+
+
+		// test methods 
+
+		// TODO 
+
+
+		// test misc (control interaction, metadata, styles, etc.)	
+
+		function isEmpty(oObject) {
+			for(var i in oObject){ return false;}
+			return true;
+		}
+
+		test("MetadataOk", function() {
+			var oMetadata = t1.getMetadata();
+			ok(oMetadata, "t1.getMetadata() should not be null");
+			ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
+			ok(oMetadata.getParent() === sap.ui.core.Control.getMetadata());
+			strictEqual(oMetadata.getProperties()["value"]["type"], "string");
+			ok(isEmpty(oMetadata.getAggregations()));
+			var oAssociations = oMetadata.getAssociations();
+			strictEqual(oAssociations["ariaDescribedBy"]["type"], "sap.ui.core.Control", "ariaDescribedBy type");
+			ok(oAssociations["ariaDescribedBy"]["multiple"], "ariaDescribedBy multiple");
+			strictEqual(oAssociations["ariaLabelledBy"]["type"], "sap.ui.core.Control", "ariaLabelledBy type");
+			ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
+		});
+
+		test("OffsetWidthOk", function() {
+			//test the pixel perfect width of the control
+			var oDomRef = window.document.getElementById("t1");
+			strictEqual(oDomRef.offsetWidth, parseInt(t1.getWidth()), "t1.offsetWidth == parseInt(t1.getWidth())");
+			t2.setWidth("500px");
+			sap.ui.getCore().applyChanges();
+			oDomRef = window.document.getElementById("t2");
+			strictEqual(oDomRef.offsetWidth, 500, "b2.offsetWidth == 500");
+		});
+
+		test("ARIA", function() {
+			var oT1 = jQuery.sap.byId("t1");
+			var oT2 = jQuery.sap.byId("t2");
+			equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
+			equal(oT2.attr("aria-multiline"), "false", "aria-multiline");
+			equal(oT2.attr("aria-autocomplete"), "none", "aria-autocomplete");
+			ok(!oT1.attr("aria-invalid"), "aria-invalid not set");
+			equal(oT2.attr("aria-invalid"), "true", "aria-invalid");
+			equal(oT2.attr("aria-describedby"), "D1 D2", "aria-describesby");
+			equal(oT2.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
+			ok(!oT1.attr("aria-required"), "aria-required not set");
+			equal(oT2.attr("aria-required"), "true", "aria-required");
+		});
+
+		test("DomRef test", function() {
+			equal( oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK" );
+			equal( oTextField1.getInputDomRef().id, "t1", "InputDomRef OK" );
+			equal( oTextField1.getIdForLabel(), "t1", "Label ID OK" );
+		});
+
+		test("Placeholder", function() {
+			var oT1 = jQuery.sap.byId("t1");
+			var oT2 = jQuery.sap.byId("t2");
+			var oT3 = jQuery.sap.byId("t3");
+			if (sap.ui.Device.support.input.placeholder) {
+				ok(!oT1.attr("placeholder"), "placeholder not set");
+				equal(oT2.attr("placeholder"), "Hello", "placeholder set");
+			}
+			ok(!oT3.attr("placeholder"), "placeholder not set");
+			equal(oT3.val(), "", "no placeholder value set on HTML element");
+			ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
+
+			oTextField3.setPlaceholder("Hello");
+			sap.ui.getCore().applyChanges();
+			oT3 = jQuery.sap.byId("t3");
+
+			if (sap.ui.Device.support.input.placeholder) {
+				equal(oT3.attr("placeholder"), "Hello", "Placeholder set");
+				equal(oT3.val(), "", "no placeholder value set on HTML element");
+				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
+			}else{
+				ok(!oT3.attr("placeholder"), "placeholder not set");
+				equal(oT3.val(), "Hello", "placeholder value set on HTML element");
+				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set");
+				oT3.focus();
+				equal(oT3.val(), "", "no placeholdervalue set on HTML element if focused");
+				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if focused");
+				oT1.focus();
+				equal(oT3.val(), "Hello", "value set on HTML element if focuse lost");
+				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if focus lost");
+				oTextField3.setValue("Text");
+				equal(oT3.val(), "Text", "value set on HTML element");
+				ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set if a value is set");
+				oTextField3.setValue("");
+				equal(oT3.val(), "Hello", "placeholder value set on HTML element if value is empty");
+				ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set if value is empty");
+			}
+
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.commons.TextField</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		<span id="D1">Hello</span>
+		<span id="D2">World</span>
+		<span id="L1">Label1</span>
+		<span id="L2">Label2</span>
+		<div id="uiArea3"></div>
+	</body>
+</html>
+

@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.ScrollBar
+  Author: d029506
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+	// Vertical Scrollbar
+    var oVSB = new sap.ui.core.ScrollBar("vertSB");
+    oVSB.setVertical(true);
+    oVSB.setSize("200px");
+    //oVSB.setContentSize("1000px");
+    oVSB.setScrollPosition(4);
+  	oVSB.setSteps(100);
+
+	oVSB.placeAt("target1");
+
+	// Horizontal Scrollbar
+	var oHSB = new sap.ui.core.ScrollBar("horiSB");
+	oHSB.setVertical(false);
+	oHSB.setSize("200px");
+	oHSB.setContentSize("1000px");
+	oHSB.setScrollPosition(50);
+	oHSB.placeAt("target2");
+
+
+	</script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+	var vSB = undefined;
+	var hSB = undefined;
+
+	qutils.delayTestStart();
+
+
+	module("Initial check");
+
+
+	test("Controls Check", function() {
+	 	 vSB = sap.ui.getCore().getControl("vertSB");
+		 hSB = sap.ui.getCore().getControl("horiSB");
+
+		ok((vSB !== undefined) && (vSB != null), "vSB should not be null or undefined");
+		ok((hSB !== undefined) && (hSB != null), "hSB should not be null or undefined");
+
+	});
+
+	test("Orientation", function() {
+		ok(((vSB.getVertical() !== undefined)), "should not be null or undefined");
+		equal(vSB.getVertical(), true, "This is vertical scrollbar");
+		ok(((hSB.getVertical() !== undefined)), "should not be null or undefined");
+		equal(hSB.getVertical(), false, "This is horizontal scrollbar");
+	});
+
+	test("Scroll Position", function() {
+
+		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
+		equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
+	});
+
+
+	module("Properties");
+
+
+	test("Orientation", function() {
+		vSB.setVertical(false);
+		equal(vSB.getVertical(), false, "This is not vertical scrollbar");
+		vSB.setVertical(true);
+		equal(vSB.getVertical(), true, "This is vertical scrollbar");
+	});
+
+	test("Scroll Position", function() {
+		vSB.setScrollPosition(5); // steps
+		hSB.setScrollPosition(38); // pixels
+		equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
+		equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");	
+	});
+
+	test("Size", function() {
+		vSB.setSize("100px");
+		equal(vSB.getSize(), "100px", "size of vertical scrollbar is 100px");
+		equal(hSB.getSize(), "200px", "size of horizontal scrollbar is 200");	
+	});
+
+	test("Content Size and steps", function() {
+		equal(hSB.getContentSize(), "1000px", "size of content is 1000");
+		equal(vSB.getSteps(), 100, "number of steps for vertical scrollbar is 100");
+	});
+
+
+	module("Event handler");
+
+	asyncTest("Rerender scrollbars", function() {
+		equal(vSB.getScrollPosition(), 5, "1scroll position should be 5");
+		equal(hSB.getScrollPosition(), 38, "1scroll position is 38");
+		vSB.rerender();
+		hSB.rerender();
+		window.setTimeout(function(){
+			equal(vSB.getScrollPosition(), 5, "2scroll position should be 5");
+			equal(hSB.getScrollPosition(), 38, "2scroll position is 38");
+		start();
+		}, 100);
+	});
+
+
+	asyncTest("Scroll Event", 3, function() {
+
+		var bScrolled = false;
+		hSB.attachScroll( function() {bScrolled = true;});
+		notEqual(bScrolled, true, "Scroll event was not fired yet");
+		if ( sap.ui.getCore().getConfiguration().getRTL() && sap.ui.Device.browser.firefox){
+			jQuery('#'+ oHSB.getId() + ' > div').scrollLeft(-15);
+		} else {
+			jQuery('#'+ oHSB.getId() + ' > div').scrollLeft(15);
+		}
+
+	 	setTimeout(function() {
+
+			start();
+	 		equal(bScrolled, true, "Scroll event was fired");
+	 		equal(jQuery("#horiSB-sb").scrollLeft(), 15, "New scroll position of horizontal scrollbar is 15 px");
+	 	}, 100);
+	});
+
+	asyncTest("Scroll Scrollbars", 1, function() {
+		vSB.setScrollPosition(8);
+		jQuery("#horiSB-sb").scrollLeft(155);
+
+		setTimeout(function() {
+
+			start();
+			equal(vSB.getScrollPosition(), "8", "scroll position is 8 step");
+			// TODO: this is quite often failing! Check why! Maybe we increase the timeout!
+			//equal(hSB.getScrollPosition(), "155", "scroll position is 155 px");
+			
+		}, 10);
+
+	});
+	
+	
+	asyncTest("Scroll Huge Scrollbars", 1, function() {
+		// Suport of Huge number of steps
+		vSB.setSteps(1000000); //8000000px in Chrom
+		vSB.setScrollPosition(300000);
+		vSB.rerender();
+		setTimeout(function() {
+
+			start();
+			equal(vSB.getScrollPosition(), "300000", "scroll position is 300000 step");
+		}, 500);
+
+	});
+	
+	
+	// Touch support
+	module("Touch Support", {
+		setup : function() {
+			// Remember original touch event mode
+			this.touchEventMode = jQuery.sap.touchEventMode;
+			jQuery.sap.touchEventMode = "ON"
+			this.oVSB = new sap.ui.core.ScrollBar("vertSBTouch");
+			this.oVSB.setVertical(true);
+			this.oVSB.setSize("200px");
+			this.oVSB.setSteps(100);
+			this.oVSB.placeAt("target3");
+
+			jQuery.sap.touchEventMode = "ON"
+			// Horizontal Scrollbar
+			this.oHSB = new sap.ui.core.ScrollBar("horiSBTouch");
+			this.oHSB.setVertical(false);
+			this.oHSB.setSize("200px");
+			this.oHSB.setContentSize("1000px");
+			this.oHSB.placeAt("target4");
+			sap.ui.getCore().applyChanges();
+		},
+
+		
+		teardown : function() {
+			this.oVSB.destroy();
+			this.oVSB = null;
+			this.oHSB.destroy();
+			this.oHSB = null;
+			// Restore touch event mode
+			jQuery.sap.touchEventMode = this.touchEventMode;
+		}
+	});
+
+	asyncTest("Touch Scrolling", 2, function() {
+		this.oVSB._handleTouchScroll(0,192);
+		this.oHSB._handleTouchScroll(155,0);
+
+		var self = this;
+		setTimeout(function() {
+			start();
+			equal(self.oVSB.getScrollPosition(), "8", "scroll position is 8 step");
+			equal(self.oHSB.getScrollPosition(), "155", "scroll position is 155 px");
+		}, 10);
+	});
+
+	</script>
+
+	<title>QUnit Test for Scrollbar</title>
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.ScrollBar</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="target1"></div>
+	<br>
+	<div id="target2"></div>
+	<br>
+	<div id="target3"></div>
+	<br>
+	<div id="target4"></div>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
+<title>Object Header used in Grid - sap.m</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.layout,sap.m" data-sap-ui-theme="sap_bluecrystal">
+
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.IconPool");
+	
+	
+
+	var marginStyle = jQuery.device.is.phone ? "sapUiSmallMargin" : "sapUiMediumMargin";
+
+	var attrs = [ new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Contract #D1234567890"
+	}), new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+	}), new sap.m.ObjectAttribute({
+		text : "Ñagçyfox Created at: April 9, 2013"
+	}) ];
+	var attrs2 = [ new sap.m.ObjectAttribute({
+		text : "Contract #D1234567890 Ñagçyfox",
+		active : true,
+		press : function() {
+
+			attrs2[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectAttribute({
+		text : "Created by: John Doe Ñagçyfox",
+		active : true,
+		press : function() {
+
+			attrs2[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}) ];
+
+	var oh1 = new sap.m.ObjectHeader(
+			"oh1", {
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				number : "3.624,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Success,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+	
+	var oh1Icon = new sap.m.ObjectHeader("oh1-with-icon",{
+				icon : sap.ui.core.IconPool.getIconURI("attachment"),
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				number : "3.624,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Success,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				}) ]
+			});
+	
+	var oh1IconNoNumber = new sap.m.ObjectHeader(
+			"oh1-with-icon-no-number",	{
+				icon : sap.ui.core.IconPool.getIconURI("attachment"),
+				intro : "On behalf of John Smith Ñagçyfox",
+				title : "123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421123213213213214211232132132132142112321321321321421",
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Lorem ipsum dolor sit amet",
+					icon : sap.ui.core.IconPool.getIconURI("inbox"),
+					state : sap.ui.core.ValueState.Success
+				})]
+			});
+
+	var oh2 = new sap.m.ObjectHeader(
+			"oh2",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+
+				statuses : [ new sap.m.ObjectStatus({
+					text : ""
+				}), new sap.m.ObjectStatus({}) ],
+				attributes : [ new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), new sap.m.ObjectAttribute({}), ]
+			});
+
+	var oh3 = new sap.m.ObjectHeader(
+			"oh3",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "3.624.000.000,00",
+				numberUnit : "Euro",
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Ñgçy Positive Text Ñgçy",
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+
+	var oh3_1 = new sap.m.ObjectHeader(
+			"oh3_1",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "6,00",
+				numberUnit : "Euro",
+				numberState : sap.ui.core.ValueState.Error,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ]
+			});
+
+	var oh3_2 = new sap.m.ObjectHeader(
+			"oh3_2",
+			{
+				title : "Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
+				number : "3.624",
+				numberUnit : "EUR",
+				numberState : sap.ui.core.ValueState.Warning,
+				statuses : [ new sap.m.ObjectStatus({
+					text : "Ñgçy Positive Text Ñgçy",
+					state : sap.ui.core.ValueState.Success
+				}), new sap.m.ObjectStatus({
+					text : "Negative Text Ñgçy",
+					state : sap.ui.core.ValueState.Error
+				}) ],
+				attributes : [ new sap.m.ObjectAttribute({
+					text : "This one is invisible",
+					visible : false
+				}),
+				    new sap.m.ObjectAttribute({
+					text : "Ñagçyfox Contract #D1234567890"
+				}) ],
+				markFavorite : true
+			});
+
+	var oh4PressHandler = function(oEvent) {
+
+		if (oh4.getIcon()) {
+			oh4.setIcon(null);
+		} else {
+			oh4.setIcon(sap.ui.core.IconPool.getIconURI("attachment"));
+		}
+	}
+
+	var oh4 = new sap.m.ObjectHeader("oh4", {
+		intro : "On behalf of John Smith Ñagçyfox",
+		title : "Title is Active Ñagçyfox Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+		titleActive : true,
+		titlePress : oh4PressHandler,
+		number : "3.628.000",
+		numberUnit : "EUR",
+		numberState : sap.ui.core.ValueState.None,
+		attributes : attrs,
+		statuses : [ new sap.m.ObjectStatus({
+			text : "Ñgçy Positive Text Ñgçy",
+			state : sap.ui.core.ValueState.Success
+		}), new sap.m.ObjectStatus({
+			text : "Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy Negative Text Ñgçy",
+			state : sap.ui.core.ValueState.Error
+		}) ],
+		icon : sap.ui.core.IconPool.getIconURI("attachment"),
+		iconActive : true,
+		iconPress : oh4PressHandler
+	});
+
+	
+	var scrollContainer = new sap.m.ScrollContainer({
+		width : "100%",
+		horizontal : sap.ui.Device.system.phone,
+		content: [new sap.m.Label({text: "This label is displayed on the Object Header's right hand side"})]
+	});
+	
+	var facetGrid = new sap.ui.layout.Grid({
+		defaultSpan: "L6 M12 S12",
+		hSpacing: 1,
+		vSpacing: 1,
+		width: "auto",
+		content: [oh1, oh2, oh3, oh4]
+	});
+	
+	var gridOHeader = new sap.m.ObjectHeader ({ 
+		title: "Create fictitious vendor and initiate payment to the vendor [Vendor Management]", 
+		condensed: true });
+	gridOHeader.addAttribute(new sap.m.ObjectAttribute({ text: "P001" }));
+	
+	var headerGrid = new sap.ui.layout.Grid({
+		hSpacing: 0,
+		vSpacing: 0,
+		content: [
+			gridOHeader,
+			scrollContainer
+		]
+	});
+	
+	var masterPage = new sap.m.Page({
+		content: [headerGrid, facetGrid],
+		showNavButton: true,
+	});
+	
+	
+	
+	
+	// put all the testing object header objects on the testing page
+	var app = new sap.m.App();
+	
+	
+	app.setInitialPage(masterPage.getId());
+	app.addPage(masterPage);
+	
+	app.placeAt('body');
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

@@ -1,0 +1,831 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ManagedObject - sap.ui.base</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true" >
+		</script>
+		
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+			
+			var mObjects = {};
+			
+			// define new types for testing
+			sap.ui.base.ManagedObject.extend("sap.ui.core.TestManagedObject", {
+				metadata : { 
+					// ---- control specific ----
+					library : "sap.ui.core",
+					properties : {
+						value : {type: "string", group: "Appearance", defaultValue: ""},
+						stringValue : {type: "string", group: "Appearance", defaultValue: ""},
+						floatValue : {type: "float", group: "Appearance", defaultValue: 0},
+						intValue : {type: "int", group: "Appearance", defaultValue: 0},
+						booleanValue : {type: "boolean", group: "Appearance", defaultValue: false},
+						stringArray : {type: "string[]", group: "Appearance", defaultValue: []},
+						floatArray : {type: "float[]", group: "Appearance", defaultValue: []},
+						intArray : {type: "int[]", group: "Appearance", defaultValue: []},
+						booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
+						objectValue : {type: "object", group: "Misc", defaultValue: null}
+					},
+					aggregations : {
+						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
+						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"}
+					},
+					associations : {
+						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false}, 
+						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
+					}
+				},
+				
+				init : function() {
+					mObjects[this.getId()] = this;
+				},
+				
+				exit : function() {
+					delete mObjects[this.getId()];
+				}
+			});	
+		
+			sap.ui.base.ManagedObject.extend("sap.test.TestManagedObject", {
+				metadata : { 
+					// ---- control specific ----
+					library : "sap.test",
+					aggregations : {
+						"multiplePublicItems" : {type : "sap.ui.core.TestManagedObject", multiple : true},
+						"multipleHiddenItems" : {type : "sap.ui.core.TestManagedObject", multiple : true, visibility : "hidden"},
+						"singlePublicItem" : {type : "sap.ui.core.TestManagedObject", multiple : false},
+						"singleHiddenItem" : {type : "sap.ui.core.TestManagedObject", multiple : false, visibility : "hidden"}
+					},
+				},
+				
+				init: function(){
+					mObjects[this.getId()] = this;
+					this.setAggregation("singleHiddenItem", new sap.ui.core.TestManagedObject(this.getId()+"-singleHiddenItem"));
+					this.addAggregation("multipleHiddenItems", new sap.ui.core.TestManagedObject(this.getId()+"-multipleHiddenItem1"));
+					this.addAggregation("multipleHiddenItems", new sap.ui.core.TestManagedObject(this.getId()+"-multipleHiddenItem2"));
+				},
+				
+				exit : function() {
+					delete mObjects[this.getId()];
+				}
+				
+			});	
+			
+			var changed = false;
+			
+			function byId(sId) {
+				return mObjects[sId];
+			}
+
+			function toId(v) {
+				if ( jQuery.isArray(v) ) {
+					return jQuery.map(v, toId);
+				} else {
+					return v && v.getId();
+				}
+			}
+
+			function equalSortedIds(aActual, aExpected, sMsg) {
+				var aIdActual = toId(aActual).sort();
+				var aIdExpected = toId(aExpected).sort();
+				deepEqual(aIdActual, aIdExpected, sMsg);
+			}
+			
+			function childOf(sId,sParentId) {
+				var oItem = byId(sId);
+				sParentId = sParentId || "testObj";
+				ok(!!oItem, "Item '"+sId+"' should exist");
+				equal(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
+			}
+			
+			function notChildOf(sId, sParentId) {
+				var oItem = byId(sId);
+				sParentId = sParentId || "testObj";
+				ok(!!oItem, "Item '"+sId+"' should exist");
+				notEqual(oItem.getParent() && oItem.getParent().getId(), sParentId, "Item '"+sId+"' should have correct parent");
+			}
+
+			function checkIfParentCleared(oObj, sMsg) {
+				var oParent = sap.ui.base.ManagedObject.prototype.getParent.call (oObj); 
+				ok(oParent == null, sMsg || "parent relationship must have been cleared");
+			}
+			
+			function checkIfDestroyed(oObj) {
+				try {
+					oObj.setParent(this.obj);
+					ok(false, "should not be reached");
+				} catch (e) {
+					ok(true, "setting the parent on a destroyed object should raise an exception");
+				}
+				checkIfParentCleared(oObj, "parent relationship for a destroyed object must have been cleared");
+			}
+
+			var oModel = new sap.ui.model.json.JSONModel({
+				value: "testvalue",
+				objectValue: { model: true },
+				list: [
+					{value: "testvalue1"},
+					{value: "testvalue2"},
+					{value: "testvalue3"}
+				]
+			});
+			
+			function fnChange() {
+				changed = true;
+			}
+			
+			module("Basic");
+			
+			test("Object Creation", function() {
+				var obj = new sap.ui.core.TestManagedObject();
+				ok(obj, "obj must have been created");
+				ok(obj.getId, "obj must have a getter for the ID");
+				ok(obj.getId(), "obj must have a (generated) ID");
+				ok(obj.getId().length > 0, "generated ID must not be empty");
+				
+				var obj2 = new sap.ui.core.TestManagedObject();
+				ok(obj.getId() != obj2.getId(), "second generated ID must be different from the first one");
+			});
+			
+			test("Object Creation (ID given)", function() {
+				var obj = new sap.ui.core.TestManagedObject("myObject");
+				equal(obj.getId(), "myObject", "ID must be 'myObject'");
+			});
+			
+			module("Properties", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.obj.setModel(oModel);
+				}
+			});
+			
+			test("Set and get property", function() {
+				this.obj.setProperty("value", "testvalue");
+				equal(this.obj.getProperty("value"), "testvalue", "Getter must return set value");
+			});
+			
+			test("Set unknown property", function() {
+				var bThrown = false;
+				try {
+					this.obj.setProperty("unknown", "testvalue");
+				} catch(e) {
+					bThrown = true;
+				}
+				ok(bThrown, "Must throw error on unknown property setter")
+			});
+			
+			test("Set properties with different types", function() {
+				var that = this;
+				function test(name, value, shouldThrow) {
+					var bThrown = false,
+						sMessage = "Must " + (shouldThrow ? "throw" : "not throw") + " when setting " + value + " on " + name;
+					try {
+						that.obj.setProperty(name, value);
+					} catch(e) {
+						bThrown = true;
+					}
+					
+					equal(bThrown, shouldThrow, sMessage)
+				}
+				test("stringValue", "test", false);
+				test("stringValue", 23, false);
+				test("stringValue", 23.45, false);
+				test("stringValue", true, false);
+				test("intValue", 23, false);
+				test("intValue", "23", true);
+				test("intValue", 23.45, true);
+				test("intValue", true, true);
+				test("floatValue", 23.45, false);
+				test("floatValue", 23, false);
+				test("floatValue", "23", true);
+				test("floatValue", true, true);
+				test("booleanValue", true, false);
+				test("booleanValue", 23.45, true);
+				test("booleanValue", 23, true);
+				test("booleanValue", "true", true);
+				test("stringArray", ["a", "b", "c"], false);
+				test("stringArray", ["a", 10, true], false);
+				test("stringArray", "test", false);
+				test("stringArray", 23, true);
+				test("stringArray", 23.45, true);
+				test("stringArray", true, true);
+				test("intArray", [1, 2, 3], false);
+				test("intArray", [1, 2, 3.5], true);
+				test("intArray", ["a", 10, true], true);
+				test("intArray", "test", true);
+				test("intArray", 23, true);
+				test("intArray", 23.45, true);
+				test("intArray", true, true);
+				test("floatArray", [1.3, 2.5, 3.123], false);
+				test("floatArray", [1, 2, 3.5], false);
+				test("floatArray", ["a", 10, true], true);
+				test("floatArray", "test", true);
+				test("floatArray", 23, true);
+				test("floatArray", 23.45, true);
+				test("floatArray", true, true);
+				test("booleanArray", [true, false, true], false);
+				test("booleanArray", [true, false, 0], true);
+				test("booleanArray", ["a", 10, true], true);
+				test("booleanArray", "test", true);
+				test("booleanArray", 23, true);
+				test("booleanArray", 23.45, true);
+				test("booleanArray", true, true);
+			});
+						
+			test("Bind property", function() {
+				this.obj.bindProperty("value", "/value");	
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+			});
+
+			test("Bind property in settings", function() {
+				var obj = new sap.ui.core.TestManagedObject({
+					value: "{/value}",
+					objectValue: {
+						path: "/objectValue"
+					},
+					models: oModel
+				});	
+				equal(obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(obj.getProperty("value"), "testvalue", "Property must return model value");
+				equal(obj.isBound("objectValue"), true, "isBound must return true for bound properties");
+				equal(obj.getProperty("objectValue").model, true, "Object must contain model property");
+				obj.destroy();
+				obj = new sap.ui.core.TestManagedObject({
+					objectValue: {
+						ui5object: true,
+						local: true,
+						path: "/objectValue"
+					},
+					models: oModel
+				});	
+				equal(obj.isBound("objectValue"), false, "isBound does return false if object contains ui5object");
+				equal(obj.getProperty("objectValue").local, true, "Object must contain local property");
+				equal(obj.getProperty("objectValue").ui5object, undefined, "Object must not contain ui5object anymore");
+				obj.destroy();
+			});
+			
+			test("Bind property/pass event handler", function() {
+				this.obj.bindProperty("value", {path:"/value", events:{change:fnChange}});	
+				equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
+				equal(this.obj.getProperty("value"), "testvalue", "Property must return model value");
+				equal(changed,true,"handler attached/change event fired");
+				changed = false;
+			});
+			
+			test("Unbind property", function() {
+				this.obj.bindProperty("value", "/value");	
+				this.obj.unbindProperty("value");	
+				equal(this.obj.isBound("value"), false, "isBound must return false for bound properties");
+				equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
+			});
+
+
+			test("Bind unkown property", function() {
+				var bThrown = false;
+				try {
+					this.obj.bindProperty("unknown", "/testpath");
+				} catch(e) {
+					bThrown = true;
+				}
+				ok(bThrown, "Must throw error on unknown property bind")
+			});
+			
+			module("Aggregations", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.subObj = new sap.ui.core.TestManagedObject();
+					this.subObj2 = new sap.ui.core.TestManagedObject();
+					this.subObj3 = new sap.ui.core.TestManagedObject();
+					this.template = new sap.ui.core.TestManagedObject({value: "{value}"});
+					this.obj.setModel(oModel);
+				}
+			});
+
+			test("Accessor / Mutator functions", function() {
+				ok(typeof(this.obj.getSubObjects) === "function", "Typed get function for multiple public aggregation available");
+				ok(typeof(this.obj.addSubObj) === "function", "Typed add function for multiple public aggregation available");
+				ok(typeof(this.obj.removeSubObj) === "function", "Typed remove function for multiple public aggregation available");
+				ok(typeof(this.obj.removeAllSubObjects) === "function", "Typed removeAll function for multiple public aggregation available");
+				ok(typeof(this.obj.destroySubObjects) === "function", "Typed destroy function for multiple public aggregation available");
+				ok(typeof(this.obj.indexOfSubObj) === "function", "Typed indexOf function for multiple public aggregation available");
+				ok(typeof(this.obj.insertSubObj) === "function", "Typed insert function for multiple public aggregation available");
+				
+				ok(typeof(this.obj.getSingleAggr) === "function", "Typed get function for single public aggregation available");
+				ok(typeof(this.obj.setSingleAggr) === "function", "Typed set function for single public aggregation available");
+				ok(typeof(this.obj.destroySingleAggr) === "function", "Typed destroy function for single public aggregation available");
+			});
+			
+			test("Set, get, unset and destroy single aggregation", function() {
+
+				// get
+				equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined for an empty aggregation");
+
+				// set
+				this.obj.setAggregation("singleAggr", this.subObj);
+				childOf(this.subObj.getId(), this.obj.getId());
+				
+				// get
+				equal(this.obj.getAggregation("singleAggr"), this.subObj, "getter should return the previously set object");
+
+				// unset
+				this.obj.setAggregation("singleAggr", null);
+				equal(this.obj.getAggregation("singleAggr"), undefined, "getter should return null/undefined after setting the aggregation to null");
+				notChildOf(this.subObj.getId(), this.obj.getId());
+				checkIfParentCleared(this.subObj);
+				
+				// destroy
+				this.obj.setAggregation("singleAggr", this.subObj);
+				this.obj.destroyAggregation("singleAggr");
+				equal(this.obj.getAggregation("singleAggr"), undefined, "Getter must not return an object");
+				checkIfDestroyed(this.subObj);
+			});
+
+			test("Add, Get, Remove and Destroy multiple aggregation", function() {
+				this.obj.addAggregation("subObjects", this.subObj);
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj], "Getter must return objects array");
+				childOf(this.subObj.getId(), this.obj.getId());
+
+				this.obj.removeAggregation("subObjects", this.subObj);
+				deepEqual(this.obj.getAggregation("subObjects"), [], "Getter must return empty array");
+
+				this.obj.addAggregation("subObjects", this.subObj);
+				this.obj.addAggregation("subObjects", this.subObj2);
+				this.obj.addAggregation("subObjects", this.subObj3);
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "getter must return objects array");
+				childOf(this.subObj.getId(), this.obj.getId());
+				childOf(this.subObj2.getId(), this.obj.getId());
+				this.obj.removeAggregation("subObjects", this.subObj2);
+				deepEqual(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj3], "Getter must return array with remaining objects");
+				checkIfParentCleared(this.subObj2);
+				this.obj.removeAllAggregation("subObjects");
+				deepEqual(this.obj.getAggregation("subObjects", []), [], "Getter must return empty array");
+				checkIfParentCleared(this.subObj);
+				checkIfParentCleared(this.subObj3);
+				
+				this.obj.addAggregation("subObjects", this.subObj);
+				this.obj.addAggregation("subObjects", this.subObj2);
+				this.obj.addAggregation("subObjects", this.subObj3);
+				this.obj.destroyAggregation("subObjects");
+				checkIfDestroyed(this.subObj);
+				checkIfDestroyed(this.subObj2);
+				checkIfDestroyed(this.subObj3);
+			});
+			
+			test("Add/Insert item twice", function() {
+				this.obj.addAggregation("subObjects", this.subObj);
+				this.obj.addAggregation("subObjects", this.subObj2);
+				this.obj.addAggregation("subObjects", this.subObj3);
+				var N = this.obj.getAggregation("subObjects").length;
+				
+				for(var i=0; i<N; i++) {
+					this.obj.addAggregation("subObjects", this.obj.getAggregation("subObjects")[i]);
+					equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "add(get(" + i + ")): there must be no duplicate Ids");
+				}
+
+				for(var i=0; i<N; i++) {
+					for(var j=0; j<N+1; j++) {
+						this.obj.insertAggregation("subObjects", this.obj.getAggregation("subObjects")[i], j);
+						equalSortedIds(this.obj.getAggregation("subObjects"), [this.subObj, this.subObj2, this.subObj3], "insert(get(" + i + ")," + j + "): there must be no duplicate Ids");
+					}
+				}
+			});
+			
+			test("Set a multiple aggregation", function() {
+				QUnit["throws"](function() {
+					this.obj.setAggregation("subObjects", this.subObj);
+				}, null, "Must throw error on calling aggregation setter for a mutiple aggregation");
+			});
+			
+			test("Set unknown aggregation", function() {
+				QUnit["throws"](function() {
+					this.obj.setAggregation("unknown", this.subObj);
+				}, null, "Must throw error on unknown aggregation setter");
+				
+				// for controls in "unknown" libraries, the usage of invalid aggregations must not throw exceptions!
+				var object2 = new sap.test.TestManagedObject();
+				object2.setAggregation("phantasy", this.subObj);
+				object2.setAggregation("phantasy", null);
+				object2.addAggregation("phantasy", this.subObj);
+				object2.removeAggregation("phantasy", this.subObj);
+				object2.insertAggregation("phantasy", 0, this.subObj);
+				object2.removeAggregation("phantasy", this.subObj);
+				object2.setAggregation("phantasy", this.subObj);
+				object2.setAggregation("phantasy", null);
+				object2.destroy();
+				ok(true, "must not throw exception for unknown aggregations in custom libs");
+			});
+			
+			test("Bind aggregation", function() {
+				this.obj.bindAggregation("subObjects", "/list", this.template);	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+			});
+			
+			test("Bind aggregation with template non shareable", function() {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === this.template, "binding info template");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+				this.obj.unbindAggregation("subObjects");
+				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				ok(this.template.bIsDestroyed, "Template is destroyed");
+				checkIfDestroyed(this.template);
+				
+			});
+			
+			test("Bind aggregation with template shareable", function() {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template}); // old behavior	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === this.template, "binding info template");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+				this.obj.unbindAggregation("subObjects");
+				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+			});
+			
+			test("Bind aggregation with template shareable with flag", function() {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:true}); // old behavior	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === this.template, "binding info template");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+				this.obj.unbindAggregation("subObjects");
+				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+			});
+			
+			test("Bind aggregation with template non shareable and destroy object", function() {
+				this.obj.bindAggregation("subObjects", { path:"/list", template: this.template, templateShareable:false});	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				
+				var oBindingInfo = this.obj.getBindingInfo('subObjects');
+				ok(oBindingInfo, "binding info");
+				ok(oBindingInfo.template, "binding info template");
+				ok(oBindingInfo.template === this.template, "binding info template");
+				ok(!this.template.bIsDestroyed, "Template is not destroyed");
+				
+				this.obj.destroy();
+				equal(this.obj.getAggregation("subObjects"), undefined, "Getter must not return an object");
+				checkIfDestroyed(this.obj);
+				checkIfDestroyed(this.template);
+				ok(this.obj.bIsDestroyed, "obj is destroyed");
+				ok(this.template.bIsDestroyed, "Template is destroyed");
+				
+			});
+
+			test("Bind aggregation with length", function() {
+				this.obj.bindAggregation("subObjects", {
+					path: "/list",
+					template: this.template,
+					length: 2
+				});	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match defined length");
+			});
+
+			test("Bind aggregation with startIndex/length", function() {
+				this.obj.bindAggregation("subObjects", {
+					path: "/list",
+					template: this.template,
+					startIndex: 1,
+					length: 5
+				});	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 2, "Aggregation length should match the rest of available length");
+				equal(this.obj.getAggregation("subObjects")[0].getProperty("value"), "testvalue2", "First aggregation entry should match second list entry");
+			});
+			
+			test("Bind aggregation/pass event handler", function() {
+				this.obj.bindAggregation("subObjects", {path:"/list", template:this.template, events:{change:fnChange}});	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 3, "Aggregation length should match model list length");
+				equal(changed,true,"handler attached/change event fired");
+				changed = false;
+			});
+
+			test("Unbind aggregation", function() {
+				this.obj.bindAggregation("subObjects", "/list", this.template);	
+				this.obj.unbindAggregation("subObjects");	
+				equal(this.obj.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+				equal(this.obj.getAggregation("subObjects", []).length, 0, "Aggregation must be reset after unbind");
+			});
+
+			test("Bind unkown aggregation", function() {
+				var bThrown = false;
+				try {
+					this.obj.bindAggregation("unknown", "/testpath", this.template);
+				} catch(e) {
+					bThrown = true;
+				}
+				ok(bThrown, "Must throw error on unknown aggregation bind")
+			});
+			
+			module("Hidden Aggregations", {
+				setup: function() {
+					this.testObj = new sap.test.TestManagedObject("testObj", {
+						multiplePublicItems : [
+							new sap.ui.core.TestManagedObject("i1"),
+							new sap.ui.core.TestManagedObject("i2")
+						],
+						multipleHiddenItems : [
+							new sap.ui.core.TestManagedObject("i3"),
+							new sap.ui.core.TestManagedObject("i4")
+						],
+						singlePublicItem : new sap.ui.core.TestManagedObject("i5"),
+						singleHiddenItem : new sap.ui.core.TestManagedObject("i6")
+					});
+				},
+				teardown : function() {
+					this.testObj.destroy();
+				}
+			});
+			
+			test("Accessor / Mutator functions", function() {
+				ok(!this.testObj.getMultipleHiddenItems, "Typed get function for multiple private aggregation not available");
+				ok(!this.testObj.addMultipleHiddenItem, "Typed add function for multiple private aggregation not available");
+				ok(!this.testObj.removeMultipleHiddenItem, "Typed remove function for multiple private aggregation not available");
+				ok(!this.testObj.removeAllMultipleHiddenItems, "Typed removeAll function for multiple private aggregation not available");
+				ok(!this.testObj.destroyMultipleHiddenItems, "Typed destroy function for multiple private aggregation not available");
+				ok(!this.testObj.indexOfMultipleHiddenItem, "Typed indexOf function for multiple private aggregation not available");
+				ok(!this.testObj.insertMultipleHiddenItem, "Typed insert function for multiple private aggregation not available");
+				
+				ok(!this.testObj.getSingleHiddenItem, "Typed get function for single private aggregation not available");
+				ok(!this.testObj.setSingleHiddenItem, "Typed set function for single private aggregation not available");
+				ok(!this.testObj.destroySingleHiddenItem, "Typed destroy function for single private aggregation not available");
+			});
+			
+			test("Parent Relationship", function() {
+				childOf("testObj-singleHiddenItem");
+				childOf("testObj-multipleHiddenItem1");
+				childOf("testObj-multipleHiddenItem2");
+			});
+			
+			test("Initial Settings (Apply Settings ignores hidden aggregations)", function() {
+				notChildOf("i3");
+				notChildOf("i4");
+				notChildOf("i6");
+				equals(this.testObj.getAggregation("multipleHiddenItems").length, 2, "Number of aggregated multiple private items correct");
+				equals(this.testObj.getAggregation("singleHiddenItem").getId(), "testObj-singleHiddenItem", "Aggregated single private item correct");
+			});
+			
+			test("Destroy", function() {
+				this.testObj.destroyAggregation("multipleHiddenItems");
+				this.testObj.destroyAggregation("singleHiddenItem");
+				
+				equals(this.testObj.getAggregation("multipleHiddenItems", []).length, 0, "Number of aggregated multiple private items after destroy correct");
+				ok(!this.testObj.getAggregation("singleHiddenItem"), "No aggregated single private item after destroy");
+				
+				ok(!byId("testObj-singleHiddenItem"), "Item 'testObj-singleHiddenItem' destroyed");
+				ok(!byId("testObj-multipleHiddenItem1"), "Item 'testObj-multipleHiddenItem1' destroyed");
+				ok(!byId("testObj-multipleHiddenItem2"), "Item 'testObj-multipleHiddenItem2' destroyed");
+			});
+			
+			module("[0..n] Associations", {
+				setup : function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.assocElement = new sap.ui.core.TestManagedObject();
+					this.assocElement2 = new sap.ui.core.TestManagedObject();
+				}
+			});
+			
+			test("Get from to 0..n Association", function() {
+				var result = this.obj.getAssociation("associatedObjects", []); // the second parameter is usually generated by XSLT
+				ok(result, "returned value must not be null");
+				ok(jQuery.isArray(result), "returned type must be an array");
+				equal(result.length, 0, "returned array must be empty");
+			});
+			
+			test("Add to 0..n Association", function() {
+				this.obj.addAssociation("associatedObjects", this.assocElement);
+				var result = this.obj.getAssociation("associatedObjects", []);
+				
+				ok(result, "returned value must not be null");
+				equal(typeof(result.length), "number", "returned type must be an array");
+				equal(result.length, 1, "returned array must have one entry");
+				equal(result[0], this.assocElement.getId(), "returned entry must be the ID of the associated object");
+			});
+			
+			test("Add more to 0..n Association", function() {
+				this.obj.addAssociation("associatedObjects", this.assocElement);
+				var result = this.obj.addAssociation("associatedObjects", this.assocElement2);
+				equal(result.getId(), this.obj.getId(), "the returned item must be the object itself");
+				
+				result = this.obj.getAssociation("associatedObjects", []);
+				
+				ok(result, "returned value must not be null");
+				equal(typeof(result.length), "number", "returned type must be an array");
+				equal(result.length, 2, "returned array must have two entries");
+				equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object");
+				equal(result[1], this.assocElement2.getId(), "second returned entry must be the ID of the second associated object");
+			});
+			
+			test("Modification of array returned as representation of 0..n Association", function() {
+				this.obj.addAssociation("associatedObjects", this.assocElement);
+				var result = this.obj.getAssociation("associatedObjects", []);
+				result[0] = "modified-value!";
+				
+				result = this.obj.getAssociation("associatedObjects", []);
+				equal(result[0], this.assocElement.getId(), "first returned entry must be the ID of the first associated object even after a copy had been modified");
+			});
+			
+			test("Remove from 0..n Association", function() {
+				this.obj.addAssociation("associatedObjects", this.assocElement);
+				this.obj.addAssociation("associatedObjects", this.assocElement2);
+				var result = this.obj.removeAssociation("associatedObjects", this.assocElement);
+				equal(result, this.assocElement.getId(), "returned value must be the ID of the removed object");
+				
+				var remaining = this.obj.getAssociation("associatedObjects", []);
+				ok(remaining, "returned value must not be null");
+				equal(typeof(remaining.length), "number", "returned type must be an array");
+				equal(remaining.length, 1, "returned array must have one entry");
+				equal(remaining[0], this.assocElement2.getId(), "remaining entry must be the ID of the second associated object");
+			});
+			
+			test("Remove All from 0..n Association", function() {
+				this.obj.addAssociation("associatedObjects", this.assocElement2);
+				this.obj.addAssociation("associatedObjects", this.assocElement); // add one more so removeAll has to remove two objects
+				
+				var result = this.obj.removeAllAssociation("associatedObjects");
+				ok(result, "returned value must not be null");
+				equal(typeof(result.length), "number", "returned type must be an array");
+				equal(result.length, 2, "returned array must have two entries");
+				equal(result[0], this.assocElement2.getId(), "first returned entry must be the ID of the first associated object");
+				equal(result[1], this.assocElement.getId(), "second returned entry must be the ID of the second associated object");
+				
+				var remaining = this.obj.getAssociation("associatedObjects", []);
+				ok(remaining.length == 0, "returned value must be an empty array");
+			});
+			
+			module("Cloning Elements", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.subObj = new sap.ui.core.TestManagedObject();
+					this.template = new sap.ui.core.TestManagedObject();
+				}
+			});
+			
+			test("Clone Object", function() {
+				this.obj.addAggregation("subObjects", this.subObj);
+				var oClone = this.obj.clone("clone");
+				ok(oClone instanceof sap.ui.core.TestManagedObject, "clone of object created");
+				equal(oClone.getId(), this.obj.getId()+"-clone", "id created with correct suffix");
+				var result = oClone.getAggregation("subObjects", []);
+				equal(result.length, 1,	"sub objects cloned");
+				ok(result[0] instanceof sap.ui.core.TestManagedObject, "subObject instance of TestManagedObject");
+				equal(result[0].getId(), this.subObj.getId()+"-clone", "id of cloned sub object created with correct suffix");
+			});
+			
+			test("Clone Object: cloneChildren",function() {
+				this.obj.addAggregation("subObjects", this.subObj);
+				var oClone = this.obj.clone(null,null,{cloneChildren:false});
+				var result = oClone.getAggregation("subObjects", []);
+				equal(result.length, 0,	"no children cloned");
+				oClone = this.obj.clone(null,null,{cloneChildren:true});
+				result = oClone.getAggregation("subObjects", []);
+				equal(result.length, 1,	"children cloned");
+			});
+			
+			test("Clone Object: cloneBinding:true/false", function() {
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData({testpath:[{test:"test1"},{test:"test2"}]});
+				this.obj.setModel(oModel);
+				this.obj.bindAggregation("subObjects", "/testpath", this.template);	
+				equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				var oClone = this.obj.clone(null,null,{cloneChildren:false, cloneBindings:true});
+				var result = oClone.getAggregation("subObjects", []);
+				equal(oClone.isBound("subObjects"), true, "isBound must return true for bound aggregations");
+				equal(result.length, 2,	"children recreated via binding");
+				var oClone = this.obj.clone(null,null,{cloneChildren:false, cloneBindings:false});
+				var result = oClone.getAggregation("subObjects", []);
+				equal(result.length, 0,	"children not cloned");
+				equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+				var oClone = this.obj.clone(null,null,{cloneChildren:true, cloneBindings:false});
+				var result = oClone.getAggregation("subObjects", []);
+				equal(result.length, 2,	"children cloned");
+				equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+			});
+			
+			module("Invalidate")
+			
+			test("ShouldKnowIfInvalidateIsSuppressed", function() {
+				var fnTestCase = function(sutSuppressedInvalidate, parentSuppressedInvalidate, expectedResult) {
+					//Arrange
+					var sut, result,
+						parent = new sap.ui.base.ManagedObject();
+					
+					if(parentSuppressedInvalidate){
+						parent.iSuppressInvalidate = 1;
+					}
+					
+					//System under Test
+					sut = new sap.ui.base.ManagedObject();
+					
+					
+					sut.oParent = parent;
+					
+					if(sutSuppressedInvalidate){
+						sut.iSuppressInvalidate = 1;
+					}
+					
+					//Act
+					result = sut.isInvalidateSuppressed();
+
+					//Assert
+					strictEqual(result, expectedResult, "invalidate is supressed")
+				};
+				
+				
+				fnTestCase(true, false, true);
+				fnTestCase(false, true, true);
+				fnTestCase(true,true, true);
+				
+				//only if child and all parents do not suppress invalidate, it should be false
+				fnTestCase(false,false,false)
+				
+			});
+			
+			test("ShouldInvaidateWhenSettingAnAggregation", function() {
+				//Arrange
+				sap.ui.core.Element.extend("sap.test.Dummy", { metadata : {
+					defaultAggregation : "someAggregation"
+				}});
+				var fnTestCase = function(supressInvalidate) {
+								
+					var sut, 
+						invalidateWasCalled = false,
+						child = new sap.test.Dummy();
+					
+					//System under Test
+					sut = new sap.test.Dummy();
+					
+					sut.invalidate = function(){
+						invalidateWasCalled = true;
+					}
+					
+					//Act
+					sut.setAggregation("someAggregation",child,supressInvalidate);
+	
+					
+					strictEqual(invalidateWasCalled,!supressInvalidate,"invalidate was not called");
+				};
+				
+				fnTestCase(true);
+				fnTestCase(false);
+			});
+			module("bind Object", {
+				setup: function() {
+					this.obj = new sap.ui.core.TestManagedObject();
+					this.subObj = new sap.ui.core.TestManagedObject();
+					this.subObj2 = new sap.ui.core.TestManagedObject();
+					this.subObj3 = new sap.ui.core.TestManagedObject();
+					this.template = new sap.ui.core.TestManagedObject();
+					this.obj.setModel(oModel);
+				}
+			});
+			test("Bind object/pass event handler", function() {
+				this.obj.bindObject({path:"/list/0", events:{change:fnChange}});	
+				equal(changed,true,"handler attached/change event fired");
+				changed = false;
+			});
+			
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.base.ManagedObject</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+	</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Dialog - sap.ui.commons</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3">
+	
+</script>
+
+
+<script>
+	// Create the ux3 Shell
+	// ...fill several properties and aggregations in JSON syntax; alternatively they could also be set one by one
+	var oShell = new sap.ui.ux3.Shell("myShell", {
+		appTitle : "My First GoldReflection App", // give a title
+		worksetItems : [ // add some items to the top navigation
+		new sap.ui.ux3.NavigationItem({
+			key : "wi_home",
+			text : "Home",
+			subItems : [ // the "Home" workcenter also gets three sub-items
+			new sap.ui.ux3.NavigationItem({
+				key : "wi_home_overview",
+				text : "Overview"
+			}), new sap.ui.ux3.NavigationItem({
+				key : "wi_home_inbox",
+				text : "Inbox"
+			}), new sap.ui.ux3.NavigationItem({
+				key : "wi_home_news",
+				text : "News"
+			}) ]
+		}), new sap.ui.ux3.NavigationItem({
+			key : "wi_so",
+			text : "Sales Orders"
+		}), new sap.ui.ux3.NavigationItem({
+			key : "wi_analyze",
+			text : "Analyze"
+		}), ],
+		paneBarItems : [ // add also one item to the right-side PaneBar
+		new sap.ui.core.Item({
+			key : "pb_people",
+			text : "People"
+		}) ],
+		logout : function() { // create a handler function and attach it to the "logout" event
+			alert("User wants to log out...");
+		}
+	});
+
+	// also set some content for the side pane
+	oShell.setPaneContent(new sap.ui.commons.Button({
+		text : "This Button is in the Pane"
+	}));
+
+	var dialog = new sap.ui.commons.Dialog();
+
+	// Page content creation - for each workset the content is defined here 
+	// For demo purposes there is just one button on each page
+	var mContent = {}; // a map to remember page content once it is created
+	function getContent(key) {
+		if (mContent[key])
+			return mContent[key]; // if content is already created, return it directly
+
+		if (key == "wi_home_overview") {
+			mContent[key] = new sap.ui.commons.Button({
+				text : "This Button is the content of the Overview",
+				press : function() {
+					dialog.oLayout = null;
+					dialog.oMessageRowRepeater = null;
+					dialog.oDownloadTemplate = null;
+					dialog.oDownloadHelpFile = null;
+
+					//this._createButtons();
+
+					// create a next button
+					this.btnNext = new sap.ui.commons.Button({
+						text : "next",
+					});
+
+					// create a Cancel button
+					this.btnCancel = new sap.ui.commons.Button({
+						text : "cancel"
+					});
+					// create a Close button
+					this.btnClose = new sap.ui.commons.Button({
+						text : "close",
+
+					});
+					// create a New Upload
+					this.btnNew = new sap.ui.commons.Button({
+						text : "new",
+					});
+
+					dialog.addContent(_getDialogContent());
+
+					// set needed buttons active
+					this.btnNext.setEnabled(false);
+					this.btnNext.setVisible(true);
+					this.btnCancel.setVisible(true);
+					this.btnNew.setVisible(false);
+					this.btnClose.setVisible(false);
+
+					//open
+					dialog.addButton(this.btnNext);
+					dialog.addButton(this.btnNew);
+					dialog.addButton(this.btnCancel);
+					dialog.addButton(this.btnClose);
+					dialog.setModal(true);
+
+					dialog.open();
+
+				}
+
+			});
+
+		}
+		return mContent[key];
+	}
+
+	// when the user selects a workset, put the respective content into the shell's main area
+	oShell.attachWorksetItemSelected(function(oEvent) {
+		var key = oEvent.getParameter("key");
+		oShell.setContent(getContent(key));
+	});
+
+	// set the initial content of the Shell - the Home Overview is selected initially
+	oShell.setContent(getContent("wi_home_overview"));
+
+	// place the Shell into the <div> element defined below
+	oShell.placeAt("shellArea");
+
+	/*		
+	 * Create the attachment upload view and answers the layout component
+	 * 
+	 * @returns {sap.ui.commons.layout.MatrixLayout}
+	 */
+	function _getDialogContent() {
+		var that = this;
+
+		this.oLayout = new sap.ui.commons.layout.MatrixLayout({
+			// layoutFixed : true,
+			width : '410px',
+			columns : 3,
+			widths : [ '10%', '20%', '60%' ]
+		});
+
+		// ------------------------------------------------------------------
+		// File / Fileuploader
+		// ------------------------------------------------------------------
+		var oTextInstruction = new sap.ui.commons.TextView({
+			text : "this is a very long instruction text",
+			width : "370px",
+			textAlign : sap.ui.core.TextAlign.Begin,
+			wrapping : true,
+		});
+
+		var oTextWarning = new sap.ui.commons.TextView({
+			text : "warningtext",
+			wrapping : true
+		});
+
+		var oIcon = new sap.ui.commons.Image({
+			name : "message_warning",
+			size : 24,
+			decorative : true,
+		});
+
+		this.oDownloadTemplate = new sap.ui.commons.Link({
+			text : "template_text",
+			target : "_self"
+		});
+		this.oDownloadHelpFile = new sap.ui.commons.Link({
+			text : "help_text",
+			target : "_self"
+		});
+
+		// var hLayoutWarning = new sap.ui.commons.layout.HorizontalLayout();
+		// hLayoutWarning.addContent(icon);
+		// hLayoutWarning.addContent(oTextWarning);
+
+		// workaround for the required flag for the fileupload element
+		// (otherwise the toolpopupdialog lose the connection to the button))
+
+		var oSimpleFileUploader = new sap.ui.commons.FileUploader({
+			name : "uploaderTempAttachment",
+			width : "320px",
+			uploadOnChange : true,
+			uploadUrl : "/dispatcher/attachment/savetemp",
+			required : true,
+
+		});
+
+		var oHintImage = new sap.ui.commons.Image({
+			name : "message_information",
+			size : 16,
+			decorative : false,
+		});
+
+		var oRTP = new sap.ui.commons.RichTooltip({
+			text : "RICH tooltip goes here ...",
+
+		});
+		oHintImage.setTooltip(oRTP);
+
+		var oLabelFile = new sap.ui.commons.Label({
+			text : "browse",
+		});
+		oLabelFile.setLabelFor(this.oSimpleFileUploader);
+
+		// ----------
+		// the layout
+		// -----------
+		var oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		oCell.addContent(oTextInstruction);
+		oCell.setColSpan(3);
+		this.oLayout.createRow(oCell);
+
+		oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		oCell.setColSpan(3);
+		var emptyRow = new sap.ui.commons.layout.MatrixLayoutRow(oCell);
+		emptyRow.setHeight("7px");
+		this.oLayout.addRow(emptyRow, 1);
+
+		oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+			content : this.oDownloadTemplate,
+			colSpan : 2
+		});
+		var oCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
+			content : this.oDownloadHelpFile,
+			colSpan : 1
+		});
+		this.oLayout.createRow(oCell, oCell2);
+
+		// empty row as separator
+		oCell = new sap.ui.commons.layout.MatrixLayoutCell();
+		oCell.setColSpan(3);
+		var emptyRow = new sap.ui.commons.layout.MatrixLayoutRow(oCell);
+		emptyRow.setHeight("15px");
+		this.oLayout.addRow(emptyRow, 3);
+
+		oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+			content : oLabelFile,
+			colSpan : 1
+		});
+
+		oCell2 = new sap.ui.commons.layout.MatrixLayoutCell({
+			content : [ oSimpleFileUploader, oHintImage ],
+			colSpan : 2
+		});
+		// var oCell3 = new sap.ui.commons.layout.MatrixLayoutCell({
+		// content : oHelpImage,
+		// colSpan : 1
+		// });
+
+		this.oLayout.createRow(oCell, oCell2);
+
+		oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+			content : oIcon,
+			colSpan : 1,
+			hAlign : sap.ui.commons.layout.HAlign.Center,
+			vAlign : sap.ui.commons.layout.VAlign.Middle
+
+		});
+		oCell2 = new sap.ui.commons.layout.MatrixLayoutCell();
+		oCell2.addContent(oTextWarning);
+		oCell2.setColSpan(2);
+
+		this.oLayout.createRow(oCell, oCell2);
+
+		return this.oLayout;
+	};
+</script>
+
+</head>
+<body class="sapUiBody">
+	<div id="shellArea"></div>
+</body>
+</html>

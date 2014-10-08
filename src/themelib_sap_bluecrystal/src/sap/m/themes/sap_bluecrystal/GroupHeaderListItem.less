@@ -1,0 +1,24 @@
+.sapMList .sapMLIB.sapMGHLI {
+	height: 2rem;
+	line-height: 2rem;
+	font-size: @sapMFontHeader6Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiAccent7;
+	background: @sapUiGroupHeaderBG;
+	border-bottom: 1px solid fade(@sapUiAccent7,33%);
+}
+
+/* list item hover styles are too much stronger than GHLI so we overwrite with !important */
+.sap-desktop .sapMGHLI.sapMLIBTypeInactive:hover{
+	background : @sapUiGroupHeaderBG !important;
+}
+
+.sapMGHLI.sapMLIBActive.sapMLIB,
+.sapMGHLI.sapMLIBActive.sapMLIB > td {
+	color: @sapUiLITextInverted;
+	background: @sapUiLIActive;
+}
+
+.sapMGHLICell {
+	padding: 0 1rem;
+}

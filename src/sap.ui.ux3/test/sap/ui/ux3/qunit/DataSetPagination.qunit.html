@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+
+<!-- 
+  Tested classes: sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView
+  Author: d049080
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.ux3.DataSet, sap.ui.ux3.DataSetItem + sap.ui.ux3.DataSetSimpleView</title>
+		<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons,sap.ui.ux3">
+		</script>
+		
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+			
+			// Initialize the Model
+			
+			var data = {products:[]};
+			var aTitles = ["Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS",
+			               "Notebook Basic", "UMTS PDA", "Easy Hand", "Deskjet Super Highspeed",
+			               "Copperberry Cellphone", "Notebook LCD Display", "PC Power Station",
+			               "Gaming Monster Pro", "ITelO FlexTop I4000", "ITelO FlexTop I6300c",
+			               "Goldberry Cellphone", "ITelO FlexTop I9100", "Notebook Professional",
+			               "Smart Office", "Deskjet Super Highspeed", "Notebook Basic XS"];
+
+			for(var i=0; i<aTitles.length; i++){
+				var sTitle = aTitles[i];
+				var oProduct = {id: ""+i, price: Math.floor((Math.random()*1000))+1+" $", category: "PC",
+						title: sTitle, rating: Math.floor((Math.random()*5))+1};
+				if(sTitle.indexOf("Notebook") >= 0){
+					oProduct.category = "Notebook";
+				}else if(sTitle.indexOf("Cellphone") >= 0 || sTitle.indexOf("PDA") >= 0){
+					oProduct.category = "Mobile";
+				}
+				data.products.push(oProduct);
+			}
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(data);
+
+			var oDataSet = new sap.ui.ux3.DataSet({
+				items: {
+					path: "/products",
+					template: new sap.ui.ux3.DataSetItem({
+						title : "{title}"
+					})
+				},
+				views: [
+					new sap.ui.ux3.DataSetSimpleView({
+						name: "Floating, non-responsive Card View",
+						icon: "../images/thumbnails.png",
+						iconHovered: "../images/thumbnails_hover.png",
+						iconSelected: "../images/thumbnails_hover.png",
+						floating: false,
+						responsive: false,
+						itemMinWidth: 0,
+						template: new sap.ui.commons.TextField({value: "{category}", editable: false}),
+						initialItemCount: 10,
+						reloadItemCount: 5,
+						height: "495px"
+					})
+				]
+			});
+			oDataSet.setModel(oModel);
+			oDataSet.placeAt("content");
+		</script>
+
+		<script>
+			module("Pagination");
+			test("Initial item count", function() {
+				equal(sap.ui.getCore().byId(oDataSet.getSelectedView()).getInitialItemCount(), 10, "Initial item count");
+				equal(oDataSet.getItems().length, 27, "Item count after inital reload (fill scrollarea)");
+			});
+
+			asyncTest("Scrolling", function() {
+				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
+				$scrollArea.scrollTop($scrollArea.height());
+				setTimeout(function() {
+					equal(oDataSet.getItems().length, 32, "Item count after scrolling to the very bottom");
+					start();
+				}, 1000);
+			});
+
+			asyncTest("Scrolling 2", function() {
+				var $scrollArea = jQuery(".sapUiUx3DSSVSA");
+				$scrollArea.scrollTop($scrollArea.height()+$scrollArea.scrollTop());
+				setTimeout(function() {
+					equal(oDataSet.getItems().length, 37, "Item count after scrolling to the very bottom");
+					start();
+				}, 1000);
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for sap.ui.ux3.DataSet in PaginationMode</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

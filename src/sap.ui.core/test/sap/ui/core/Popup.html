@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Popup - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+		<style>
+		#popup {
+		  background-color: yellow;
+		  width: 300px;
+		  height: 100px;
+		  position: absolute;
+		  left: -560px;
+		  top: 270px;
+		}
+
+		.popupcontent {
+		  background-color: red;
+		  width: 100px;
+		  height: 50px;
+		}
+
+		.secondpopupcontent {
+		  background-color: lightgreen;
+		  width: 100px;
+		  position: absolute;
+		  left: 150px;
+		  top: 40px;
+		  height: 50px;
+		}
+
+		:focus {
+		  outline: 3px dotted black;
+		}
+
+		.important {
+			font-weight: bold;
+		}
+
+		</style>
+
+		<script>
+
+		function openAnim($Ref, iDuration, fnCallback) {
+		  $Ref.slideDown(iDuration, fnCallback);
+		}
+		function closeAnim($Ref, iDuration, fnCallback) {
+		  $Ref.slideUp(iDuration, fnCallback);
+		}
+
+		var popup = null;
+		var modal = false;
+		function openPopup(iDuration, bModal, bAutoClose, fnOpenAnim, fnCloseAnim) {
+			if (bModal) {
+				modal = true;
+				alert("Click the green rectangle to close the popup!");
+			}
+
+			if (popup) {
+				alert("This test page only allows one open popup at a time");
+				return;
+			}
+
+		  jQuery.sap.require("sap.ui.core.Popup");
+		  var element = jQuery.sap.domById("popup");
+
+		  popup = new sap.ui.core.Popup(element, bModal, true, bAutoClose);
+		  popup.attachClosed(popupClosed);
+		  if (fnOpenAnim || fnCloseAnim) {
+		    popup.setAnimations(openAnim, fnCloseAnim);
+		  }
+		  popup.open(iDuration, "center center", "center center", document.body, null);
+		}
+
+		function closePopup(iDuration) {
+		  if(popup) {
+		  	popup.close(iDuration);
+		  }
+		}
+
+		function popupClosed() {
+			popup = null;
+			modal = false;
+		}
+
+		function greenClicked() {
+			if (modal) {
+				popup.close();
+			}
+		}
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.core.Popup</h1>
+
+		This page displays several usages of the Popup functionality.
+		<p class="important">
+		IMPORTANT: the "sap.ui.core.Popup" is not a visible control!! <br/>
+		It is a helper that works in the background and can be used to convert any control
+		or any HTML element into a popup that sits on top of the rest of the screen and can be modal or can auto-close when losing the focus.
+		</p>
+		<p>
+		While this test page just uses plain HTML elements to pop up, there is a similar page in sap.ui.commons which pops up SAPUI5 controls.
+		</p>
+
+		<button onclick="openPopup()">Open Popup (default behavior)</button><br/>
+		<button onclick="openPopup(0)">Open Popup With No Animation</button><br/>
+		<button onclick="openPopup(1000, false, false, openAnim, closeAnim)">Open Popup With Custom Animations</button><br/>
+		<button onclick="openPopup(-1, true, false)">Open modal Popup</button><br/>
+		<button onclick="openPopup(-1, false, true)">Open autoclose Popup</button><br/>
+		<br/>
+		<button onclick="closePopup(-1)">Close Popup</button><br/>
+		<button onclick="closePopup(0)">Close Popup With No Animation</button><br/>
+
+
+		<div id="popup" tabindex="0">
+		  This is a plain-HTML popup with two focusable child elements
+		  <div class="popupcontent" id="popupcontent2" tabindex="0">Child 1</div>
+		  <div class="secondpopupcontent" onclick="greenClicked()" id="secondpopupcontent2" tabindex="0">Child 2</div>
+		</div>
+
+	</body>
+</html>

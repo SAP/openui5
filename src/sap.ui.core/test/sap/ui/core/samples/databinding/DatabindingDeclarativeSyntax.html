@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding: declarative syntax</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true"
+       	data-sap-ui-xx-bindingSyntax="complex">
+    </script>
+
+    <script type="text/javascript">
+	    try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+			sap.ui.getCore().loadLibrary("sap.ui.table");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' and 'sap.ui.table' which is not available.");
+			throw(e);
+		}
+		
+		// define a global formatter function
+		var my = {};
+		my.globalFormatter = function(iDay,iMonth,iYear) {
+			return iDay + "/" + iMonth + "/" + iYear;
+		} 
+		
+		sap.ui.localResources("testdata");
+		
+    	var oModel = new sap.ui.model.json.JSONModel();
+    	oModel.setData({singleEntry:{
+    		firstName: "John", 
+    		lastName: "Doe", 
+    		birthday: {day:1,month:4,year:1970}, 
+    		amount: 6000.94,
+    		gender: 'male',
+    		address:[{city:"Walldorf"}], 
+    		enabled: true
+    	},
+    	table:[{
+    		firstName: "Horsti", 
+    		lastName: "von Drueben", 
+    		birthday: {day:1,month:4,year:1972}, 
+    		amount: 6000.94,
+    		gender: 'male',
+    		address:[{city:"Walldorf"}], 
+    		enabled: true
+    	}, {
+    		firstName: "Egon", 
+    		lastName: "the Ugly", 
+    		birthday: {day:10,month:4,year:1952}, 
+    		amount: 6000.94,
+    		gender: 'male',
+    		address:[{city:"Walldorf"}], 
+    		enabled: true
+    	}, {
+    		firstName: "Verena", 
+    		lastName: "die Schoene", 
+    		birthday: {day:10,month:4,year:1982}, 
+    		amount: 6000.94,
+    		gender: 'female',
+    		address:[{city:"Walldorf"}], 
+    		enabled: true
+    	}]});
+    	sap.ui.getCore().setModel(oModel);
+    	
+    	var oModel2 = new sap.ui.model.json.JSONModel();
+    	oModel2.setData({
+		   amount : 3000.53, 
+		   currency : "$"
+    	});
+    	sap.ui.getCore().setModel(oModel2, "model2");
+    	
+    	var oHTMLView = sap.ui.view({type:sap.ui.core.mvc.ViewType.HTML,viewName:"testdata.complexsyntax"});
+    	var oXMLView = sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"testdata.complexsyntax"});
+    	var oJSView = sap.ui.view({type:sap.ui.core.mvc.ViewType.JS,viewName:"testdata.complexsyntax"});
+    	oHTMLView.placeAt("HTMLView");
+    	oXMLView.placeAt("XMLView");
+    	oJSView.placeAt("JSView");
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <h1>HTMLView</h1>
+      <div id="HTMLView"></div>
+      <h1>XMLView</h1>
+      <div id="XMLView"></div>
+      <h1>JSView</h1>
+      <div id="JSView"></div>
+    </div>
+
+  </body>
+
+</html>

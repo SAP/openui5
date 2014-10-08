@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Layout" data-sap-ui-dk-controls="sap.ui.commons.Splitter">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Splitter - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+		<script id='SplitterH'>
+		//create a horizontal Splitter
+		var oSplitterH = new sap.ui.commons.Splitter("splitterH");
+		oSplitterH.setSplitterOrientation(sap.ui.commons.Orientation.horizontal);
+		oSplitterH.setSplitterPosition("50%");
+		oSplitterH.setMinSizeFirstPane("20%");
+		oSplitterH.setMinSizeSecondPane("30%");
+		oSplitterH.setWidth("100%");
+		oSplitterH.setHeight("200px");
+
+		//adding Labels to both panes
+		var oLabel1 = new sap.ui.commons.Label({text: "First Pane"});
+		oSplitterH.addFirstPaneContent(oLabel1);	
+		var oLabel2 = new sap.ui.commons.Label({text: "Second Pane"});
+		oSplitterH.addSecondPaneContent(oLabel2);		
+
+		oSplitterH.placeAt("sample1");
+		</script>
+
+		<script id='SplitterV'>
+		//create a vertical Splitter
+		var oSplitterV = new sap.ui.commons.Splitter("splitterV"); 
+		oSplitterV.setSplitterOrientation(sap.ui.commons.Orientation.vertical);
+		oSplitterV.setSplitterPosition("50%");
+		oSplitterV.setMinSizeFirstPane("20%");
+		oSplitterV.setMinSizeSecondPane("30%");
+		oSplitterV.setWidth("100%");
+		oSplitterV.setHeight("200px");
+
+		//adding Labels to both panes
+		var oLabel1 = new sap.ui.commons.Label({text: "First Pane"});
+		oSplitterV.addFirstPaneContent(oLabel1);	
+		var oLabel2 = new sap.ui.commons.Label({text: "Second Pane"});
+		oSplitterV.addSecondPaneContent(oLabel2);		
+
+		oSplitterV.placeAt("sample2");
+		</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Green" icon="images/ctrls/splitter-icon.png">Splitter</h1>
+
+		<h2>Introduction</h2>
+
+	<p>
+		The Splitter control is a layouting control that separates the screen
+		into two areas, so called panes. It offers a built-in drag and drop
+		functionality so that the user can easily resize the two areas by
+		dragging the separator. You can decide to have the two areas separated
+		horizontally or vertically by using the
+		<code>splitterOrientation</code>
+		attribute. There are properties available for separator positioning (
+		<code>splitterPosition</code>
+		) and for making settings on the minimum widths of the areas (
+		<code>minSizeFirstPane</code>
+		,
+		<code>minSizeSecondPane</code>
+		). To fill the two panes with controls, you can use the corresponding <code>addFirstPaneContent</code> and <code>addSecondPaneContent</code> methods.
+
+	</p>
+
+	<h2>Examples</h2>
+
+		<h3>Horizontal Splitter</h3>
+		<div code-sample="sample1" script="SplitterH"></div>
+
+		<h3>Vertical Splitter</h3>
+		<div code-sample="sample2" script="SplitterV"></div>
+		<br/>
+		<p></p>
+	<h2>Keyboard Support</h2>
+	<p>
+	To navigate between the Splitter panes and their contents, press the <code>Tab</code> key. If a content pane is focused in a vertical Splitter, 
+	pressing <code>Shift+Arrow left</code> or <code>Shift+Arrow right</code> resizes that pane. For horizontal Splitters the key combination is <code>Shift+Up</code>
+	and <code>Shift+Down</code>. To maximize the selected pane, press the <code>End</code> key, and to minimize it press the <code>Home</code> key.
+	Furthermore clicking <code>F6</code> steps only through the Splitter content panes without selecting the Splitter contents. Stepping backwards is performed by pressing <code>Shift+F6</code>.
+	</p>
+	<p>
+	<h2>API Documentation</h2>
+	See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Splitter.html" >API documentation</a>
+	</p>
+	</body>
+</html>

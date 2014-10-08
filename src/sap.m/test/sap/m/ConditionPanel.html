@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>ConditionPanel - sap.m</title>
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" 
+	type="text/javascript"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal"
+	src="../../../resources/sap-ui-core.js"
+	data-sap-ui-compatVersion="edge">
+</script>
+
+<script type="text/javascript">	
+	jQuery.sap.require("sap.m.P13nConditionPanel");
+	
+	var	aConditions;    
+	
+	var oConditionPanel;
+	
+	show= function(oPanel, sTitle) {
+		if (theDialogMode.getSelected()) {
+			oPanel.setContainerQuery(true);
+			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel]});
+			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
+				oDialog.addStyleClass("sapUiSizeCompact");
+			}			
+			oDialog.setBeginButton(new sap.m.Button({
+				text: "Close",
+				press: function() {
+					oDialog.close();
+				}
+			}));
+			
+			oDialog.open();
+		} else {
+			oPanel.placeAt("contentPanel", "only");
+		}		
+	};
+	
+	var btnShow = new sap.m.Button({
+		text: "Sorting",
+		press: function() {
+			var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
+			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
+			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.Descending, "keyField": "CompanyName", "value1": "", "value2": ""};
+			aConditions= [oCondition0, oCondition1, oCondition2];    
+			
+			oConditionPanel = new sap.m.P13nConditionPanel({
+	 			maxConditions: -1,
+	 			autoReduceKeyFieldItems: true
+			});
+			
+			oConditionPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
+			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.Ascending, sap.m.P13nConditionOperation.Descending ]);			
+			oConditionPanel.setConditions(aConditions);			
+	
+			show(oConditionPanel, "Sorting");
+		}		
+	});
+	
+	var btnShow2 = new sap.m.Button({
+		text: "Filtering",
+		press: function() {
+		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
+			var oCondition2= { "key": "i2", "text": "CompanyName: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
+			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
+			aConditions= [oCondition1, oCondition2, oCondition3];    
+	
+			oConditionPanel = new sap.m.P13nConditionPanel({
+	 			maxConditions: -1,
+	 			exclude: false,
+	 			autoAddNewRow: true,
+	 			alwaysShowAddIcon: false
+			});
+			
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10"}, {key: "CompanyName", text: "Name", type: "text"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+ 			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.BT, 
+				                     		sap.m.P13nConditionOperation.EQ, 
+		                             		sap.m.P13nConditionOperation.Contains, 
+		                             		sap.m.P13nConditionOperation.StartsWith,
+		                             		sap.m.P13nConditionOperation.EndsWith, 
+		                             		sap.m.P13nConditionOperation.LT, 
+		                             		sap.m.P13nConditionOperation.LE, 
+		                             		sap.m.P13nConditionOperation.GT, 
+		                             		sap.m.P13nConditionOperation.GE ]);
+			oConditionPanel.setConditions(aConditions);			
+	
+			show(oConditionPanel, "Filter");
+		}		
+	});
+	
+	var btnShow3 = new sap.m.Button({
+		text: "Grouping",
+		press: function() {
+			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", grouping: true};
+			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", grouping: false};
+			aConditions= [oCondition1, oCondition2];    
+	
+			oConditionPanel = new sap.m.P13nConditionPanel({
+	 			maxConditions: -1
+			});
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}]); 
+			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.GroupAscending, sap.m.P13nConditionOperation.GroupDescending ]);			
+			oConditionPanel.setConditions(aConditions);			
+	
+			show(oConditionPanel, "Grouping");
+		}		
+	});
+	
+	var btnShow4 = new sap.m.Button({
+		text: "Calculation",
+		press: function() {
+			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Total, "keyField": "number", "value1": "", "value2": ""};
+			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.Average, "keyField": "price", "value1": "", "value2": ""};
+			aConditions= [oCondition1, oCondition2];    
+	
+			oConditionPanel = new sap.m.P13nConditionPanel({
+	 			maxConditions: -1
+			});
+			oConditionPanel.setKeyFields([{key: "number", text: "Number", operations: [sap.m.P13nConditionOperation.Total, sap.m.P13nConditionOperation.Average]}, 
+			                              {key: "price", text: "Price", operations: [sap.m.P13nConditionOperation.Total, sap.m.P13nConditionOperation.Average, sap.m.P13nConditionOperation.Minimum]},
+			                              {key: "date", text: "Date"}]); 
+			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.Total, sap.m.P13nConditionOperation.Average, sap.m.P13nConditionOperation.Minimum, sap.m.P13nConditionOperation.Maximum]);			
+			oConditionPanel.setConditions(aConditions);			
+	
+			show(oConditionPanel, "Calculation");
+		}		
+	});
+	
+	var btnValidate = new sap.m.Button({
+		text: "validate",
+		press: function() {
+			sap.m.MessageToast.show("validate= "+oConditionPanel.validateConditions());
+			}
+	});
+	
+	var btnConditions = new sap.m.Button({
+		text: "get Conditions",
+		press: function() {
+			aConditions = oConditionPanel.getConditions();
+	
+			var sConditions= ""; 
+			for (i = 0; i < aConditions.length; i++) {
+				var oCondition = aConditions[i];
+				sConditions+= "'"+oCondition.text + "' ";
+			}					
+	
+			sap.m.MessageToast.show("Conditions= "+sConditions);
+		}
+	});
+	
+	var theCompactMode= new sap.m.CheckBox({
+		selected: true,
+		text: "compactMode",
+		select : function() {
+			$("body").toggleClass("sapUiSizeCompact");
+		}
+	});
+
+	var theDialogMode= new sap.m.CheckBox({
+		selected: false,
+		text: "show on dialog",
+		select : function() {
+		}
+	});
+	
+	btnShow.placeAt("content");
+	btnShow2.placeAt("content");
+	btnShow3.placeAt("content");
+	btnShow4.placeAt("content");
+	btnValidate.placeAt("content");
+	btnConditions.placeAt("content");
+	theCompactMode.placeAt("content");
+	theDialogMode.placeAt("content");
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" role="application">
+	<h1 id="header">Test Page for <code>sap.m.P13nConditionPanel</code></h1>
+
+	<div id="content" style="display:inline" ></div><br>
+	<div id="contentPanel" style="display:inline" ></div><br>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/Complex" data-sap-ui-dk-controls="sap.ui.commons.Toolbar,sap.ui.commons.ToolbarItem">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="Toolbar" />
+		<title>Toolbar - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='toolbar1'>
+	// create a standalone toolbar
+	var oToolbar1 = new sap.ui.commons.Toolbar("tb1");
+	oToolbar1.setDesign(sap.ui.commons.ToolbarDesign.Standard);
+
+	// create button and add it as a toolbar item. The Button control has the ToolbarItem interface included
+	var oButton1 = new sap.ui.commons.Button("b11",{
+		text : "",
+		tooltip : "myToolTip1",
+		press : onPress
+	});
+	oButton1.setIcon("images/new.gif");
+	oToolbar1.addItem(oButton1);
+
+	// add a second item
+	var oButton2 = new sap.ui.commons.Button("b12",{
+		text : "",
+		tooltip : "myToolTip2",
+		press : onPress
+	});
+	oButton2.setIcon("images/open.gif");
+	oToolbar1.addItem(oButton2);
+
+	// add toolbar separator
+	oToolbar1.addItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a third item
+	var oButton3 = new sap.ui.commons.Button("b13",{
+		text : "item3",
+		tooltip : "myToolTip3",
+		press : onPress
+	});
+	oButton3.setIcon("images/save.gif");
+	oToolbar1.addItem(oButton3);
+
+	// add toolbar separator
+	oToolbar1.addItem(new sap.ui.commons.ToolbarSeparator({
+		design: sap.ui.commons.ToolbarSeparatorDesign.FullHeight
+	}));
+
+	// add a combobox as fourth item
+	var oComboBox = new sap.ui.commons.ComboBox("cmb11",{
+		items : [ new sap.ui.core.ListItem({
+			text : "#1"
+		}), new sap.ui.core.ListItem({
+			text : "Do it!"
+		}), new sap.ui.core.ListItem({
+			text : "Hello world!"
+		}), new sap.ui.core.ListItem({
+			text : "Yet another stupid button text"
+		}) ]
+	});
+	oToolbar1.addItem(oComboBox);
+
+	// add toolbar separator
+	oToolbar1.addItem(new sap.ui.commons.ToolbarSeparator({
+		design: sap.ui.commons.ToolbarSeparatorDesign.FullHeight
+	}));
+
+	// add fifth item
+	var oTextField1 = new sap.ui.commons.TextField("tf11",
+		  {
+		    value : "suuuuuper loooooooooooooong valueeeeee",
+		    width : "200px"
+		  });
+	oToolbar1.addItem(oTextField1);
+
+
+	// create button and add it as a toolbar item. The Button control has the ToolbarItem interface included
+	var oButton4 = new sap.ui.commons.Button("b14",{
+		text : "",
+		tooltip : "myToolTip1",
+		press : onPress
+	});
+	oButton4.setIcon("images/new.gif");
+	oToolbar1.addRightItem(oButton4);
+
+	// add a second item
+	var oButton5 = new sap.ui.commons.Button("b15",{
+		text : "",
+		tooltip : "myToolTip5",
+		press : onPress
+	});
+	oButton5.setIcon("images/open.gif");
+	oToolbar1.addRightItem(oButton5);
+
+	// add toolbar separator
+	oToolbar1.addRightItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a third item
+	var oButton6 = new sap.ui.commons.Button("b16",{
+		text : "item6",
+		tooltip : "myToolTip6",
+		press : onPress
+	});
+	oButton6.setIcon("images/save.gif");
+	oToolbar1.addRightItem(oButton6);
+
+	// add toolbar separator
+	oToolbar1.addRightItem(new sap.ui.commons.ToolbarSeparator({
+		design: sap.ui.commons.ToolbarSeparatorDesign.FullHeight
+	}));
+
+	// add fifth item
+	var oTextField2 = new sap.ui.commons.TextField("tf12",
+		  {
+		    value : "search",
+		    width : "100px"
+		  });
+	oToolbar1.addRightItem(oTextField2);
+
+
+	// what should happen if you press a toolbar item
+	function onPress(oEvent) {
+		var oButton = oEvent.getSource();
+		alert("You pressed button '" + oButton.getId()
+				+ "' with label: '" + oButton.getText() + "'");
+	}
+
+
+	// attach toolbar to the page
+	oToolbar1.placeAt("sample1");
+</script>
+
+<script id='toolbar2'>
+	// create a standalone toolbar
+	var oToolbar2 = new sap.ui.commons.Toolbar("tb2");
+	// set standalone false, flat design and fixed width
+	oToolbar2.setStandalone(false);
+	oToolbar2.setDesign(sap.ui.commons.ToolbarDesign.Flat);	
+	oToolbar2.setWidth("200px");
+
+	// create button and add it as a toolbar item. The Button control has the ToolbarItem interface included
+	var oButton1 = new sap.ui.commons.Button("b21",{
+		text : "",
+		tooltip : "myToolTip1",
+		press : onPress
+	});
+	oButton1.setIcon("images/new.gif");
+	oToolbar2.addItem(oButton1);
+
+	// add a second item
+	var oButton2 = new sap.ui.commons.Button("b22",{
+		text : "",
+		tooltip : "myToolTip2",
+		press : onPress
+	});
+	oButton2.setIcon("images/open.gif");
+	oToolbar2.addItem(oButton2);
+
+	// add toolbar separator
+	oToolbar2.addItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a third item
+	var oButton3 = new sap.ui.commons.Button("b23",{
+		text : "item3",
+		tooltip : "myToolTip3",
+		press : onPress
+	});
+	oButton3.setIcon("images/save.gif");
+	oToolbar2.addItem(oButton3);
+
+	// add toolbar separator
+	oToolbar2.addItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a combobox as fourth item
+	var oComboBox = new sap.ui.commons.ComboBox("cmb21",{
+		items : [ new sap.ui.core.ListItem({
+			text : "#1"
+		}), new sap.ui.core.ListItem({
+			text : "Do it!"
+		}), new sap.ui.core.ListItem({
+			text : "Hello world!"
+		}), new sap.ui.core.ListItem({
+			text : "Yet another stupid button text"
+		}) ]
+	});
+	oToolbar2.addItem(oComboBox);
+
+	// add fifth item
+	var oTextField1 = new sap.ui.commons.TextField("tf21",
+		  {
+		    value : "suuuuuper loooooooooooooong valueeeeee",
+		    width : "200px"
+		  });
+	oToolbar2.addItem(oTextField1);
+
+
+	// what should happen if you press a toolbar item
+	function onPress(oEvent) {
+		var oButton = oEvent.getSource();
+		alert("You pressed button '" + oButton.getId()
+				+ "' with label: '" + oButton.getText() + "'");
+	}
+
+	// attach toolbar to the page
+	oToolbar2.placeAt("sample2");
+</script>
+
+</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Blue" icon="images/ctrls/toolbar-icon.png">Toolbar</h1>
+
+		<h2>Introduction</h2>
+
+		<p>
+		The Toolbar control is used to display a group of items in a single horizontal row. In many cases, a toolbar item is a button without text but with an icon only. For embedding the toolbar item, interface <code>sap.ui.commons.ToolbarItem</code> is used. Toolbar items must have a fixed height 
+		compatible with the Toolbar being a single horizontal row. The items can refer to the toolbar's marker class <code>sapUiTb</code> to adjust their
+		own theming when used inside a Toolbar. The items can be separated using the <code>sap.ui.commons.ToolbarSeparator</code>. See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ToolbarSeparator.html" >ToolbarSeparator</a>
+		</p>
+		<p>
+		A Toolbar can have a fixed width and be a stand alone Toolbar with a border, or it can be an embedded Toolbar without a border.
+		Additionally, the Toolbar can have a <code>sap.ui.commons.ToolbarDesign</code> which determines the overall visual design including the visual appearance of its controls.	
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ToolbarDesign.html" >ToolbarDesign</a>	
+		</p>
+		<h2>Examples</h2>
+
+		<h3>Standalone Toolbar</h3>	
+		<div code-sample="sample1" script="toolbar1"></div>
+		<p>
+		The standalone Toolbar in this example contains some buttons as Toolbar items and other controls like a ComboBox, these support the <code>sap.ui.commons.ToolbarItem</code>
+		interface. Additionally, the toolbar has the <i>Standard</i> Toolbar design.
+		</p>
+		<h3>Embedded Toolbar</h3>	
+		<div code-sample="sample2" script="toolbar2"></div>
+		<p>
+		In this example, the Toolbar is embedded and therefore doesn't have a border. It uses the <i>Flat</i> design and has a fixed width size.
+		Because of this fixed width not all items fit into the Toolbar. If this is the case, or if you resize the browser window so that not all items fit into the Toolbar, an 
+		overflow button automatically appears which lets you access the remaining items.
+		</p>
+
+		<h3>Keyboard Support</h3>
+		<p>
+		It is possible to navigate through the Toolbar items via the <code>Arrow right</code> and <code>Arrow left</code> keys forwards and backwards. The same can be achieved via the <code>Arrow up</code> and <code>Arrow down</code> keys.
+		If you reach the end of the items and then select the next item, the display starts from the first item again. 
+		The <code>Space</code> and <code>Enter</code> keys can be used to activate or change the status of a selected control inside the Toolbar.
+		To activate the overflow button, press the <code>Down</code> key or the <code>Space</code> key. <code>Escape</code> closes the overflow popup window.
+		</p>
+
+		<h3>ARIA Support</h3>
+		<p>
+		The Toolbar has the ARIA role set to <code>toolbar</code>. ARIA support for the items inside the Toolbar is depending on the items themselves.
+		The overflow button has the same ARIA support as the button control (the role is set to <code>button</code>). 
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Button.html" >Button</a>
+		</p>
+
+		<p>
+		<h2>API Documentation</h2>
+		See	<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Toolbar.html" >API documentation</a>
+		</p>
+	</body>
+</html>

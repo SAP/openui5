@@ -1,0 +1,13 @@
+<mvc:View
+	controllerName="sap.m.sample.ToolbarActive.Toolbar"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+	<CheckBox text="Toolbar Active" selected="true" select="onCheckBoxSelect"/>
+	
+	<Toolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress">
+		<Text text="You press here when toolbar is active"/>
+		<ToolbarSpacer/>
+		<core:Icon src="sap-icon://undo" width="2rem" press="onIconPress"/>
+	</Toolbar>
+</mvc:View>

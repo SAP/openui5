@@ -1,0 +1,11 @@
+<!-- UI5:Template type=text/x-handlebars-template controller=sap.ui.core.mvctest.Test -->
+<div id="htmlRoot">THIS IS A TEST</div>
+
+<div>
+	<div id="htmlNested">NESTED WORKS AS WELL</div>
+	{{#control sap-ui-type="sap.ui.commons.Panel" class="test test2 test3" id="myPanel"}}
+		{{control sap-ui-type="sap.ui.commons.Button" class="test test2 test3" id="Button1" text="Hello World" press="doIt"}}
+		{{control sap-ui-type="sap.ui.commons.Button" id="Button2" text="Hello"}}
+		{{control sap-ui-type="sap.ui.core.mvc.TemplateView" id="MyTmplView" view-name="sap.ui.core.mvctest.Test2"}}
+	{{/control}}
+</div>

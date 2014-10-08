@@ -1,0 +1,170 @@
+/* =============================================== */
+/* CSS for control sap.ui.unified/Calendar.control */
+/* Goldreflection                                  */
+/* =============================================== */
+
+.sapUiCal{
+	width: 190px;
+	border: 4px solid @sapUiFieldBackground;
+}
+
+/*** HEADER ***/
+.sapUiCalHead{
+	padding-bottom: 9px;
+	height: 22px;
+}
+
+.sapUiCalPrev,
+.sapUiCalNext,
+.sapUiCalMonthPick,
+.sapUiCalYearPick{
+	height: 22px;
+	padding: 0;
+}
+
+.sapUiCalPrev,
+.sapUiCalNext{
+	width: 22px;
+	padding-top: 2px; /* to set arrows in middle */
+}
+
+.sapUiCalMonthPick,
+.sapUiCalYearPick{
+	width: 70px;
+	font-weight: bold;
+}
+
+/*** days, months, years ***/
+.sapUiCalWH,
+.sapUiCalDay,
+.sapUiCalWeekNum,
+.sapUiCalMonth,
+.sapUiCalYear{
+	border: 1px solid @sapUiFieldBackground;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.sapUiCalWH,
+.sapUiCalDay,
+.sapUiCalWeekNum{
+	height: 24px;
+	line-height: 22px;
+}
+
+.sapUiCalDayNum{
+	border: 1px solid transparent;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.sapUiCalWeekNum{
+	top: -1px;
+	padding-top: 1px;
+	color: @sapUiHighlight;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 22px;
+}
+
+.sapUiCalWH{
+	color: @sapUiHighlight;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.sapUiCalDay,
+.sapUiCalMonth,
+.sapUiCalYear{
+	color:@sapUiDeepText;
+}
+
+/* hover and focus makes only sense on desktops. On mobile devices it's not needed */
+.sap-desktop .sapUiCalDay:hover,
+.sap-desktop .sapUiCalDay:focus,
+.sap-desktop .sapUiCalMonth:hover,
+.sap-desktop .sapUiCalMonth:focus,
+.sap-desktop .sapUiCalYear:hover,
+.sap-desktop .sapUiCalYear:focus{
+	background-color: @sapUiHighlight;
+	color: @sapUiTextSelection;
+}
+
+.sap-desktop .sapUiCalDay:focus,
+.sap-desktop .sapUiCalMonth:focus,
+.sap-desktop .sapUiCalYear:focus{
+	outline: none;
+}
+
+.sapUiCalDayOtherMonth{
+	color: @sapUiLightText;
+}
+
+.sapUiCalDayToday > .sapUiCalDayNum{
+	background-color: @sapUiFieldBackground;
+	border-color: @sapUiCalendarColorToday;
+	box-shadow: inset 1px 1px 0 1px @sapUiCalendarColorToday, inset -1px -1px 0 1px @sapUiCalendarColorToday;
+	-moz-box-shadow: inset 1px 1px 0 1px @sapUiCalendarColorToday, inset -1px -1px 0 1px @sapUiCalendarColorToday;
+	-webkit-box-shadow: inset 1px 1px 0 1px @sapUiCalendarColorToday, inset -1px -1px 0 1px @sapUiCalendarColorToday;
+}
+
+html[data-sap-ui-browser="ie8"] .sapUiCalDayToday > .sapUiCalDayNum{
+	background-color: @sapUiCalendarColorToday; /*As IE8 don't support shadows - complete filled*/
+}
+
+.sap-desktop .sapUiCalDayToday:hover > .sapUiCalDayNum,
+.sap-desktop .sapUiCalDayToday:focus > .sapUiCalDayNum{
+	background-color: @sapUiHighlight;
+}
+
+.sapUiCalDaySel,
+.sapUiCalMonthSel,
+.sapUiCalYearSel{
+	background-color: @sapUiFieldBackground;
+}
+
+.sapUiCalDaySel > .sapUiCalDayNum{
+	border-color: @sapUiButtonHoverBackground;
+}
+
+.sap-desktop .sapUiCalDaySel:not(.sapUiCalDayToday):hover > .sapUiCalDayNum,
+.sap-desktop .sapUiCalDaySel:not(.sapUiCalDayToday):focus > .sapUiCalDayNum{
+	box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
+	-moz-box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
+	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiFieldBackground, inset -1px -1px 0 0 @sapUiFieldBackground;
+}
+
+.sapUiCalMonths,
+.sapUiCalYears{
+	top: 31px;
+	padding-top: 24px;
+}
+
+.sapUiCalYears.sapUiCalYearNoTop{
+	padding-top: 0;
+}
+
+.sapUiCalMonth,
+.sapUiCalYear{
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	padding: 0 4px;
+	overflow: hidden;
+	height: 24px;
+	line-height: 22px;
+}
+
+.sapUiCalMonthSel,
+.sapUiCalYearSel{
+	box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
+	-moz-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
+	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
+}
+
+html[data-sap-ui-browser="ie8"] .sapUiCalMonthSel,
+html[data-sap-ui-browser="ie8"] .sapUiCalYearSel{
+	border-color: @sapUiButtonHoverBackground; /* As IE8 don't support shadows - use border */
+}

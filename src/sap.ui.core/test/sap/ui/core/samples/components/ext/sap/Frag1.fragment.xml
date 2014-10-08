@@ -1,0 +1,7 @@
+<Panel xmlns="sap.ui.commons" xmlns:core="sap.ui.core">
+
+	<TextView text="SAP Fragment in Panel with extension Point:"></TextView>
+	
+	<core:ExtensionPoint name="extensionPointInFragment" />
+	
+</Panel>

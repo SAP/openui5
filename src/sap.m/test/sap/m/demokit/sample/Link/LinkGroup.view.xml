@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="sap.m.sample.Link.LinkGroup"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="marginVerticalContent"
+		width="100%">
+		<l:content>
+			<Link
+				text="Click me"
+				press="handleLinkPress" />
+			<Link
+				text="Disabled link"
+				enabled="false" />
+			<Link
+				text="Open SAP Homepage"
+				target="_blank"
+				href="http://www.sap.com" />
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

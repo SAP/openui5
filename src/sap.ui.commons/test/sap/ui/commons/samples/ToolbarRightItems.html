@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Toolbar with Right Side Items Test Page</title>
+
+    <script id="sap-ui-bootstrap" type="text/javascript"
+            src="../../../../../resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.ui.commons"
+            data-sap-ui-theme="sap_goldreflection"
+            >
+	</script>
+
+    <script type="text/javascript">
+
+		function addManyItems(oToolbar) {
+			var id = oToolbar.getId();
+
+		    // 10 buttons
+		    var aIcons =
+		      [
+		        "../images/new.png",
+		        "../images/open.png",
+		        "../images/save.png",
+		        "../images/cut.png",
+		        "../images/copy.png",
+		        "../images/paste2.png",
+		        null,
+		        null,
+		        null,
+		        null
+		      ];
+		    var aLabels =
+			  [
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "",
+				  "Forward",
+				  "Process",
+				  "View All",
+				  "Approve"
+		     ];
+
+		   // create ten buttons
+		    for (var i = 0; i < 10; ++i) {
+		      var oButton = new sap.ui.commons.Button(id + "_b_" + i, {text : aLabels[i]});
+		      if (aIcons[i]) {
+		    	  oButton.setIcon(aIcons[i]);
+		      }
+
+		      // add separators at various positions
+		      if (i==2) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator());
+		      } else if (i==5) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
+		      } else if (i==8) {
+		    	  oToolbar.addItem(new sap.ui.commons.ToolbarSeparator({"displayVisualSeparator":false}));
+		      }
+
+		      oToolbar.addItem(oButton);
+		    }
+
+		    // input field
+		    var oTextField = new sap.ui.commons.TextField(id + "_tf",
+			  {
+			    value : "#0"
+			  });
+		    oToolbar.addItem(oTextField);
+
+		    // combo box for 2nd button's text
+		    var oComboBox = new sap.ui.commons.ComboBox(id + "_cmb",
+		      { 
+		        items :
+		        [
+		          new sap.ui.core.ListItem({text : "#1"}), 
+		          new sap.ui.core.ListItem({text : "Do it"}),
+		          new sap.ui.core.ListItem({text : "Hello world"}),
+		          new sap.ui.core.ListItem({text : "Yet another stupid button text"})
+		        ]
+		      });
+		    oToolbar.addItem(oComboBox);
+
+
+		  //Add Right side items
+		    for (var i = 0; i < 5; ++i) {
+		       var oButton = new sap.ui.commons.Button(id + "_bRi_" + i, {text : aLabels[i]});
+		       if (aIcons[i]) {
+		    	  oButton.setIcon(aIcons[i]);
+		       }
+
+		       // add separators at various positions
+		       if (i==1) {
+		    	  oToolbar.addRightItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.FullHeight}));
+		       } else if (i==2) {
+		    	  oToolbar.addRightItem(new sap.ui.commons.ToolbarSeparator({"design":sap.ui.commons.ToolbarSeparatorDesign.Standard}));
+		      }
+			oToolbar.addRightItem(oButton);
+		    }
+		}
+
+		// create the standalone toolbars
+	    var oToolbar = new sap.ui.commons.Toolbar("tb1").setWidth("60%").placeAt("uiArea");
+		oToolbar.setDesign(sap.ui.commons.ToolbarDesign.Standard);
+	    addManyItems(oToolbar);
+
+    </script>
+  </head>
+  <body class="sapUiBody" role="application">
+	<h1>Toolbar With Right Side Items</h1>
+
+    <div id="uiArea"></div>
+
+    <span id="targetForOutput"></span>
+  </body>
+</html>

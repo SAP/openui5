@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.RadioButtonGroup,sap.ui.core.Item">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	  <meta charset="UTF-8"/>
+    <title>RadioButtonGroup - SAPUI5 Demo Kit</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../theme/default.css" />
+    <script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+    <script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleRBGroup'>
+// Create a simple RadioButtonGroup with three items
+var oRBG1 = new sap.ui.commons.RadioButtonGroup({
+	tooltip : "This is a test tooltip for the first RadioButtonGroup",
+	select : function() {alert('RadioButton ' + oRBG1.getSelectedItem().getText());} 
+	});
+var oItem = new sap.ui.core.Item({
+	text : "Option 1", 
+	tooltip : "Tooltip 1",
+	key : "Key1"});
+oRBG1.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 2", 
+	tooltip : "Tooltip 2",
+	key : "Key2"});
+oRBG1.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 3", 
+	tooltip : "Tooltip 3",
+	key : "Key3"});
+oRBG1.addItem(oItem);
+
+// attach it to some element in the page
+oRBG1.placeAt("sample1");
+</script>
+
+<script id='MultiColumnRBGroup'>
+// Create a RadioButtonGroup with three colums and six items
+var oRBG2 = new sap.ui.commons.RadioButtonGroup({
+	tooltip : "This is the tooltip for the second example",
+	columns : 3,
+	selectedIndex : 2,
+	select : function() {alert('RadioButton ' + oRBG2.getSelectedItem().getText());}
+	});
+var oItem = new sap.ui.core.Item({
+	text : "Option 1",
+	tooltip : "Tooltip 1",
+	key : "Key1"});
+oRBG2.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 2",
+	tooltip : "Tooltip 2",
+	key : "Key2"});
+oRBG2.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 3",
+	tooltip : "Tooltip 3",
+	key : "Key3"});
+oRBG2.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 4",
+	tooltip : "Tooltip 4",
+	key : "Key4"});
+oRBG2.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 5",
+	tooltip : "Tooltip 5",
+	key : "Key5"});
+oRBG2.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 6",
+	tooltip : "Tooltip 6",
+	key : "Key6"});
+oRBG2.addItem(oItem);
+// attach it to some other element in the page
+oRBG2.placeAt("sample2");
+</script>
+
+<script id='ToggleEditable'>
+// Create a simple RadioButtonGroup with three items
+var oLayout = new sap.ui.commons.layout.MatrixLayout("matrix1");
+	oLayout.setLayoutFixed(false);
+	oLayout.setColumns(2);
+
+var oRBG3 = new sap.ui.commons.RadioButtonGroup({
+	tooltip : "This is the third tooltip",
+	columns : 3,
+	editable : false,
+	});
+var oItem = new sap.ui.core.Item({
+	text : "Option 1",
+	tooltip : "Tooltip 1",
+	key : "Key1"});
+oRBG3.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 2",
+	tooltip : "Tooltip 2",
+	enabled: false,
+	key : "Key2"});
+oRBG3.addItem(oItem);
+oItem = new sap.ui.core.Item({
+	text : "Option 3",
+	tooltip : "Tooltip 3",
+	key : "Key3"});
+oRBG3.addItem(oItem);
+
+var oButton = new sap.ui.commons.Button({
+	text : "Toggle Editable",
+	tooltip : "Press to change Editable state",
+	press : function() {oRBG3.setEditable(!oRBG3.getEditable());}
+});
+
+oLayout.createRow(oRBG3, oButton);
+
+// Attach it to some element in the page
+oLayout.placeAt("sample3");
+</script>
+
+</head>
+
+<body class="sapUiDemokitBody" role="application">
+  <h1 color="Red" icon="images/ctrls/radiobuttongroup-icon.png">RadioButtonGroup</h1>
+
+	<h2>Overview</h2>
+
+	<p>The RadioButtonGroup is a basic control that is used to provide an area for making an interactive choice out of a set of options. The RadioButtonGroup represents a list with items where exactly one item can be selected in a session. For the representation of the single group entries, the RadioButton items are created automatically.
+	For the radio button choice, mouse and keyboard navigation usage is supported.
+
+	<h2>Examples</h2>
+	<h3>First Steps</h3>
+	<p>Following you can find an example for a simple RadioButtonGroup with three radio buttons. When the user selects a radio button, the <code>select</code> event is fired. To show the function of this <code>select</code> event,
+	in this example an alert popup is called where the popup is displaying the text of the selected radio button item, this of course also could be any other text.</p>
+	<br>
+	<div code-sample="sample1" script="SimpleRBGroup"></div>
+	<br />
+
+	<h3>Multi-Column-Group With Preset Radio Button</h3>
+	<p>A RadioButtonGroup can have multiple columns. In the following example, the radio buttons are created row-wise.
+	The radio button that shall be initially selected at runtime can be set by using the <code>selectedIndex</code> property.
+	</p>
+	<br>
+	<div code-sample="sample2" script="MultiColumnRBGroup"></div>
+
+	<br />
+	<h3>Properties <code>editable</code> and <code>enabled</code></h3>
+	<p>A RadioButtonGroup as a whole can be set to editable true or false. The single radio buttons can have an enabled or disabled status.</p>
+	<br>
+	<div code-sample="sample3" script="ToggleEditable"></div>
+
+	<p>
+	<h2>API Documentation</h2>
+	See <a href="../../../../../docs/api/symbols/sap.ui.commons.RadioButtonGroup.html">API documentation</a>
+	</p>
+</body>
+</html>

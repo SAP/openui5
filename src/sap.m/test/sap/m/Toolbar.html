@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.Toolbar</title>
+
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<style type="text/css">
+
+</style>
+
+<script>
+
+
+	// initialize
+	var oUriParameters = jQuery.sap.getUriParameters();
+	jQuery.sap.require("sap.m.MessageToast");
+	jQuery.sap.require("sap.m.ToolbarDesign");
+	jQuery.sap.require("sap.m.Toolbar");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	
+	// for behaviour testing
+	if (oUriParameters.get("noFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.Toolbar.hasFlexBoxSupport = false;
+	} else if (oUriParameters.get("oldFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.Toolbar.hasFlexBoxSupport = true;
+	} else if (oUriParameters.get("newFlex")) {
+		sap.m.Toolbar.hasNewFlexBoxSupport = true;
+		sap.m.Toolbar.hasFlexBoxSupport = true;
+	}
+
+	var oApp = new sap.m.App();
+	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
+
+	function getToolbarContent (sText) {
+		return [
+			new sap.m.Button({text : "Button"}),
+			new sap.m.Button({text : "Test"}),
+			new sap.m.Select({
+				autoAdjustWidth: true,
+				items : [
+					new sap.ui.core.Item({
+							key: "0",
+							text: "item 0",
+						}),
+					new sap.ui.core.Item({
+							key: "0",
+							text: "loooooooooooooong item"
+					})
+				]
+			}),
+			new sap.m.SearchField({
+				placeholder : "Search",
+				width : "200px"
+			}),
+			new sap.m.SegmentedButton({
+				buttons: [
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						icon: sAddIconURI,
+						enabled: true
+					}), 
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						icon: sAddIconURI,
+						enabled: true
+					}), 
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						icon: sAddIconURI,
+						enabled: true
+					}), 
+					new sap.m.Button({
+						type: sap.m.ButtonType.Default,
+						icon: sAddIconURI,
+						enabled: true
+					})
+				]
+			}),
+			new sap.m.Button({text : "Button"}),
+			new sap.m.Select({ 
+				type: sap.m.SelectType.IconOnly,
+				icon: sap.ui.core.IconPool.getIconURI("filter"),
+				autoAdjustWidth: true,
+				items : [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+					new sap.ui.core.Item({
+						key: "0",
+						text: "loooooooooooooong item"
+					})
+				]
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Label({ text : sText }),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Select({ 
+				items : [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+					new sap.ui.core.Item({
+						key: "0",
+						text: "loooooooooooooong item"
+					})
+				]
+			})
+		]
+	}
+
+	function getInputToolbarContent () {
+		return [
+			new sap.m.Label({
+				text : "Input controls"
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.ToggleButton({
+				text: "ToggleButton"
+			}),
+			new sap.m.Input({
+				placeholder: "Input",
+				width: "150px"
+			}),
+			new sap.m.DateTimeInput({
+				placeholder: "DateTimeInput",
+				width: "150px"
+			}),
+			new sap.m.CheckBox({
+				text : "Checkbox"
+			}),
+			new sap.m.RadioButton({
+				text : "Option a",
+				group : "a"
+			}),
+			new sap.m.RadioButton({
+				text : "Option b",
+				group : "b"
+			})
+		];
+	}
+
+	TBHeader = new sap.m.Toolbar({
+		content : getToolbarContent("This is a Header")
+	});
+
+	TBSubHeader = new sap.m.Toolbar({
+		content : getToolbarContent("This is a SubHeader")
+	});
+
+	TBFooter = new sap.m.Toolbar({
+		content : getToolbarContent("This is a Footer")
+	});
+
+	// test toolbars in dialog
+	var oDialog = new sap.m.Dialog({
+		title: "Toolbar Dialog",
+		content: [
+			oList = new sap.m.List({
+				headerToolbar : new sap.m.Toolbar({
+					content : [
+						new sap.m.Label({ 
+							text : "This is a header"
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({ 
+							text : "Remove",
+							type : "Reject",
+							press : function() {
+								oList.getHeaderToolbar().destroy();
+							}
+						})
+					]
+				})
+			}),
+			oList.getHeaderToolbar().clone().setDesign("Info").setHeight("auto")
+		],
+ 		beginButton: new sap.m.Button({
+ 			text: "Close",
+ 			press : function() {
+				oDialog.close()
+			}
+ 		})
+	});
+
+	// add toolbars to the page
+	var oPage = new sap.m.Page({
+		customHeader : TBHeader,
+		subHeader : TBSubHeader,
+		footer : TBFooter,
+		title : "Toolbar",
+		enableScrolling : true,
+		headerContent : new sap.m.Button({
+			text : "Open Dialog",
+			press : function() {
+				oDialog.open()
+			}
+		}),
+		content : [
+			new sap.m.Toolbar({
+				active : true,
+				design : sap.m.ToolbarDesign.Info,
+				tooltip : "This is a info bar",
+				content : [
+					new sap.m.Label({
+						text : "Plain old infobar"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.ui.core.Icon({
+						src : "sap-icon://undo",
+						width : "2rem",
+						press : function (evt) {
+							jQuery.sap.require("sap.m.MessageToast");
+							sap.m.MessageToast.show("Icon is pressed");
+						}
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				active : true,
+				design : sap.m.ToolbarDesign.Solid,
+				height : "auto",
+				content : [
+					new sap.m.Label({
+						text : "This text should never get shrink.",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : false
+						})
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						text : "This Button is shrinkable up to 100px",
+						icon: "sap-icon://person-placeholder",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : true,
+							minWidth: "100px"
+						}),
+						press : function() {
+							sap.m.MessageToast.show("Shrinkable button is pressed.",  {
+								at: "center center"
+							});
+						}
+					})
+				]
+			}).attachPress(function(oEvent) {
+				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
+			}),
+			new sap.m.Toolbar({
+				height: "auto",
+				content : [
+					new sap.m.Label({
+						text : "Percent Width Controls"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.SearchField({
+						placeholder : "This has 100% width by default",
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				height: "auto",
+				design : sap.m.ToolbarDesign.Transparent,
+				content : [
+					new sap.m.Label({
+						text : "Segmented Button"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.SegmentedButton({
+						selectedButton : "sbi1",
+						buttons : [ 
+							new sap.m.Button("sbi1", {
+								text : "Seg-"
+							}), 
+							new sap.m.Button({
+								text : "-men-"
+							}), 
+							new sap.m.Button({
+								text : "-ted Button"
+							})
+						]
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				height: "auto",
+				design : sap.m.ToolbarDesign.Transparent,
+				content : [
+					new sap.m.Label({
+						text : "Lots of Buttons"
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						text : "1st Button"
+					}),
+					new sap.m.Button({
+						type : "Accept",
+						text : "Second Button Shrinkable",
+						icon: "sap-icon://person-placeholder",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : true
+						})
+					}),
+					new sap.m.Button({
+						text : "3rd Button"
+					}),
+					new sap.m.Button({
+						type : "Reject",
+						text : "Fourth Button Shrinkable",
+						icon: "sap-icon://person-placeholder",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : true
+						})
+					}),
+					new sap.m.Button({
+						text : "5th Button"
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				content : getInputToolbarContent()
+			}).applyTagAndContextClassFor("header"),
+			new sap.m.Toolbar({
+				content : getInputToolbarContent()
+			}).applyTagAndContextClassFor("subheader"),
+			new sap.m.Toolbar({
+				content : 	getInputToolbarContent()
+			}).applyTagAndContextClassFor("footer"),
+			new sap.m.Toolbar({
+				design : sap.m.ToolbarDesign.Transparent,
+				content : getInputToolbarContent()
+			}),
+			new sap.m.Toolbar({
+				design : sap.m.ToolbarDesign.Solid,
+				content : getInputToolbarContent()
+			}),
+			new sap.m.Toolbar({
+				height : "auto",
+				design : sap.m.ToolbarDesign.Solid,
+				content : [
+					new sap.m.Label({
+						text : "This text should never get shrink This text should never get shrink",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : false
+						})
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						text : "This Button is shrinkable",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : true
+						})
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Button({
+						text : "This Button is shrinkable up to 100px",
+						layoutData : new sap.m.ToolbarLayoutData({
+							shrinkable : true,
+							minWidth: "100px",
+							maxWidth: "250px"
+						})
+					})
+				]
+			}),
+			new sap.m.Toolbar({
+				design : sap.m.ToolbarDesign.Solid,
+				content : [
+					new sap.m.Button({
+						text : "Button1",
+						type : "Accept",
+						width : "50%"
+					}),
+					new sap.m.Button({
+						text : "Button2",
+						type : "Reject",
+						width : "50%"
+					})
+				]
+			})
+		]
+	});
+
+	var oApp = new sap.m.App();
+	oApp.addPage(oPage).placeAt("body");
+	
+	// inform about the less for the polyfill
+	if (!oUriParameters.get("sap-ui-xx-noless") && !sap.m.Toolbar.hasFlexBoxSupport) {
+		setTimeout(function() {
+			sap.m.MessageToast.show("Beaware maybe LESS is running!");
+		}, 2000);
+	}
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

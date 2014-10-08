@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>RichTooltip - sap.ui.commons test in Matrix layout</title>
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script src="../../../../../resources/sap-ui-core.js"
+		type="text/javascript" id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-theme="sap_goldreflection">
+</script>
+
+<script type="text/javascript">
+
+	var oCore = sap.ui.getCore();
+
+	function quickhelp(oControl, sText) {
+		// create the RichTooltip control 
+		var oRichTooltip = new sap.ui.commons.RichTooltip({
+			text : sText,
+			title : "Quick Help",
+			imageSrc : sap.ui.resource("sap.ui.core", "mimes/logo/txtonly_32x32.png")
+		});
+		// add it to the control
+		oControl.setTooltip(oRichTooltip);
+		// return the control itself (makes this function a decorator function)
+		return oControl;
+	};
+
+		jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+		var oML = new sap.ui.commons.layout.MatrixLayout("ml");
+		oML.setLayoutFixed(false);
+		oML.setTooltip("the whole matrix title attribute");
+
+		var oMLR = new sap.ui.commons.layout.MatrixLayoutRow();
+		oMLR.setTooltip("title attribute on Row");
+
+		oMLR.setHeight("80px");
+		oML.addRow(oMLR);
+		var oMLC = quickhelp( new sap.ui.commons.layout.MatrixLayoutCell(),
+						"RichToooltip on Matrix Cell");
+
+		var oTF = quickhelp( new sap.ui.commons.TextField({
+									id : "tf",
+									required : true,
+									value : "Both - the Textfield and Matrix Cell have RichTooltip"
+								}), "This is the RTT on The TextField");
+		oTF.setWidth("320px");
+
+		oMLC.addContent(oTF);
+		oMLR.addCell(oMLC);
+
+		oML.placeAt("uiArea");
+
+		// Second example: Text Field has no any tooltip. Cell has RTT - this one must be shown also if the mouse is over the TextField
+
+		var oML1 = new sap.ui.commons.layout.MatrixLayout("ml1");
+		oML1.setLayoutFixed(false);
+		var oMLR1 = new sap.ui.commons.layout.MatrixLayoutRow();
+		oMLR1.setHeight("80px");
+		oML1.addRow(oMLR1);
+		var oMLC1 = quickhelp( new sap.ui.commons.layout.MatrixLayoutCell(),
+						"RichToooltip on Matrix Cell");
+		var oTF1 = new sap.ui.commons.TextField({
+					id : "tf1",
+					required : true,
+					value : "Text Field has no any own Tooltip"
+				});
+
+		oTF1.setWidth("320px");
+
+		oMLC1.addContent(oTF1);
+		oMLR1.addCell(oMLC1);
+		oML1.placeAt("uiArea1");
+
+		// Next example  Text Field has standard tooltip. Cell has RTT - this one must be shown also if the mouse is over the TextField
+
+		var oML2 = new sap.ui.commons.layout.MatrixLayout("ml2");
+		oML2.setLayoutFixed(false);
+		var oMLR2 = new sap.ui.commons.layout.MatrixLayoutRow();
+		oMLR2.setHeight("80px");
+		oML2.addRow(oMLR2);
+		var oMLC2 = quickhelp(new sap.ui.commons.layout.MatrixLayoutCell(),
+						"RichToooltip on Matrix Cell");
+
+		var oTF2 = new sap.ui.commons.TextField({
+							id : "tf2",
+							required : true,
+							value : "Text Field has standard tooltip and the matrix cell the RichTooltip"
+						});
+
+		oTF2.setTooltip("Standard Tooltip on the TextField");
+		oTF2.setWidth("320px");
+		oMLC2.addContent(oTF2);
+		oMLR2.addCell(oMLC2);
+		oML2.placeAt("uiArea2");
+
+</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for RichTooltip in Matrix Layout</h1>
+
+	<p>
+	<div id="uiArea" style="background: lavender;"></div>
+	</p>
+
+	<p>
+	<div id="uiArea1" style="background: lavender;"></div>
+	</p>
+	<p>
+	<div id="uiArea2" style="background: lavender;"></div>
+	</p>
+
+</body>
+</html>

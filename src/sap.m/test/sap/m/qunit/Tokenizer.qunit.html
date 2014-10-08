@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.Tokenizer</title>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-noConflict="true" data-sap-ui-libs="sap.m"
+	src="../../../../resources/sap-ui-core.js">
+	
+</script>
+
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+	var Tokenizer1;
+	var key = "testKey";
+	var text = "testText";
+
+	var oTokenizer = new sap.m.Tokenizer("t1");
+	oTokenizer.placeAt("content");
+
+	module("Basic", {
+		setup : function() {
+			tokenizer1 = sap.ui.getCore().getControl("t1");
+		},
+		teardown : function() {
+			token1 = null;
+		}
+	});
+
+	test("validator add/remove/removeAll", function() {
+		var function1 = function() {
+		};
+		var function2 = function() {
+		};
+		var function3 = function() {
+		};
+
+		tokenizer1.removeAllValidators();
+		equals(tokenizer1._aTokenValidators.length, 0, "No token validators available");
+
+		tokenizer1.addValidator(function1);
+		equals(tokenizer1._aTokenValidators.length, 1, "1 token validator available");
+
+		tokenizer1.addValidator(function2);
+		equals(tokenizer1._aTokenValidators.length, 2, "2 token validators available");
+
+		tokenizer1.addValidator(function3);
+		equals(tokenizer1._aTokenValidators.length, 3, "3 token validators available");
+
+		tokenizer1.removeValidator(function2);
+		equals(tokenizer1._aTokenValidators.length, 2, "2 token validators available");
+
+		tokenizer1.removeAllValidators();
+		equals(tokenizer1._aTokenValidators.length, 0, "No token validators available");
+	});
+
+	test("tokens aggregation", function() {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		tokenizer1.addToken(token1);
+		tokenizer1.addToken(token2);
+		tokenizer1.addToken(token3);
+
+		equals(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
+
+		tokenizer1.removeToken(token1);
+		equals(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
+
+		tokenizer1.removeAllTokens();
+		equals(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens");
+
+		tokenizer1.addToken(token1);
+		tokenizer1.addToken(token2);
+		tokenizer1.addToken(token3);
+		equals(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
+
+		token2.fireDelete({
+			token : token2
+		});
+		equals(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
+
+		tokenizer1.removeAllTokens();
+	});
+
+	test("validate tokens using validator callback", function() {
+		// 1
+		equals(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens");
+		tokenizer1.removeAllValidators();
+
+		var validationCallbackCount = 0;
+		var isValidated = false;
+		var fValidationCallback = function(bValidated) {
+			validationCallbackCount++;
+			isValidated = bValidated;
+		}
+		var tokenText = "new Token 1";
+
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		// 2
+		equals(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens, as no validator exists");
+
+		// 3
+		equals(validationCallbackCount, 1, "validation callback called 1x");
+
+		// 4
+		equals(isValidated, false, "token not validated");
+
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			token : new sap.m.Token({
+				text : tokenText
+			}),
+			validationCallback : fValidationCallback
+		});
+
+		// 5
+		equals(tokenizer1.getTokens().length, 1, "Tokenizer contains 1 token");
+
+		// 6
+		equals(tokenizer1.getTokens()[0].getText(), tokenText, "added token contains validated text");
+
+		// 7
+		equals(validationCallbackCount, 2, "validation callback called 2x");
+
+		// 8
+		equals(isValidated, true, "token got validated");
+
+		tokenizer1.removeAllTokens();
+
+		tokenizer1.addValidator(function(args) {
+			return new sap.m.Token({
+				text : args.text
+			});
+		});
+
+		tokenText = "TestToken1";
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		// 9
+		equals(tokenizer1.getTokens().length, 1, "Tokenizer contains 1 token");
+
+		//10
+		equals(tokenizer1.getTokens()[0].getText(), tokenText, "added token contains validated text");
+		equals(validationCallbackCount, 3, "validation callback called 3x");
+		equals(isValidated, true, "token got validated");
+
+		isValdiated = false;
+		var tokenText = "TestToken2";
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+
+		equals(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
+		equals(tokenizer1.getTokens()[1].getText(), tokenText, "added token contains validated text");
+		equals(validationCallbackCount, 4, "validation callback called 4x");
+		equals(isValidated, true, "token got validated");
+
+		tokenizer1.removeAllValidators();
+		tokenizer1.addValidator(function(args) {
+			return;
+		});
+		tokenText = "TestToken3";
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+		equals(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens, no token added as validator rejected it");
+		equals(validationCallbackCount, 5, "validation callback called 5x");
+		equals(isValidated, false, "token not validated");
+
+		var fAsyncValidateCallback;
+		tokenizer1.removeAllValidators();
+		tokenizer1.addValidator(function(args) {
+			fAsyncValidateCallback = args.asyncCallback;
+			return sap.m.Tokenizer.WaitForAsyncValidation;
+		});
+		tokenText = "TestToken4";
+		tokenizer1.addValidateToken({
+			text : tokenText,
+			validationCallback : fValidationCallback
+		});
+		equals(tokenizer1.getTokens().length, 2,
+				"Tokenizer contains 2 tokens, no token added as validator runs asynchronously");
+		equals(validationCallbackCount, 5, "validation callback called 5x (1 call still pending)");
+
+		fAsyncValidateCallback(new sap.m.Token({
+			text : "dummy"
+		}));
+
+		equals(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
+		equals(validationCallbackCount, 6, "validation callback called 6x");
+		equals(isValidated, true, "token got validated");
+
+		tokenizer1.removeAllValidators();
+		tokenizer1.removeAllTokens();
+	});
+
+	test("tokens change event", function() {
+		var eventType;
+		tokenizer1.attachTokenChange(function(args) {
+			eventType = args.getParameter("type");
+		});
+
+		var token1 = new sap.m.Token();
+		tokenizer1.addToken(token1);
+		equals(eventType, sap.m.Tokenizer.TokenChangeType.Added, "added event raised");
+
+		tokenizer1.removeToken(token1);
+		equals(eventType, sap.m.Tokenizer.TokenChangeType.Removed, "removed event raised");
+
+		tokenizer1.removeAllTokens();
+		equals(eventType, sap.m.Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
+	});
+
+	test("getSelectedTokens", function() {
+		var token1 = new sap.m.Token({
+			selected : true
+		});
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token({
+			selected : true
+		});
+		tokenizer1.addToken(token1);
+		tokenizer1.addToken(token2);
+		tokenizer1.addToken(token3);
+
+		var aSelectedTokens = tokenizer1.getSelectedTokens();
+		equals(aSelectedTokens.length, 2, "2 selected tokens");
+		equals(aSelectedTokens[0], token1, "correct selected token1");
+		equals(aSelectedTokens[1], token3, "correct selected token3");
+
+		tokenizer1.removeAllTokens();
+	});
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for sap.m.Tokenizer</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<div id="qunit-fixture">test markup, will be hidden</div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>

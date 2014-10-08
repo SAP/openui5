@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<VBox binding="{/ProductCollection}">
+			<RadioButton groupName="GroupA" text="Option 1" selected="true" />
+			<RadioButton groupName="GroupA" text="Option 2" />
+			<RadioButton groupName="GroupA" text="Option 3" />
+			<RadioButton groupName="GroupA" text="Option 4" />
+			<RadioButton groupName="GroupA" text="Option 5" />
+		</VBox>
+</mvc:View>

@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>ApplicationHeader - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<script>
+
+		//Let's create 4 different cases to show different displays of the application header
+		var bDisplayAllAreas = true;		
+		var bDisplayWithoutLogOutArea = true;
+		var bDisplayWithNoName = true;
+		var bDisplayLongTitle = true;
+		var bDisplayLongUserName = true;
+		var bDisplayBigLogo = true;
+		var bDisplayBiggerLogo = true;
+		var bDisplayWrongLogoSrc = true;
+
+		//First case, all areas will be displayed (logo, functions, search and logout)
+		if(bDisplayAllAreas){		
+			var oApplicationHeader = new sap.ui.commons.ApplicationHeader("appHeaderAll");
+			oApplicationHeader.setLogoText("Title - All areas");
+			oApplicationHeader.setUserName("Carey Price");
+			oApplicationHeader.placeAt("uiApplicationHeaderAll");
+		}
+
+		if (bDisplayWithoutLogOutArea){			
+			var oApplicationHeader2 = new sap.ui.commons.ApplicationHeader("appHeaderNoLogout");
+			oApplicationHeader2.setLogoText("Title - No Logout");
+			oApplicationHeader2.setDisplayLogoff(false);
+			oApplicationHeader2.setUserName("Huguette Tremblay");
+			oApplicationHeader2.placeAt("uiApplicationHeaderNoLogout");
+		}
+
+		if (bDisplayWithNoName){
+			var oApplicationHeader3 = new sap.ui.commons.ApplicationHeader("appHeaderNoUser");
+			oApplicationHeader3.setLogoText("Title - No User name provided");
+			oApplicationHeader3.setDisplayLogoff(true);
+			oApplicationHeader3.placeAt("uiApplicationHeaderNoUser");
+		}
+
+		if (bDisplayLongTitle){
+			var oApplicationHeader4 = new sap.ui.commons.ApplicationHeader("appHeaderLongTitle");
+			oApplicationHeader4.setLogoText("This is a super long title that cannot overlap the rest of the application header");
+			oApplicationHeader4.setUserName("Bobby Smith");
+			oApplicationHeader4.placeAt("uiApplicationHeaderLongTitle");
+		}
+
+		if (bDisplayLongUserName){
+			var oApplicationHeader5 = new sap.ui.commons.ApplicationHeader("appHeaderLonguserName");
+			oApplicationHeader5.setLogoText("Title - Long user name");
+			oApplicationHeader5.setUserName("Arman Farid Fathya Jean-Yves Armand Jerome Louis Mladen Daniel Thomas Yohan Roger Britney Christina Brenda Alouette");
+			oApplicationHeader5.placeAt("uiApplicationHeaderLongUserName");
+		}
+
+		if (bDisplayBigLogo){
+			var oApplicationHeader6 = new sap.ui.commons.ApplicationHeader("appHeaderBigLogo");
+			oApplicationHeader6.setLogoSrc("http://www.sap.com/global/images/SAPLogo.gif");
+			oApplicationHeader6.setLogoText("Title - Big SAP Logo");
+			oApplicationHeader6.setUserName("Angelina Jolie");
+			oApplicationHeader6.placeAt("uiApplicationHeaderBigLogo");
+		}
+
+		if (bDisplayBiggerLogo){
+			var oApplicationHeader7 = new sap.ui.commons.ApplicationHeader("appHeaderBiggerLogo");
+			oApplicationHeader7.setLogoSrc("http://assets.espn.go.com/i/teamlogos/nhl/sml/trans/pho.gif");
+			oApplicationHeader7.setLogoText("Title - Bigger Logo");
+			oApplicationHeader7.setUserName("Britney Spears");
+			oApplicationHeader7.placeAt("uiApplicationHeaderBiggerLogo");
+		}
+
+		if (bDisplayWrongLogoSrc){
+			var oApplicationHeader8 = new sap.ui.commons.ApplicationHeader("appHeaderWrongLogo");
+			oApplicationHeader8.setLogoSrc("wrong_url");
+			oApplicationHeader8.setLogoText("Title - Wrong logo url provided");
+			oApplicationHeader8.setUserName("Vladimir Metslaswitchov");
+			oApplicationHeader8.placeAt("uiApplicationHeaderWrongLogo");
+		}
+
+		</script>
+	</head>
+	<body class="sapUiBody" role="application" style="background:white;">
+		<h1>Test Page for sap.ui.commons.ApplicationHeader</h1>
+		<br><br>
+
+		<b>Application header with all areas:</b>
+		<div id="uiApplicationHeaderAll"></div>
+		<br><br>
+
+		<b>Application header without logout area:</b>
+		<div id="uiApplicationHeaderNoLogout"></div>
+		<br><br>
+
+		<b>Application header without user name provided by application:</b>
+		<div id="uiApplicationHeaderNoUser"></div>
+		<br><br>
+
+		<b>Application header with longer title:</b>
+		<div id="uiApplicationHeaderLongTitle"></div>
+		<br><br>
+
+		<b>Application header with long user name:</b>
+		<div id="uiApplicationHeaderLongUserName"></div>
+		<br><br>
+
+		<b>Application header with big SAP logo:</b>
+		<div id="uiApplicationHeaderBigLogo"></div>
+		<br><br>
+
+		<b>Application header with bigger logo:</b>
+		<div id="uiApplicationHeaderBiggerLogo"></div>
+		<br><br>
+
+		<b>Application header with wrong logo url provided:</b>
+		<div id="uiApplicationHeaderWrongLogo"></div>
+		<br><br>
+
+	</body>
+</html>

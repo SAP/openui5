@@ -1,0 +1,789 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		sinon.config.useFakeTimers = false;
+
+		module("Initial Check");
+
+		test("Initialization on desktop", function() {
+			var oSystem = {
+				desktop: true,
+				tablet: false,
+				phone: false
+			};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			ok(jQuery.sap.byId("master").length, "Master page should be rendered initially.");
+			ok(jQuery.sap.byId("detail").length, "Detail page should be rendered initially.");
+
+			oSplitApp.destroy();
+		});	
+
+		module("Modes Check on desktop");
+		asyncTest("PopoverMode_portrait", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oPortrait = {
+					landscape: false,
+					portrait: true
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oPortrait);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1"
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 2"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "PopoverMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+
+			oSplitApp._oPopOver.attachAfterOpen(function(){
+				ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+				ok(jQuery.sap.byId("splitapp-Popover").length, "Popover should be rendered.");
+				ok(oSplitApp.isMasterShown(), "Master area is shown");
+				equal(oSplitApp._oPopOver.getContent().length,1, "Popover content should not be empty.");
+				ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
+				ok(jQuery.sap.byId("splitapp-MasterBtn").is(":visible"), "Master Button is shown");
+				ok(jQuery.sap.byId("detail").length, "Detail page should be rendered  initially.");
+				equal(oSplitApp.$().children().length,2, "SplitApp should only contain the detail nav container.");
+				equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp-Popover", "Parent of Master Nav container page should be Popover.");
+				oSplitApp.destroy();
+				start();
+			});
+			oSplitApp._oPopOver.openBy(oSplitApp._oShowMasterBtn);
+		});
+
+		asyncTest("ShowHideMode_portrait", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oPortrait = {
+					landscape: false,
+					portrait: true
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oPortrait);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "ShowHideMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			equal(oSplitApp._oMasterNav.getParent().getId(), "splitapp", "Parent of Master page should be SpltApp.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
+			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
+			ok(!jQuery.sap.byId("splitapp-MasterBtn").is(":hidden"), "Master Button is shown");
+			equal(oSplitApp.$().children().length, 3, "Splitapp should render both master and detail.");
+
+			oSplitApp.showMaster();
+			setTimeout(function(){
+				equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+				oSplitApp.destroy();
+				start();
+			}, 400);
+		});
+
+		test("StretchCompressMode_portrait", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oPortrait = {
+					landscape: false,
+					portrait: true
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oPortrait);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "StretchCompressMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Master Nav Container should be rendered initially.");
+			//equal(jQuery("#splitapp-MasterBtn").css("display"), "none", "Master Button is not shown");	           TODO
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			equal(jQuery.sap.byId("splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+			oSplitApp.destroy();
+		});
+
+		test("PopoverMode_landscape", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oLandscape = {
+					landscape: true,
+					portrait: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oLandscape);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "PopoverMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master").length, "Master Nav Container page should be rendered");
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			equal(oSplitApp.$("Master").outerWidth(),320, "Master width should be 320px.");
+
+			oSplitApp.destroy();
+		});
+
+		test("ShowHideMode_landscape", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oLandscape = {
+					landscape: true,
+					portrait: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oLandscape);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "ShowHideMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+			equal(oSplitApp.$().children().length, 3 ,"Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+			equal(oSplitApp.$("Master").outerWidth(), 320, "Master width should be 320px.");
+
+			oSplitApp.destroy();
+		});
+
+		test("StretchCompressMode_landscape", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oLandscape = {
+					landscape: true,
+					portrait: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oLandscape);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "StretchCompressMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), true, "Master area is shown");
+
+			ok(!jQuery.sap.byId("splitapp-Master").is(":hidden"),"Master should be visible.");
+			equal(jQuery.sap.byId("splitapp-Master").outerWidth(),320, "Master width should be 320px.");
+			oSplitApp.destroy();
+		});
+
+		test("HideMode", function(){
+			var oSystem = {
+				desktop: true,
+				tablet: false,
+				phone: false
+			};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "HideMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+			ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered initially.");
+			ok(jQuery.sap.byId("splitapp-MasterBtn").length, "Master Button should be rendered");
+			equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+			equal(oSplitApp.isMasterShown(), false, "Master area is NOT shown");
+			ok(jQuery.sap.byId("splitapp-Master").position().left <= -320, "Master should be hidden.");
+			oSplitApp.destroy();
+		});
+
+		module("Public Methods");
+		asyncTest("ShowMaster", function(){
+			var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				}, oPortrait = {
+					landscape: false,
+					portrait: true
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(sap.ui.Device, "orientation", oPortrait);
+
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "ShowHideMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oSplitApp.showMaster();
+
+			setTimeout(function(){
+				ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+				equal(oSplitApp._oPopOver.getContent().length, 0, "Popover content should be empty.");
+				ok(jQuery.sap.byId("detail").length, "Detail Nav Container should be rendered");
+				ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered");
+				equal(oSplitApp.$().children().length, 3, "Master page should be rendered initially.");
+				
+				ok(!jQuery("#splitapp-Master").is(":hidden"),"Master should not be hidden.");
+				equal(jQuery("#splitapp-Master").outerWidth(), 320, "Master width should be 320px.");
+				oSplitApp.destroy();
+				start();
+			}, 500);
+		});
+
+		test("Initialization on phone", function() {
+			var oSystem = {
+				desktop: false,
+				tablet: false,
+				phone: true
+			};
+			this.stub(sap.ui.Device, "system", oSystem);
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				],
+				mode: "ShowHideMode"
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			ok(jQuery.sap.byId("splitapp").length, "SplitApp is rendered in the beginning.");
+			ok(jQuery.sap.byId("master").length, "Master Nav Container should be rendered initially.");
+			equal(jQuery.sap.byId("detail").length , 0, "Detail Nav Container should not be rendered.");
+			equal(jQuery.sap.byId("splitapp-MasterBtn").length, 0, "Master Button should not be rendered");
+			oSplitApp.destroy();
+		});
+
+		// Tests for all modes
+		module("Master / Detail page aggregation");
+		test("Master / Detail page aggregation returns the right pages in the right order", function() {
+			var oMasterPage = new sap.m.Page("master",{
+				title : "Master 1",
+				content: [new sap.m.Button("Button", {text: "That is a Button"})]
+			});
+			var oMasterPage2 = new sap.m.Page("master2",{
+				title : "Master 1"
+			});
+			var oDetailPage = new sap.m.Page("detail",{
+				title : "Detail 1"
+			});
+			var oDetailPage2 = new sap.m.Page("detail2",{
+				title : "Detail 2"
+			});
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					oMasterPage, oMasterPage2
+				],
+				detailPages: [
+					oDetailPage, oDetailPage2
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oSpyIndexOfPage = this.spy(oSplitApp._oMasterNav, "indexOfPage");
+
+			var aMaster = oSplitApp.getMasterPages();
+			var aDetail = oSplitApp.getDetailPages();
+			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+
+			equal(oSplitApp.indexOfMasterPage(oMasterPage), 0, "Master page is in the right aggregation and order");
+			equal(oSplitApp.indexOfMasterPage(oMasterPage2), 1, "Master page 2 is in the right aggregation and order");
+			equal(oSplitApp.indexOfDetailPage(oDetailPage), 0, "Detail page is in the right aggregation and order");
+			equal(oSplitApp.indexOfDetailPage(oDetailPage2), 1, "Detail page 2 is in the right aggregation and order");
+
+			var oSpyIndexOfMasterPage = this.spy(oSplitApp, "_indexOfMasterPage");
+			equal(oSplitApp.indexOfAggregation("masterPages", oMasterPage), 0, "Master page is in the right aggregation and order");
+
+			ok(!oSpyIndexOfPage.called, "Right delegate method was called");
+			ok(oSpyIndexOfMasterPage.called, "Right delegate method was called");
+			oSplitApp.destroy();
+		});
+
+		test("Adding / Removing Pages to/from Master / Detail", function() {
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oNewMasterPage = new sap.m.Page("newMasterPage1",{
+				title : "Master 1"
+			});
+
+			var oSpyAddPage = this.spy(oSplitApp._oMasterNav, "addPage");
+			var oSpyRemovePage = this.spy(oSplitApp._oMasterNav, "removePage");
+
+			oSplitApp.addMasterPage(oNewMasterPage);
+
+			var oNewDetailPage = new sap.m.Page("newDetailPage1",{
+				title : "Detail 1"
+			});
+
+			oSplitApp.addDetailPage(oNewDetailPage);
+
+			var aMaster = oSplitApp.getMasterPages();
+			var aDetail = oSplitApp.getDetailPages();
+			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+
+			oSplitApp.removeMasterPage(oNewMasterPage);
+			oSplitApp.removeDetailPage(oNewDetailPage);
+
+			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+
+			oSplitApp.addMasterPage(oNewMasterPage);
+			oSplitApp.addDetailPage(oNewDetailPage);
+			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+			oNewDetailPage.destroy();
+			oNewMasterPage.destroy();
+			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+
+			ok(oSpyAddPage.called, "Right delegate method was called");
+			ok(oSpyRemovePage.called, "Right delegate method was called");
+
+			oSplitApp.destroy();
+		});
+
+		test("Moving Page from Master to Detail", function() {
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var aMaster = oSplitApp.getMasterPages();
+			var aDetail = oSplitApp.getDetailPages();
+
+			var oMovePage = new sap.m.Page("movePagePage1",{
+				title : "Detail 1"
+			});
+
+			oSplitApp.addMasterPage(oMovePage);
+			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			oSplitApp.addDetailPage(oMovePage);
+			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 3, "Detail page aggregation contains the right number of pages");
+			oSplitApp.removeDetailPage(oMovePage);
+			equal(aMaster.length, 2, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 2, "Detail page aggregation contains the right number of pages");
+			
+			oMovePage.destroy();
+			oSplitApp.destroy();
+		});
+
+		test("Insert Page", function() {
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var aMaster = oSplitApp.getMasterPages();
+			var aDetail = oSplitApp.getDetailPages();
+
+			var oSpyInsertPage = this.spy(oSplitApp._oMasterNav, "insertPage");
+
+			var oInsertPage = new sap.m.Page("insertPagePage",{
+				title : "Detail 1"
+			});
+
+			oSplitApp.insertMasterPage(oInsertPage, 1);
+			equal(aMaster.length, 3, "Master page aggregation contains the right number of pages");
+			equal(oSplitApp.indexOfMasterPage(oInsertPage), 1, "Master page is in the right position");
+			oInsertPage.destroy();
+
+			// Check against native implementation
+			var oNavContainer = new sap.m.NavContainer("navcontainer", {});
+			var oInsertPage1 = new sap.m.Page("insertPagePage1",{
+				title : "Detail 1"
+			});
+			var oInsertPage2 = new sap.m.Page("insertPagePage2",{
+				title : "Detail 1"
+			});
+			var oInsertPage3 = new sap.m.Page("insertPagePage3",{
+				title : "Detail 1"
+			});
+			oNavContainer.addPage(oInsertPage1);
+			oNavContainer.addPage(oInsertPage2);
+			oNavContainer.insertPage(oInsertPage3, 1);
+			equal(oNavContainer.indexOfPage(oInsertPage3), 1, "Validation against native Implementation: Page is in the right position");
+
+			ok(oSpyInsertPage.called, "Right delegate method was called");
+
+			oNavContainer.destroy();
+			oSplitApp.destroy();
+		});
+
+		test("Remove all pages", function() {
+			var oSplitApp = new sap.m.SplitApp("splitapp", {
+				masterPages: [
+					new sap.m.Page("master",{
+						title : "Master 1",
+						content: [new sap.m.Button("Button", {text: "That is a Button"})]
+					}),
+					new sap.m.Page("master2",{
+						title : "Master 1"
+					})
+				],
+				detailPages: [
+					new sap.m.Page("detail",{
+						title : "Detail 1"
+					}),
+					new sap.m.Page("detail2",{
+						title : "Detail 2"
+					})
+				]
+			});
+			oSplitApp.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oSpyRemoveAllPages = this.spy(oSplitApp._oMasterNav, "removeAllPages");
+
+			oSplitApp.removeAllMasterPages();
+			oSplitApp.removeAllDetailPages();
+
+			var aMaster = oSplitApp.getMasterPages();
+			var aDetail = oSplitApp.getDetailPages();
+			equal(aMaster.length, 0, "Master page aggregation contains the right number of pages");
+			equal(aDetail.length, 0, "Detail page aggregation contains the right number of pages");
+
+			ok(oSpyRemoveAllPages.called, "Right delegate method was called");
+
+			oSplitApp.destroy();
+		});
+
+		asyncTest("keyboard handling with showMasterButton", function(){
+			var oSystem = {
+					desktop: true,
+					phone: false,
+					tablet: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+
+			this.stub(jQuery.device, "is", oSystem);
+
+			var	oSplitApp1 = new sap.m.SplitApp({
+				mode: sap.m.SplitAppMode.HideMode
+			});
+
+			var page = new sap.m.Page("master_1");
+			var page2 = new sap.m.Page("detail_1");
+			oSplitApp1.addMasterPage(page).addDetailPage(page2);
+
+			oSplitApp1.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var oMasterButton = oSplitApp1._oShowMasterBtn;
+			ok(oMasterButton.getDomRef(), "Master Button is rendered");
+			ok(oMasterButton.$().css("display") !== "none", "Master Button should be shown");
+			oMasterButton.$().focus();
+			sap.ui.test.qunit.triggerKeydown(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			sap.ui.test.qunit.triggerKeyup(oMasterButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			setTimeout(function(){
+				ok(oSplitApp1.isMasterShown(), "Master should be opened");
+				oSplitApp1.destroy();
+				start();
+			}, 500);
+		});
+	</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.SplitApp</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

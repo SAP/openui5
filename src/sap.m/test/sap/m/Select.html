@@ -1,0 +1,1120 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Select - sap.m</title>
+		<style type="text/css">
+			.vBoxSelectTestPage {
+				margin: 0.5rem 1rem 0rem 1rem;
+			}
+
+			.vBoxSelectTestPage > .sapMFlexItem {
+				margin-bottom: 0.5rem;
+			}
+
+			.labelResult {
+				margin-top: 2rem;
+			}
+
+			.vBoxSelectTestPageWithWhiteBackground {
+				background-color: #ffffff;
+				padding: 1rem;
+				margin-bottom: 1rem;
+				margin: 1rem 2rem 0 2rem;
+			}
+
+			.labelSelectTestPageHeader {
+				margin: 1rem 2rem 0 2rem;
+			}
+		</style>
+		<script id="sap-ui-bootstrap"
+				src="../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script>
+		jQuery.sap.require("sap.m.MessageToast");
+
+		var oApp = new sap.m.App("myApp", {
+			initialPage:"page1"
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		var mData = {
+			"items": [
+				{
+					"key": "DZ",
+					"text": "Algeria"
+				},
+
+				{
+					"key": "AR",
+					"text": "Argentina"
+				},
+
+				{
+					"key": "AU",
+					"text": "Australia"
+				},
+
+				{
+					"key": "AT",
+					"text": "Austria"
+				},
+
+				{
+					"key": "BH",
+					"text": "Bahrain"
+				},
+
+				{
+					"key": "BE",
+					"text": "Belgium"
+				},
+
+				{
+					"key": "BA",
+					"text": "Bosnia and Herzegovina"
+				},
+
+				{
+					"key": "BR",
+					"text": "Brazil"
+				},
+
+				{
+					"key": "BG",
+					"text": "Bulgaria"
+				},
+
+				{
+					"key": "CA",
+					"text": "Canada"
+				},
+
+				{
+					"key": "CL",
+					"text": "Chile"
+				},
+
+				{
+					"key": "CO",
+					"text": "Colombia"
+				},
+
+				{
+					"key": "HR",
+					"text": "Croatia"
+				},
+
+				{
+					"key": "CU",
+					"text": "Cuba"
+				},
+
+				{
+					"key": "CZ",
+					"text": "Czech Republic"
+				},
+
+				{
+					"key": "DK",
+					"text": "Denmark"
+				},
+
+				{
+					"key": "EG",
+					"text": "Egypt"
+				},
+
+				{
+					"key": "EE",
+					"text": "Estonia"
+				},
+
+				{
+					"key": "FI",
+					"text": "Finland"
+				},
+
+				{
+					"key": "FR",
+					"text": "France"
+				},
+
+				{
+					"key": "GH",
+					"text": "Ghana"
+				},
+
+				{
+					"key": "GR",
+					"text": "Greece"
+				},
+
+				{
+					"key": "HK",
+					"text": "Hong Kong"
+				},
+
+				{
+					"key": "HU",
+					"text": "Hungary"
+				},
+
+				{
+					"key": "IN",
+					"text": "India"
+				},
+
+				{
+					"key": "ID",
+					"text": "Indonesia"
+				},
+
+				{
+					"key": "IE",
+					"text": "Ireland"
+				},
+
+				{
+					"key": "IL",
+					"text": "Israel"
+				},
+
+				{
+					"key": "IT",
+					"text": "Italy"
+				},
+
+				{
+					"key": "JP",
+					"text": "Japan"
+				},
+
+				{
+					"key": "JO",
+					"text": "Jordan"
+				},
+
+				{
+					"key": "KE",
+					"text": "Kenya"
+				},
+
+				{
+					"key": "KW",
+					"text": "Kuwait"
+				},
+
+				{
+					"key": "LV",
+					"text": "Latvia"
+				},
+
+				{
+					"key": "LT",
+					"text": "Lithuania"
+				},
+
+				{
+					"key": "MK",
+					"text": "Macedonia"
+				},
+
+				{
+					"key": "MY",
+					"text": "Malaysia"
+				},
+
+				{
+					"key": "MX",
+					"text": "Mexico"
+				},
+
+				{
+					"key": "ME",
+					"text": "Montenegro"
+				},
+
+				{
+					"key": "MA",
+					"text": "Morocco"
+				},
+
+				{
+					"key": "NL",
+					"text": "Netherlands"
+				},
+
+				{
+					"key": "NZ",
+					"text": "New Zealand"
+				},
+
+				{
+					"key": "NG",
+					"text": "Nigeria"
+				},
+
+				{
+					"key": "NO",
+					"text": "Norway"
+				},
+
+				{
+					"key": "OM",
+					"text": "Oman"
+				},
+
+				{
+					"key": "PE",
+					"text": "Peru"
+				},
+
+				{
+					"key": "PH",
+					"text": "Philippines"
+				},
+
+				{
+					"key": "PL",
+					"text": "Poland"
+				},
+
+				{
+					"key": "PT",
+					"text": "Portugal"
+				},
+
+				{
+					"key": "QA",
+					"text": "Qatar"
+				},
+
+				{
+					"key": "RO",
+					"text": "Romania"
+				},
+
+				{
+					"key": "RU",
+					"text": "Russia"
+				},
+
+				{
+					"key": "SA",
+					"text": "Saudi Arabia"
+				},
+
+				{
+					"key": "SN",
+					"text": "Senegal"
+				},
+
+				{
+					"key": "RS",
+					"text": "Serbia"
+				},
+
+				{
+					"key": "SG",
+					"text": "Singapore"
+				},
+
+				{
+					"key": "SK",
+					"text": "Slovakia"
+				},
+
+				{
+					"key": "SI",
+					"text": "Slovenia"
+				},
+
+				{
+					"key": "ZA",
+					"text": "South Africa"
+				},
+
+				{
+					"key": "KR",
+					"text": "South Korea"
+				},
+
+				{
+					"key": "ES",
+					"text": "Spain"
+				},
+
+				{
+					"key": "SE",
+					"text": "Sweden"
+				},
+
+				{
+					"key": "CH",
+					"text": "Switzerland"
+				},
+
+				{
+					"key": "TW",
+					"text": "Taiwan"
+				},
+
+				{
+					"key": "TN",
+					"text": "Tunisia"
+				},
+
+				{
+					"key": "TR",
+					"text": "Turkey"
+				},
+
+				{
+					"key": "UG",
+					"text": "Uganda"
+				},
+
+				{
+					"key": "UA",
+					"text": "Ukraine"
+				},
+
+				{
+					"key": "AE",
+					"text": "United Arab Emirates"
+				},
+
+				{
+					"key": "GB",
+					"text": "United Kingdom"
+				},
+
+				{
+					"key": "YE",
+					"text": "Yemen"
+				}
+		]};
+
+		oModel.setData(mData);
+		sap.ui.getCore().setModel(oModel);
+
+		var oItemTemplate = new sap.ui.core.Item({
+			key: "{key}",
+			text: "{text}"
+		});
+
+		var oSelect0 = new sap.m.Select({
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oLabel1 = new sap.m.Label({
+			text: "Most common use cases:",
+			design: sap.m.LabelDesign.Bold
+		});
+
+		var oLabel2 = new sap.m.Label({
+			text: "Other possible options:",
+			design: sap.m.LabelDesign.Bold
+		});
+
+		var oText0 = new sap.m.Text({
+			text: "If the selected item is not specified, the first one will be selected"
+		});
+
+		var oText1 = new sap.m.Text({
+			text: "The default width of a select control depends on the width of the widest option/item in the menu"
+		});
+
+		var oText2 = new sap.m.Text({
+			text: "Inactive"
+		});
+
+		var oText3 = new sap.m.Text({
+			text: "Default width changed to 15rem"
+		});
+
+		var oText8 = new sap.m.Text({
+			text: "Default type with auto adjustable width"
+		});
+
+		var oText4 = new sap.m.Text({
+			text: "Without items"
+		});
+
+		var oText5 = new sap.m.Text({
+			text: "With disabled items"
+		});
+
+		var oText6 = new sap.m.Text({
+			text: "Only Icon type with auto adjustable width"
+		});
+
+		var oSelect1 = new sap.m.Select({
+			name: "select-name0",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2 is a little long"
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect2 = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				})
+			],
+			enabled: false
+		});
+
+		var oSelect3 = new sap.m.Select({
+			name: "select-name3",
+			width: "15rem",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect4 = new sap.m.Select({
+			items: [],
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect6 = new sap.m.Select({
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			},
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect7 = new sap.m.Select({
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect8 = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				}),
+
+				new sap.ui.core.Item({
+					key: "4",
+					text: "item 4"
+				}),
+
+				new sap.ui.core.Item({
+					key: "5",
+					text: "item 5"
+				}),
+
+				new sap.ui.core.Item({
+					key: "6",
+					text: "item 6"
+				}),
+
+				new sap.ui.core.Item({
+					key: "7",
+					text: "item 7"
+				}),
+
+				new sap.ui.core.Item({
+					key: "8",
+					text: "item 8"
+				}),
+
+				new sap.ui.core.Item({
+					key: "9",
+					text: "item 9"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect9 = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3",
+					enabled: false
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect10 = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+			],
+
+			selectedKey: 0,
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				oInput4.setValue(oControlEvent.getParameter("selectedItem").getKey());
+				oInput5.setValue(oControlEvent.getParameter("selectedItem").getId());
+			}
+		});
+
+		var oSelect11 = new sap.m.Select({
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect12 = new sap.m.Select({
+			type: sap.m.SelectType.IconOnly,
+			autoAdjustWidth: true,
+			icon: sap.ui.core.IconPool.getIconURI("add"),
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect13 = new sap.m.Select({
+			type: sap.m.SelectType.IconOnly,
+			autoAdjustWidth: true,
+			icon: sap.ui.core.IconPool.getIconURI("filter"),
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect14 = new sap.m.Select({
+			type: sap.m.SelectType.IconOnly,
+			autoAdjustWidth: true,
+			icon: sap.ui.core.IconPool.getIconURI("settings"),
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "setting 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "setting 2",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "setting 3",
+				})
+			]
+		});
+
+		var oSelect16 = new sap.m.Select({
+			type: sap.m.SelectType.Default,
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0 is longer",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect17 = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect19 = new sap.m.Select({
+			type: sap.m.SelectType.IconOnly,
+			icon: sap.ui.core.IconPool.getIconURI("filter"),
+			autoAdjustWidth: true,
+			width: "15rem",
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+				})
+			]
+		});
+
+		var oSelect20 = new sap.m.Select({
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		var oSelect21 = new sap.m.Select({
+			autoAdjustWidth: true,
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				}),
+
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				})
+			],
+
+			change: function(oControlEvent) {
+				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+			}
+		});
+
+		// lists
+		var oList0 = new sap.m.List({
+			headerText: "Input List Item",
+			inset: false,
+			items: [
+
+				// input list items
+				oInputListItem0 = new sap.m.InputListItem({
+					label: "Address",
+					content: oInput0 = new sap.m.Input()
+				}),
+
+				oInputListItem1 = new sap.m.InputListItem({
+					label: "Country",
+					content: oSelect6
+				}),
+
+				oInputListItem2 = new sap.m.InputListItem({
+					label: "WLAN",
+					content: oSwitch0 = new sap.m.Switch()
+				}),
+
+				oInputListItem3 = new sap.m.InputListItem({
+					label: "Volume",
+					content: oSlider0 = new sap.m.Slider({
+						value: 50
+					})
+				}),
+
+				oInputListItem4 = new sap.m.InputListItem({
+					label: "High Performance",
+					content: oRadioButton0 = new sap.m.RadioButton()
+				}),
+
+				oInputListItem5 = new sap.m.InputListItem({
+					label: "Battery Saving",
+					content: oRadioButton1 = new sap.m.RadioButton()
+				}),
+
+				oInputListItem6 = new sap.m.InputListItem({
+					label: "Flight Mode",
+					content: oCheckBox0 = new sap.m.CheckBox()
+				})
+			]
+		});
+
+		// vbox
+		var oVBox0 = new sap.m.VBox({
+			items: [
+
+				// most common use cases
+				oLabel1,
+
+				oText0,
+				oSelect0,
+
+				oText1,
+				oSelect1,
+
+				oText3,
+				oSelect3,
+
+				oText8,
+				oSelect16,
+
+				oText6,
+				oSelect12,
+
+				// other possible options
+				oLabel2,
+
+				oText4,
+				oSelect4,
+
+				oText2,
+				oSelect2,
+
+				oText5,
+				oSelect9
+			]
+		}).addStyleClass("vBoxSelectTestPage");
+
+		var oVBox1 =  new sap.m.VBox({
+			items: [
+
+				// width
+				oLabel3 = new sap.m.Label({
+					text: "Width:"
+				}),
+
+				oInput2 = new sap.m.Input({
+					value: oSelect10.getWidth()
+				}),
+
+				// maximum width
+				oLabel4 = new sap.m.Label({
+					text: "Maximum width:"
+				}),
+
+				oInput3 = new sap.m.Input({
+					value: oSelect10.getMaxWidth()
+				}),
+
+				// selected key
+				oLabel4 = new sap.m.Label({
+					text: "Selected Key:"
+				}),
+
+				oInput4 = new sap.m.Input({
+					value: oSelect10.getSelectedKey(),
+					editable: false
+				}),
+
+				// selected item id
+				oLabel5 = new sap.m.Label({
+					text: "Selected item id:"
+				}),
+
+				oInput5 = new sap.m.Input({
+					value: oSelect10.getSelectedItemId(),
+					editable: false
+				}),
+
+				// auto adjust width
+				oLabel20 = new sap.m.Label({
+					text: "Auto adjust width:"
+				}),
+
+				oCheckBoxIsAutoAdjustableWidth = new sap.m.CheckBox({
+					selected: oSelect10.getAutoAdjustWidth(),
+					select: function(oControlEvent) {
+						var bSelected = oControlEvent.getParameter("selected");
+
+						oInput2.setEnabled(!bSelected);
+						oInput3.setEnabled(!bSelected);
+					}
+				}),
+
+				// enabled
+				oLabel6 = new sap.m.Label({
+					text: "Enabled:"
+				}),
+
+				oCheckBox1 = new sap.m.CheckBox({
+					selected: oSelect10.getEnabled()
+				}),
+
+				// visible
+				oLabel7 = new sap.m.Label({
+					text: "Visible:"
+				}),
+
+				oCheckBox2 = new sap.m.CheckBox({
+					selected: oSelect10.getVisible()
+				}),
+
+				// apply button
+				oButton2 = new sap.m.Button({
+					text: "Apply changes",
+					press: function() {
+						try {
+							oSelect10.setAutoAdjustWidth(oCheckBoxIsAutoAdjustableWidth.getSelected());
+							oSelect10.setWidth(oInput2.getValue());
+							oSelect10.setMaxWidth(oInput3.getValue());
+							oSelect10.setEnabled(oCheckBox1.getSelected());
+							oSelect10.setVisible(oCheckBox2.getSelected());
+						} catch (e) {
+							sap.m.MessageToast.show(e.message);
+						}
+					}
+				}),
+
+				// visible
+				oLabel8 = new sap.m.Label({
+					text: "Result:"
+				}),
+
+				// result
+				oSelect10,
+
+				// clone
+				oLabel21 = new sap.m.Label({
+					text: "Clone the result:"
+				}).addStyleClass("labelResult"),
+
+				oButton2 = new sap.m.Button({
+					text: "Clone",
+					press: function() {
+						oPage.addContent(oSelect10.clone());
+					}
+				})
+			]
+		}).addStyleClass("vBoxSelectTestPageWithWhiteBackground");
+
+		var oLabel9 = new sap.m.Label({
+			text: "API test:",
+			design: sap.m.LabelDesign.Bold
+		}).addStyleClass("labelSelectTestPageHeader");
+
+		var oPage = new sap.m.Page("page1", {
+			customHeader: oBar0 = new sap.m.Bar({
+
+				contentLeft: oSelect14,
+
+				contentMiddle: oLabel0 = new sap.m.Label({
+					text: "Select Control demo page"
+				}),
+
+				contentRight: oSelect7
+			}),
+
+			subHeader: oBar2 = new sap.m.Bar({
+				contentLeft: [oSelect17, oSelect19],
+				contentRight: [oSelect20, oSelect21]
+			}),
+
+			content: [oVBox0, oList0, oLabel9, oVBox1],
+
+			footer: oBar1 = new sap.m.Bar({
+				contentLeft: oSelect8,
+				contentRight: [oSelect11, oSelect13]
+			})
+		});
+
+		oApp.addPage(oPage);
+		oApp.placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody"></body>
+</html>

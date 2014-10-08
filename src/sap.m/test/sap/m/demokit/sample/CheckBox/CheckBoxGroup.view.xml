@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox>
+		<CheckBox text="Option a" selected="true" />
+		<CheckBox text="Option b" />
+		<CheckBox text="Option c" selected="true" />
+		<CheckBox text="Option d" />
+		<CheckBox text="Option e" enabled="false" />
+	</VBox>
+</mvc:View>

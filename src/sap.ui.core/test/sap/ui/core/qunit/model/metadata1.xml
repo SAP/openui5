@@ -1,0 +1,103 @@
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:gp="http://www.sap.com/Protocols/SAPData/GenericPlayer"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData" xmlns:ux="http://www.sap.com/Protocols/OData4SAP/UX">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="RMTSAMPLEFLIGHT_2" xml:lang="en"
+			sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Flight" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="AirLineID" />
+					<PropertyRef Name="FlightConnectionID" />
+					<PropertyRef Name="FlightDate" />
+				</Key>
+				<Property Name="FlightDetails" Type="RMTSAMPLEFLIGHT_2.FlightDetails"
+					Nullable="false" />
+				<Property Name="AirLineID" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Airline" />
+				<Property Name="FlightConnectionID" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="Flight Number" />
+				<Property Name="FlightDate" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:label="Date" />
+				<Property Name="AirFare" Type="Edm.Decimal" Precision="15"
+					Scale="2" sap:unit="LocalCurrencyCode" sap:label="Airfare" />
+				<Property Name="LocalCurrencyCode" Type="Edm.String"
+					MaxLength="5" sap:label="Airline Currency" sap:semantics="currency-code" />
+				<Property Name="AirCraftType" Type="Edm.String" MaxLength="10"
+					sap:label="Type of the plane" />
+				<Property Name="EconomyClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity econ." />
+				<Property Name="EconomyClassOccupiedSeats" Type="Edm.Int32"
+					sap:label="Occupied econ." />
+				<Property Name="TotalBookingsSum" Type="Edm.Decimal"
+					Precision="17" Scale="2" sap:unit="LocalCurrencyCode" sap:label="Total" />
+				<Property Name="BusinessClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity bus." />
+				<Property Name="BusinessClassOccupiedSeats" Type="Edm.Int32"
+					sap:label="Occupied bus." />
+				<Property Name="FirstClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity 1st" />
+				<Property Name="FirstClassOccupiedSeats" Type="Edm.Int32"
+					sap:label="Occupied 1st" />
+				<NavigationProperty Name="FlightBooking"
+					Relationship="RMTSAMPLEFLIGHT_2.BookingFlight" FromRole="FromRole_BookingFlight"
+					ToRole="ToRole_BookingFlight" />
+				<NavigationProperty Name="FlightBookings"
+					Relationship="RMTSAMPLEFLIGHT_2.FlightBookings" FromRole="FromRole_FlightBookings"
+					ToRole="ToRole_FlightBookings" />
+				<NavigationProperty Name="FlightCarrier"
+					Relationship="RMTSAMPLEFLIGHT_2.CarrierToFlight" FromRole="ToRole_CarrierToFlight"
+					ToRole="FromRole_CarrierToFlight" />
+			</EntityType>
+			<ComplexType Name="FlightDetails" gp:display-order="0010">
+				<Property Name="DepartureCountryCode" Type="Edm.String"
+					MaxLength="3" sap:label="Country" />
+				<Property Name="DepartureCity" Type="Edm.String" MaxLength="20"
+					sap:label="Depart.city" />
+				<Property Name="DepartureAirPort" Type="Edm.String"
+					MaxLength="3" sap:label="Dep. airport" />
+				<Property Name="DestinationCountryCode" Type="Edm.String"
+					MaxLength="3" sap:label="Country" />
+				<Property Name="DestinationCity" Type="Edm.String"
+					MaxLength="20" sap:label="Arrival city" />
+				<Property Name="DestinationAirPort" Type="Edm.String"
+					MaxLength="3" sap:label="Dest. airport" />
+				<Property Name="FlightTime" Type="Edm.Int32" sap:label="Flight time" />
+				<Property Name="DepartureTime" Type="Edm.Time" Precision="0"
+					sap:label="Departure" />
+				<Property Name="ArrivalTime" Type="Edm.Time" Precision="0"
+					sap:label="Arrival Time" />
+				<Property Name="Distance" Type="Edm.Decimal" Precision="9"
+					Scale="4" sap:unit="DistanceUnit" sap:label="Distance" />
+				<Property Name="DistanceUnit" Type="Edm.String" MaxLength="3"
+					sap:label="Distance in" sap:semantics="unit-of-measure" />
+				<Property Name="FlightType" Type="Edm.String" MaxLength="1"
+					sap:label="Charter" />
+				<Property Name="ArrivalInDays" Type="Edm.Byte" sap:label="n day(s) later" />
+			</ComplexType>
+			<ComplexType Name="FlightAvailability">
+				<Property Name="EconomyClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity econ." />
+				<Property Name="EconomyClassFreeSeats" Type="Edm.Int32"
+					sap:label="Free seats" />
+				<Property Name="BusinessClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity bus." />
+				<Property Name="BusinessClassFreeSeats" Type="Edm.Int32"
+					sap:label="Free seats" />
+				<Property Name="FirstClassMaximumSeats" Type="Edm.Int32"
+					sap:label="Max. capacity 1st" />
+				<Property Name="FirstClassFreeSeats" Type="Edm.Int32"
+					sap:label="Free seats" />
+			</ComplexType>
+			<ComplexType Name="FlightAvailability2" BaseType="RMTSAMPLEFLIGHT_2.FlightAvailability" />
+			<EntityContainer Name="RMTSAMPLEFLIGHT_2_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="FlightCollection" EntityType="RMTSAMPLEFLIGHT_2.Flight"
+					sap:content-version="1">
+					<gp:collectionLayout display-order="0010"
+						top-level="true" />
+				</EntitySet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

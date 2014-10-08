@@ -1,0 +1,11 @@
+.fixFlexFixedSize > .sapUiFixFlexFixed {
+	background: #D7E9FF;
+}
+
+.fixFlexFixedSize > .sapUiFixFlexFlexible {
+	background: #A9CFFF;
+}
+
+.fixFlexFixedSize .sapMText {
+	margin-bottom: 1rem;
+}

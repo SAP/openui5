@@ -1,0 +1,307 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.P13nConditionPanel</title>
+<script id="sap-ui-bootstrap" 
+	data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" 
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" 
+	src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript">
+(function() {
+	jQuery.sap.require("sap.m.P13nConditionPanel");
+
+	module("Properties", {
+		setup: function() {
+		},
+		teardown: function() {
+		}
+	});
+
+	test("Default Values", function(){
+
+		var nItems= 0;
+		
+		// system under test
+		var oP13nConditionPanel = new sap.m.P13nConditionPanel();
+
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+		strictEqual(oP13nConditionPanel.getOperations().length, nItems, "length of getOperations should be '" + nItems + "'");
+
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+	test("get/SetConditions test", function(){
+
+		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "Date", "value1": "", "value2": ""};
+		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.Ascending, "keyField": "CompanyCode", "value1": "", "value2": ""};
+		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.Descending, "keyField": "CompanyName", "value1": "", "value2": ""};
+		var aConditions= [oCondition0, oCondition1];    
+		
+		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+		
+		oP13nConditionPanel.setConditions(aConditions);			
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 2;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+
+		
+		oP13nConditionPanel.addCondition(oCondition2);			
+		
+		// assertions
+		nItems= 3;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+
+
+		oP13nConditionPanel.removeCondition(oCondition1);			
+		
+		// assertions
+		nItems= 2;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+
+
+		oP13nConditionPanel.removeAllConditions();			
+		
+		// assertions
+		nItems= 0;
+		strictEqual(oP13nConditionPanel.getConditions().length, nItems, "getConditions should return '" + nItems + "' items.");
+		
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+
+	test("get/SetKeyFields test", function(){
+
+ 		var oKeyField1= {key: "", text: "(none)"};
+ 		var oKeyField2= {key: "CompanyCode", text: "Code"};
+ 		var oKeyField3= {key: "CompanyName", text: "Name"};
+ 		var oKeyField4= {key: "Date", text: "Date"}; 
+ 		var oKeyField5= {key: "column1", text: "Column1"};
+ 		var oKeyField6= {key: "Column2", text: "Column2"}; 
+ 		var aKeyFields= [oKeyField1,oKeyField2,oKeyField3,oKeyField4,oKeyField5];
+		
+ 		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+		
+ 
+		oP13nConditionPanel.setKeyFields(aKeyFields); 
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 5;
+		strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+
+		
+		oP13nConditionPanel.addKeyField(oKeyField6);			
+		
+		// assertions
+		nItems= 6;
+		strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+
+
+ 		oP13nConditionPanel.removeAllKeyFields();			
+		
+		// assertions
+		nItems= 0;
+		strictEqual(oP13nConditionPanel.getKeyFields().length, nItems, "getKeyFields should return '" + nItems + "' items.");
+		
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+
+	test("get/SetOperations test", function(){
+
+		var aOperations= [ sap.m.P13nConditionOperation.BT, 
+			               sap.m.P13nConditionOperation.EQ, 
+	                       sap.m.P13nConditionOperation.Contains, 
+	                       sap.m.P13nConditionOperation.StartsWith,
+	                       sap.m.P13nConditionOperation.EndsWith, 
+	                       sap.m.P13nConditionOperation.LT, 
+	                       sap.m.P13nConditionOperation.LE, 
+	                       sap.m.P13nConditionOperation.GT ];
+ 		 
+		
+ 		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+		
+		oP13nConditionPanel.setOperations(aOperations); 
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 8;
+		strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+
+		
+		oP13nConditionPanel.addOperation(sap.m.P13nConditionOperation.GE);			
+		
+		// assertions
+		nItems= 9;
+		strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+
+
+ 		oP13nConditionPanel.removeAllOperations();			
+		
+		// assertions
+		nItems= 0;
+		strictEqual(oP13nConditionPanel.getOperations().length, nItems, "getOperations should return '" + nItems + "' items.");
+ 	
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+	var fillConditionPanel = function(oP13nConditionPanel) {
+		var aOperations= [ sap.m.P13nConditionOperation.BT, 
+			               sap.m.P13nConditionOperation.EQ, 
+	                       sap.m.P13nConditionOperation.Contains, 
+	                       sap.m.P13nConditionOperation.StartsWith,
+	                       sap.m.P13nConditionOperation.EndsWith, 
+	                       sap.m.P13nConditionOperation.LT, 
+	                       sap.m.P13nConditionOperation.LE, 
+	                       sap.m.P13nConditionOperation.GT ];
+ 		 
+ 		var oKeyField1= {key: "", text: "(none)"};
+ 		var oKeyField2= {key: "CompanyCode", text: "Code"};
+ 		var oKeyField3= {key: "CompanyName", text: "Name"};
+ 		var oKeyField4= {key: "Date", text: "Date"}; 
+ 		var oKeyField5= {key: "column1", text: "Column1"};
+ 		var oKeyField6= {key: "Column2", text: "Column2"}; 
+ 		var aKeyFields= [oKeyField1,oKeyField2,oKeyField3,oKeyField4,oKeyField5];
+		
+		var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.BT, "keyField": "Date", "value1": "1", "value2": "10"};
+		var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "a", "value2": ""};
+		var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.LT, "keyField": "CompanyName", "value1": "g", "value2": ""};
+		var aConditions= [oCondition0, oCondition1, oCondition2];    
+
+		 
+		oP13nConditionPanel.setKeyFields(aKeyFields); 
+		oP13nConditionPanel.setOperations(aOperations); 
+		oP13nConditionPanel.setConditions(aConditions); 
+
+	};
+	
+	test("trigger add and remove test", function(){
+		
+ 		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+		
+ 		fillConditionPanel(oP13nConditionPanel);
+ 
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		oP13nConditionPanel._triggerRemoveCondition(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		
+		var nItems= 2;
+		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
+
+		// assertions
+		oP13nConditionPanel._triggerAddCondition(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oP13nConditionPanel._oConditionsGrid.getContent()[0]);
+		
+		nItems= 3;
+		strictEqual(oP13nConditionPanel._oConditionsGrid.getContent().length, nItems, "# Condition grids should should be '" + nItems + "' after a Remove.");
+
+		
+		
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+	
+	test("change KeyField, Operation and Value test", function(){
+		
+ 		// system under test
+		oP13nConditionPanel = new sap.m.P13nConditionPanel({
+ 			maxConditions: -1
+		});
+		
+ 		fillConditionPanel(oP13nConditionPanel);
+		
+		// arrange
+		oP13nConditionPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
+		oConditionGrid.keyField.setSelectedIndex(2);
+		oP13nConditionPanel._triggerChangeKeyfield(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		
+		var sKeyField= "CompanyName";
+		strictEqual(oP13nConditionPanel.getConditions()[0].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");
+		
+		
+		
+		oConditionGrid.operation.setSelectedIndex(2);
+		oP13nConditionPanel._triggerChangeOperations(oP13nConditionPanel, oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		
+		var sOperation= "Contains";
+		strictEqual(oP13nConditionPanel.getConditions()[0].operation, sOperation, "Operation of first condition must be '" + sOperation + "'.");
+		
+
+		oConditionGrid.value1.setValue("foo");
+		oP13nConditionPanel._changeField(oP13nConditionPanel, oConditionGrid);		
+		
+		var sValue1 = "foo";
+		strictEqual(oP13nConditionPanel.getConditions()[0].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		
+		
+		// cleanup
+		oP13nConditionPanel.destroy();
+	});
+
+}());
+
+</script>
+
+
+</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.P13nConditionPanel</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+				
+		<div id="content"></div>
+	</body>
+</html>

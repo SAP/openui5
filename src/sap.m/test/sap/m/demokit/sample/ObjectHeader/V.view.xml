@@ -1,0 +1,29 @@
+<mvc:View
+	controllerName="sap.m.sample.ObjectHeader.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<ObjectHeader
+		binding="{/ProductCollection/0}"
+		title="{Name}"
+		number="{Price}"
+		numberUnit="{CurrencyCode}" >
+		<statuses>
+			<ObjectStatus
+				text="Some Damaged"
+				state="Error" />
+			<ObjectStatus
+				text="In Stock"
+				state="Success" />
+		</statuses>
+		<attributes>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<ObjectAttribute text="{Description}" />
+			<ObjectAttribute
+				text="www.sap.com"
+				active="true"
+				press="handleLinkObjectAttributePress" />
+		</attributes>
+	</ObjectHeader>
+</mvc:View>

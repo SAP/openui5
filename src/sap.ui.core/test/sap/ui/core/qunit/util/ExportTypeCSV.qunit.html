@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+  Tested class: sap.ui.core.util.ExportTypeCSV
+-->
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.util.ExportTypeCSV</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true" >
+		</script>
+
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+
+		(function() {
+
+			jQuery.sap.require("sap.ui.core.util.ExportTypeCSV");
+
+			module("Properties");
+
+			test("separatorChar", 1, function() {
+				var oCSV = new sap.ui.core.util.ExportTypeCSV({
+					separatorChar: ';'
+				});
+				equal(oCSV.getSeparatorChar(), ";", "separatorChar should be ';'");
+			});
+
+			test("separatorChar default", 1, function() {
+				var oCSV = new sap.ui.core.util.ExportTypeCSV();
+				equal(oCSV.getSeparatorChar(), ",", "separatorChar default should be ','");
+			});
+
+			test("separatorChar invalid value", 1, function() {
+				try {
+					new sap.ui.core.util.ExportTypeCSV({
+						separatorChar: true
+					});
+				} catch(ex) {
+					equal(ex.message, "Value of property \"separatorChar\" needs to be exactly one character or empty. \"true\" is 4 characters long.",
+						"Error message should be correct.");
+				}
+			});
+
+		})();
+
+		</script>
+	</head>
+	<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.util.ExportTypeCSV</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="main"></div>
+</html>

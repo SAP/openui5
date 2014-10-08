@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>TabStrip -sap.ui.commons in TabStrip test </title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.TabStrip.gif">
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-evt-oninit="createControls()"
+				>
+		</script>
+
+		<script>
+			function createControls() {
+
+				var oTabStrip2 = new sap.ui.commons.TabStrip("tabstrip2");
+				oTabStrip2.setWidth("100%");
+				//oTabStrip2.setHeight("100%");
+				oTabStrip2.createTab("Tab1", new sap.ui.commons.TextView({text: "Tab1"}));
+				oTabStrip2.createTab("Tab2", new sap.ui.commons.TextView({text: "Tab2"}));
+				oTabStrip2.createTab("Tab3", new sap.ui.commons.TextView({text: "Tab3"}));
+				oTabStrip2.getTabs()[2].setClosable(true);
+				oTabStrip2.attachSelect( function (oParams) {
+					oTabStrip2.setSelectedIndex(oParams.getParameter("index"));
+				});
+				oTabStrip2.attachClose( function (oEvent) {
+					alert("Closing Tab " + oEvent.getParameter("index") + " of " + oEvent.getSource().getId());
+				});
+
+				var oTabStrip1 = new sap.ui.commons.TabStrip("tabstrip1");
+				oTabStrip1.setWidth("100%");
+				oTabStrip1.setHeight("200px");
+				oTabStrip1.createTab("Tab1", oTabStrip2);
+				oTabStrip1.createTab("Tab2", new sap.ui.commons.TextView({text: "Tab2"}));
+				oTabStrip1.createTab("Tab3", new sap.ui.commons.TextView({text: "Tab3"}));
+				oTabStrip1.getTabs()[2].setClosable(true);
+				oTabStrip1.attachSelect( function (oParams) {
+					oTabStrip1.setSelectedIndex(oParams.getParameter("index"));
+				});
+				oTabStrip1.attachClose( function (oEvent) {
+					alert("Closing Tab " + oEvent.getParameter("index") + " of " + oEvent.getSource().getId());
+				});
+
+				oTabStrip1.placeAt("uiArea1");
+
+			}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.TabStrip</h1>
+		<div id="uiArea1"></div>
+	</body>
+</html>

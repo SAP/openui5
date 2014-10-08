@@ -1,0 +1,68 @@
+<mvc:View
+	controllerName="view.Product"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:control="control"
+	xmlns:h="http://www.w3.org/1999/xhtml">
+	<Page
+		id="page"
+		title="{Name}"
+		showNavButton="{device>/isPhone}"
+		navButtonPress="handleNavButtonPress" >
+		<headerContent>
+			<Button
+				icon="sap-icon://cart"
+				visible="{device>/isPhone}"
+				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
+				press="handleCartButtonPress" />
+		</headerContent>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button
+					icon="sap-icon://add"
+					text="{i18n>PRODUCT_ADD_BUTTON_TEXT}"
+					tooltip="{i18n>PRODUCT_ADD_BUTTON_TOOLTIP}"
+					press="handleAddButtonPress" />
+			</Toolbar>
+		</footer>
+		<content>
+			<ObjectHeader
+				title="{Name}"
+				number="{
+					path : 'Price',
+					formatter : 'util.Formatter.price'
+				}"
+				numberUnit="EUR">
+				<attributes>
+					<ObjectAttribute
+						text="{SupplierName}" />
+					<ObjectAttribute
+						text="{ShortDescription}" /> 
+					<ObjectAttribute
+						text="{Weight}g" />
+				</attributes>
+				<firstStatus>
+					<ObjectStatus
+						text="{
+							path : 'status',
+							formatter : 'util.Formatter.statusText'
+						}"
+						state="{
+							path : 'status',
+							formatter : 'util.Formatter.statusState'
+						}" />
+				</firstStatus>
+			</ObjectHeader>
+			<VBox alignItems="Center">
+				<Image
+					src= "{
+						path : 'PictureUrl',
+						formatter: 'util.Formatter.pictureUrl'}"
+					decorative="true"
+					densityAware="false" />
+			</VBox>
+		</content>
+	</Page>
+</mvc:View>

@@ -1,0 +1,12 @@
+{
+	"name": "samples.components.orders",
+	"version": "0.1.0",
+	"description": "Sample orders component",
+	"keywords": [
+		"orders",
+		"table",
+		"example" 
+	],
+	"dependencies": {
+	}
+}

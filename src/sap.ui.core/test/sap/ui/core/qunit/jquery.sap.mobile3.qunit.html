@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	
+<!-- 
+  QUNIT: 
+    Tested control/class: jquery.sap.mobile.js
+    Author: Andreas Kunz
+    
+    This third test file is required because the mobile initialization only runs once per page
+ -->
+		
+		<script>
+		// Fake user-agent
+		
+		// user-agent of iPhone 3GS
+		var uaOri = navigator.userAgent;
+		var ua = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5";
+		var uaFaked;
+		
+		//TODO test fails with chrome v36. fix pending
+		//Reason: window.navigator is read-only since chrome v36, so 
+		//window.navigator = new Object(); has no impact
+		if (/msie/i.test(navigator.userAgent) || /Firefox\/10\./i.test(navigator.userAgent)) {
+			uaFaked = false; // cannot test some features
+			
+		} else {
+			uaFaked = true;
+			var __originalNavigator = window.navigator;
+			
+			function fakeUserAgent(ua) {
+		 		if (/safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent)) {
+		 			var __originalNavigator = window.navigator;
+		 			window.navigator = new Object();
+		 			window.navigator.__proto__ = __originalNavigator;
+		 			window.navigator.__defineGetter__('userAgent', function () { 
+		 				return ua; 
+		 			});
+		 		} else {
+		 			window.navigator.__defineGetter__('userAgent', function(){
+		 				return ua;
+		 			});
+		 		}
+		 	}
+			fakeUserAgent(ua);
+		}
+		
+		</script>
+		
+		
+		
+		<title>Test Page for jquery.sap.mobile</title>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="base"
+				data-sap-ui-noConflict="true"
+				>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+
+		
+		
+		// TESTS
+		
+		if (uaFaked) {
+			test("Test faked user-agent", function () {
+				equal(navigator.userAgent, ua, "navigator.userAgent should return the faked string");
+			});
+		}
+		
+		
+		test("Test initMobile with resolution-specific home icons", function () {
+			jQuery.support.retina = true; // some more faking...
+			
+			jQuery.sap.initMobile({
+				homeIcon: {
+				   'phone':'phone-icon.png',
+				   'phone@2':'phone-retina.png',
+				   'tablet':'tablet-icon.png',
+				   'tablet@2':'tablet-retina.png',
+				   'icon': 'desktop.ico'
+				},
+				homeIconPrecomposed: false
+			});
+			
+			// touch icon  <link rel="apple-touch-icon...
+			var $ti = jQuery("link").filter("[rel=apple-touch-icon-precomposed]");
+			equal($ti.length, 0, "There should be no apple-touch-icon-precomposed link tag");
+			
+			$ti = jQuery("link").filter("[rel=apple-touch-icon]");
+			equal($ti.length, 4, "There should be four apple-touch-icon link tags");
+			equal($ti.filter(":eq(0)").attr("href"), "phone-icon.png", "The apple-touch-icon link tag href should be correct");
+			equal($ti.filter(":eq(1)").attr("href"), "tablet-icon.png", "The apple-touch-icon link tag href should be correct");
+			equal($ti.filter(":eq(2)").attr("href"), "phone-retina.png", "The apple-touch-icon link tag href should be correct");
+			equal($ti.filter(":eq(3)").attr("href"), "tablet-retina.png", "The apple-touch-icon link tag href should be correct");
+			
+			var $si = jQuery("link").filter("[rel^=shortcut]");
+			equal($si.length, 1, "There should be one shortcut icon tag");
+			equal($si.attr("href"), "desktop.ico", "The shortcut icon link tag href should be correct");
+		});
+		
+		
+		if (uaFaked) {
+			test("Test reset user-agent", function(){
+				if (/safari/i.test(uaOri) && !/chrome/i.test(uaOri)) {
+		 			window.navigator = new Object();
+		 			window.navigator.__proto__ = __originalNavigator;
+		 			window.navigator.__defineGetter__('userAgent', function () { 
+		 				return uaOri; 
+		 			});
+		 		} else {
+		 			window.navigator.__defineGetter__('userAgent', function(){
+		 				return uaOri;
+		 			});
+		 		}
+				
+				equal(navigator.userAgent, uaOri, "navigator.userAgent should return the original string again");
+			});
+		}
+
+		</script>
+		</head>
+		
+		<body>
+			<h1 id="qunit-header">QUnit page for jquery.sap.mobile</h1>
+			<h2 id="qunit-banner"></h2>
+		 	<h2 id="qunit-userAgent"></h2>
+			<div id="qunit-testrunner-toolbar"></div>
+			<ol id="qunit-tests"></ol>
+		</body>
+</html>
+			

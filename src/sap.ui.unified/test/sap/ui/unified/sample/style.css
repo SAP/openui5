@@ -1,0 +1,15 @@
+.viewPadding {
+	padding:1rem;
+}
+
+.sap-phone .viewPadding {
+	padding:0rem;
+}
+
+.labelMarginLeft {
+	margin:1rem;
+}
+
+.fullHeight {
+	height:100%;
+}

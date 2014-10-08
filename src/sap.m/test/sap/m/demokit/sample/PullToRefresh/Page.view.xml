@@ -1,0 +1,24 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.PullToRefresh.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false">
+		<content>
+			<PullToRefresh
+				id="pullToRefresh"
+				refresh="handleRefresh" />
+			<List
+				id="list"
+				items="{/ProductCollection}" >
+				<StandardListItem
+					title="{Name}"
+					description="{ProductId}"
+					icon="{ProductPicUrl}"
+					iconDensityAware="false"
+					iconInset="false" />
+			</List>
+		</content>
+	</Page>
+</mvc:View>

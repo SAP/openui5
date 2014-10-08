@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Label - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Label.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			var oCore = sap.ui.getCore(); 
+			oCore.attachInitEvent(function () {
+
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				var oLabel = new sap.ui.commons.Label("l1");
+				oLabel.setText("Test label");
+				oLabel.setTooltip("Tooltip");
+				oLabel.placeAt("target1");
+
+				oLabel = new sap.ui.commons.Label("l2");
+				oLabel.setText("Label with bold text");
+				oLabel.setDesign(sap.ui.commons.LabelDesign.Bold);
+				oLabel.setTooltip(new sap.ui.commons.RichTooltip( "Rtt-l2", {
+					title: "Label 2",
+					imageSrc: "images/help.gif",
+					text: "This is a rich tooltip on the Label"
+					}));
+
+				oLabel.placeAt("target2");
+
+				oLabel = new sap.ui.commons.Label("l3");
+				oLabel.setText("Test label with icon");
+				oLabel.setIcon("images/backtotop.gif");
+				oLabel.placeAt("target3");
+
+				oLabel = new sap.ui.commons.Label("l4"); 
+				oLabel.setText("Label with bold text and icon");
+				oLabel.setDesign(sap.ui.commons.LabelDesign.Bold);
+				oLabel.setIcon("images/backtotop.gif");
+				oLabel.placeAt("target4");
+
+				// test labelFor and width
+				var oLayout = new sap.ui.commons.layout.MatrixLayout("m1");
+				oLayout.setLayoutFixed(false);
+				oLayout.placeAt("target5");
+				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
+				oLayout.addRow(oMLR);
+
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1"); 
+				oLabel = new sap.ui.commons.Label("l5");
+				oLabel.setText("Label with LabelFor and width 200px:");
+				oLabel.setLabelFor("input_1");
+				oLabel.setWidth("200px");
+				oMLC.addContent(oLabel);
+				oMLR.addCell(oMLC);
+
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+				var oInput = new sap.ui.commons.TextField("input_1");
+				oInput.setValue("some value");
+				oInput.setTooltip("Hello!")
+				oMLC.addContent(oInput);
+				oMLR.addCell(oMLC);
+
+				oLayout.createRow(
+						new sap.ui.commons.Label({text : "A 'Required' Field just with text", labelFor : "requiredTF1"}),
+						new sap.ui.commons.TextField("requiredTF1", {
+							value: "",
+							maxLength: 5,
+							required: true,
+							tooltip: new sap.ui.commons.RichTooltip( "Rtt-TF1", {
+								title: "TextField 1",
+								imageSrc: "images/help.gif",
+								text: "This is a rich tooltip on the TextField"
+								})
+						}));
+				oLayout.createRow(
+						new sap.ui.commons.Label({text : "A 'Required' Field and Icon", icon: "images/backtotop.gif", labelFor : "requiredTF2", tooltip: "Tooltip for Label"}),
+						new sap.ui.commons.TextField({ id : "requiredTF2", value:"", maxLength:5, required:true, tooltip: "Tooltip for TextField"})
+					);
+				oLayout.createRow(
+						new sap.ui.commons.Label({
+							text : "",
+							icon: "images/backtotop.gif",
+							labelFor : "requiredTF3",
+							tooltip: new sap.ui.commons.RichTooltip( "Rtt-Label3", {
+								title: "Label 3",
+								imageSrc: "images/help.gif",
+								text: "This is a rich tooltip on the Label"
+								})
+							}),
+						new sap.ui.commons.TextField("requiredTF3", {
+							value: "",
+							maxLength:5,
+							required:true,
+							tooltip: new sap.ui.commons.RichTooltip( "Rtt-TF3", {
+								title: "TextField 3",
+								imageSrc: "images/help.gif",
+								text: "This is a rich tooltip on the TextField"
+								})
+							})
+					);
+
+				// test alignments
+				oLabel = new sap.ui.commons.Label("l6"); 
+				oLabel.setText("Test label with TextAlign.End and width 400px"); 
+				oLabel.setTextAlign(sap.ui.core.TextAlign.End);
+				oLabel.setWidth("400px");
+				oLabel.placeAt("target6");
+
+				oLabel = new sap.ui.commons.Label("l7"); 
+				oLabel.setText("Test label with TextAlign.Center and width 400px"); 
+				oLabel.setTextAlign(sap.ui.core.TextAlign.Center);
+				oLabel.setWidth("400px");
+				oLabel.placeAt("target7");
+
+				// test RTL
+				oLabel = new sap.ui.commons.Label("l8"); 
+				oLabel.setText("Test label with TextDirection.RTL");
+				oLabel.setIcon("images/backtotop.gif");
+				oLabel.setTextDirection(sap.ui.core.TextDirection.RTL);
+				oLabel.placeAt("target8");
+
+				// test wrapping
+				oLabel = new sap.ui.commons.Label("l9",{
+					text: "Label with long text ro test the wrapping.\nThe width of the label is 200px.The text is longer",
+					width: "200px",
+					wrapping: true
+				}).placeAt("target9");
+
+				// test wrapping with icon
+				oLabel = new sap.ui.commons.Label("l10",{
+					text: "Label with long text ro test the wrapping.\nThe width of the label is 200px.The text is longer. Additional there is an icon",
+					width: "200px",
+					icon: "images/backtotop.gif",
+					wrapping: true
+				}).placeAt("target10");
+
+				// test on inverted background
+				oLabel = new sap.ui.commons.Label("l11",{
+					text: "Label",
+					width: "200px",
+					labelFor: "TF11"
+				}).placeAt("target11");
+				new sap.ui.commons.TextField("TF11", {
+					required: true
+				}).placeAt("target11");
+
+				// Required indicator at begin
+				oLabel = new sap.ui.commons.Label("l12",{
+					text: "Label with required indicator at begin",
+					textAlign: sap.ui.core.TextAlign.End,
+					requiredAtBegin: true,
+					width: "300px",
+					labelFor: "TF12"
+				}).placeAt("target12");
+				new sap.ui.commons.TextField("TF12", {
+					required: true
+				}).placeAt("target12");
+
+				oLabel = new sap.ui.commons.Label("l13",{
+					text: "Label with icon font",
+					icon: "sap-icon://lead",
+					labelFor: "TF13"
+				}).placeAt("target13");
+				new sap.ui.commons.TextField("TF13", {
+					required: true
+				}).placeAt("target13");
+
+			}
+
+			);
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.Label</h1>
+
+		<div id="target1"></div>
+		<div id="target2"></div>
+		<div id="target3"></div>
+		<div id="target4"></div>
+		<div id="target5"></div>
+		<div id="target6"></div>
+		<div id="target7"></div>
+		<div id="target8"></div>
+		<br>
+		<div id="target9"></div>
+		<br>
+		<div id="target10"></div>
+		<br>
+		<div id="target11" style="background-color: black;" class="sapUiInverted-CTX"></div>
+		<br>
+		<div id="target12"></div>
+		<br>
+		<div id="target13"></div>
+
+	</body>
+</html>

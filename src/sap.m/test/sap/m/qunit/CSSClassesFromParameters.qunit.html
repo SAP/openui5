@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for Theme-dependent CSS Classes</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+    
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		<style>
+		.crazy {
+			color:blue;
+			background-color:#CCCCFF;
+			border: 3px solid green;
+			font-family: serif;
+			padding: 20px;
+			margin: 16px;
+		}
+		#testTable {
+			width: 80%;
+		}
+		table {
+			color: red;
+			background-color: red;
+		}
+		#testTable td:first-child {
+			width: 66%;
+			border: 3px ridge #CCFFCC;
+			color: black;
+			background-color: white;
+		}
+		#testTable td {
+			padding: 8px;
+			border: 0;
+		}
+		#pageWrapper {
+			text-align: center;
+		}
+		#pageHolder {
+			border: 3px solid black;
+			width: 80%;
+			height: 300px;
+			display: inline-block;
+			text-align: left;
+		}
+		</style>
+		
+		
+		<script language="javascript">
+
+		QUnit.config.autostart = false;
+		jQuery(document).ready(function() {
+			QUnit.start();
+		});
+
+		asyncTest("Check Blue Crystal theme", function() {
+			window.setTimeout(function(){
+				var cell = jQuery.sap.domById("cell1");
+				equal(window.getComputedStyle(cell).color, "rgb(0, 0, 0)", "the text color of cell 1 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(242, 242, 242)", "the background color of cell 1 should be correct");
+				
+				cell = jQuery.sap.domById("cell2");
+				equal(window.getComputedStyle(cell).color, "rgb(242, 242, 242)", "the text color of cell 2 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 2 should be correct");
+				
+				cell = jQuery.sap.domById("cell3");
+				equal(window.getComputedStyle(cell).color, "rgb(102, 102, 102)", "the text color of cell 3 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(242, 242, 242)", "the background color of cell 3 should be correct");
+				start();
+			}, 1000);
+		});
+		
+		/* TODO: remove if MVI theme remains deleted, re-enable otherwise
+		asyncTest("Check MVI theme", function() {
+			sap.ui.getCore().applyTheme("sap_mvi");
+			window.setTimeout(function(){
+				var cell = jQuery.sap.domById("cell1");
+				equal(window.getComputedStyle(cell).color, "rgb(0, 0, 0)", "the text color of cell 1 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(247, 247, 247)", "the background color of cell 1 should be correct");
+				
+				cell = jQuery.sap.domById("cell2");
+				equal(window.getComputedStyle(cell).color, "rgb(247, 247, 247)", "the text color of cell 2 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 2 should be correct");
+				
+				cell = jQuery.sap.domById("cell3");
+				equal(window.getComputedStyle(cell).color, "rgb(240, 171, 0)", "the text color of cell 3 should be correct");
+				equal(window.getComputedStyle(cell).backgroundColor, "rgb(0, 0, 0)", "the background color of cell 3 should be correct");
+				start();
+			}, 1000);
+		});
+		*/
+		
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: CSS Classes for Theme Parameters</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		
+		<div class="crazy">
+			This is a crazy &lt;div&gt;, but the cells in the second column of the following static HTML table should have current theme colors.<br>
+			<div id="tableWrapper">
+				<table id="testTable">
+					<tbody>
+						<tr>
+							<td>The following cell should have the normal text color and the base background color:</td>
+							<td id="cell1" class="sapThemeFont sapThemeText sapThemeBaseBG">Hello world.</td>
+						</tr>
+						<tr>
+							<td>The following cell should have the normal text color as background color and the base background color as text color:</td>
+							<td id="cell2" class="sapThemeFont sapThemeText-asBackgroundColor sapThemeBaseBG-asColor">Hello world.</td>
+						</tr>
+						<tr>
+							<td>In themes supporting the UI5 mobile controls, the following cell should have the Header Bar background color as background color and the Header Bar header text color as text color:</td>
+							<td id="cell3" class="sapThemeFont sapThemeBarBG sapThemeBarHeading">Hello world.</td>
+						</tr>
+						<tr>
+							<td>The following cell should be completely red because invalid CSS classes have been set:</td>
+							<td class="sapThemePhantasy">Hello world.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

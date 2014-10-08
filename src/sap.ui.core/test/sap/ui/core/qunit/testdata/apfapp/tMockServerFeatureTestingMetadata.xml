@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+           xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+                       m:DataServiceVersion="2.0">
+        <Schema Namespace="apf-test"
+                xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+                xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+                xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="TestQueryResultsType" sap:semantics="aggregate">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="P_SAPClient"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="2147483647"
+                          sap:filterable="false"/>
+                <Property Name="P_SAPClient" Type="Edm.Int32" Nullable="false" MaxLength="3" sap:label="SAP Client"
+                          sap:filterable="true"/>
+                <Property Name="SAPClient" Type="Edm.Int32" MaxLength="3" sap:aggregation-role="dimension"
+                          sap:label="SAP Client"/>
+                <Property Name="Currency_E" Type="Edm.Decimal" Precision="34"
+                          sap:aggregation-role="measure" sap:label="Receivables in Display Currency"
+                          sap:unit="Currency_E.CURRENCY"/>
+            </EntityType>
+            <EntityType Name="TestQueryType" sap:semantics="parameters">
+                <Key>
+                    <PropertyRef Name="P_SAPClient"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false" MaxLength="2147483647"
+                          sap:filterable="false"/>
+                <Property Name="P_SAPClient" Type="Edm.Int32" Nullable="false" MaxLength="3" sap:label="SAP Client"
+                          sap:parameter="mandatory"/>
+                <NavigationProperty Name="Results"
+                                    Relationship="apf-test.TestQuery_TestQueryResultsType"
+                                    FromRole="TestQueryPrincipal"
+                                    ToRole="TestQueryResultsDependent"/>
+            </EntityType>
+            <Association Name="TestQuery_TestQueryResultsType">
+                <End Type="apf-test.TestQueryType"
+                     Role="TestQueryPrincipal" Multiplicity="1"/>
+                <End Type="apf-test.TestQueryResultsType"
+                     Role="TestQueryResultsDependent" Multiplicity="*"/>
+                <ReferentialConstraint>
+                    <Principal Role="TestQueryPrincipal">
+                        <PropertyRef Name="P_SAPClient" />
+                    </Principal>
+                    <Dependent Role="TestQueryResultsDependent">
+                        <PropertyRef Name="P_SAPClient" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="wca" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="TestQueryResults"
+                           EntityType="apf-test.TestQueryResultsType"
+                           sap:addressable="false"/>
+                <EntitySet Name="TestQuery"
+                           EntityType="apf-test.TestQueryType"
+                           sap:addressable="false"/>
+                <AssociationSet Name="TestQuery_TestQueryResults"
+                                Association="apf-test.TestQuery_TestQueryResultsType">
+                    <End Role="TestQueryPrincipal" EntitySet="TestQuery"/>
+                    <End Role="TestQueryResultsDependent" EntitySet="TestQueryResults"/>
+                </AssociationSet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.Table</title>
+
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+
+		<script language="javascript">
+
+		jQuery.sap.require("sap.m.TablePersoDialog");
+
+
+		
+		
+		function createSUT(sId, bCreateColumns, bCreateHeader, sMode) {
+			var oData = {
+				items: [
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "David", color: "green", number: 0 },
+				],
+				cols: ["Name", "Color", "Number"]
+			};
+			// sap.m.Table is the system under test
+			var sut = new sap.m.Table(sId);
+			
+			if(bCreateColumns) {
+				
+				var aColumns = oData.cols.map(function (colname) {
+					return new sap.m.Column({ header: new sap.m.Label({ text: colname })})
+					}),
+					i = aColumns.length;
+				while(i--){
+					sut.addColumn(aColumns[aColumns.length - i - 1]);
+				}
+			}
+			
+			if(bCreateHeader) {
+				sut.setHeaderToolbar(new sap.m.Toolbar({
+					content: [
+								new sap.m.Label({text: "Random Data"}),
+								new sap.m.ToolbarSpacer({}),
+								new sap.m.Button("idPersonalizationButton", {
+									icon: "sap-icon://person-placeholder"
+								})
+							]
+				}));
+			}
+			
+			if(sMode) {
+				sut.setMode(sMode);
+			}
+	
+			sut.setModel(new sap.ui.model.json.JSONModel(oData));
+			sut.bindAggregation("items", "/items", new sap.m.ColumnListItem({
+				cells: oData.cols.map(function (colname) {
+					return new sap.m.Label({ text: "{" + colname.toLowerCase() + "}" })
+				})
+			}));
+	
+			
+			return sut;
+		}
+
+		
+		module("Display");
+
+		test("Basic Properties", function() {
+			var sut = createSUT('idBasicPropertiesTable');
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			//Check if table has been added to dom tree
+			ok(sut.$().length > 0, "Table in DOM tree");
+			
+			sut.setVisible(false);
+			sap.ui.getCore().applyChanges();
+			ok(sut.$().length === 0, "Table has been removed from DOM")
+			
+			//clean up
+			sut.destroy()
+		});	
+		
+		test("Column Display", function() {
+			var sut = createSUT('idColumnDisplayTable', true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			//Check table columns (should be three)
+			var aLabels = sut.$().find('th>label');
+			ok(aLabels.length === 3, "Table has three columns rendered");
+			ok(aLabels[0].textContent == "Name", "First column named 'Name'");
+			ok(aLabels[1].textContent == "Color", "First column named 'Color'");
+			ok(aLabels[2].textContent == "Number", "First column named 'Number'");
+			
+			//Remove first column
+			var oFirstColumn = sut.removeColumn("__column0");
+			sap.ui.getCore().applyChanges();
+			
+			//Check table columns (should be two)
+			aLabels = sut.$().find('th>label');
+			ok(aLabels.length === 2, "Table has three columns" );
+			
+			//Insert column again
+			sut.insertColumn(oFirstColumn, 1);
+			sap.ui.getCore().applyChanges();
+			
+			//Check table columns and their positions
+			aLabels = sut.$().find('th>label');
+			ok(aLabels.length === 3, "Table has three columns rendered");
+			ok(aLabels[1].textContent == "Name", "First column named 'Name'");
+			ok(aLabels[0].textContent == "Color", "First column named 'Color'");
+			ok(aLabels[2].textContent == "Number", "First column named 'Number'");
+			
+			//remove all columns
+			sut.removeAllColumns();
+			sap.ui.getCore().applyChanges();
+			aLabels = sut.$().find('th>label');
+			ok(aLabels.length === 0, "Table has no more columns rendered");
+			
+			//clean up
+			sut.destroy();
+		});	
+		
+		test("Header Toolbar Display", function() {
+			var sut = createSUT('idHeaderToolbarDisplayTable', true, true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			//Check if header toolbar is in DOM
+			var oToolBar = sut.getHeaderToolbar();
+			ok(oToolBar.$().length > 0, "HeaderToolbar in DOM tree");
+			
+			//clean up
+			sut.destroy();
+		});	
+		
+		
+		test("Empty Table", function() {
+			var sut = createSUT('idEmptyTable', true, true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			
+			//Check if header toolbar is in DOM
+			
+			var oData = {
+				items: [],
+				cols: ["Name", "Color", "Number"]
+			};
+			sut.setModel(new sap.ui.model.json.JSONModel(oData));
+			sap.ui.getCore().applyChanges();
+			
+			var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
+			
+			ok(aNoDataRow.length === 1, "Table displays 'No Data'")
+			
+			//clean up
+			sut.destroy();
+		});
+		
+		test("Fixed Layout", function() {
+			var sut = createSUT('FixedLayoutTestTable');
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			// check initial rendering
+			strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has fixed layout after initial rendering");
+			
+			sut.setFixedLayout(false);
+			sap.ui.getCore().applyChanges();
+			strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
+			
+			//clean up
+			sut.destroy()
+		});	
+		
+		module("Modes");
+		
+		test("MultiSelect", function() {
+			var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			
+			//Check if multiselct checkboxes are visible
+			var aSelectionChecks = sut.$().find(".sapMCb");
+			ok(aSelectionChecks.length === 4, "Table displays selection checkboxes");
+			
+			//Check if checkboxes are initially not selected
+			var aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
+			ok(aSelectionChecksMarked.length === 0, "Selection checkboxes not checked");
+			
+			//Check if 'selectAll' marks all rows as selected
+			sut.selectAll();
+			sap.ui.getCore().applyChanges();
+			
+			aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
+			ok(aSelectionChecksMarked.length === 4, "Selection checkboxes ALL checked");
+			
+			//clean up
+			sut.destroy();
+		});	
+		
+		
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: sap.m.Table</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

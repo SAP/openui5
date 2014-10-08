@@ -1,0 +1,108 @@
+/*!
+ * ${copyright}
+ */
+
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
+	"use strict";
+
+
+	/**
+	 * @class ObjectIdentifier renderer.
+	 * @static
+	 */
+	var ObjectIdentifierRenderer = {};
+	
+	/**
+	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 * 
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager that can be used for writing to the render
+	 *            output buffer
+	 * @param {sap.ui.core.Control}
+	 *            oOI an object representation of the control that should be
+	 *            rendered
+	 */
+	ObjectIdentifierRenderer.render = function(oRm, oOI) {
+		// Return immediately if control is invisible
+		if (!oOI.getVisible()) {
+			return;
+		}
+	
+		// write the HTML into the render manager
+		oRm.write("<div"); // Identifier begins
+		oRm.writeControlData(oOI);
+		oRm.addClass("sapMObjectIdentifier");
+		oRm.writeClasses();
+		oRm.write(">");
+	
+		oRm.write("<div"); // Top row begins
+		oRm.addClass("sapMObjectIdentifierTopRow");
+		oRm.writeClasses();
+		oRm.write(">");
+	
+		oRm.write("<div"); // Icons begin
+		oRm.addClass("sapMObjectIdentifierIcons");
+		oRm.writeClasses();
+		oRm.write(">");
+	
+		if (oOI.getBadgeAttachments()) {
+			oRm.write("<span"); // Icon span begins
+			oRm.addClass("sapMObjectIdentifierIconSpan");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oOI._getAttachmentsIcon());
+			oRm.write("</span>"); // Icon span ends
+		}
+		if (oOI.getBadgeNotes()) {
+			oRm.write("<span"); // Icon span begins
+			oRm.addClass("sapMObjectIdentifierIconSpan");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oOI._getNotesIcon());
+			oRm.write("</span>"); // Icon span ends
+		}
+		if (oOI.getBadgePeople()) {
+			oRm.write("<span"); // Icon span begins
+			oRm.addClass("sapMObjectIdentifierIconSpan");
+			oRm.writeClasses();
+			oRm.write(">");
+			oRm.renderControl(oOI._getPeopleIcon());
+			oRm.write("</span>"); // Icon span ends
+		}
+		
+		oRm.write("</div>"); // Icons end
+	
+		oRm.write("<div id='" + oOI.getId() + "-title'"); // Title begins 
+		oRm.addClass("sapMObjectIdentifierTitle");
+	
+		if (oOI.getTitleActive()) {
+			oRm.addClass("sapMOITitleActive");
+			oRm.writeAttributeEscaped("tabindex", "1");
+		}
+	
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.writeEscaped(oOI.getTitle());
+		oRm.write("</div>"); // Title ends
+	
+		oRm.write("</div>"); // Top row ends
+	
+		oRm.write("<div id='" + oOI.getId() + "-text'"); // Text begins
+		oRm.addClass("sapMObjectIdentifierText");
+		
+		if (!!oOI.getProperty("text") && !!oOI.getProperty("title")) {
+			oRm.addClass("sapMObjectIdentifierTextBellow");
+		}
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.writeEscaped(oOI.getText());
+		oRm.write("</div>"); // Text ends
+	
+		oRm.write("</div>"); // Identifier ends
+	};
+	
+
+	return ObjectIdentifierRenderer;
+
+}, /* bExport= */ true);

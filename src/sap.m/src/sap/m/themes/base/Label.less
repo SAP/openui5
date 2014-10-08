@@ -1,0 +1,44 @@
+
+/* ============================================= */
+/* CSS for control sap.m/Label.control */
+/* ============================================= */
+
+.sapMLabel {
+	color: @sapUiText;
+	font-size: @sapUiFontSize;
+	display: inline-block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	cursor: text;
+}
+
+.sapMLabelBold {
+	font-weight: bold;
+}
+
+.sapMLabelMaxWidth {
+	max-width: 100%;
+}
+
+.sapMLIBCursor .sapMLabel,
+.sapMLIBCursor + .sapMListTblSubRow .sapMLabel{
+	cursor: pointer;
+}
+
+/* ============================ */
+/* Overwrites for Label in Form */
+/* ============================ */
+
+/* GridLayout */
+.sapUiGridLabel > .sapMLabel{
+	float: right;
+}
+
+/* ResponsiveGridLayout */
+/* make labels right aligned if left from fields*/
+.sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
+.sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormResGridLbl:not(.sapUiRespGridSpanL12) > .sapMLabel {
+	float: right;
+}

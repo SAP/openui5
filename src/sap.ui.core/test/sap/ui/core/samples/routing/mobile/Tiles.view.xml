@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.ui.core.samples.routing.mobile.Tiles" xmlns:html="http://www.w3.org/1999/xhtml">
+	<App id="tileapp">
+		<TileContainer id="tiles">
+			<tiles>
+				<StandardTile id="testapp1" press="press" info="Some info text" title="Test Application 1" icon="sap-icon://newspaper"/>
+				<StandardTile press="press" info="Some info text" title="Second Tile" icon="sap-icon://nutrition-activity"/>
+			</tiles>
+		</TileContainer>
+	</App>
+</mvc:View>

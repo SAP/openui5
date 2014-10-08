@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.TablePersoDialog</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-compatVersion="1.16"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script id="mainView" type="sapui5/xmlview">
+			<mvc:View
+				controllerName="perso.qunit.controller"
+				xmlns:core="sap.ui.core"
+				xmlns:mvc="sap.ui.core.mvc"
+				xmlns="sap.m">
+				<App><Page title="Perso Migration Test">
+					<Table id="myTable" items="{/items}">
+						<headerToolbar>
+							<Toolbar>
+								<ToolbarSpacer />
+								<Button
+									id="idPersonalizationButton"
+									icon="sap-icon://person-placeholder" />
+							</Toolbar>
+						</headerToolbar>
+						<columns>
+							<Column id="idName"><Label text="Name" /></Column>
+							<Column id="idColor"><Label text="Color" /></Column>
+							<Column id="idNumber"><Label text="Number" /></Column>
+						</columns>
+						<ColumnListItem>
+							<cells>
+								<Label text="{name}" />
+								<Label text="{color}" />
+								<Label text="{number}" />
+							</cells>
+						</ColumnListItem>
+					</Table>
+				</Page></App>
+			</mvc:View>
+		</script>
+
+		<script>
+
+		jQuery.sap.require("sap.m.TablePersoController");
+
+		var oPersoService = {
+
+			// Historic bundle, to be migrated
+			_oBundle : {
+				_persoSchemaVersion: "1.0",
+				aColumns: [
+					{
+						id: "__xmlview0--idColor",
+						order: 1,
+						text: "Color",
+						visible: true
+					},
+					{
+						id: "__xmlview0--idName",
+						order: 0,
+						text: "Name",
+						visible: false
+					},
+					{
+						id: "__xmlview0--idNumber",
+						order: 2,
+						text: "Number",
+						visible: true
+					},
+				]
+			},
+
+			getPersData : function () {
+				var oDeferred = new jQuery.Deferred();
+				var oBundle = this._oBundle;
+				oDeferred.resolve(oBundle);
+				return oDeferred.promise();
+			},
+
+			setPersData : function (oBundle) {
+				var oDeferred = new jQuery.Deferred();
+				this._oBundle = oBundle;
+				oDeferred.resolve();
+				return oDeferred.promise();
+			}
+		};
+
+		sap.ui.controller("perso.qunit.controller", {
+
+			onInit: function(oEvent) {
+
+				var oView = this.getView();
+
+				var oTPC = new sap.m.TablePersoController({
+					table: oView.byId("myTable"),
+					persoService: oPersoService
+				}).activate();
+
+				oView.byId("idPersonalizationButton").attachPress(function(oEvent) {
+					oTPC.openDialog();
+				});
+			}
+
+		});
+
+		sap.ui.core.UIComponent.extend("perso.qunit.Component", {
+			createContent: function(oEvent) {
+
+				var oView = sap.ui.xmlview({ viewContent: jQuery('#mainView').html() });
+				oView.setModel(new sap.ui.model.json.JSONModel({
+					items: [
+							{ name: "Michelle", color: "orange", number: 3.14 },
+							{ name: "Joseph", color: "blue", number: 1.618 },
+							{ name: "David", color: "green", number: 0 },
+					],
+				}));
+				return oView;
+
+			}
+		});
+
+		var oComponentContainer = new sap.ui.core.ComponentContainer();
+		oComponentContainer.setComponent(new perso.qunit.Component());
+		oComponentContainer.placeAt("content");
+
+		module("Migration");
+
+		test("Column order as in historic settings", function() {
+
+			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
+			equal(aColumns[0].getHeader().getText(), "Name", "Column 1 is Number");
+			equal(aColumns[1].getHeader().getText(), "Color", "Column 2 is Color");
+			equal(aColumns[2].getHeader().getText(), "Number", "Column 3 is Number");
+
+		});
+
+		test("Column visibility as in historic settings", function() {
+
+			var aColumns = sap.ui.getCore().byId("__xmlview0").byId("myTable").getColumns();
+			equal(aColumns[0].getVisible(), false, "Column 1 (Name) is not visible");
+			equal(aColumns[1].getVisible(), true, "Column 2 (Color) is visible");
+			equal(aColumns[2].getVisible(), true, "Column 3 (Number) is visible");
+
+		});
+
+			</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.TablePersoController - Migration in Component</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture"></div>
+		<div id="content"></div>
+	</body>
+</html>

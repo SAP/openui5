@@ -1,0 +1,675 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Rating - sap.m</title>
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<style>
+		.TestPageRatingWithWhiteBackground {
+			background-color: #ffffff;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			margin: 1rem 2rem 0 2rem;
+		}
+
+		.sapMVBox {
+			margin: 0.5rem 2rem 0rem 2rem;
+		}
+		
+		.sapMList {
+			padding-bottom: 0;
+		}
+
+		.TestPageHeaderLabel {
+			font-weight: bold;
+			margin: 1rem 2rem 0 2rem;
+		}
+
+		.descriptiveRatingLabel {
+			color: @sapUiLightText;
+			padding-left: 0.5rem;
+			vertical-align: sub;
+			line-height: 1.375rem;
+		}
+		
+		.changeEvent {
+			color: green;
+			font-weight: bold;
+		}
+		</style>
+
+		<script type="text/javascript">
+			jQuery.sap.require("sap.ui.core.IconPool");
+
+			var oApp = new sap.m.App("myApp");
+
+			var oRatingPage = new sap.m.Page("ratingPage", {
+				title : "Ratings",
+				footer : new sap.m.Bar({
+					contentMiddle : [
+					]
+				})
+			});
+
+			var oLabel = new sap.m.Label({text:'Most common use cases:'}).addStyleClass("TestPageHeaderLabel");
+			oRatingPage.addContent(oLabel);
+
+			var oLabel0 = new sap.m.Label({text:'Small inactive rating'});
+			var oRating0 = new sap.m.RatingIndicator({
+				iconSize: "1rem",
+				enabled: false,
+				value: 2.5,
+				tooltip: "This is a tooltip"
+			});
+
+			var oLabel1 = new sap.m.Label({text:'Small active rating'});
+			var oRating1 = new sap.m.RatingIndicator({
+				iconSize: "1rem",
+				value: 2.5,
+				tooltip: "This is a tooltip"
+			});
+
+			var oLabel2 = new sap.m.Label({text:'Medium inactive rating'});
+			var oRating2 = new sap.m.RatingIndicator({
+				enabled: false,
+				value: 2.5
+			});
+
+			var oLabel3 = new sap.m.Label({text:'Medium active rating'});
+			var oRating3 = new sap.m.RatingIndicator({
+				value: 2.5
+			});
+
+			var oLabel4 = new sap.m.Label({text:'Large inactive rating'});
+			var oRating4 = new sap.m.RatingIndicator({
+				iconSize: "2rem",
+				enabled: false,
+				value: 2.5
+			});
+
+			var oLabel5 = new sap.m.Label({text:'Large active rating'});
+			var oRating5 = new sap.m.RatingIndicator({
+				iconSize: "2rem",
+				value: 2.5
+			});
+
+			var oLabel6 = new sap.m.Label({text:'Default active rating'});
+			var oRating6 = new sap.m.RatingIndicator({
+				value: 2.5
+			});
+
+			var oVBox = new sap.m.VBox({
+				items: [
+					oLabel0,
+					oRating0,
+					oLabel1,
+					oRating1,
+					oLabel2,
+					oRating2,
+					oLabel3,
+					oRating3,
+					oLabel4,
+					oRating4,
+					oLabel5,
+					oRating5,
+					oLabel6,
+					oRating6
+				]
+			});
+
+			oRatingPage.addContent(oVBox);
+
+			// rating table
+			var oProducts = {
+				items : [{
+					name: "Headphone",
+					price: "12.00 EUR",
+					rating: 1
+				}, {
+					name : "Mouse Pad",
+					price : "3.00 EUR",
+					rating: 2
+				}, {
+					name : "Monitor",
+					price : "45.00 EUR",
+					rating: 3
+				}, {
+					name : "Optic Mouse",
+					price : "15.00 EUR",
+					rating: 4
+				}, {
+					name : "Dock Station",
+					price : "55.00 EUR",
+					rating: 5
+				}]
+			};
+
+			var oRatingTable = new sap.m.List("items", {
+					inset: true,
+					threshold: 2,
+					mode: "MultiSelect",
+					showUnread : true,
+					scrollToLoad : true,
+					headerText : "Rating Table",
+					columns : [
+						new sap.m.Column({
+							header: new sap.m.Label({
+								text: "Name"
+							})
+						}), new sap.m.Column({
+							header : new sap.m.Label({
+								text: "Price"
+							}),
+						}), new sap.m.Column({
+							header: new sap.m.Label({
+								text: "Rating"
+							}),
+						})
+					]
+				});
+
+			var oRatingTableTemplate = new sap.m.ColumnListItem({
+				type: "Active",
+				unread: false,
+				cells: [ 
+					new sap.m.Label({
+						text : "{name}"
+					}),
+					new sap.m.Label({
+						text: "{price}",
+					}), new sap.m.RatingIndicator({
+						iconSize: "1rem",
+						enabled: false,
+						value: "{rating}",
+						tooltip: "This is a tooltip"
+					})
+				]
+			});
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(oProducts);
+			oRatingTable.setModel(oModel);
+			oRatingTable.bindAggregation("items", "/items", oRatingTableTemplate);
+
+			// rating list			
+			var oRatingList = new sap.m.List({
+				inset: true,
+				headerText : "Rating List",
+				swipeContent : new sap.m.Button({
+					text : "Swipe Button",
+					type: "Reject",
+					press : function(e) {
+						oSwipeList3.swipeOut();
+					}
+				}),
+				swipe: function(e) {
+					var oSrcControl = e.getParameter("srcControl");
+					if (oSrcControl instanceof sap.m.Button) {
+						e.preventDefault();
+					}
+				},
+				items: [
+					new sap.m.InputListItem({
+						type: "Active",
+						label : "Rate me now!",
+						content : new sap.m.RatingIndicator({
+							value: 1,
+							tooltip: "Rating"
+						})
+					}),
+					new sap.m.InputListItem({
+						type: "Active",
+						label : "No, rate me!",
+						content : new sap.m.RatingIndicator({
+							value: 2.5,
+							tooltip: "Rating"
+						})
+					}),
+					new sap.m.InputListItem({
+						type: "Active",
+						label : "Or maybe rate me!",
+						content : new sap.m.RatingIndicator({
+							value: 5,
+							tooltip: "Rating"
+						})
+					})
+				]
+			});
+
+			oRatingPage.addContent(oRatingTable);
+			oRatingPage.addContent(oRatingList);
+
+			// rating with automatically updated label
+			var oLabel = new sap.m.Label({text:'Rating with automatically updated label (black = liveChange, green = change):'}).addStyleClass("TestPageHeaderLabel");
+			oRatingPage.addContent(oLabel);
+
+			var oLabel3 = new sap.m.Label({text:' Rate me!'}).addStyleClass("descriptiveRatingLabel");;
+			var oRating3 = new sap.m.RatingIndicator({
+				value: 2.5,
+				iconSize: "1.375rem",
+				liveChange: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'liveChange' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					oLabel3.setText(" " + oControlEvent.getParameter("value") + " out of " + oRating3.getMaxValue());
+					oLabel3.removeStyleClass('changeEvent');
+				},
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+					oLabel3.setText(" " + oControlEvent.getParameter("value") + " out of " + oRating3.getMaxValue());
+					oLabel3.addStyleClass('changeEvent');
+				}
+			});
+
+			var oHBoxLabeledRating = new sap.m.HBox({
+				items: [
+					oRating3,
+					oLabel3
+				]
+			}).addStyleClass("TestPageRatingWithWhiteBackground");
+
+			oRatingPage.addContent(oHBoxLabeledRating);
+
+			// API Test panel
+			var oLabel = new sap.m.Label({text:'API test:'}).addStyleClass("TestPageHeaderLabel");
+			oRatingPage.addContent(oLabel);
+
+			var oLabelAPI0 = new sap.m.Label({text:'Result:'});
+			var oRatingAPI0 = new sap.m.RatingIndicator({
+				value: 2.5,
+				maxValue: 5,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+			});
+
+			var oValueLabel = new sap.m.Label({text: 'Value'});
+			var oValueInput = new sap.m.Input({
+				type: sap.m.InputType.Number,
+				value: 2.5,
+				placeholder: 'eg. 1.23'
+			});
+
+			var oMaxValueLabel = new sap.m.Label({text: 'Rating items'});
+			var oMaxValueInput = new sap.m.Input({
+				type: sap.m.InputType.Number, 
+				value: 5,
+				placeholder: '5'
+			});
+
+			var oIconSizeLabel = new sap.m.Label({text: 'IconSize'});
+			var oIconSizeInput = new sap.m.Input({
+				type: sap.m.InputType.Text,
+				value: "1.375rem",
+				placeholder: '1.375rem'
+			});
+
+			var aNames = sap.ui.core.IconPool.getIconNames();
+			var aIconsSelected = [], aIconsUnselected = [], aIconsHovered = [];
+			for(index = 0; index < aNames.length ; index++){
+				aIconsSelected.push(new sap.ui.core.Item(aNames[index]+"_selected", {text: aNames[index]}));
+			}
+			for(index = 0; index < aNames.length ; index++){
+				aIconsUnselected.push(new sap.ui.core.Item(aNames[index]+"_unselected", {text: aNames[index]}));
+			}
+			for(index = 0; index < aNames.length ; index++){
+				aIconsHovered.push(new sap.ui.core.Item(aNames[index]+"_hovered", {text: aNames[index]}));
+			}
+
+			var oIconSelectedLabel = new sap.m.Label({text: 'IconSelected'});
+			var oIconSelectedSelect = new sap.m.Select({
+				selectedItemId: "favorite_selected",
+				items: aIconsSelected
+			});
+			var oIconUnselectedLabel = new sap.m.Label({text: 'IconUnselected'});
+			var oIconUnselectedSelect = new sap.m.Select({
+				selectedItemId: "favorite_unselected",
+				items: aIconsUnselected
+			});
+			var oIconHoveredLabel = new sap.m.Label({text: 'IconHovered'});
+			var oIconHoveredSelect = new sap.m.Select({
+				selectedItemId: "favorite_hovered",
+				items: aIconsHovered
+			});
+
+			var oVisualModeLabel = new sap.m.Label({text: 'VisualMode'});
+			var oVisualModeSelect = new sap.m.Select({
+				selectedItemId: "Half",
+				items: [
+					new sap.ui.core.Item("Full", {text: "Full"}),
+					new sap.ui.core.Item("Half", {text: "Half"}),
+				]
+			});
+
+			var oEnabledLabel = new sap.m.Label({text: 'Enabled'});
+			var oEnabledCheckbox = new sap.m.CheckBox({
+				selected: true
+			});
+			var oVisibleLabel = new sap.m.Label({text: 'Visible'});
+			var oVisibleCheckbox = new sap.m.CheckBox({
+				selected: true
+			});
+
+			var oSubmitButton = new sap.m.Button({
+				text: "Apply changes",
+				press: function() {
+					oRatingAPI0.setValue(parseFloat(oValueInput.getValue()));
+					oRatingAPI0.setMaxValue(parseInt(oMaxValueInput.getValue()));
+					oRatingAPI0.setIconSize(oIconSizeInput.getValue());
+					oRatingAPI0.setVisualMode(oVisualModeSelect.getSelectedItemId());
+					oRatingAPI0.setIconSelected(sap.ui.core.IconPool.getIconURI(oIconSelectedSelect.getSelectedItem().getText()));
+					oRatingAPI0.setIconUnselected(sap.ui.core.IconPool.getIconURI(oIconUnselectedSelect.getSelectedItem().getText()));
+					oRatingAPI0.setIconHovered(sap.ui.core.IconPool.getIconURI(oIconHoveredSelect.getSelectedItem().getText()));
+					oRatingAPI0.setEnabled(oEnabledCheckbox.getSelected());
+					oRatingAPI0.setVisible(oVisibleCheckbox.getSelected());
+				},
+				layoutData: new sap.m.FlexItemData({growFactor: 1})
+			});
+
+			var oVBoxAPI = new sap.m.VBox({
+				items: [
+					oValueLabel,
+					oValueInput,
+					oMaxValueLabel,
+					oMaxValueInput,
+					oIconSizeLabel,
+					oIconSizeInput,
+					oVisualModeLabel,
+					oVisualModeSelect,
+					oIconSelectedLabel,
+					oIconSelectedSelect,
+					oIconUnselectedLabel,
+					oIconUnselectedSelect,
+					oIconHoveredLabel,
+					oIconHoveredSelect,
+					oEnabledLabel,
+					oEnabledCheckbox,
+					oVisibleLabel,
+					oVisibleCheckbox,
+					oSubmitButton,
+					oLabelAPI0,
+					oRatingAPI0
+				]
+			}).addStyleClass("TestPageRatingWithWhiteBackground");
+
+			oRatingPage.addContent(oVBoxAPI);
+
+			var oLabel = new sap.m.Label({text:'All other possible options & combinations (not recommended):'}).addStyleClass("TestPageHeaderLabel");
+			oRatingPage.addContent(oLabel);
+
+			// custom icons for rating
+			var oLabelSpecial5 = new sap.m.Label({text:'Rating with customized icons 4.4 / 8 (Half):'});
+			var oRatingSpecial5 = new sap.m.RatingIndicator({
+				maxValue: 8,
+				value: 4.4,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("process"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("attachment"),
+				iconHovered: sap.ui.core.IconPool.getIconURI("paper-plane")
+			});
+
+			// not existent icons for rating
+			var oLabelSpecial6 = new sap.m.Label({text:'Rating with non-existent icons 3 / 7 (Half):'});
+			var oRatingSpecial6 = new sap.m.RatingIndicator({
+				value: 3,
+				maxValue: 7,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("querstromzerspaner"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("monstertruckdriver"),
+				iconHovered: sap.ui.core.IconPool.getIconURI("bolzplatz")
+			});
+
+			// readonly/disabled rating
+			var oLabelSpecial7 = new sap.m.Label({text:'readonly/disabled rating with float value 4.5678 / 15 (Half):'});
+			var oRatingSpecial7 = new sap.m.RatingIndicator({
+				maxValue: 15,
+				value: 4.5678,
+				visible: true,
+				enabled: false,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("favorite"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("unfavorite"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("accept")
+			});
+
+			// standard with incorrect initial value (has to be rounded to 3 for display)
+			var oLabelSpecial8 = new sap.m.Label({text:'Standard rating with float value 2.5678 / 6 (Full, has to be rounded for display):'});
+			var oRatingSpecial8 = new sap.m.RatingIndicator({
+				maxValue: 6,
+				value: 2.5678,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Full,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("favorite"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("unfavorite"),
+				iconHovered: sap.ui.core.IconPool.getIconURI("favorite")
+			});
+
+			// invisible rating
+			var oLabelSpecial9 = new sap.m.Label({text:'Invisible not enabled rating with float value 1 / 5 (full):'});
+			var oRatingSpecial9 = new sap.m.RatingIndicator({
+				maxValue: 5,
+				value: 1,
+				visible: false,
+				enabled: false,
+				visualMode: sap.m.RatingIndicatorVisualMode.Full,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("favorite"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("unfavorite")
+			});
+
+			// small image rating
+			var oLabelSpecial10 = new sap.m.Label({text:'Small image-based rating 2.75 / 10 (Half):'});
+			var oRatingSpecial10 = new sap.m.RatingIndicator({
+				maxValue: 10,
+				value: 2.75,
+				iconSize: "1rem",
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: "images/candy_v_46x46.png",
+				iconUnselected: "images/candy_x_46x46.png",
+				iconHovered: "images/candy_star_46x46.png"
+			});
+
+			// medium image rating
+			var oLabelSpecial11 = new sap.m.Label({text:'Medium image-based rating 5.77 / 10 (Half):'});
+			var oRatingSpecial11 = new sap.m.RatingIndicator({
+				maxValue: 10,
+				value: 5.77,
+				iconSize: "1.375rem",
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: "images/candy_v_46x46.png",
+				iconUnselected: "images/candy_x_46x46.png",
+				iconHovered: "images/candy_star_46x46.png"
+			});
+
+			// large image rating
+			var oLabelSpecial12 = new sap.m.Label({text:'Large image-based rating 8.34 / 10 (Half):'});
+			var oRatingSpecial12 = new sap.m.RatingIndicator({
+				maxValue: 10,
+				value: 8.34,
+				iconSize: "2rem",
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: "images/candy_v_46x46.png",
+				iconUnselected: "images/candy_x_46x46.png",
+				iconHovered: "images/candy_star_46x46.png"
+			});
+
+			// mixed image and iconpool rating
+			var oLabelSpecial13 = new sap.m.Label({text:'Mixed image and iconpool rating 6.5 / 10 (Half):'});
+			var oRatingSpecial13 = new sap.m.RatingIndicator({
+				maxValue: 10,
+				value: 6.5,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("nutrition-activity"),
+				iconUnselected: "images/wounds_doc@2.png",
+				iconHovered: sap.ui.core.IconPool.getIconURI("nutrition-activity")
+			});
+
+			// small rating with custom icons
+			var oLabelSpecial14 = new sap.m.Label({text:'Small rating with custom icons value 2.5 / 5 (Half):'});
+			var oRatingSpecial14 = new sap.m.RatingIndicator({
+				iconSize: "1rem",
+				value: 2.5,
+				maxValue: 10,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("physical-activity"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("media-play"),
+				iconHovered: sap.ui.core.IconPool.getIconURI("sys-enter-2")
+			});
+
+			// large rating with custom icons
+			var oLabelSpecial15 = new sap.m.Label({text:'large rating with custom icons value 2.5 / 5 (Half):'});
+			var oRatingSpecial15 = new sap.m.RatingIndicator({
+				iconSize: "2rem",
+				value: 2.5,
+				maxValue: 10,
+				visible: true,
+				enabled: true,
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+				iconSelected: sap.ui.core.IconPool.getIconURI("umbrella"),
+				iconUnselected: sap.ui.core.IconPool.getIconURI("drill-up"),
+				iconHovered: sap.ui.core.IconPool.getIconURI("accept")
+			});
+
+			// large rating with custom icons
+			var oLabelSpecial16 = new sap.m.Label({text:'200px iconSize rating value 2.5 / 5 (Half):'});
+			var oRatingSpecial16 = new sap.m.RatingIndicator({
+				iconSize: "200px",
+				value: 2.5,
+				maxValue: 5,
+				visible: true,
+				enabled: true,
+				iconHovered: sap.ui.core.IconPool.getIconURI("accept"),
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+			});
+
+			// large rating with custom icons
+			var oLabelSpecial17 = new sap.m.Label({text:'30pt iconSize rating value 2.5 / 5 (Half):'});
+			var oRatingSpecial17 = new sap.m.RatingIndicator({
+				iconSize: "30pt",
+				value: 2.5,
+				maxValue: 5,
+				visible: true,
+				enabled: true,
+				iconHovered: sap.ui.core.IconPool.getIconURI("accept"),
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+			});
+
+			// large rating with custom icons
+			var oLabelSpecial18 = new sap.m.Label({text:'10% iconSize rating value 2.5 / 5 (Half):'});
+			var oRatingSpecial18 = new sap.m.RatingIndicator({
+				iconSize: "10%",
+				value: 2.5,
+				maxValue: 5,
+				visible: true,
+				enabled: true,
+				iconHovered: sap.ui.core.IconPool.getIconURI("accept"),
+				visualMode: sap.m.RatingIndicatorVisualMode.Half,
+				change : function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("value") + " on " + this);
+				},
+			});
+
+			var oVBoxSpecial = new sap.m.VBox({
+				items: [
+					oLabelSpecial5,
+					oRatingSpecial5,
+					oLabelSpecial6,
+					oRatingSpecial6,
+					oLabelSpecial7,
+					oRatingSpecial7,
+					oLabelSpecial8,
+					oRatingSpecial8,
+					oLabelSpecial9,
+					oRatingSpecial9,
+					oLabelSpecial10,
+					oRatingSpecial10,
+					oLabelSpecial11,
+					oRatingSpecial11,
+					oLabelSpecial12,
+					oRatingSpecial12,
+					oLabelSpecial13,
+					oRatingSpecial13,
+					oLabelSpecial14,
+					oRatingSpecial14,
+					oLabelSpecial15,
+					oRatingSpecial15,
+					oLabelSpecial16,
+					oRatingSpecial16,
+					oLabelSpecial17,
+					oRatingSpecial17,
+					oLabelSpecial18,
+					oRatingSpecial18
+				]
+			}).addStyleClass("TestPageRatingWithWhiteBackground").addStyleClass("Content");
+
+			oRatingPage.addContent(oVBoxSpecial);
+
+			// place content
+			oApp.addPage(oRatingPage);
+			oApp.placeAt("body");
+		</script>
+	</head>
+
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

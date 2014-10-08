@@ -1,0 +1,1056 @@
+<!DOCTYPE HTML>
+
+<!--
+	Tested class: sap.ui.core.DisplayVariants
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet"
+		href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+		type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
+	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
+	Promise, sinon */
+
+	// default error handler
+	function onRejected(oError) {
+		start(); // MUST be called before an assertion which fails!
+		ok(false, oError);
+	}
+
+	// WARNING! These are on by default and break the Promise polyfill...
+	sinon.config.useFakeTimers = false;
+
+	jQuery.sap.require("sap.ui.core.DisplayVariants");
+
+	// dummy control to test variant support
+	sap.ui.core.Control.extend("sap.ui.core.test.display_variants.Control", {
+		metadata: {
+			properties: {
+				currentVariant: {defaultValue: [], type: "string[]"}
+			}
+		}
+	});
+
+	// some component creating an instance of our dummy control
+	sap.ui.core.UIComponent.extend("sap.ui.core.test.display_variants.Component", {
+		createContent: function () {
+			return new sap.ui.core.test.display_variants.Control({id: "stableId"});
+		}
+	});
+	jQuery.sap.declare("sap.ui.core.test.display_variants.Component");
+
+	// yet another dummy control to test variant support, but with aggregations/associations
+	sap.ui.core.Control.extend("sap.ui.core.test.display_variants.Parent", {
+		metadata: {
+			aggregations: {
+				child: {multiple: false, type: "sap.ui.core.Control", visibility: "hidden"},
+				myDatas: {multiple: true, type: "sap.ui.core.CustomData"}, // 0..n
+				mySingleton: {multiple: false, type: "sap.ui.core.CustomData"} // 0..1
+			},
+			associations: {
+				myFriends: {multiple: true, type: "sap.ui.core.CustomData"}, // 0..n
+				myOneAndOnly: {multiple: false, type: "sap.ui.core.CustomData"} // 0..1
+			}
+		}
+	});
+
+	//*********************************************************************************************
+	module("sap.ui.core.DisplayVariants", {
+		teardown: function () {
+			var oControl = sap.ui.getCore().byId("stableId");
+
+			if (oControl) {
+				oControl.destroy();
+			}
+			if (jQuery.ajax.restore) {
+				jQuery.ajax.restore();
+			}
+			if (jQuery.sap.loadResource.restore) {
+				jQuery.sap.loadResource.restore();
+			}
+			if (jQuery.sap.log.error.restore) {
+				jQuery.sap.log.error.restore();
+			}
+			if (jQuery.sap.log.warning.restore) {
+				jQuery.sap.log.warning.restore();
+			}
+			if (sap.ui.core.DisplayVariants._applyChangeDocuments.restore) {
+				sap.ui.core.DisplayVariants._applyChangeDocuments.restore();
+			}
+			if (sap.ui.core.DisplayVariants._applyChanges.restore) {
+				sap.ui.core.DisplayVariants._applyChanges.restore();
+			}
+			if (sap.ui.core.DisplayVariants._createChangeDocument.restore) {
+				sap.ui.core.DisplayVariants._createChangeDocument.restore();
+			}
+			if (sap.ui.core.DisplayVariants._destroyAll.restore) {
+				sap.ui.core.DisplayVariants._destroyAll.restore();
+			}
+			if (sap.ui.core.DisplayVariants._getComponentClassName.restore) {
+				sap.ui.core.DisplayVariants._getComponentClassName.restore();
+			}
+			if (sap.ui.core.DisplayVariants._init.restore) {
+				sap.ui.core.DisplayVariants._init.restore();
+			}
+			if (sap.ui.core.DisplayVariants._toSettings.restore) {
+				sap.ui.core.DisplayVariants._toSettings.restore();
+			}
+		}
+	});
+
+	//*********************************************************************************************
+	test("_getComponentClassName", function () {
+		var oComponent = sap.ui.component({
+				name : "sap.ui.core.test.display_variants"
+			}),
+			oControl = sap.ui.getCore().byId("stableId");
+
+		strictEqual(sap.ui.base.ManagedObject.getOwnerIdFor(oControl), oComponent.getId(),
+			"oControl knows that it belongs to oComponent");
+
+		strictEqual(sap.ui.core.DisplayVariants._getComponentClassName(oControl),
+			"sap.ui.core.test.display_variants.Component");
+	});
+
+	//*********************************************************************************************
+	test("_getComponentClassName for a control w/o a component", function () {
+		var oControl = new sap.ui.core.Control({id: "stableId"});
+
+		strictEqual(sap.ui.base.ManagedObject.getOwnerIdFor(oControl), undefined,
+			"control w/o a component");
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._getComponentClassName(oControl);
+		}, /Cannot determine component for Element sap\.ui\.core\.Control#stableId/);
+	});
+
+	//*********************************************************************************************
+	asyncTest("_init", function () {
+		var aChangeDocuments = {changes: []},
+			// use a strange compoment name, having already '.Component'
+			sComponentClassName = "sap.ui.core.test.Component.display_variants.Component",
+			oControl = new sap.ui.core.test.display_variants.Control(),
+			oPromise;
+
+		sinon.spy(jQuery.sap, "loadResource");
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			strictEqual(mSettings.async, true);
+			strictEqual(mSettings.dataType, "json");
+			deepEqual(mSettings.headers, {
+				"X-UI5-Component": "sap.ui.core.test.Component.display_variants"
+			}, "Header contains 'X-UI5-Component' + name");
+
+			mSettings.success(aChangeDocuments);
+			//mSettings.error({status: 404}, "Not found", new Error("This call intentionally failed"));
+		});
+		sinon.stub(sap.ui.core.DisplayVariants, "_applyChangeDocuments");
+		sinon.stub(sap.ui.core.DisplayVariants, "_getComponentClassName")
+			.returns(sComponentClassName);
+
+		// this loads 'Component-changes.json'
+		oPromise = sap.ui.core.DisplayVariants._init(oControl);
+
+		ok(jQuery.sap.loadResource.calledOnce);
+		ok(jQuery.sap.loadResource.calledWith(
+			"sap/ui/core/test/Component/display_variants/Component-changes.json"),
+			"proper resource name used");
+		ok(oPromise instanceof Promise);
+		oPromise.then(function (sComponentClassName0) {
+			start();
+			strictEqual(sComponentClassName0, sComponentClassName);
+			ok(sap.ui.core.DisplayVariants._applyChangeDocuments.calledOnce);
+			ok(sap.ui.core.DisplayVariants._applyChangeDocuments.calledWith(oControl,
+				aChangeDocuments.changes));
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("_init again", function () {
+		var oComponent = sap.ui.component({
+				name : "sap.ui.core.test.display_variants"
+			}),
+			oControl = sap.ui.getCore().byId("stableId");
+
+		sinon.spy(jQuery.sap, "loadResource");
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			mSettings.success({changes: []});
+		});
+
+		sap.ui.core.DisplayVariants._init(oControl).then(function (sComponentClassName) {
+			strictEqual(sComponentClassName, "sap.ui.core.test.display_variants.Component");
+
+			sap.ui.core.DisplayVariants._init(oControl).then(function (sComponentClassName0) {
+				start();
+				ok(jQuery.sap.loadResource.calledOnce, "resource loaded just once");
+			}, onRejected);
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("_init with error in loading", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			oPromise;
+
+		sinon.spy(jQuery.sap.log, "warning");
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			mSettings.error({status: 123}, "ABC", new Error("This call intentionally failed"));
+		});
+		sinon.stub(sap.ui.core.DisplayVariants, "_applyChangeDocuments");
+		sinon.stub(sap.ui.core.DisplayVariants, "_getComponentClassName").returns("foo.Component");
+
+		// this loads 'Component-changes.json' which fails
+		// Note: a TINAF enabled backend is supposed to return [], but not fail!
+		oPromise = sap.ui.core.DisplayVariants._init(oControl);
+
+		oPromise.then(function () {
+			start();
+			ok(false, "unexpected call to success handler");
+		}, function (oError) {
+			start();
+			ok(sap.ui.core.DisplayVariants._applyChangeDocuments.notCalled);
+			ok(new RegExp("resource foo/Component-changes\\.json could not be loaded from ")
+				.test(oError.message));
+		});
+	});
+
+	//*********************************************************************************************
+	test("_applyChanges: unsupported operation", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control({id: "stableId"}),
+			oInvalidChange = {
+				"selector": "#stableId",
+				"operation": "invalid"
+			};
+
+		sinon.spy(jQuery.sap.log, "error");
+
+		sap.ui.core.DisplayVariants._applyChanges(oControl, [oInvalidChange], "component.name");
+
+		ok(jQuery.sap.log.error.calledWith(
+			"Unsupported change operation 'invalid' for component 'component.name'",
+			JSON.stringify(oInvalidChange), "sap.ui.core.DisplayVariants"));
+	});
+
+	//*********************************************************************************************
+	test("_applyChanges: defineVariant", function () {
+		var aChanges = [{
+				"selector": "#stableId",
+				"operation": "defineVariant",
+				"variantId": "0",
+				"variantDescription": "foo",
+				"changes": [{/*don't care*/}]
+			}, {
+				"selector": "#stableId",
+				"operation": "defineVariant",
+				"variantId": "1",
+				"variantDescription": "bar",
+				"changes": [{/*don't care*/}]
+			}, {
+				"selector": "#otherId",
+				"operation": "defineVariant",
+				"variantId": "99",
+				"variantDescription": "must be ignored",
+				"changes": [{/*don't care*/}]
+			}],
+			aMoreChanges = [{
+				"selector": "#stableId",
+				"operation": "defineVariant",
+				"variantId": "2",
+				"variantDescription": "baz",
+				"changes": [{/*don't care*/}]
+			},{
+				"selector": "#stableId",
+				"operation": "defineVariant",
+				"variantId": "0",
+				"variantDescription": "overwrite foo",
+				"changes": [{/*don't care*/}]
+			}],
+			oControl = new sap.ui.core.test.display_variants.Control({id: "stableId"});
+
+		oControl._mDisplayVariants = {}; // mimic _applyChangeDocuments()
+		sinon.spy(jQuery.sap.log, "error");
+
+		sap.ui.core.DisplayVariants._applyChanges(oControl, aChanges, "not used");
+		deepEqual(oControl._mDisplayVariants, { // just refer to the whole change
+			"0": aChanges[0],
+			"1": aChanges[1]
+		});
+
+		sap.ui.core.DisplayVariants._applyChanges(oControl, aMoreChanges, "not used");
+		deepEqual(oControl._mDisplayVariants, { // just refer to the whole change
+			"0": aMoreChanges[1], // overwritten!
+			"1": aChanges[1],
+			"2": aMoreChanges[0]
+		});
+
+		ok(jQuery.sap.log.error.notCalled);
+	});
+	//TODO support translatable texts for variant descriptions via "{{{title}}}" syntax
+
+	//*********************************************************************************************
+	test("_destroyAll", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent({
+				myDatas: [{
+					key: "0"
+				}, {
+					key: "1"
+				}],
+				mySingleton: {
+					key: "42"
+				}
+			});
+
+		sinon.spy(oParent, "destroyMyDatas");
+		sinon.spy(oParent, "destroyMySingleton");
+		strictEqual(oParent.getMyDatas().length, 2);
+		strictEqual(oParent.getMySingleton().getKey(), "42");
+
+		sap.ui.core.DisplayVariants._destroyAll(oParent, "toString");
+		// no specific checks
+
+		sap.ui.core.DisplayVariants._destroyAll(oParent, "myDatas");
+		strictEqual(oParent.getMyDatas().length, 0);
+		ok(oParent.destroyMyDatas.calledOnce, "control specific method is called");
+
+		sap.ui.core.DisplayVariants._destroyAll(oParent, "mySingleton");
+		strictEqual(oParent.getMySingleton(), null);
+		ok(oParent.destroyMySingleton.calledOnce, "control specific method is called");
+	});
+	//TODO support to destroy 0..n associations and event bindings?!
+
+	//*********************************************************************************************
+	test("_applyChanges: applySettings", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent({id: "stableId"}),
+			oChange = {
+				"selector": "#stableId",
+				"operation": "applySettings",
+				"settings": {
+					myDatas: [{
+						key: "0"
+					}, {
+						key: "1"
+					}],
+					mySingleton: {
+						key: "42"
+					}
+				}
+			};
+
+		sinon.spy(jQuery.sap.log, "error");
+		sinon.spy(sap.ui.core.DisplayVariants, "_destroyAll");
+
+		// without destroyAll flag
+		sap.ui.core.DisplayVariants._applyChanges(oParent, [oChange], "not used");
+
+		strictEqual(oParent.getMyDatas().length, 2);
+		strictEqual(oParent.getMySingleton().getKey(), "42");
+		ok(jQuery.sap.log.error.notCalled);
+		ok(sap.ui.core.DisplayVariants._destroyAll.notCalled);
+
+		// with destroyAll flag
+		oChange.destroyAll = true;
+
+		sap.ui.core.DisplayVariants._applyChanges(oParent, [oChange], "not used");
+
+		strictEqual(oParent.getMyDatas().length, 2);
+		strictEqual(oParent.getMySingleton().getKey(), "42");
+		ok(sap.ui.core.DisplayVariants._destroyAll.calledTwice);
+		ok(sap.ui.core.DisplayVariants._destroyAll.calledWith(oParent, "myDatas"));
+		ok(sap.ui.core.DisplayVariants._destroyAll.calledWith(oParent, "mySingleton"));
+	});
+
+	//*********************************************************************************************
+	test("_applyChangeDocuments", function () {
+		var mTexts = {
+				"v0": { "value": "foo" }
+			},
+			aChangeDocuments = [{
+				texts: mTexts,
+				component: "foo"
+			}, {
+				texts: mTexts,
+				component: "bar"
+			}],
+			oControl = new sap.ui.core.test.display_variants.Control({id: "stableId"}),
+			i;
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_applyChanges");
+
+		sap.ui.core.DisplayVariants._applyChangeDocuments(oControl, []);
+		deepEqual(oControl._mDisplayVariants, {}, "used as a flag for 'documents processed'");
+		ok(sap.ui.core.DisplayVariants._applyChanges.notCalled);
+
+		sap.ui.core.DisplayVariants._applyChangeDocuments(oControl, aChangeDocuments);
+		deepEqual(oControl._mDisplayVariants, {}, "change documents are only applied once");
+		ok(sap.ui.core.DisplayVariants._applyChanges.notCalled);
+
+		delete oControl._mDisplayVariants; // or create new instance
+		sap.ui.core.DisplayVariants._applyChangeDocuments(oControl, aChangeDocuments);
+		strictEqual(sap.ui.core.DisplayVariants._applyChanges.callCount, aChangeDocuments.length);
+		for (i = 0; i < aChangeDocuments.length; i += 1) {
+			strictEqual(sap.ui.core.DisplayVariants._applyChanges.args[i][0], oControl);
+			strictEqual(sap.ui.core.DisplayVariants._applyChanges.args[i][1],
+				aChangeDocuments[i].content);
+			strictEqual(sap.ui.core.DisplayVariants._applyChanges.args[i][2],
+				aChangeDocuments[i].component);
+			strictEqual(sap.ui.core.DisplayVariants._applyChanges.args[i][3],
+					mTexts);
+		}
+	});
+
+	//*********************************************************************************************
+	asyncTest("read []", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			oControl._mDisplayVariants = {};
+			return Promise.resolve("foo.Component");
+		});
+
+		sap.ui.core.DisplayVariants.read(oControl).then(function (aVariants) {
+			start();
+			deepEqual(aVariants, []);
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("read", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			mTexts = {
+				"v0": { "value": "foo" },
+				"v1": { "value": "bar" }
+			};
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			oControl._mDisplayVariants = {
+				"0" : {
+					"variantId": "0",
+					"variantDescription": "{{{v0}}}",
+					"__texts__":  mTexts
+				},
+				"1" : {
+					"variantId": "1",
+					"variantDescription": "{{{v1}}}",
+					"__texts__":  mTexts
+				}
+			};
+			return Promise.resolve("foo.Component");
+		});
+
+		sap.ui.core.DisplayVariants.read(oControl).then(function (aVariants) {
+			start();
+			deepEqual(aVariants,
+				[{"id": "0", "description": "foo"},
+				 {"id": "1", "description": "bar"}]);
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("read propagates errors", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			oError = new Error("This call intentionally failed");
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			return Promise.reject(oError);
+		});
+
+		sap.ui.core.DisplayVariants.read(oControl).then(function () {
+			start();
+			ok(false, "unexpected call to success handler");
+		}, function (oError0) {
+			start();
+			strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
+	asyncTest("apply fails", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			oControl._mDisplayVariants = {};
+			return Promise.resolve("foo.Component");
+		});
+
+		sap.ui.core.DisplayVariants.apply(oControl, "toString").then(function () {
+			start();
+			ok(false, "unexpected call to success handler");
+		}, function (oError) {
+			start();
+			ok(sap.ui.core.DisplayVariants._init.calledOnce);
+			strictEqual(oError.message, "Variant 'toString' not found for " + oControl);
+		});
+	});
+
+	//*********************************************************************************************
+	asyncTest("apply", function () {
+		var aChanges = [],
+			oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_applyChanges");
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			oControl._mDisplayVariants = {
+				"0" : {
+					"changes": aChanges,
+					"variantId": "0",
+					"variantDescription": "bar"
+				}
+			};
+			return Promise.resolve("foo.Component");
+		});
+
+		sap.ui.core.DisplayVariants.apply(oControl, "0").then(function () {
+			start();
+			ok(sap.ui.core.DisplayVariants._applyChanges.calledOnce);
+			ok(sap.ui.core.DisplayVariants._applyChanges.calledWith(oControl, aChanges,
+				"foo.Component"));
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: recursion", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			oCustomData = new sap.ui.core.CustomData({key: "foo"}),
+			oParent = new sap.ui.core.test.display_variants.Parent();
+
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData), {
+			"Type": "sap.ui.core.CustomData",
+			"key": "foo"
+		});
+
+		oParent.setAggregation("child", new sap.ui.core.Control()); // add some hidden child
+
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oParent), {
+			"Type": "sap.ui.core.test.display_variants.Parent"
+		}, "hidden child does not show up");
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: events", function () {
+		var oCustomData = new sap.ui.core.CustomData({validationSuccess: function () {}});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oCustomData);
+		}, /Unsupported setting 'validationSuccess' for Element sap\.ui\.core\.CustomData#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: associations", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent({
+				myFriends: ["a", "b", "c"]
+			});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent);
+		}, /Unsupported setting 'myFriends' for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+
+		oParent.removeAllMyFriends();
+		oParent.setMyOneAndOnly("42");
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent);
+		}, /Unsupported setting 'myOneAndOnly' for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: property basics", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			aCurrentVariant = ["A", "B", "C"],
+			oSettings;
+
+		sinon.spy(oControl, "getCurrentVariant");
+
+		// initially, currentVariant = []
+		oSettings = sap.ui.core.DisplayVariants._toSettings(oControl, ["currentVariant"]);
+
+		deepEqual(oSettings, {
+			"currentVariant": []
+		}, "named settings are never ignored!");
+		ok(oControl.getCurrentVariant.calledOnce);
+
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oControl), {
+			"Type": "sap.ui.core.test.display_variants.Control"
+		}, "default property value of [] ignored (for recursive calls)");
+
+		// user defines some variant
+		oControl.setCurrentVariant(aCurrentVariant);
+		oControl.getCurrentVariant.reset();
+
+		oSettings = sap.ui.core.DisplayVariants._toSettings(oControl, ["currentVariant"]);
+
+		deepEqual(oSettings, {
+			"currentVariant": aCurrentVariant
+		});
+		ok(oControl.getCurrentVariant.calledOnce);
+
+		// wrong name
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oControl, ["toString"]);
+		}, /Setting 'toString' not found for Element sap\.ui\.core\.test\.display_variants\.Control#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: property data types", function () {
+		var oCustomData = new sap.ui.core.CustomData({key: "foo"});
+
+		function check(oExpectedValue) {
+			deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData, ["key", "value"]), {
+				"key": "foo",
+				"value": arguments.length > 0 ? oExpectedValue : oCustomData.getValue()
+			});
+		}
+
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData, ["key", "value"]), {
+			"key": "foo",
+			"value": null
+		});
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData), {
+			"Type": "sap.ui.core.CustomData",
+			"key": "foo"
+		});
+
+		oCustomData.setValue(undefined); // UI5 maps undefined to null!
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData, ["key", "value"]), {
+			"key": "foo",
+			"value": null
+		});
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oCustomData), {
+			"Type": "sap.ui.core.CustomData",
+			"key": "foo"
+		});
+
+		oCustomData.setValue("bar");
+		check();
+
+		oCustomData.setValue(true);
+		check();
+
+		oCustomData.setValue(42);
+		check();
+
+		oCustomData.setValue([]);
+		check();
+
+		oCustomData.setValue([1, 2, 3]);
+		check();
+
+		oCustomData.setValue([[], [], []]);
+		check();
+
+		//TODO what about Dates? cf. http://weblogs.asp.net/bleroy/dates-and-json
+		oCustomData.setValue({});
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oCustomData, ["key", "value"]);
+		}, /Cannot turn '\[object Object\]' into setting 'value' for Element sap\.ui\.core\.CustomData#__/);
+
+		//TODO allow reference to controller's method?
+		oCustomData.setValue(function ()  {});
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oCustomData, ["key", "value"]);
+		}, /Cannot turn 'function \(\) {2}\{\}' into setting 'value' for Element sap\.ui\.core\.CustomData#__/);
+		// BEWARE of the two spaces between the parentheses and braces above!
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: bound property", function () {
+		var oCustomData = new sap.ui.core.CustomData({key: "{foo}"});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oCustomData);
+		}, /Unsupported bound setting 'key' for Element sap\.ui\.core\.CustomData#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: bound aggregation", function () {
+		var oCustomData = new sap.ui.core.CustomData(),
+			oParent = new sap.ui.core.test.display_variants.Parent({
+				myDatas: {
+					path: "foo",
+					template: oCustomData
+				}
+			});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent, ["myDatas"]);
+		}, /Unsupported bound setting 'myDatas' for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+
+		// Note: SAPUI5 ignores aggregation binding for 0..1 aggregations, except if altTypes are
+		// present (e.g. tooltip)
+		oParent = new sap.ui.core.test.display_variants.Parent({
+			tooltip: {
+				path: "foo",
+				template: oCustomData
+			}
+		});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent, ["tooltip"]);
+		}, /Unsupported bound setting 'tooltip' for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: simple element binding", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent();
+
+		oParent.bindElement("foo");
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent);
+		}, /Unsupported element binding for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: advanced element binding", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent();
+
+		oParent.bindElement({model: "foo", path: "bar"});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants._toSettings(oParent);
+		}, /Unsupported element binding for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+	});
+
+	//*********************************************************************************************
+	test("_toSettings: aggregation basics", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent({
+				myDatas: [{
+					key: "0"
+				}, {
+					key: "1"
+				}],
+				mySingleton: {
+					key: "42"
+				}
+			}),
+			oSettings;
+
+		sinon.spy(oParent, "getMyDatas");
+		sinon.spy(oParent, "getMySingleton");
+
+		oSettings = sap.ui.core.DisplayVariants._toSettings(oParent, ["myDatas", "mySingleton"]);
+
+		deepEqual(oSettings, {
+			"myDatas": [{
+				"Type": "sap.ui.core.CustomData",
+				key: "0"
+			}, {
+				"Type": "sap.ui.core.CustomData",
+				key: "1"
+			}],
+			"mySingleton": {
+				"Type": "sap.ui.core.CustomData",
+				key: "42"
+			}
+		});
+		ok(oParent.getMyDatas.calledOnce);
+		ok(oParent.getMySingleton.calledOnce);
+
+		// default state
+		oParent = new sap.ui.core.test.display_variants.Parent();
+		deepEqual(sap.ui.core.DisplayVariants._toSettings(oParent, ["myDatas", "mySingleton"]), {
+			"myDatas": [],
+			"mySingleton": null
+		}, "named settings are never ignored!");
+	});
+	//TODO in which cases can the "Type" be dropped?
+
+	//*********************************************************************************************
+	asyncTest("save: roundtrip", function () {
+		var oControl = new sap.ui.core.test.display_variants.Control(),
+			aCurrentVariant0 = ["C", "B", "A"],
+			aCurrentVariant1 = ["X", "Y", "Z"];
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			// @see sap.ui.core.DisplayVariants#_applyChangeDocuments
+			oControl._mDisplayVariants = oControl._mDisplayVariants || {};
+			return Promise.resolve("not.used.Component");
+		});
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			mSettings.success.call(null, mSettings.data); //return the change doc from the request
+		});
+
+		sap.ui.core.DisplayVariants.read(oControl).then(function (aInitialVariants) {
+			deepEqual(aInitialVariants, [], "initially, there are no variants");
+
+			oControl.setCurrentVariant(aCurrentVariant0); // user defines some variant
+
+			// save a variant...
+			sap.ui.core.DisplayVariants.save(oControl, undefined, "foo", ["currentVariant"])
+			.then(function (sVariantId0) {
+				ok(sVariantId0, "ID gets generated");
+
+				oControl.setCurrentVariant(aCurrentVariant1); // user defines another variant
+
+				// save another variant...
+				sap.ui.core.DisplayVariants.save(oControl, undefined, "bar", ["currentVariant"])
+				.then(function (sVariantId1) {
+					ok(sVariantId1, "ID gets generated");
+
+					// ...and re-read them...
+					sap.ui.core.DisplayVariants.read(oControl).then(function (aVariants) {
+						strictEqual(aVariants.length, 2);
+						strictEqual(aVariants[0].id, sVariantId0);
+						strictEqual(aVariants[0].description, "foo");
+						strictEqual(aVariants[1].id, sVariantId1);
+						strictEqual(aVariants[1].description, "bar");
+
+						// ...and re-apply first one!
+						sap.ui.core.DisplayVariants.apply(oControl, sVariantId0).then(function () {
+							start();
+							deepEqual(oControl.getCurrentVariant(), aCurrentVariant0);
+						}, onRejected);
+					}, onRejected);
+				}, onRejected);
+			}, onRejected);
+		}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("save: roundtrip w/ default value", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			// @see sap.ui.core.DisplayVariants#_applyChangeDocuments
+			oControl._mDisplayVariants = oControl._mDisplayVariants || {};
+			return Promise.resolve("not.used.Component");
+		});
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			mSettings.success.call(null, mSettings.data); //return the change doc from the request
+		});
+
+		// save default value as variant...
+		sap.ui.core.DisplayVariants.save(oParent, undefined, "foo", ["myDatas"])
+		.then(function (sVariantId) {
+			ok(sap.ui.core.DisplayVariants._init.calledOnce);
+
+			oParent.addMyData(new sap.ui.core.CustomData()); // modify control somehow
+
+			// ...and re-apply saved variant!
+			sap.ui.core.DisplayVariants.apply(oParent, sVariantId).then(function () {
+				start();
+				deepEqual(oParent.getMyDatas(), []);
+			}, onRejected);
+		}, onRejected)["catch"](onRejected); // why is error handling in tests so damn hard?
+	});
+
+	//*********************************************************************************************
+	test("save: no description/names", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			// @see sap.ui.core.DisplayVariants#_applyChangeDocuments
+			oControl._mDisplayVariants = oControl._mDisplayVariants || {};
+			return Promise.resolve("not.used.Component");
+		});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants.save(oParent, undefined, "", ["myDatas"]);
+		}, /Missing variant description for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+
+		raises(function () {
+			sap.ui.core.DisplayVariants.save(oParent, undefined, "foo");
+		}, /Missing names for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+
+		raises(function () {
+			sap.ui.core.DisplayVariants.save(oParent, undefined, "foo", []);
+		}, /Missing names for Element sap\.ui\.core\.test\.display_variants\.Parent#__/);
+	});
+
+	//*********************************************************************************************
+	test("save propagates errors", function () {
+		var oParent = new sap.ui.core.test.display_variants.Parent();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_toSettings", function (oControl, aNames) {
+			throw new Error("This call intentionally failed");
+		});
+
+		raises(function () {
+			sap.ui.core.DisplayVariants.save(oParent, undefined, "foo", ["myDatas"]);
+		}, /This call intentionally failed/);
+	});
+
+	//*********************************************************************************************
+	test("_createChangeDocument", function () {
+		var sCOMPONENT = "foo",
+			sLAYER = "LAYER",
+			oExpected = {
+				component: sCOMPONENT,
+				content: [{variantId: "fooId", variantDescription: "{{{fooId}}}"}],
+				layer: sLAYER,
+				originalLanguage: sap.ui.getCore().getConfiguration().getLocale().getLanguage(),
+				texts: {
+					fooId: {
+						value: "fooDescription",
+						type: "XTIT"
+					}
+				}
+			},
+			oActual = sap.ui.core.DisplayVariants._createChangeDocument(sCOMPONENT, sLAYER,
+				[{variantId: "fooId", variantDescription: "fooDescription"}]);
+		deepEqual(oActual, oExpected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("save: successful POST", function () {
+		var sCOMPONENT = "theComponent",
+			oChange,
+			oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			// @see sap.ui.core.DisplayVariants#_applyChangeDocuments
+			oControl._mDisplayVariants = oControl._mDisplayVariants || {};
+			return Promise.resolve(sCOMPONENT);
+		});
+
+		sinon.spy(sap.ui.core.DisplayVariants, "_createChangeDocument");
+
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			strictEqual(mSettings.async, true);
+			strictEqual(mSettings.dataType, "json");
+			strictEqual(mSettings.url, "/sap/bc/lrep/changes");
+			strictEqual(mSettings.type, "POST");
+			strictEqual(typeof mSettings.success, "function");
+
+			ok(sap.ui.core.DisplayVariants._createChangeDocument.calledOnce);
+			strictEqual(sap.ui.core.DisplayVariants._createChangeDocument.args[0][0], sCOMPONENT);
+			strictEqual(sap.ui.core.DisplayVariants._createChangeDocument.args[0][1], "USER");
+			strictEqual(sap.ui.core.DisplayVariants._createChangeDocument.args[0][2].length, 1);
+			oChange = sap.ui.core.DisplayVariants._createChangeDocument.args[0][2][0];
+			strictEqual(oChange.operation, "defineVariant");
+			deepEqual(JSON.parse(mSettings.data),
+				sap.ui.core.DisplayVariants._createChangeDocument.returnValues[0]);
+
+			strictEqual(oControl._mDisplayVariants[oChange.variantId], undefined,
+				"variant does not exist before success handler call");
+			mSettings.success(JSON.stringify(JSON.parse(mSettings.data)));
+			deepEqual(oControl._mDisplayVariants[oChange.variantId], oChange,
+				"variant after success handler call");
+		});
+
+		sap.ui.core.DisplayVariants.save(oControl, undefined, "foo", ["currentVariant"])
+			.then(function (sId) {
+				ok(jQuery.ajax.calledOnce, "jQuery.ajax called");
+				strictEqual(sId, oChange.variantId);
+				start();
+			}, onRejected);
+	});
+
+	//*********************************************************************************************
+	asyncTest("save: error on POST", function () {
+		var sCOMPONENT = "theComponent",
+			oChange,
+			oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			// @see sap.ui.core.DisplayVariants#_applyChangeDocuments
+			oControl._mDisplayVariants = oControl._mDisplayVariants || {};
+			return Promise.resolve(sCOMPONENT);
+		});
+
+		sinon.spy(sap.ui.core.DisplayVariants, "_createChangeDocument");
+		sinon.spy(jQuery.sap.log, "error");
+
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			strictEqual(typeof mSettings.error, "function");
+			oChange = sap.ui.core.DisplayVariants._createChangeDocument.args[0][2][0];
+			mSettings.error.call(null, {/*unused jqXHR*/}, "textStatus", "errorThrown");
+			strictEqual(oControl._mDisplayVariants[oChange.variantId], undefined,
+				"variant does not exist after error handler call");
+		});
+
+		sap.ui.core.DisplayVariants.save(oControl, undefined, "foo", ["currentVariant"])
+			.then(function (sId) {
+				ok(false, "unexpected fulfillment of save Promise");
+				start();
+			}, function (oError) {
+				ok(true, "expected rejection of save Promise");
+				strictEqual(oError.message,
+					"Could not save variant due to 'textStatus' with error 'errorThrown'");
+				ok(jQuery.sap.log.error.calledWith(
+					"Could not save variant with id '"+ oChange.variantId
+					+ "' and description '" + "foo" + "' due to 'textStatus'",
+					"errorThrown", "sap.ui.core.DisplayVariants"));
+				start();
+			});
+	});
+
+	//*********************************************************************************************
+	asyncTest("save: error on POST caused by error in _init", function () {
+		var sCOMPONENT = "theComponent",
+			oChange,
+			oControl = new sap.ui.core.test.display_variants.Control();
+
+		sinon.stub(sap.ui.core.DisplayVariants, "_init", function (oControl) {
+			return Promise.reject(new Error("_init error"));
+		});
+
+		sinon.stub(jQuery, "ajax", function (mSettings) {
+			ok(false, "unexpected jQuery.ajax");
+			start();
+		});
+
+		sap.ui.core.DisplayVariants.save(oControl, undefined, "foo", ["currentVariant"])
+			.then(function (sId) {
+				ok(false, "unexpected fulfillment of save Promise");
+				start();
+			}, function (oError) {
+				ok(true, "expected rejection of save Promise");
+				strictEqual(oError.message, "_init error");
+				start();
+			});
+	});
+
+	//TODO updates!
+	/*
+	 *TODO
+	 * @throws {Error}
+	 *     in case an ID is provided but no such variant is found for the control
+	 * --> cannot be checked synchronously!
+	 */
+
+	//*********************************************************************************************
+	test("_getTranslatedTexts", function () {
+		var mTexts = {},
+			sId0 = jQuery.sap.uid(),
+			sKey0 = "{{{" +  sId0 + "}}}",
+			sId1 = jQuery.sap.uid(),
+			sKey1 = "{{{" +  sId1 + "}}}";
+
+		mTexts[sId0] = { "value": "FOO" };
+		mTexts[sId1] = { "value": "BAR" };
+
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, sKey0), "FOO");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, sKey1), "BAR");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts,
+			"{{{toString}}}"), "{{{toString}}}");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, "{{v0}}}"), "{{v0}}}");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, "{{{v0}"), "{{{v0}");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(undefined, "{{{v0}}}"), "{{{v0}}}");
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, undefined), undefined);
+		strictEqual(sap.ui.core.DisplayVariants._getTranslatedText(mTexts, "{{{}}}"), "{{{}}}");
+	});
+
+	</script>
+
+	</head>
+	<body><h1 id="qunit-header">QUnit tests: sap.ui.core.DisplayVariants</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>

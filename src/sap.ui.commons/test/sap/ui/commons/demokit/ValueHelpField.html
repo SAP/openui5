@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.ValueHelpField">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>ValueHelpField - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='DefaultDesign'>
+// create a default ValueHelpField
+var oVHF1 = new sap.ui.commons.ValueHelpField('VHF1',{
+	value: "default",
+	tooltip: "This is a tooltip",
+	valueHelpRequest: function(){alert('ValueHelpRequest fired');}
+}).placeAt("sample1");
+</script>
+
+<script id='CustomDesign'>
+// create a default ValueHelpField
+var oVHF2 = new sap.ui.commons.ValueHelpField('VHF2',{
+	value: "custom",
+	tooltip: "This is a tooltip",
+	iconURL: "images/save-icon.gif",
+	iconHoverURL: "images/address.gif",
+	iconDisabledURL: "images/SAPLogo.gif",
+	valueHelpRequest: function(){alert('ValueHelpRequest fired');}
+}).placeAt("sample2");
+
+var oVHF3 = new sap.ui.commons.ValueHelpField('VHF3',{
+	value: "disabled",
+	enabled: false,
+	tooltip: "This is a tooltip",
+	iconURL: "images/save-icon.gif",
+	iconHoverURL: "images/address.gif",
+	iconDisabledURL: "images/SAPLogo.gif",
+	valueHelpRequest: function(){alert('ValueHelpRequest fired');}
+}).placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/valuehelpfield-icon.png">ValueHelpField</h1>
+
+		<h2>Overview</h2>
+		<p>
+		The <code>ValueHelpField</code> is a <code>TextField</code> with the possibility for a value help. There is a value help icon where the image can be defined from the application.
+		If the application does not define own images default images are used. The images can be defined using the properties <code>iconURL</code>, <code>iconHoverURL</code> and
+		<code>iconDisabledURL</code>. If only a <code>iconURL</code> is defined it will be also used on hover and for disabled. In disabled case this icon will be then displayed with an opacity.
+		<br>
+		By clicking on the value help icon or pressing F4 on the control the <code>ValueHelpRequest</code> event is fired. Reacting on this event
+		applications can implement their own value help,
+		</p>
+
+		<h2>Examples</h2>
+		<h3>default ValueHelpField</h3>
+		The first example shows a <code>ValueHelpField</code> in the default design.
+		</p>
+		<br>
+		<div code-sample="sample1" script="DefaultDesign"></div>
+		<br/>
+
+		<h3>ValueHelpField with own icons</h3>
+		This example shows an enabled and a disabled <code>ValueHelpField</code> with icons defined by the call.
+		</p>
+		<br>
+		<div code-sample="sample2" script="CustomDesign"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.ValueHelpField.html" >API documentation</a>
+		</p>
+	</body>
+</html>

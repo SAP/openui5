@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.Configuration
+  Author: d020684
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- Initialization -->
+	<script language="javascript">
+		window["sap-ui-config"] = {
+			theme : "sap_bluecrystal"
+		}
+	</script>
+	
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core">
+	</script>
+	
+	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+		module("Basic");
+
+		test("Settings", function() {
+			var oCfg = new sap.ui.core.Configuration();
+			equal(oCfg.theme, "sap_bluecrystal", "tag config should override global config");
+			deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
+		});
+
+		test("jQuery and $", function() {
+			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
+			ok(window.jQuery, "window.jQuery is available");
+			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+		});
+		
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (results)</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<input id="customInput" type="text"></input>
+</body>
+</html>

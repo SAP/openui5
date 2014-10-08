@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/SimpleControls" data-sap-ui-dk-controls="sap.ui.commons.Image">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>Image - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+<script id='sample1-script'>
+var oImage = new sap.ui.commons.Image("i1");
+oImage.setSrc("images/FlowersAndWesp.jpg");
+oImage.setTooltip("Summer 2001, an syrphid fly on a chrysantemum.");
+oImage.setDecorative(false);
+oImage.placeAt("sample1");
+</script>
+
+<script id='sample2-script'>
+var oImage = new sap.ui.commons.Image();
+oImage.setSrc("http://www.sap.com/global/images/SAPLogo.gif");
+oImage.setAlt("alternative image text for image");
+oImage.placeAt("sample2");
+</script>
+
+	</head>
+
+<body class="sapUiDemokitBody" role="application">
+	<h1 color="Yellow" icon="images/ctrls/image-icon.png">Image</h1>
+
+  <h2>Introduction</h2>
+		<p>The Image control is a wrapper around the HTML tag for graphics. There are two main scenarios how the Image control is used: 
+		As a visually appealing clickable area in the form of an image button,  or as a purely decorative element.
+		In the second case, images are not pre-defined as tab stops in accessibility mode.
+		Whether or not an image is <code>decorative</code> can be configured with the property of the same name. </p>		
+
+
+	<h2>Examples</h2>
+
+	<h3>Non-decorative Image With Relevant Content</h3>
+		<p>
+		This image is in the tab chain and screenreaders understand that the content represents relevant information which needs to be announced.
+		</p>
+		<div code-sample="sample1"></div>
+		<br>
+
+	<h3>Decorative Image With Company Logo</h3>
+		<p>
+		This image is purly decorative and will be ignored by screenreaders.
+		</p>
+		<div code-sample="sample2"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.Image.html">API documentation</a>
+		</p>		
+	</body>
+</html>

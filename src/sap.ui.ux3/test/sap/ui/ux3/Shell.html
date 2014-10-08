@@ -1,0 +1,495 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<title>Shell - sap.ui.ux3</title>
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+			data-sap-ui-theme="sap_goldreflection">
+		</script>
+		<script src="resources/ShellSettings.js" type="text/javascript"></script>
+		<link type="text/css" rel="stylesheet" href="resources/ShellSettings.css"/>
+		
+		<style>
+		
+		.sapUiPanel .sapUiLnk { /* hacky! this should be done in the layout around the links! Do not copy! */
+			display: block;
+			margin-bottom: 3px;
+		}
+		
+		.VisualizeContent .sapUiUx3ShellContent {
+			background-color: red;
+		}
+		</style>
+		    
+		<script>
+			function checkClose(oEvent) {
+				var reallyClose = confirm("Really abort creating a contact?")
+				if (!reallyClose && oEvent) { // if called as event handler, tell the event to not proceed
+					oEvent.preventDefault();
+				}
+				return reallyClose; // when called directly, return the result
+			}
+			
+			function messageSelected(oEvent){
+				var oMessage = oEvent.getParameter("message");
+				var oNotifier = oEvent.getParameter("notifier");
+				
+				oNotifier.removeMessage(oMessage);
+				oMessage.destroy();
+			}
+		
+			function paneClosed(oEvent) {
+			    alert("Pane closed. Id: \"" + oEvent.getParameter("id") + "\"");
+			}
+			
+			jQuery.sap.require("jquery.sap.script");
+		
+			var c = sap.ui.commons; /* shorthand */
+			var mContent = {};
+			var oShell = new sap.ui.ux3.Shell("myShell", {
+				appTitle:"SAPUI5 Gold Reflection Shell",
+				paneWidth: 300,
+				headerType: function(){
+					var sHeaderType = jQuery.sap.getUriParameters().get("shellHead");
+					if(sHeaderType && sap.ui.ux3.ShellHeaderType[sHeaderType]){
+						return sHeaderType;
+					}
+					return sap.ui.ux3.ShellHeaderType.Standard;
+				}(),
+				showTools: jQuery.sap.getUriParameters().get("hideTool") != "X",
+				showPane: jQuery.sap.getUriParameters().get("hidePane") != "X",
+				notificationBar: new sap.ui.ux3.NotificationBar({
+					messageNotifier: new sap.ui.ux3.Notifier({
+						title : "Messages"
+					}).attachMessageSelected(messageSelected)
+				}),
+				logout:function(){
+					alert("Logout Button has been clicked.\nThe application can now do whatever is required.\nThis example page will just clear the screen.");
+					oShell.forceInvalidation();
+					oShell.destroy();
+					sap.ui.getCore().applyChanges();
+					jQuery(document.body).html("<span>Logout had been pressed, screen has been cleared.</span>");
+				},
+				search:function(oEvent){
+					alert("Search triggered: " + oEvent.getParameter("text"));
+				},feedSubmit:function(oEvent){
+					alert("Feed entry submitted: " + oEvent.getParameter("text"));
+				}
+			});
+			
+			oShell.attachPaneClosed(paneClosed);
+			
+			jQuery.sap.require("jquery.sap.script");
+			if(jQuery.sap.getUriParameters().get("VisualizeContent")){
+				oShell.addStyleClass("VisualizeContent");
+			}
+			
+			oShell.addHeaderItem(new c.TextView({text:"Kate Jacob",tooltip:"KJACOB"}));
+			oShell.addHeaderItem(new c.Button({text:"Personalize",tooltip:"Personalize",press:function(){oShell.openPersonalizationDialog();}}));
+			oShell.addHeaderItem(new c.Link({text:"Homepage", href:"http://www.sap.com"}));
+			oShell.addHeaderItem(new c.MenuButton({
+				text:"Help",
+				tooltip:"Help Menu",
+				menu:new c.Menu("menu1",{
+					items:[
+						new c.MenuItem("menuitem1",{text:"Help"}),
+						new c.MenuItem("menuitem2",{text:"Report Incident"}),
+						new c.MenuItem("menuitem3",{text:"About"})
+					]
+				})
+			}));
+			
+			
+			var WI = sap.ui.ux3.NavigationItem;
+			oShell.addWorksetItem(new WI("wi_home", {key:"wi_home",text:"Home",subItems:[
+				new WI("wi_home_overview", {key:"wi_home_overview",text:"Overview"}),
+				new WI("wi_home_inbox", {key:"wi_home_inbox",text:"Inbox"}),
+				new WI("wi_home_news", {key:"wi_home_news",text:"News"}),
+				new WI("wi_home_dsbl", {key:"wi_home_dsbl",text:"Disabled", enabled : false}),
+				new WI("wi_home_option", {key:"wi_home_option",text:"Options"})
+			]}));
+			oShell.addWorksetItem(new WI({key:"wi_m",text:"Marketing",subItems:[
+ 				new WI({key:"wi_m_overview",text:"Overview"}),
+ 				new WI({key:"wi_m_leads",text:"Leads"}),
+ 				new WI({key:"wi_m_mi",text:"Market Information"}),
+ 				new WI({key:"wi_m_competitors",text:"Competitors"}),
+ 				new WI({key:"wi_m_tg",text:"Target Groups"})
+ 			]}));
+			oShell.addWorksetItem(new WI("wi_so",{key:"wi_so",text:"Sales Orders"})); // ID needed for later removal
+			oShell.addWorksetItem(new WI("wi_pd",{key:"wi_pd",text:"Product Data"})); // ID needed for later removal
+			oShell.addWorksetItem(new WI("wi_cont",{key:"wi_cont",text:"Content"}));
+			oShell.addWorksetItem(new WI("wi_dsbl",{key:"wi_dsbl",text:"Disabled", enabled : false}));
+			oShell.addWorksetItem(new WI({key:"wi_sel",text:"Selection"}));
+			oShell.addWorksetItem(new WI({key:"wi_l1",text:"One rather long workset item"}));
+			oShell.addWorksetItem(new WI({key:"wi_l2",text:"Another rather long workset item"}));
+			oShell.addWorksetItem(new WI({key:"wi_l3",text:"A third rather long workset item"}));
+			oShell.addWorksetItem(new WI({key:"wi_me",text:"Me"}));
+			
+						
+			// first application-level ToolPopup ("New Contact") - UI content is completely pre-populated
+			var layout = new c.layout.MatrixLayout({width:"auto"});
+			layout.createRow(new c.Label({text:"Title:"}), new c.TextField("titleTextField"));
+			layout.createRow(new c.Label({text:"Name:"}), new c.TextField("nameTextField"));
+			layout.createRow(new c.Label({text:"Address:"}), new c.TextField("addressTextField"));
+			layout.createRow(new c.Label({text:"City:"}), new c.TextField("cityTextField"));
+			layout.createRow(new c.Label({text:"Country:"}), new c.TextField("countryTextField"));
+			layout.createRow(new c.Label({text:"E-Mail:"}), new c.TextField("emailTextField"));
+			
+			
+			var oContactTool = new sap.ui.ux3.ToolPopup("contactTool", {
+				title: "New Contact",
+				tooltip: "Create New Contact",
+				content:[layout],
+				buttons: [
+					new c.Button("saveContactButton", {text:"Save",press:function(){
+						oContactTool.close();
+						var now = (new Date()).toUTCString();
+						oShell.getNotificationBar().getMessageNotifier().addMessage(new sap.ui.core.Message({
+							text : "New contact saved successfully (click to remove)",
+							timestamp : now,
+							level : sap.ui.core.MessageType.Success
+						}));
+					}}),
+					new c.Button("cancelContactButton", {text:"Cancel",press:function(){
+						// simulate a case where cancelling is not allowed, e.g. because of unsaved data
+						var reallyClose = checkClose(); 
+						if (reallyClose) {
+							oContactTool.close();
+						}
+					}})
+				],
+				close:checkClose
+			});
+			oContactTool.attachEnter(function(oEvent){
+				var text = "Application receives 'Enter' event from ContactTool.\n";
+				if (oEvent.getParameter("originalSrcControl")) {
+					text += "Enter was pressed on the control: '" + oEvent.getParameter("originalSrcControl").getId() + "'.\n";
+				}
+				text += "The application can now read the entered data and save or cancel and could close the popup.";
+				alert(text);
+			});
+			oContactTool.setInitialFocus("saveContactButton");
+			oShell.addToolPopup(oContactTool);
+			
+			
+			// second application-level ToolPopup ("New Appointment") - UI content is created on-demand and could be thrown away/destroyed after closing (but is not)
+			var oAppointmentTool = new sap.ui.ux3.ToolPopup("appointmentTool", {
+				title: "New Appointment"
+				/* no tooltip - testing the automatic tooltip generation   tooltip: "Create New Appointment",  */
+			});
+			oShell.addToolPopup(oAppointmentTool);
+			var appointmentPopupInitialized = false;
+			oAppointmentTool.attachOpen(function() {
+				if (!appointmentPopupInitialized) {
+					var layout = new c.layout.MatrixLayout({width:"auto"});
+					layout.createRow(new c.Label({text:"Subject:"}), new c.TextField("subjectTextField"));
+					layout.createRow(new c.Label({text:"Location:"}), new c.TextField("locationTextField"));
+					layout.createRow(new c.Label({text:"Start Time:"}), new c.TextField("startTimeTextField"));
+					layout.createRow(new c.Label({text:"Duration:"}), new c.TextField("durationTextField"));
+					layout.createRow(null, new c.CheckBox("privateCheckBox", {text:"Private"}));
+					oAppointmentTool.addContent(layout);
+					oAppointmentTool.addButton(new c.Button("saveAppointmentButton", {text:"Save",press:function(){
+						oAppointmentTool.close();
+						var now = (new Date()).toUTCString();
+						oShell.getNotificationBar().getMessageNotifier().addMessage(new sap.ui.core.Message({
+							text : "Appointment saved successfully (click to remove)",
+							timestamp : now,
+							level : sap.ui.core.MessageType.Success
+						}));
+					}}));
+					oAppointmentTool.addButton(new c.Button("cancelAppointmentButton", {text:"Cancel",press:function(){
+						oAppointmentTool.close();
+					}}));
+					appointmentPopupInitialized = true;
+				}
+			});
+			oAppointmentTool.attachEnter(function(oEvent){
+				var text = "Application receives 'Enter' event from AppointmentTool.\n";
+				if (oEvent.getParameter("originalSrcControl")) {
+					text += "Enter was pressed on the control: '" + oEvent.getParameter("originalSrcControl").getId() + "'.\n";
+				}
+				text += "The application can now read the entered data and save or cancel and could close the popup.";
+				alert(text);
+			});
+
+			oContactTool.setIcon("sap-icon://contacts");
+			oContactTool.setIconHover("sap-icon://contacts");
+			oAppointmentTool.setIcon("sap-icon://appointment-2");
+			oAppointmentTool.setIconHover("sap-icon://appointment-2");
+
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_feed",{text:"Feed"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_people",{text:"People"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_news",{text:"News"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra1",{text:"Extra Item 1"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra2",{text:"Extra Item 2"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra3",{text:"Extra Item 3"}));
+			oShell.addPaneBarItem(new sap.ui.core.Item("pane_extra4",{text:"Extra Item 4"}));
+			
+			oShell.attachPaneBarItemSelected(function(oEvent) {
+				var paneId = oEvent.mParameters.id;
+				oShell.setPaneContent(getPaneContent(paneId));
+			});
+			
+			oShell.attachWorksetItemSelected(function(oEvent) {
+				var itemKey = oEvent.getParameter("key");
+				var oItem = oEvent.getParameter("item");
+				
+				// Disable selection of disabled items
+				if (!oItem.getEnabled()) {
+					oEvent.preventDefault();
+					return;
+				}
+
+				// special code for lazy loading of sub-items
+				if (itemKey == "wi_pd") {
+					var wi = oEvent.getParameter("item");
+					if (wi.getSubItems().length == 0) { // subitems not yet populated
+						wi.addSubItem(new sap.ui.ux3.NavigationItem({key:"wi_pd_one",text:"One"}));
+						wi.addSubItem(new sap.ui.ux3.NavigationItem({key:"wi_pd_two",text:"Two"}));
+						wi.addSubItem(new sap.ui.ux3.NavigationItem({key:"wi_pd_three",text:"Three"}));
+						itemKey = "wi_pd_one"; // the parent was selected, but now there are children and the first one should be selected, so use the ID of that one for getContent later on
+					}
+				}
+				
+				oShell.setContent(getContent(itemKey));
+			});
+			
+			// EXPERIMENTAL - THIS WILL CHANGE!!
+			oShell._getPersonalization().attachPersonalizationChange(function(oEvent){
+				var data = oEvent.getParameter("settings"); // retrieve the personalization data object
+				// ...now persist this data on the server or wherever personalization data is stored
+				// (in-browser is not enough because the user wants his settings when logging in from another browser as well)
+				
+				// browser-only:
+				if (JSON && window["localStorage"]) { // only in browsers with native JSON and offline storage support
+					var string = JSON.stringify(data);
+					localStorage.setItem("sapUiShellTestSettings", string);
+				}
+			});
+			// initialize settings
+			if (JSON && window["localStorage"]) { // only in browsers with native JSON and offline storage support
+				var sSettings = localStorage.getItem("sapUiShellTestSettings");
+				if (sSettings) {
+					oShell.initializePersonalization(JSON.parse(sSettings));
+				}
+			}
+
+            // URL parameter for Designtype (for faster reloading while testing)
+            // Introduces the GET-parameter "sap-ui-_shelldesign" for this special case
+            var aDesign = location.href.match(/sap-ui-_shelldesign=([a-z0-9]+)/i);
+            if (aDesign && aDesign.length > 1 && aDesign[1]) {
+                try {
+                    oShell.setDesignType(aDesign[1]);
+                } catch(error) {
+                    // Uses previously set design (default: standard)
+                }
+            }
+			
+			oShell.setContent(getContent("wi_home_overview"));
+			
+			oShell.placeAt("shellArea");
+		
+			
+			
+			// content generation and buffering
+			function getContent(id) {
+				if (!mContent[id]) {
+					if (id == "wi_home_overview") {
+						var layout = new c.layout.MatrixLayout();
+						//
+						var p1 = new c.Panel().setText("Home Quick Links");
+						p1.addContent(new c.Link({text:"Open Activities (5)"}));
+						p1.addContent(new c.Link({text:"Open Alerts (0)"}));
+						p1.addContent(new c.Link({text:"Open Tasks (8)"}));
+						p1.addContent(new c.Link({text:"Open Notifications (0)"}));
+						var cell1 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p1);
+						
+						var p2 = new c.Panel().setText("My Top Worklists");
+						p2.addContent(new c.Link({text:"Open Activities - Activities - Account Management (1)"}));
+						p2.addContent(new c.Link({text:"Open Tasks - Sales Quotes - New Business (2)"}));
+						p2.addContent(new c.Link({text:"Open Tasks - Returns - Sales Orders (2)"}));
+						var cell2 = new c.layout.MatrixLayoutCell({vAlign:c.layout.VAlign.Top}).addContent(p2);
+						layout.createRow(cell1, cell2);
+						
+						var cell = new c.layout.MatrixLayoutCell({colSpan:2});
+						var p3 = new c.Panel().setText("Latest News");
+						p3.addContent(new c.TextView({text:"No news available."}));
+						cell.addContent(p3);
+						layout.createRow(cell);
+						
+						mContent[id] = layout;
+					} else if (id == "wi_home_inbox") {
+						mContent[id] = [new c.Button({text:"This Button is the content of the Inbox"}),
+						                new c.Button({text:"Change the Shell Title",press:function(){
+						                	oShell.setAppTitle("New Title");
+						                }}),
+						                new c.Button({text:"Change Appointment Tool Icon",press:function(){
+						                	oAppointmentTool.setIcon("images/sap_18.png");
+						                }}),
+						                new c.Button({text:"Add Dummy WorksetItem",press:function(){
+						                	oShell.addWorksetItem(new sap.ui.ux3.NavigationItem({text:"Dummy WorksetItem"}));
+						                }}),
+						                new c.Button({text:"Add Dummy Facet",press:function(){
+						                	var homeItem = sap.ui.getCore().byId("wi_home");
+						                	homeItem.addSubItem(new sap.ui.ux3.NavigationItem({text:"Dummy Facet"}));
+						                }})];
+					} else if (id == "wi_home_news") {
+						mContent[id] = new c.Button({text:"This Button is the content of the News"});
+						
+					} else if (id == "wi_home_option") {
+						
+						function _createContent(){
+							var _mContent = [];
+							
+							for (var i=0; i<=50; i++){
+								_mContent[i] = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";	
+							}
+							
+							var _oTempMatrix = new c.layout.MatrixLayout();
+							for(var i=0; i<=_mContent.length; i++){
+								_oTempMatrix.createRow(_mContent[i]);
+							}
+							
+							return _oTempMatrix;
+						};
+						var _oMatrix = _createContent();
+						
+						mContent[id] = [
+							getShellOptionsPanel(oShell),
+							
+							new c.Panel({
+								title : new c.Title({
+									text: "Some Lorem Ipsum" 
+								}),
+								content : _oMatrix
+							})
+						];
+					} else if (id == "wi_m_overview") {
+						mContent[id] = [
+							new c.layout.HorizontalLayout({content:[
+								new c.Label({text:"Pane width in px: "}),
+								new c.TextField("paneWidthField", {value:"250"}),
+								new c.Button({
+									text:"Apply",
+									press:function(){
+										oShell.setPaneWidth(parseInt(sap.ui.getCore().byId("paneWidthField").getValue()))
+								}})
+							]})
+						];
+					} else if (id == "wi_so") {
+						mContent[id] = new c.layout.MatrixLayout().createRow(
+            	new c.Button({text:"Sales Orders Content"}),
+            	new c.Button({text:"Remove Product Data WorksetItem",press:function(){
+            		var wsi = sap.ui.getCore().byId("wi_pd");
+            		if (wsi) {
+	            		oShell.removeWorksetItem(oShell.indexOfWorksetItem(wsi));
+            		}
+            	}}),
+            	new c.Button({text:"Remove Sales Orders WorksetItem",press:function(){
+            		var wsi = sap.ui.getCore().byId("wi_so");
+            		if (wsi) {
+	            		oShell.removeWorksetItem(oShell.indexOfWorksetItem(wsi));
+            		}
+            	}})
+            );
+					} else if (id == "wi_pd") {
+						mContent[id] = new c.Button({text:"This Button is the content of 'Product Data - TOPLEVEL'"});
+					} else if (id == "wi_pd_one") {
+						mContent[id] = new c.Button({text:"This Button is the content of 'Product Data - One'"});
+					} else if (id == "wi_pd_two") {
+						mContent[id] = new c.Button({text:"This Button is the content of 'Product Data - Two'"});
+					} else if (id == "wi_pd_three") {
+						mContent[id] = new c.Panel({text:"This Panel is the content of 'Product Data - Three'"});
+					} else if (id == "wi_cont") {
+						mContent[id] = new c.Button({text:"Add more content",press:function(){
+            	oShell.addContent(new c.Button({text:"This is more content"}));
+            }});
+					} else if (id == "wi_sel") {
+						mContent[id] = [
+						  new c.Button({text:"Jump to 'Home/Inbox'",press:function(){
+								// make the Shell jump to the "Home/Inbox" workset item
+            		oShell.setSelectedWorksetItem("wi_home_inbox");
+								// this fires no event, as it is not triggered by the user - at least as of now - so also make sure the correct Shell content is displayed
+            		oShell.setContent(getContent("wi_home_inbox"));
+            	}}),
+            	new c.Button({text:"Jump to 'Home'",press:function(){
+								// make the Shell jump to the "Home" workset item
+            		oShell.setSelectedWorksetItem("wi_home");
+								// this fires no event, as it is not triggered by the user - at least as of now - so also make sure the correct Shell content is displayed
+            		oShell.setContent(getContent("wi_home_overview")); // TODO
+            	}}),
+            	new c.Button({text:"Jump to 'Content'",press:function(){
+								// make the Shell jump to the "Content" workset item
+            		oShell.setSelectedWorksetItem("wi_cont");
+								// this fires no event, as it is not triggered by the user - at least as of now - so also make sure the correct Shell content is displayed
+            		oShell.setContent(getContent("wi_cont"));
+            	}})];
+					} else {
+						mContent[id] = null;
+					}
+				} 
+				return mContent[id];
+			}
+			
+			// Pane content generation and buffering
+			function getPaneContent(id) {
+				if (!mContent[id]) {
+					if (id == "pane_feed") {
+						mContent[id] = new c.Button({text:id});
+					} else if (id == "pane_people") {
+						mContent[id] = new c.Button({text:id});
+					} else if (id == "pane_news") {
+						mContent[id] = new c.Button({text:id});
+					} else {
+						mContent[id] = new c.Button({text: "Extra: " + id});
+					}
+				}
+				return mContent[id];
+			}
+		</script>
+		
+		<style>
+			.DemoOuterSideBar {
+				background-color:#007CC0;
+			}
+			
+			.DemoOuterSideBar > * {
+				margin-left: 10px;
+				margin-right: 10px;
+				white-space: nowrap;
+				font-weight: normal;
+				overflow: hidden;
+				text-overflow: ellipses;
+			}
+			
+			.DemoOuterSideBar > h1 {
+				color: white;
+			}
+			
+			.DemoOuterSideBar > div {
+				margin-top: 5px;
+				background-color: #F2F2F2;
+				height: 40px;
+				font-size: 16px;
+				text-align: center;
+				line-height: 40px;
+			}
+		</style>
+		
+	</head>
+	<body  class="sapUiBody" role="application">
+		<div id="shellArea"></div>
+		<div id="outerSideBar" class="sapUiUx3ShellOuterSideBar DemoOuterSideBar" style="width:0px;">
+			<h1>Authoring Panel</h1>
+			<div>Application Settings</div>
+			<div>Worksets</div>
+			<div>Add Widgets</div>
+			<div>Widget properties</div>
+			<div>Simulate by devices</div>
+		</div>
+	</body>
+</html>

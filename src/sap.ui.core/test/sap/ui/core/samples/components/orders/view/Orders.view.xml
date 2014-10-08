@@ -1,0 +1,39 @@
+<mvc:View controllerName="samples.components.orders.view.Orders" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:table="sap.ui.table" xmlns="sap.ui.commons" xmlns:cl="sap.ui.commons.layout" xmlns:html="http://www.w3.org/1999/xhtml" width="100%">
+	
+	<table:Table id="tblOrders" selectionMode="Single" rowSelectionChange="onRowSelect" rows="{/PurchaseOrderCollection}">
+		<table:title>
+			<TextView text="{texts>EPM_PO_TBL_HDR}" design="H3"></TextView>
+		</table:title>
+		<table:Column width="100px" sortProperty="PurchaseOrderID">
+			<Label text="{texts>EPM_PO_TBL_COL_ID}"></Label>
+			<table:template>
+				<TextField value="{PurchaseOrderID}"></TextField>
+			</table:template>
+		</table:Column>
+		<table:Column sortProperty="GrossAmount" width="100px" hAlign="End">
+			<Label text="{texts>EPM_PO_TBL_COL_AMOUNT}"></Label>
+			<table:template>
+				<TextField value="{GrossAmount}"></TextField>
+			</table:template>
+		</table:Column>
+		<table:Column width="100px">
+			<Label text="{texts>EPM_PO_TBL_COL_CURR}"></Label>
+			<table:template>
+				<TextView text="{CurrencyCode}"></TextView>
+			</table:template>
+		</table:Column>
+		<table:Column width="150px" sortProperty="CreatedAt">
+			<Label text="{texts>EPM_PO_TBL_COL_CREA}"></Label>
+			<table:template>
+				<TextView text="{CreatedAt}"></TextView>
+			</table:template>
+		</table:Column>
+		<table:Column width="150px" sortProperty="ChangedAt">
+			<Label text="{texts>EPM_PO_TBL_COL_CHAA}"></Label>
+			<table:template>
+				<TextView text="{ChangedAt}"></TextView>
+			</table:template>
+		</table:Column>
+	</table:Table>
+	
+</mvc:View>

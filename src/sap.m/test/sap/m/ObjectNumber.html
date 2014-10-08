@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" />
+		<title>ObjectNumber - sap.m</title>
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript" 
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+		
+			var txt1 = new sap.m.Label({text:"ObjectNumber (emphasized by default):"});
+			
+			var on1 = new sap.m.ObjectNumber("on1", {
+				number: "300,000,000",
+				unit: "Euro"
+			});
+			
+			var txt2 = new sap.m.Label({text:"Non-emphasized ObjectNumber:"});
+			
+			var on2 = new sap.m.ObjectNumber("on2", {
+				number: "1.50",
+				unit: "Euro",
+				emphasized: false
+			});
+			
+			
+			//Object Number control to demonstrate state changes
+			var txt3 = new sap.m.Label({text:"ObjectNumber value state: "});
+			
+			var on3 = new sap.m.ObjectNumber("on3", {
+				number: "1.50",
+				unit: "Euro",				
+				emphasized: false,
+			
+			});
+			
+			// items
+			var oItemNone = new sap.ui.core.Item({
+				key: sap.ui.core.ValueState.None,
+				text: "None"
+			}),
+
+			oItemWarning = new sap.ui.core.Item({
+				key: sap.ui.core.ValueState.Warning,
+				text: "Warning"
+			}),
+			
+			oItemError = new sap.ui.core.Item({
+				key: sap.ui.core.ValueState.Error,
+				text: "Error"
+			}),
+			
+			oItemSuccess = new sap.ui.core.Item({
+				key: sap.ui.core.ValueState.Success,
+				text: "Success"
+			}),
+			
+			oStateSelect = new sap.m.Select({
+				name: "select-object-state",
+				title: "Object Number state",
+				items: [oItemNone, oItemWarning, oItemError, oItemSuccess],
+				change: function(oControlEvent) {
+					on3.setState(oControlEvent.getParameter("selectedItem").getKey());
+				}
+			});
+			
+			
+		
+			var app = new sap.m.App();
+			var page = new sap.m.Page({
+				showHeader : false,
+				enableScrolling : true,
+				content: [
+					txt1,
+					on1,
+					txt2,
+					on2,
+					txt3,
+					oStateSelect,
+					on3
+				]
+			});
+			app.setInitialPage(page.getId());
+			app.addPage(page);
+
+			app.placeAt('body');
+		</script>		
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

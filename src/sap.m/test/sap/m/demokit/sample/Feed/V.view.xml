@@ -1,0 +1,22 @@
+<mvc:View
+	controllerName="sap.m.sample.Feed.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<FeedInput 
+		post="onPost"
+		icon="test-resources/sap/ui/demokit/explored/img/Woman_10.png"
+		class="sapUiExploredFeedMargin" />
+	<List
+		showSeparators="Inner"
+		items="{/EntryCollection}" >
+		<FeedListItem
+			sender="{Author}"
+			icon="{AuthorPicUrl}"
+			senderPress="onSenderPress"
+			iconPress="onIconPress"
+			iconDensityAware="false"
+			info="{Type}"
+			timestamp="{Date}"
+			text="{Text}" />
+	</List>
+</mvc:View>

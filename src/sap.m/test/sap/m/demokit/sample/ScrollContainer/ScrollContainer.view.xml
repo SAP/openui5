@@ -1,0 +1,16 @@
+<mvc:View
+	height="100%"
+	width="100%"
+	controllerName="sap.m.sample.ScrollContainer.ScrollContainer"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<ScrollContainer
+		height="100%"
+		width="100%"
+		horizontal="true"
+		vertical="true" >
+		<Image
+			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
+			width="{/width}" />
+	</ScrollContainer>
+</mvc:View>

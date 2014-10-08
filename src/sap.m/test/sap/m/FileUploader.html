@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>FileUploader - sap.ui.unified</title>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.unified, sap.m"
+				src="../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.m.MessageBox");
+
+			var oFileUploader1 = new sap.ui.unified.FileUploader("upload_1", {
+				name: "test1",
+				uploadUrl: "../../../upload/",
+				value: "",
+				width: "250px",
+				tooltip: "Upload your file to the local server.",
+				additionalData: "abc=123&test=456",
+				uploadComplete: function (oEvent) {
+					var sResponse = oEvent.getParameter("response");
+					if (sResponse) {
+						var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
+						if (m[1] == "200") {
+							sap.m.MessageBox.show("Return Code: " + m[1] + "\n" + m[2], "SUCCESS", "Upload Success");
+						} else {
+							sap.m.MessageBox.show("Return Code: " + m[1] + "\n" + m[2], "ERROR", "Upload Error");
+						}
+					}
+				}
+			});
+
+			var oLabel = new sap.m.Label({ text: "Fileuploader to the local server: ", labelFor: oFileUploader1});
+			oLabel.placeAt("target1");
+			oFileUploader1.placeAt("target1");
+
+
+			var oFileUploader2 = new sap.ui.unified.FileUploader("upload_2", {
+				name: "test2",
+				width: "350px",
+				tooltip: "Upload your file to the SAPUI5 Test-Server.",
+				uploadComplete: function (oEvent) {
+					alert("File has been uploaded via File Uploader 2!");
+				}
+			});
+			oFileUploader2.setUploadUrl("../../../upload/");
+
+			var oLabel = new sap.m.Label({ text: "Fileuploader to the SAPUI5 Test-Server: ", labelFor: oFileUploader2});
+			oLabel.placeAt("target2");
+			oFileUploader2.placeAt("target2");
+
+
+			var oFileUploader3 = new sap.ui.unified.FileUploader("upload_3", {
+				name: "test3",
+				uploadUrl: "../../../upload/",
+				value: "",
+				width: "250px",
+				tooltip: "Upload your file to the local server.",
+				additionalData: "abc=123&test=456",
+				parameters: [
+					new sap.ui.unified.FileUploaderParameter({name: "name1", value: "value1"}),
+					new sap.ui.unified.FileUploaderParameter({name: "name2", value: "value2"}),
+					new sap.ui.unified.FileUploaderParameter({name: "name3", value: "value3"})
+				]
+			});
+
+			var oLabel3 = new sap.m.Label({ text: "Fileuploader to the local server (incl. parameters): ", labelFor: oFileUploader3});
+			oLabel3.placeAt("target3");
+			oFileUploader3.placeAt("target3");
+
+
+			var oButton = new sap.m.Button({
+				text : "Upload Uploader 1",
+				press : function() {
+					oFileUploader1.upload();
+				}
+			});
+			oButton.placeAt("target4");
+
+			var oButton2 = new sap.m.Button({
+				text : "Upload Uploader 2",
+				press : function() {
+					oFileUploader2.upload();
+				}
+			});
+			oButton2.placeAt("target4");
+
+			var oButton3 = new sap.m.Button({
+				text : "Upload Uploader 3",
+				press : function() {
+					oFileUploader3.upload();
+				}
+			});
+			oButton3.placeAt("target4");
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.unified.FileUploader</h1>
+		<p>
+			<div id="target1"></div>
+		</p>
+		<p>
+			<div id="target2"></div>
+		</p>
+		<p>
+			<div id="target3"></div>
+		</p>
+		<p>
+			<div id="target4"></div>
+		</p>
+		<p>
+		<form enctype="multipart/form-data" method="post" id="upload_4-fu_form" action="../../../../upload/" target="upload_4-frame">
+			<input type="file" name="test4" id="upload_4-fu">
+			<input type="hidden" name="test4-data" id="upload_4-fu_data" value="abc=123&amp;test=456">
+		</form>
+		<iframe style="display: none" id="upload_4-frame"></iframe>
+		<button onclick="document.getElementById('upload_4-fu_form').submit()">Trigger Upload</button>
+	</body>
+</html>

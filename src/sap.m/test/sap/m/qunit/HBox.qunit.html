@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.HBox</title>
+
+		<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+			var sVendorPrefix = "";
+
+			if(jQuery.support.flexBoxPrefixed) {
+				if(jQuery.browser.webkit) {
+					sVendorPrefix = "-webkit-";
+				} else if(jQuery.browser.mozilla) {
+					sVendorPrefix = "-moz-";
+				} else if(jQuery.browser.msie) {
+					sVendorPrefix = "-ms-";
+				}
+			}
+
+			// Create items
+			var oItem1 = new sap.m.Image("item1", {
+						src: "../images/mark1.png",
+						alt: "test image",
+						decorative: false
+					});
+
+			var oItem2 = new sap.m.Image("item2", {
+						src: "../images/mark2.png",
+						alt: "test image",
+						decorative: false
+					});
+
+			// Create a HBox with items
+			var oHBox1 = new sap.m.HBox("hbox1", {
+				items:[
+					oItem1,
+					oItem2
+				]
+			});
+			oHBox1.setDisplayInline(false);
+// 			oHBox1.setWrap('Wrap');
+			oHBox1.setJustifyContent('Center');
+			oHBox1.setAlignItems('End');
+// 			oHBox1.setAlignContent('End');
+			oHBox1.setRenderType('List');
+			oHBox1.placeAt("content");
+
+
+			// Create items
+			var oItem3 = new sap.m.Image("item3", {
+						src: "../images/mark1.png",
+						alt: "test image",
+						decorative: false
+					});
+
+			var oItem4 = new sap.m.Image("item4", {
+						src: "../images/mark2.png",
+						alt: "test image",
+						decorative: false
+					});
+
+			// Create a HBox with box items
+			var oHBox2 = new sap.m.HBox("hbox2", {
+				items:[
+					oItem3,
+					oItem4
+				]
+			});
+			oHBox2.setDirection("RowReverse");
+			oHBox2.setDisplayInline(true);
+// 			oHBox2.setWrap('Nowrap');
+			oHBox2.setJustifyContent('End');
+			oHBox2.setAlignItems('Center');
+// 			oHBox2.setAlignContent('Center');
+			oHBox2.setRenderType('Div');
+			oHBox2.placeAt("content");
+
+
+			QUnit.config.autostart = false;
+			jQuery(document).ready(function() {
+				QUnit.start();
+				if (!jQuery.support.flexBoxLayout) {
+					test("Dummy Test", function() {
+						ok(true, "At least one test needs to run to avoid test timeouts!");
+					});
+				}
+			});
+
+			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
+				test("Flex Boxes rendered", function() {
+					ok(jQuery.sap.domById("hbox1"), "HBox 1 should be rendered");
+					equal(jQuery.sap.byId("hbox1").get(0).tagName, "UL", "HBox 1 should be rendered as UL");
+					ok(jQuery.sap.domById("item1"), "First item of HBox 1 should be rendered");
+					equal(jQuery.sap.byId("hbox1").find(".sapMFlexItem:first-child").get(0).tagName, "LI", "First item of HBox 1 should be rendered as LI");
+					ok(jQuery.sap.domById("item2"), "Second item of HBox 1 should be rendered");
+					equal(jQuery.sap.byId("hbox1").find(".sapMFlexItem:nth-child(2)").get(0).tagName, "LI", "Second item of HBox 1 should be rendered as LI");
+					ok(jQuery.sap.domById("hbox2"), "HBox 2 should be rendered");
+					equal(jQuery.sap.byId("hbox2").get(0).tagName, "DIV", "HBox 2 should be rendered as DIV");
+					ok(jQuery.sap.domById("item3"), "First item of HBox 2 should be rendered");
+					equal(jQuery.sap.byId("hbox2").find(".sapMFlexItem:first-child").get(0).tagName, "DIV", "First item of HBox 2 should be rendered as DIV");
+					ok(jQuery.sap.domById("item4"), "Second item of HBox 2 should be rendered");
+					equal(jQuery.sap.byId("hbox2").find(".sapMFlexItem:nth-child(2)").get(0).tagName, "DIV", "Second item of HBox 2 should be rendered as DIV");
+				});
+			}
+
+			if(jQuery.support.newFlexBoxLayout) { // Browsers that should support the final spec
+				module('Final spec property tests');
+				test("display", function() {
+					equal(jQuery("#hbox1").css('display'), sVendorPrefix + "flex", "HBox display property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css('display'), sVendorPrefix + "inline-flex", "HBox display property should be set correctly in standard-compatible browsers");
+				});
+				test("flex-direction", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-direction'), "row", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-direction'), "row-reverse", "HBox " + sVendorPrefix + "flex-direction property should be set correctly in standard-compatible browsers");
+				});
+// 				test("flex-wrap", function() {
+//					// skip nowrap for Chrome as it has a bug in some versions where it returns "none" instead
+// 					equal(jQuery("#hbox1").css(sVendorPrefix + 'flex-wrap'), "wrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");
+// 					if(!jQuery.browser.webkit) equal(jQuery("#hbox2").css(sVendorPrefix + 'flex-wrap'), "nowrap", "HBox " + sVendorPrefix + "flex-wrap property should be set correctly in standard-compatible browsers");
+// 				});
+				test("justify-content", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'justify-content'), "center", "HBox " + sVendorPrefix + "justify-content property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'justify-content'), "flex-end", "HBox " + sVendorPrefix + "justify-content property should be set correctly in standard-compatible browsers");
+				});
+				test("align-items", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'align-items'), "flex-end", "HBox " + sVendorPrefix + "align-items property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'align-items'), "center", "HBox " + sVendorPrefix + "align-items property should be set correctly in standard-compatible browsers");
+				});
+// 				test("align-content", function() {
+// 					equal(jQuery("#hbox1").css('align-content'), "flex-end", "HBox " + sVendorPrefix + "align-content property should be set correctly in standard-compatible browsers");
+// 					equal(jQuery("#hbox2").css('align-content'), "center", "HBox " + sVendorPrefix + "align-content property should be set correctly in standard-compatible browsers");
+// 				});
+			}
+
+			if(!jQuery.support.newFlexBoxLayout && jQuery.support.flexBoxLayout) { // Browsers that should support the old spec but not the final one
+				module('Old spec property tests');
+				test("display", function() {
+					equal(jQuery("#hbox1").css('display'), sVendorPrefix + "box", "HBox display property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css('display'), sVendorPrefix + "inline-box", "HBox display property should be set correctly in standard-compatible browsers");
+				});
+				test("box-orient", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-orient'), "horizontal", "HBox " + sVendorPrefix + "box-orient property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-orient'), "horizontal", "HBox " + sVendorPrefix + "box-orient property should be set correctly in standard-compatible browsers");
+				});
+				test("box-direction", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-direction'), "normal", "HBox " + sVendorPrefix + "box-direction property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-direction'), "reverse", "HBox " + sVendorPrefix + "box-direction property should be set correctly in standard-compatible browsers");
+				});
+				test("box-pack", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-pack'), "center", "HBox " + sVendorPrefix + "box-pack property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-pack'), "end", "HBox " + sVendorPrefix + "box-pack property should be set correctly in standard-compatible browsers");
+				});
+				test("box-align", function() {
+					equal(jQuery("#hbox1").css(sVendorPrefix + 'box-align'), "end", "HBox " + sVendorPrefix + "box-align property should be set correctly in standard-compatible browsers");
+					equal(jQuery("#hbox2").css(sVendorPrefix + 'box-align'), "center", "HBox " + sVendorPrefix + "box-align property should be set correctly in standard-compatible browsers");
+				});
+			}
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.HBox</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

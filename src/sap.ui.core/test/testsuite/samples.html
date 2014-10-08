@@ -1,0 +1,574 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
+		<title>Loading Lib Test App</title>
+		<script id="sap-ui-bootstrap" 
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../resources/sap-ui-core.js"
+				>
+		</script>
+				
+		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+				
+		<script>
+			jQuery.sap.require("jquery.sap.strings");
+			
+			testfwk = top.testfwk;
+			window.onresize = onResizePage;
+			window.onload = onLoadPage;
+	
+			function onLoadPage() {
+				var oContentWindow = top.frames["sap-ui-ContentWindow"];
+			 	jQuery.sap.focus(document.getElementById("filter"));
+				setTimeout(loadSamples, 10);
+			};
+			
+			function onResizePage() {
+				var h = document.body.clientHeight;
+				h -= 2;
+				h -= document.getElementById("title").offsetHeight;
+				h -= document.getElementById("toolbar").offsetHeight;
+				if ( h > 0 ) 
+					document.getElementById("samples").style.height = h + "px";
+			};
+
+			function loadSamples() {
+				onResizePage();
+				discoverAppPages();
+				discoverTests();
+			};
+			
+			function getLibForElement(oElem) {
+				while (oElem && !$(oElem).attr("data-libname")) {
+					oElem = oElem.parentNode;
+				}
+				if (oElem) {
+					return $(oElem).attr("data-libname");
+				} else {
+					return null;
+				}
+			}
+			
+			function getThemesForElement(oElem) {
+				var libName = getLibForElement(oElem);
+				if (libName) {
+					var themes = testfwk.LIBRARY_THEMES[libName]; // try to get theme information for the current library
+					return themes || testfwk.LIBRARY_THEMES["all"]; // return the found config - or "all themes" if nothing was found
+				} else {
+					return null;
+				}
+			}
+
+			function toggleToolbar(oExpander) {
+				var tabstrip = document.getElementById("toolbar");
+				if ( tabstrip.style.display == 'none' ) {
+					tabstrip.style.display = '';
+					oExpander.className = "expander less";
+				} else {
+					tabstrip.style.display = 'none';
+					oExpander.className = "expander more";
+				}
+				onResizePage();
+			}	
+
+			function triggerLink(o) {
+				var sRef = o.getAttribute("ref");
+				
+				//allow all themes for application or custom pages
+				var oThemeConstraints;
+				if (o.parentNode.parentNode.id === "application-pages" 
+						|| o.parentNode.parentNode.id === "custom-tests") {
+					oThemeConstraints = testfwk.LIBRARY_THEMES["all"];
+				} else {
+					oThemeConstraints = getThemesForElement(o);
+				}
+				
+				// trigger testfwk (which is responsible for displaying the page)	
+				testfwk.setContentURL(sRef, oThemeConstraints, getLibForElement(o));
+				
+				return false;
+			}
+			
+			function mouseDownLink(o) {
+				// update local link for "copy shortcut" 
+				var oThemeConstraints = getThemesForElement(o);
+				var sRef = o.getAttribute("ref");
+				o.href = testfwk.addSettingsToURL(sRef, oThemeConstraints);	
+			}
+			
+			function keydownUrl(o,evt) {
+				if ( evt.keyCode == 13) {
+					clickAdd();
+				} 
+			};
+
+			function clickAdd() {
+				var o = document.getElementById("sampleurl");
+				addSampleLink(o.value);
+			};
+			
+			function addSampleLink(sUrl) {
+				var oResult = jQuery.sap.sjax({type : 'HEAD', url : sUrl}); 
+				if ( !oResult.success ) {
+					alert(sUrl + " does not exist (" + oResult.error + ")");
+					return;
+				}
+
+				var spans = document.getElementById("custom-tests").getElementsByTagName("SPAN");
+				if ( spans[0] && spans[0].id === "custom-tests-empty" ) {
+					document.getElementById("custom-tests").innerHTML = '';
+				}
+				
+				var oCustomSample = document.createElement("DIV");
+				oCustomSample.className = "leaf";
+				oCustomSample.style.paddingLeft = getPadding(1) + "px";
+				var oNewSampleDomRef = document.createElement("A");
+				oNewSampleDomRef.href = sUrl;
+				oNewSampleDomRef.setAttribute("ref",sUrl);
+				jQuery(oNewSampleDomRef).bind("click", jQuery.proxy(function(){
+					return triggerLink(oNewSampleDomRef);
+				}));
+				oNewSampleDomRef.target = "sap-ui-ContentWindow";
+				oNewSampleDomRef.title = sUrl;
+				var sText = sUrl;
+				if ( sText.length > 40 && sText.lastIndexOf('/') >= 0 )
+					sText = "..." + sText.slice(sText.lastIndexOf('/'));
+				oNewSampleDomRef.innerHTML = "<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif' />" + sText;
+				oCustomSample.appendChild(oNewSampleDomRef);
+				/*
+				var oDeleteIcon = document.createElement("IMG");
+				oDeleteIcon.src = "images/delete.gif";
+				oCustomSample.appendChild(oDeleteIcon);
+				*/
+				document.getElementById("custom-tests").appendChild(oCustomSample);
+				triggerLink(oNewSampleDomRef);
+				document.getElementById("samples").scrollTop = document.getElementById("samples").scrollHeight; 
+			}
+
+			function toggleNode(oNode, bExpanded) {
+				
+		    	var oDiv = oNode.nextSibling;
+		    	while (oDiv && oDiv.nodeType != 1)
+			    	oDiv = oDiv.nextSibling;
+		    	if ( !oDiv )
+			    	return;
+		    	
+		    	var $div = jQuery(oDiv);
+		        var oImg = oNode.getElementsByTagName("IMG")[0];
+		        if ( typeof bExpanded === "undefined" ) {
+		        	bExpanded = !($div.hasClass("showdiv") || $div[0].className === "");
+		        }
+		        if (!bExpanded)
+		        {  
+		      		$div.addClass("hidediv").removeClass("showdiv");
+		        	if (oImg) { 
+		        		oImg.src = "images/tree_node_closed.gif";
+		        	}
+		        }
+		        else
+		        {
+		      		$div.removeClass("hidediv").addClass("showdiv");
+		        	if (oImg) {
+		        		oImg.src = "images/tree_node_open.gif";
+		        	}
+		        }
+		    }	
+		    		
+			function getPadding(level) {
+				return 12 * level;
+			}		
+
+			function renderLeaf(content, url, name, level) {
+				var sUrl = (url && url.indexOf("./") == 0) ? sap.ui.global.resourceRoot + "." + url : url;
+				content.push("<div class='leaf'");
+				content.push(" style='padding-left:", getPadding(level) + "px;'>");
+				content.push("<a href='", sUrl, "'");
+				content.push(" ref='", sUrl, "'");
+				content.push(" title='", sUrl, "'");
+				content.push(" onmousedown='return mouseDownLink(this);' onclick='return triggerLink(this);' id='" + sUrl + "' target='sap-ui-ContentWindow' >");
+				content.push("<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src='images/test.gif' />");			
+				content.push(name); 
+				content.push("</a></div>");
+			}				
+			
+			function renderNodeBegin(content, parentPath, name, level) {
+				var divId = "node_" + parentPath + "_" + name;
+				content.push("<div class='node ", level==0?"library":"folder", "'");
+				content.push(" style='padding-left:", getPadding(level) + "px;'");
+				content.push(" onclick='toggleNode(this);' >");
+				// expand just one level of the tree initially
+				var bExpanded = (level == 0);				
+				content.push("<img style=\"border:none;vertical-align:middle;margin-right:2px;\" src=\"");
+				if (bExpanded) {
+					content.push("images/tree_node_open.gif");
+				} else {
+					content.push("images/tree_node_closed.gif");
+				}
+				content.push("\"/>");
+				if ( level == 0 ) {
+					content.push("<img style=\"border:none;vertical-align:middle;margin-right:4px;\" src='images/library.gif' />");			
+				}
+				content.push("<span>", name, "</span>");  
+				content.push("<span class='matches'></span>");  
+				content.push("</div>");	
+
+				// children						
+				content.push("<div id='", divId, "'");
+				var additionalClass = "";
+				if ( level == 0 ) {
+					additionalClass = "libcontainer ";
+					content.push(" data-libname='" + name + "'")
+				}
+				content.push(" class='", additionalClass, bExpanded ? "showdiv" : "hidediv", "'");
+				content.push(">");				
+			}	
+					
+			function renderNodeEnd(content) {
+				content.push("</div>");
+			}		
+								
+			function renderTreeRecursion(content, parentPath, nodeName, node, level) {				
+				if (node.lib) {
+					// node is a test 				
+					renderLeaf(content, node.url, nodeName, level);
+				} else if (node.entry) {
+					// node is an app page;  			
+					// the passed url is relative to <context-path>/test-resources/testsuite/testframe.html	
+					renderLeaf(content, "../../" + node.entry, nodeName, level);
+				} else {
+					// node is an inner tree node (no leaf)
+
+					renderNodeBegin(content, parentPath, nodeName, level);
+					
+					var newParentPath = (parentPath=="") ? nodeName : parentPath + '/' + nodeName;
+					var newLevel = level+1; 
+					for (var newNodeName in node) {						
+						renderTreeRecursion(content, newParentPath, newNodeName, node[newNodeName], newLevel);	
+					}	 			
+
+					renderNodeEnd(content);		
+				}				
+			}			
+
+			function renderTree(tree) {
+				var content = new Array();
+				for (var folder in tree) {
+					renderTreeRecursion(content, "", folder, tree[folder], 0); 
+				}
+				return content;
+			}
+
+			function createTreeRecursion(tree, leaf, name) {
+				var index = name.indexOf('/'); 
+				if (index==-1) {
+					tree[name] = leaf;
+				} else {
+					var folder = name.substring(0, index);
+					var rest = name.substring(index + 1);
+					var node = tree[folder];
+					if (node == null) {
+						tree[folder] = node = {}; 
+					}
+					createTreeRecursion(node, leaf, rest);		
+				}				 				
+			}
+			function createTestTree(testArray) {
+				var tree = {};
+				for (var i=0,l=testArray.length; i<l; i++) {
+					var lib = testArray[i].lib;
+					var node = tree[lib]; 
+					if (node==null) {
+						tree[lib] = node = {}; 
+					}
+					createTreeRecursion(node, testArray[i], testArray[i].name);
+				}
+				return tree;
+			}		
+				
+			function createAppPagesTree(pagesArray) {
+				var tree = {};
+				var node; 
+				for (var i=0; i<pagesArray.length; i++) {					
+					var index = pagesArray[i].entry.indexOf('/');
+					var folder = pagesArray[i].entry;  
+					if (index!=-1) {
+						folder = folder.substring(0, index); 	
+					}
+					
+					node = tree[folder]; 
+					if (node) { /* TODO: why this check? (node && folder!=e) */
+						node = {};
+						tree[folder] = node; 
+					}
+					createTreeRecursion(node ? node : tree, pagesArray[i], pagesArray[i].entry);
+				}
+				return tree;
+			}					
+
+			function isEmpty(oTree) {
+				if ( !oTree )
+					return true;
+				for(var i in oTree) {
+					return false;
+				}
+				return true;
+			};
+			
+			function discoverTests() {
+				jQuery.ajax({
+					url : "../../discovery/all_tests", 
+					dataType : "text",
+					error : function(xhr, status, e) { processAllTestsList(undefined, status || e); },
+					success : function(data, status, xhr) { processAllTestsList(data, undefined); }
+				});
+			};
+			
+			function processAllTestsList(sAllTests, oError) {
+
+				try {
+					var oObject = null;
+					eval("oObject = " + sAllTests);
+
+					/**
+					 * Sort TestCases by Library and Name, sap.ui.core is always the first library 
+					 */ 
+					function sortByLibAndName(test1, test2) {
+						if ( test1.lib == "sap.ui.core" && test2.lib != "sap.ui.core" )
+							return -1;
+						if ( test1.lib != "sap.ui.core" && test2.lib == "sap.ui.core" )
+							return 1;
+						if (test1.lib < test2.lib)
+							return -1; 
+						else if (test1.lib > test2.lib) 
+							return 1;
+						if (test1.name < test2.name)
+							return -1; 
+						else if (test1.name > test2.name) 
+							return 1;
+						return 0;
+					}								
+					var testArray = oObject.all_tests;
+					testArray.sort(sortByLibAndName);		
+
+					// build a tree from the test cases 
+					var tree = createTestTree(testArray);
+
+					// render it 
+					if ( isEmpty(tree) ) {
+						document.getElementById("library-tests").innerHTML = "<span style='font-size:10pt;font-style:italic;padding-left:22px;'>none</span>";
+					} else {
+						document.getElementById("library-tests").innerHTML = renderTree(tree).join("");
+					}
+
+				} catch (ex) {
+					oError = ex;
+				}
+
+				oObject = null;
+				
+				if ( oError ) {
+					document.getElementById("library-tests").innerHTML = "<span style='font-size:10pt;font-style:italic;color:red;'>failed to load tests: " + (oError.message ? oError.message : oError) + "</span>"; 
+				}
+			};
+
+			function discoverAppPages() {
+				jQuery.ajax({
+					url : "../../discovery/app_pages", 
+					dataType : "text",
+					error : function(xhr, status, e) { processAppPagesList(undefined, status || e); },
+					success : function(data, status, xhr) { processAppPagesList(data, undefined); }
+				});
+			};
+
+			function processAppPagesList(sAllTests, oError) {
+				try {
+					var oObject = null;
+					eval("oObject = " + sAllTests);
+
+					/**
+					 * Sort App Pages by name/URL
+					 */
+					function sortfunction2(page1, page2) {
+						if (page1.entry < page2.entry)
+							return -1; 
+						else if (page1.entry > page2.entry) 
+							return 1;
+						return 0;
+					}									
+					var resultArray = oObject.app_pages;
+					resultArray.sort(sortfunction2);	
+
+					// create a tree from it
+					var tree = createAppPagesTree(resultArray);
+
+					// render the tree
+					if ( isEmpty(tree) ) {
+						document.getElementById("application-pages").innerHTML = "<span style='font-size:10pt;font-style:italic;padding-left:22px;'>none</span>";
+					} else {
+						document.getElementById("application-pages").innerHTML = renderTree(tree).join("");
+					}
+					
+				} catch (ex) {
+					oError = ex;
+				}
+
+				oObject = null;
+
+				if ( oError ) { 
+					document.getElementById("application-pages").innerHTML = "<span style='font-size:10pt;font-style:italic;color:red;'>failed to load application pages: " + (oError.message ? oError.message : oError) + "</span>";
+				} 
+			};
+			   			
+			/*function normalizeResourceUrl(currentUrl, sResource) {
+				var sResult; 
+
+				var sTestResourcePrefix = '/test-resources/';
+				var sResourcePrefix = sap.ui.core.Core.ResourceLoaderPrefix;
+								
+				// 1. check if currentUrl contains "test-resources"
+				var index = currentUrl.indexOf(sTestResourcePrefix);
+				if (index>-1) {
+					sResult = currentUrl.substring(0, index) + sResourcePrefix + sResource;	
+					return sResult; 
+				} 	
+
+				// 2. check if currentUrl contains "resources"
+				index = currentUrl.indexOf(sResourcePrefix);
+				if (index>-1) {
+					sResult = currentUrl.substring(0, index + sResourcePrefix.length) + sap.ui.core.Core.ResourceLoaderPrefix + '/' + sResource;	
+					return sResult; 
+				}
+
+				// 3. assumption is that the currentUrl represents a page from the application
+				// TODO - implementation unclear 
+				alert("unsupported: currentUrl=" + currentUrl + ", sResource=" + sResource);
+			}	*/
+
+			var oTimerId = undefined;
+			function setSampleFilter(oInputField) {
+				if ( oTimerId ) {
+					clearTimeout(oTimerId);
+					oTimerId = undefined;
+				}
+				var oFilter = undefined;
+				if ( oInputField.value ) {
+					sFilter = oInputField.value.toUpperCase();
+					oFilter = function(sText) { return sText && sText.toUpperCase().indexOf(sFilter) >= 0; };
+				}
+				oTimerId = setTimeout(function() { setSampleFilterDelayed(oFilter); }, 400);
+			};
+			
+			function makeNodeVisible(oDomNode, bVisible) {
+				oDomNode.style.display = bVisible ? '' : 'none';
+		    	var oChildren = oDomNode.nextSibling;
+		    	while (oChildren && oChildren.nodeType != 1)
+		    		oChildren = oChildren.nextSibling;
+		    	if ( !oChildren )
+			    	return;
+		    	oChildren.style.display = bVisible ? '' : 'none';		    
+			};
+
+			function clearFilter() {
+				document.getElementById("filter").value = '';
+				setSampleFilterDelayed(undefined);
+			};
+			
+			function setSampleFilterDelayed(oFilter) {
+				window.oFilter = oFilter;
+				var i = applyFilter(document.getElementById("library-tests-node"));
+				// document.getElementById("filter-count").innerHTML = oFilter ? "(" + i + ")" : "";
+			};
+
+			function applyFilter(oDomNode) {
+
+				if ( !oDomNode ) 
+					return false;
+
+		    	var oChildren = oDomNode.nextSibling;
+		    	while (oChildren && oChildren.nodeType != 1)
+		    		oChildren = oChildren.nextSibling;
+		    	if ( !oChildren )
+			    	return false;			    
+				
+				var iMatches = 0;
+				var oChild = oChildren.firstChild;
+				while ( oChild ) {
+					if ( oChild.className && oChild.className.indexOf("node") >= 0 ) {
+						iMatches = iMatches + applyFilter(oChild);
+					} else if ( oChild.className && oChild.className.indexOf("leaf") >= 0 ) {
+						var sText = oChild.innerText;
+						if (!sText) sText = oChild.innerHTML;
+						var bMatches = !oFilter || oFilter(sText);
+						oChild.style.display = bMatches ? '' : 'none';
+						//oChild.style.border = bMatches ? '1px dashed red' : '';
+						if ( bMatches ) 
+							iMatches++;
+					}
+					oChild = oChild.nextSibling;
+				};
+
+				if ( oDomNode.getElementsByTagName("SPAN")[1] ) {
+					oDomNode.getElementsByTagName("SPAN")[1].innerHTML = (oFilter && iMatches > 0) ? "(" + iMatches + ")" : "";
+				}
+
+				this.makeNodeVisible(oDomNode, oDomNode.className.indexOf("section") >= 0 || iMatches > 0);
+				// toggleNode(oDomNode,bKeepVisible); 
+				//oDomNode.className = bKeepVisible ? 'showdiv' : 'hidediv';
+				//oDomNode.style.color = bKeepVisible ? 'red' : 'gray';
+
+				return iMatches;
+			}
+			
+			
+		</script>	
+	</head>
+	<body class="left" >
+		<div class="expander less" style="right:1px" onclick="toggleToolbar(this);"></div> 
+		<div id="title" class="title">Test Navigation View</div>		
+		<div id="toolbar" class="toolbar" style="height:24px;display:;">
+		<!-- <span id="filter-count" style="float:right"></span> -->
+		<a href="javascript:clearFilter();" tabindex="3" ><img class="clickable" style="border:none;vertical-align:middle;margin-right:2px;float:right" src="images/delete.gif" /></a>
+		<input tabindex="2" id="filter" style="height:15px;width:8em;float:right" type="text" onkeyup="setSampleFilter(this)" title="Show only those samples whose name contains the given text">
+		<span style="height:20px;padding:3px 4px 3px 0px;float:right;">Filter: </span>
+		</div>
+		<div id="samples" class="border right scrollpanel" style="border:1px solid buttonshadow;">					
+				
+			<div id="library-tests-node" class='node section' onclick='toggleNode(this);'>
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<span>Library Tests</span>
+				<span class="matches"></span>
+			</div>
+			<div id="library-tests" class="showdiv" style="padding-left:10px;" >
+				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif" />
+			</div>
+				
+			<div id="application-pages-node" class='node section' onclick='toggleNode(this);'>
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<span>Application Pages</span>
+				<span class="matches"></span>
+			</div>
+			<div id="application-pages" class="showdiv" style="padding-left:10px;" >
+				<img style="display:block;margin-left:auto;margin-right:auto;border:none;vertical-align:middle;" src="images/loading.gif" />
+			</div>
+
+			<div id="custom-tests-node" class='node section' onclick='toggleNode(this);'>
+				<img style="border:none;vertical-align:middle;margin-right:2px;" src="images/tree_node_open.gif" />
+				<span>Custom Tests</span>
+				<span class="matches"></span>
+			</div>
+			<div id="custom-tests" class="showdiv" style="padding-left:10px;" >
+				<span id="custom-tests-empty" style="font-size:10pt;font-style:italic;padding-left:22px;">none so far...</span>
+			</div>
+			<div id="add-custom-test" style="padding-left:10px;margin-top:10px" >
+				<Label>URL to HTML resource:</Label> 
+				<div style="display:block">
+				<input id="sampleurl" value="" onkeydown="keydownUrl(this,event)" />
+				<button onclick="clickAdd()">Add</button><br>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

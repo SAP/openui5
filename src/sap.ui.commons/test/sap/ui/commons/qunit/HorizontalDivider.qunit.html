@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.commons.HorizontalDivider
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>HorizontalDivider - sap.ui.commons</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.HorizontalDivider.gif">
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+		var oDividers = {};
+
+		var initDivider = function(idx, sWidth, sHeight, sType, bVisible){
+			var sId = "oDivider"+idx;
+			var oDivider = new sap.ui.commons.HorizontalDivider(sId);
+			if(sWidth) oDivider.setWidth(sWidth);
+			if(sHeight) oDivider.setHeight(sHeight);
+			if(sType) oDivider.setType(sType);
+			if(bVisible != -1) oDivider.setVisible(bVisible);
+			sap.ui.setRoot("uiArea"+idx, oDivider);
+			oDividers[sId] = oDivider;
+		};
+
+		initDivider(1, null, null, null, -1); //Default values
+		initDivider(2, "50%", "Large", "Page", false); //Invisible
+		initDivider(3, "100px", "Ruleheight", "Area", -1);
+		initDivider(4, "100px", "Small", "Area", -1);
+		initDivider(5, "100px", "Medium", "Area", -1);
+		initDivider(6, "100px", "Large", "Area", -1);
+		initDivider(7, "100px", "Ruleheight", "Page", -1);
+		initDivider(8, "100px", "Small", "Page", -1);
+		initDivider(9, "100px", "Medium", "Page", -1);
+		initDivider(10, "100px", "Large", "Page", -1);
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+
+		module("Properties");
+
+		test("Default Values", function() {
+			var oDivider = oDividers["oDivider1"];
+			equals(oDivider.getWidth(), "100%", "Default 'width':");
+			equals(oDivider.getHeight(), "Medium", "Default 'height':");
+			equals(oDivider.getVisible(), true, "Default 'visible':");
+			equals(oDivider.getType(), "Area", "Default 'type':");
+		 });
+
+		test("Custom Values", function() {
+			var oDivider = oDividers["oDivider2"];
+			equals(oDivider.getWidth(), "50%", "Custom 'width':");
+			equals(oDivider.getHeight(), "Large", "Custom 'height':");
+			equals(oDivider.getVisible(), false, "Custom 'visible':");
+			equals(oDivider.getType(), "Page", "Custom 'type':");
+		 });
+
+		module("Visual Appearence");
+
+		test("Visibility", function() {
+			equals(jQuery("#oDivider2").get(0), undefined, "Invisible:");
+			ok(jQuery("#oDivider1").get(0), "Visible: expected defined");
+		});
+
+		test("Area Divider", function() {
+			for(var i=3; i<7; i++){
+				var oDivider = jQuery("#oDivider"+i);
+				var sDividerStyle = oDivider.attr("style");
+				ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
+				ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
+				ok(oDivider.hasClass("sapUiCommonsHoriDivTypeArea"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypeArea'");
+				switch(i){
+					case 3:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
+						break;
+					case 4:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
+						break;
+					case 5:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
+						break;
+					case 6:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
+						break;
+				}
+			}
+		});
+
+		test("Page Divider", function() {
+			for(var i=7; i<11; i++){
+				var oDivider = jQuery("#oDivider"+i);
+				var sDividerStyle = oDivider.attr("style");
+				ok(sDividerStyle.toLowerCase().indexOf("width: 100px") != -1 || sDividerStyle.toLowerCase().indexOf("width:100px") != -1, "Area - width set for divider "+i+" ("+sDividerStyle+"): expected 100px");
+				ok(oDivider.hasClass("sapUiCommonsHoriDiv"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDiv'");
+				ok(oDivider.hasClass("sapUiCommonsHoriDivTypePage"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivTypePage'");
+				switch(i){
+					case 7:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightR"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightR'");
+						break;
+					case 8:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightS"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightS'");
+						break;
+					case 9:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightM"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightM'");
+						break;
+					case 10:
+						ok(oDivider.hasClass("sapUiCommonsHoriDivHeightL"), "Divider "+i+" has CSS class 'sapUiCommonsHoriDivHeightL'");
+						break;
+				}
+			}
+		});
+	
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.HorizontalDivider</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="uiArea2"></div>
+	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
+	<div id="uiArea5"></div>
+	<div id="uiArea6"></div>
+	<div id="uiArea7"></div>
+	<div id="uiArea8"></div>
+	<div id="uiArea9"></div>
+	<div id="uiArea10"></div>
+</body>
+</html>

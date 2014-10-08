@@ -1,0 +1,349 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Popups in Popup - sap.ui.commons</title>
+<link rel="shortcut icon" type="image/x-icon"
+	href="images/controls/sap.ui.commons.Menu.gif">
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.ui.table"
+	data-sap-ui-theme="sap_bluecrystal">
+	
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.core.Popup");
+	var eDock = sap.ui.core.Popup.Dock;
+
+	// create a standalone toolbar
+	var oToolbar2 = new sap.ui.commons.Toolbar();
+	// set standalone false, flat design and fixed width
+	oToolbar2.setStandalone(false);
+	oToolbar2.setDesign(sap.ui.commons.ToolbarDesign.Flat);
+	oToolbar2.setWidth("200px");
+
+	// create button and add it as a toolbar item. The Button control has the ToolbarItem interface included
+	var oButton1 = new sap.ui.commons.Button({
+		text : "New",
+		tooltip : "myToolTip1",
+		press : onPress
+	});
+	oToolbar2.addItem(oButton1);
+
+	// add a second item
+	var oButton2 = new sap.ui.commons.Button({
+		text : "Open",
+		tooltip : "myToolTip2",
+		press : onPress
+	});
+	oToolbar2.addItem(oButton2);
+
+	// add toolbar separator
+	oToolbar2.addItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a third item
+	var oButton3 = new sap.ui.commons.Button({
+		text : "Save",
+		tooltip : "myToolTip3",
+		press : onPress
+	});
+	oToolbar2.addItem(oButton3);
+
+	// add toolbar separator
+	oToolbar2.addItem(new sap.ui.commons.ToolbarSeparator());
+
+	// add a combobox as fourth item
+	var oComboBox = new sap.ui.commons.ComboBox({
+		items : [ new sap.ui.core.ListItem({
+			text : "#1"
+		}), new sap.ui.core.ListItem({
+			text : "Do it!"
+		}), new sap.ui.core.ListItem({
+			text : "Hello world!"
+		}), new sap.ui.core.ListItem({
+			text : "Yet another stupid button text"
+		}) ]
+	});
+	oToolbar2.addItem(oComboBox);
+
+	// add fifth item
+	var oTextField1 = new sap.ui.commons.TextField({
+		value : "suuuuuper loooooooooooooong valueeeeee",
+		width : "200px"
+	});
+	oToolbar2.addItem(oTextField1);
+
+	var saveMenuButton = new sap.ui.commons.MenuButton({
+		text : "Save"
+	});
+	var saveMenu = new sap.ui.commons.Menu();
+	var saveMenuItem = new sap.ui.commons.MenuItem({
+		text : "save"
+	});
+	var saveAsMenuItem = new sap.ui.commons.MenuItem({
+		text : "save as"
+	});
+	saveMenu.addItem(saveMenuItem);
+	saveMenu.addItem(saveAsMenuItem);
+	saveMenuButton.setMenu(saveMenu);
+	oToolbar2.addItem(saveMenuButton);
+
+	var moreMenuButton = new sap.ui.commons.MenuButton({
+		text : "More"
+	});
+	var moreMenu = new sap.ui.commons.Menu();
+	var printMenuItem = new sap.ui.commons.MenuItem({
+		text : "Print"
+	});
+	var exportMenuItem = new sap.ui.commons.MenuItem({
+		text : "Export"
+	});
+	moreMenu.addItem(printMenuItem);
+	moreMenu.addItem(exportMenuItem);
+	moreMenuButton.setMenu(moreMenu);
+	oToolbar2.addItem(moreMenuButton);
+
+	// what should happen if you press a toolbar item
+	function onPress(oEvent) {
+		var oButton = oEvent.getSource();
+		alert("You pressed button '" + oButton.getId() + "' with label: '" + oButton.getText() + "'");
+	}
+
+	// attach toolbar to the page
+	oToolbar2.placeAt("content");
+
+	var commonMenuButton = new sap.ui.commons.MenuButton({
+		text : "Common Menu Button",
+		menu : new sap.ui.commons.Menu({
+			items : [ new sap.ui.commons.MenuItem({
+				text : "item1"
+			}), new sap.ui.commons.MenuItem({
+				text : "item2"
+			}) ]
+		})
+	}).placeAt("content2");
+
+	var oBtnTP = new sap.ui.commons.Button({
+		text : "Open ToolPopup with table",
+		press : function() {
+			if (oTPTable.isOpen()) {
+				oTPTable.close();
+			} else {
+				oTPTable.open();
+			}
+		}
+	}).placeAt("content3");
+	var oCheckTPWithTable = new sap.ui.commons.CheckBox({
+		checked : true,
+		change : function() {
+			oTPTable.setAutoClose(this.getChecked());
+		},
+		text : "ToolPopup is 'autoclose'"
+	}).placeAt("content3");
+
+	var data = [ {
+		lastname : "xyc",
+		checked : true,
+		gender : "m"
+	}, {
+		lastname : "symond",
+		checked : false,
+		gender : "m"
+	}, {
+		lastname : "harry",
+		checked : false,
+		gender : "m"
+	}, {
+		lastname : "george",
+		checked : false,
+		gender : "m"
+	}, {
+		lastname : "mary",
+		checked : false,
+		gender : "f"
+	}, {
+		lastname : "robert",
+		checked : false,
+		gender : "m"
+	}, {
+		lastname : "michelle",
+		checked : false,
+		gender : "m"
+	}, {
+		lastname : "sandra",
+		checked : false,
+		gender : "f"
+	}, {
+		lastname : "kate",
+		checked : false,
+		gender : "f"
+	}, {
+		lastname : "alis",
+		checked : false,
+		gender : "f"
+	}, {
+		lastname : "peter",
+		checked : true,
+		gender : "m"
+	} ];
+
+	var oTable = new sap.ui.table.Table("tabInPop", {
+		title : "Table with fixed columns Example",
+		visibleRowCount : 7,
+		firstVisibleRow : 3,
+		selectionMode : sap.ui.table.SelectionMode.Single,
+		cellClick : function(oEvent) {
+			if (oEvent.getParameter("columnIndex") != 0) {
+				return;
+			}
+
+			var oMenu = new sap.ui.commons.Menu({
+				items : [ new sap.ui.commons.MenuItem({
+					text : "Print"
+				}), new sap.ui.commons.MenuItem({
+					text : "Export"
+				}) ],
+			});
+
+			var oCellCont = oEvent.getParameter("cellControl");
+
+			oMenu.open(false /*First item already highlighted*/,
+					oCellCont.getFocusDomRef() /*Dom reference which gets the focus back when the menu is closed*/, eDock.BeginTop, /*"Edge" of the menu (see sap.ui.core.Popup)*/
+					eDock.BeginBottom, /*"Edge" of the related opener position (see sap.ui.core.Popup)*/
+					oCellCont.getDomRef() /*Related opener position (see sap.ui.core.Popup)*/
+			);
+		},
+
+		fixedColumnCount : 2
+	});
+
+	var oColumn1 = new sap.ui.table.Column({
+		label : new sap.ui.commons.Label({
+			text : "Last Name"
+		}),
+		width : "100px",
+		template : new sap.ui.commons.TextView().bindProperty("text", "lastname"),
+		sortProperty : "lastname",
+		filterProperty : "lastname"
+	});
+
+	var oColumn2 = new sap.ui.table.Column({
+		label : new sap.ui.commons.Label({
+			text : "Checked Value"
+		}),
+		width : "100px",
+		template : new sap.ui.commons.CheckBox().bindProperty("checked", "checked"),
+		sortProperty : "checked",
+		filterProperty : "checked"
+	});
+
+	var oColumn3 = new sap.ui.table.Column({
+		label : new sap.ui.commons.Label({
+			text : "Gender"
+		}),
+		width : "100px",
+		template : new sap.ui.commons.TextView().bindProperty("text", "gender"),
+		sortProperty : "gender",
+		filterProperty : "gender"
+	});
+
+	oTable.addColumn(oColumn1);
+	oTable.addColumn(oColumn2);
+	oTable.addColumn(oColumn3);
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({
+		modelData : data
+	});
+	oTable.setModel(oModel);
+	oTable.bindRows("/modelData");
+
+	var oBtnTPinTP = new sap.ui.commons.Button({
+		text : "Open NOT autoClose ToolPopup",
+		press : function() {
+			if (oNoAutoTP.isOpen()) {
+				oNoAutoTP.close();
+			} else {
+				oNoAutoTP.open(eDock.EndTop, eDock.BeginTop);
+			}
+		}
+	});
+	oBtnTPinTP.setTooltip(new sap.ui.commons.RichTooltip({
+		text : "This opens a new Popup but it won't close on focusleave"
+	}));
+
+	var oNoAutoTP = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button("justMeOpener", {
+			text : "Just me",
+			press : function() {
+				if (oNoAutoTP2.isOpen()) {
+					oNoAutoTP2.close();
+				} else {
+					oNoAutoTP2.open(eDock.BeginTop, eDock.BeginBottom);
+				}
+			}
+		}) ],
+		opener : oBtnTPinTP
+	});
+	var oNoAutoTP2 = new sap.ui.ux3.ToolPopup({
+		content : [ new sap.ui.commons.Button("justMeOpener2", {
+			text : "Just me2"
+		}) ],
+		opener : "justMeOpener"
+	});
+
+	var oTPTable = new sap.ui.ux3.ToolPopup({
+		opener : oBtnTP,
+		content : [ oBtnTPinTP, oTable ],
+		autoClose : true
+	});
+
+	// Popup in Popup
+	var oBtn5 = new sap.ui.commons.Button({
+		text : "ToolPopup with focusable Areas",
+		press : function() {
+			if (t5.isOpen()) {
+				t5.close();
+			} else {
+				t5.open(eDock.BeginBottom, eDock.BeginTop);
+			}
+		}
+	}).placeAt("content4");
+
+	var oOpenerAdiitionalToolPop = new sap.ui.commons.Button({
+		text : "Open additional ToolPopup",
+		press : function() {
+			if (t5_2.isOpen()) {
+				t5_2.close();
+			} else {
+				t5_2.open();
+			}
+		}
+	});
+	var t5 = new sap.ui.ux3.ToolPopup({
+		opener : oBtn5,
+		autoClose : true,
+		content : [ oOpenerAdiitionalToolPop ]
+	});
+	var t5_2 = new sap.ui.ux3.ToolPopup({
+		opener : oOpenerAdiitionalToolPop,
+		autoClose : true,
+		content : [ new sap.ui.commons.Label({
+			text : "Lorem ipsum"
+		}) ]
+	});
+</script>
+</head>
+<body class="sapUiBody" role="application">
+	<h1>Test Page for sap.ui.commons.MenuButton</h1>
+	<div id="content"></div>
+	<br />
+	<div id="content2"></div>
+	<br />
+	<div id="content3"></div>
+	<br />
+	<div id="content4"></div>
+</body>
+</html>

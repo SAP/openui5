@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Accordion - sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-libs="sap.ui.commons"
+				>
+		</script>
+
+		<script>
+
+		var bDisplay1 = true;
+		var bDisplay2 = true;
+		var bDisplay3 = true;
+
+
+		/***************************************************************
+		* Accordion 1: will contain 4 sections with section 3 disabled
+		* Section 1 will have vertical scrolling
+		****************************************************************/
+
+		if(bDisplay1){
+
+			var oAccordion = new sap.ui.commons.Accordion("accordion1");
+
+			//Building Section 1
+			var oSection1 = new sap.ui.commons.AccordionSection( "section1" );
+			oSection1.setTitle("Sunrise(Default)");
+			oSection1.setTooltip("This is the tooltip for Sunrise");
+			for (var i=0 ; i < 100 ; i++){
+			  var oCheckBox1 = new sap.ui.commons.CheckBox( "CheckBox1"+i );
+			  oCheckBox1.setText("CheckBox1 "+i);
+			  oSection1.addContent( oCheckBox1);
+			  var oLabel1 = new sap.ui.commons.Label( "Label1"+i );
+			  oLabel1.setText("Label 1 "+i);
+			  oSection1.setMaxHeight("100px");
+			  oSection1.addContent( oLabel1);
+			}
+			oAccordion.addSection( oSection1 );
+
+			//Building Section 2
+			var oSection2 = new sap.ui.commons.AccordionSection( "section2");
+			oSection2.setTitle("Sonnig");
+			for (var i=0 ; i < 5 ; i++){
+			  var oCheckBox2 = new sap.ui.commons.CheckBox( "CheckBox2"+i );
+			  oCheckBox2.setText("CheckBox2 "+i);
+			  oSection2.addContent( oCheckBox2);
+			}
+			oAccordion.addSection( oSection2 );
+
+			//Building Section 3
+			var oSection3 = new sap.ui.commons.AccordionSection( "section3");
+			oSection3.setTitle("This is another section");
+			oSection3.setEnabled(false);
+			var oCheckBox3 = new sap.ui.commons.CheckBox( "CheckBox3" );
+			oSection3.addContent( oCheckBox3);
+			oAccordion.addSection( oSection3 );
+
+			//Building Section 4
+			var oSection4 = new sap.ui.commons.AccordionSection( "section4");
+			oSection4.setTitle("Montreal");
+			var oTextField = new sap.ui.commons.TextField();
+			oSection4.addContent(oTextField);
+
+			//Accordion properties settings
+			oAccordion.addSection( oSection4 );
+			oAccordion.setWidth("100px");
+			//oAccordion.setOpenedSectionsId("section2,section3")
+			oAccordion.placeAt( "uiAccordion1" );
+
+			//Event testing only!!!!
+			//oAccordion.attachSectionOpen(testEvent);
+			//function testEvent(oEvent){
+			//	debugger;
+			//}
+
+			/***************************************************************
+			* Link Area - Only to separate 2 accordions
+			****************************************************************/
+			var oLink = new sap.ui.commons.Link( "LinkAreaLink");
+			oLink.setText("This is a link to split 2 accordions");
+			oLink.placeAt( "LinkArea" );
+		}
+
+		/***************************************************************
+		* Accordion 2: will contain 4 sections with section 1/3 disabled
+		* Section 1: Height 100px
+		* Section 2: Height 50px - Expanded by default
+		* Section 3: Height 300px - Horizontal scrolling necessary - Long label
+		* Section 4: Height 100px
+		****************************************************************/
+
+		if(bDisplay2){
+			var oAccordion2 = new sap.ui.commons.Accordion("accordion2");
+
+			//Building Section 1
+			var oSect1 = new sap.ui.commons.AccordionSection( "Sect21" );
+			oSect1.setTitle("First section");
+			for (var i=0 ; i < 100 ; i++){
+			  var oLink1 = new sap.ui.commons.Link( "Link21"+i );
+			  oLink1.setText("Link1 "+i);
+			  oSect1.addContent( oLink1);
+			  var oLabel1 = new sap.ui.commons.Label( "Label21"+i );
+			  oLabel1.setText("Label 1 "+i);
+			  oSect1.addContent( oLabel1);
+			  oSect1.setMaxHeight("100px");
+			}
+			//oSect1.setCollapsed(true);
+			oAccordion2.addSection( oSect1 );
+
+			//Building Section 2
+			var oSect2 = new sap.ui.commons.AccordionSection( "Sect2");
+			oSect2.setTitle("Second section(Default)");
+			for (var i=0 ; i < 100 ; i++){
+			  var oLink2 = new sap.ui.commons.Link( "Link22"+i );
+			  oLink2.setText("Link2 "+i);
+			  oSect2.addContent( oLink2);
+			}
+			oSect2.setMaxHeight("100px");
+			oSect2.setCollapsed(false);
+			oAccordion2.addSection( oSect2 );	
+
+
+			//Building Section 3
+			var oSect3 = new sap.ui.commons.AccordionSection( "Sect3");
+			oSect3.setTitle("Third section");
+			var oLabel2 = new sap.ui.commons.Label( "Label22" );
+			oLabel2.setText("This is an extra long label that should eventually make the accordion section to render its horizontal scrollbar...");		  		 
+			oSect3.addContent( oLabel2 );
+			oAccordion2.addSection( oSect3 );
+
+			//Accordion properties settings
+			oAccordion2.setOpenedSectionsId("Sect2")
+			oAccordion2.setWidth("100px");
+			oAccordion2.placeAt( "uiAccordion2" );
+
+			/***************************************************************
+			* CheckBox Area - Only to separate 2 accordions
+			****************************************************************/
+			var oCheckBox = new sap.ui.commons.CheckBox( "CheckBoxAreaCheckBox");
+			oCheckBox.setText("This is a CheckBox to split 2 accordions");
+			oCheckBox.placeAt( "CheckBoxArea" );
+		}
+		/***************************************************************
+		* Accordion 3: will contain 4 sections with section 3 disabled
+		****************************************************************/
+		if(bDisplay3){
+			var oAccordion3 = new sap.ui.commons.Accordion("accordion3");
+
+			var oS1 = new sap.ui.commons.AccordionSection( "S1" );
+			oS1.setTitle("First section disabled");
+			oS1.setEnabled(false);
+			oAccordion3.addSection( oS1 );
+
+			var oS2 = new sap.ui.commons.AccordionSection( "S" );
+			oS2.setTitle("Second section disabled");
+			oS2.setEnabled(false);
+			oAccordion3.addSection( oS2 );
+
+			var oS3 = new sap.ui.commons.AccordionSection( "S3" );
+			oS3.setTitle("Third section disabled");
+			oS3.setEnabled(false);		
+			oAccordion3.addSection( oS3 );
+
+			var oS4 = new sap.ui.commons.AccordionSection( "S4");
+			oS4.setTitle("Fourth section enabled(Default)");
+			for (var i=0 ; i < 20 ; i++){
+			  var oL1 = new sap.ui.commons.Link( "L1"+i );
+			  oL1.setText("L1 "+i);
+			  oS4.addContent(oL1);
+			}
+			oAccordion3.addSection( oS4 );
+
+			var oS5 = new sap.ui.commons.AccordionSection( "S5" );
+			oS5.setTitle("Fifth section disabled");
+			oS5.setEnabled(false);
+			oAccordion3.addSection( oS5 );
+
+			var oS6 = new sap.ui.commons.AccordionSection( "S6" );
+			oS6.setTitle("Sixth section disabled");
+			oS6.setEnabled(false);
+			oAccordion3.addSection( oS6 );
+
+			var oS7 = new sap.ui.commons.AccordionSection( "S7");
+			oS7.setTitle("Seventh section enabled");
+			for (var i=0 ; i < 20 ; i++){
+			  var oLi1 = new sap.ui.commons.Link( "Li1"+i );
+			  oLi1.setText("Li1 "+i);
+			  oS7.addContent(oLi1);
+			}
+			oAccordion3.addSection( oS7 );
+			oAccordion3.setWidth("200px");
+			oAccordion3.placeAt( "uiAccordion3" );
+		}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="uiAccordion1"></div>
+		</br>
+		</br>
+		<div id="LinkArea"></div>
+		</br>
+		</br>
+		<div id="uiAccordion2"></div>
+		</br>
+		</br>
+		<div id="CheckBoxArea"></div>
+		</br>
+		</br>
+		<div id="uiAccordion3"></div>
+	</body>
+</html>

@@ -1,0 +1,32 @@
+<mvc:View
+	controllerName="sap.m.sample.UrlHelper.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="{SupplierName}"
+		binding="{/SupplierCollection/0}" >
+		<items>
+			<DisplayListItem
+				label="Telephone"
+				value="{Tel}"
+				type="Active"
+				press="handleTelPress" />
+			<DisplayListItem
+				label="SMS"
+				value="{Sms}"
+				type="Active"
+				press="handleSmsPress" />
+			<DisplayListItem
+				label="Email"
+				value="{Email}"
+				type="Active"
+				press="handleEmailPress" />
+			<DisplayListItem
+				label="Website"
+				value="{Url}"
+				type="Active"
+				press="handleUrlPress" />
+		</items>
+	</List>
+</mvc:View>

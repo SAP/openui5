@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>MVC - sap.ui.core</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection">
+		</script>
+
+
+		<script>
+			try{
+				sap.ui.getCore().loadLibrary("sap.ui.commons");
+			}catch(e){
+				alert("This test page requires the library 'sap.ui.commons' which is not available.");
+				throw(e);
+			}
+		
+			// this test page is not below "resources", but "test-resources"
+			// usually this redirect is NOT needed - but possible if useful
+			jQuery.sap.registerModulePath("sap.ui.core.mvctest", "../../../../../../test-resources/sap/ui/core/samples/mvc/");
+
+			// define View and place it onto the page
+			sap.ui.xmlview("id1","sap.ui.core.mvctest.views.Product").placeAt("content");
+
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

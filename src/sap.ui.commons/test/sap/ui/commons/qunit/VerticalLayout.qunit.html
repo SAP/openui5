@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<!-- 
+  Tested control/class: sap.ui.commons.layout.VerticalLayout
+  Author: D031513
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<!-- Control initialization -->
+	<script language="javascript">
+
+	var oLayout1 = new sap.ui.commons.layout.VerticalLayout("Layout1", {
+		content: [new sap.ui.commons.Button("B1",{text:"Press me", tooltip:"Button tooltip"}),
+		          new sap.ui.commons.TextField("TF1",{value:"Test"}),
+		          new sap.ui.commons.Image("I1",{src:"http://www.sap.com/global/images/SAPLogo.gif"})]
+	});
+	oLayout1.placeAt("uiArea1");
+		
+	oLayout2 = new sap.ui.commons.layout.VerticalLayout("Layout2", {
+		width: "200px",
+		content: [new sap.ui.commons.Slider("S2",{Value:25, tooltip:"Slider tooltip", width: "300px"}),
+		          new sap.ui.commons.TextArea("TA2",{value:"Test \n1\n2\n3\n4\n5\n6\n7\n8\n9", width: "250px", height: "150px"}),
+		          new sap.ui.commons.RatingIndicator("RI2",{value: 4}),
+					    new sap.ui.commons.CheckBox("CB2",{text: "Test"})]
+	});
+	oLayout2.placeAt("uiArea2");
+	</script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+	qutils.delayTestStart();
+	
+	module("Properties");
+
+	test("Default Values", function() {
+		equals(oLayout1.getWidth(), "", "Default 'Width':");
+	});
+
+	test("Custom Values", function() {
+		equals(oLayout2.getWidth(), "200px", "Custom 'Width':");
+	});
+
+	module("Visual Appearence");
+
+	test("Visibility", function() {
+		// controls must be one below the other -> same X coordinate, nut higher Y coordinate
+		var oButtonDom = jQuery.sap.domById('B1');
+		var oTextDom = jQuery.sap.domById('TF1');
+		var oImageDom = jQuery.sap.domById('I1');
+		equals(oButtonDom.offsetLeft, oTextDom.offsetLeft, "Left offset of Button same as for TextField");
+		equals(oButtonDom.offsetLeft, oImageDom.offsetLeft, "Left offset of Button same as for Image");
+		ok(oButtonDom.offsetTop < oTextDom.offsetTop, "Top offset of Button < TextField");
+		ok(oTextDom.offsetTop < oImageDom.offsetTop, "Top offset of TextField < Image");
+
+		// width must fit to defined one even if content is larger
+		var oLayout2Dom = jQuery.sap.domById('Layout2');
+		equals(oLayout2Dom.offsetWidth, 200, "Width of Layout fits defined one");
+		var oSliderDom = jQuery.sap.domById('S2');
+		var oTextADom = jQuery.sap.domById('TA2');
+		var oRatingDom = jQuery.sap.domById('RI2');
+		var oCheckBDom = jQuery.sap.domById('CB2');
+		equals(oSliderDom.offsetLeft, oTextADom.offsetLeft, "Left offset of Slider same as for TextArea");
+		equals(oSliderDom.offsetLeft, oRatingDom.offsetLeft, "Left offset of Slider same as for RatingIndicator");
+		equals(oSliderDom.offsetLeft, oCheckBDom.offsetLeft, "Left offset of Slider same as for CheckBox");
+		ok(oSliderDom.offsetTop < oTextADom.offsetTop, "Top offset of Slider < TextArea");
+		ok(oTextADom.offsetTop < oRatingDom.offsetTop, "Top offset of TextArea < RatingIndicator");
+		ok(oRatingDom.offsetTop < oCheckBDom.offsetTop, "Top offset of RatingIndicator < CheckBox");
+
+
+	});
+	
+	</script>
+
+	<title>qunit Test for VerticalLayout</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.layout.VerticalLayout.gif">
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.layout.VerticalLayout</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<br>
+	<div id="uiArea2"></div>
+<!-- 	<br>
+	<div id="uiArea3"></div>
+	<br>
+	<div id="uiArea4"></div>
+-->
+</body>
+</html>

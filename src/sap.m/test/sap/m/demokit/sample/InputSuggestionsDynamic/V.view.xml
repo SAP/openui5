@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.InputSuggestionsDynamic.C"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		class="marginBoxContent" >
+		<items>
+			<Label text="Product" />
+			<Input
+				id="productInput"
+				type="Text"
+				placeholder="Enter Product ..."
+				showSuggestion="true"
+				suggest="handleSuggest"
+				suggestionItems="{/ProductCollection}" >
+				<suggestionItems>
+					<core:Item text="{Name}" />
+				</suggestionItems>
+			</Input>
+		</items>
+	</VBox>
+</mvc:View>

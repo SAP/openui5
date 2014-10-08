@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Image - sap.ui.commons</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Image.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_goldreflection"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons"
+				src="../../../../resources/sap-ui-core.js"
+				>
+		</script>
+
+		<script type="text/javascript">
+			var oCore = sap.ui.getCore();
+
+			oCore.attachInitEvent(function () {
+				jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
+
+				// a plain Image
+				var oImage = new sap.ui.commons.Image("i1");
+				oImage.setSrc("http://www.sap.com/global/images/SAPLogo.gif");
+				oImage.setAlt("alternative image text for i1");
+				oImage.placeAt("target1");
+
+				oImage = new sap.ui.commons.Image("i2");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setAlt("alternative image text for i2");
+				oImage.setTooltip("This is a tooltip for the SAP logo image i2");
+				oImage.placeAt("target2");
+
+				oImage = new sap.ui.commons.Image("i3");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setWidth("36px");
+				oImage.setAlt("alternative image text for i3");
+				oImage.placeAt("target3");
+
+				oImage = new sap.ui.commons.Image("i4");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setHeight("18px");
+				oImage.setAlt("alternative image text for i4");
+				oImage.placeAt("target4");
+
+				oImage = new sap.ui.commons.Image("i7");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setHeight("36px");
+				oImage.setWidth("36px");
+				oImage.placeAt("target7");
+
+				oImage = new sap.ui.commons.Image("i8");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setDecorative(true);
+				oImage.setWidth("73px");
+				oImage.setHeight("18px");
+				oImage.placeAt("target8");
+
+				// width test
+				oImage = new sap.ui.commons.Image("i9");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setHeight("36px");
+				oImage.setWidth("200px");
+				oImage.placeAt("target9");
+
+				oImage = new sap.ui.commons.Image("i10");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.placeAt("target10");
+
+				// invisible Image
+				oImage = new sap.ui.commons.Image("i11");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setVisible(false);
+				oImage.placeAt("target11");
+
+				// event handler (onclick)
+				oImage = new sap.ui.commons.Image("i12");
+				oImage.setSrc("images/SAPLogo.gif");
+				oImage.setAlt("image with press event handler");
+				oImage.attachPress(function() {
+					alert("press");
+				});
+				oImage.placeAt("target12");
+
+				// image without source (should not show red X or border)
+				oImage = new sap.ui.commons.Image("i13");
+				oImage.setSrc("");
+				oImage.setWidth("200px");
+				oImage.setHeight("200px");
+				oImage.placeAt("target13");
+
+				// image without source - no width / height (should be 0x0 pixel)
+				oImage = new sap.ui.commons.Image("i14");
+				oImage.setSrc("");
+				oImage.placeAt("target14");
+			});
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<h1>Test Page for sap.ui.commons.Image</h1>
+
+		Image loaded from the http://sap.com server:
+		<div id="target1"></div>
+
+		Image loaded from a local resource (with tooltip):
+		<div id="target2"></div>
+
+		Image with half the width (only width set, so not distorted):
+		<div id="target3"></div>
+
+		Image with half the height (only height set, so not distorted):
+		<div id="target4"></div>
+
+		Image with half the width (both set, so it is distorted):
+		<div id="target7"></div>
+
+		Image with half the height (both set, so it is distorted). This image is set as "decorative", so it should not have a tab stop.
+		<div id="target8"></div>
+
+		Width test (first Image must be 200px wide):<br>
+		<span id="target9"></span><span id="target10"></span><br>
+		<img src="images/test-ruler.png">
+		<br> <br>
+		Invisible Image (there must not be a Image below!):
+		<div id="target11"></div>
+
+		Image with press event handler:
+		<div id="target12"></div>
+
+		Image with empty source (should not show red X or border):
+		<div id="target13"></div>
+
+		Image with empty source - no width / height (should be 0x0 px)
+		<div id="target14"></div>
+
+	</body>
+</html>

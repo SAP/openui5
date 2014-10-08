@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.core">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+
+		module("Sanitize check");
+
+		test("valid HTML5", function() {
+
+			var sHTML = "<div><article></article><progress></progress></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+			var sHTML = "<table><tr><td></td></tr></table>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+			var sHTML = "<div><input><audio></audio></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+			var sHTML = '<div><img draggable="true"><video></video></div>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+		});
+
+		test("obsolete HTML4 (not valid)", function() {
+
+			var sHTML = "<div><font></font><center></center></div>";
+			var sresultHTML = "<div></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+			var sHTML = "<table><tr><td><frame></frame></td></tr></table>";
+			var sresultHTML = "<table><tr><td></td></tr></table>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+			var sHTML = "<div><dir></dir></div>";
+			var sresultHTML = "<div></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+			var sHTML = "<div><img><nobr>Some Text</nobr></div>";
+			var sresultHTML = "<div><img>Some Text</div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");	
+			
+		});
+		
+		test("dangerous code (not valid)", function() {
+			
+			var sHTML = "<table><tr><td><script>alert('XSS attack');</" + "script></td></tr></table>";
+			var sresultHTML = "<table><tr><td></td></tr></table>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+
+			var sHTML = "<div><object></object><audio></audio></div>";
+			var sresultHTML = "<div><audio></audio></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+			var sHTML = "<div><title></title><audio></audio></div>";
+			var sresultHTML = "<div><audio></audio></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+			var sHTML = "<html><head></head><body><div></div></body></html>";
+			var sresultHTML = "<div></div>";
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+		});
+		
+		test("valid URLs", function() {
+			
+			var sHTML = '<div><a href="http://anonymous.org">Some Link</a></div>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+
+			var sHTML = '<table><tr><td><a href="http://www.sap.com">SAP</a></td></tr></table>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+			var sHTML = '<div><a href="https://sdn.sap.com">SDN</a><audio></audio></div>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+			var sHTML = '<div><img draggable="true"><a href="http://www.sap.com/index.epx">SAP with path</a><video></video></div>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sHTML, sHTML+" valid");
+			
+		});
+		
+		test("invalid URLs (not valid)", function() {
+			
+			var sHTML = '<div><a href="xxxxx%%%%%%-----------;;;;;;">Some Link</a></div>';
+			var sresultHTML = '<div><a>Some Link</a></div>';
+			equal(jQuery.sap._sanitizeHTML(sHTML), sresultHTML, sHTML+" not valid");
+			
+		});
+
+		</script>
+
+		<title>QUnit Test for HTML Sanitizer</title>
+
+	</head>
+	<body class="sapUiBody">
+		<h1 id="qunit-header">QUnit tests: jQuery.sap._sanitizeHTML</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="target1"></div>
+
+	</body>
+</html>		

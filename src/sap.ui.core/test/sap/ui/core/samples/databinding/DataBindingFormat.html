@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page with different data types with Formatter</title>
+
+   <style>
+	   .area > * {
+	   		margin-right: 3px;
+	   }
+   </style>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_goldreflection"
+		data-sap-ui-trace="true">
+	</script>
+
+    <script type="text/javascript">
+
+  	   try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+	   }catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+	 		throw(e);
+	   }
+
+    	var oModel = new sap.ui.model.json.JSONModel();
+    	oModel.setData({
+    		intValue: 42342,
+    		floatValue: 34556.12,
+    		dateValue: new Date(2323874928374),
+    		dateAsStringValue: "2000/05/04",
+    		dateAsTimestampValue: 2323874928374,
+    		dateAsTimestampValueString: "2323874928374",
+    		timeValue: new Date(2323874928374),
+    		timeAsStringValue: "13:37:51",
+    		dateTimeValue: new Date(2323874928374),
+    		dateTimeAsStringValue: "2000/05/04 13:37:51",
+    		dateTimeAsStringValue_TZ1: "2000/05/04 13:37:51 Z",
+    		dateTimeAsStringValue_TZ2: "2000/05/04 13:37:51 GMT-03:00",
+    		dateTimeAsStringValue_TZ3: "2000/05/04 13:37:51 UTC-03:00",
+    		dateTimeAsStringValue_TZ4: "2000/05/04 13:37:51 UT-03:00",
+    		dateTimeAsStringValue_TZ5: "2000/05/04 13:37:51 -03:00",
+    		dateTimeAsStringValue_TZ6: "2000/05/04 13:37:51 -0300"
+
+    	});
+    	sap.ui.getCore().setModel(oModel);
+
+
+    	//Integer Type
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/intValue", 
+    		type: new sap.ui.model.type.Integer({})
+    	}})).placeAt("integer1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/intValue", 
+    		type: new sap.ui.model.type.Integer({minIntegerDigits: 10, groupingEnabled: true})
+    	}})).placeAt("integer1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/intValue", 
+    		type: new sap.ui.model.type.Integer({groupingEnabled: true, groupingSeparator: ".", decimalSeparator: ","})
+    	}})).placeAt("integer1");
+
+    	(new sap.ui.commons.TextView({text: {path: "intValue"}})).placeAt("integer1"); //Output of original model value
+
+    	//Float Type
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/floatValue", 
+    		type: new sap.ui.model.type.Float({})
+    	}})).placeAt("float1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/floatValue", 
+    		type: new sap.ui.model.type.Float({minFractionDigits: 6})
+    	}})).placeAt("float1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/floatValue", 
+    		type: new sap.ui.model.type.Float({decimalSeparator: ";", groupingSeparator: "'"})
+    	}})).placeAt("float1");
+
+    	(new sap.ui.commons.TextView({text: {path: "floatValue"}})).placeAt("float1"); //Output of original model value
+
+    	//Date Type
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateValue", 
+    		type: new sap.ui.model.type.Date()
+    	}})).placeAt("date1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateValue", 
+    		type: new sap.ui.model.type.Date({pattern: "yy-MM-dd"})
+    	}})).placeAt("date1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateValue", 
+    		type: new sap.ui.model.type.Date({pattern: "EEEE, MMMM d, yyyy"})
+    	}})).placeAt("date1");
+
+    	(new sap.ui.commons.TextView({text: {path: "dateValue"}})).placeAt("date1"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsStringValue", 
+    		type: new sap.ui.model.type.Date({source: {pattern: "yyyy/MM/dd"}, pattern: "EEEE, MMMM d, yyyy"})
+    	}})).placeAt("date2");
+
+    	(new sap.ui.commons.TextView({text: {path: "dateAsStringValue"}})).placeAt("date2"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValue", 
+    		type: new sap.ui.model.type.Date({source: {pattern: "timestamp"}, pattern: "dd.MM.yyyy"})
+    	}})).placeAt("date3");
+
+    	(new sap.ui.commons.TextView({text: {path: "dateAsTimestampValue"}})).placeAt("date3"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValueString", 
+    		type: new sap.ui.model.type.Date({source: {pattern: "timestamp"}, pattern: "dd.MM.yyyy"})
+    	}})).placeAt("date4");
+
+    	(new sap.ui.commons.TextView({text: {path: "dateAsTimestampValueString"}})).placeAt("date4"); //Output of original model value
+
+    	//Time Type 
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/timeValue", 
+    		type: new sap.ui.model.type.Time()
+    	}})).placeAt("time1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/timeValue", 
+    		type: new sap.ui.model.type.Time({pattern: "hh-mm-ss"})
+    	}})).placeAt("time1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/timeValue", 
+    		type: new sap.ui.model.type.Time({pattern: "HH:mm:ss '+' SSS 'ms'"})
+    	}})).placeAt("time1");
+
+    	(new sap.ui.commons.TextView({text: {path: "/timeValue"}})).placeAt("time1"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/timeAsStringValue", 
+    		type: new sap.ui.model.type.Time({source: {pattern: "HH:mm:ss"}, pattern: "ss 'Seconds' mm 'Minutes' HH 'Hours'"})
+    	}})).placeAt("time2");
+
+    	(new sap.ui.commons.TextView({text: {path: "/timeAsStringValue"}})).placeAt("time2"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValue", 
+    		type: new sap.ui.model.type.Time({source: {pattern: "timestamp"}, pattern: "HH:mm:ss'"})
+    	}})).placeAt("time3");
+
+    	(new sap.ui.commons.TextView({text: {path: "/dateAsTimestampValue"}})).placeAt("time3"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValueString", 
+    		type: new sap.ui.model.type.Time({source: {pattern: "timestamp"}, pattern: "HH:mm:ss'"})
+    	}})).placeAt("time4");
+
+    	(new sap.ui.commons.TextView({text: {path: "/dateAsTimestampValueString"}})).placeAt("time4"); //Output of original model value
+
+    	//DateTime Type 
+
+		(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeValue", 
+    		type: new sap.ui.model.type.DateTime()
+    	}})).placeAt("datetime1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeValue", 
+    		type: new sap.ui.model.type.DateTime({pattern: "hh-mm-ss '/' yy-MM-dd"})
+    	}})).placeAt("datetime1");
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeValue", 
+    		type: new sap.ui.model.type.DateTime({pattern: "MMMM d, yyyy, HH:mm:ss.SSS"})
+    	}})).placeAt("datetime1");
+
+    	(new sap.ui.commons.TextView({text: {path: "/dateTimeValue"}})).placeAt("datetime1"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss"}, pattern: "'Year:' yyyy 'Month:' MMMM 'Day:' dd ',' ss 'Sec.' mm 'Min.' HH 'Hours'"})
+    	}})).placeAt("datetime2");
+
+    	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue"}})).placeAt("datetime2"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValue", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "timestamp"}, pattern: "dd.MMM.yyyy HH:mm:ss"})
+    	}})).placeAt("datetime3");
+     	(new sap.ui.commons.TextView({text: {path: "/dateAsTimestampValue"}})).placeAt("datetime3"); //Output of original model value
+
+    	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateAsTimestampValueString", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "timestamp"}, pattern: "dd.MMM.yyyy HH:mm:ss"})
+    	}})).placeAt("datetime4");
+     	(new sap.ui.commons.TextView({text: {path: "/dateAsTimestampValueString"}})).placeAt("datetime4"); //Output of original model value
+
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ1", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss z"}, pattern: "dd.MMM.yyyy HH:mm:ss X"})
+    	}})).placeAt("datetime5");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ1"}})).placeAt("datetime5"); //Output of original model value
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ2", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss z"}, pattern: "dd.MMM.yyyy HH:mm:ss z"})
+    	}})).placeAt("datetime6");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ2"}})).placeAt("datetime6"); //Output of original model value
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ3", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss z"}, pattern: "dd.MMM.yyyy HH:mm:ss Z"})
+    	}})).placeAt("datetime7");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ3"}})).placeAt("datetime7"); //Output of original model value
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ4", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss z"}, pattern: "dd.MMM.yyyy HH:mm:ss Z"})
+    	}})).placeAt("datetime8");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ4"}})).placeAt("datetime8"); //Output of original model value
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ5", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss X"}, pattern: "dd.MMM.yyyy HH:mm:ss z"})
+    	}})).placeAt("datetime9");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ5"}})).placeAt("datetime9"); //Output of original model value
+
+     	(new sap.ui.commons.TextField({width: "200px", value: {
+    		path: "/dateTimeAsStringValue_TZ6", 
+    		type: new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HH:mm:ss Z"}, pattern: "dd.MMM.yyyy HH:mm:ss X"})
+    	}})).placeAt("datetime10");
+     	(new sap.ui.commons.TextView({text: {path: "/dateTimeAsStringValue_TZ6"}})).placeAt("datetime10"); //Output of original model value
+
+
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>Data binding formatting/parsing test page</h1>
+      </div>
+      <h2>Integer</h2>
+      <div id="integer1" class="area"></div>
+      <h2>Float</h2>
+      <div id="float1" class="area"></div>
+      <h2>Date</h2>
+      <div id="date1" class="area"></div>
+      <hr>
+      <div id="date2" class="area"></div>
+      <hr>
+      <div id="date3" class="area"></div>
+      <div id="date4" class="area"></div>
+      <h2>Time</h2>
+      <div id="time1" class="area"></div>
+      <hr>
+      <div id="time2" class="area"></div>
+      <hr>
+      <div id="time3" class="area"></div>
+      <div id="time4" class="area"></div>
+      <h2>DateTime</h2>
+      <div id="datetime1" class="area"></div>
+      <div id="datetime2" class="area"></div>
+      <hr>
+      <div id="datetime3" class="area"></div>
+      <div id="datetime4" class="area"></div>
+      <hr>
+      <div id="datetime5" class="area"></div>
+      <div id="datetime6" class="area"></div>
+      <div id="datetime7" class="area"></div>
+      <div id="datetime8" class="area"></div>
+      <div id="datetime9" class="area"></div>
+      <div id="datetime10" class="area"></div>
+    </div>
+
+  </body>
+
+</html>

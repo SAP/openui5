@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+
+<html>
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page using XML View</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+		 try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+		// set application namespace. Views and controller are loaded relative to this page
+		jQuery.sap.registerModulePath("sap.ui.commons.databinding", "./testdata/");
+
+		var myModel = new sap.ui.model.json.JSONModel();
+    	myModel.setData({
+    	     "listItems" : [
+    	          {"text" : "item 1"}, 
+    	          {"text" : "item 2"},
+    	          {"text" : "item 3"}
+    	     ]
+    	});
+
+		var myView = sap.ui.view({viewName:"sap.ui.commons.databinding.ListBinding",type:sap.ui.core.mvc.ViewType.XML});
+		myView.setModel(myModel);
+		myView.placeAt("content");
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="content"></div>
+    </div>
+
+  </body>
+
+</html>

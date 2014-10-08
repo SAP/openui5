@@ -1,0 +1,274 @@
+/* Global CSS for 'base' theme */
+
+// Semantic Theming Mapping
+@sapUiBaseColor: @sapBaseColor;
+
+@sapUiContentDisabledTextColor: @sapContent_DisabledTextColor;
+@sapUiContentForegroundBorderColor: #A6A6A6;
+
+@sapUiButtonBackground: @sapButton_Background;
+@sapUiButtonBorderColor: @sapButton_BorderColor;
+@sapUiButtonTextColor: @sapButton_TextColor;
+@sapUiButtonDisabledBackground: @sapButton_Disabled_Background;
+@sapUiButtonDisabledBorderColor: @sapButton_Disabled_BorderColor;
+@sapUiButtonDisabledTextColor: @sapButton_Disabled_TextColor;
+@sapUiButtonHoverBackground: @sapButton_Hover_Background;
+@sapUiButtonHoverBorderColor: @sapButton_Hover_BorderColor;
+@sapUiButtonHoverTextColor: @sapButton_Hover_TextColor;
+// @sapUiButtonEmphasizedBackground: @sapButton_Emphasized_Background;
+// @sapUiButtonEmphasizedBorderColor: @sapButton_Emphasized_BorderColor;
+// @sapUiButtonEmphasizedTextColor: @sapButton_Emphasized_TextColor;
+@sapUiButtonRejectBackground: red;
+@sapUiButtonAcceptBackground: green;
+
+@sapUiFieldBackground: @sapField_Background;
+@sapUiFieldBorderColor: #BFBFBF;
+@sapUiFieldHelpBackground: @sapField_Background;
+@sapUiFieldHoverBackground: @sapField_Hover_Background;
+@sapUiFieldHoverBorderColor: @sapField_Hover_BorderColor;
+@sapUiFieldHoverHelpBackground: @sapField_Hover_HelpBackground;
+@sapUiFieldFocusBackground: @sapField_Background;
+@sapUiFieldFocusBorderColor: @sapField_Focus_BorderColor;
+@sapUiFieldFocusHelpBackground: @sapField_Background;
+@sapUiFieldReadOnlyBackground: #808080;
+@sapUiFieldReadOnlyBorderColor: @sapField_ReadOnly_BorderColor;
+@sapUiFieldReadOnlyHelpBackground: #808080;
+@sapUiFieldDisabledBackground: @sapField_Background;
+@sapUiFieldDisabledBorderColor: @sapField_BorderColor;
+@sapUiFieldDisabledHelpBackground: @sapField_Background;
+@sapUiFieldRequiredColor: @sapField_BorderColor;
+@sapUiFieldInvalidColor: #FF0000;
+@sapUiFieldInvalidBackground: #FF9A90;
+@sapUiFieldWarningColor: #FFFF00;
+@sapUiFieldWarningBackground: #FAF2B0;
+@sapUiFieldSuccessColor: @sapField_SuccessColor;
+@sapUiFieldSuccessBackground: @sapField_SuccessBackground;
+
+@sapUiListHeaderBorderColor: #000000;
+@sapUiListHighlightColor: @sapList_HighlightColor;
+@sapUiListHoverBackground: @sapList_Hover_Background;
+@sapUiListSelectionBackgroundColor: @sapUiHighlight;
+
+
+// Brand Colors
+@sapUiBrand: #F0AB00;     // SAP Gold #f0ab00
+@sapUiHighlight: #111177;
+@sapUiSelected: @sapUiHighlight;
+@sapUiActive: @sapUiHighlight;
+
+// Accent Colors
+@sapUiPurple: purple;
+@sapUiOrange: orange;
+@sapUiGreen: green;
+@sapUiBlue: blue;
+@sapUiRed: red;
+@sapUiYellow: yellow;
+
+// Base Colors
+@sapUiBase: darken(@sapBaseColor, 100);			// #000000
+@sapUiBaseBG: lighten(@sapBaseColor, 100);			// #ffffff
+@sapUiBaseBorder: @sapUiBase;
+@sapUiBaseText: @sapTextColor;
+@sapUiBaseLine: @sapUiBase;
+
+// Background Colors
+// Grayscale Backgrounds
+@sapUiWhite: #FFFFFF;
+@sapUiWhiteBG: lighten(@sapBaseColor, 100);			// #ffffff
+@sapUiExtraLightBG: @sapUiBaseBG;
+@sapUiLightBG: lightgray;
+@sapUiMediumBG: gray;
+@sapUiDarkBG: darkgray;
+@sapUiDeepBG: black;
+@sapUiBlackBG: #000000;
+
+// Tinted Backgrounds
+@sapUiHoverBG: grey;
+@sapUiMediumAltBG: grey;
+@sapUiDarkAltBG: darkgrey;
+
+// Button Background Colors
+@sapUiButtonStandardBG: @sapUiBaseBG;
+@sapUiButtonEmphasizedBG: yellow;
+@sapUiButtonNegativeBG: red;
+@sapUiButtonPositiveBG: green;
+
+// Semantic Background Colors
+@sapUiErrorBG: #FF9A90;
+@sapUiWarningBG: #FAF2B0;
+@sapUiReadOnlyBG: grey;
+
+// Text Colors
+@sapUiExtraLightText: lightgray;
+@sapUiLightText: lightgray;
+@sapUiMediumText: grey;
+@sapUiDarkText: darkgrey;
+@sapUiDeepText: black;
+@sapUiText: @sapUiBaseText; // black
+@sapUiTextInverted: lighten(@sapUiBaseText, 100%);			// #ffffff;
+
+// Link
+@sapUiLink: #0000FF;
+@sapUiLinkInverted: @sapUiLink;
+@sapUiLinkVisited: #800080;               // the color for a vistited link
+@sapUiLinkActive: #FF0000;                // the color for a link while being clicked
+@sapUiLinkHover: #FF0000;                 // the color for a link while being hovered
+
+// Semantic Text Colors
+@sapUiNegativeText: red;
+@sapUiPositiveText: #B5E7A8;
+
+// Grayscale Borders
+@sapUiWhiteBorder: lighten(@sapUiBaseBorder, 100%);	// #ffffff
+@sapUiExtraLightBorder: lightgrey;
+@sapUiLightBorder: grey;
+@sapUiMediumBorder: @sapUiBaseBorder;
+@sapUiDarkBorder: @sapUiBaseBorder;
+@sapUiBlackBorder: darken(@sapUiBaseBorder, 100%);	// #000000
+
+// Semantic Border Colors
+@sapUiErrorBorder: red;
+@sapUiWarningBorder: yellow;
+
+// Line Colors
+@sapUiLightLine: lightgrey;
+@sapUiMediumLine: grey;
+@sapUiEmphasizedLine: @sapUiHighlight;
+@sapUiDarkLine: darkgrey;
+
+// Table Colors
+@sapUiTableRowBG: @sapUiWhite;
+@sapUiTableRowAlternatingBG: @sapUiWhite;
+@sapUiTableRowSelectionBG: @sapUiHighlight;
+@sapUiTableRowSelectionReadOnlyBG: @sapUiHighlight;
+@sapUiTableRowHoverBG: @sapUiHoverBG;
+
+// MOBILE-specific, but still very global-like:
+@sapUiListBG: #f7f7f7;
+
+
+/* ---------------------------------------------------------------------------------------- */
+/* TMP during LESS convertion ---- to be deleted */
+@sapUiTextColor: green; /* may be required by SubstitutionRulesManager.css in inbox lib */
+@sapUiTextTitleColor: green;
+@sapUiTextSelectionColor: green;
+
+/* ---------------------------------------------------------------------------------------- */
+
+@sapUiTextDisabled: lighten(@sapUiText, 60%); // the color for disabled text
+@sapUiTextTitle: @sapUiBaseText;  // the text color for titles of all kinds
+@sapUiTextSelection: @sapUiTextInverted; // the color for selected text
+@sapUiTextfieldBackground: @sapUiWhite; // better to have an own parameter insted of using sapUiWhite
+
+@sapUiLineHeight: 21px;
+
+@sapUiFontFamily: Arial,Helvetica,sans-serif;  // the default font
+@sapUiFontMonospaceFamily: Lucida Console;     // the default monospacefont
+@sapUiFontSize: medium;                        // the default font size
+@sapUiFontLargeSize: large;                    // TODO: might also be title font size
+@sapUiFontSmallSize: small;
+@sapUiFontHeader1Size: xx-large;
+@sapUiFontHeader2Size: x-large;
+@sapUiFontHeader3Size: @sapUiFontLargeSize;
+@sapUiFontHeader4Size: @sapUiFontSize;
+@sapUiFontHeader5Size: @sapUiFontSize;
+@sapUiFontHeader6Size: @sapUiFontSize;
+
+
+// SOME important control-specific parameters...
+
+@sapUiUx3ShellBackgroundColor: @sapUiExtraLightBG;
+@sapUiUx3ShellHoverColor: @sapUiBaseText;
+/** 
+  * This parameter is used in the Shell control to calculate the size when it grows.
+  * !!! ONLY PX-VALUES ARE ALLOWED HERE. 
+  */
+@sapUiUx3ShellSideBarBaseWidth:       40px;
+/** 
+  * This parameter is used in the Shell control to calculate the size of the margin when showing
+  * an overflow button in the right pane. As of 1.18.0 this value contains the _maximum_ height
+  * of the overflow button, if the text inside the button is smaller, the button shrinks with it.
+  * !!! ONLY PX-VALUES ARE ALLOWED HERE.
+  */
+@sapUiUx3ShellPaneOverflowButtonHeight: 120px;
+
+/* Approved by UX to use a hard coded color value for this */
+@sapUiUx3ShellToolPaletteIconFontColor: #8899aa;
+
+@sapUiUx3ExactLstExpandOffset: 0 0;
+@sapUiUx3ExactLstRootExpandOffset: 0 3;
+@sapUiUx3ExactLstCollapseWidth: 24px;
+@sapUiUx3ExactLstHeaderHeight: 25px;
+@sapUiUx3ExactLstContentTop: @sapUiUx3ExactLstHeaderHeight;
+
+/* NotificationBar */
+@sapUiNotificationBarBG: fade(@sapUiMediumText, 92%);
+@sapUiNotificationBarBG_IE: @sapUiMediumText;
+@sapUiNotifierHoverColor: @sapUiHighlight;
+@sapUiNotifierSeparator: @sapUiMediumLine;
+@sapUiNotificationText: contrast(@sapUiNotificationBarBG, @sapUiText, @sapUiTextInverted);
+@sapUiNotificationTimestamp: contrast(@sapUiNotificationBarBG, lighten(@sapUiText,33), darken(@sapUiTextInverted,33));
+@sapUiNotificationBarCalloutBorder: fade(@sapUiMediumText, 0%);
+@sapUiNotificationBarCalloutBorder_IE: @sapUiNotificationBarBG_IE;
+@sapUiNotificationBarCalloutArr: @sapUiNotificationBarBG;
+@sapUiNotificationBarHeight: ~"40px";
+@sapUiNotificationBarHeightMinimized: ~"0px";
+/* The maximized height will be calculated corresponding to the window's height.*/
+@sapUiNotificationBarHeightMaximized: ~"40%";
+@sapUiNotifierWidth: ~"40px";
+@sapUiNotifierSeparatorWidth: ~"2px";
+
+/* ToolPopup */
+@sapUiUx3ToolPopupInverted: ~"true"; /* Telling the ToolPopup if it's inverted per default */
+@sapUiUx3ToolPopupArrowWidth: 13px;
+@sapUiUx3ToolPopupArrowHeight: 20px;
+@sapUiUx3ToolPopupArrowRightMarginCorrection: -2px;
+@sapUiUx3ToolPopupArrowRightMarginCorrectionInverted: -7px;
+@sapUiUx3TPPaddingBottom: 50px;
+
+
+// @sapUiButtonBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+// @sapUiButtonBackground: @sapUiButtonStandardBG; // to be renamed????
+// @sapUiButtonDisabledBorderColor: @sapUiMediumBorder; // needed because different in GR, HCB and UX
+@sapUiButtonDisabledBackground: @sapUiExtraLightBG; // needed, different in every theme
+// @sapUiButtonHoverBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+@sapUiButtonHoverBackground: @sapUiMediumBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonActiveBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
+@sapUiButtonActiveBackground: @sapUiDarkBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonEmphasizedBorderColor: @sapUiButtonBorderColor;
+@sapUiButtonEmphasizedBackground: @sapUiButtonEmphasizedBG;
+@sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonEmphasizedBorderColor;
+@sapUiButtonEmphasizedDisabledBackground: @sapUiButtonEmphasizedBackground;
+@sapUiButtonEmphasizedHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonEmphasizedHoverBackground: @sapUiButtonHoverBackground;
+@sapUiButtonEmphasizedActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonEmphasizedActiveBackground: @sapUiButtonActiveBackground;
+@sapUiButtonAcceptBorderColor: @sapUiButtonBorderColor;
+@sapUiButtonAcceptBackground: @sapUiButtonPositiveBG;
+@sapUiButtonAcceptDisabledBorderColor: @sapUiButtonAcceptBorderColor;
+@sapUiButtonAcceptDisabledBackground: @sapUiButtonAcceptBackground;
+@sapUiButtonAcceptHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonAcceptHoverBackground: @sapUiButtonHoverBackground;
+@sapUiButtonAcceptActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonAcceptActiveBackground: @sapUiButtonActiveBackground;
+@sapUiButtonRejectBorderColor: @sapUiButtonBorderColor;
+@sapUiButtonRejectBackground: @sapUiButtonNegativeBG;
+@sapUiButtonRejectDisabledBorderColor: @sapUiButtonRejectBorderColor;
+@sapUiButtonRejectDisabledBackground: @sapUiButtonRejectBackground;
+@sapUiButtonRejectHoverBorderColor: @sapUiButtonHoverBorderColor;
+@sapUiButtonRejectHoverBackground: @sapUiButtonHoverBackground;
+@sapUiButtonRejectActiveBorderColor: @sapUiButtonActiveBorderColor;
+@sapUiButtonRejectActiveBackground: @sapUiButtonActiveBackground;
+@sapUiButtonLiteBackground: rgba(0,0,0,0); /* transparent; */
+@sapUiToggleButtonPressedDisabledBackground: #D8D8E8;
+@sapUiToggleButtonPressedBackground: @sapUiHighlight;
+
+// semantic colors
+@sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing
+
+// default shadow for popups 
+@sapUiShadowTint: #000;
+@sapUiShadow: 5px 5px 10px fade(@sapUiShadowTint,50%);
+
+// This parameter will be set to true by the Theme Designer when custom CSS has been added to a new custom theme
+@sapUiThemeDesignerCustomCss:false;

@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.test.Opa</title>
+
+<script src="../../../../../../resources/sap-ui-core.js">
+</script>
+
+
+<script>
+(function () {
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.test.Opa");
+	var Opa = sap.ui.test.Opa;
+
+	test("Should have the same context", function() {
+		// System under Test
+		var oOpa = new Opa();
+		var oOpa2 = new Opa();
+
+		// Act + Assert
+		strictEqual(oOpa.getContext(), oOpa2.getContext(), "Contexts are the same");
+	});
+
+	//Sinon does not work in IE8 -.-
+	if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+		return;
+	}
+
+	test("Should wait for something", function() {
+		// Arrange
+		var bFirstCheck = false,
+			oFirstSuccess = this.spy(),
+			bSecondCheck = false,
+			oSecondSuccess = this.spy();
+
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return bFirstCheck
+			},
+			success : oFirstSuccess
+		});
+
+		oOpa.waitFor({
+			check : function () {
+				return bSecondCheck;
+			},
+			success : oSecondSuccess
+		});
+		sap.ui.test.Opa.emptyQueue();
+
+		this.clock.tick(1000);
+
+		// Assert
+		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
+		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+
+		bSecondCheck = true;
+		this.clock.tick(1000);
+
+		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
+		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+
+		bFirstCheck = true;
+		this.clock.tick(1000);
+
+		ok(oFirstSuccess.calledBefore(oSecondSuccess), "Did call the first success first");
+
+		strictEqual(oFirstSuccess.callCount, 1, "First did succeed");
+		strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");
+	});
+
+})();
+
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.test.Opa</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+
+</body>
+</html>

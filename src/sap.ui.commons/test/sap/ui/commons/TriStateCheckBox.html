@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>TriStateCheckBox - sap.ui.commons</title>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.layout,sap.ui.commons"
+	data-sap-ui-theme="sap_goldreflection">
+</script>
+<script type="text/javascript">
+	var oCore = sap.ui.getCore(); 
+	var oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc1", {
+		text: "Plain vanilla tri-state checkbox; User can directly only switch between checked and unchecked."});
+	oTriStateCB.placeAt("target1");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc2", {
+		editable: false,
+		text: "Read-only checkbox in mixed state with tooltip",
+		tooltip: "This is a tooltip",
+		selectionState: "Mixed"
+	});
+	oTriStateCB.placeAt("target2");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc3", {
+		enabled: false,
+		text: "This checkbox has been disabled."
+	});
+	oTriStateCB.placeAt("target3");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc4", {
+		text: "This checkbox is in warning state.",
+		valueState: sap.ui.core.ValueState.Warning
+	});
+	oTriStateCB.placeAt("target4");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc5", {
+		text: "Checked checkbox in warning state _and_ read-only",
+		valueState: sap.ui.core.ValueState.Warning,
+		editable: false,
+		selectionState: "Checked"
+	});
+	oTriStateCB.placeAt("target5");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc6", {
+		text: "This checkbox is in error state.",
+		valueState: sap.ui.core.ValueState.Error
+	});
+	oTriStateCB.placeAt("target6");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc7", {
+		text: "Checked checkbox in error state _and_ read-only.",
+		selectionState: "Checked",
+		valueState: sap.ui.core.ValueState.Error,
+		editable: false
+	});
+	oTriStateCB.placeAt("target7");
+	 // width test
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc8", {
+		text: "TriSTateCheckBox (width = 300px)",
+	    width: "300px"
+	});
+	oTriStateCB.placeAt("target8");
+	oTriStateCB = new sap.ui.commons.TriStateCheckBox("tc9", {
+		text: "Another TriStateCheckBox"
+	});
+	oTriStateCB.placeAt("target9");
+
+	
+	function registerChildren(allChildren, oParent){
+		var nSelectedChildren = 0;
+   		for (var i = 0; i < allChildren.length; i++) {
+	   		allChildren[i].attachChange(function(){
+	   				this.getChecked() ? nSelectedChildren+=1 : nSelectedChildren-=1;
+	   				if(nSelectedChildren === 0){
+	   					oParent.toggle("Unchecked");
+	   				}
+	   				else if(nSelectedChildren === allChildren.length){
+	   					oParent.toggle("Checked");
+	   				}
+	   				else{
+	   					oParent.toggle("Mixed");
+	   				}
+	   			}
+	   		);
+   		}
+   		oParent.attachChange(function(){
+     		if (this.getSelectionState() === "Checked"){
+     			for (var i = 0; i < allChildren.length; i++) {
+  	     			allChildren[i].setChecked(true);
+  	     			nSelectedChildren = allChildren.length;
+     			}
+     		}
+     		else {
+     			for (var i = 0; i < allChildren.length; i++) {
+     				allChildren[i].setChecked(false);
+	     				nSelectedChildren = 0;
+   				}
+   			}
+     	});
+	};
+
+	var oVLayout = new sap.ui.layout.VerticalLayout("hLayout1");
+	var oTV = new sap.ui.commons.TextView({
+		id : 'TV-Head',
+		text : 'Which language(s) do you speak?',
+		design : sap.ui.commons.TextViewDesign.Bold });
+	oVLayout.addContent(oTV);
+	var oParentCheckBox = new sap.ui.commons.TriStateCheckBox("pcb1", {text: "select / deselect all"});
+	oVLayout.addContent(oParentCheckBox);
+	oVLayout.addContent(new sap.ui.commons.HorizontalDivider({height: sap.ui.commons.HorizontalDividerHeight.Small}));
+	var aChildren = [
+		new sap.ui.commons.CheckBox("ccb1", {text: "Java"}),
+		new sap.ui.commons.CheckBox("ccb2", {text: "ABAP"}),
+		new sap.ui.commons.CheckBox("ccb3", {text: "BASIC"})
+	];	
+	for (i = 0; i < aChildren.length; i++){
+		oVLayout.addContent(aChildren[i]);
+	}		
+	registerChildren(aChildren, oParentCheckBox);
+	oVLayout.placeAt("target10");
+
+	
+</script>
+<style>
+ul{
+	list-style-type: none;
+	padding:0;
+	margin:0;
+}
+</style>
+</head>		
+<body class="sapUiBody" role="application">
+	<h1>Test Page for sap.ui.commons.TriStateCheckBox</h1>
+	<h2>Basics</h2>
+	<div id="target1"></div>
+	<div id="target2"></div>
+	<div id="target3"></div>
+	<div id="target4"></div>
+	<div id="target5"></div>
+	<div id="target6"></div>
+	<div id="target7"></div>
+	<br><br>
+	Width test:
+	<span id="target8"></span><span id="target9"></span>
+	<br><br>
+	<div>
+		<h2>Checkbox with state dependent on &quot;child&quot; checkboxes:</h2>
+		<div id="target10"></div>
+	</div>
+	
+</body>
+</html>

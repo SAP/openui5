@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.TextArea</title>
+
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script>
+	/* Possible TextArea options
+	new sap.m.TextArea({
+		rows : 10,
+		cols : 50,
+		width : "300px",
+		height : "100px",
+		value : "TextArea",
+		enabled : true,
+		visible : true,
+		maxLength : 100,
+		valueState : "None",
+		placeholder : "TextArea",
+		wrapping : "None"
+	})
+	*/
+	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+
+	var dialog = new sap.m.Dialog({
+		title : "Approve",
+		content : [taComment = new sap.m.TextArea({
+			placeholder : "Please add your comment",
+			rows : 6,
+			value: lorem,
+			maxLength: 255,
+			width: "100%"
+		})],
+		leftButton : new sap.m.Button({
+			text : "Reject",
+			type : sap.m.ButtonType.Reject,
+			press : function() {
+				dialog.close();
+			}
+		}),
+		rightButton : new sap.m.Button({
+			text : "Accept",
+			type : sap.m.ButtonType.Accept,
+			press : function() {
+				dialog.close();
+			}
+		})
+	});
+
+	var page = new sap.m.Page({
+		title : "TextArea Controls",
+		enableScrolling : true,
+		headerContent : new sap.m.Button({
+			text : "Approve",
+			press : function() {
+				dialog.open();
+			}
+		}),
+		content : [
+			ta0 = new sap.m.TextArea({
+				value : "Default textarea rows: 2, cols: 20",
+				valueState : "Warning"
+			}),
+			ta1 = new sap.m.TextArea({
+				value : "%90 width TextArea:\n\n" + lorem + lorem,
+				width : "90%",
+				rows : 4
+			}),
+			ta2 = new sap.m.TextArea({
+				value : "Disabled Textarea:\n\n" + lorem + lorem,
+				enabled : false,
+				editable : false,
+				width : "99%",
+				rows : 4
+			}),
+			ta3 = new sap.m.TextArea({
+				value : "ValueState : Warning \n\n" + lorem + lorem,
+				valueState : "Warning",
+				width : "100%",
+				rows : 3
+			}),
+			ta4 = new sap.m.TextArea({
+				value : "ValueState : Error \n\n" + lorem + lorem,
+				valueState : "Error",
+				width : "90%",
+				rows : 3
+			}),
+			ta5 = new sap.m.TextArea({
+				value : "Wrapping: Off Scroll horizontal --- " + lorem,
+				wrapping : "Off",
+				width : "90%",
+				rows : 3
+			}),
+			ta6 = new sap.m.TextArea({
+				value : "Not Editable: " + lorem,
+				editable : false,
+				width : "100%",
+				rows : 3
+			}),
+			ta7 = new sap.m.TextArea({
+				placeholder : "Max Length : 5",
+				maxLength : 5,
+				rows : 2
+			})
+		]
+	});
+
+	new sap.m.App().addPage(page).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

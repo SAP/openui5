@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.ui.core.samples.routing.mobile.App" xmlns:html="http://www.w3.org/1999/xhtml">
+	<SplitApp id="app">
+		<masterPages>
+			<mvc:XMLView id="myMaster" viewName="sap.ui.core.samples.routing.mobile.Master" />
+		</masterPages>
+		<detailPages>
+			<mvc:XMLView id="myDetail" viewName="sap.ui.core.samples.routing.mobile.Detail" />
+		</detailPages>
+	</SplitApp>
+</mvc:View>

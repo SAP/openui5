@@ -1,0 +1,146 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested jquery.sap.escaping.js
+  Author: i040589, d040216 
+-->
+
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" >
+	</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+	media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+<!-- Output encodings should follow the guide  -->
+<!-- <SAPWIKI>/wiki/download/attachments/867713114/XSS_Char_Table.pdf -->
+
+module("HTML context");
+test("encode HTML", function(){
+	equal(jQuery.sap.encodeHTML("+"), "&#x2b;", "Plus");
+	equal(jQuery.sap.encodeHTML("<>&\""), "&lt;&gt;&amp;&quot;", "<>&\"");
+	equal(jQuery.sap.encodeHTML("\x00\x01\x02"), "&#xfffd;&#xfffd;&#xfffd;", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeHTML(">&<\"\'\\/"), "&gt;&amp;&lt;&quot;&#x27;&#x5c;&#x2f;", ">&<\"\'\\/");
+});
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeHTML("nothingtoencode123,.-_"), "nothingtoencode123,.-_", "nothingtoencode123,.-_");
+});
+
+<!-- http://unicode.org/review/pr-121.html -->
+test("should replaced with 0xfffd", function(){
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(8)),  "&#xfffd;", "Backspace");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(9)), "&#x9;", "Tab");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(10)), "&#xa;", "Line feed");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(11)), "&#xfffd;", "Vertical tab");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(12)), "&#xfffd;", "Form feed");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(13)), "&#xd;", "Carriage return");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(14)), "&#xfffd;", "Shift out");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(15)), "&#xfffd;", "Shift in");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(16)), "&#xfffd;", "Data link escape");	
+
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2028)),  "&#x2028;", "(0x2028)");
+	equal(jQuery.sap.encodeHTML(String.fromCharCode(0x2029)),  "&#x2029;", "(0x2029)");
+});
+
+module("JS context");
+test("encode JS", function(){
+	equal(jQuery.sap.encodeJS("\""), "\\x22", "Quote");
+	equal(jQuery.sap.encodeJS("\'"), "\\x27", "Apostrophe");
+	equal(jQuery.sap.encodeJS("\x00\x01\x02"), "\\x00\\x01\\x02", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeJS(">&<\"\'\\/"), "\\x3e\\x26\\x3c\\x22\\x27\\x5c\\x2f", ">&<\"\'\\/");
+});
+
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeJS("nothingtoencode123,._"), "nothingtoencode123,._", "nothingtoencode123,._");
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeJS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2028)),  "\\u2028", "(0x2028)");
+	equal(jQuery.sap.encodeJS(String.fromCharCode(0x2029)),  "\\u2029", "(0x2029)");
+});
+
+module("URL context");
+test("encode URL", function(){
+	equal(jQuery.sap.encodeURL("*"), "%2a", "Asterisk");
+	equal(jQuery.sap.encodeURL("+"), "%2b", "Plus");
+	equal(jQuery.sap.encodeURL("ä"), "%c3%a4", "Umlaut");
+	equal(jQuery.sap.encodeURL("\x00\x01\x02"), "%00%01%02", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeURL(">&<\"\'\\/"), "%3e%26%3c%22%27%5c%2f", ">&<\"\'\\/");
+});
+test("encode URL parameters", function(){
+	equal(jQuery.sap.encodeURLParameters({
+		"?": "=",
+		"&": "?",
+		">&<\"\'\\/": String.fromCharCode(256)
+	}),  "%3f=%3d&%26=%3f&%3e%26%3c%22%27%5c%2f=%c4%80", "parameter map");
+	equal(jQuery.sap.encodeURLParameters({}), "", "empty parameter map");
+	equal(jQuery.sap.encodeURLParameters(), "", "no parameter map");
+});
+test("should not encode", function(){
+	equal(jQuery.sap.encodeURL("nothingtoencode123-._"), "nothingtoencode123-._", "nothingtoencode123-._");
+});
+
+test("characters above (>) 255 (0xff) should be encoded always", function(){
+	equal(jQuery.sap.encodeURL(String.fromCharCode(256)),  "%c4%80", "Ā (0x100)");
+	equal(jQuery.sap.encodeURL(String.fromCharCode(257)),  "%c4%81", "ā (0x101)");
+});
+
+module("CSS context");
+test("encode CSS", function(){
+	equal(jQuery.sap.encodeCSS("+"), "\\2b", "Plus");
+	equal(jQuery.sap.encodeCSS("~7"), "\\7e 7", "~7");
+	equal(jQuery.sap.encodeCSS("+apple"), "\\2b apple", "+apple");
+	equal(jQuery.sap.encodeCSS("/BUG"), "\\2f BUG", "/BUG");
+	equal(jQuery.sap.encodeCSS("~test"), "\\7etest", "~test");
+	equal(jQuery.sap.encodeCSS("\x00\x01\x02"), "\\0\\1\\2", "0x00 0x01 0x02");
+	equal(jQuery.sap.encodeCSS(">&<\"\'\\/"), "\\3e\\26\\3c\\22\\27\\5c\\2f", ">&<\"\'\\/");
+});
+
+test("should not encode", function(){
+	equal(jQuery.sap.encodeCSS("nothingtoencode123"), "nothingtoencode123", "nothingtoencode123");
+	
+});
+
+test("characters above (>) 255 (0xff) should not be encoded, except for 0x2028 and 0x2029", function(){
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(256)),  "Ā", "Ā (0x100)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(257)),  "ā", "ā (0x101)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2028)),  "\\2028", "(0x2028)");
+	equal(jQuery.sap.encodeCSS(String.fromCharCode(0x2029)),  "\\2029", "(0x2029)");
+});
+
+</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: String Encoding/Escaping Functions</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

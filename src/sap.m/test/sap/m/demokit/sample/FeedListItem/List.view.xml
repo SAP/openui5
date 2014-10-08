@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.FeedListItem.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		width="100%">
+		<l:content>
+			<List
+				headerText="Feed Entries"
+				items="{/EntryCollection}" >
+				<FeedListItem
+					sender="{Author}"
+					icon="{AuthorPicUrl}"
+					senderPress="onPress"
+					iconPress="onPress"
+					iconDensityAware="false"
+					info="{Type}"
+					timestamp="{Date}"
+					text="{Text}" />
+			</List>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

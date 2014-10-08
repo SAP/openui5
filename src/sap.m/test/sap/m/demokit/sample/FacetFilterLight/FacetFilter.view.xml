@@ -1,0 +1,38 @@
+<mvc:View
+	controllerName="sap.m.sample.FacetFilterLight.FacetFilter"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox
+		id="idVBox">
+		<items>
+
+			<FacetFilter
+				id="idFacetFilter"
+				type="Light"
+				showPersonalization="true"
+				showReset="true"
+				reset="handleFacetFilterReset"
+				lists="{/ProductCollectionStats/Filters}">
+				<lists>
+					<FacetFilterList
+						title="{type}"
+						key="{key}"
+						multiselect="true"
+						listClose="handleListClose"
+						items="{values}" >
+						<items>
+							<FacetFilterItem
+								text="{text}"
+								key="{key}"
+								count="{data}" />
+						</items>
+					</FacetFilterList>
+				</lists>
+			</FacetFilter>
+
+			<!--  A demo table will be appended here  -->
+
+		</items>
+	</VBox>
+</mvc:View>

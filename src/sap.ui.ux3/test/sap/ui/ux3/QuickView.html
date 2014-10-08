@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<title>QuickView - sap.ui.ux3</title>
+<style>
+	#target1 { 
+		width:600px;
+		margin-bottom:200px;
+		text-align:right }
+	#QuickViewDS .quickViewDS {
+		border-bottom: 2px solid #e5e5e5;
+		background-color: white;
+		padding: 4px 4px 4px 6px;
+	}
+	.quickViewDS>span, .quickViewDS>a {
+		max-width: 120px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	td.qvlabel {
+		padding: 0px 6px 0px 0px;
+	}
+	td.qvlabel>span {
+		max-width: 100px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	td.qvvalue>span, td.qvvalue>a {
+		max-width: 140px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0px;
+	}
+</style>
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" 
+	id="sap-ui-bootstrap"
+	data-sap-ui-theme="sap_goldreflection"
+	data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.ux3">
+</script>
+<!--script src="../../../../resources/sap-ui-debug.js"></script-->
+
+<script type="text/javascript">
+sap.ui.getCore().attachInitEvent(function () {
+	var oButton,
+		oQuickView,
+		oQuickViewDataSet,
+		oRTT,
+		bDataLoaded = false;
+
+	jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+	// DataModel loading functions
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.attachRequestFailed(function(){jQuery.sap.log.debug("Failed to load the data model");});
+	oModel.attachRequestCompleted(function(){jQuery.sap.log.debug("Data model loaded successfully");});
+	sap.ui.getCore().setModel(oModel);
+
+	function loadModel(url){
+		if(url){
+			jQuery.sap.log.debug("QuickView data load from: " + url); 
+			oModel.loadData(url);
+			bDataLoaded = true;
+		}
+	}
+
+	function loadModelDelayed(event){
+		if(bDataLoaded){ return;}
+		
+		var oControl = event.getSource();
+		var dataUrl = oControl.data("dataUrl");
+		var delay = oControl.data("loadDelay");
+		if(isNaN(delay)){ delay = 0; }
+		jQuery.sap.log.debug("Delayed loading data from source: " + dataUrl); 
+		if(dataUrl && !bDataLoaded){
+			window.setTimeout( function(){
+					loadModel(dataUrl);
+				},delay);
+		}
+	}
+
+	// Keyboard navigation with arrow keys over cells in a matrix layout
+	// (see "Keyboard Navigation (Lists) in the Developer Guide")
+	function setKeyboardNavigation(){
+
+		// "this" is expected to be a matrix layout
+		var oFocusRef = this.getDomRef(),
+			aCells = oFocusRef.getElementsByTagName("TD"),
+			aDomRefs = [];
+
+		jQuery.sap.require("sap.ui.core.delegate.ItemNavigation");
+		for (var i=0;i<aCells.length;i++) {
+			aDomRefs.push(aCells[i].firstChild);
+		}
+		if (!this.QVItemNavigation) {
+			this.QVItemNavigation = new sap.ui.core.delegate.ItemNavigation();
+			this.addDelegate(this.QVItemNavigation);
+		}
+		this.QVItemNavigation.setRootDomRef(oFocusRef);
+		this.QVItemNavigation.setItemDomRefs(aDomRefs);
+		this.QVItemNavigation.setCycling(false);
+		this.QVItemNavigation.setSelectedIndex(0);
+		this.QVItemNavigation.setPageSize(aDomRefs.length);
+	}
+
+	/* To create and attach a QuickView:
+	 * 1. Create variable content for the QuickView
+	 * 2. Instantiate a QuickView control
+	 * 3. Set the QuickView as a tooltip to a parent control
+	*/
+
+	// Parent control
+	oButton = new sap.ui.commons.Button("b1");
+	oButton.setText("QuickView 1");
+	oButton.setLite(true);
+
+
+	// 1. create a QuickView form content
+	function createQuickViewContent(){
+		// In form of "label: value", the value can be either a link or a text view
+		// Both (link and text view are created but only one is shown depending on the contents)
+		var oLabel = new sap.ui.commons.TextView()
+			.bindProperty("text", "label", function( label ){ return label ? label + ":" : ""; });
+		var oTextView = new sap.ui.commons.TextView({text : "{text}"})
+			.bindProperty("visible", "href", function( href ){ return !href; });
+		var oLink = new sap.ui.commons.Link({text : "{text}", href: "{href}"})
+			.bindProperty("visible", "href", function( href ){ return !!href; });
+
+		var c = sap.ui.commons;
+		var oLeftCell = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.End, vAlign : c.layout.VAlign.Top, content:[oLabel]});
+		oLeftCell.addStyleClass("qvlabel");
+		var oRightCell = new c.layout.MatrixLayoutCell({hAlign : c.layout.HAlign.Begin, vAlign : c.layout.VAlign.Top, content:[oTextView, oLink]});
+		oRightCell.addStyleClass("qvvalue");
+
+		var oRow = new c.layout.MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
+
+		var oContent = new c.layout.MatrixLayout({layoutFixed:true, widths: ["45%", "140px"]});
+		oContent.bindAggregation("rows", "accountData", oRow);
+
+		oContent.addDelegate({onAfterRendering:jQuery.proxy(setKeyboardNavigation,oContent)});
+
+		return oContent;
+	}
+
+	// Event handlers from QuickViews
+	function onOpen(event){
+		jQuery.sap.log.debug( event.getSource().getId() + ": open event received by the application");
+		// simulate delayed data request from server
+		loadModelDelayed(event);
+	}
+
+	function onClose(event){
+		jQuery.sap.log.debug( event.getSource().getId() + ": close event received by the application");
+	}
+
+	function onNavigate(event){
+		jQuery.sap.log.debug("Navigate event with the reference to: " + event.getParameter("href"));
+		// Supress link navigation from a QuickView
+		event.preventDefault();
+		// Close the QuickView after a click on a link
+		event.getSource().close();
+	}
+
+	function onActionSelected(event){
+		var param = event.getParameters();
+		jQuery.sap.log.debug("Action from " + event.getSource().getId() + ":: id:" + param.id + ", action:(" + param.action + "), state:" + param.state);
+	}
+
+	//Specify business actions "create", "delete" and "duplicate"
+	var oCreateAction = new sap.ui.ux3.ThingAction({
+		id : "create",
+		text : "Create Survey"
+	});
+	
+	var oDeleteAction =  new sap.ui.ux3.ThingAction({
+		id : "delete",
+		text : "Delete Reference"
+	});
+   
+	var oDuplicateAction = new sap.ui.ux3.ThingAction({
+		id : "duplicate",
+		text : "Duplicate Reference"
+	});
+
+	// 2. create a QuickView control
+	oQuickView = new sap.ui.ux3.QuickView( "QuickView1", {
+		type:			"{type}",
+		firstTitle:		"{name}",
+		firstTitleHref:	"{href}",
+		secondTitle:	"{description}",
+		icon:			"{icon}",
+		content:		createQuickViewContent(),
+		open:			onOpen,
+		close:			onClose,
+		navigate:		onNavigate,
+		actionSelected:	onActionSelected,
+		actions:		[oCreateAction, oDeleteAction, oDuplicateAction]
+	})
+		.bindContext("/items/0") // select the first item in the "items" array
+		.setModel(oModel) // this line is redundant here but provided as an example
+		.data("dataUrl","resources/QuickViewData.json") // additional data for event listeners
+		.data("loadDelay","500"); // data loading delay to simulate a slower roundtrip
+
+	var oQV = oQuickView;
+	//oQV.getContent()[0].addDelegate({onAfterRendering:jQuery.proxy(oQV.adjustPosition, oQV)});
+
+	// 3. Attach the QuickView to the parent control
+	oButton.setTooltip(oQuickView);
+	oButton.placeAt("target1");
+
+	// Do the same for the second QuickView, but use the second item in the DataModel
+	oButton = new sap.ui.commons.Button("b2");
+	oButton.setText("QuickView 2");
+	oButton.setLite(true);
+
+	// reuse an existing ThingGroup as QuickView content
+	jQuery.sap.require("sap.ui.ux3.ThingGroup");
+	var oThingGroup = new sap.ui.ux3.ThingGroup();
+	oThingGroup.addContent(createQuickViewContent());
+
+	oQuickView = new sap.ui.ux3.QuickView( "QuickView2", {
+		type:			"{type}",
+		firstTitle:		"{name}",
+		firstTitleHref:	"{href}",
+		secondTitle:	"{description}",
+		icon:			"{icon}",
+		content:		oThingGroup,
+		open:			onOpen,
+		close:			onClose,
+		navigate:		onNavigate,
+		actionSelected:	onActionSelected
+	})
+		.bindContext("/items/1")
+		.data("dataUrl","resources/QuickViewData.json");
+
+	oButton.setTooltip(oQuickView);
+	oButton.placeAt("target2");
+	
+	oQuickView.attachOpened(function(){
+		oQuickView.adjustPosition();
+		alert("QuickView has been opened");
+	});
+	oQuickView.attachClosed(function(){
+		alert("QuickView has been closed");
+	});
+
+	//
+	// QuickView DataSet example
+	//
+
+	// 1. QuickView DataSet content as a table (MatrixLayout):
+	function createQuickViewDSContent(){
+		var oDescription = new sap.ui.commons.TextView({text : "{description}"});
+		var oTextView = new sap.ui.commons.TextView({text : "{name}"})
+			.bindProperty("visible", "href", function( href ){ return !href; });
+		var oLink = new sap.ui.commons.Link({text : "{name}", href: "{href}"})
+			.bindProperty("visible", "href", function( href ){ return !!href; });
+
+		var c = sap.ui.commons;
+		var oLeftCell = new c.layout.MatrixLayoutCell({content:[oTextView, oLink]});
+		var oRightCell = new c.layout.MatrixLayoutCell({content:[oDescription]});
+
+		oLeftCell.addStyleClass("quickViewDS");
+		oRightCell.addStyleClass("quickViewDS");
+
+		var oRow = new c.layout.MatrixLayoutRow({cells:[oLeftCell, oRightCell]});
+
+		var oContent = new c.layout.MatrixLayout();
+		oContent.bindAggregation("rows", "/items", oRow);
+
+		oContent.addDelegate({onAfterRendering:jQuery.proxy(setKeyboardNavigation,oContent)});
+
+		return oContent;
+	}
+
+	// Create a Data Set QuickView and attach it to the parent control
+	oButton = new sap.ui.commons.Button("b3");
+	oButton.setText("QuickView with Data Set");
+	oButton.setLite(true);
+
+	var oContent = createQuickViewDSContent();
+	var oQuickViewDS = new sap.ui.ux3.QuickView( "QuickViewDS", {
+		type:		"CONTACTS",
+		content:	oContent,
+		open:		onOpen,
+		close:		onClose,
+		navigate:	onNavigate,
+		actionSelected:	onActionSelected,
+		showActionBar:	false
+	}).data("dataUrl","resources/QuickViewData.json");
+
+	oContent.addDelegate({onAfterRendering:function(){oQuickViewDS.adjustPosition();}});
+	oButton.setTooltip(oQuickViewDS);
+	oButton.placeAt("target2");
+
+	//Create a button with a RichToolTip
+	oButton = new sap.ui.commons.Button("b4");
+	oButton.setText("RichToolTip");
+	oButton.setLite(true);
+	oRTT = new sap.ui.commons.RichTooltip( "Rtt1", {title: "Rich Tooltip", text:"RichTooltip"});
+	oButton.setTooltip(oRTT);
+	oButton.placeAt("target3");
+});
+</script>
+</head>
+
+<body class="sapUiBody" role="application">
+<h1>Test Page for QuickView</h1>
+<div id="target1" title="QuickView"></div>
+<div id="target2"  title="QuickView"></div>
+<div id="target3"  title="RichTooltip"></div>
+</body>
+</html>

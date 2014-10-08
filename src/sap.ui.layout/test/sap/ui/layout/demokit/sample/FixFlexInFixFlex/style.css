@@ -1,0 +1,15 @@
+.fixFlexInFixFlex1  > .sapUiFixFlexFixed {
+	background: #8A8A8A;
+}
+
+.fixFlexInFixFlex1  > .sapUiFixFlexFlexible {
+	background: #BBBBBB;
+}
+
+.fixFlexInFixFlex2 > .sapUiFixFlexFixed {
+	background: #3384EB;
+}
+
+.fixFlexInFixFlex2 > .sapUiFixFlexFlexible {
+	background: #A9CFFF;
+}

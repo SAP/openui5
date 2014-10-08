@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Splitter -sap.ui.commons</title>
+
+		<script id="sap-ui-bootstrap" 
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_goldreflection"
+				data-sap-ui-trace="true"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.commons"
+				data-sap-ui-areas="uiArea1"
+				data-sap-ui-evt-oninit="createControls()"
+				>
+		</script>
+		<script>
+			function createControls() {
+
+				var oSplitter = new sap.ui.commons.Splitter("mySplitter");
+				var oSplitter1 = new sap.ui.commons.Splitter("mySplitter1");
+				var oSplitter2 = new sap.ui.commons.Splitter("mySplitter2");
+				var oSplitter3 = new sap.ui.commons.Splitter("mySplitter3");
+				var oSplitter4 = new sap.ui.commons.Splitter("mySplitter4");
+				var oSplitter5 = new sap.ui.commons.Splitter("mySplitter5");
+				var oSplitter6 = new sap.ui.commons.Splitter("mySplitter6");
+				var oSplitter7 = new sap.ui.commons.Splitter("mySplitter7");
+
+				oSplitter.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter.setSplitterPosition("15%");
+
+				oSplitter.setMinSizeFirstPane("5%");
+				oSplitter.setMinSizeSecondPane("25%");
+
+				oSplitter1.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter1.setSplitterPosition("85%");
+				oSplitter1.setMinSizeFirstPane("5%");
+				oSplitter1.setMinSizeSecondPane("5%");
+
+				oSplitter2.setSplitterPosition("15%");
+				oSplitter2.setMinSizeFirstPane("5%");
+				oSplitter2.setMinSizeSecondPane("5%");
+
+				oSplitter3.setSplitterPosition("85%");
+				oSplitter3.setMinSizeFirstPane("5%");
+				oSplitter3.setMinSizeSecondPane("5%");
+
+				oSplitter4.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter4.setSplitterPosition("15%");
+				oSplitter4.setMinSizeFirstPane("5%");
+				oSplitter4.setMinSizeSecondPane("5%");
+
+				oSplitter5.setSplitterOrientation(sap.ui.commons.Orientation.Horizontal);
+				oSplitter5.setSplitterPosition("85%");
+				oSplitter5.setMinSizeFirstPane("5%");
+				oSplitter5.setMinSizeSecondPane("5%");
+
+				oSplitter6.setSplitterPosition("15%");
+				oSplitter6.setMinSizeFirstPane("5%");
+				oSplitter6.setMinSizeSecondPane("5%");
+
+				oSplitter7.setSplitterPosition("85%");
+				oSplitter7.setMinSizeFirstPane("5%");
+				oSplitter7.setMinSizeSecondPane("5%");
+
+				// top Pane of mySplitter
+				var otBtn1 = new sap.ui.commons.Button({text: "Top SP"});
+				oSplitter.addFirstPaneContent(otBtn1);	
+				var otBtn2 = new sap.ui.commons.Button({text: "Top SP"});
+				oSplitter.addFirstPaneContent(otBtn2);		
+				var otBtn3 = new sap.ui.commons.Button({text: "Top SP"});
+				var label1 = new sap.ui.commons.Label({text: "Tabbing Order : 1"});
+				oSplitter.addFirstPaneContent(otBtn3);
+				oSplitter.addFirstPaneContent(label1);
+
+			    // bottom Pane of mySplitter
+					//top Pane of mySplitter1
+						//left Pane of mySplitter2
+						var olBtn1SP2 = new sap.ui.commons.Button({text: "Left SP2"});
+						oSplitter2.addFirstPaneContent(olBtn1SP2);
+						var olBtn2SP2 = new sap.ui.commons.Button({text: "Left SP2"});
+						oSplitter2.addFirstPaneContent(olBtn2SP2);
+						var olBtn3SP2 = new sap.ui.commons.Button({text: "Left SP2"});
+						oSplitter2.addFirstPaneContent(olBtn3SP2);
+						//right Pane of mySplitter2
+							//left Pane of mySplitter3
+								// top Pane of mySplitter4
+								var otBtn1SP4 = new sap.ui.commons.Button({text: "Top SP4"});
+								oSplitter4.addFirstPaneContent(otBtn1SP4);
+								var otBtn2SP4 = new sap.ui.commons.Button({text: "Top SP4"});
+								oSplitter4.addFirstPaneContent(otBtn2SP4);
+								var otBtn3SP4 = new sap.ui.commons.Button({text: "Top SP4"});
+								oSplitter4.addFirstPaneContent(otBtn3SP4);
+
+			    				// bottom Pane of mySplitter4
+									//top Pane of mySplitter5
+										//left Pane of mySplitter6
+										var olBtn1SP6 = new sap.ui.commons.Button({text: "Left SP6"});
+										oSplitter6.addFirstPaneContent(olBtn1SP6);
+										var olBtn2SP6 = new sap.ui.commons.Button({text: "Left SP6"});
+										oSplitter6.addFirstPaneContent(olBtn2SP6);
+										var olBtn3SP6 = new sap.ui.commons.Button({text: "Left SP6"});
+										oSplitter6.addFirstPaneContent(olBtn3SP6);
+										//right Pane of mySplitter6
+											//left Pane of mySplitter7
+											var olBtn1SP7 = new sap.ui.commons.Button({text: "Left SP7"});
+											oSplitter7.addFirstPaneContent(olBtn1SP7);
+											var olBtn2SP7 = new sap.ui.commons.Button({text: "Left SP7"});
+											oSplitter7.addFirstPaneContent(olBtn2SP7);
+											var olBtn3SP7 = new sap.ui.commons.Button({text: "Left SP7"});
+											oSplitter7.addFirstPaneContent(olBtn3SP7);
+											//right Pane of mySplitter7
+											var orBtn1SP7 = new sap.ui.commons.Button({text: "Right SP7"});
+											oSplitter7.addSecondPaneContent(orBtn1SP7);
+											var orBtn2SP7 = new sap.ui.commons.Button({text: "Right SP7"});
+											oSplitter7.addSecondPaneContent(orBtn2SP7);
+											var orBtn3SP7 = new sap.ui.commons.Button({text: "Right SP7"});
+											oSplitter7.addSecondPaneContent(orBtn3SP7);
+										oSplitter6.addSecondPaneContent(oSplitter7);
+									oSplitter5.addFirstPaneContent(oSplitter6);
+									//bottom Pane of mySplitter5
+									var obBtn1SP5 = new sap.ui.commons.Button({text: "Bottom SP5"});
+									oSplitter5.addSecondPaneContent(obBtn1SP5);
+									var obBtn2SP5 = new sap.ui.commons.Button({text: "Bottom SP5"});
+									oSplitter5.addSecondPaneContent(obBtn2SP5);
+									var obBtn3SP5 = new sap.ui.commons.Button({text: "Bottom SP5"});
+									oSplitter5.addSecondPaneContent(obBtn3SP5);
+								oSplitter4.addSecondPaneContent(oSplitter5);
+							oSplitter3.addFirstPaneContent(oSplitter4);
+							//right Pane of mySplitter3
+								var orBtn1SP3 = new sap.ui.commons.Button({text: "Right SP3"});
+								oSplitter3.addSecondPaneContent(orBtn1SP3);
+								var orBtn2SP3 = new sap.ui.commons.Button({text: "Right SP3"});
+								oSplitter3.addSecondPaneContent(orBtn2SP3);
+								var orBtn3SP3 = new sap.ui.commons.Button({text: "Right SP3"});
+								oSplitter3.addSecondPaneContent(orBtn3SP3);
+						oSplitter2.addSecondPaneContent(oSplitter3);
+					oSplitter1.addFirstPaneContent(oSplitter2);
+					//bottom Pane of mySplitter1
+					var obBtn1SP1 = new sap.ui.commons.Button({text: "Bottom SP1"});
+					oSplitter1.addSecondPaneContent(obBtn1SP1);
+					var obBtn2SP1 = new sap.ui.commons.Button({text: "Bottom SP1"});
+					oSplitter1.addSecondPaneContent(obBtn2SP1);
+					var obBtn3SP1 = new sap.ui.commons.Button({text: "Bottom SP1"});
+					oSplitter1.addSecondPaneContent(obBtn3SP1);
+				oSplitter.addSecondPaneContent(oSplitter1);
+				oSplitter.placeAt("uiArea1");
+			}
+		</script>
+	</head>
+	<body class="sapUiBody" role="application" style="height: 100%; width:100%;">
+		<h1>Test Page for sap.ui.commons.Splitter</h1>
+		<div id="uiArea1" style="height:100%; width:100%;">
+		</div>
+	</body>
+</html>

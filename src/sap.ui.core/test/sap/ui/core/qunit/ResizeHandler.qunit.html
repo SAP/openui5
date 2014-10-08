@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested class: sap.ui.core.ResizeHandler
+  Author: d046314
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="base"
+		data-sap-ui-noConflict="true">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<style>
+		.ResizeArea{
+			background-color: blue;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+		
+		.ResizeAreaContainer{
+			background-color: cyan;
+			width: 100px;
+			height: 100px;
+			position: relative;
+		}
+	</style>
+
+	<!-- Initialization -->
+	<script language="javascript">
+		var oResizeHandler = null;
+		var oPlugin = {};
+		oPlugin.startPlugin = function(oCore, bInit){
+			oResizeHandler = oCore.oResizeHandler;
+		};
+		oPlugin.stopPlugin = function(oCore){};
+		sap.ui.getCore().registerPlugin(oPlugin);
+
+		var lastResizeTarget = null;
+		var lastResizeTargetCtrl = null;
+		var lastSize = null;
+		
+		var _register = function(oRef){
+			var sResizeListenerId = sap.ui.core.ResizeHandler.register(oRef, doOnResize);
+			lastResizeTarget = null;
+			lastResizeTargetCtrl = null;
+			lastSize = null;
+			return sResizeListenerId;
+		};
+		
+		var doOnResize = function(oEvent){
+			lastResizeTarget = oEvent.target;
+			lastResizeTargetCtrl = oEvent.control;
+			lastSize = oEvent.size;
+			ok(true, "ResizeHandler called"); 
+		};
+		
+		sap.ui.core.Control.extend("TestControl", {
+			metadata : {
+                properties : {
+                    "height" : {type: "sap.ui.core.CSSSize", defaultValue: "100px"},
+                    "width" : {type: "sap.ui.core.CSSSize", defaultValue: "100px"}
+                }
+            },
+            
+            renderer : function(oRm, oControl) {
+                oRm.write("<div"); 
+                oRm.writeControlData(oControl);
+                oRm.addStyle("width", oControl.getWidth());
+                oRm.addStyle("height", oControl.getHeight());
+                oRm.writeStyles();
+                oRm.addClass("ResizeAreaContainer");
+                oRm.writeClasses();
+                oRm.write(">");
+                oRm.write("<div id='"+oControl.getId()+"-inner' class='ResizeArea'></div>");
+                oRm.write("</div>");
+            }
+		});
+		
+		var control = new TestControl("TestControl", {width: "100px", height: "100px"});
+		control.placeAt("content");
+		
+		
+	</script>
+	
+	<!-- Test functions -->
+	<script language="javascript">
+
+		qutils.delayTestStart();
+	
+		module("Basic");
+	
+		test("Check ResizeHandler initialized", function() {
+			ok(oResizeHandler, "ResizeHandler initialized");
+		});
+
+		test("Check Register/Deregister", function() {
+			var oDomRef = jQuery("#resizeArea").get(0);
+			var currentNumberOfEventListeners = oResizeHandler.aResizeListeners.length;
+			var sResizeListenerId = sap.ui.core.ResizeHandler.register(oDomRef, doOnResize);
+			equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners+1, "Number of event listeners after registration");
+			var bIsRegistered = false;
+			jQuery.each(oResizeHandler.aResizeListeners, function(index, oResizeListener){
+				if(oResizeListener.sId == sResizeListenerId){
+					bIsRegistered = true;
+					ok(oResizeListener.oDomRef == oDomRef, "Registered DOM Ref correct");
+					if (!(sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version >= 9))) {
+						ok(oResizeListener.fHandler == doOnResize, "Registered Handler correct");
+					}
+					return false; //break the loop
+				};
+			});
+			ok(bIsRegistered, "Listener registered correctly");
+			sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+			equal(oResizeHandler.aResizeListeners.length, currentNumberOfEventListeners, "Number of event listeners after de-registration");
+		});
+
+
+		module("DOM Element Resize");
+
+		asyncTest("Check DOM Resize", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
+			
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		
+		
+		asyncTest("Check DOM Resize width +1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize width -1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize height +1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:151px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize height -1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize width and height +1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:151px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize width and height -1", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize width and height +101", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:251px;height:251px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize width and height -101", function() {
+			expect(2);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			jQuery("#resizeAreaContainer").attr("style", "width:150px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("DetachListener", function() {
+			expect(1);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;");
+			window.setTimeout(function(){
+				ok(lastResizeTarget == null, "Listener should be NOT be called on DOM Resize after deregistering: " + lastResizeTarget);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check DOM Resize while setting display:none", function() {
+			expect(7);
+			var oResizeAreaDom = jQuery("#resizeArea").get(0);
+			var sResizeListenerId = _register(oResizeAreaDom);
+			equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px");
+			
+			// now make the parent invisible
+			jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;display:none;");
+			equal(oResizeAreaDom.offsetHeight, 0, "height should be 0px when the parent is display:none");
+
+			window.setTimeout(function(){
+				ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize due to display:none");
+				lastResizeTarget = null;
+				
+				// now make the parent visible again
+				jQuery("#resizeAreaContainer").attr("style", "width:151px;height:150px;");
+				equal(oResizeAreaDom.offsetHeight, 150, "height should be 150px again when the parent is display:block");
+				
+				window.setTimeout(function(){
+					ok(lastResizeTarget == oResizeAreaDom, "Listener should be called on DOM Resize due to display:none");
+					sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+					start();
+				}, 300);
+			}, 300);
+		});
+		
+		
+		module("Control Resize");
+		
+		asyncTest("Check Control Resize - With Rerendering", function() {
+			expect(3);
+			var sResizeListenerId = _register(control);
+
+			control.setWidth("150px");
+			control.setHeight("150px");
+			sap.ui.getCore().applyChanges();
+			
+			window.setTimeout(function(){
+				ok(lastResizeTargetCtrl == control, "Listener should be called on DOM Resize");
+				ok(lastSize && lastSize.width == 150 && lastSize.height == 150, "New Size given");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		asyncTest("Check Control Resize - Dom Changes", function() {
+			expect(3);
+			var sResizeListenerId = _register(control);
+
+			control.$().attr("style", "width:151px;height:149px;");
+			
+			window.setTimeout(function(){
+				ok(lastResizeTargetCtrl == control, "Listener should be called on DOM Resize");
+				ok(lastSize && lastSize.width == 151 && lastSize.height == 149, "New Size given");
+				sap.ui.core.ResizeHandler.deregister(sResizeListenerId);
+				start();
+			}, 300);
+		});
+		
+		test("Check Control Resize - Destroy", function() {
+			expect(3);
+			ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers before registration");
+			var sResizeListenerId = _register(control);
+			ok(oResizeHandler.aResizeListeners.length == 1, "Number of Handlers after registration");
+			control.destroy();
+			ok(oResizeHandler.aResizeListeners.length == 0, "Number of Handlers after destroy");
+		});
+		
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: sap.ui.core.ResizeHandler</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="resizeAreaContainer" class="ResizeAreaContainer">
+		<div id="resizeArea" class="ResizeArea"></div>
+	</div>
+	<br>
+	<div id="content"></div>
+</body>
+</html>

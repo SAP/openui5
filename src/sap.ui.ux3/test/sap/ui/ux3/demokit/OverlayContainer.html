@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/UX3Controls" data-sap-ui-dk-controls="sap.ui.ux3.OverlayContainer">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="Control OverlayContainer" />
+		<title>OverlayContainer - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.ux3,sap.ui.commons,sap.ui.demokit"
+				data-sap-ui-language="en"
+				>
+		</script>
+		<script>sap.ui.demokit._supportedThemes = ["sap_bluecrystal", "sap_goldreflection", "sap_hcb" ];</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='samplescript1'>
+function handler(oEvent) {
+	alert("Event '"+oEvent.getId()+"' triggered");
+}
+
+var oOverlayContainer = new sap.ui.ux3.OverlayContainer();
+oOverlayContainer.addContent(new sap.ui.commons.TextView({text: "Some Content ..."}));			
+oOverlayContainer.attachClose(handler);
+oOverlayContainer.attachOpen(handler);
+oOverlayContainer.attachOpenNew(handler);
+
+var oButton = new sap.ui.commons.Button({
+	text: "Open Overlay Container",
+	press: function(oEvent){ 
+		if(!oOverlayContainer.isOpen()){
+			oOverlayContainer.open();
+		}
+	}
+});
+oButton.placeAt("sample1");
+</script>
+
+	</head>
+	
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/overlaycontainer-icon.png">OverlayContainer</h1>
+		<h2>Introduction</h2>
+		
+		<p>The OverlayContainer is quite similar to the <a class="sapUiDemokitSrcLink" href="ThingInspector.html">ThingInspector</a> control.
+		It is a popup which is positioned over the application content. The OverlayContainer is either aligned with the <a class="sapUiDemokitSrcLink" href="Shell.html">Shell</a> 
+		control if it is available (on the same window) or with the window itself (like in the example below because the Demokit content runs within an IFrame).
+		The difference to the ThingInspector control is that the OverlayContainer allows arbitrary content.</p>
+		<br/>
+
+		<h2>Example</h2>
+		
+		<p>Here is a small example using the OverlayContainer control.</p>
+		<div code-sample="sample1" script="samplescript1"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.ux3.OverlayContainer.html" >API documentation</a>
+		</p>
+	</body>
+</html>

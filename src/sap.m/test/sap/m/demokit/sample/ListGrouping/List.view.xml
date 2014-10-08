@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.ListGrouping.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'SupplierName',
+				descending: false,
+				group: true
+			},
+			groupHeaderFactory: '.getGroupHeader'
+		}"
+		headerText="Products" >
+		<StandardListItem
+			title="{Name}"
+			description="{ProductId}"
+			icon="{ProductPicUrl}"
+			iconDensityAware="false"
+			iconInset="false" />
+	</List>
+</mvc:View>

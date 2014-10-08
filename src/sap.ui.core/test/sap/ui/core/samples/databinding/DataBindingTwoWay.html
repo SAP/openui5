@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+
+<html>
+
+ <head>
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+   <title>Data binding test page with Two Way data binding and JSON Model</title>
+
+    <!-- ********************************************************************** -->
+    <!-- JavaScript Bootstrap:                                                  -->
+    <!-- Extend the "libs" property if you like to import additional libraries  -->
+    <!-- ********************************************************************** -->
+    <script id="sap-ui-bootstrap"
+        type="text/javascript"
+        src="../../../../../../resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_goldreflection"
+        data-sap-ui-trace="true">
+    </script>
+
+    <script type="text/javascript">
+
+
+    	try{
+			sap.ui.getCore().loadLibrary("sap.ui.commons");
+		}catch(e){
+			alert("This test page requires the library 'sap.ui.commons' which is not available.");
+			throw(e);
+		}
+
+    	sap.ui.getCore().attachInitEvent(doIt);
+
+    	var oModel = new sap.ui.model.json.JSONModel();
+    	var oData = {
+        		firstName: "John", 
+        		lastName: "Doe", 
+        		birthday: {day:1,month:4,year:1970}, 
+        		address:[{city:"Walldorf"}], 
+        		enabled: true
+        	};
+    	oModel.setData(oData);
+    	sap.ui.getCore().setModel(oModel);
+    	
+    	function doIt(){
+    		
+    		var oLbl = new sap.ui.commons.Label({text : "Model default binding mode: " + oModel.getDefaultBindingMode()});
+    		oLbl.placeAt("target0");
+    		
+    		oLbl = new sap.ui.commons.Label({text : "Textfield with Two Way data binding"});
+			var oText = new sap.ui.commons.TextField({value : "{/firstName}"});			
+			oLbl.placeAt("target1");
+			oText.placeAt("target2");
+
+    		oLbl = new sap.ui.commons.Label({text : "Textfield with One Way data binding"});
+			oLbl.placeAt("target3");
+			var oText = new sap.ui.commons.TextField();
+			// bind value property one way only
+			// propertyname, formatter function, binding mode
+			oText.bindValue("/firstName", null, sap.ui.model.BindingMode.OneWay);			
+			oText.placeAt("target4");
+			
+			oLbl = new sap.ui.commons.Label({text : "First Name value:"});
+			oLbl.placeAt("target5");
+    		oText = new sap.ui.commons.TextView({text : "{/firstName}"});
+			oText.placeAt("target6");
+						
+			oLbl = new sap.ui.commons.Label({text: "ComboBox with Two Way data binding"});
+			oLbl.placeAt("target7");
+    		var oCombo = new sap.ui.commons.ComboBox({value : "{/firstName}"});
+            oCombo.addItem(new sap.ui.core.ListItem("i1",{text:"John", additionalText: "(1)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i2",{text:"Jane", additionalText: "(2)"}));
+            oCombo.addItem(new sap.ui.core.ListItem("i3",{text:"Jack", additionalText: "(3)"}));			
+            oCombo.placeAt("target8");
+            
+			var oBtn = new sap.ui.commons.Button({
+				text : "Read First Name value from the model and display in textfield",
+				press : function(){oTextBtn.setText(oModel.getProperty("/firstName"))} 	
+			});
+			oBtn.placeAt("target9");
+    		var oTextBtn = new sap.ui.commons.TextView({text : oModel.getProperty("/firstName")});
+    		oTextBtn.placeAt("target10");
+    		
+			oBtn = new sap.ui.commons.Button({
+				text : "Set textfield value as First Name value in the model",
+				press : function(){oModel.setProperty("/firstName",oTextSetBtn.getValue())} 	
+			});
+			oBtn.placeAt("target11");
+    		var oTextSetBtn = new sap.ui.commons.TextField({value: oModel.getProperty("/firstName")});
+    		oTextSetBtn.placeAt("target12");
+			
+			var oChkBx = new sap.ui.commons.CheckBox({change:handleCheckBoxChange});
+			oChkBx.bindChecked("/enabled", null, sap.ui.model.BindingMode.OneWay);
+			oChkBx.placeAt("target13");
+			
+			var oML = new sap.ui.commons.layout.MatrixLayout();
+			oML.setLayoutFixed(false);
+
+			oTxt = new sap.ui.commons.TextField("firstName");
+			oLbl = new sap.ui.commons.Label({text:"First Name", labelFor:"firstName"});
+			oML.createRow(oLbl, oTxt);
+			oTxt.bindValue("/firstName");
+			oTxt.bindProperty("enabled", "/enabled");
+
+			oTxt = new sap.ui.commons.TextField("lastName");
+			oLbl = new sap.ui.commons.Label({text:"Last Name", labelFor:"lastName"});
+			oML.createRow(oLbl,	oTxt);
+			oTxt.bindValue("/lastName");
+			oTxt.bindProperty("enabled", "/enabled");
+
+			oML.placeAt("target14");
+			
+    	};
+    	
+    	function update(){
+			oModel.setProperty("/firstName", sap.ui.getCore().byId("source").getValue());
+    	};
+    	
+    	function handleCheckBoxChange(oEvent){
+    		var bEnabled = oEvent.getParameter("checked");
+    		//oModel.setProperty("enabled", bEnabled);
+    		oModel.setProperty("/enabled", bEnabled);
+    	};
+    </script>
+  </head>
+
+  <body class="sapUiBody">
+
+    <div>
+      <div id="header">
+        <h1>Data binding test page with Two Way data binding and JSON Model</h1>
+      </div>
+      <div id="target0"></div>
+      <hr/>
+      <div id="target1"></div>
+      <div id="target2"></div>
+      <hr/>
+      <div id="target3"></div>
+      <div id="target4"></div>
+      <hr/>
+      <div id="target5"></div>
+      <div id="target6"></div>
+      <hr/>
+      <div id="target7"></div>
+      <div id="target8"></div>
+      <hr/>
+      <div id="target9"></div>
+      <div id="target10"></div>
+      <hr/>
+      <div id="target11"></div>
+      <div id="target12"></div>
+      <hr/>
+      <div id="target13"></div>
+      <div id="target14"></div>      
+    </div>
+
+  </body>
+
+</html>

@@ -1,0 +1,78 @@
+{
+	"explored" : {
+		"entitiesDefaults" : {
+			"appComponent" : "CA-UI5",
+			"formFactors" : "-"
+		},
+		"samplesRef" : {
+			"namespace" : "sap.ui.core.sample",
+			"ref" : "test-resources/sap/ui/core/demokit/sample"
+		},
+		"entities" : [
+			{
+				"id" : "sap.ui.core.Control",
+				"name" : "Control",
+				"category" : "Display",
+				"since" : "1.0",
+				"samples" : [ "sap.ui.core.sample.ControlBusyIndicator" ]
+			},
+			{
+				"id" : "sap.ui.core.HTML",
+				"name" : "HTML",
+				"category" : "Display",
+				"since" : "1.0",
+				"samples" : [ "sap.ui.core.sample.Html" ]
+			},
+			{
+				"id" : "sap.ui.core.Icon",
+				"name" : "Icon",
+				"category" : "Display",
+				"since" : "1.12",
+				"samples" : [ "sap.ui.core.sample.Icon" ]
+			},
+			{
+				"id" : "sap.ui.test.Opa5",
+				"name" : "OPA5",
+				"category" : "Testing",
+				"since" : "1.24",
+				"samples" : [ 
+					"sap.ui.core.sample.OpaMatchers",
+					"sap.ui.core.sample.OpaById",
+					"sap.ui.core.sample.OpaReuse"
+				]
+			}
+		],
+		"samples" : [
+			{
+				"id": "sap.ui.core.sample.ControlBusyIndicator",
+				"name": "Control Busy Indicator",
+				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
+			},
+			{
+				"id": "sap.ui.core.sample.Html",
+				"name": "HTML",
+				"description": "With the HTML controls you can easily embed any kind of HTML content into your UI5 mobile application."
+			},
+			{
+				"id": "sap.ui.core.sample.Icon",
+				"name": "Icon",
+				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaMatchers",
+				"name": "Using Matchers",
+				"description": "Matchers are used to retrieve controls that have to match a condition, eg: Property matching a value"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaById",
+				"name": "Finding controls by id",
+				"description": "OPA finds a control by its id, triggers a tap and then finds multiple controls by their ids"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaReuse",
+				"name": "How to structure your OPA tests",
+				"description": "If you have complex apps you should build reuse functions to make your OPA tests maintainable."
+			}
+		]
+	}
+}

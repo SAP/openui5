@@ -1,0 +1,13 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		headerText="Actions" >
+		<ActionListItem text="Reject" />
+		<ActionListItem text="Accept" />
+		<ActionListItem text="Email" />
+		<ActionListItem text="Forward" />
+		<ActionListItem text="Delete" />
+	</List>
+</mvc:View>

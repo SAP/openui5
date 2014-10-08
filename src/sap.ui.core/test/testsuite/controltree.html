@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
+		<title>Control Tree</title>
+		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+		<script>
+		var _bPageSizeCalculated = false; 
+		window.onload = onLoadPage;
+		window.onresize = onResizePage;
+	
+		function onLoadPage() {
+			initialSizing();
+		};
+
+		function initialSizing() {
+			if ( !_bPageSizeCalculated ) {
+				onResizePage();
+				if ( !_bPageSizeCalculated ) {
+					setTimeout(initialSizing, 50);
+				}
+			}
+		};
+		
+		function onResizePage() {
+			var h = document.body.clientHeight;
+			h -= 7; // 2*2px padding + 2 * 1px border + 2px margin
+			h -= document.getElementById("title").offsetHeight;
+			h -= document.getElementById("toolbar").offsetHeight;
+			if ( h > 0 ) {
+				document.getElementById("sap-ui-ControlTreeRoot").style.height = h + 'px';
+				_bPageSizeCalculated = true;
+			}
+		};
+
+		function toggleToolbar(oExpander) {
+			var tabstrip = document.getElementById("toolbar");
+			if ( tabstrip.style.display == 'none' ) {
+				tabstrip.style.display = '';
+				oExpander.className = "expander less";
+			} else {
+				tabstrip.style.display = 'none';
+				oExpander.className = "expander more";
+			}
+			onResizePage();
+		};		
+
+		</script>
+	</head>
+	<body class="right">
+		<div class="border left bottom" >
+			<div class="expander more" style="right:1px" onclick="toggleToolbar(this);"></div> 
+			<div id="title" class="title" >Control Tree</div>
+			<div id="toolbar" class="toolbar" style="height:22px;display:none">
+			</div>
+			<div id="sap-ui-ControlTreeRoot" class="scrollpanel" style="height:100%;border:1px solid buttonshadow;padding:2px;font-size:8pt" ></div>
+		</div>
+	</body>
+</html>

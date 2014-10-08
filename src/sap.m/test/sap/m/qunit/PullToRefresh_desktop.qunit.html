@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Test Page for sap.m.PullToRefresh on Desktop</title>
+		<script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+		
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		
+		<script>
+		
+		if (jQuery.support.touch || !window.getComputedStyle) {
+			test("Not relevant on touch devices and below IE9", function() {
+				ok(true, "Not relevant on touch devices and below IE9");
+			});
+			
+		} else {
+		
+			function addItems(list, nItems){
+				var n = list.getItems().length + 1;
+				for(var i = 0; i < nItems; i++){
+					list.addItem(
+						new sap.m.StandardListItem({
+							title: "List item " + (n + i),
+							type: sap.m.ListType.Navigation
+						})
+					);
+				}
+			}
+		
+			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oApp = new sap.m.App("p2RApp", {initialPage:"page1"});
+			
+			var sPullDwn = oRb.getText("PULL2REFRESH_REFRESH"),
+				sRelease = oRb.getText("PULL2REFRESH_RELEASE"),
+				sRefresh = "refreshing",
+				sLoading = oRb.getText("PULL2REFRESH_LOADING");
+			var sDescription = "pull to refresh";
+		
+			var oList =  new sap.m.List("oList", {inset : false});
+			addItems(oList, 5);
+		
+			var oP2R = new sap.m.PullToRefresh({
+				description: sDescription,
+				refresh: function(){
+					oP2R.setDescription(sRefresh);
+					ok(true, "Refresh event has been fired.");
+				}
+			});
+
+			var oP2RHidden = new sap.m.PullToRefresh("oP2RHidden",{
+				description: sDescription,
+				visible: false
+			});
+			
+			var oPage1 = new sap.m.Page("page1", {
+				title: "PullToRefresh Control",
+				enableScrolling: true,
+				content : [ oP2R, oP2RHidden, oList ]
+			});
+		
+			oApp.addPage(oPage1);
+			oApp.placeAt("content");
+		
+			QUnit.config.autostart = false;
+			jQuery(document).ready(function() {
+				QUnit.start();
+			});
+
+
+
+			// TEST functions
+		
+			module("Properties");
+			test("Default values", 3, function() {
+				strictEqual(oP2R.getShowIcon(), false, "Default value for showIcon");
+				strictEqual(oP2R.getDescription(), sDescription, "Description value");
+				ok(!oP2R.getCustomIcon(), "Custom icon is not set");
+			});
+			
+			test("Invisible PullToRefresh", 2, function() {
+				strictEqual(oP2RHidden.getVisible(), false, "Hidden control should have visiblity false");
+				ok(!oP2RHidden._oBusyIndicator, "Hidden PullToRefresh does not have a BusyIndicator");
+			});
+		
+			module("Check HTML");
+			
+			test("HTML", function() {
+				var $P2R = oP2R.$();
+				ok(window.getComputedStyle($P2R[0]).position, "relative", "position: should e set to 'relative'");
+				ok($P2R.length > 0, "Pull down control is rendered");
+				strictEqual($P2R.children(".sapMPullDownText").text(), sPullDwn, "Pull down text is set correctly");
+				strictEqual($P2R.children(".sapMPullDownInfo").text(), sDescription, "Pull down description is set correctly");
+				ok(!($P2R.hasClass("sapLoading")), "Loading class is not set");
+				ok(!oP2RHidden.getDomRef(), "Invisible control does not have DOM");
+			});
+		
+			// Test pull to refresh functionality
+			module("Behavior");
+		
+			asyncTest("Refresh", function() {
+				var $P2R = oP2R.$();
+				qutils.triggerEvent("click", oP2R.getId());
+				strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
+				strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
+				setTimeout(function() {
+					oP2R.hide(); // Close
+					oP2R.setDescription("");
+					start();
+				}, 200);
+			});
+		}
+		
+		</script>
+	
+	</head>
+	<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.m.PullToRefresh on Desktop</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

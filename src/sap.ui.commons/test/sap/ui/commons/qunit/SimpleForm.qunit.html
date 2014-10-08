@@ -1,0 +1,485 @@
+<!DOCTYPE HTML>
+<!-- 
+  Tested control/class: sap.ui.commons.form.Form
+  Author: SAP
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<script id="sap-ui-bootstrap"
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+
+		// create SimpleForm
+	var oSimpleForm = new sap.ui.commons.form.SimpleForm(
+			"sf1",
+			{
+				minWidth : 1024,
+				maxContainerCols: 2,
+				content:[
+					    new sap.ui.commons.Title("title1",{text:"Title 1"}),
+			        new sap.ui.commons.Label("L1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("tf1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("L2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("tf2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("tf3",{value:"Value 2/2"}),
+			        new sap.ui.commons.Label("L3",{text:"Label 3"}),
+			        new sap.ui.commons.TextField("tf4",{value:"Value 3/1"}),
+			        new sap.ui.commons.TextField("tf5",{value:"Value 3/2"}),
+			        new sap.ui.commons.TextField("tf6",{value:"Value 3/3"}),
+			        new sap.ui.commons.Label({text:"Label 4"}),
+			        new sap.ui.commons.CheckBox({checked:false}),
+			        new sap.ui.commons.Label({text:"Label 5"}),
+			        new sap.ui.commons.TextArea({value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
+			        new sap.ui.commons.Title("title2",{text:"Title 2"}),
+			        new sap.ui.commons.Label("L2-1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("tf2-1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("L2-2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("tf2-2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("tf2-3",{value:"Value 2/2", layoutData:new sap.ui.commons.layout.ResponsiveFlowLayoutData("LD_tf2-3", {linebreak:true,weight:8})}),
+			        new sap.ui.commons.Label("L2-3",{text:"Label 3"}),
+			        new sap.ui.commons.TextField("tf2-4",{value:"Value 3/1", layoutData:new sap.ui.commons.layout.ResponsiveFlowLayoutData("LD_tf2-4", {weight:3})}),
+			        new sap.ui.commons.TextField("tf2-5",{value:"Value 3/2"}),
+			        new sap.ui.commons.TextField("tf2-6",{value:"Value 3/3"})
+				]
+			}).placeAt("uiArea1");
+
+	var oSimpleForm2 = new sap.ui.commons.form.SimpleForm(
+			"sf2",
+			{
+				minWidth : 1024,
+				maxContainerCols: 2,
+				layout: sap.ui.commons.form.SimpleFormLayout.GridLayout,
+				content:[
+					    new sap.ui.commons.Title("SF2-title1",{text:"Title 1"}),
+			        new sap.ui.commons.Label("SF2-L1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("SF2-tf1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("SF2-L2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("SF2-tf2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("SF2-tf3",{value:"Value 2/2"}),
+			        new sap.ui.commons.Title("SF2-title2",{text:"Title 2"}),
+			        new sap.ui.commons.Label("SF2-L2-1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("SF2-tf2-1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("SF2-L2-2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("SF2-tf2-2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("SF2-tf2-3",{value:"Value 2/2", layoutData:new sap.ui.commons.layout.ResponsiveFlowLayoutData("SF2-LD_tf2-3", {linebreak:true,weight:8})})
+				]
+			}).placeAt("uiArea2");
+
+	var oSimpleForm3 = new sap.ui.commons.form.SimpleForm(
+			"sf3",
+			{
+				minWidth : 1024,
+				maxContainerCols: 2,
+				content:[
+					    new sap.ui.commons.Title("SF3-title1",{text:"Title 1"}),
+			        new sap.ui.commons.Label("SF3-L1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("SF3-tf1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("SF3-L2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("SF3-tf2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("SF3-tf3",{value:"Value 2/2"}),
+			        new sap.ui.commons.Title("SF3-title2",{text:"Title 2"}),
+			        new sap.ui.commons.Label("SF3-L2-1",{text:"Label 1"}),
+			        new sap.ui.commons.TextField("SF3-tf2-1",{value:"Value 1"}),
+			        new sap.ui.commons.Label("SF3-L2-2",{text:"Label 2"}),
+			        new sap.ui.commons.TextField("SF3-tf2-2",{value:"Value 2/1"}),
+			        new sap.ui.commons.TextField("SF3-tf2-3",{value:"Value 2/2", layoutData:new sap.ui.commons.layout.ResponsiveFlowLayoutData("SF3-LD_tf2-3", {linebreak:true,weight:8})})
+				]
+			}).placeAt("uiArea3");
+
+	// test functions
+		qutils.delayTestStart();
+
+		module("Setter/Getter");
+
+		test("used Layout", function() {
+			var oForm = oSimpleForm.getAggregation("form");
+			var oLayout = oForm.getLayout();
+			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.ResponsiveLayout", "ResponsiveLayout used by default");
+
+			oForm = oSimpleForm2.getAggregation("form");
+			oLayout = oForm.getLayout();
+			equal(oLayout.getMetadata().getName(), "sap.ui.layout.form.GridLayout", "GridLayout used");
+		});
+
+		test("first content", function() {
+			var aContent = oSimpleForm.getContent();
+			equal(aContent.length, 24, "Number of content entries");
+
+			ok(oSimpleForm.getAggregation("form"), "Internal Form exists");
+			ok(oSimpleForm.getAggregation("form").getDomRef(), "Internal Form rendered");
+
+			//containers + title
+			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 2, "number of FormContainers");
+			equal(aContainers[1].getTitle().getId(), "title2", "Second container title");
+
+			//FormElements
+			var aElements1 = aContainers[0].getFormElements();
+			equal(aElements1.length, 5, "number of FormElements of first Container");
+			equal(aElements1[0].getLabel().getId(), "L1", "Label of first FormElement");
+			equal(aElements1[0].getFields().length, 1, "Number of Fields of first FormElement");
+			equal(aElements1[1].getLabel().getId(), "L2", "Label of second FormElement");
+			equal(aElements1[1].getFields().length, 2, "Number of Fields of second FormElement");
+
+			var aElements2 = aContainers[1].getFormElements();
+			equal(aElements2.length, 4, "number of FormElements of second Container");
+			equal(aElements2[1].getLabel().getId(), "L2-2", "Label of second FormElement");
+			equal(aElements2[1].getFields().length, 1, "Number of Fields of second FormElement");
+			ok(!aElements2[2].getLabel(), "no Label on third FormElement");
+			equal(aElements2[2].getFields().length, 1, "Number of Fields of third FormElement");
+		});
+
+		test("LayoutData", function() {
+			var oLabel = sap.ui.getCore().byId("L1");
+			var oLayoutData = oLabel.getLayoutData();
+			ok(oLayoutData, "Label has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
+			var oTextField = sap.ui.getCore().byId("tf1");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField has LayoutData");
+			equal(oLayoutData.getWeight(), 5, "TextField LayoutData weight");
+
+			oLabel = sap.ui.getCore().byId("L2");
+			oLayoutData = oLabel.getLayoutData();
+			ok(oLayoutData, "Label2 has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Label2 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf2");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField2 has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "TextField2 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf3");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField3 has LayoutData");
+			equal(oLayoutData.getWeight(), 2, "TextField3 LayoutData weight");
+
+			oLabel = sap.ui.getCore().byId("L3");
+			oLayoutData = oLabel.getLayoutData();
+			ok(oLayoutData, "Label3 has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Label3 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf4");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField4 has LayoutData");
+			equal(oLayoutData.getWeight(), 2, "TextField4 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf5");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField5 has LayoutData");
+			equal(oLayoutData.getWeight(), 2, "TextField5 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf6");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "TextField6 has LayoutData");
+			equal(oLayoutData.getWeight(), 1, "TextField6 LayoutData weight");
+
+			oLabel = sap.ui.getCore().byId("L2-2");
+			oLayoutData = oLabel.getLayoutData();
+			ok(oLayoutData, "Container2: Label2 has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Container2: Label2 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf2-2");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "Container2: TextField2 has LayoutData");
+			equal(oLayoutData.getWeight(), 5, "Container2: TextField2 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf2-3");
+			oLayoutData = oTextField.getLayoutData();
+			equal(oLayoutData.getId(), "LD_tf2-3", "Container2: TextField3 has own LayoutData");
+			equal(oLayoutData.getWeight(), 8, "Container2: TextField3 LayoutData weight");
+
+			oTextField = sap.ui.getCore().byId("tf2-4");
+			oLayoutData = oTextField.getLayoutData();
+			equal(oLayoutData.getId(), "LD_tf2-4", "Container2: TextField4 has own LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Container2: TextField4 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf2-5");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "Container2: TextField5 has LayoutData");
+			equal(oLayoutData.getWeight(), 1, "Container2: TextField5 LayoutData weight");
+			oTextField = sap.ui.getCore().byId("tf2-6");
+			oLayoutData = oTextField.getLayoutData();
+			ok(oLayoutData, "Container2: TextField6 has LayoutData");
+			equal(oLayoutData.getWeight(), 1, "Container2: TextField6 LayoutData weight");
+		});
+
+		test("addContent", function() {
+
+			oSimpleForm.addContent(new sap.ui.commons.Title("title3",{text:"Title 3"}));
+			var aContent = oSimpleForm.getContent();
+			equal(aContent.length, 25, "Number of content entries after title added");
+			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 3, "number of FormContainers");
+			equal(aContainers[2].getTitle().getId(), "title3", "Third container title");
+
+			oSimpleForm.addContent(new sap.ui.commons.TextField("TF3-1",{value:"Text"}));
+			aContent = oSimpleForm.getContent();
+			equal(aContent.length, 26, "Number of content entries after TextField added");
+			var oTextField = sap.ui.getCore().byId("TF3-1");
+			var oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "TextField is inside new container");
+			ok(!oElement.getLabel(), "First Element of new container has no label");
+
+			oSimpleForm.addContent(new sap.ui.commons.Label("L-X",{text:"Label"}));
+			oSimpleForm.addContent(new sap.ui.commons.TextField("TF-X-1",{value:"Text"}));
+			oSimpleForm.addContent(new sap.ui.commons.TextField("TF-X-2",{value:"Text"}));
+			oSimpleForm.addContent(new sap.ui.commons.TextField("TF-X-3",{value:"Text"}));
+			aContent = oSimpleForm.getContent();
+			equal(aContent.length, 30, "Number of content entries after new Fields added");
+			var oLabel = sap.ui.getCore().byId("L-X");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "Label is inside new container");
+			equal(aContainers[2].getFormElements().length, 2, "Container has now 2 FormElemnts");
+			equal(oElement.getLabel().getId(), "L-X", "new FormElement has label");
+			equal(oElement.getFields().length, 3, "new FormElemnt number of fields");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("insertContent", function() {
+			oSimpleForm.insertContent(new sap.ui.commons.Title("title4",{text:"Title 4"}), 26); // insert before Label
+			var aContent = oSimpleForm.getContent();
+			var oTitle = sap.ui.getCore().byId("title4");
+			equal(aContent.length, 31, "Number of content entries after new Title inserted");
+			equal(oSimpleForm.indexOfContent(oTitle), 26, "Index of new title");
+			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 4, "number of FormContainers");
+			equal(aContainers[3].getTitle().getId(), "title4", "container4 title");
+			var oLabel = sap.ui.getCore().byId("L-X");
+			var oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "Last label now in new container");
+
+			oSimpleForm.insertContent(new sap.ui.commons.Label("L-Y",{text:"Label"}), 26); // insert before title
+			aContent = oSimpleForm.getContent();
+			var oLabel = sap.ui.getCore().byId("L-Y");
+			equal(aContent.length, 32, "Number of content entries after new Label inserted");
+			equal(oSimpleForm.indexOfContent(oLabel), 26, "Index of new Label");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "new label in third container");
+
+			oSimpleForm.insertContent(new sap.ui.commons.Label("L-Z",{text:"Label"}), 28); // insert before Label
+			aContent = oSimpleForm.getContent();
+			var oLabel = sap.ui.getCore().byId("L-Z");
+			equal(aContent.length, 33, "Number of content entries after new Label inserted");
+			equal(oSimpleForm.indexOfContent(oLabel), 28, "Index of new Label");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "new label in container 4");
+			var iIndex = aContainers[3].indexOfFormElement(oElement);
+			equal(iIndex, 0, "index of new FormElement in Container4");
+
+			oSimpleForm.insertContent(new sap.ui.commons.Label("L-Z1",{text:"Label"}), 32); // insert before TextField
+			aContent = oSimpleForm.getContent();
+			var oLabel = sap.ui.getCore().byId("L-Z1");
+			equal(aContent.length, 34, "Number of content entries after new Label inserted");
+			equal(oSimpleForm.indexOfContent(oLabel), 32, "Index of new Label");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "new label in container 4");
+			iIndex = aContainers[3].indexOfFormElement(oElement);
+			equal(iIndex, 2, "index of new FormElement in Container4");
+
+			oSimpleForm.insertContent(new sap.ui.commons.Label("L-Z2",{text:"Label"}), 25); // insert before TextField, but no label before
+			aContent = oSimpleForm.getContent();
+			var oLabel = sap.ui.getCore().byId("L-Z2");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "new label in container 3");
+			iIndex = aContainers[2].indexOfFormElement(oElement);
+			equal(iIndex, 0, "index of FormElement in Container3");
+			oLayoutData = oLabel.getLayoutData();
+			ok(oLayoutData, "Label has LayoutData");
+			equal(oLayoutData.getWeight(), 3, "Label LayoutData weight");
+
+			oSimpleForm.insertContent(new sap.ui.commons.TextField("TF-X",{value:"Text X"}), 28); // insert before title
+			var oTextField = sap.ui.getCore().byId("TF-X");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "new TextField in container 3");
+			iIndex = aContainers[2].indexOfFormElement(oElement);
+			equal(iIndex, 1, "index of FormElement in Container3");
+
+			oSimpleForm.insertContent(new sap.ui.commons.TextField("TF-Y",{value:"Text Y"}), 34); // insert before Label
+			var oTextField = sap.ui.getCore().byId("TF-Y");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "new TextField in container 4");
+			iIndex = aContainers[3].indexOfFormElement(oElement);
+			equal(iIndex, 1, "index of FormElement in Container4");
+			iIndex = oElement.indexOfField(oTextField);
+			equal(iIndex, oElement.getFields().length-1, "TextField is last Field of FormElement");
+
+			oSimpleForm.insertContent(new sap.ui.commons.TextField("TF-Z",{value:"Text Z"}), 28); // insert before TextField
+			var oTextField = sap.ui.getCore().byId("TF-Z");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "new TextField in container 2");
+			iIndex = aContainers[2].indexOfFormElement(oElement);
+			equal(iIndex, 1, "index of FormElement in Container3");
+			iIndex = oElement.indexOfField(oTextField);
+			iIndex2 = oElement.indexOfField(sap.ui.getCore().byId("TF-X"));
+			equal(iIndex, iIndex2-1, "TextField is before old TextField in FormElement");
+
+			oSimpleForm.insertContent(new sap.ui.commons.Title("title5",{text:"Title 5"}), 37); // insert before TextField
+			oTitle = sap.ui.getCore().byId("title5");
+			aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 5, "number of FormContainers");
+			equal(aContainers[4].getTitle().getId(), "title5", "container5 title");
+			oLabel = sap.ui.getCore().byId("L-Z1");
+			oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "Last label still in container4");
+			oTextField = sap.ui.getCore().byId("TF-X-3");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[4].getId(), "TextField now in container5");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("removeContent", function() {
+			var aContent = oSimpleForm.getContent();
+			var iContentLengthBefore = aContent.length;
+			var sOldContainerId = sap.ui.getCore().byId("title4").getParent().getId();
+			oSimpleForm.removeContent("title4");
+			aContent = oSimpleForm.getContent();
+			var iContentLengthAfter = aContent.length;
+			equal(iContentLengthBefore, iContentLengthAfter+1, "Number of content entries after title was removed");
+			var aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 4, "number of FormContainers");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
+			var oLabel = sap.ui.getCore().byId("L-X");
+			var oElement = oLabel.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "Label now in container3");
+			var oTextField = sap.ui.getCore().byId("TF-Y");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "TextField now in container3");
+			oTextField = sap.ui.getCore().byId("TF-X-3");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[3].getId(), "TextField still in container5");
+
+			sOldContainerId = sap.ui.getCore().byId("title5").getParent().getId();
+			oTextField = sap.ui.getCore().byId("TF-X-3");
+			var sOldElementId = oTextField.getParent().getId();
+			oSimpleForm.removeContent("title5"); // remove title before element without label
+			aContent = oSimpleForm.getContent();
+			iContentLengthAfter = aContent.length;
+			equal(iContentLengthBefore, iContentLengthAfter+2, "Number of content entries after title was removed");
+			aContainers = oSimpleForm.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 3, "number of FormContainers");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "Old container not longer exists");
+			oElement = oTextField.getParent();
+			equal(oElement.getParent().getId(), aContainers[2].getId(), "TextField now in container3");
+			equal(oElement.indexOfField(oTextField), oElement.getFields().length-1, "TextField now last Field in Element");
+			ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
+
+			oLabel = sap.ui.getCore().byId("L-Y");
+			sOldElementId = oLabel.getParent().getId();
+			oSimpleForm.removeContent("L-Y"); // remove label
+			aContent = oSimpleForm.getContent();
+			iContentLengthAfter = aContent.length;
+			equal(iContentLengthBefore, iContentLengthAfter+3, "Number of content entries after label was removed");
+			oTextField = sap.ui.getCore().byId("TF-Z");
+			oElement = oTextField.getParent();
+			equal(oElement.getLabel().getId(), "L-Z2", "TextField now in previous FormElement");
+			equal(oElement.indexOfField(oTextField), 1, "TextField now second Field in Element");
+			ok(!sap.ui.getCore().byId(sOldElementId), "Old element not longer exists");
+			ok(!oLabel.getLayoutData(), "Label has no LayoutData");
+
+			oLabel = sap.ui.getCore().byId("L-Z2");
+			oElement = oLabel.getParent();
+			oSimpleForm.removeContent("L-Z2"); // remove label of first FormElement of Container
+			ok(!oElement.getLabel(), "FormElement has no longer a label");
+
+			oTextField = sap.ui.getCore().byId("TF-X-2");
+			oElement = oTextField.getParent();
+			oSimpleForm.removeContent("TF-X-2"); // remove TextField
+			equal(oElement.getFields().length, 2, "FormElement number of fields after removing TextField");
+			ok(!oTextField.getLayoutData(), "TextField has no LayoutData");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("removeAllContent", function() {
+			var oLabel = sap.ui.getCore().byId("SF2-L1");
+			var sOldElementId = oLabel.getParent().getId();
+			var sOldContainerId = oLabel.getParent().getParent().getId();
+			oSimpleForm2.removeAllContent();
+			equal(oSimpleForm2.getContent().length, 0, "No content");
+			var aContainers = oSimpleForm2.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 0, "No FormContainers");
+			ok(!oLabel.getLayoutData(), "Label has no LayoutData");
+			ok(!oLabel.getParent(), "Label has no parent");
+			var oTextField = sap.ui.getCore().byId("SF2-tf1");
+			ok(!oTextField.getLayoutData(), "TextField has no LayoutData");
+			ok(!oTextField.getParent(), "TextField has no parent");
+			oTextField = sap.ui.getCore().byId("SF2-tf2-3");
+			ok(oTextField.getLayoutData(), "TextField still has LayoutData");
+			equal(oTextField.getLayoutData().getId(), "SF2-LD_tf2-3", "TextField has original LayoutData");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+		test("destroyContent", function() {
+			var oLabel = sap.ui.getCore().byId("SF3-L1");
+			var sOldElementId = oLabel.getParent().getId();
+			var sOldContainerId = oLabel.getParent().getParent().getId();
+			oSimpleForm3.destroyContent();
+			equal(oSimpleForm3.getContent().length, 0, "No content");
+			var aContainers = oSimpleForm3.getAggregation("form").getFormContainers();
+			equal(aContainers.length, 0, "No FormContainers");
+			var oLabel = sap.ui.getCore().byId("SF3-L1");
+			ok(!oLabel, "Label no longer exist");
+			var oTextField = sap.ui.getCore().byId("SF3-tf1");
+			ok(!oTextField, "TextField no longer exist");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "FormContainer not longer exists");
+			ok(!sap.ui.getCore().byId(sOldContainerId), "FormElement not longer exists");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+		module("Content changing");
+
+		test("toggle visibility", function() {
+
+			var oTextField = sap.ui.getCore().byId("TF-X-3");
+			var oElement = oTextField.getParent();
+			oTextField.setVisible(false);
+			equal(oElement.getVisible(), false, "FormElement is invisible if Field is invisible");
+
+			oTextField = sap.ui.getCore().byId("TF-X-1");
+			oElement = oTextField.getParent();
+			oTextField.setVisible(false);
+			equal(oElement.getVisible(), true, "FormElement is still visible if only one Field is invisible");
+			oTextField = sap.ui.getCore().byId("TF-Y");
+			oTextField.setVisible(false);
+			equal(oElement.getVisible(), false, "FormElement is invisible if all fields are invisible");
+
+			oTextField.setVisible(true);
+			equal(oElement.getVisible(), true, "FormElement is visible again if one field is visible");
+
+			sap.ui.getCore().applyChanges();
+		});
+
+
+		</script>
+
+	<title>qUnit Test for SimpleForm</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.Form.gif">
+
+
+</head>
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.commons.form.SimpleForm</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<br>
+	<div id="uiArea2"></div>
+	<br>
+	<div id="uiArea3"></div>
+
+</body>
+</html>

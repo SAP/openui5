@@ -1,0 +1,20 @@
+.sapUiUx3ShellCanvas {
+	color: gold;
+	background-color: lightyellow;
+}
+
+.sapUiBtnS.sapUiBtnNorm.sapUiBtnStd {
+	background-color: lightgreen;
+}
+
+.sapUiUx3ShellCanvasBackground {
+	background-color: lightyellow;
+}
+
+.sapUiUx3ShellToolPaletteArea {
+	background-color: lightslategrey;
+}
+
+.sapUiVlt.sapuiVlt {
+	width: 100%;
+}

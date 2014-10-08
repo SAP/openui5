@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.CheckBox">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+	  <meta name="keywords" content="CheckBox" />
+		<title>CheckBox - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleCheckBox'>
+// create a simple CheckBox
+var oCB = new sap.ui.commons.CheckBox({
+	text : 'I want to receive the newsletter',
+	tooltip : 'Newsletter checkbox',
+	checked : true,
+	change : function() {if(oCB.getChecked()){alert('YES')}else{alert('NO')};}
+	});
+
+// attach it to some element in the page
+oCB.placeAt("sample1");
+</script>
+
+<script id='CheckBoxStates'>
+// create CheckBoxes in different states
+var oLayout = new sap.ui.commons.layout.MatrixLayout("matrix1");
+	oLayout.setLayoutFixed(false);
+	oLayout.setColumns(4);
+
+var oCB1 = new sap.ui.commons.CheckBox({
+	text : 'error',
+	tooltip : 'Select for Error',
+	valueState : sap.ui.core.ValueState.Error
+	});
+
+var oCB2 = new sap.ui.commons.CheckBox({
+	text : 'warning',
+	tooltip : 'Select for Warning',
+	valueState : sap.ui.core.ValueState.Warning
+	});
+
+var oCB3 = new sap.ui.commons.CheckBox({
+	text : 'ReadOnly',
+	tooltip : 'This CheckBox is read only',
+	editable : false,
+	checked : true
+	});
+
+var oCB4 = new sap.ui.commons.CheckBox({
+	text : 'disabled',
+	tooltip : 'This CheckBox is disabled',
+	enabled : false
+	});
+
+oLayout.createRow(oCB1, oCB2, oCB3, oCB4);
+
+// attach it to some element in the page
+oLayout.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/checkbox-icon.png">CheckBox</h1>
+		<h2>Introduction</h2>
+
+		<p>A CheckBox can be used to visualize multiple choice questions, another use case is providing a single CheckBox that can be flagged by the user.
+		If a CheckBox is selected, the <code>change</code> event is fired. The control provides the flaggable box and a label.
+		</p>
+
+		<p>
+		See also: RadioButton
+		</p>
+		<br/>
+
+		<h2>Examples</h2>
+
+		<h3>Basic CheckBox Example</h3>
+
+		<div code-sample="sample1" script="SimpleCheckBox"></div>
+		<br/>
+		<h3>CheckBox States</h3>
+		<p>
+		CheckBox can have different states controlled by the <code>valueState</code> property. The visualization of these states depends on the used theme.
+		A CheckBox can be disabled or have status read-only, for example - then the selection state cannot be changed via user interaction.
+		</p>
+		<div code-sample="sample2" script="CheckBoxStates"></div>
+		<br/>
+		<p>
+		<h2>API Documentation</h2>
+		<a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.CheckBox.html" >API documentation</a>
+		</p>
+	</body>
+</html>

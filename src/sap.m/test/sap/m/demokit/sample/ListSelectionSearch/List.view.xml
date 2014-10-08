@@ -1,0 +1,42 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ListSelectionSearch.List"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		showHeader="false" >
+		<subHeader>
+			<Toolbar>
+				<SearchField
+					liveChange="onSearch"
+					width="100%" />
+			</Toolbar>
+		</subHeader>
+		<content>
+			<List
+				id="idList"
+				items="{/ProductCollection}"
+				selectionChange="onSelectionChange"
+				mode="MultiSelect"
+				includeItemInSelection="true" >
+				<infoToolbar>
+					<Toolbar
+						visible="false"
+						id="idInfoToolbar" >
+						<Label id="idFilterLabel" />
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<StandardListItem
+						title="{Name}"
+						description="{ProductId}"
+						icon="{ProductPicUrl}"
+						iconDensityAware="false"
+						iconInset="false" />
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

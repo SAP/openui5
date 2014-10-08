@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html data-sap-ui-dk-category="Controls/ValueHolders" data-sap-ui-dk-controls="sap.ui.commons.TextArea">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8"/>
+		<title>TextArea - SAPUI5 Demo Kit</title>
+		<link rel="stylesheet" type="text/css" href="../../../../../theme/default.css"></link>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.demokit"
+				>
+		</script>
+		<script src="../../../../../js/utils.js"></script>
+
+<script id='SimpleInput'>
+// create a simple Input field
+oInput = new sap.ui.commons.TextArea('input1');
+oInput.setValue("Here is some Text. I hope you like it.");
+oInput.setTooltip("This is a tooltip");
+oInput.setRows(3);
+oInput.attachChange(function(){alert('Text changed to :'+ oInput.getValue());});
+
+// attach it to some element in the page
+oInput.placeAt("sample1");
+</script>
+
+<script id='NoWrapping'>
+// create a simple Input field without automatic wrapping
+oInput2 = new sap.ui.commons.TextArea({
+	id : 'input2',
+	value : 'This text is longer than the output of the Text Area. But it should not break. So you should see a scrollbar.\nBut this is a manual line break.So it should be a new line.',
+	tooltip : 'This is a tooltip',
+	cols : 30,
+	rows : 4,
+	wrapping : sap.ui.core.Wrapping.Off,
+	valueState : sap.ui.core.ValueState.Warning
+	});
+
+// attach it to some element in the page
+oInput2.placeAt("sample2");
+</script>
+
+	</head>
+
+	<body class="sapUiDemokitBody" role="application">
+		<h1 color="Red" icon="images/ctrls/textarea-icon.png">TextArea</h1>
+
+		<h2>Overview</h2>
+		<p>The TextArea control provides large spaces for text entries in the form of multiple rows. It has the same functionality like the TextField but additional functions for multi-line texts.
+		The automatic wrapping of the text can be disabled using the <code>wrapping</code> property.
+		</p>
+
+		<p>
+		See also: TextField
+		</p>
+
+		<h2>Examples</h2>
+		<h3>Simple Input Example</h3>
+		<p>
+		The example shows a TextArea where an alert popup appears when the text has been changed.
+		</p>
+		<div code-sample="sample1" script="SimpleInput"></div>
+		<br/>
+		<h3>Example for the Usage of the Wrapping Parameter</h3>
+		<p>
+		The second example shows how the <code>wrapping</code> property works. Use case here is an area without wrapping.
+		</p>
+		<div code-sample="sample2" script="NoWrapping"></div>
+
+		<p>
+		<h2>API Documentation</h2>
+		See <a class="sapUiDemokitSrcLink" href="../../../../../docs/api/symbols/sap.ui.commons.TextArea.html" >API documentation</a>
+		</p>
+	</body>
+</html>

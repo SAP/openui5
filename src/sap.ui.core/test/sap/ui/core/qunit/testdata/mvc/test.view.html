@@ -1,0 +1,24 @@
+<template data-controller-name="example.mvc.test">
+	<div id="htmlRoot">THIS IS A TEST</div>
+
+	<div>
+		<div id="htmlNested">NESTED WORKS AS WELL</div>
+
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem1" data-text="navitem1"></div>
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem2" data-text="navitem2"></div>
+		<div data-sap-ui-type="sap.ui.ux3.NavigationItem" id="navitem3" data-text="navitem3"></div>
+
+		<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Panel" id="myPanel">
+			<div class="test test2 test3" data-sap-ui-type="sap.ui.commons.Button" id="Button1" data-text="Hello World" data-press="doIt"></div>
+			<div data-sap-ui-type="sap.ui.commons.Button" id="Button2" data-text="Hello" data-custom-data:my-data1="myvalue1" data-custom-data:my-data2="{path:'/key', formatter:'.valueFormatter'}" ></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.HTMLView" id="MyHTMLView" data-view-name="example.mvc.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.JSView" id="MyJSView" data-view-name="example.mvc.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.JSONView" id="MyJSONView" data-view-name="example.mvc.test2"></div>
+			<div data-sap-ui-type="sap.ui.core.mvc.XMLView" id="MyXMLView" data-view-name="example.mvc.test2"></div>
+			<div data-sap-ui-type="sap.ui.commons.Label" id="MyLabel" data-text="Message:" data-label-for="message"></div>
+			<div data-sap-ui-type="sap.ui.commons.TextField" id="message"></div>
+			<div data-sap-ui-type="sap.ui.ux3.NavigationBar" id="MyNavigationBar" id="navbar" data-associated-items="navitem1, navitem2 navitem3"></div>
+		</div>
+	</div>
+
+</template>

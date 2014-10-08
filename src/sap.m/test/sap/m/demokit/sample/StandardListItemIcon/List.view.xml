@@ -1,0 +1,23 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemIcon.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List 
+		id="ShortProductList"
+		headerText="Products"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<items>
+			<StandardListItem
+				title="{Name}"
+				description="{ProductId}"
+				icon="{ProductPicUrl}" 
+				iconDensityAware="false"
+				iconInset="false" />
+		</items>
+	</List>
+</mvc:View>

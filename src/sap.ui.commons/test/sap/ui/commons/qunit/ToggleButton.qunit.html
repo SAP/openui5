@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>ToggleButton - sap.ui.commons</title>
+
+    <script id="sap-ui-bootstrap" 
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons" >
+		</script>
+    
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+		/* Create and structure your QUnit tests here
+	  Documentation can be found at http://docs.jquery.com/QUnit
+	  
+	  Example:
+      module("Module A");
+        test("1. a basic test example", function() {
+        ok( true, "this test is fine" );
+        var value = "hello1";
+        equals( value, "hello1", "We expect value to be hello" );
+      });
+	  */
+		var sToggleButtonId = "testToggleButton";
+		var oToggleButton1 = new sap.ui.commons.ToggleButton( sToggleButtonId + "_1" , {text:"TestButton", tooltip:"TestButton", pressed:true});
+		oToggleButton1.placeAt("uiArea1");
+		var oToggleButton2 = new sap.ui.commons.ToggleButton( sToggleButtonId + "_2" , {text:"TestButton1", tooltip:"TestButton1", pressed:false});
+		oToggleButton2.placeAt("uiArea2");
+		
+		test("TestGetPressedStateOK", function(){
+			equal(oToggleButton1.getPressed(), true, "getPressedState for testToggleButton_1");
+			equal(oToggleButton2.getPressed(), false, "getPressedState for testToggleButton_2");
+		});
+		test("TestPressedToUnpressedOK", function(){
+			qutils.triggerEvent("click", sToggleButtonId + "_1");
+			equal(oToggleButton1.getPressed(), false, "getPressedState");
+		});
+		
+		test("TestUnpressedToPressedOK", function(){
+			qutils.triggerEvent("click", sToggleButtonId + "_2");
+			equal(oToggleButton2.getPressed(), true, "getPressedState");
+		});
+		
+		asyncTest("ARIA", function(){
+			setTimeout(function() {
+				start();
+				var oTB1 = jQuery.sap.domById(sToggleButtonId + "_1");
+				equal(jQuery(oTB1).attr("aria-pressed"),"false","ARIA-PRESSED: for testToggleButton_1");
+				var oTB2 = jQuery.sap.domById(sToggleButtonId + "_2");
+				equal(jQuery(oTB2).attr("aria-pressed"),"true","ARIA-PRESSED: for testToggleButton_2");	
+			},0);
+		});
+	  </script>
+	</head>
+	<body>
+		<h1 id="qunit-header">qUnit Page for ToggleButton</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		
+		
+	</body>
+</html>
