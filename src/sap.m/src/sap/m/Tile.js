@@ -68,12 +68,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Tile.prototype.init = function() {
 		//keyboard support for desktop environments
 		if (sap.ui.Device.system.desktop) {
-			var fnOnSpace = jQuery.proxy(function(oEvent) {
+			var fnOnSpaceOrEnter = jQuery.proxy(function(oEvent) {
 				this.ontap();
 				//event should not trigger any further actions
 				oEvent.stopPropagation();
 			}, this);
-			this.onsapspace = fnOnSpace;
+
+			this.onsapspace = fnOnSpaceOrEnter;
+			this.onsapenter = fnOnSpaceOrEnter;
 		}
 	};
 	

@@ -11,7 +11,13 @@
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
-
+		
+		<style>
+			.darkView {
+				background-color: white;
+			}
+		</style>
+		
 		<script type="text/javascript">
 		function handlePress(oEvent) {
 		    alert('tile ' + oEvent.oSource.getTitle() + ' pressed');
@@ -35,6 +41,17 @@
 				
 				// defines the UI of this View
 				createContent: function(oController) {
+					if(i === 9) {
+						//new
+						return [
+									new sap.m.Button({text: 'acb'}),
+									new sap.m.Button({text: 'def'}),
+									new sap.m.Button({text: 'ghi'})
+								];			
+						
+						//end new
+					}
+					else
 					// button text is bound to Model, "press" action is bound to Controller's event handler
 					return new sap.m.StandardTile("tile" + i, {
 		                icon : "images/action.png",
@@ -49,16 +66,34 @@
 			});
 			
 			for (var i=0; i<n; i++){
+				var vw = sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view", height: '100%'});
+				if(i === 9)
+					vw.addStyleClass('darkView');
 				var oTile = new sap.m.CustomTile({
-						content: sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"})
+						content: vw
+						
 				});
 				tiles.push(oTile);
 			}
 			return tiles;
-		}
+		}		
 		
-		var tc = new sap.m.TileContainer("tc",{});
-
+		var tc = new sap.m.TileContainer("tc",{ 
+			tiles:[
+				new sap.m.StandardTile("tileAdded345", {
+	   			    icon : "images/action.png",
+	   	            info : "Added 345",
+	   	            infoUnit : "Unit",
+	   	            title : "Click to add another tile",
+	   	            description : "1 day ago",
+	   	            press : function() { 
+	   	            	tc.deleteTile(tc.getTiles()[5]);
+	   	            }
+   	        	})
+			], 
+			height: '700px'
+		});				
+		
 		tc.addTile(new sap.m.StandardTile("tileEdit", {
             icon : "images/action.png",
             number : "Switch To Edit Mode",
@@ -68,7 +103,7 @@
             press : toggleEdit,
             removable:false
         }));
-
+		
 		tc.addTile(new sap.m.StandardTile("tileAdd", {
             icon : "images/action.png",
             number : "Add",
@@ -76,11 +111,12 @@
             title : "Click to add another tile",
             info : "1 day ago",
             press : addTile
-        }));
+        }));		
+		
 		var aTiles = getTiles(20);
 		for (var i=0;i<aTiles.length;i++) {
 			if (i<10) {
-				tc.insertTile(aTiles[i],2);
+				tc.insertTile(aTiles[i],3);
 			} else {
 				tc.addTile(aTiles[i]);
 			}
@@ -106,14 +142,11 @@
         	tc.getTiles()[tc.getTiles().length-1].setNumber("Changed");
     		
         	iAdded++;
-       		tc.addTile(new sap.m.StandardTile("tileAdded" + iAdded, {
-   			    icon : "images/action.png",
-   	            info : "Added "+iAdded,
-   	            infoUnit : "Unit",
-   	            title : "Click to add another tile",
-   	            description : "1 day ago",
-   	            press : addTile
-   	        }));
+       		tc.addTile(
+       		    new sap.m.CustomTile("tileAdded"+ iAdded, {
+						content: new sap.m.Button({text: "hhasfdh"})
+				})
+       		);
         	         	
 		};
         var app = new sap.m.App();
@@ -122,7 +155,15 @@
 		page.setEnableScrolling(false);
 		page.setShowHeader(false);
 		app.addPage(page);
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
 		page.addContent(tc);
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
+		page.addContent(new sap.m.Button({text: 'acb'}));
 		app.placeAt('body');
 		
 		tc.attachTileDelete(function(oEvent) {

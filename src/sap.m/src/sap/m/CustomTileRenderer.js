@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './TileRenderer'],
 	 *                oControl an object representation of the control that should be rendered
 	 */
 	 CustomTileRenderer.render = function(rm, oControl) {
-		rm.write("<div ");
+		rm.write("<div tabindex=\"0\"");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMCustomTile");
 		rm.writeClasses();
