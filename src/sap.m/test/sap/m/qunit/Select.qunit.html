@@ -351,6 +351,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id1");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id1");
@@ -395,6 +396,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id1");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id1");
@@ -444,6 +446,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -487,6 +490,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			// strictEqual(oSelect.getValue(), "item 1");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -507,6 +511,7 @@
 			ok(oSelect.getSelectedItem() === null);
 			strictEqual(oSelect.getSelectedItemId(), "");
 			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
 			// strictEqual(oSelect.getValue(), "");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === null);
 			strictEqual(oSelect.getList().getSelectedItemId(), "");
@@ -550,6 +555,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -593,6 +599,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -640,6 +647,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -683,6 +691,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -714,6 +723,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -762,6 +772,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -810,6 +821,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "3");
+			strictEqual(oSelect.getSelectedIndex(), 3);
 			// strictEqual(oSelect.getValue(), "item 3");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -853,6 +865,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			// strictEqual(oSelect.getValue(), "item 1");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -873,6 +886,7 @@
 			ok(oSelect.getSelectedItem() === null);
 			strictEqual(oSelect.getSelectedItemId(), "");
 			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
 			// strictEqual(oSelect.getValue(), ""); not implemented
 			ok(oSelect.getList().getSelectedItem() === null);
 			strictEqual(oSelect.getList().getSelectedItemId(), "");
@@ -916,6 +930,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -959,6 +974,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1002,6 +1018,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1049,6 +1066,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1080,6 +1098,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1128,6 +1147,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1176,6 +1196,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "3");
+			strictEqual(oSelect.getSelectedIndex(), 3);
 			// strictEqual(oSelect.getValue(), "item 3");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1219,6 +1240,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			// strictEqual(oSelect.getValue(), "item 1");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1243,6 +1265,7 @@
 			ok(oSelect.getSelectedItem() === null);
 			strictEqual(oSelect.getSelectedItemId(), "");
 			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
 			// strictEqual(oSelect.getValue(), "");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === null);
 			strictEqual(oSelect.getList().getSelectedItemId(), "");
@@ -1286,6 +1309,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1329,6 +1353,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1372,6 +1397,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1415,6 +1441,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -1461,6 +1488,7 @@
 			// assert
 			strictEqual(oSelect.getSelectedKey(), "GER");
 			strictEqual(oSelect.getList().getSelectedKey(), "GER");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			strictEqual(oSelect.$("label").text(), "Germany");
 
 			// cleanup
@@ -1572,6 +1600,7 @@
 			// assert
 			strictEqual(oSelect.getSelectedKey(), "CU");
 			strictEqual(oSelect.getList().getSelectedKey(), "CU");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			strictEqual(oSelect.$("label").text(), "Cuba");
 
 			// cleanup
@@ -1618,6 +1647,7 @@
 			// assert
 			strictEqual(oSelect.getSelectedKey(), "CU");
 			strictEqual(oSelect.getSelectedItem().getKey(), "CU");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			strictEqual(oSelect.getList().getSelectedKey(), "CU");
 			strictEqual(oSelect.getList().getSelectedItem().getKey(), "CU");
 
@@ -1806,6 +1836,7 @@
 			ok(oSelect.getSelectedItem() === null);
 			strictEqual(oSelect.getSelectedItemId(), "");
 			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
 			// strictEqual(oSelect.getValue(), "");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === null);
 			strictEqual(oSelect.getList().getSelectedItemId(), "");
@@ -1856,6 +1887,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getList().getSelectedKey(), "1");
@@ -1907,6 +1939,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getList().getSelectedKey(), "1");
@@ -1953,6 +1986,7 @@
 			// assert
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			strictEqual(oSelect.getSelectedKey(), "2");
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
@@ -2001,6 +2035,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2084,6 +2119,7 @@
 			ok(oSelect.getSelectedItem() === null);
 			strictEqual(oSelect.getSelectedItemId(), "");
 			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
 			// strictEqual(oSelect.getValue(), "");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === null);
 			strictEqual(oSelect.getList().getSelectedItemId(), "");
@@ -2138,6 +2174,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			// strictEqual(oSelect.getValue(), "item 1");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2184,6 +2221,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2231,6 +2269,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2280,6 +2319,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), oExpectedItem.getId());
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
@@ -2329,6 +2369,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "2");
+			strictEqual(oSelect.getSelectedIndex(), 2);
 			// strictEqual(oSelect.getValue(), "item 2");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2369,6 +2410,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getList().getSelectedKey(), "1");
@@ -2426,6 +2468,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "1");
+			strictEqual(oSelect.getSelectedIndex(), 1);
 			// strictEqual(oSelect.getValue(), "item 1");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2473,6 +2516,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), "item-id");
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), "item-id");
@@ -2522,6 +2566,7 @@
 			ok(oSelect.getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getSelectedItemId(), oExpectedItem.getId());
 			strictEqual(oSelect.getSelectedKey(), "0");
+			strictEqual(oSelect.getSelectedIndex(), 0);
 			// strictEqual(oSelect.getValue(), "item 0");	// not implemented
 			ok(oSelect.getList().getSelectedItem() === oExpectedItem);
 			strictEqual(oSelect.getList().getSelectedItemId(), oExpectedItem.getId());
@@ -3161,7 +3206,7 @@
 		});
 
 		/* ------------------------------ */
-		/* findLastEnabledItem()         */
+		/* findLastEnabledItem()          */
 		/* ------------------------------ */
 
 		test("findLastEnabledItem()", function() {
@@ -3260,6 +3305,231 @@
 
 			// assert
 			ok(oLastEnabledItem === null, 'The last enabled item is "null"');
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		/* ------------------------------ */
+		/* findNextItemByFirstCharacter() */
+		/* ------------------------------ */
+
+		test("findNextItemByFirstCharacter() test case 1", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "Algeria"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						text: "Argentina"
+					}),
+
+					new sap.ui.core.Item({
+						text: "Australia"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedItem(oSelect.getFirstItem());
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+
+			// assert
+			ok(oNextItem === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		test("findNextItemByFirstCharacter() test case 2", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AR",
+						text: "Argentina"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedKey("AR");
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+
+			// assert
+			ok(oNextItem === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		test("findNextItemByFirstCharacter() test case 3", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AR",
+						text: "Argentina"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedKey("AU");
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+
+			// assert
+			ok(oNextItem === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		test("findNextItemByFirstCharacter() test case 4", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AR",
+						text: "Argentina",
+						enabled: false
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AT",
+						text: "Austria"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedKey("DZ");
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+
+			// assert
+			ok(oNextItem === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		test("findNextItemByFirstCharacter() test case 5", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.SeparatorItem(),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AT",
+						text: "Austria"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedItem(oSelect.getFirstItem());
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("a");
+
+			// assert
+			ok(oNextItem === oExpectedItem);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		test("findNextItemByFirstCharacter() test case 6", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AT",
+						text: "Austria"
+					})
+				]
+			});
+
+			// arrange
+			oSelect.setSelectedKey("DZ");
+
+			// act
+			var oNextItem = oSelect.findNextItemByFirstCharacter("b");
+
+			// assert
+			ok(oNextItem === null);
 
 			// cleanup
 			oSelect.destroy();
@@ -5046,12 +5316,12 @@
 			fnKeypressTestCase({
 				control: new sap.m.Select({
 					items: [
-						oExpectedItem = new sap.ui.core.Item({
+						new sap.ui.core.Item({
 							key: "0",
 							text: "a item 0"
 						}),
 
-						new sap.ui.core.Item({
+						oExpectedItem = new sap.ui.core.Item({
 							key: "1",
 							text: "A item 1"
 						})
@@ -5065,12 +5335,12 @@
 			fnKeypressTestCase({
 				control: new sap.m.Select({
 					items: [
-						oExpectedItem = new sap.ui.core.Item({
+						new sap.ui.core.Item({
 							key: "0",
 							text: "A item 0"
 						}),
 
-						new sap.ui.core.Item({
+						oExpectedItem = new sap.ui.core.Item({
 							key: "1",
 							text: "a item 1"
 						})
