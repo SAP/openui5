@@ -1,0 +1,143 @@
+
+/* Public, For Samples */
+
+.sapUiExploredWarning {
+	margin : 1rem;
+	padding : 1rem;
+	color : red;
+	border: 1px red solid;
+	background : white;
+	display: block;	/* because of the margin */
+}
+
+.sapUiExploredInfo {
+	display: block;
+	background: #f2f8fc;
+	border: 1px solid #ddd;
+	margin : 2rem 0.25rem 0.25rem 0.25rem;
+	padding : 0.5rem 1rem;
+	color: #666;
+	line-height: 1rem;
+}
+
+.sapUiExploredInfo:before {
+	display: inline-block;
+	font-family: "SAP-icons";
+	vertical-align: middle;
+	font-size: 1rem;
+	content:"\e047";
+	color: #666666;
+	width: 1.5rem;
+}
+
+/* Entity view */
+
+.sapMOH[data-deprecated^="true"] .sapMText.sapMOHTitle {
+	text-decoration: line-through;
+}
+
+.sapMITBContent > .sapMListTblCnt {
+	padding: 1rem 0 0;
+}
+
+.entityAbout {
+	margin: 1rem;
+}
+.sapMListTbl .entitySampleName.sapMText  {
+	font-weight: bold;
+}
+.sapMListTbl .docuKey.sapMText  {
+	font-style: italic;
+}
+.sapMListTbl .docuKey.sapMText[data-deprecated^="true"]  {
+	text-decoration: line-through;
+}
+.sapMListTbl .docuParam.sapMText  {
+	font-style: italic;
+}
+
+/* Code view */
+
+pre {
+	margin-top: 0;
+}
+code {
+	font-family: Consolas, Courier, monospace;
+	font-size: 0.85em;
+}
+
+.nameTitle {
+	font-weight: bold;
+}
+
+/* Samples */
+
+.marginOnlyTop {
+	margin-top: 1em;
+}
+.marginAll {
+	margin: 1em;
+}
+.marginNone {
+	margin: 0em;
+}
+.marginNoBottom {
+	margin: 1em 1em 0em 1em;
+}
+.marginNoTop {
+	margin: 0em 1em 1em 1em;
+}
+.marginTopBottom {
+	margin: 1em 0em 1em 0em;
+}
+.marginRight {
+	margin: 1em;
+}
+.marginTopLeft {
+	margin: 1em 0 0 1em;
+}
+
+/* Margins for content in Vertical Layout */
+.marginVerticalContent.sapUiVlt {
+	margin: 1em;
+}
+.marginVerticalContent .sapUiVltCell:not(:first-child) {
+	margin-top: 1em;
+}
+
+/* Margins for content in VBox */
+.sapMVBox.marginBoxContent{
+	padding: 1em;
+}
+.marginBoxContent .description {
+	margin-top: 1em;
+}
+.sapMPage.marginBoxContent > section > .sapMPageScroll{
+	padding: 1rem;
+}
+.gridMarginTop {
+	margin-top: 1rem;
+}
+.iconTabBarPaddingTop .sapMITBContent {
+	padding-top: 1rem;
+}
+.panelBoxContainer .sapMFlexBox {
+	height: 200px;
+}
+.zeroWidthItems .sapMFlexItem {
+	width: 0;
+}
+.visibleFlexItemSizes .sapMFlexItem {
+	border: 1px dashed ;
+	margin: 3px;
+	padding: 3px;
+}
+/* Provide IconTabBar content padding */
+.sap-phone .iconTabBarPaddingTop .sapMITBContent {
+	padding: 1rem;
+}
+
+#sampleFrame {
+	width : 100%;
+	height : 100%;
+}

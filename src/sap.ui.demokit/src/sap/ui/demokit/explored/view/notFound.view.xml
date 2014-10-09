@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.ui.demokit.explored.view.notFound"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m">
+	<Page
+		title="Not Found"
+		showNavButton="{device>/isPhone}"
+		navButtonPress="onNavBack"
+		enableScrolling="false"
+		class="titlesSpace" >
+		<content>
+			<core:HTML
+				id="msgHtml"
+				sanitizeContent="true" />
+		</content>
+	</Page>
+</mvc:View>

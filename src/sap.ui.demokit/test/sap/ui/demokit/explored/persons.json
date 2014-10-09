@@ -1,0 +1,53 @@
+{
+	"PersonCollection" : [ 
+		{
+			"FirstName" : "George",
+			"LastName" : "Washington",
+			"Title" : "1st U.S. President",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/2/25/George_Washington_as_CIC_of_the_Continental_Army_bust.jpg",
+			"Description" : "George Washington was the first President of the United States, the commander-in-chief of the Continental Army during the American Revolutionary War, and one of the Founding Fathers of the United States."
+		},
+		{
+			"FirstName" : "Alexandrina",
+			"LastName" : "Victoria",
+			"Title" : "Former Queen regnant",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/a/aa/Dronning_victoria.jpg",
+			"Description" : "Queen Victoria was the monarch of the United Kingdom of Great Britain and Ireland from 20 June 1837 until her death. From 1 May 1876, she used the additional title of Empress of India."
+		},
+		{
+			"FirstName" : "Friedrich",
+			"LastName" : "Der Große",
+			"Title" : "King of Prussia 1740-1786",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/f/fc/Frederic_II_de_prusse.jpg",
+			"Description" : "Frederick II was King in Prussia of the Hohenzollern dynasty. He is best known for his brilliance in military campaigning and organization of Prussian armies. He became known as Frederick the Great and was nicknamed Der Alte Fritz."
+		},
+		{
+			"FirstName" : "Agnes",
+			"LastName" : "Teresa",
+			"Title" : "Mother Teresa",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/6/6e/The_Saint_Mother_Teresa.jpg",
+			"Description" : "Mother Teresa (26 August 1910 – 5 September 1997), was an Albanian born, Indian Roman Catholic Religious Sister. She founded the Missionaries of Charity, a Roman Catholic religious congregation, which in 2012 consisted of over 4,500 sisters and is active in 133 countries."
+		},
+		{
+			"FirstName" : "Sigmund",
+			"LastName" : "Freud",
+			"Title" : "Neurologist",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/6/69/Sigmund_Freud_Anciano.jpg",
+			"Description" : "Sigmund Freud was an Austrian neurologist who became known as the founding father of psychoanalysis."
+		},
+		{
+			"FirstName" : "Christopher",
+			"LastName" : "Columbus",
+			"Title" : "Explorer",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/0/06/CristobalColon.jpg",
+			"Description" : "Christopher Columbus was an Italian explorer, navigator, and colonizer, born in the Republic of Genoa, in what is today northwestern Italy."
+		},
+		{
+			"FirstName" : "Winston",
+			"LastName" : "Churchill",
+			"Title" : "Former Prime Minister of the United Kingdom",
+			"ContactPicUrl" : "http://upload.wikimedia.org/wikipedia/commons/3/35/Churchill_portrait_NYP_45063.jpg",
+			"Description" : "Sir Winston Leonard Spencer-Churchill, KG, OM, CH, TD, DL, FRS, Hon. RA was a British politician who was Prime Minister of the United Kingdom from 1940 to 1945 and again from 1951 to 1955."
+		}
+	]
+}

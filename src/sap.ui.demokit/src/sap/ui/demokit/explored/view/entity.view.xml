@@ -1,0 +1,324 @@
+<mvc:View
+	controllerName="sap.ui.demokit.explored.view.entity"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m">
+	<Page
+		title="Entity"
+		class="sapUiFioriObjectPage"
+		navButtonPress="onNavBack"
+		id="page" >
+
+		<ObjectHeader
+			title="{/name}"
+			responsive="true"
+			backgroundDesign="Translucent" >
+			<customData>
+				<core:CustomData writeToDom="true" key="deprecated" value="{/deprecated}" />
+			</customData>
+
+			<attributes>
+				<ObjectAttribute
+					title="Application Component"
+					text="{entity>appComponent}" />
+				<ObjectAttribute
+					title="Available Since"
+					text="{entity>since}" />
+				<ObjectAttribute
+					title="Inherits from"
+					text="{/baseTypeText}"
+					active="{/baseTypeNav}"
+					press="onTypeLinkPress" >
+					<customData>
+						<core:CustomData key="type" value="{/baseType}" />
+					</customData>
+				</ObjectAttribute>
+				<ObjectAttribute
+					title="Form Factors"
+					text="{entity>formFactors}" />
+				<ObjectAttribute
+					title="Category"
+					text="{entity>category}" />
+			</attributes>
+			
+			<headerContainer>
+				<IconTabBar
+					id="tabBar"
+					expanded="{device>/isNoPhone}"
+					select="onTabSelect"
+					upperCase="true" >
+					<items>
+			
+						<IconTabFilter
+							key="about"
+							text="About"
+							visible="{/show/about}" >
+							<Text text="{/description}" class="entityAbout" />
+							<Table
+								class="myTable"
+								visible="{/show/values}"
+								showSeparators="Inner"
+								fixedLayout="false"
+								items="{/values}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false" />
+											<Text text="{doc}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+		
+						<IconTabFilter
+							key="samples"
+							count="{/count/samples}"
+							text="Samples"
+							visible="{/show/samples}" >
+							<Table
+								class="myTable"
+								items="{entity>samples}"
+								fixedLayout="false"
+								showSeparators="Inner" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column minScreenWidth="Tablet"><Label text="Description" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
+										<cells>
+											<Text text="{entity>name}" class="entitySampleName" wrapping="false" />
+											<Text text="{entity>description}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+		
+						<IconTabFilter
+							key="properties"
+							text="Properties"
+							count="{/count/properties}"
+							visible="{/show/properties}" >
+							<Table
+								class="myTable"
+								showSeparators="Inner"
+								fixedLayout="false"
+								width=""
+								items="{
+									path:'/properties',
+									sorter: {
+										path: 'name',
+										descending: false
+									}
+								}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column><Label text="Type" /></Column>
+									<Column><Label text="Default" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false">
+												<customData>
+													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
+												</customData>
+											</Text>
+											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
+												<customData>
+													<core:CustomData key="type" value="{type}" />
+												</customData>
+											</Link>
+											<Text text="{defaultValue}" wrapping="false" />
+											<Text text="{doc}" />
+											<Label text="{since}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+			
+						<IconTabFilter
+							key="aggregations"
+							text="Aggregations"
+							count="{/count/aggregations}"
+							visible="{/show/aggregations}" >
+							<Table
+								class="myTable"
+								showSeparators="Inner"
+								fixedLayout="false"
+								items="{
+									path:'/aggregations',
+									sorter: {
+										path: 'name',
+										descending: false
+									}
+								}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column><Label text="Cardinality" /></Column>
+									<Column><Label text="Type" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false">
+												<customData>
+													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
+												</customData>
+											</Text>
+											<Text text="{cardinality}" wrapping="false" />
+											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
+												<customData>
+													<core:CustomData key="type" value="{type}" />
+												</customData>
+											</Link>
+											<Text text="{doc}" />
+											<Label text="{since}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+			
+						<IconTabFilter
+							key="associations"
+							text="Associations"
+							count="{/count/associations}"
+							visible="{/show/associations}" >
+							<Table
+								class="myTable"
+								showSeparators="Inner"
+								fixedLayout="false"
+								items="{
+									path:'/associations',
+									sorter: {
+										path: 'name',
+										descending: false
+									}
+								}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column><Label text="Cardinality" /></Column>
+									<Column><Label text="Type" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false">
+												<customData>
+													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
+												</customData>
+											</Text>
+											<Text text="{cardinality}" wrapping="false" />
+											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
+												<customData>
+													<core:CustomData key="type" value="{type}" />
+												</customData>
+											</Link>
+											<Text text="{doc}" />
+											<Label text="{since}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+				
+						<IconTabFilter
+							key="events"
+							text="Events"
+							count="{/count/events}"
+							visible="{/show/events}" >
+							<Table
+								class="myTable"
+								showSeparators="Inner"
+								fixedLayout="false"
+								items="{/events}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column><Label text="Param" /></Column>
+									<Column><Label text="Type" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false">
+												<customData>
+													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
+												</customData>
+											</Text>
+											<Text text="{param}" class="docuParam" wrapping="false" />
+											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
+												<customData>
+													<core:CustomData key="type" value="{type}" />
+												</customData>
+											</Link>
+											<Text text="{doc}" />
+											<Label text="{since}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+				
+						<IconTabFilter
+							key="methods"
+							text="Methods"
+							count="{/count/methods}"
+							visible="{/show/methods}" >
+							<Table
+								class="myTable"
+								showSeparators="Inner"
+								fixedLayout="false"
+								items="{/methods}" >
+								<columns>
+									<Column><Label text="Name" /></Column>
+									<Column><Label text="Param" /></Column>
+									<Column><Label text="Type" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true"><Label text="Description" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{name}" class="docuKey" wrapping="false">
+												<customData>
+													<core:CustomData writeToDom="true" key="deprecated" value="{deprecated}" />
+												</customData>
+											</Text>
+											<Text text="{param}" class="docuParam" wrapping="false" />
+											<Link text="{typeText}" enabled="{typeNav}" press="onTypeLinkPress">
+												<customData>
+													<core:CustomData key="type" value="{type}" />
+												</customData>
+											</Link>
+											<Text text="{doc}" />
+											<Label text="{since}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</IconTabFilter>
+
+					</items>
+				</IconTabBar>
+			</headerContainer>
+		</ObjectHeader>
+	</Page>
+</mvc:View>

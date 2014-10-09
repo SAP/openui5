@@ -1,0 +1,20 @@
+<mvc:View
+	controllerName="sap.ui.demokit.explored.view.sample"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		id="page"
+		navButtonPress="onNavBack" >
+		<headerContent>
+			<Button
+				class="sapUiHideOnPhone"
+				text="Show Code"
+				icon="sap-icon://display"
+				press="onNavToCode" />
+			<Button
+				class="sapUiVisibleOnlyOnPhone"
+				icon="sap-icon://display"
+				press="onNavToCode" />
+		</headerContent>
+	</Page>
+</mvc:View>
