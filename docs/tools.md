@@ -79,10 +79,8 @@ browsers   | Browser name(s) to test on (comma-separated) `chrome`, `firefox`, `
 Runs QUnit tests with Selenium WebDriver on a local server.
 
 ```
-grunt test:<library-1>:<library-n> --browsers=<browsers> --coverage=<boolean>
+grunt test --browsers=<browsers>
 
-# examples
-#  grunt test --coverage=true               # run tests of all libraries on chrome with coverage
-#  grunt test --browsers="safari,firefox"   # run tests of all libraries on safari and firefox without coverage
-#  grunt test:sap.ui.core:sap.m             # only run tests of sap.ui.core and sap.m on chrome without coverage
+# example
+#  grunt test --browsers="safari,firefox"   # run tests of all libraries on safari and firefox
 ```
