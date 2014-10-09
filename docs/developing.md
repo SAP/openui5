@@ -2,40 +2,45 @@
 Developing UI5
 ==============
 
+This page explains the initial setup, development roundtrip, and how tests are executed.
+
 Setting up the UI5 development environment
 ------------------------------------------
 
 UI5 content is developed in an environment based on node.js, used as server, with a build process based on Grunt. To set up this environment follow these simple steps:
 
- 1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
-  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line, using the settings required within SAP):
+1. Install node.js (get it from  [nodejs.org](http://nodejs.org/)); this includes npm, the node package manager.
+  * If working behind an HTTP proxy, you need to configure it properly: set the environment variables in the operating system settings or on the command line. The following example is for the Windows command line, using the settings required within SAP):
   ```
 @SET HTTP_PROXY=http://proxy:8080
 @SET HTTPS_PROXY=http://proxy:8080
 @SET FTP_PROXY=http://proxy:8080
 @SET NO_PROXY=localhost,127.0.0.1,.sap.corp,.corp.sap
 ```
- 2. Install grunt-cli globally
-     ```
+2. Install grunt-cli globally
+
+   ```
 npm install grunt-cli -g
 ```
+3. Clone the UI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
 
- 3. Clone the UI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
-   ```
+   ```
 git clone https://github.com/SAP/openui5.git
 ```
- 4. Install all npm dependencies locally (execute this inside the "openui5" directory)
-   ```
+4. Install all npm dependencies locally (execute this inside the "openui5" directory)
+
+   ```
 cd openui5
 npm install
 ```
- 5. Start the server
-   ```
- grunt serve
- ```
- 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite](http://localhost:8080/testsuite)  - done!
+5. Start the server
 
- ```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
+   ```
+ grunt serve
+```
+6. Point your browser to this server running UI5: [http://localhost:8080/testsuite](http://localhost:8080/testsuite)  - done!
+
+```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
  See the [documentation](https://github.com/SAP/openui5/blob/master/docs/tools.md) for more details.
 
 
@@ -48,8 +53,8 @@ Just modify any source file and reload your browser. Now that's simple, no?
 
 This build-free development process does not deliver optimized runtime performance (e.g. there are many small requests, which would not be acceptable for remote connections), but is the most convenient way to modify the UI5 sources. Under the hood there are mainly two mechanisms applied that adapt the sources:
 
- * The Git repository path contains a folder named like the respective control library (e.g. "sap.ui.commons"), which is omitted at runtime. The node.js-based server is configured to map the locations.
- * The CSS files are transformed (server-side) by the LESS pre-processor during the first request after a CSS file has been modified. This includes mirroring for right-to-left support. This first request to the respective library.css file after a CSS modification will take some hundred milliseconds, depending on the amount of CSS. This is the LESS processing time.
+ * The Git repository path contains a folder named like the respective control library (e.g. "sap.ui.commons"), which is omitted at runtime. The node.js-based server is configured to map the locations.
+ * The CSS files are transformed (server-side) by the LESS pre-processor during the first request after a CSS file has been modified. This includes mirroring for right-to-left support. This first request to the respective library.css file after a CSS modification will take some hundred milliseconds, depending on the amount of CSS. This is the LESS processing time.
 
 ### Building UI5
 
@@ -66,11 +71,11 @@ Optionally, only selected libraries can be built or the copy of the test-resourc
 
 The build is responsible for the following tasks:
 
- * Creation of the bundled library.css and library-RTL.css file for all available themes
- * Minification of CSS
- * Minification of JavaScript (not yet re-implemented)
- * Combination of JavaScript control files into a single library-preload.json file
- * Combination of the most important UI5 core files into sap-ui-core.js (not yet re-implemented)
+ * Creation of the bundled library.css and library-RTL.css file for all available themes
+ * Minification of CSS
+ * Minification of JavaScript (not yet re-implemented)
+ * Combination of JavaScript control files into a single library-preload.json file
+ * Combination of the most important UI5 core files into sap-ui-core.js (not yet re-implemented)
 
 #### Troubleshooting
 
@@ -118,8 +123,8 @@ By giving parameters you can change this default behavior:
 
 The parameter {{{--coverage=true}}} to also report the test coverage is not yet supported.
 
-#### Troubleshooting proxy issues
 
+#### Troubleshooting proxy issues
 ```grunt test``` will download the "selenium-server-standalone" when run for the first time. If you are working behind a proxy and have no environment variables set for the proxy, this will fail for the first time:
 
 > selenium-server-standalone.jar not found. Downloading...
@@ -127,6 +132,7 @@ The parameter {{{--coverage=true}}} to also report the test coverage is not yet 
 
 
 To solve this issue, set the environment variables for the proxy as described above.
+
 
 #### Troubleshooting "browser not found" issues
 
@@ -147,9 +153,9 @@ If you get the following error, remember that for browsers other than Firefox yo
 
 Solution: download the Selenium driver for the respective browser and make sure the Selenium Web Driver finds it; for Chrome:
 
- * Download the current chromedriver_*.zip from  [http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)
- * Extract the executable to a suitable location (e.g. C:\Program Files (x86)\Selenium Drivers)
- * Include the ChromeDriver location in your PATH environment variable
+ * Download the current chromedriver_*.zip from  [http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)
+ * Extract the executable to a suitable location (e.g. C:\Program Files (x86)\Selenium Drivers)
+ * Include the ChromeDriver location in your PATH environment variable
 
 For Internet Explorer (browser type "ie"), the download location is <http://selenium-release.storage.googleapis.com/index.html>. For other browsers, consult the respective driver documentation. In Internet Explorer you may have to adjust the "protected mode" settings in the Internet Options, tab "Security".
 

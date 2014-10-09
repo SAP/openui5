@@ -1,28 +1,8 @@
-![openui5](http://openui5.org/images/OpenUI5_new_big_side.png)
 
-OpenUI5. Build Once. Run on any device.
+Grunt tasks
+===========
 
-# Install
-
-1. Install node.js and npm (get it from [here](http:nodejs.org))
-
-1. Make sure grunt-cli is installed globally
-```
-npm install grunt-cli -g
-```
-
-1. Clone the repository and navigate into the repository folder
-```
-git clone https://github.com/SAP/openui5.git
-cd openui5
-```
-
-1. Install all npm dependencies locally
-```
-npm install
-```
-
-# Grunt tasks
+The following Grunt tasks are available after [setting up the development environment](https://github.com/SAP/openui5/blob/master/docs/developing.md).
 
 ## serve ##
 
@@ -30,9 +10,9 @@ Argument | Description                                                          
 -------- | ------------------------------------------------------------------------------ | -------
 mode     | `src` uses source files, `target` uses built files (see build task)            | `src`
 port     | Network port to use                                                            | `8080`
-watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`) | `false`
+watch    | `boolean` whether to enable watch / livereload (only possible with mode `src`)  Note: watch is currently not yet supported | `false`
 
-Runs a HTTP server.
+Runs an HTTP server.
 
 Maps folders of all libraries
 - src -> /resources

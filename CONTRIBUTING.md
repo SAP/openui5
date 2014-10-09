@@ -32,7 +32,7 @@ Once you have familiarized with the guidelines, you can go to the [Github issue 
  * Good summary
  * Well-documented
  * Minimal example
- * Use the [template](http://sap.github.io/openui5/bugreport_template.txt)
+ * Use the [template](http://openui5.org/bugreport_template.txt)
 
 
 ### Requirements for a bug report
@@ -59,7 +59,7 @@ These eight requirements are the mandatory base of a good bug report:
  7. Minimal example: it is highly encouraged to provide a minimal example to reproduce in e.g. jsbin: isolate the application code which triggers the issue and strip it down as much as possible as long as the issue still occurs. If several files are required, you can create a gist. This may not always be possible and sometimes be overkill, but it always helps analyzing a bug.
  8. Only one bug per report: open different tickets for different issues
 
-You are encouraged to use [this template](http://sap.github.io/openui5/bugreport_template.txt).
+You are encouraged to use [this template](http://openui5.org/bugreport_template.txt).
 
 Please report bugs in English, so all users can understand them.
 
@@ -106,6 +106,86 @@ We want to improve the quality of UI5 and good bug reports are welcome! But our 
 
 Bug report analysis support is very welcome! (e.g. pre-analysis or proposing solutions)
 
+
 ## Contribute Code
 
-The source code is now available to fork on GitHub and we are working on setting up the contribution process via pull requests. Please bear with us until this is ready.
+You are welcome to contribute code to OpenUI5 in order to fix bugs or to implement new features.
+
+There are three important things to know:
+
+1.  You must be aware of the Apache License (which describes contributions) and **agree to the Contributors License Agreement**. This is common practice in all major Open Source projects and we made it as simple as possible for you to express your consent: just mention it in your commit message. See the respective section below for details, also for special rules for company contributors.
+2.  There are **several requirements regarding code style, quality, and product standards** which need to be met (we also have to follow them). The respective section below gives more details on the coding guidelines.
+3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation must first be discussed with one of the [OpenUI5 committers](https://github.com/orgs/SAP/teams/openui5). The more effort you invest, the better you should clarify in advance whether the contribution fits: open an enhancement ticket in the issue tracker to discuss the feature you plan to implement, this avoids disappointment.
+
+### Contributor License Agreement
+
+When you contribute (code, documentation, or anything else), you have to be aware that your contribution is covered by the same [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0) that is applied to OpenUI5 itself.
+In particular you need to agree to the Individual Contributor License Agreement,
+which can be [downloaded here](https://github.com/SAP/openui5/blob/master/docs/SAP Individual Contributor License Agreement.pdf).
+(this applies to all contributors, including those contributing on behalf of a company). If you agree to its content, express this consent in the commit message of your pull request.
+You can e.g. write:
+```I hereby declare to agree to the OpenUI5 Individual Contributor License Agreement```
+
+#### Company Contributors
+
+If employees of a company contribute code, in **addition** to the individual agreement above, there needs to be one company agreement submitted. This is mainly for the protection of the contributing employees.
+
+A company representative authorized to do so needs to download, fill, and print
+the [Corporate Contributor License Agreement](https://github.com/SAP/openui5/blob/master/docs/SAP Corporate Contributor License Agreement.pdf) form. Then either:
+
+-   Scan it and e-mail it to [opensource@sap.com](mailto:opensource@sap.com) and [openui5@sap.com](mailto:openui5@sap.com)
+-   Fax it to: +49 6227 78-45813
+-   Send it by traditional letter to: *Industry Standards & Open Source Team, Dietmar-Hopp-Allee 16, 69190 Walldorf, Germany*
+
+The form contains a list of employees who are authorized to contribute on behalf of your company. When this list changes, please let us know.
+
+### Contribution Content Guidelines
+
+Contributed content can be accepted if it:
+
+1. is useful to improve OpenUI5 (explained above)
+2. follows the applicable guidelines and standards
+
+The second requirement could be described in entire books and would still lack a 100%-clear definition, so you will get a committer's feedback if something is not right. Extensive conventions and guidelines documentation is [available here](https://github.com/SAP/openui5/blob/master/docs/guidelines.md).
+
+These are some of the most important rules to give you an initial impression:
+
+-   Apply a clean coding style adapted to the surrounding code, even though we are aware the existing code is not fully clean
+-   Use tabs for indentation (except if the modified file consistently uses spaces)
+-   Use variable and CSS class naming conventions like in the other files you are seeing (e.g. hungarian notation)
+-   No global variables, of course, and [use "jQuery" instead of "$"](http://learn.jquery.com/using-jquery-core/avoid-conflicts-other-libraries/)
+-   No console.log() - use jQuery.sap.log.\*
+-   Run the ESLint code check and make it succeed
+-   Use jQuery.sap.byId("someId") instead of jQuery("\#someId") - certain characters in IDs need to be escaped for jQuery to work correctly
+-   Only access public APIs of other entities (there are exceptions, but this is the rule)
+-   Comment your code where it gets non-trivial and remember to keep the public JSDoc documentation up-to-date
+-   Controls need to be accessible (operable by keyboard and read properly by screenreaders, through ARIA support), support right-to-left languages, and run fine in all supported browsers/devices
+-   Translation and Localization must be supported
+-   Keep databinding in mind - users expect it to work for basically everything
+-   Keep an eye on performance and memory consumption, properly destroy objects when not used anymore (e.g. avoid ancestor selectors in CSS)
+-   Try to write slim and "modern" HTML and CSS, avoid using images and affecting any non-UI5 content in the page/app
+-   Avoid `!important` in the CSS files and don't apply outer margins to controls; make them work also when positioned absolutely
+-   Do not use oEvent.preventDefault(); or oEvent.stopPropagation(); without a good reason or without documentation why it is really required
+-   Write a unit test
+-   Do not do any incompatible changes, especially do not modify the name or behavior of public API methods or properties
+-   Always consider the developer who USES your control/code!
+    -   Think about what code and how much code he/she will need to write to use your feature
+    -   Think about what she/he expects your control/feature to do
+
+If this list sounds lengthy and hard to achieve - well, that's what WE have to comply with as well, and it's by far not complete…
+
+### How to contribute - the Process
+
+1.  Make sure the change would be welcome (e.g. a bugfix or a useful feature); best do so by proposing it in a GitHub issue
+2.  Create a branch forking the openui5 repository and do your change
+3.  Commit and push your changes on that branch
+    -   When you have several commits, squash them into one
+
+4.  In the Commit message, state that you agree to our CLA (see above)
+5.  Create a Pull Request to github.com/SAP/openui5
+6.  Wait for our code review and approval, possibly enhancing your change on request
+    -   Note that the UI5 developers also have their regular duties, so depending on the required effort for reviewing, testing and clarification this may take a while
+
+7.  Once the change has been approved we will inform you in a comment
+8.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
+9.  We will close the pull request, feel free to delete the now obsolete branch

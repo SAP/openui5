@@ -21,7 +21,7 @@ and the UI5 SDK containing the documentation and many example apps as well as th
 
 Get started!
 ------------
-Try the [Hello World](http://sap.github.io/openui5/getstarted.html), read
+Try the [Hello World](http://openui5.org/getstarted.html), read
 the [Developer Guide](https://openui5.hana.ondemand.com/#docs/guide/Documentation.html)
 and refer to the [API Reference](https://openui5.hana.ondemand.com/#docs/api/symbols/sap.ui.html).
 Check out the [SCN Forum](http://scn.sap.com/community/developer-center/front-end/content) and
@@ -30,8 +30,5 @@ problems and questions.
 
 Hack it!
 --------
-You get the sources and build UI5 on your own, please check the [UI5 development documentation](https://github.com/SAP/openui5/blob/master/docs/developing.md).
-
-What's next?
-------------
-While you can fork UI5 on GitHub, we are still finalizing the contribution process. Please be patient.
+You can get the sources and build UI5 on your own, please check the [documentation for the UI5 development setup](https://github.com/SAP/openui5/blob/master/docs/developing.md).
+Maybe there's a bug you could analyze and fix?

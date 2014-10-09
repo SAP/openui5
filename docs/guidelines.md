@@ -1,30 +1,30 @@
 Development Conventions and Guidelines
 ======================================
 
-To keep the UI5 code readable and maintainable, please follow these rules, even if you find them violated somewhere. Note that this list is not complete. 
+To keep the UI5 code readable and maintainable, please follow these rules, even if you find them violated somewhere. Note that this list is not complete.
 When a file is consistently not following these rules and adhering to the rules would make the code worse, follow the local style.
 
 ### Table of Contents
 
-1.  [General](#General)
-2.  [JavaScript Coding Guidelines](#JavaScriptCodingGuidelines)
-    *  [Code Formatting](#CodeFormatting)
-    *  [Naming Conventions](#NamingConventions)
-    *  [Creating Classes](#CreatingClasses)
-    *  [Documentation (JSDoc)](#DocumentationJSDoc)
-3.  [UI5 Control Development Guidelines](#UI5ControlDevelopmentGuidelines)
-    *  [API](#API)
-    *  [Behavior](#Behavior)
-    *  [Renderer](#Renderer)
-    *  [Themes/CSS](#ThemesCSS)
-        *  [General](#General1)
-        *  [Naming](#Naming)
-        *  [LESS Theme Parameters](#LESSThemeParameters)
-4.  [Product Standards / Acceptance Criteria](#ProductStandardsAcceptanceCriteria)
-5.  [File Names and Encoding](#FileNamesandEncoding)
-<!-- 6.  [Git Guidelines](#GitGuidelines) -->
-6.  [Tools](#Tools)
-    *  [ESLint](#ESLint)
+1.  [General](#general)
+2.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
+    *  [Code Formatting](#code-formatting)
+    *  [Naming Conventions](#naming-conventions)
+    *  [Creating Classes](#creating-classes)
+    *  [Documentation (JSDoc)](#documentation-jsdoc)
+3.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
+    *  [API](#api)
+    *  [Behavior](#behavior)
+    *  [Renderer](#renderer)
+    *  [Themes/CSS](#themescss)
+        *  [General](#general-1)
+        *  [Naming](#naming)
+        *  [LESS Theme Parameters](#less-theme-parameters)
+4.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
+5.  [File Names and Encoding](#file-names-and-encoding)
+<!-- 6.  [Git Guidelines](#git-guidelines) -->
+6.  [Tools](#tools)
+    *  [ESLint](#eslint)
 
 
 
@@ -63,23 +63,23 @@ JavaScript Coding Guidelines
     -   Use `===` and `!==` instead of `==` and `!=` (see the ESLint docu for special cases where `==` is allowed)
     -   The code should therefore look like this:
 
-        ```js
-            function outer(c, d) {
-                var e = c * d;
-                if (e === 0) {
-                    e++;
-                }
-                for (var i = 0; i < e; i++) {
-                    // do nothing
-                }
-
-                function inner(a, b) {
-                    return (e * a) + b;
-                }
-
-                return inner(0, 1);
+    ```js
+        function outer(c, d) {
+            var e = c * d;
+            if (e === 0) {
+                e++;
             }
-        ```
+            for (var i = 0; i < e; i++) {
+                // do nothing
+            }
+    
+            function inner(a, b) {
+                return (e * a) + b;
+            }
+    
+            return inner(0, 1);
+        }
+    ```
 
     -   The Eclipse default settings for the JavaScript editor are pretty fine, but make sure tabs are used for indentation
 
@@ -307,7 +307,7 @@ The commit message consists of two or three parts, separated by empty lines:
     focus/blur event listener in onBefore/AfterRerendering
 
     Change-Id: I3c7d6e4d52fa71e9412b729b7a234a112915c2a4
-	Bug-URL: https://github.com/SAP/openui5/issues/1
+    Bug-URL: https://github.com/SAP/openui5/issues/1
     ```
 
 
