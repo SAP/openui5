@@ -375,7 +375,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					oFilterItem.setValue1(oNewData.value1);
 					oFilterItem.setValue2(oNewData.value2);
 					
-					sap.m.MessageToast.show("update FilterItem ---> " + sKey);
+					//sap.m.MessageToast.show("update FilterItem ---> " + sKey);
 				} 
 			}
 			if (sOperation === "add") {

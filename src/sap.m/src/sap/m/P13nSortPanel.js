@@ -202,11 +202,6 @@ var P13nSortPanel = P13nPanel.extend("sap.m.P13nSortPanel", /** @lends sap.m.P13
 			dataChange : this._handleDataChange()
 		});
 		this._oSortPanel.setOperations(this._aOperations);
-		this._oSortPanel.addKeyField({
-			key : null,
-			text : "(none)"
-		});
-		
 	
 		this.addAggregation("content", this._oSortPanel);
 	};
@@ -279,7 +274,7 @@ var P13nSortPanel = P13nPanel.extend("sap.m.P13nSortPanel", /** @lends sap.m.P13
 					oSortItem.setColumnKey(oNewData.keyField);
 					oSortItem.setOperation(oNewData.operation);
 	
-					sap.m.MessageToast.show("update SortItem ---> " + sKey);
+					//sap.m.MessageToast.show("update SortItem ---> " + sKey);
 				} 
 			}
 			if (sOperation === "add") {
