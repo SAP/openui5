@@ -18,30 +18,34 @@
 		initialPage: "page1"
 	});
 
+	var that = this;
 	this._oModel = new sap.ui.model.json.JSONModel();
 	
 	var _oData = {
-		itemData: [ {
-			key: '4711',
-			selected: true,
-			visible: true,
-			text: "Column1"
-		}, {
-			key: '4712',
-			selected: true,
-			visible: true,
-			text: "Column2"
-		}, {
-			key: '4713',
-			selected: false,
-			visible: true,
-			text: "Column3"
-		},{
-			key: '4714',
-			selected: true,
-			visible: true,
-			text: "Column4"
-		} ]
+			columns: {
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
+					items: [ {
+						key: '4711',
+						selected: true,
+						visible: true,
+						text: "Column1"
+					}, {
+						key: '4712',
+						selected: true,
+						visible: true,
+						text: "Column2"
+					}, {
+						key: '4713',
+						selected: false,
+						visible: true,
+						text: "Column3"
+					},{
+						key: '4714',
+						selected: true,
+						visible: true,
+						text: "Column4"
+					} ]
+				}
 	};
 
 	this._oModel.setData(_oData);
@@ -54,19 +58,51 @@
 		type: sap.m.ListType.Active
 	});
 
-	var oColumnsPanel = new sap.m.P13nColumnsPanel({
+	this._oColumnsPanel = new sap.m.P13nColumnsPanel({
+		title: "{/columns/title}",
+		type: "columns",
 		items: {
-			path: '/itemData',
+			path: '/columns/items',
 			template: this._oColumnItemTemplate
+		},
+		moveItem: function(oEvent) {
+			that._handleMoveItem(oEvent);
 		}
 	});
 
 	var oPage = new sap.m.Page("page1", {
-		content: [ oColumnsPanel ]
+		content: [ this._oColumnsPanel ]
 	});
 
-	oColumnsPanel.setModel(this._oModel)
+	this._oColumnsPanel.setModel(this._oModel)
 
+	this._handleMoveItem = function(oEvent) {
+		var oOldItem = null, oNewItem = null;
+
+ 		if (oEvent !== null) {
+			oOldItem = oEvent.getParameter('oldItem');
+			oNewItem = oEvent.getParameter('newItem');
+			if (oOldItem !== null && oNewItem !== null) {
+		
+				// Store old item data
+				var bTargetItemIsSelected = oOldItem.getSelected();
+				var sTargetItemText = oOldItem.getCells()[0].getText();
+				var sTargetItemKey = oOldItem.getKey();
+
+				// Swop item content
+				oOldItem.setSelected(oNewItem.getSelected());
+				oOldItem.getCells()[0].setText(oNewItem.getCells()[0].getText());
+				oOldItem.setKey(oNewItem.getKey());
+
+				oNewItem.setSelected(bTargetItemIsSelected);
+				oNewItem.getCells()[0].setText(sTargetItemText);
+				oNewItem.setKey(sTargetItemKey);
+				
+				that._oColumnsPanel._afterMoveItem(oOldItem, oNewItem);
+			}
+		} 
+	};
+	
 	oApp.addPage(oPage);
 	oApp.placeAt("body");
 </script>
