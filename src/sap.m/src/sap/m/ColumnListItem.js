@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * ColumnListItem can be used to create columns for Table control.
+	 * ColumnListItem can be used to create rows for Table control.
 	 * Note: This control should not be used without Column definition in parent control.
 	 * @extends sap.m.ListItemBase
 	 *
@@ -45,11 +45,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		aggregations : {
 	
 			/**
-			 * Internal aggregation to hold the cloned column headers for pop-in.
-			 */
-			clonedHeaders : {type : "sap.ui.core.Control", multiple : true, singularName : "clonedHeader", visibility : "hidden"}, 
-	
-			/**
 			 * Every item inside the cells aggregation defines one column of the row.
 			 */
 			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
@@ -59,6 +54,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	
 	// prototype lookup for pop-in id
 	ColumnListItem.prototype._popinId = "";
+	
+	// initialization hook
+	ColumnListItem.prototype.init = function() {
+		sap.m.ListItemBase.prototype.init.call(this);
+		this._aClonedHeaders = [];
+	};
 	
 	/**
 	 * Returns pop-in DOMRef as a jQuery Object
@@ -77,7 +78,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	ColumnListItem.prototype.removePopin = function() {
 		this.$Popin().remove();
 		this._popinId = "";
-		return this;
 	};
 	
 	/**
@@ -86,6 +86,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 */
 	ColumnListItem.prototype.hasPopin = function() {
 		return !!(this._popinId);
+	};
+	
+	// Adds cloned header to the local collection
+	sap.m.ColumnListItem.prototype.addClonedHeader = function(oHeader) {
+		return this._aClonedHeaders.push(oHeader);
+	};
+
+	// Destroys cloned headers that are generated for popin
+	sap.m.ColumnListItem.prototype.destroyClonedHeaders = function() {
+		this._aClonedHeaders.forEach(function(oClone) {
+			oClone.destroy(true);
+		});
+
+		this._aClonedHeaders.length = 0;
 	};
 	
 	/*
@@ -103,8 +117,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	// remove pop-in on destroy
 	ColumnListItem.prototype.exit = function() {
 		ListItemBase.prototype.exit.call(this);
-		this.destroyAggregation("clonedHeaders", true);
-		return this.removePopin();
+		this.destroyClonedHeaders();
+		this.removePopin();
 	};
 	
 	// active feedback for pop-in
