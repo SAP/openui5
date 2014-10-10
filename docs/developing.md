@@ -38,7 +38,7 @@ npm install
    ```
  grunt serve
 ```
-6. Point your browser to this server running UI5: [http://localhost:8080/testsuite](http://localhost:8080/testsuite)  - done!
+6. Point your browser to this server running UI5: [http://localhost:8080/testsuite/](http://localhost:8080/testsuite/)  - done!
 
 ```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
  See the [documentation](tools.md) for more details.
