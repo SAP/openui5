@@ -100,7 +100,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 				}
 	
 				oColumn.getVAlign() != "Inherit" && rm.addStyle("vertical-align", oColumn.getVAlign().toLowerCase());
-				rm.addStyle("text-align", oColumn.getCssAlign());
+				var sAlign = oColumn.getCssAlign();
+				if (sAlign) {
+					rm.addStyle("text-align", sAlign);
+				}
+				
 				rm.writeStyles();
 			}
 	
