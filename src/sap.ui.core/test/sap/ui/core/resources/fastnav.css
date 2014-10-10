@@ -1,0 +1,16 @@
+*:focus {
+	outline: 3px solid blue;
+}
+
+*[data-sap-ui-fastnavgroup="true"] {
+	border: 1px solid green;
+	padding: 5px;
+	margin: 5px;
+}
+
+.TabbableDiv {
+	display:inline-block;
+	height:20px;
+	width:200px;
+	background:red;
+}

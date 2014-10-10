@@ -1073,18 +1073,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		var aData = oElement.getCustomData();
 		var l = aData.length;
 		for (var i = 0; i < l; i++) {
-			var oData = aData[i];
-			if (oData.getWriteToDom()) { // application wants this to be written to the DOM, but there are some conditions for this to work
-				var key = oData.getKey();
-				if (typeof oData.getValue() === "string") {
-					if ((sap.ui.core.ID.isValid(key)) && (key.indexOf(":") == -1) && (key.indexOf("sap-ui") !== 0)) {
-						this.writeAttributeEscaped("data-" + key, oData.getValue());
-					} else { // error case
-						jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the key is not valid (must be a valid sap.ui.core.ID without any colon and may not start with 'sap-ui').");
-					}
-				} else { // error case: non-string value
-					jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + this + " but the value is not a string.");
-				}
+			var oCheckResult = aData[i]._checkWriteToDom(oElement);
+			if (oCheckResult) {
+				this.writeAttributeEscaped(oCheckResult.key, oCheckResult.value);
 			}
 		}
 		return this;

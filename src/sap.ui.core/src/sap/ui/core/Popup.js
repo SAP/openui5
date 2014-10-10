@@ -95,6 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._durations = {	open: "fast", close: "fast" };
 			this._iZIndex = -1;
 			this._oBlindLayer = null;
+			this.setNavigationMode();
 	
 			//autoclose handler for mobile or desktop browser in touch mode
 			//this function needs to be put onto the instance other than the prototype because functions on the prototype are treated as same function and can't be bound twice.
@@ -130,6 +131,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 					}
 				};
 			}
+			
+			this._F6NavigationHandler = function(oEvent) {
+				var oSettings = {},
+					sMode = this._sF6NavMode,
+					oDockElement;
+				
+				// DOCK mode only possible for non-modal popups with valid dock element
+				if (sMode == "DOCK") {
+					if (this._bModal) {
+						sMode = "NONE";
+					} else if (this._oLastPosition && this._oLastPosition.of) {
+						oDockElement = this._getOfDom(this._oLastPosition.of);
+						if (!oDockElement || oDockElement === document ){
+							oDockElement = null;
+							sMode = "NONE";
+						}
+					}
+				}
+				
+				// Define navigation settings according to specified mode
+				switch (sMode) {
+					case "SCOPE":
+						oSettings.scope = this._$()[0]; // Search scope for next F6 target is the popup itself
+						break;
+					case "DOCK":
+						oSettings.target = oDockElement; // Starting point for searching the next F6 target is the dock element
+						var $DockPopup = jQuery(oDockElement).parents("[data-sap-ui-popup]");
+						oSettings.scope = $DockPopup.length ? $DockPopup[0] : null; // Search scope is the parent popup (if exists, otherwise the document) 
+						break;
+					default: //"NONE" and others
+						oSettings.skip = true; // Ignore the F6 key event
+				}
+				
+				jQuery.sap.handleF6GroupNavigation(oEvent, oSettings);
+			};
 		},
 	
 		metadata : {
@@ -779,6 +815,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		if (this._bModal || this._bAutoClose) { // initialize focus handling
 			this._addFocusEventListeners();
 		}
+		
+		this._$().on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
 
 		//autoclose implementation for mobile or desktop browser in touch mode
 		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
@@ -941,6 +979,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		if (this.fEventHandler) { // remove focus handling
 			this._removeFocusEventListeners();
 		}
+		
+		this._$().off("keydown", this._F6NavigationHandler);
 	
 		//deregister the autoclose handler for mobile
 		if (this.touchEnabled) {
@@ -1566,6 +1606,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 */
 	Popup.prototype.getModal = function() {
 		return this._bModal;
+	};
+	
+	/**
+	 * Sets the behavior of the popup for fast navigation (F6).
+	 * 
+	 *  "NONE": Fast Navigation is disabled within the popup (default).
+	 *  "DOCK": Fast Navigation is disabled within the popup. When a fast navigation is triggered the first element before/after the dock element in the
+	 *          fast navigation chain will be focused. If the popup is modal, there is no dock element or the dock element is the document this option behaves like "NONE".
+	 *  "SCOPE": Fast Navigation is enabled and cycles within the popup.
+	 * 
+	 * @private
+	 * @param {string} sMode the desired navigation mode
+	 * @since 1.25.0
+	 */
+	Popup.prototype.setNavigationMode = function(sMode) {
+		if (sMode != "NONE" && sMode != "DOCK" && sMode != "SCOPE") {
+			this._sF6NavMode = "NONE";
+		}
+		this._sF6NavMode = sMode;
 	};
 	
 	/**
@@ -2303,6 +2362,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			// register the focus event listener again after rendering because the content DOM node is changed
 			this._addFocusEventListeners();
 		}
+		
+		this._$().on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
 	};
 	
 	/**
@@ -2322,6 +2383,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			// deregister the focus event listener because the content DOM node is going to be deleted
 			this._removeFocusEventListeners();
 		}
+		
+		this._$().off("keydown", this._F6NavigationHandler);
 	};
 	
 	/**
