@@ -7,7 +7,7 @@
 	class="viewPadding">
 	<l:HorizontalLayout>
 		<l:content>
-			<Button text="Open Menu" press="handlePressOpenMenu" />
+			<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" />
 			
 		</l:content>
 	</l:HorizontalLayout>
