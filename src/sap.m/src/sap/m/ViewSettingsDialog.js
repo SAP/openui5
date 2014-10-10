@@ -859,6 +859,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// execute cancel action
 				that._onCancel();
 			};
+			
+			// [SHIFT]+[ENTER] triggers the “Back” button of the dialog 
+			this._dialog.onsapentermodifiers = function (oEvent) {
+				
+				if (oEvent.shiftKey && !oEvent.ctrlKey && !oEvent.altKey ) {
+					that._pressBackButton();
+				}
+			};
 		}
 	
 		return this._dialog;
@@ -1042,12 +1050,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// init internal page content
 			oBackButton = new sap.m.Button(this.getId() + "-backbutton", {
 				icon : IconPool.getIconURI("nav-back"),
-				press : function() {
-					that._updateFilterCounters();
-					jQuery.sap.delayedCall(0, that._navContainer, "back");
-					that._switchToPage(2);
-					that._segmentedButton.setSelectedButton(that._filterButton);
-				}
+				press : [this._pressBackButton, this]
 			});
 			oDetailResetButton = new sap.m.Button(this.getId()
 					+ "-detailresetbutton", {
@@ -1371,6 +1374,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._iContentPage === 3) {
 			this._iContentPage = -1;
 			this._switchToPage(3, this._oContentItem);
+		}
+	};
+	
+	sap.m.ViewSettingsDialog.prototype._pressBackButton = function() {
+		if (this._iContentPage === 3) {
+			this._updateFilterCounters();
+			jQuery.sap.delayedCall(0, this._navContainer, "back");
+			this._switchToPage(2);
+			this._segmentedButton.setSelectedButton(this._filterButton);
 		}
 	};
 	
