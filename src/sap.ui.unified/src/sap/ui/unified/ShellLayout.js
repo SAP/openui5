@@ -87,10 +87,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	ShellLayout._SIDEPANE_WIDTH_DESKTOP = 240;
 	ShellLayout._HEADER_ALWAYS_VISIBLE = true; /*Whether header hiding is technically possible (touch enabled)*/
 	ShellLayout._HEADER_AUTO_CLOSE = true;
-	ShellLayout._HEADER_TOUCH_TRESHOLD = 30;
-	if (Device.browser.chrome) {
+	ShellLayout._HEADER_TOUCH_TRESHOLD = 15;
+	if (Device.browser.chrome && Device.browser.version < 36) {
 		//see https://groups.google.com/a/chromium.org/forum/#!topic/input-dev/Ru9xjSsvLHw --> chrome://flags/#touch-scrolling-mode
-		ShellLayout._HEADER_TOUCH_TRESHOLD = Device.browser.version < 36 ? 10 : 15;
+		ShellLayout._HEADER_TOUCH_TRESHOLD = 10;
 	}
 		
 	ShellLayout.prototype.init = function(){
