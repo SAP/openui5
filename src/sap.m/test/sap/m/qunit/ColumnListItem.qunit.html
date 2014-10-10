@@ -52,7 +52,6 @@
 				result = sut.removePopin();
 
 				// Assert
-				equal(sut, result,"method is chainable");
 				ok(hasPopin,"did have a popin before deleting it");
 				ok(sut._popinId === "", "popinId Property is cleared");
 				equal(jQuery("#" + popinId).length, 0,"popin got removed from dom");

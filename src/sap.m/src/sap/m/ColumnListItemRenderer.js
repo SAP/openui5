@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			aCells = oLI.getCells();
 	
 		// remove cloned headers
-		oLI.destroyAggregation("clonedHeaders", true);
+		oLI.destroyClonedHeaders();
 	
 		// remove pop-in if list is not in rendering phase
 		// in rendering phase all pop-ins are already removed
@@ -162,7 +162,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 				rm.writeClasses();
 				rm.write(">");
 				oHeader = oHeader.clone();
-				oLI.addAggregation("clonedHeaders", oHeader, true);
+				oColumn.addDependent(oHeader);
+				oLI.addClonedHeader(oHeader);
 				oColumn.applyAlignTo(oHeader, "Begin");
 				rm.renderControl(oHeader);
 				rm.write("</div>");
