@@ -113,7 +113,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	
 			var control = oColumn["get" + type + "er"](),
 				width = hasOneHeader ? "" : oColumn.getWidth(),
-				cls = oColumn.getStyleClass(true);
+				cls = oColumn.getStyleClass(true),
+				align = oColumn.getCssAlign();
 	
 			rm.write("<" + cellTag);
 			cls && rm.addClass(cls);
@@ -122,7 +123,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			rm.writeAttribute("id", idPrefix + type + index);
 			rm.writeAttribute("data-sap-orig-width", oColumn.getWidth());
 			width && rm.addStyle("width", width);
-			rm.addStyle("text-align", oColumn.getCssAlign());
+			
+			if (align) {
+				rm.addStyle("text-align", align);
+			}
+			
 			rm.writeClasses();
 			rm.writeStyles();
 			rm.write(">");

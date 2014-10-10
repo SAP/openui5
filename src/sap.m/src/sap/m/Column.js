@@ -139,9 +139,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	// default media value
 	Column.prototype._media = null;
 	
-	// prototype lookup
-	Column.prototype._getTextAlign = Renderer.getTextAlign;
-	
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
 			sap.ui.Device.media.removeRangeSet(this.getId());
@@ -234,15 +231,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @protected
 	 */
 	Column.prototype.applyAlignTo = function(oControl, sAlign) {
-		if (oControl.getMetadata().getProperties().textAlign) {
-			sAlign = sAlign || this.getHAlign();
-			if (oControl.getTextAlign() != sAlign) {
-				var oDomRef = oControl.getDomRef();
-				oControl.setProperty("textAlign", sAlign, true);
-				oDomRef && (oDomRef.style.textAlign = this.getCssAlign(sAlign));
-			}
+		sAlign = sAlign || this.getHAlign();
+		if (sAlign === sap.ui.core.TextAlign.Initial ||
+			!oControl.getMetadata().getProperties().textAlign ||
+			oControl.getTextAlign() === sAlign) {
+			return oControl;
 		}
-	
+
+		oControl.setProperty("textAlign", sAlign, true);
+		var oDomRef = oControl.getDomRef();
+		sAlign = this.getCssAlign(sAlign);
+		
+		if (oDomRef && sAlign) {
+			oDomRef.style.textAlign = sAlign;
+		}
+
 		return oControl;
 	};
 	
@@ -257,7 +260,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 */
 	Column.prototype.getCssAlign = function(sAlign) {
 		sAlign = sAlign || this.getHAlign();
-		sAlign = this._getTextAlign(sAlign);
+		
+		var mTextAlign = sap.ui.core.TextAlign;
+		if (sAlign === mTextAlign.Begin || sAlign === mTextAlign.End || sAlign === mTextAlign.Initial) {
+			sAlign = Renderer.getTextAlign(sAlign);
+		}
 	
 		return sAlign.toLowerCase();
 	};
