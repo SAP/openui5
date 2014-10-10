@@ -661,11 +661,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 	
 	FileUploader.prototype.onfocusin = function () {
-		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdHover');
+		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdFocus').attr("tabindex", "-1");
+		jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfFoc');
+		this.focus();
 	};
 	
 	FileUploader.prototype.onfocusout = function () {
-		jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdHover');
+		jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdFocus').attr("tabindex", "0");
 	};
 	
 	FileUploader.prototype.setAdditionalData = function(sAdditionalData) {
