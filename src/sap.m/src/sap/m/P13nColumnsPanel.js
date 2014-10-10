@@ -31,20 +31,20 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 		events : {
 	
 			/**
-			 * This event is called as soon as an item in the table shall be moved to a new index
+			 * This event is called as soon as an item in the table shall be moved in the table
 			 */
 			moveItem : {
 				parameters : {
 	
 					/**
-					 * old index
+					 * old item
 					 */
-					oldIndex : {type : "int"}, 
+					oldItem : {type : "./P13nColumnItem"}, 
 	
 					/**
-					 * new index
+					 * new item
 					 */
-					newIndex : {type : "int"}
+					newItem : {type : "./P13nColumnItem"}
 				}
 			}
 		}
@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	
 		// Remove highlighting from selected item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			this._removeHighLightingToItem(this._oSelectedItem);
+			this._removeHighLightingFromItem(this._oSelectedItem);
 		}
 	
 		// deactivate item move buttons
@@ -213,8 +213,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 				if (iOldIndex > -1 && iOldIndex <= iLength - 1 && iNewIndex > -1 && iNewIndex <= iLength - 1) {
 	
 					this.fireEvent('moveItem', {
-						oldIndex: iOldIndex,
-						newIndex: iNewIndex
+						oldItem: this._oSelectedItem,
+						newItem: aModelItems[iNewIndex]
 					});
 				}
 			}
@@ -222,11 +222,31 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	};
 	
 	/**
+	 * After an items was moved renewal selected items instance and it's selection
+	 * 
+	 * @private
+	 * @param {P13nColumnItem}
+	 *            oOldItem is the old item (item that was marked and that shall be moved)
+	 * @param {P13nColumnItem}
+	 *            oNewItem is the new item (item that shall take over the whole content from old item) 
+	 */
+	P13nColumnsPanel.prototype._afterMoveItem = function(oOldItem, oNewItem) {
+		if (oOldItem !== null && oNewItem !== null) {
+			this._removeHighLightingFromItem(oOldItem);
+			this._oSelectedItem = oNewItem;
+			this._setHighLightingToItem(oNewItem);
+			this._scrollToSelectedItem(oNewItem);
+			this._calculateMoveButtonAppearance();
+		}
+	};
+	
+	
+	/**
 	 * Swop "Show Selected" button to "Show All"
 	 * 
 	 * @private
 	 */
-	P13nColumnsPanel.prototype._SwopShowSelectedButton = function() {
+	P13nColumnsPanel.prototype._swopShowSelectedButton = function() {
 		var sNewButtonText;
 	
 		// Swop the button text
@@ -238,7 +258,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 		}
 		this._oShowSelectedButton.setText(sNewButtonText);
 		this._filterItems();
-		this._fnHandleResize.call(this);
+		this._fnHandleResize();
 	};
 	
 	/**
@@ -308,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	
 		if (iLength > 0) {
 			this._bSearchFilterActive = true;
-			this._deactivateItemSelection();
+			this._deactivateSelectedItem();
 		} else {
 			this._bSearchFilterActive = false;
 		}
@@ -342,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	};
 	
 	/**
-	 * Item press behavior is call as soon as a table item is selected
+	 * Item press behavior is called as soon as a table item is selected
 	 * 
 	 * @private
 	 */
@@ -355,7 +375,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	
 		// Remove highlighting from previous item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			this._removeHighLightingToItem(this._oSelectedItem);
+			this._removeHighLightingFromItem(this._oSelectedItem);
 		}
 	
 		// Set highlighting to just selected item (only in case it is not already selected -> then do nothing)
@@ -445,8 +465,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	 * @param {object}
 	 *            oItem is that item that where highlighting shall be removed from
 	 */
-	P13nColumnsPanel.prototype._removeHighLightingToItem = function(oItem) {
-		if (oItem !== null && oItem !== undefined && oItem.addStyleClass) {
+	P13nColumnsPanel.prototype._removeHighLightingFromItem = function(oItem) {
+		if (oItem !== null && oItem !== undefined && oItem.removeStyleClass) {
 			oItem.removeStyleClass("sapMP13nColumnsPanelItemSelected");
 		}
 	};
@@ -456,9 +476,9 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	 * 
 	 * @private
 	 */
-	P13nColumnsPanel.prototype._deactivateItemSelection = function() {
+	P13nColumnsPanel.prototype._deactivateSelectedItem = function() {
 		if (this._oSelectedItem) {
-			this._removeHighLightingToItem(this._oSelectedItem);
+			this._removeHighLightingFromItem(this._oSelectedItem);
 			this._oSelectedItem = null;
 			this._calculateMoveButtonAppearance();
 		}
@@ -516,27 +536,32 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	};
 	
 	/**
-	 * Checks, whether the selected item instance does fit to the item identified by the item key
+	 * Scroll table content to given item
 	 * 
 	 * @private
 	 */
-	P13nColumnsPanel.prototype._syncSelectedItemInstance = function() {
-		var iIndexOfSelectedItemBasedOnItemKey = null, oItemFromTableIndex = null;
-		var sIdOfSelectedItem = null, sIdOfItemFromTableIndex = null;
-	
-		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			sIdOfSelectedItem = this._oSelectedItem.getId();
-			iIndexOfSelectedItemBasedOnItemKey = this._getItemIndexByItemKey(this._oSelectedItem);
-			if (iIndexOfSelectedItemBasedOnItemKey !== null && iIndexOfSelectedItemBasedOnItemKey !== undefined) {
-				oItemFromTableIndex = this._oTable.getItems()[iIndexOfSelectedItemBasedOnItemKey];
-			}
-	
-			if (oItemFromTableIndex !== null && oItemFromTableIndex !== undefined) {
-				sIdOfItemFromTableIndex = oItemFromTableIndex.getId();
-			}
-	
-			if (sIdOfSelectedItem !== null && sIdOfItemFromTableIndex !== null && sIdOfSelectedItem !== sIdOfItemFromTableIndex) {
-				this._oSelectedItem = oItemFromTableIndex;
+	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
+		var iMinHeight, iElementOffset, iViewPortHeight, iViewPortStart, iViewPortEnd;
+		if (oItem) {
+			sap.ui.getCore().applyChanges();
+			// oItem needs to be rendered, otherwise we cannot perform necessary calculations
+			if (!!oItem.getDomRef()) {
+				iElementOffset = oItem.$().position().top;
+				// this is the minimal height that should be visible from the selected item
+				// 18 means 18px which corresponds to 3em
+				iMinHeight = 18;
+				iViewPortHeight = this._oScrollContainer.$().height();
+				iViewPortStart = this._oScrollContainer.$().offset().top - this._oTable.$().offset().top;
+				iViewPortEnd = iViewPortStart + iViewPortHeight;
+
+				if (iElementOffset < iViewPortStart) {
+					// selected item is above or below visible viewport -> scroll page to item
+					this._oScrollContainer.scrollTo(0, Math.max(0, iViewPortStart - iViewPortHeight + iMinHeight));
+				} else if (iElementOffset + iMinHeight > iViewPortEnd) {
+					// selected item is above or below visible viewport -> scroll down a page (this is the height of the scroll container)
+					this._oScrollContainer.scrollTo(0, iElementOffset);
+				}
+				// otherwise, the item is already within the scroll container's viewport, so no action is necessary
 			}
 		}
 	};
@@ -612,7 +637,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 		this._oShowSelectedButton = new sap.m.Button({
 			text: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
 			press: function() {
-				that._SwopShowSelectedButton();
+				that._swopShowSelectedButton();
 			}
 		});
 		this._bShowSelected = false;
@@ -681,37 +706,33 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	P13nColumnsPanel.prototype.onAfterRendering = function() {
 		var iLiveChangeTimer = 0;
 		var that = this;
-		var oData = this._oTable.getModel().getJSON();
-	
-		// Save model data for reset
-		if (oData && (this._oModelData4ResetAll === null || this._oModelData4ResetAll === undefined)) {
-			this._oModelData4ResetAll = oData;
-		}
-	
-		this._updateSelectAllDescription();
-	
-		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			// if an item was moved -> sync the selected item instance, so that it fits to the selected item key
-			this._syncSelectedItemInstance();
-			this._setHighLightingToItem(this._oSelectedItem);
-		}
-	
-		// Calculate move button appearance
-		this._calculateMoveButtonAppearance();
-	
-		// Execute following lines only if panel will be started first time!
+		var oData = null;
+
+		// Execute following lines only if this control is started the first time!
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
+
+			// Save model data for reset
+			if (this._oModelData4ResetAll === null || this._oModelData4ResetAll === undefined) {
+				oData = this._oTable.getModel().getJSON();
+				if (oData) {
+					this._oModelData4ResetAll = oData;
+				}
+			}
+
+			this._calculateMoveButtonAppearance();
+
 			// Register call-back function for re-sizing
 			sap.ui.Device.resize.attachHandler(this._fnHandleResize);
-	
+
 			// Re-size visible part of scroll container
 			window.clearTimeout(iLiveChangeTimer);
 			iLiveChangeTimer = window.setTimeout(function() {
-				that._fnHandleResize.call(that);
+				that._fnHandleResize();
 			}, 0);
 		}
-	
+
+		this._updateSelectAllDescription();
 	};
 	
 	/**
@@ -756,18 +777,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 	/*
 	 * Set the model for the internal table AND the current control so that both controls can be used with data binding
 	 * 
-	 * @overwrite @public @param {sap.ui.Model} oModel the model that holds the data for the table @param {string} sName the optional model name @returns {this}
-	 * this pointer for chaining @public
+	 * @public @param {sap.ui.Model} oModel the model that holds the data for the table @param {string} sName the optional model name
 	 */
-	P13nColumnsPanel.prototype._setModel = P13nColumnsPanel.prototype.setModel;
 	P13nColumnsPanel.prototype.setModel = function(oModel, sModelName) {
-		var aArgs = Array.prototype.slice.call(arguments);
-	
-		// pass the model to the table and also to the local control to allow binding of own properties
+		sap.m.P13nPanel.prototype.setModel.apply(this, arguments);
 		this._oTable.setModel(oModel, sModelName);
-		P13nColumnsPanel.prototype._setModel.apply(this, aArgs);
-	
-		return this;
 	};
 	
 	/*
