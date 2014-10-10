@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 	
 	
-	/*
+	/**
 	 * Types of the Bar design
 	 *
 	 * @enum {string}
@@ -706,6 +706,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		H6 : "H6"
 	
 	};
+	
+
 	/**
 	 * 
 	 *   Interface for controls which are suitable as a Header, Subheader or Footer of a Page.
@@ -749,6 +751,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Footer : "Footer"
 	
 	};
+
+
 	/**
 	 * 
 	 *   Marker interface for controls which are suitable as items for the IconTabBar.
@@ -1051,6 +1055,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		DetailAndActive : "DetailAndActive"
 	
 	};
+
+
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
 	 *
