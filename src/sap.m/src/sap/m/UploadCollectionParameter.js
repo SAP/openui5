@@ -19,8 +19,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	 * Represents a parameter for the UploadCollection.
 	 * @extends sap.ui.core.Element
 	 *
-	 * @author SAP AG
-	 * @version 1.25.0-SNAPSHOT
+	 * @author SAP SE
+	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
