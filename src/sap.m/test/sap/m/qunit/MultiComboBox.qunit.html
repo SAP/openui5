@@ -1206,6 +1206,31 @@
 		oMultiComboBox.destroy();
 	});
 
+	test("method: destroyItems()", function() {
+
+		// system under test
+		var oItem;
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [oItem = new sap.ui.core.Item()],
+			selectedItems : [oItem]
+		});
+
+		// arrange
+
+		// act
+		oMultiComboBox.destroyItems();
+
+		// assertions
+		deepEqual(oMultiComboBox.getItems(), []);
+		deepEqual(oMultiComboBox.getAggregation("items"), []);
+		deepEqual(oMultiComboBox.getSelectedKeys(), []);
+		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		deepEqual(oMultiComboBox._oTokenizer.getTokens(), []);
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+	
 	// ------------------------------ //
 	// insertItem                     //
 	// ------------------------------ //
