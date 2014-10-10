@@ -2,6 +2,13 @@
 jQuery.sap.require("sap.m.MessageToast");
 
 sap.ui.controller("sap.ui.unified.sample.MenuItemEventing.MenuItemEventing", {
+	
+	onInit: function(){
+		this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
+			this._bKeyboard = oEvent.type == "keyup";
+		}, this);
+	},
+	
 	handlePressOpenMenu: function(oEvent) {
 		var oButton = oEvent.getSource();
 
@@ -15,7 +22,7 @@ sap.ui.controller("sap.ui.unified.sample.MenuItemEventing.MenuItemEventing", {
 		}
 
 		var eDock = sap.ui.core.Popup.Dock;
-		this._menu.open(false, oButton, eDock.BeginTop, eDock.BeginBottom, oButton);
+		this._menu.open(this._bKeyboard, oButton, eDock.BeginTop, eDock.BeginBottom, oButton);
 	},
 	
 	handleMenuItemPress: function(oEvent) {
