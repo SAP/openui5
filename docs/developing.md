@@ -41,7 +41,7 @@ npm install
 6. Point your browser to this server running UI5: [http://localhost:8080/testsuite](http://localhost:8080/testsuite)  - done!
 
 ```grunt serve``` has various configuration options, e.g. you can give the parameter ```-port=9090``` to use a different HTTP port.
- See the [documentation](https://github.com/SAP/openui5/blob/master/docs/tools.md) for more details.
+ See the [documentation](tools.md) for more details.
 
 
 The Development Process
@@ -65,7 +65,7 @@ Usage:
 grunt build
 ```
 
-Optionally, only selected libraries can be built or the copy of the test-resources folder can be skipped, see [the documentation](https://github.com/SAP/openui5/blob/master/docs/tools.md) for details.
+Optionally, only selected libraries can be built or the copy of the test-resources folder can be skipped, see [the documentation](tools.md) for details.
 
 **IMPORTANT:** as we are still migrating our build infrastructure from the old Maven-based one, this new Grunt build does not yet have all desired capabilities. Bear with us as we are adding them. This means that currently the build result is not completely optimized for size and performance! When you intend to use UI5 for productive purposes, you should use the runtime binaries provided at <http://openui5.org>.
 

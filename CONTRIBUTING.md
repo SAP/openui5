@@ -146,7 +146,7 @@ Contributed content can be accepted if it:
 1. is useful to improve OpenUI5 (explained above)
 2. follows the applicable guidelines and standards
 
-The second requirement could be described in entire books and would still lack a 100%-clear definition, so you will get a committer's feedback if something is not right. Extensive conventions and guidelines documentation is [available here](https://github.com/SAP/openui5/blob/master/docs/guidelines.md).
+The second requirement could be described in entire books and would still lack a 100%-clear definition, so you will get a committer's feedback if something is not right. Extensive conventions and guidelines documentation is [available here](docs/guidelines.md).
 
 These are some of the most important rules to give you an initial impression:
 
