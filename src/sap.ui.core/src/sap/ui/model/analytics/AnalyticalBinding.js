@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				// considering different count mode settings
 				if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
 					jQuery.sap.log.fatal("requested count mode is ignored; OData requests will include $inlinecout options");
-				} else if (mParameters
+				} else if (mParameters 
 						&& (mParameters.countMode == sap.ui.model.odata.CountMode.Request
 							|| mParameters.countMode == sap.ui.model.odata.CountMode.Both)) {
 					jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
@@ -442,6 +442,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 				}
 				if (aColumns[i].grouped == true) {
+					if (this.getSortablePropertyNames().indexOf(oDimension.getName()) == -1) {
+						jQuery.sap.log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
+					}
 					oDimensionDetails.grouped = true;
 				}
 				
@@ -715,7 +718,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 					if (bExecuteRequest) {
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
-							this._abortAllPendingRequests();
+							this._abortAllPendingRequests();  
 						}
 						
 						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
@@ -742,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 					if (bExecuteRequest) {
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
-							this._abortAllPendingRequests();
+							this._abortAllPendingRequests();  
 						}
 						
 						this._executeQueryRequest(oMemberRequestDetails);
@@ -875,8 +878,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(oDimensionDetails.name, // bIncludeKey: No, always needed!
 			true, bIncludeText, oDimensionDetails.aAttributeName);
 
-			// define a default sort order in case no sort criteria have been provided externally 
-			oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+			// define a default sort order in case no sort criteria have been provided externally
+			if (oDimensionDetails.grouped) {
+				oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+			}
 		}
 	
 		// (4) set filter
@@ -1184,9 +1189,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
 				oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(oDimensionDetails.name, // bIncludeKey: No, always needed!
 				true, bIncludeText, oDimensionDetails.aAttributeName);
-				
-				// define a default sort order in case no sort criteria have been provided externally 
-				oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+
+				// define a default sort order in case no sort criteria have been provided externally
+				if (oDimensionDetails.grouped) {
+					oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+				}
 			}
 		
 			// (4) set filter
@@ -1567,7 +1574,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				success: false,
 				errorobject: that.oModel._handleError(oError)});
 			// fire event to indicate request failure
-			that.fireRequestFailed(that.oModel._handleError(oError));
+			that.oModel.fireRequestFailed(that.oModel._handleError(oError));
 
 			that.fireDataReceived();
 		}
@@ -1897,7 +1904,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				aSelectedUnitPropertyName : oRequestDetails.aSelectedUnitPropertyName,
 				aAggregationLevel : oRequestDetails.aAggregationLevel,
 				bIsFlatListRequest : oRequestDetails.bIsFlatListRequest,
-				bIsLeafGroupsRequest : oRequestDetails.bIsLeafGroupsRequest,
+				bIsLeafGroupsRequest : oRequestDetails.bIsLeafGroupsRequest,				
 				iStartIndex : bProcessFirstLoadedGroup ? oRequestDetails.iStartIndex : 0,
 				iLength : oRequestDetails.iLength,
 				bAvoidLengthUpdate : oRequestDetails.bAvoidLengthUpdate
