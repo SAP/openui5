@@ -288,7 +288,7 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	width: @sapUiUx3ShellSideBarBaseWidth;
 	display: inline-block;
 	height: 100%;
-	
+
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
@@ -326,11 +326,11 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
     -ms-transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
-    
-    -moz-transform-origin: 0 0;
-    -ms-transform-origin: 0 0;
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
+
+    -moz-transform-origin: 0% 0;
+    -ms-transform-origin: 0% 0;
+    -webkit-transform-origin: 0% 0;
+    transform-origin: 0% 0;
 
     white-space: nowrap;
     -ms-text-overflow: ellipsis;
@@ -389,12 +389,12 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3ShellPaneEntries {
 }
 
 /**
- * In RTL case, IE8 has a bug where the clickable area is different from the visible elements. 
+ * In RTL case, IE8 has a bug where the clickable area is different from the visible elements.
  * So the plan here is: switch to LTR for rotation, rotate into the opposite direction, switch
  * back to RTL inside. Because of LTR the pane bar content needs to be right-aligned.
  */
 html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneBarRight {
-	direction: ltr; 
+	direction: ltr;
 }
 
 html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneEntries {
@@ -486,7 +486,7 @@ html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneEntry {
 	right: 40px;
 	top: 98px;
 	padding: 24px 32px 2px 32px;
-	min-width: 96px; /* = padding plus some space for the remaining content */ 
+	min-width: 96px; /* = padding plus some space for the remaining content */
 	background-color: @sapUiUx3ShellBackgroundColor;
 	z-index: 1;
 	overflow-x: auto;
@@ -534,7 +534,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3ShellCanvas {
 	left: 40px;
 	right: 40px;
 	padding: 0 32px; /* Should be as wide as the canvas padding, so when making the window very small, they stay in sync */
-	min-width: 96px; /* = padding plus some space for the remaining content */ 
+	min-width: 96px; /* = padding plus some space for the remaining content */
 	bottom: 0px;
 	top: 108px;
 }
@@ -555,7 +555,7 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3ShellCanvas {
 }
 
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > img,
-.sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > h1, 
+.sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > h1,
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellHeader > span,
 .sapUiUx3Shell.sapUiUx3ShellHeadBrandOnly > .sapUiUx3ShellWorksetBar,
 .sapUiUx3Shell.sapUiUx3ShellHeadNoNav > .sapUiUx3ShellWorksetBar {
