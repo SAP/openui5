@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			
 			var that = this;
 			setTimeout(function() {
-				that.fireSelect();
+				that.fireSelect({selected: true});
 			}, 0);
 	
 		}
