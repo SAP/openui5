@@ -105,8 +105,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this._liveResize        = true;
 		this._keyboardEnabled   = true;
 		this._bHorizontal       = true;
+		/** @type {Number[]} */
 		this._calculatedSizes   = [];
 		this._move              = {};
+		
+		this._resizeTimeout     = null;
 		
 		// Context bound method for easy (de-)registering at the ResizeHandler
 		this._resizeCallback    = this._delayedResize.bind(this);
@@ -152,7 +155,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @public
 	 */
 	Splitter.prototype.triggerResize = function(forceDirectly) {
-		forceDirectly ? this._resize() : this._delayedResize();
+		if (forceDirectly) {
+			this._resize();
+		} else {
+			this._delayedResize();
+		}
 	};
 	
 	//////////////////////////////////////// "Protected" Methods ///////////////////////////////////////
@@ -161,7 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Returns the current actual content sizes as pixel value - these values can change with every 
 	 * resize.
 	 * 
-	 * @returns [Number[]]
+	 * @returns {Number[]} Array of px values that correspond to the content area sizes
 	 * @protected
 	 * @deprecated This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
@@ -287,6 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Starts the resize of splitter contents (when the bar is moved by touch)
 	 * 
+	 * @param {jQuery.Event} [oJEv] The jQuery event 
 	 * @private
 	 */
 	Splitter.prototype.ontouchstart = function(oJEv) {
@@ -312,6 +320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Starts the resize of splitter contents (when the bar is moved by mouse)
 	 * 
+	 * @param {jQuery.Event} [oJEv] The jQuery event 
 	 * @private
 	 */
 	Splitter.prototype.onmousedown = function(oJEv) {
@@ -333,6 +342,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Starts a resize (for touch and click)
 	 * 
+	 * @param {jQuery.Event} [oJEv] The jQuery event 
+	 * @param {bool} [bTouch] Whether the first parameter is a touch event 
 	 * @private
 	 */
 	Splitter.prototype._onBarMoveStart = function(oJEv, bTouch) {
@@ -436,6 +447,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Ends the resize of splitter contents (when the bar is moved)
 	 * 
+	 * @param {jQuery.Event} [oJEv] The jQuery event 
 	 * @private
 	 */
 	Splitter.prototype._onBarMoveEnd = function(oJEv) {
@@ -473,10 +485,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Resizes the contents after a bar has been moved
 	 * 
-	 * @param iLefContent Number of the first (left) content that is resized
-	 * @param iPixels     Number of pixels to increase the first and decrease the second content
-	 * @param bFinal      Whether this is the final position (sets the size in the layoutData of the 
-	 *                    content areas)
+	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
+	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
+	 * @param {bool} [bFinal] Whether this is the final position (sets the size in the layoutData of the 
+	 * content areas)
 	 */
 	Splitter.prototype._resizeContents = function(iLeftContent, iPixels, bFinal) {
 		if (isNaN(iPixels)) {
@@ -500,13 +512,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		var iMinSize2 = parseInt(oLd2.getMinSize(), 10);
 		
 		// Adhere to size constraints
+		var iDiff;
 		if (iNewSize1 < iMinSize1) {
-			var iDiff = iMinSize1 - iNewSize1;
+			iDiff = iMinSize1 - iNewSize1;
 			iPixels += iDiff;
 			iNewSize1 = iMinSize1;
 			iNewSize2 -= iDiff;
 		} else if (iNewSize2 < iMinSize2) {
-			var iDiff = iMinSize2 - iNewSize2;
+			iDiff = iMinSize2 - iNewSize2;
 			iPixels -= iDiff;
 			iNewSize2 = iMinSize2;
 			iNewSize1 -= iDiff;
@@ -540,7 +553,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	/**
 	 * Resizes as soon as the current stack is done. Can be used in cases where several resize-relevant
 	 * actions are done in a loop to make sure only one resize calculation is done at the end.
-	 *
+	 * 
+	 * @param {Number} [iDelay=0] Number of milliseconds to wait before doing the resize
 	 * @private
 	 */
 	Splitter.prototype._delayedResize = function(iDelay) {
@@ -561,13 +575,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
+		var i = 0, $Bar;
+		
 		// Save calculated sizes to be able to tell whether a resize occurred
 		var oldCalculatedSizes = this.getCalculatedSizes();
 		this._recalculateSizes();
 		var newCalculatedSizes = this.getCalculatedSizes();
 		
 		var bSizesValid = false;
-		for (var i = 0, iLen = newCalculatedSizes.length; i < iLen; ++i) {
+		for (i = 0; i < newCalculatedSizes.length; ++i) {
 			if (newCalculatedSizes[i] !== 0) {
 				bSizesValid = true;
 				break;
@@ -581,7 +597,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		var aContentAreas = this.getContentAreas();
 		var bLastContentResizable = true;
-		for (var i = 0; i < aContentAreas.length; ++i) {
+		for (i = 0; i < aContentAreas.length; ++i) {
 			var $Content = this.$("content-" + i);
 			var oContent = aContentAreas[i];
 			
@@ -594,7 +610,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			var bContentResizable = oLd && oLd.getResizable();
 			if (i > 0) {
 				var bResizable = bContentResizable && bLastContentResizable;
-				var $Bar = this.$("splitbar-" + (i - 1));
+				$Bar = this.$("splitbar-" + (i - 1));
 				$Bar.toggleClass("sapUiLoSplitterNoResize", !bResizable);
 				$Bar.attr("tabindex", bResizable && this._keyboardEnabled ? "0" : "-1");
 				$Bar.attr("title", bResizable ? this._getText("SPLITTER_MOVE") : "");
@@ -607,13 +623,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// in which case the size of the splitter bars is incorrect.
 		var $this = this.$();
 		// First remove the size from the splitter bar so it does not lead to growing the content
-		for (var i = 0; i < aContentAreas.length - 1; ++i) {
-			var $Bar = this.$("splitbar-" + i);
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
 			$Bar.css(this._sizeTypeNot, "");
 		}
 		// Now measure the content and adapt the size of the Splitter bar
-		for (var i = 0; i < aContentAreas.length - 1; ++i) {
-			var $Bar = this.$("splitbar-" + i);
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
 			var iSize = this._bHorizontal ? $this.height() : $this.width();
 			$Bar.css(this._sizeTypeNot, iSize + "px");
 		}
@@ -627,6 +643,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	};
 	
+	
+	/**
+	 * Calculates how much space is actually available inside the splitter to distribute the content
+	 * areas in.
+	 * 
+	 * @param {string[]} [aSizes] The list of size values from the LayoutData of the content areas
+	 * @returns {Number} The available space in px
+	 * @private
+	 */
+	Splitter.prototype._calculateAvailableContentSize = function(aSizes) {
+		var i = 0;
+		
+		var $Splitter = this.$();
+		var iFullSize      = this._bHorizontal ? $Splitter.innerWidth() : $Splitter.innerHeight();
+		// Due to rounding errors when zoom is activated, we need 1px of error margin for every element
+		// that is automatically sized...
+		var iAutosizedAreas = 0;
+		var bHasAutoSizedContent = false;
+		for (i = 0; i < aSizes.length; ++i) {
+			var sSize = aSizes[i];
+			if (sSize.indexOf("%") > -1) {
+				iAutosizedAreas++;
+			}
+			if (aSizes[i] == "auto") {
+				bHasAutoSizedContent = true;
+			}
+		}
+		iAutosizedAreas += bHasAutoSizedContent ? 1 : 0;
+		
+		iFullSize -= iAutosizedAreas;
+		
+		// Due to zoom rounding erros, we cannot assume that all SplitBars have the same sizes, even 
+		// though they have the same CSS size set.
+		var iSplitters     = aSizes.length - 1;
+		var iSplitBarsWidth = 0;
+		for (i = 0; i < iSplitters; ++i) {
+			iSplitBarsWidth += this._bHorizontal 
+				? this.$("splitbar-" + i).innerWidth() 
+				: this.$("splitbar-" + i).innerHeight();
+		}
+		
+		return iFullSize - iSplitBarsWidth;
+	};
+
 	/**
 	 * Recalculates the content sizes in three steps:
 	 *  1. Searches for all absolute values ("px") and deducts them from the available space.
@@ -637,35 +697,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 */
 	Splitter.prototype._recalculateSizes = function() {
 		// TODO: (?) Use maxSize value from layoutData
-		
-		var $Splitter = this.$();
-		var $firstBar = this.$("splitbar-0");
-		
-		
+		var i, sSize, oLayoutData, iColSize, idx;
+
 		// Read all content sizes from the layout data
 		var aSizes = [];
 		var aContentAreas = this.getContentAreas();
-		for (var i = 0; i < aContentAreas.length; ++i) {
-			var oLayoutData = aContentAreas[i].getLayoutData();
-			var sSize = oLayoutData ? oLayoutData.getSize() : "auto";
-			
+		for (i = 0; i < aContentAreas.length; ++i) {
+			oLayoutData = aContentAreas[i].getLayoutData();
+			sSize = oLayoutData ? oLayoutData.getSize() : "auto";
+
 			aSizes.push(sSize);
 		}
 		
 		this._calculatedSizes = [];
 		
-		var iFullSize      = this._bHorizontal ? $Splitter.innerWidth() : $Splitter.innerHeight();
-		var iBarSize       = this._bHorizontal ? $firstBar.innerWidth() : $firstBar.innerHeight();
-		var iSplitters     = aSizes.length - 1;
-		var iAvailableSize = iFullSize - (iSplitters * iBarSize);
+		var iAvailableSize      = this._calculateAvailableContentSize(aSizes);
 		
 		var aAutosizeIdx = [];
 		var aAutoMinsizeIdx = [];
 		var aPercentsizeIdx = [];
 		
 		// Remove fixed sizes from available size
-		for (var i = 0; i < aSizes.length; ++i) {
-			var sSize = aSizes[i];
+		for (i = 0; i < aSizes.length; ++i) {
+			sSize = aSizes[i];
 			var iSize;
 			
 			if (sSize.indexOf("px") > -1) {
@@ -676,7 +730,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			} else if (sSize.indexOf("%") > -1) {
 				aPercentsizeIdx.push(i);
 			} else if (aSizes[i] == "auto") {
-				var oLayoutData = aContentAreas[i].getLayoutData();
+				oLayoutData = aContentAreas[i].getLayoutData();
 				if (oLayoutData && parseInt(oLayoutData.getMinSize(), 10) != 0) {
 					aAutoMinsizeIdx.push(i);
 				} else {
@@ -696,10 +750,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// Now calculate % of the available space
 		var iRest = iAvailableSize;
 		var iPercentSizes = aPercentsizeIdx.length;
-		for (var i = 0; i < iPercentSizes; ++i) {
-			var idx = aPercentsizeIdx[i];
+		for (i = 0; i < iPercentSizes; ++i) {
+			idx = aPercentsizeIdx[i];
 			// Percent based Value - deduct it from available size
-			var iColSize = Math.floor(parseFloat(aSizes[idx]) / 100 * iAvailableSize, 0);
+			iColSize = Math.floor(parseFloat(aSizes[idx]) / 100 * iAvailableSize, 0);
 			iAvailableSize -= iColSize;
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
@@ -709,12 +763,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
 		
 		// Calculate auto sizes
-		var iColSize = Math.round(iAvailableSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
+		iColSize = Math.floor(iAvailableSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
 	
 		// First calculate auto-sizes with a minSize constraint
 		var iAutoMinSizes = aAutoMinsizeIdx.length;
-		for (var i = 0; i < iAutoMinSizes; ++i) {
-			var idx = aAutoMinsizeIdx[i];
+		for (i = 0; i < iAutoMinSizes; ++i) {
+			idx = aAutoMinsizeIdx[i];
 			var iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize(), 10);
 			if (iMinSize > iColSize) {
 				this._calculatedSizes[idx] = iMinSize;
@@ -730,9 +784,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// Now calculate "auto"-sizes
 		iRest = iAvailableSize;
 		var iAutoSizes = aAutosizeIdx.length;
-		iColSize = Math.round(iAvailableSize / iAutoSizes, 0);
-		for (var i = 0; i < iAutoSizes; ++i) {
-			var idx = aAutosizeIdx[i];
+		iColSize = Math.floor(iAvailableSize / iAutoSizes, 0);
+		for (i = 0; i < iAutoSizes; ++i) {
+			idx = aAutosizeIdx[i];
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
 			if (i == iAutoSizes - 1 && iRest != 0) {
@@ -744,11 +798,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		if (bWarnSize) {
 			// TODO: Decide if the warning should be kept - might spam the console but on the other
 			//       hand it might make analyzing of splitter bugs easier, since we can just ask 
-			//       developers if there was a warning on the console if the splitter looks weird in
-			//       their application.
-			jQuery.sap.log.warning(
-				"The set sizes and minimal sizes of the splitter contents are bigger than the " +
-				"available space in the UI."
+			//       developers if there was a [Splitter] output on the console if the splitter looks
+			//       weird in their application.
+			jQuery.sap.log.info(
+				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
+				"than the available space in the UI."
 			);
 		}
 	};
@@ -784,46 +838,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Handles events that are generated from the keyboard that should trigger a resize (on the 
 	 * Splitter bars).
 	 * 
-	 * @param sType
-	 * @param oEvent
+	 * @param {string} [sType] The type of resize step ("inc", "dec", "max", "min")
+	 * @param {jQuery.Event} [oEvent] The original keyboard event
 	 */
 	Splitter.prototype._onKeyboardResize = function(sType, oEvent) {
 		var sBarId = this.getId() + "-splitbar-";
 		if (!oEvent || !oEvent.target || !oEvent.target.id || oEvent.target.id.indexOf(sBarId) !== 0) {
 			return;
 		}
-	
+
 		var iStepSize = 20;
 		var iBigStep  = 999999;
-	
+
 		var iBar = parseInt(oEvent.target.id.substr(sBarId.length), 10);
 		var mCalcSizes = this.getCalculatedSizes();
 		// TODO: These two lines are incomprehensible magic - find better solution
 		this._move.c1Size = mCalcSizes[iBar];
 		this._move.c2Size = mCalcSizes[iBar + 1];
-		
+
 		var iStep = 0;
 		switch (sType) {
 			case "inc":
 				iStep = iStepSize;
 				break;
-				
+
 			case "dec":
 				iStep = 0 - iStepSize;
 				break;
-				
+
 			case "max":
 				iStep = iBigStep;
 				break;
-				
+
 			case "min":
 				iStep = 0 - iBigStep;
 				break;
+
+			default:
+				jQuery.sap.log.warn("[Splitter] Invalid keyboard resize type");
+				break;
 		}
-	
+
 		this._resizeContents(iBar, iStep, true);
 	};
-	
+
 	/**
 	 * Connects the keyboard event listeners so resizing via keyboard will be possible
 	 */
@@ -832,12 +890,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.onsapdecreasemodifiers = this._keyListeners.decrease;
 		this.onsapendmodifiers      = this._keyListeners.max;
 		this.onsaphomemodifiers     = this._keyListeners.min;
-		
+
 		this._keyboardEnabled = true;
-		
-		// TODO: implement sapskipforward and sapskipback for navigating between content areas
 	};
-	
+
 	/**
 	 * Disconnects the keyboard event listeners so resizing via keyboard will not be possible anymore
 	 */
@@ -846,16 +902,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		delete this.onsapdecreasemodifiers;
 		delete this.onsapendmodifiers;
 		delete this.onsaphomemodifiers;
-		
+
 		this._keyboardEnabled = false;
 	};
-	
+
 	/**
 	 * Gets the text for the given key from the current resourcebundle 
 	 * 
-	 * @param sKey text key to look for in the resource bundle
-	 * @param aArgs additional arguments
-	 * @returns {string}
+	 * @param {string} [sKey] Text key to look for in the resource bundle
+	 * @param {array} [aArgs] Additional arguments for the getText method of the ResourceBundle
+	 * @returns {string} The translated string
 	 * @private
 	 */
 	Splitter.prototype._getText = function(sKey, aArgs) {
@@ -869,6 +925,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Compares two (simple, one-dimensional) arrays. If all values are the same, false is returned - 
 	 * If values differ or at least one of the values is no array, true is returned.
 	 * 
+	 * @param {Number[]} [aSizes1] The array of numbers to compare against
+	 * @param {Number[]} [aSizes2] The array of numbers that is compared to the first one
+	 * @returns {bool} True if the size-arrays differ, false otherwise
 	 * @private
 	 */
 	function _sizeArraysDiffer(aSizes1, aSizes2) {
@@ -897,6 +956,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	
 	/**
 	 * Prevents the selection of text while the mouse is moving when pressed
+	 * 
+	 * @param {bool} [bTouch] If set to true, touch events instead of mouse events are captured
 	 */
 	function _preventTextSelection(bTouch) {
 		var fnPreventSelection = function(oEvent) {
@@ -921,8 +982,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	}
 	
 	/**
-	 * Makes sure the LayoutData for the given control is set and compatible.
+	 * Makes sure the LayoutData for the given control is set and compatible. In case nothing is set,
+	 * a default sap.ui.layout.SplitterLayoutData is set on the Element
 	 * 
+	 * @param {sap.ui.core.Element} [oContent] The Element for which the existance of LayoutData should be ensured
 	 * @private
 	 */
 	function _ensureLayoutData(oContent) {
@@ -941,17 +1004,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			oContent.setLayoutData(new sap.ui.layout.SplitterLayoutData());
 		}
 	}
-	
-	
-	/**
-	 * @private
-	 */
-	Splitter.prototype._dbg = function(sMessage, iLevel) {
-		if (typeof (this._debugLog) === "function") {
-			this._debugLog.apply(this, arguments);
-		}
-	};
-	
+
+
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 	
 	
