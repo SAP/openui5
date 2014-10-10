@@ -90,6 +90,10 @@ module.exports = function(grunt) {
 					name: 'themelib_sap_goldreflection',
 					path: 'src/themelib_sap_goldreflection',
 					type: 'theme'
+			},
+			{
+					name: 'sap.ui.demokit',
+					path: 'src/sap.ui.demokit'
 			}
 		]
 	};

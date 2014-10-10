@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+  <name>sap.ui.demokit</name>
+  <vendor>SAP SE</vendor>
+  <copyright>${copyright}</copyright>
+  <version>${version}</version>
+  
+  <documentation>Non-public controls that should be used in a UI5 demokit (SDK) only.</documentation>
+  
+  <dependencies>
+    <dependency>
+      <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.commons</libraryName>
+    </dependency>
+  </dependencies>
+  
+  <appData>
+    <selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.demokit" />
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+      <exclude name="sap.ui.demokit.js." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.demokit.js." />
+    </jscoverage>
+  </appData>
+
+</library>

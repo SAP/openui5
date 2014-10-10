@@ -1,0 +1,42 @@
+<mvc:View
+	controllerName="sap.ui.demokit.explored.view.code"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<Page
+		id="page"
+		showNavButton="true"
+		navButtonPress="onNavBack"
+		title="{/title}"
+		icon="img/144_iPad_Retina_Web_Clip.png" >
+		<headerContent>
+			<Button
+				class="sapUiHideOnPhone"
+				text="Download"
+				icon="sap-icon://download"
+				press="onDownload" />
+			<Button
+				class="sapUiVisibleOnlyOnPhone"
+				icon="sap-icon://download"
+				press="onDownload" />
+		</headerContent>
+		<content>
+			<IconTabBar
+				class="iconTabBarPaddingTop"
+				expandable="false"
+				selectedKey="{/selectedTab}"
+				items="{/files}" >
+				<items>
+					<IconTabFilter
+						key="{name}"
+						text="{name}" >
+						<content>
+							<core:HTML content="{code}" />
+						</content>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</content>
+	</Page>
+</mvc:View>

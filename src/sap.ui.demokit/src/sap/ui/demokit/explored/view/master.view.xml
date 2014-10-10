@@ -1,0 +1,62 @@
+<mvc:View
+	controllerName="sap.ui.demokit.explored.view.master"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page
+		id="page" >
+		<customHeader>
+			<Toolbar>
+				<Button icon="sap-icon://drop-down-list" press="onOpenViewSettings" />
+				<ToolbarSpacer/>
+				<Label text="Entities ({entity>/entityCount})" />
+				<ToolbarSpacer/>
+				<ToggleButton
+						id="compactModeButton"
+						text="Compact"
+						press="onToggleCompactMode" />
+			</Toolbar>
+		</customHeader>
+		<subHeader>
+			<Bar
+				id="searchBar">
+				<contentMiddle>
+					<SearchField
+						id="searchField"
+						placeholder="Search"
+						liveChange="onSearch"
+						width="100%" >
+					</SearchField>
+				</contentMiddle>
+			</Bar>
+		</subHeader>
+		<content>
+			<List
+				id="list"
+				class="myList"
+				noDataText="{i18n>masterListNoData}"
+				mode="{device>/listMode}"
+				selectionChange="onNavToEntity"
+				items="{
+					path: 'entity>/entities',
+					groupHeaderFactory: '.getGroupHeader'
+				}" >
+				<infoToolbar>
+					<Toolbar
+						id="vsFilterBar"
+						active="true"
+						visible="false"
+						press="onOpenViewSettings">
+						<Label id="vsFilterLabel" />
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<StandardListItem
+						title="{entity>name}"
+						counter="{entity>sampleCount}"
+						type="{device>/listItemType}"
+						press="onNavToEntity" />
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>
