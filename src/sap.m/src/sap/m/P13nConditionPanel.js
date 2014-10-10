@@ -76,7 +76,12 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		/**
 		 * can be used to control the layout behavior. Default is "" which will automatically change the layout. With "Desktop", "Table" or"Phone" you can set a fixed layout.
 		 */
-		layoutMode : {type : "string", group : "Misc", defaultValue : null}
+		layoutMode : {type : "string", group : "Misc", defaultValue : null},
+		
+		/**
+		 * show additional labels in the condition
+		 */
+		showLabel : {type : "boolean", group : "Misc", defaultValue : false}
 	},
 	aggregations : {
 
@@ -311,6 +316,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		this._aKeyFields.push(oKeyField);
 	
 		this._updateKeyFieldItems(this, this._oConditionsGrid, true);
+		this._enableAllCondition();		
 	};
 	
 	
@@ -354,7 +360,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 				this._aConditionsFields[1].Span = "L3 M3 S3"; // : "L3 M5 S10";
 				this._aConditionsFields[2].Span = "L2 M2 S2"; // : "L2 M5 S10";
 				this._aConditionsFields[3].Span = "L3 M3 S3"; // : "L3 M10 S10";
-				this._aConditionsFields[4].Span = "L3 M3 S3"; // : "L3 M10 S10";
+				this._aConditionsFields[4].Span = "L2 M2 S2"; // : "L3 M10 S10";
 				this._aConditionsFields[5].Span = "L1 M1 S1"; // : "L1 M10 S10";
 			}
 		}
@@ -420,11 +426,21 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 			"Control": "CheckBox",
 			"Value": ""
 		}, {
+			"ID": "keyFieldLabel",
+			"Text": "Column",
+			"Span": this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M1 S10",
+			"Control": "Label"
+		}, {
 			"ID": "keyField",
 			"Label": "",
 			"Span": this.getLayoutMode() === "Desktop" ? "L3 M3 S3" : "L3 M5 S10",
 			"Control": "ComboBox",
 			"SelectedKey": "0"
+		}, {
+			"ID": "operationLabel",
+			"Text": "Operation",
+			"Span": this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M1 S10",
+			"Control": "Label"
 		}, {
 			"ID": "operation",
 			"Label": "",
@@ -440,7 +456,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		}, {
 			"ID": "value2",
 			"Label": this._sToLabelText,
-			"Span": this.getLayoutMode() === "Desktop" ? "L3 M3 S3" : "L3 M10 S10",
+			"Span": this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L2 M10 S10",
 			"Control": "TextField",
 			"Value": ""
 		}, {
@@ -729,6 +745,18 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 						}
 					}
 					break;
+					
+				case "Label":
+					oControl = new sap.m.Label({
+									text:  field["Text"]+":",
+									visible: this.getShowLabel(),
+									layoutData: new sap.ui.layout.GridData({
+										span: field["Span"]
+									})
+								});
+
+					oControl.oTargetGrid = oTargetGrid;
+					break;					
 			}
 			
 			oControl.gridId = field["ID"];
@@ -741,7 +769,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 	
 		oButtonContainer = new sap.ui.layout.HorizontalLayout({
 			layoutData: new sap.ui.layout.GridData({
-				span: this.getLayoutMode() === "Desktop" ? "L1 M2 S2" : "L1 M2 S2"
+				span: this.getLayoutMode() === "Desktop" ? "L2 M2 S2" : "L1 M2 S2"
 			})
 		});
 		oConditionGrid.addContent(oButtonContainer);
@@ -796,10 +824,8 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		
 		// disable fields if the selectedKeyField value is none
 		var oKeyField = oThat._getCurrentKeyField(oConditionGrid.keyField);
-		if (oKeyField) {
-			var sKeyField = oKeyField.key !== undefined ? oKeyField.key : oKeyField;
-			oThat._enableCondition(oThat, oConditionGrid, !(sKeyField == "" || sKeyField == null));
-		}
+		var sKeyField = oKeyField && oKeyField.key !== undefined ? oKeyField.key : oKeyField;
+		oThat._enableCondition(oThat, oConditionGrid, !(sKeyField == "" || sKeyField == null));
 	
 		// update the add/remove buttons visibility
 		this._updateConditionButtons(oTargetGrid);
@@ -1012,7 +1038,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		var sOldValue1 = oConditionGrid.value1.getValue();
 		oConditionGrid.removeContent(oConditionGrid.value1);
 		delete oConditionGrid.value1;
-		var fieldInfo = oThat._aConditionsFields[3];
+		var fieldInfo = oThat._aConditionsFields[5];
 		var oNewValue1 = this._createField(sCtrlType, fieldInfo, oThat, oConditionGrid);
 		if (oCurrentKeyField && oCurrentKeyField.maxlength) {
 			oNewValue1.setMaxLength(parseInt(oCurrentKeyField.maxlength, 10));
@@ -1020,14 +1046,14 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		oNewValue1.setValue(sOldValue1);
 		oNewValue1.gridId = fieldInfo["ID"];
 		oConditionGrid[fieldInfo["ID"]] = oNewValue1;
-		oConditionGrid.insertContent(oNewValue1, 3);
+		oConditionGrid.insertContent(oNewValue1, 5);
 		
 		
 		// update Value2 field control
 		var sOldValue2 = oConditionGrid.value2.getValue();
 		oConditionGrid.removeContent(oConditionGrid.value2);
 		delete oConditionGrid.value2;
-		var fieldInfo = oThat._aConditionsFields[4];
+		var fieldInfo = oThat._aConditionsFields[6];
 		var oNewValue2 = this._createField(sCtrlType, fieldInfo, oThat, oConditionGrid);
 		if (oCurrentKeyField && oCurrentKeyField.maxlength) {
 			oNewValue2.setMaxLength(parseInt(oCurrentKeyField.maxlength, 10));
@@ -1035,7 +1061,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		oNewValue2.setValue(sOldValue2);
 		oNewValue2.gridId = fieldInfo["ID"];
 		oConditionGrid[fieldInfo["ID"]] = oNewValue2;
-		oConditionGrid.insertContent(oNewValue2, 4);
+		oConditionGrid.insertContent(oNewValue2, 6);
 	
 		oThat._changeOperations(oThat, oTargetGrid, oConditionGrid);
 	
@@ -1050,11 +1076,10 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 	
 	P13nConditionPanel.prototype._updateAllOperations = function() {
 		var aConditionGrids = this._oConditionsGrid.getContent();
-		var n = aConditionGrids.length;
-		for (var i = 0; i < n; i++) {
-			this._updateOperations(this, this._oConditionsGrid, aConditionGrids[i]);
-			this._changeOperations(this, this._oConditionsGrid, aConditionGrids[i]);
-		}
+		aConditionGrids.forEach(function(oConditionGrid) {
+			this._updateOperations(this, this._oConditionsGrid, oConditionGrid);
+			this._changeOperations(this, this._oConditionsGrid, oConditionGrid);
+		}, this);
 	};
 	
 	P13nConditionPanel.prototype._updateOperations = function(oThat, oTargetGrid, oConditionGrid) {
@@ -1206,15 +1231,15 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 				oCheckvalue.getLayoutData().setVisibleOnSmall(false);
 	
 				if ( sOperation !== sap.m.P13nConditionOperation.Initial) {
-	//				if (this.getLayoutMode() === "Desktop") {
-	//					oKeyfield.getLayoutData().setSpan("L5 M5 S5");
-	//					oOperation.getLayoutData().setSpan("L4 M4 S4");
-	//				} else {
+					if (this.getLayoutMode() === "Desktop") {
+						oKeyfield.getLayoutData().setSpan("L5 M5 S5");
+						oOperation.getLayoutData().setSpan("L4 M4 S4");
+					} else {
 						oKeyfield.getLayoutData().setSpanL(5);
 						oOperation.getLayoutData().setSpanL(4);
 	//					oKeyfield.getLayoutData().setSpan("L5 M5 S5");
 	//					oOperation.getLayoutData().setSpan("L4 M4 S4");
-	//				}
+					}
 				}
 			} else {
 				// for all other operations we enable only the Value1 fields
@@ -1250,8 +1275,10 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		var sOperation = oConditionGrid.operation.getSelectedKey();
 		var sValue1 = oConditionGrid.value1.getValue();
 		var oValue1 = oConditionGrid.oFormatter ? oConditionGrid.oFormatter.parse(sValue1) : sValue1;
+		if (oConditionGrid.oFormatter) { sValue1= oConditionGrid.oFormatter.format(oValue1); } 
 		var sValue2 = oConditionGrid.value2.getValue();
 		var oValue2 = oConditionGrid.oFormatter ? oConditionGrid.oFormatter.parse(sValue2) : sValue2;
+		if (oConditionGrid.oFormatter) { sValue2= oConditionGrid.oFormatter.format(oValue2); } 
 		var bGrouping = oConditionGrid.grouping.getSelected();
 		var bExclude = this.getExclude();
 		var oSelectCheckbox = oConditionGrid.select;
@@ -1328,6 +1355,15 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 	};
 	
 	
+	P13nConditionPanel.prototype._enableAllCondition = function() {
+		var aConditionGrids = this._oConditionsGrid.getContent();
+		aConditionGrids.forEach(function(oConditionGrid) {
+			var oKeyField = this._getCurrentKeyField(oConditionGrid.keyField);
+			var sKeyField = oKeyField && oKeyField.key !== undefined ? oKeyField.key : oKeyField;
+			this._enableCondition(this, oConditionGrid, !(sKeyField == "" || sKeyField == null));
+		}, this);
+	};
+
 	P13nConditionPanel.prototype._enableCondition = function(oThat, oConditionGrid, bEnable) {
 		oConditionGrid.operation.setEnabled(bEnable);
 		oConditionGrid.value1.setEnabled(bEnable);
@@ -1595,10 +1631,10 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		var n = this._aConditionsFields.length;
 		var newIndex = n;
 		if (oRangeInfo.name === "Tablet") {
-			newIndex = 3;
+			newIndex = 5;
 		}
 		if (oRangeInfo.name === "Phone") {
-			newIndex = 2;
+			newIndex = 3;
 		}
 		
 		for (var i = 0; i < aGrids.length; i++) {
