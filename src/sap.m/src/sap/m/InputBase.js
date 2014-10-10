@@ -758,7 +758,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					that._popup.close();
 				}
 			);
-	
+			
+			// Check whether popup is below or above the input
+			if ($Input.offset().top < this._popup._$().offset().top) {
+				this._popup._$().addClass("sapMInputBaseMessageBottom");
+			} else {
+				this._popup._$().addClass("sapMInputBaseMessageTop");
+			}
 		}
 	
 	};
