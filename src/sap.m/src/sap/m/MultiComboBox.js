@@ -1001,23 +1001,25 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	
 		// we go to the sapMMultiInputBorder child elements, this makes the computations easier
 		var iAvailableWidth = this.$().find(".sapMMultiComboBoxBorder").width();
-		var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
+		if (iAvailableWidth > 0) {		
+			var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
 	
-		var iTotalWidthNeeded = iTokenizerWidth + iInputWidthMinimalNeeded + iIconWidth;
+			var iTotalWidthNeeded = iTokenizerWidth + iInputWidthMinimalNeeded + iIconWidth;
 	
-		var iInputWidth;
-		if (iTotalWidthNeeded < iAvailableWidth) {
-			iInputWidth = iInputWidthMinimalNeeded + iAvailableWidth - iTotalWidthNeeded;
-		} else {
-			iInputWidth = iInputWidthMinimalNeeded;
-			iTokenizerWidth = iAvailableWidth - iInputWidth - iIconWidth;
+			var iInputWidth;
+			if (iTotalWidthNeeded < iAvailableWidth) {
+				iInputWidth = iInputWidthMinimalNeeded + iAvailableWidth - iTotalWidthNeeded;
+			} else {
+				iInputWidth = iInputWidthMinimalNeeded;
+				iTokenizerWidth = iAvailableWidth - iInputWidth - iIconWidth;
+			}
+	
+			var sWidth = (iInputWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
+	
+			jQuery($InputContainer.find(".sapMInputBaseInner")[0]).css("width", sWidth);
+	
+			this._oTokenizer.setPixelWidth(iTokenizerWidth);
 		}
-	
-		var sWidth = (iInputWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
-	
-		jQuery($InputContainer.find(".sapMInputBaseInner")[0]).css("width", sWidth);
-	
-		this._oTokenizer.setPixelWidth(iTokenizerWidth);
 	};
 	
 	/**
