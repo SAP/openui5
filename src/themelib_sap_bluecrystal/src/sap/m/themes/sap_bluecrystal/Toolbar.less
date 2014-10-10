@@ -40,9 +40,13 @@
 	background: @sapUiToolbarInfoActiveBG;
 }
 
-.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
-	outline: 1px dotted @sapUiInvertedFocus;
+.sap-desktop .sapMTBActive:focus {
+	outline: 1px dotted @sapUiFocus;
 	outline-offset: -0.125rem;
+}
+
+.sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {
+	outline-color: @sapUiInvertedFocus;
 }
 
 .sapMTB-Info-CTX.sapMTB > * {
