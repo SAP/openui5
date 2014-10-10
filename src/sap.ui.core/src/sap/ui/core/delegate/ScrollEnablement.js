@@ -798,12 +798,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 				// Special case for dragging instead of scrolling:
 				if (this._bDoDrag) {
-					container.scrollLeft = container.scrollLeft + this._iX - point.pageX;
-					container.scrollTop = container.scrollTop + this._iY - point.pageY;
+					var scrollLeft = container.scrollLeft,
+					scrollTop = container.scrollTop;
+					if (this._bHorizontal) {
+						container.scrollLeft = scrollLeft + this._iX - point.pageX;
+					}
+					if (this._bVertical) {
+						container.scrollTop = scrollTop + this._iY - point.pageY;
+					}
+					if ((container.scrollLeft != scrollLeft) || (container.scrollTop != scrollTop)) { // if moved
+						oEvent.setMarked();
+						oEvent.preventDefault();
+					}
 					this._iX = point.pageX;
 					this._iY = point.pageY;
-					oEvent.setMarked();
-					oEvent.preventDefault();
 					return;
 				}
 
