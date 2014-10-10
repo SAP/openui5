@@ -204,8 +204,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 			this._close();
 		} else {
 			this._sTypedChars = jQuery(this.getInputDomRef()).val();
-			//TODO: Check this with a simple example for eslint, seems to be a bug there
-			/*eslint-disable no-fallthrough */
 			switch (oEvent.type) {
 				case "keyup":
 					if (!ComboBox._isHotKey(oEvent)) {
@@ -221,12 +219,10 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 						break;
 					}
 					// falls through
-
-				default: //paste or no hotkey or not escape
+				default:
 					refreshListBoxItems(this);
 					bFireSuggest = true;
 			}
-			/*eslint-enable no-fallthrough */
 		}
 		
 		if (bFireSuggest) {
