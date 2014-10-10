@@ -13,10 +13,6 @@
 	jQuery.sap.require("sap.m.MessageToast");
 	jQuery.sap.require("jquery.sap.xml");
 
-	var oApp = new sap.m.App("myApp", {
-		initialPage : "page1"
-	});
-
 	var oModel = new sap.ui.model.json.JSONModel();
 
 	var mData = {
@@ -475,6 +471,52 @@
 		}
 	});
 
+	var oMultiComboBoxBinding = new sap.m.MultiComboBox({
+		id : "MultiComboBoxBinding",
+		placeholder : "binding test: navigate to next page and back",
+		width : "400px",
+		items : {
+			path : "/items",
+			template : new sap.ui.core.Item({
+				key : "{key}",
+				text : "{text}",
+				enabled : "{enabled}"
+			})
+		},
+		selectedKeys : {
+			path : "/selected",
+			template : "{selected}"
+		},
+		change : function(oControlEvent) {
+			jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on "
+					+ this);
+		},
+		selectionChange : function(oEvent) {
+			jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oEvent.getParameter("changedItem")
+					+ " with selected=" + oEvent.getParameter("selected") + " on " + this);
+		},
+		selectionFinish : function(oEvent) {
+			jQuery.sap.log.info('Event fired: "selectionFinish" value property to ' + oEvent.getParameter("selectedItems")
+					+ " on " + this);
+		}
+	});
+	oMultiComboBoxBinding.setModel(new sap.ui.model.json.JSONModel({
+		"selected" : [],
+		"items" : [{
+			"key" : "AL",
+			"text" : "Algeria"
+		}, {
+			"key" : "AR",
+			"text" : "Argentina"
+		}, {
+			"key" : "NO",
+			"text" : "Norway"
+		}, {
+			"key" : "OM",
+			"text" : "Oman"
+		}]
+	}));
+
 	var oItem20, oItem21, oItem22, oItem23;
 	var oMultiComboBox1 = new sap.m.MultiComboBox({
 		id : "MultiComboBox1",
@@ -733,16 +775,55 @@
 								+ oControlEvent.getParameter("selectedItems") + " on " + this);
 					}
 				}), new sap.m.ToolbarSpacer()]
-	})
-	var oPage = new sap.m.Page("page1", {
+	})	
+
+	var oApp = new sap.m.App("myApp", {
+		initialPage : "page1"
+	});
+	oApp.addPage(new sap.m.Page("page1", {
 		content : [oMultiComboBox2, oComboBox, oMultiInput1, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 				oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, theCompactMode, oMultiComboBoxError, oMultiComboBoxWarning,
-				oMultiComboBoxSuccess, oToolbar]
-	});
+				oMultiComboBoxSuccess, oMultiComboBoxBinding, oToolbar],
+		showNavButton : true,
+		navButtonPress : function() {
+			oApp.to("page2")
+		}
+	}));
 
-	oApp.addPage(oPage);
-	oApp.placeAt("body");
+	oApp.addPage(new sap.m.Page("page2", {
+		title : "Navigation",
+		content : [new sap.m.Label({
+			text : "Navigating back the JSON model of 'oMultiComboBoxBinding' will be replaced by new one where only 'Argentina' is selected...",
+			width : "100%"
+		})],
+		showNavButton : true,
+		navButtonPress : function() {
+			oMultiComboBox2.rerender();
+			var oModelNew = new sap.ui.model.json.JSONModel({
+				"selected" : ["AR"],
+				"items" : [{
+					"key" : "AL",
+					"text" : "Algeria"
+				}, {
+					"key" : "AR",
+					"text" : "Argentina"
+				}, {
+					"key" : "NO",
+					"text" : "Norway"
+				}, {
+					"key" : "OM",
+					"text" : "Oman"
+				}]
+			});
+			oMultiComboBoxBinding.setModel(oModelNew);
+			sap.ui.getCore().applyChanges();
+			oApp.back();
+		}
+	}));
+	var shell = new sap.m.Shell();
+	shell.setApp(oApp);
+	shell.placeAt("body");
 </script>
 </head>
 <body id="body" class="sapUiBody"></body>

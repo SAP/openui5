@@ -570,6 +570,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		var aItems = this.getItems();
 		this._synchronizeSelectedItemAndKey(aItems);
 		this._clearList();
+		this._clearTokenizer();
 		this._fillList(aItems);
 	};
 	
@@ -1880,6 +1881,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 		oListItem.setTooltip(oItem.getTooltip());
 		oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem", oListItem);
+		
+		if (sListItemSelected) {
+			var oToken = new sap.m.Token({
+				key : oItem.getKey(),
+				text : oItem.getText(),
+				tooltip : oItem.getText()
+			});
+			oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", oToken);
+			this._oTokenizer.addToken(oToken);
+		}
+		
 		this.setSelectable(oItem, oItem.getEnabled());
 		this._decorateListItem(oListItem);
 	
@@ -2029,6 +2041,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 	
 	/**
+	 * Destroy the tokens in the Tokenizer.
+	 * 
+	 * @private
+	 */
+	MultiComboBox.prototype._clearTokenizer = function() {	
+		this._oTokenizer.destroyAggregation("tokens", true);
+	};
+	
+	/**
 	 * Getter for the control's List.
 	 * 
 	 * @returns {sap.m.List}
@@ -2048,7 +2069,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	
 		if (this.getList()) {
 			this.getList().destroy();
-			this._oList = null;
+			this._oList = null;			
+		}
+		
+		if (this._oTokenizer) {
+			this._oTokenizer.destroy();
+			this._oTokenizer = null;
 		}
 	};
 	
@@ -2066,7 +2092,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this.getList()) {
 			this.getList().destroyItems();
 		}
-	
+		this._oTokenizer.destroyTokens();
 		return this;
 	};
 	
