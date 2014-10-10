@@ -467,6 +467,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.fireChange(oChangeEvent);
 	};
 	
+	/**
+	 * Hook method that gets called when the input value is reverted with hitting escape.
+	 * It may require to re-implement this method from sub classes for control specific behaviour.
+	 *
+	 * @protected
+	 * @name sap.m.InputBase#onValueRevertedByEscape
+	 * @param {String} sValue Reverted value of the input.
+	 * @since 1.26
+	 * @function
+	 */
+	InputBase.prototype.onValueRevertedByEscape = function(sValue) {
+		// fire private live change event
+		this.fireEvent("liveChange", {
+			value: sValue,
+
+			// backwards compatibility
+			newValue: sValue
+		});
+	};
+	
 	/* ----------------------------------------------------------- */
 	/* Keyboard handling                                           */
 	/* ----------------------------------------------------------- */
@@ -504,13 +524,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// revert to the old dom value
 			this.updateDomValue(this._lastValue);
 	
-			// fire private live change event
-			this.fireEvent("liveChange", {
-				value: this._lastValue,
-	
-				// backwards compatibility
-				newValue: this._lastValue
-			});
+			// value is reverted, now call the hook to inform
+			this.onValueRevertedByEscape(this._lastValue);
 		}
 	};
 	
