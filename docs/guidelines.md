@@ -319,4 +319,4 @@ Tools
 
 ### ESLint
 
-UI5 comes with a ruleset for [ESLint](http://eslint.org/). Adhering to these rules is mandatory. You can find the complete list of rules and settings [here](https://github.com/SAP/openui5/blob/master/docs/eslint.md).
+UI5 comes with a ruleset for [ESLint](http://eslint.org/). Adhering to these rules is mandatory. You can find the complete list of rules and settings [here](eslint.md).

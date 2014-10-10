@@ -30,5 +30,5 @@ problems and questions.
 
 Hack it!
 --------
-You can get the sources and build UI5 on your own, please check the [documentation for the UI5 development setup](https://github.com/SAP/openui5/blob/master/docs/developing.md).
+You can get the sources and build UI5 on your own, please check the [documentation for the UI5 development setup](docs/developing.md).
 Maybe there's a bug you could analyze and fix?

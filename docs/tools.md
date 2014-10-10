@@ -2,7 +2,7 @@
 Grunt tasks
 ===========
 
-The following Grunt tasks are available after [setting up the development environment](https://github.com/SAP/openui5/blob/master/docs/developing.md).
+The following Grunt tasks are available after [setting up the development environment](developing.md).
 
 ## serve ##
 
