@@ -531,6 +531,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/* Keyboard Handling */
 	ListItemBase.prototype.onsapspace = function(oEvent) {
+		
+		// prevent default not to scroll down
+		oEvent.preventDefault();
+		
 		if (!this._listId ||
 			oEvent.isMarked() ||
 			!this.isSelectable() ||
@@ -548,8 +552,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sap.ui.getCore().byId(this._listId)._selectTapped(this);
 		}
 	
-		// let the parent know and prevent default not to scroll down
-		oEvent.preventDefault();
+		// event is handled
 		oEvent.setMarked();
 	};
 	
