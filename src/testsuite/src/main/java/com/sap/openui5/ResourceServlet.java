@@ -1,6 +1,5 @@
 package com.sap.openui5;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,6 +54,20 @@ public class ResourceServlet extends HttpServlet {
     String path = request.getServletPath() + request.getPathInfo();
     URL url = this.findResource(path);
     
+    if (request.getAttribute("OVERLAY") != null) {
+      
+      OutputStream os = response.getOutputStream();
+      IOUtils.write((String) request.getAttribute("OVERLAY"), os, "UTF-8");
+      
+      os.flush();
+      os.close();
+      
+      response.setStatus(HttpServletResponse.SC_OK);
+      this.log("[200] " + request.getRequestURI());
+      
+      
+    } else 
+    
     // return the resource or send 404
     if (url != null) {
       
@@ -67,14 +80,14 @@ public class ResourceServlet extends HttpServlet {
       IOUtils.closeQuietly(is);
       
       // include the LessSupport plugin for local testing
+      /* when the LessFilter is active we do not need to add the LessSupport plugin
       if ("/resources/sap-ui-core.js".equals(path)) {
-        
         URL url4less = this.findResource(request.getServletPath() + "/sap/ui/core/plugin/LessSupport.js");
         InputStream is4less = url4less.openStream();
         IOUtils.copyLarge(is4less, os);
         IOUtils.closeQuietly(is4less);
-        
       }
+      */
       
       os.flush();
       os.close();
