@@ -617,7 +617,8 @@ if (typeof window.sap.ui !== "object") {
 						versionStr: "" + version,
 						version: version,
 						mobile: oExpMobile.test(_ua),
-						webkit: true
+						webkit: true,
+						webkitVersion: webkitVersion
 					};
 				} else {
 					// unknown webkit browser
