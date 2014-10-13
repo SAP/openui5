@@ -3196,9 +3196,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		if (!oContext && !jQuery.sap.startsWith(sPath,"/")) {
 			// we need to add a / due to compatibility reasons; but only if there is no context
 			sPath = '/' + sPath;
-			jQuery.sap.log.warning("sPath should be absolute if no Context is set");
+			jQuery.sap.log.warning(this + " path " + sPath + " should be absolute if no Context is set");
 		}
-	
 		return this.resolve(sPath, oContext);
 	};
 	
