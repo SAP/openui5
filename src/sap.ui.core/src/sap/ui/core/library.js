@@ -567,94 +567,139 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	};
 
 	/**
-	 * The map between calendar type and its class that implements its support
+	 * The map between calendar type and its class that implements its support.
+	 * 
 	 * All new calendar types have to be added in the CalendarType their implementations registered in CalendarTypeToClassMap
 	 * @enum {string}
 	 * @private
-	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.CalendarTypeToClassMap = {};
 	sap.ui.core.CalendarTypeToClassMap[sap.ui.core.CalendarType.Islamic] = "sap.ui.core.date.IslamicDate";
 
 	/**
-	 * @class A string type that represents CSS color values. Allowed values are CSS hex colors like "#666666" or
-	 * 	"#fff", RGB/HSL values like "rgb(0,0,0)" or "hsla(50%,10%,30%,0.5)" as well as css color
-	 * 	names like "green" and "darkblue" and values like "inherit" and "transparent".
-	 * 	The empty string is also allowed and has the same effect as setting no color.
+	 * @classdesc A string type that represents CSS color values.
+	 * 
+	 * Allowed values are CSS hex colors like "#666666" or "#fff", RGB/HSL values like "rgb(0,0,0)"
+	 * or "hsla(50%,10%,30%,0.5)" as well as CSS color names like "green" and "darkblue" and special
+	 * values like "inherit" and "transparent".
+	 * 
+	 * The empty string is also allowed and has the same effect as setting no color.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.CSSColor = DataType.createType('sap.ui.core.CSSColor', {
-	    isValid : function(vValue) {
-	      return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*(,\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|rgba\((\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){3}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|hsl\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*(,\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|hsla\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*,(\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){2}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coralcornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen|transparent|inherit|)$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				// Note: the following regexp by intention is a single regexp literal. 
+				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings) 
+				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
+				return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*(,\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|rgba\((\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){3}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|hsl\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*(,\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|hsla\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*,(\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){2}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coralcornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen|transparent|inherit|)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
 	/**
-	 * @class A string type that represents CSS size values. Allowed values are CSS sizes like "1px" or "2em" or "50%", but also the special values "auto" and "inherit".
-	 * Note that CSS does not allow all of these values for every CSS property representing a size. E.g. "auto" is not an allowed value for a padding size.
+	 * @classdesc A string type that represents CSS size values. 
+	 * 
+	 * The CSS specifications calls this the <code>'&lt;length&gt; type'</code>.
+	 * Allowed values are CSS sizes like "1px" or "2em" or "50%". The special values <code>auto</code> 
+	 * and <code>inherit</code> are also accepted as well as mathematical expressions using the CSS3 
+	 * <code>calc(<i>expression</i>)</code> operator.
+	 * 
+	 * Note that CSS does not allow all these values for every CSS property representing a size. 
+	 * E.g. <code>padding-left</code> doesn't allow the value <code>auto</code>. So even if a value is 
+	 * accepted by <code>sap.ui.core.CSSSize</code>, it still might have no effect in a specific context.
+	 * In other words: UI5 controls usually don't extend the range of allowed values in CSS.
 	 *
+	 *
+	 * <b>Units</b>
+	 * 
+	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Supported absolute units 
+	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported yet.
+	 * 
+	 * 
+	 * <b>Mathematical Expressions</b>
+	 * 
+	 * Expressions inside the <code>calc()</code> operator are only roughly checked for validity. 
+	 * Not every value that this type accepts might be a valid expression in the sense of the CSS spec.
+	 * But vice versa, any expression that is valid according to the spec should be accepted by this type. 
+	 * The current implementation is based on the 
+	 * {@link http://dev.w3.org/csswg/css-values-3/#calc-syntax CSS3 Draft specification from 22 April 2015}.
+	 * 
+	 * Noteworthy details:
+	 * <ul>
+	 * <li>whitespace is mandatory around a '-' or '+' operator and optional otherwise</li>
+	 * <li>parentheses are accepted but not checked for being balanced (a limitation of regexp based checks)</li>
+	 * <li>semantic constraints like type restrictions are not checked</li>
+	 * </ul>
+	 * 
+	 * Future versions of UI5 might check <code>calc()</code> expressions in more detail, so applications should 
+	 * not assume that a value, that is invalid according to the CSS spec but currently accepted by this type 
+	 * still will be accepted by future versions of this type.
+	 * 
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
-	    isValid : function(vValue) {
-	      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				// Note: the following regexp by intention is a single regexp literal. 
+				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings) 
+				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
+				return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))|calc\(\s*(\(\s*)*[-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)(\s*(\)\s*)*(\s[-+]\s|[*\/])\s*(\(\s*)*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)))*\s*(\)\s*)*\))$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
 	/**
-	 * @class This type checks the short hand form of a margin or
-	 * 		padding definition. E.g. "1px 1px" or up to four values are allowed.
+	 * @classdesc This type checks the short hand form of a margin or padding definition. 
+	 * 
+	 * E.g. "1px 1px" or up to four CSSSize values are allowed or tHe special keyword <code>inherit</code>.
 	 *
 	 *
 	 * @since 1.11.0
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.CSSSizeShortHand = DataType.createType('sap.ui.core.CSSSizeShortHand', {
-	    isValid : function(vValue) {
-	      return /^(inherit|(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))){1}(\s(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))){0,3})$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				// Note: the following regexp by intention is a single regexp literal. 
+				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings) 
+				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
+				return /^(inherit|(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))){1}(\s(auto|[-+]?(0*|(\d+|\d*\.\d+)([eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))){0,3})$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
 	/**
-	 * @class Collision behavior: horizontal/vertical.
+	 * @classdesc Collision behavior: horizontal/vertical.
+	 * 
 	 * Defines how the position of an element should be adjusted in case it overflows the window in some direction. For both
 	 * directions this can be "flip", "fit" or "none". If only one behavior is provided it is applied to both directions.
 	 * Examples: "flip", "fit none".
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.Collision = DataType.createType('sap.ui.core.Collision', {
-	    isValid : function(vValue) {
-	      return /^((flip|fit|none)( (flip|fit|none))?)$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				return /^((flip|fit|none)( (flip|fit|none))?)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
@@ -683,7 +728,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * @class Docking position: horizontal/vertical.
+	 * @classdesc Docking position: horizontal/vertical.
+	 * 
 	 * Defines a position on the element which is used for aligned positioning of another element (e.g. the left top
 	 * corner of a popup is positioned at the left bottom corner of the input field). For the horizontal position possible values
 	 * are "begin", "left", "center", "right" and "end", where left/right always are left and right, or begin/end which are
@@ -691,17 +737,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * Examples: "left top", "end bottom", "center center".
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.Dock = DataType.createType('sap.ui.core.Dock', {
-	    isValid : function(vValue) {
-	      return /^((begin|left|center|right|end) (top|center|bottom))$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				return /^((begin|left|center|right|end) (top|center|bottom))$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
@@ -748,27 +793,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * @class A string type representing an Id or a name.
+	 * @classdesc A string type representing an Id or a name.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.ID = DataType.createType('sap.ui.core.ID', {
-	    isValid : function(vValue) {
-	      return /^([A-Za-z_][-A-Za-z0-9_.:]*)$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				return /^([A-Za-z_][-A-Za-z0-9_.:]*)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 	/**
-	 * Interface for the controls which are suitable to shrink. This means the control should still look fine when it gets smaller than its normal size. e.g. Text controls which can show ellipsis in case of shrink.
-	 * Note: This marker interface can be implemented by controls to give a hint to the container. The control itself does not need to implement anything.
-	 * A parent control that respects this interface will apply the "flex-shrink" as a CSS property which determines how much the item will shrink relative to the rest of the items in the container when negative free space is distributed.
-	 *
+	 * Interface for the controls which are suitable to shrink. 
+	 * 
+	 * This means the control should still look fine when it gets smaller than its normal size,
+	 * e.g. Text controls which can show ellipsis in case of shrink.
+	 *  
+	 * Note: This marker interface can be implemented by controls to give a hint to the container. 
+	 * The control itself does not need to implement anything. A parent control that respects this interface 
+	 * will apply the "flex-shrink" as a CSS property which determines how much the item will shrink relative 
+	 * to the rest of the items in the container when negative free space is distributed.
 	 *
 	 * @since 1.26
 	 * @name sap.ui.core.IShrinkable
@@ -821,7 +870,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * State of the Input Method Editor (IME) for the control. Depending on its value, it allows users to enter and edit for example Chinese characters.
+	 * State of the Input Method Editor (IME) for the control. 
+	 * 
+	 * Depending on its value, it allows users to enter and edit for example Chinese characters.
 	 *
 	 * @enum {string}
 	 * @public
@@ -907,7 +958,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Defines the different possible states of an element that can be open or closed and does not only toggle between these states, but also spends some time in between (e.g. because of an animation).
+	 * Defines the different possible states of an element that can be open or closed and does not only 
+	 * toggle between these states, but also spends some time in between (e.g. because of an animation).
 	 *
 	 * @enum {string}
 	 * @public
@@ -968,20 +1020,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * @class A string type that represents a percentage value.
+	 * @classdesc A string type that represents a percentage value.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.Percentage = DataType.createType('sap.ui.core.Percentage', {
-	    isValid : function(vValue) {
-	      return /^([0-9][0-9]*(\.[0-9]+)?%)$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				return /^([0-9][0-9]*(\.[0-9]+)?%)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 	/**
@@ -1201,6 +1252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		H6 : "H6"
 
 	};
+
 	/**
 	 *
 	 * 	Marker interface for toolbar controls.
@@ -1215,20 +1267,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * @class A string type that represents an RFC 3986 conformant URI.
+	 * @classdesc A string type that represents an RFC 3986 conformant URI.
 	 *
 	 * @final
-	 * @static
+	 * @namespace
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.URI = DataType.createType('sap.ui.core.URI', {
-	    isValid : function(vValue) {
-	      return /^((([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)$/.test(vValue);
-	    }
-
-	  },
-	  DataType.getType('string')
+			isValid : function(vValue) {
+				return /^((([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)$/.test(vValue);
+			}
+		},
+		DataType.getType('string')
 	);
 
 
