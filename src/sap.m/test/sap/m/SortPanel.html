@@ -71,10 +71,10 @@
 		text: "show bound SortPanel",
 		press: function() {
 			var oData = {
-				"items" : [ /*{
+				"items" : [ {
 					"key" : null,
 					"text" : "(none)"
-				}, */ {
+				},  {
 					"key" : "c0",
 					"text" : "Name"
 				}, {
@@ -84,7 +84,7 @@
 					"key" : "c2",
 					"text" : "Number"
 				}],
-				"sortItems" : [{
+				"sortItems" : [ /* {
 					"key" : "s0",
 					"columnKey" : "c1",
 					"operation" : "Ascending"
@@ -92,7 +92,7 @@
 					"key" : "s1",
 					"columnKey" : "c0",
 					"operation" : "Descending"
-				}]
+				} */ ]
 			};
 	
 			oModel = new sap.ui.model.json.JSONModel(oData);

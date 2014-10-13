@@ -34,6 +34,7 @@
 		if (theDialogMode.getSelected()) {
 			oPanel.setContainerQuery(true);
 			oPanel.setLayoutMode("Desktop");
+			//oPanel.setLayoutMode("Tablet");
 			
 			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel]});
 			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
