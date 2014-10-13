@@ -574,9 +574,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
-	    isValid : function(vValue) {
-	      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)))$/.test(vValue);
-	    }
+		isValid : function(vValue) {
+			return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)(rem|em|ex|px|cm|mm|in|pt|pc|%))|calc\(([+*/-]?\s*[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)(|rem|em|ex|px|cm|mm|in|pt|pc|%)))+\))$/i.test(vValue);
+		}
 	
 	  },
 	  DataType.getType('string')
