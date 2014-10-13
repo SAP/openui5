@@ -6,9 +6,7 @@
 sap.ui.define(['jquery.sap.global', './Select', './library'],
 	function(jQuery, Select, library) {
 		"use strict";
-	
-	
-		
+
 		/**
 		 * Constructor for a new ActionSelect.
 		 *
@@ -29,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ { metadata : {
-		
+
 			library : "sap.m",
 			associations : {
 		
@@ -39,15 +37,15 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 				buttons : {type : "sap.m.Button", multiple : true, singularName : "button"}
 			}
 		}});
-		
+
 		/* =========================================================== */
 		/* Internal methods and properties                             */
 		/* =========================================================== */
-		
+
 		/* ----------------------------------------------------------- */
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
-		
+
 		/**
 		 * Determines whether the ActionSelect has content or not.
 		 *
@@ -58,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		ActionSelect.prototype.hasContent = function() {
 			return Select.prototype.hasContent.call(this) || !!this.getButtons().length;
 		};
-		
+
 		/**
 		 * Add additional content.
 		 *
@@ -69,16 +67,16 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		ActionSelect.prototype.addContent = function() {
 			var oCore = sap.ui.getCore(),
 				oPicker = this.getPicker();
-		
+
 			this.getButtons().forEach(function(sButtonId) {
 				oPicker.addContent(oCore.byId(sButtonId));
 			});
 		};
-		
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
-		
+
 		/**
 		 * Called after the ActionSelect picker pop-up is render.
 		 *
@@ -90,15 +88,15 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 			Select.prototype.onAfterRenderingPicker.call(this);
 			this.getPicker().addStyleClass(sap.m.ActionSelectRenderer.CSS_CLASS + "Picker");
 		};
-		
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
-		
+
 		/* ----------------------------------------------------------- */
 		/* Public methods                                              */
 		/* ----------------------------------------------------------- */
-		
+
 		/**
 		 * Button to be removed from the ActionSelect content.
 		 *
@@ -110,19 +108,19 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 */
 		ActionSelect.prototype.removeButton = function(vButton) {
 			var oPicker = this.getPicker();
-		
+
 			if (oPicker) {
-		
+
 				if (typeof vButton === "number") {
 					vButton = this.getButtons()[vButton];
 				}
-		
+
 				oPicker.removeContent(vButton);
 			}
-		
+
 			return this.removeAssociation("buttons", vButton);
 		};
-		
+
 		/**
 		 * Remove all buttons from the ActionSelect.
 		 *
@@ -133,16 +131,16 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 */
 		ActionSelect.prototype.removeAllButtons = function() {
 			var oPicker = this.getPicker();
-		
+
 			if (oPicker) {
 				this.getButtons().forEach(function(sButtonId) {
 					oPicker.removeContent(sButtonId);
 				});
 			}
-		
+
 			return this.removeAllAssociation("buttons");
 		};
-	
+
 		return ActionSelect;
 
-}, /* bExport= */ true);
+	}, /* bExport= */ true);
