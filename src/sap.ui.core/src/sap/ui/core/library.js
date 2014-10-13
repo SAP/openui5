@@ -575,7 +575,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 	sap.ui.core.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
 	    isValid : function(vValue) {
-	      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)(rem|em|ex|px|cm|mm|in|pt|pc|%))|calc\(([+*/-]?\s*[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)(|rem|em|ex|px|cm|mm|in|pt|pc|%)))+\))$/i.test(vValue);
+	      return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)(rem|em|ex|px|cm|mm|in|pt|pc|%))|calc\(([-+]?([0-9]+|[0-9]*\.[0-9]+)(|rem|em|ex|px|cm|mm|in|pt|pc|%))(\s*[+*/-]?\s*([-+]?([0-9]+|[0-9]*\.[0-9]+)(|rem|em|ex|px|cm|mm|in|pt|pc|%)))*\))$/i.test(vValue);
 	    }
 	
 	  },
