@@ -31,6 +31,13 @@
 				"samples" : [ "sap.ui.core.sample.Icon" ]
 			},
 			{
+				"id" : "sap.ui.core.mvc.XMLView",
+				"name" : "XMLView",
+				"category" : "Display",
+				"since" : "1.26",
+				"samples" : [ "sap.ui.core.sample.ViewTemplate.if_sample" ]
+			},
+			{
 				"id" : "sap.ui.test.Opa5",
 				"name" : "OPA5",
 				"category" : "Testing",
@@ -57,6 +64,11 @@
 				"id": "sap.ui.core.sample.Icon",
 				"name": "Icon",
 				"description": "Built with an embedded font, icons scale well, and can be altered with CSS. They can also fire a press event. See the Icon Explorer for more icons."
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.if_sample",
+				"name": "XMLView Templating: if",
+				"description": "Simple example for XML View Templating with the if/then/else templating instruction"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",

@@ -1,0 +1,15 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	controllerName="sap.ui.core.sample.ViewTemplate.if_sample.Master"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<HBox id="layout">
+		<List id="customerList" items="{/Customers}" mode="SingleSelectMaster"
+			selectionChange="onSelect" includeItemInSelection="true" headerText="Customers">
+			<StandardListItem title="{CustomerName}" />
+		</List>
+		<HBox id="detail"/>
+	</HBox>
+</mvc:View>

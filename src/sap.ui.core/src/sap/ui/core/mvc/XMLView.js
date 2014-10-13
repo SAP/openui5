@@ -103,7 +103,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			} else if (mSettings.xmlNode) {
 				this._xContent = mSettings.xmlNode;
 			} // else does not happen, already checked
-	
+
+			//TODO/FIX4MASTER replace once final solution is available
+			jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
+			sap.ui.core.util.XMLPreprocessor.process(this._xContent, mSettings);
+
 			this._oContainingView = mSettings.containingView || this;
 	
 			// extract the properties of the view from the XML element
@@ -190,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			jQuery(oElement).replaceWith('<div id="sap-ui-dummy-' + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
 		};
-		
+
 		/**
 		 * Dummy control for after rendering notification before onAfterRendering of
 		 * child controls of the XMLView is called

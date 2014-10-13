@@ -1,0 +1,36 @@
+{
+	"d": {
+		"results": [{
+			"__metadata": {
+				"id": "http://vecocomst.dhcp.wdf.sap.corp:1080/gm6-001/ODATA/sap/CB_SALES_ORDER_SRV/USER_Hs('ESH_TEST')",
+				"uri": "http://vecocomst.dhcp.wdf.sap.corp:1080/gm6-001/ODATA/sap/CB_SALES_ORDER_SRV/USER_Hs('ESH_TEST')",
+				"type": "CB_SALES_ORDER_SRV.USER_H"
+			},
+			"User": "ESH_TEST",
+			"AddressID": "311849",
+			"VALUE_TEXT": "",
+			"VALUE_TEXT1": "",
+			"FirstName": "",
+			"LastName": "ESH_TEST",
+			"PersonFullName": "ESH_TEST",
+			"NAME1": "SAP AG",
+			"DEPARTMENT": "",
+			"FAX_NUMBER": "",
+			"TEL_NUMBER_MOBILE": "",
+			"FAX_EXTENS": "",
+			"TEL_EXTENS_MOBILE": "",
+			"TEL_NUMBER_STANDARD": "",
+			"FUNCTION": "",
+			"TEL_EXTENS_STANDARD": "",
+			"EmailAddress": "",
+			"PROFESSION": "",
+			"MobilePhoneNumber": "",
+			"InternationalPhoneNumber": "",
+			"BUILDING": "",
+			"FLOOR": "",
+			"ROOMNUMBER": "",
+			"InternationalFaxNumber": "",
+			"IH_MAIL": ""
+		}]
+	}
+}

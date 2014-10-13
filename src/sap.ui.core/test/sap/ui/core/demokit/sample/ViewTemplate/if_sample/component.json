@@ -1,0 +1,19 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Master.view.xml",
+				"Master.controller.js",
+				"Detail.view.xml",
+				"../data/metadata.xml",
+				"../data/BSCBN_SALES_ORDER_SRV_ANNO.xml",
+				"../data/Customer.json"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for XMLView template sample with if/then/else",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.if_sample",
+	"version": "1.25.0-SNAPSHOT"
+}
