@@ -192,6 +192,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	*/
 	RadioButton.prototype.onsapselect = function(oEvent) {
 		
+		oEvent.preventDefault();
 		this.ontap(oEvent);
 	};
 	
