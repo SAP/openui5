@@ -69,15 +69,7 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	opacity: 0.5;
 }
 
-/* Read only */
-.sapMRbRo .sapMRbBOut {
-	background-color: @sapBackgroundColor;
-	border-color: @sapUiDarkBorder;
-}
-
-.sapMRbRo.sapMRbSel .sapMRbBInn {
-	background-color: @sapUiElement;
-}
+/* Value states */
 
 .sapMRbErr.sapMRbSel .sapMRbBInn {
 	background-color: @sapUiErrorBorder;
@@ -93,6 +85,16 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 
 .sapMRbWarn .sapMRbBOut {
 	border-color: @sapUiWarningBorder;
+}
+
+/* Read only */
+.sapMRbRo .sapMRbBOut {
+	background-color: @sapBackgroundColor;
+	border-color: @sapUiDarkBorder;
+}
+
+.sapMRbRo.sapMRbSel .sapMRbBInn {
+	background-color: @sapUiElement;
 }
 
 /* Compact size */
