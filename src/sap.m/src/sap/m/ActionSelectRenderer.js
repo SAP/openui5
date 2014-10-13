@@ -3,31 +3,29 @@
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './SelectRenderer'],
 	function(jQuery, Renderer, SelectRenderer) {
-	"use strict";
+		"use strict";
 
+		var ActionSelectRenderer = Renderer.extend(SelectRenderer);
 
-	var ActionSelectRenderer = Renderer.extend(SelectRenderer);
-	
-	/**
-	 * CSS class to be applied to the HTML root element of the ActionSelect control.
-	 *
-	 * @type {string}
-	 */
-	ActionSelectRenderer.CSS_CLASS = "sapMActionSelect";
-	
-	/**
-	 * Apply a CSS class to the HTML root element of the ActionSelect control.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oActionSelect An object representation of the control that should be rendered.
-	 * @override
-	 * @protected
-	 */
-	ActionSelectRenderer.addStyleClass = function(oRm, oActionSelect) {
-		oRm.addClass(ActionSelectRenderer.CSS_CLASS);
-	};
-	
+		/**
+		 * CSS class to be applied to the HTML root element of the ActionSelect control.
+		 *
+		 * @type {string}
+		 */
+		ActionSelectRenderer.CSS_CLASS = "sapMActionSelect";
 
-	return ActionSelectRenderer;
+		/**
+		 * Apply a CSS class to the HTML root element of the ActionSelect control.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oActionSelect An object representation of the control that should be rendered.
+		 * @override
+		 * @protected
+		 */
+		ActionSelectRenderer.addStyleClass = function(oRm, oActionSelect) {
+			oRm.addClass(ActionSelectRenderer.CSS_CLASS);
+		};
 
-}, /* bExport= */ true);
+		return ActionSelectRenderer;
+
+	}, /* bExport= */ true);
