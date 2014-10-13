@@ -110,21 +110,21 @@
 
 .sapUiSliStd .sapUiSliHiLi,
 .sapUiSliRo .sapUiSliHiLi {
-	background-color: @sapUiHighlight;
+	background-color: @sapHCStandardBG;
 }
 
 .sapUiSliStd.sapUiSliHori  .sapUiSliHiLi,
 .sapUiSliHori.sapUiSliRo .sapUiSliHiLi {
-	border-top-color: @sapUiHighlight;
-	border-bottom-color: @sapUiHighlight;
-	border-left-color: @sapUiHighlight;
+	border-top-color: @sapHCStandardFG;
+	border-bottom-color: @sapHCStandardFG;
+	border-left-color: @sapHCStandardFG;
 }
 
 .sapUiSliStd.sapUiSliVert .sapUiSliHiLi,
 .sapUiSliVert.sapUiSliRo .sapUiSliHiLi {
-	border-left-color: @sapUiHighlight;
-	border-right-color: @sapUiHighlight;
-	border-bottom-color: @sapUiHighlight;
+	border-left-color: @sapHCStandardFG;
+	border-right-color: @sapHCStandardFG;
+	border-bottom-color: @sapHCStandardFG;
 }
 
 .sapUiSliHori.sapUiSliDsbl .sapUiSliHiLi {
@@ -168,19 +168,23 @@
 
 .sapUiSliStd .sapUiSliGrip,
 .sapUiSliRo .sapUiSliGrip {
-	background-color: @sapUiExtraLightBG;
-	border-color: @sapUiExtraLightText;
+	background-color: @sapHCStandardBG;
+	border-color: @sapHCStandardFG;
 }
 
 .sapUiSliStd .sapUiSliGrip:hover {
-	background-color: @sapUiDarkBG;
-	border-color: @sapUiDarkBG;
+	background-color: @sapHCHighlightBG;
+	border-color: @sapHCStandardFG;
+	border-width: 1px;
+	padding: 1px;
 }
 
 .sapUiSliStd .sapUiSliGrip:focus,
 .sapUiSliStd .sapUiSliGrip:active {
-	border-color: @sapUiHighlight;
-	background-color: @sapUiHighlight;
+	border-color: @sapHCStandardFG;
+	background-color: @sapHCHighlightBG;
+	border-width: 1px;
+	padding: 1px;
 	outline: none;
 }
 
