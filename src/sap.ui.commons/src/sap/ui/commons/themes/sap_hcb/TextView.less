@@ -42,13 +42,22 @@
 
 /* invalid state */
 .sapUiTvErr {
-	color: @sapUiBaseText;
+	color: @sapHCNegative;
+	border-color: transparent;
+	background-color: transparent;
 }
 
 /* warning state */
 .sapUiTvWarn,
 .sapUiInverted-CTX .sapUiTvWarn {
-	color: @sapUiTextInverted;
+	color: @sapHCCritical;
+	background-color: transparent;
+}
+
+/* success state */
+.sapUiTvSucc {
+	color: @sapHCPositive;
+	background-color: transparent;
 }
 
 /* Designs */
