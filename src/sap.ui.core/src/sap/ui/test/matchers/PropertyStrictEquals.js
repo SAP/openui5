@@ -5,10 +5,20 @@
 sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 	/**
+	 * PropertyStrictEquals - checks if a property has the exact same value
+	 * The settings supported by PropertyStrictEquals are:
+	 * <ul>
+	 *	<li>Properties
+	 *		<ul>
+	 *			<li>{@link #getName name} : string</li>
+	 *			<li>{@link #getValue value} : any</li>
+	 *		</ul>
+	 *	</li>
+	 * </ul>
+	 *
 	 * @class PropertyStrictEquals - checks if a property has the exact same value
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @param {string} [name] the name of the property
-	 * @param {any} [value] the value of the property
+	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new PropertyStrictEquals
 	 * @public
 	 * @name sap.ui.test.matchers.PropertyStrictEquals
 	 * @author SAP SE

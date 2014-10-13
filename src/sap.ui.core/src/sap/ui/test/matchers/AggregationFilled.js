@@ -5,9 +5,20 @@
 sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 	/**
+	 * AggregationFilled - checks if an aggregation contains at least one entry
+	 *
+	 * 	 * The settings supported by AggregationFilled are:
+	 * <ul>
+	 *	<li>Properties
+	 * 		<ul>
+	 *			<li>{@link #getName name} : string</li>
+	 * 		</ul>
+	 * </li>
+	 * </ul>
+	 *
 	 * @class AggregationFilled - checks if an aggregation contains at least one entry
+	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationFilledMatcher
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @param {string} [name] the name of the aggregation
 	 * @public
 	 * @name sap.ui.test.matchers.AggregationFilled
 	 * @author SAP SE
