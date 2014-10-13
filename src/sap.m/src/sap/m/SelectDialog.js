@@ -809,14 +809,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			} else {
 				if (this._bFirstRequest) { // also show the header bar again for the first request
 					this._oSubHeader.$().css('display', 'block');
-					// set initial focus manually after all items are visible
-					if (sap.ui.Device.system.desktop) {
-						var oFocusControl = sap.ui.getCore().byId(this._oDialog.getInitialFocus());
-						if (oFocusControl.getFocusDomRef()) {
-							oFocusControl.getFocusDomRef().focus();
-						}
-					}
-					this._bFirstRequest = false;
 				}
 				this._oList.removeStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'none');
@@ -848,15 +840,37 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {jQuery.EventObject} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
-		// only reset busy mode when we have an oData model
-		this._updateSelectionIndicator();
-		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
-			this._setBusy(false);
-			this._bInitBusy = false;
+	// only reset busy mode when we have an oData model
+	this._updateSelectionIndicator();
+	if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
+		this._setBusy(false);
+		this._bInitBusy = false;
+	}
+	if (sap.ui.Device.system.desktop) {
+
+		if (this._oList.getItems()[0]) {
+			this._oDialog.setInitialFocus(this._oList.getItems()[0]);
+		} else {
+			this._oDialog.setInitialFocus(this._oSearchField);
 		}
+
+		// set initial focus manually after all items are visible
+		if (this._bFirstRequest) {
+			var oFocusControl = this._oList.getItems()[0];
+			if (!oFocusControl) {
+				oFocusControl = this._oSearchField;
+			}
+			
+			if (oFocusControl.getFocusDomRef()) {
+				oFocusControl.getFocusDomRef().focus();
+			}
+		}
+	}
 	
-		// we received a request (from this or from another control) so set the counter to 0
-		this._iListUpdateRequested = 0;
+	this._bFirstRequest = false;
+
+	// we received a request (from this or from another control) so set the counter to 0
+	this._iListUpdateRequested = 0;
 	};
 	
 	/*

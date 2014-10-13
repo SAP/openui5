@@ -16,9 +16,12 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 		jQuery.sap.require("sap.ui.model.FilterOperator");
+		sinon.config.useFakeTimers = false;
 
 		// helper variables
 		var iItemCount = 0,
@@ -757,6 +760,59 @@
 			});
 			oSelectDialog.open();
 		})
+
+		/********************************************************************************/
+			module("Keyboard Handling");
+		/********************************************************************************/
+
+		asyncTest("Initialfocus when there are no items in the SelectDialog's list", function () {
+			var oSystem = {
+					desktop: true,
+					phone: false,
+					tablet: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available"
+			});
+
+			oSelectDialog.open();
+
+			setTimeout(function(){
+				ok(jQuery.sap.byId('selectDialog-searchField-I').is(":focus"), 'SearchField should be focused if there are no items in the list');
+					start();
+					oSelectDialog.destroy();
+			}, 500)
+		});	
+
+		asyncTest("Initialfocus when there are items in the SelectDialog's list", function () {
+			var oSystem = {
+					desktop: true,
+					phone: false,
+					tablet: false
+				};
+
+			this.stub(sap.ui.Device, "system", oSystem);
+			
+			var oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+				title: "my SelectDialog",
+				noDataText: "Sorry, no data is available"
+			});
+
+			bindItems(oSelectDialog, data10, "/items", createTemplateListItem());
+			sap.ui.getCore().applyChanges();
+			oSelectDialog.open();
+
+			setTimeout(function(){
+				ok(oSelectDialog.getItems()[0].$().is(':focus'), 'The first item of the list should be focused');
+					start();
+					oSelectDialog.destroy();
+			}, 500)
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
