@@ -634,7 +634,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var aSelectableItems = this.getSelectableItems(),
-				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 20,
+				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 10,
 				oItem;
 
 			// constrain the index
@@ -678,7 +678,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var aSelectableItems = this.getSelectableItems(),
-				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) - 20,
+				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) - 10,
 				oItem;
 
 			// constrain the index
