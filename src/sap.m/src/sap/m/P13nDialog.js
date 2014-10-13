@@ -62,7 +62,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 	P13nDialog.prototype.init = function(oEvent) {
 		this.addStyleClass("sapMP13nDialog");
 		Dialog.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp");
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._initDialog();
 	};
 	
@@ -78,9 +78,9 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 				}
 			})]
 		}));
-		this.setTitle(this._oResourceBundle.getText("PERSODIALOG_VIEW_SETTINGS"));
+		this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
 		this.addButton(new sap.m.Button({
-			text : this._oResourceBundle.getText("PERSODIALOG_OK"),
+			text : this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press : function() {
 				that.fireClose({
 					type : P13nDialog.ButtonType.Ok
@@ -89,7 +89,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 			}
 		}));
 		this.addButton(new sap.m.Button({
-			text : this._oResourceBundle.getText("PERSODIALOG_CANCEL"),
+			text : this._oResourceBundle.getText("P13NDIALOG_CANCEL"),
 			press : function() {
 				that.fireClose({
 					type : P13nDialog.ButtonType.Cancel
@@ -116,6 +116,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 				bVisible = true;
 			}
 			oPanel.setVisible(bVisible);
+			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible); 
 		}
 		return this;
 	};
