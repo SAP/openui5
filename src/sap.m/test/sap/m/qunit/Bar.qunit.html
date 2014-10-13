@@ -180,6 +180,29 @@
 				sut.destroy();
 			});
 
+			test("Should not register resize handlers if the bar is invisible", function() {
+				var //System under Test
+						oBar = new sap.m.Bar({
+							visible : true,
+							contentLeft : new sap.m.Button()
+						});
+
+				//Arrange + Act
+				oBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				var fnSpy = this.spy(sap.ui.core.ResizeHandler, "register");
+
+				//Act
+				oBar.setVisible(false);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				strictEqual(fnSpy.callCount, 0,"the resize listeners did not get registered");
+
+				//Cleanup
+				oBar.destroy();
+			});
+
 			var iMargin = 8;
 			var iStartEndPadding = 4;
 
