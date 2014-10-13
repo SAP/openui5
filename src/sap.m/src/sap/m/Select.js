@@ -963,7 +963,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var aSelectableItems = this.getSelectableItems(),
 				oSelectedItem = this.getSelectedItem();
 
-			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) + 20, aSelectableItems);
+			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) + 10, aSelectableItems);
 
 			if (oSelectedItem !== this.getSelectedItem()) {
 				this.fireChange({ selectedItem: this.getSelectedItem() });
@@ -997,7 +997,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var aSelectableItems = this.getSelectableItems(),
 				oSelectedItem = this.getSelectedItem();
 
-			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) - 20, aSelectableItems);
+			this.setSelectedIndex(aSelectableItems.indexOf(oSelectedItem) - 10, aSelectableItems);
 
 			if (oSelectedItem !== this.getSelectedItem()) {
 				this.fireChange({ selectedItem: this.getSelectedItem() });
