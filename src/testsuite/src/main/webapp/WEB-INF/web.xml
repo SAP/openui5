@@ -7,6 +7,15 @@
 
 	<display-name>testsuite</display-name>
 
+	<filter>
+		<filter-name>LessFilter</filter-name>
+		<filter-class>com.sap.openui5.LessFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LessFilter</filter-name>
+		<url-pattern>/resources/*</url-pattern>
+	</filter-mapping>
+	
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>
 		<servlet-class>com.sap.openui5.ResourceServlet</servlet-class>
