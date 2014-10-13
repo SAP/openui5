@@ -125,10 +125,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {
-			increase : this._onKeyboardResize.bind(this, "inc"),
-			decrease : this._onKeyboardResize.bind(this, "dec"),
-			max      : this._onKeyboardResize.bind(this, "max"),
-			min      : this._onKeyboardResize.bind(this, "min")
+			increase     : this._onKeyboardResize.bind(this, "inc"),
+			decrease     : this._onKeyboardResize.bind(this, "dec"),
+			increaseMore : this._onKeyboardResize.bind(this, "incMore"),
+			decreaseMore : this._onKeyboardResize.bind(this, "decMore"),
+			max          : this._onKeyboardResize.bind(this, "max"),
+			min          : this._onKeyboardResize.bind(this, "min")
 		};
 		this._enableKeyboardListeners();
 		
@@ -789,10 +791,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			idx = aAutosizeIdx[i];
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
-			if (i == iAutoSizes - 1 && iRest != 0) {
-				// In case of rounding errors, change the last auto-size column
-				this._calculatedSizes[idx] += iRest;
-			}
+//			if (i == iAutoSizes - 1 && iRest != 0) {
+//				// In case of rounding errors, change the last auto-size column
+//				this._calculatedSizes[idx] += iRest;
+//			}
 		}
 		
 		if (bWarnSize) {
@@ -862,8 +864,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 				iStep = iStepSize;
 				break;
 
+			case "incMore":
+				iStep = iStepSize * 10;
+				break;
+
 			case "dec":
 				iStep = 0 - iStepSize;
+				break;
+
+			case "decMore":
+				iStep = 0 - iStepSize * 10;
 				break;
 
 			case "max":
@@ -886,9 +896,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Connects the keyboard event listeners so resizing via keyboard will be possible
 	 */
 	Splitter.prototype._enableKeyboardListeners = function() {
+		this.onsapincrease          = this._keyListeners.increase;
 		this.onsapincreasemodifiers = this._keyListeners.increase;
+		this.onsapdecrease          = this._keyListeners.decrease;
 		this.onsapdecreasemodifiers = this._keyListeners.decrease;
+		this.onsappageup            = this._keyListeners.decreaseMore;
+		this.onsappagedown          = this._keyListeners.increaseMore;
+		this.onsapend               = this._keyListeners.max;
 		this.onsapendmodifiers      = this._keyListeners.max;
+		this.onsaphome              = this._keyListeners.min;
 		this.onsaphomemodifiers     = this._keyListeners.min;
 
 		this._keyboardEnabled = true;
