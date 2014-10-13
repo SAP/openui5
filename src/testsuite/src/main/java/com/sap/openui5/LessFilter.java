@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -196,11 +197,14 @@ public class LessFilter implements Filter{
    */
   private URL findResource(String path) throws MalformedURLException {
     
+    // normalize the path (JarURLConnection cannot resolve non-normalized paths)
+    String normalizedPath = URI.create(path).normalize().toString();
+    
     // define the classpath for the classloader lookup
-    String classPath = CLASSPATH_PREFIX + path;
+    String classPath = CLASSPATH_PREFIX + normalizedPath;
     
     // first lookup the resource in the web context path
-    URL url = this.config.getServletContext().getResource(path);
+    URL url = this.config.getServletContext().getResource(normalizedPath);
 
     // lookup the resource in the current threads classloaders
     if (url == null) {
