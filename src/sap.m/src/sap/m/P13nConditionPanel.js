@@ -748,7 +748,7 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 					
 				case "Label":
 					oControl = new sap.m.Label({
-									text:  field["Text"]+":",
+									text:  field["Text"] + ":",
 									visible: this.getShowLabel(),
 									layoutData: new sap.ui.layout.GridData({
 										span: field["Span"]
@@ -1275,10 +1275,10 @@ var P13nConditionPanel = P13nPanel.extend("sap.m.P13nConditionPanel", /** @lends
 		var sOperation = oConditionGrid.operation.getSelectedKey();
 		var sValue1 = oConditionGrid.value1.getValue();
 		var oValue1 = oConditionGrid.oFormatter ? oConditionGrid.oFormatter.parse(sValue1) : sValue1;
-		if (oConditionGrid.oFormatter) { sValue1= oConditionGrid.oFormatter.format(oValue1); } 
+		if (oConditionGrid.oFormatter) { sValue1 = oConditionGrid.oFormatter.format(oValue1); } 
 		var sValue2 = oConditionGrid.value2.getValue();
 		var oValue2 = oConditionGrid.oFormatter ? oConditionGrid.oFormatter.parse(sValue2) : sValue2;
-		if (oConditionGrid.oFormatter) { sValue2= oConditionGrid.oFormatter.format(oValue2); } 
+		if (oConditionGrid.oFormatter) { sValue2 = oConditionGrid.oFormatter.format(oValue2); } 
 		var bGrouping = oConditionGrid.grouping.getSelected();
 		var bExclude = this.getExclude();
 		var oSelectCheckbox = oConditionGrid.select;

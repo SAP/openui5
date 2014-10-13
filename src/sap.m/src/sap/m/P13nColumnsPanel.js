@@ -39,12 +39,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 					/**
 					 * old item
 					 */
-					oldItem : {type : "./P13nColumnItem"}, 
+					oldItem : {type : "sap.m.P13nColumnItem"}, 
 	
 					/**
 					 * new item
 					 */
-					newItem : {type : "./P13nColumnItem"}
+					newItem : {type : "sap.m.P13nColumnItem"}
 				}
 			}
 		}

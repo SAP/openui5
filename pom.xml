@@ -171,7 +171,7 @@
 				<sap.ui5.eslint.skip.validation>true</sap.ui5.eslint.skip.validation>
 				
 				<!-- fail on eslint error -->
-				<sap.ui5.eslint.failonerror>false</sap.ui5.eslint.failonerror>
+				<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
 
 			</properties>
 
