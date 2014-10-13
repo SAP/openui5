@@ -389,6 +389,24 @@
 				});
 			}
 
+			test("Back on key [SHIFT]+[ENTER] event", function () {
+				expect(2);
+
+				vsd2.open();
+				
+				vsd2._switchToPage(0);
+				vsd2._switchToPage(1);
+				vsd2._switchToPage(2);
+				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
+				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
+				
+				sap.ui.test.qunit.triggerKeyboardEvent(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+				equal(vsd2._iContentPage, 2, "Internal page state should be on the second page");
+				equal(vsd2._navContainer.getCurrentPage(), vsd2._getPage1(), "NavContainer should be on the first page");
+
+				vsd2._dialog.getEndButton().firePress();
+			});
+			
 			asyncTest("Confirm event", function () {
 				expect(12);
 				// open dialog to store previous state
