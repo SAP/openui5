@@ -316,6 +316,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
 			this.selectAllTokens(false);
 		}
+		
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command		
+			this.focus();
+			this.selectAllTokens(true);
+			oEvent.preventDefault();
+		}
+
 	};
 	
 	/**

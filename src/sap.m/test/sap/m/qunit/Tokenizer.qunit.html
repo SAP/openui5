@@ -253,6 +253,30 @@
 
 		tokenizer1.removeAllTokens();
 	});
+	
+	test("test keyboard select all", function() {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		oTokenizer.setTokens([token1, token2, token3]);
+		
+		oTokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
+		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
+		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
+		
+		token1.setSelected(false);
+		token2.setSelected(false);
+		token3.setSelected(false);
+		
+		oTokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		equals(token1.getSelected(), true, "Token1 got selected using metaKey+a");
+		equals(token2.getSelected(), true, "Token2 got selected using metaKey+a");
+		equals(token3.getSelected(), true, "Token3 got selected using metaKey+a");		
+		
+		oTokenizer.destroy()
+	});
+
 </script>
 
 </head>

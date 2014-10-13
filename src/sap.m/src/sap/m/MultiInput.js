@@ -336,24 +336,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
-	 * Handle the key down event for Ctrl+ a
-	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
-	 * @private
-	 */
-	MultiInput.prototype.onkeydown = function(oEvent) {
-		if (this.getValue().length === 0) {
-			// only if there is no text
-			if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command		
-				this._tokenizer.focus();
-				this._tokenizer.selectAllTokens(true);
-				oEvent.preventDefault();
-			}
-		}
-	};
-	
-	/**
 	 * Handle the backspace button, gives backspace to tokenizer if text cursor was on first character
 	 *
 	 * @param {jQuery.Event}
