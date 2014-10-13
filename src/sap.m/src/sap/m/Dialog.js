@@ -3,12 +3,13 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/ValueState', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, Bar, InstanceManager, Toolbar, ToolbarSpacer, library, Control, IconPool, Popup, ValueState, ScrollEnablement, Parameters) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, Bar, InstanceManager, Toolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters) {
 	"use strict";
 
 
-	
+	var ValueState = sap.ui.core.ValueState;
+
 	/**
 	 * Constructor for a new Dialog.
 	 *
