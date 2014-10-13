@@ -1483,11 +1483,11 @@
 				});
 				equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
 				
-// 				oResponse = jQuery.sap.sjax({
-// 					url : "/myservice/Products?$filter=Discontinued eq 1",
-// 					dataType : "json"
-// 				});
-// 				equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq 1");
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$top=1&$orderby=ProductID desc",
+					dataType : "json"
+				});
+				equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
 				
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=UnitsInStock lt 40",

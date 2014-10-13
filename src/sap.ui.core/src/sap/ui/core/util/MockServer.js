@@ -2357,14 +2357,14 @@ sap.ui
 						if (iInlinecountIndex >= 0) {
 							aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);
 						}
+						if (iOrderbyIndex >= 0) {
+							aOrderedUrlParams.push(aUrlParams[iOrderbyIndex]);
+						}
 						if (iSkipIndex >= 0) {
 							aOrderedUrlParams.push(aUrlParams[iSkipIndex]);
 						}
 						if (iTopIndex >= 0) {
 							aOrderedUrlParams.push(aUrlParams[iTopIndex]);
-						}
-						if (iOrderbyIndex >= 0) {
-							aOrderedUrlParams.push(aUrlParams[iOrderbyIndex]);
 						}
 						if (iExpandIndex >= 0) {
 							aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
