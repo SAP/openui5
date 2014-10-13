@@ -1,5 +1,6 @@
 src/*/target
 src/*/test
 
-src/sap.ui.core/src/**/jquery-*
+# library specific excludes - need to be consistent with the library-local .eslintignore files
 src/sap.ui.core/src/sap/ui/thirdparty
+src/sap.ui.demokit/src/sap/ui/demokit/js

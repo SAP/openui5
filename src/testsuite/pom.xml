@@ -126,6 +126,11 @@
 			<artifactId>themelib_sap_goldreflection</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sap.ui.demokit</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	</dependencies>
 
