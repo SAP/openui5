@@ -154,10 +154,10 @@
 			equal(type.isValid(" 20px"), false, "a partial match must not be valid");
 			equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
 			equal(type.isValid("100% "), false, "a partial match must not be valid");
-            equal(type.isValid("calc(100%-20rem)"), true,  "an valid calc() expression must be valid");
-            equal(type.isValid("calc(100%-"),       false, "an invalid calc() expression must be invalid");
-            equal(type.isValid("calc(2 * -20rem / 23)"), true,  "an valid calc() expression must be valid");
-            equal(type.isValid("calc(100%)"),       true,  "an valid calc() expression must be valid");
+			equal(type.isValid("calc(100%-20rem)"), true,  "an valid calc() expression must be valid");
+			equal(type.isValid("calc(100%-"),       false, "an invalid calc() expression must be invalid");
+			equal(type.isValid("calc(2 * -20rem / 23)"), true,  "an valid calc() expression must be valid");
+			equal(type.isValid("calc(100%)"),       true,  "an valid calc() expression must be valid");
 		});
 
 		test("type CSSSize[]", function() {
