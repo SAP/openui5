@@ -508,6 +508,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ListBase.prototype.onBeforeRendering = function() {
@@ -1547,68 +1549,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 		// return the found section
 		return $Section;
-	};
-	
-	// move focus to the next/prev tabbable element after or before the list
-	// TODO: This implementation search parent which means we are out of our sandbox!
-	ListBase.prototype._navToTabChain = function(bForward) {
-		var $Current = this.$();
-		var $Tabbables = $Current.find(":sapTabbable");
-		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
-		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
-		var sTabIndex = $Reference.attr("tabindex");
-		var iStep = bForward ? 1 : -1;
-	
-		// make the dummy tabbable
-		$Reference.attr("tabindex", "0");
-	
-		// search all dom parents to find next/prev tabbable item
-		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
-			$Tabbables = $Current.find(":sapTabbable");
-			var iLimit = bForward ? $Tabbables.length - 1 : 0;
-			var iIndex = $Tabbables.index($Reference);
-	
-			// should have more tabbables element then before or after reference
-			// should keep searching if the $Reference is the first or last one
-			if ($Tabbables.length > 1 && iIndex != iLimit) {
-				break;
-			}
-		}
-	
-		// find next/prev tabbable item and reset tabindex
-		iIndex = $Tabbables.index($Reference) + iStep;
-		$Reference.attr("tabindex", sTabIndex);
-	
-		// focus and return the found tabbable if possible
-		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
-	};
-	
-	// Handle F6
-	ListBase.prototype.onsapskipforward = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
-		}
-	
-		// focus to the next tabbable element after the control
-		if (this._navToTabChain(true)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
-	};
-	
-	// Handle Shift + F6
-	ListBase.prototype.onsapskipback = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
-		}
-	
-		// focus to the previous tabbable element before the control
-		if (this._navToTabChain(false)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
 	};
 	
 	// Handle Alt + Down

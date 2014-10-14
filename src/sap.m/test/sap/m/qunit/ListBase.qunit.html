@@ -1169,10 +1169,12 @@
 			fnSpy.reset();
 			
 			// shift-F6 key
+			oInput.getFocusDomRef().focus();
 			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", true, false, false);
 			strictEqual(document.activeElement.id, oBeforeList.getFocusDomRef().id, "Focus is moved correctly after Shift-F6");
 			
 			// F6
+			oInput.getFocusDomRef().focus();
 			sap.ui.test.qunit.triggerKeyboardEvent(oInput.getFocusDomRef(), "F6", false, false, false);
 			strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
 			
@@ -1250,6 +1252,6 @@
 	<div id="qunit-testrunner-toolbar"></div>
 	<div id="qunit-fixture"></div>
 	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
+	<div id="content" data-sap-ui-fastnavgroup="true"></div>
 </body>
 </html>
