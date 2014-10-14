@@ -415,6 +415,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.onsappagedown = fnOnPageDown;
 			this.onsaptabnext = fnOnTabNext;
 			this.onsaptabprevious = fnOnTabPrevious;
+			
+			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	/**
