@@ -79,12 +79,11 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			// dummy after focusable area..
 			oRm.write("<div tabindex='-1'");
-			oRm.writeAttribute("id", oControl.getId + "-before");
+			oRm.writeAttribute("id", oControl.getId() + "-before");
 			oRm.write("></div>");
 			// Render the div for the carousel
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-head");
-			oRm.writeControlData(oControl);
 			oRm.addClass("sapMFFHead");
 			oRm.writeClasses();
 			oRm.write(">");
