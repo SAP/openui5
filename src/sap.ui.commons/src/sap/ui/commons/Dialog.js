@@ -562,16 +562,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		if (oSourceDomRef.id === sFirstFocusable) {
 			// the FocusHandlingFirstElement was focused and thus the focus should move to the last element.
+			jQuery.sap.log.debug("First dummy focus element was focused", "", "sap.ui.commons.Dialog");
 			if ($FocusablesFoot.length > 0) {
+				jQuery.sap.log.debug("Last footer element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesFoot[$FocusablesFoot.length - 1];
 			} else {
+				jQuery.sap.log.debug("Last content element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesCont[$FocusablesCont.length - 1];
 			}
 		} else if (oSourceDomRef.id === sLastFocusable) {
 			// the FocusHandlingEndElement was focused and thus the focus should move to the first element.
+			jQuery.sap.log.debug("Last dummy focus element was focues", "", "sap.ui.commons.Dialog");
 			if ($FocusablesCont.length > 0) {
+				jQuery.sap.log.debug("First content element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesCont[0];
 			} else {
+				jQuery.sap.log.debug("First footer element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesFoot[0];
 			}
 		}
@@ -587,11 +593,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.delayedCall(iDelay, this, function(){
 				// if the element is a control the focus should be called via the control
 				// especially if the control has an individual focus DOM-ref
-				if (sap.ui.getCore().byId(oFocusDomRef.id) instanceof Control) {
-					oFocusDomRef.focus();
+				var oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+				if (oControl instanceof Control) {
+					jQuery.sap.log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", "sap.ui.commons.Dialog");
 				} else {
-					jQuery.sap.focus(oFocusDomRef);
+					jQuery.sap.log.debug("oFocusDomRef will be focused", "", "sap.ui.commons.Dialog");
 				}
+				jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
 			});
 		}
 	};
