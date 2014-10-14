@@ -18,7 +18,6 @@
 					maxContainerCols="2"
 					editable="true"
 					layout="ResponsiveGridLayout"
-					title="New Product"
 					labelSpanL="3"
 					labelSpanM="3"
 					emptySpanL="4"
