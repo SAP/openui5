@@ -6,7 +6,7 @@ module.exports = function(grunt, config) {
 		target: {
 
 			// replace patterns in all js/css files in the target resources dir
-			src: [ 'target/openui5/resources/**/*.{js,css}' ],
+			src: [ 'target/openui5-*/resources/**/*.{js,css}' ],
 
 			// overwrite target files instead of copying into a dist dir
 			overwrite: true,
@@ -31,8 +31,15 @@ module.exports = function(grunt, config) {
 				// ${buildtime} or @buildtime@
 				{
 					from: /(?:\$\{buildtime\}|@buildtime@)/g,
-					to: new Date().toISOString()
+					to: '<%= buildtime %>'
+				},
+
+				// ${lastchange} or @lastchange@
+				{
+					from: /(?:\$\{lastchange\}|@lastchange@)/g,
+					to: '<%= lastchange %>'
 				}
+
 			]
 		}
 

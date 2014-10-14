@@ -24,12 +24,12 @@ module.exports = function(grunt, config) {
 		openui5_library_preload['target-preload-' + library.name] = {
 			options: {
 				libraryName: library.name,
-				dest: 'target/openui5/resources'
+				dest: 'target/openui5-' + library.name + '/resources'
 			},
 			files: [
 				{
 					expand: true,
-					cwd: 'target/openui5/resources',
+					cwd: 'target/openui5-' + library.name + '/resources',
 					src: src
 				}
 			]

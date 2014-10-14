@@ -50,15 +50,15 @@ module.exports = function(grunt, config) {
 
 			options: {
 
-				appresources: ['target/openui5'],
+				appresources: ['target/openui5-testsuite'],
 
-				resources: ['target/openui5/resources'],
+				resources: aLibraries.map(function(lib) {
+					return 'target/openui5-' + lib.name + '/resources';
+				}),
 
-				registerResources: false,
-
-				testresources: ['target/openui5/test-resources'],
-
-				registerTestresources: false
+				testresources: aLibraries.map(function(lib) {
+					return 'target/openui5-' + lib.name + '/test-resources';
+				})
 
 			}
 

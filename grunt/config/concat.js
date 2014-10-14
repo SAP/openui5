@@ -11,7 +11,7 @@ module.exports = function(grunt, config) {
 		};
 	}
 
-	var sSourcesFolder = 'target/openui5/resources/';
+	var sSourcesFolder = 'target/openui5-sap.ui.core/resources/';
 
 	return {
 		options: {
