@@ -1,6 +1,10 @@
 # Contributing to OpenUI5
 
-You want to contribute to OpenUI5? Welcome! Please read this document to understand what you can do.
+You want to contribute to OpenUI5? Welcome! Please read this document to understand what you can do:
+ * [Help Others](#help-others)
+ * [Analyze Issues](#analyze-issues)
+ * [Report an Issue](#report-an-issue)
+ * [Contribute Code](#contribute-code)
 
 ## Help Others
 
@@ -11,9 +15,7 @@ You can help OpenUI5 by helping others who use UI5 and need support. You will fi
 Analyzing issue reports can be a lot of effort. Any help is welcome!
 Go to [the Github issue tracker](https://github.com/SAP/openui5/issues?state=open) and find an open issue which needs additional work or a bugfix.
 
-Additional work may be further information, or a minimized jsbin example or gist, or it might be a hint that helps understanding the issue.
-
-We cannot accept pull requests yet, so in case you find a fix and want to propose it, describe it in the bug report - we will happily pick it up.
+Additional work may be further information, or a minimized jsbin example or gist, or it might be a hint that helps understanding the issue. Maybe you can even find and [contribute](#contribute-code) a bugfix?
 
 
 ## Report an Issue
