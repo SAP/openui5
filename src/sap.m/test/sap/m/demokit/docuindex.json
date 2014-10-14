@@ -370,7 +370,10 @@
 				"name" : "Object Attribute",
 				"category" : "Display",
 				"since" : "1.12",
-				"samples" : [ "sap.m.sample.ObjectHeaderResponsiveI" ]
+				"samples" : [
+					"sap.m.sample.ObjectHeaderResponsiveI",
+					"sap.m.sample.ObjectHeaderActiveAttributes"
+				]
 			},
 			{
 				"id" : "sap.m.ObjectHeader",
@@ -928,6 +931,11 @@
 				"id": "sap.m.sample.ObjectHeader",
 				"name": "Object Header",
 				"description": "This is a Object Header which displays the basic information about objects similar to the Object List Item. Besides a title and number you can show multiple attributes (on the left) and statuses (on the right)."
+			},
+			{
+				"id": "sap.m.sample.ObjectHeaderActiveAttributes",
+				"name": "Object Header – Active Attributes",
+				"description": "Active Object Attributes can trigger actions, such as navigating to related content inside or outside of the current application, or displaying additional information in a popover."
 			},
 			{
 				"id": "sap.m.sample.ObjectHeaderImage",
