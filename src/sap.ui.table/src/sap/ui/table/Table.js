@@ -659,6 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
 		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
 	
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	
