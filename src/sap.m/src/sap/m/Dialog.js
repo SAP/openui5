@@ -356,8 +356,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		
 		if (this.isOpen()) {
 			//restore the focus after rendering when dialog is already open
-			var sFocusControlId = this._getFocusId();
-			jQuery.sap.focus(jQuery.sap.domById(sFocusControlId));
+			this._setInitialFocus();
 		}
 	};
 	
@@ -925,24 +924,33 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	};
 	
 	
-	//The control that needs to be focused after dialog is open is calculated in following sequence:
+	// The control that needs to be focused after dialog is open is calculated in following sequence:
 	// initialFocus, first focusable element in content area, beginButton, endButton
 	// dialog is always modal so the focus doen't need to be on the dialog when there's
 	// no initialFocus, beginButton and endButton available, but to keep the consistency,
 	// the focus will in the end fall back to dialog itself.
 	Dialog.prototype._setInitialFocus = function() {
-		
+
 		var sFocusId = this._getFocusId();
 		var oControl = sap.ui.getCore().byId(sFocusId);
 		var oFocusDomRef;
-		
+
 		if (oControl) {
 			oFocusDomRef = oControl.getFocusDomRef();
 		}
-		
+
 		oFocusDomRef = oFocusDomRef || jQuery.sap.domById(sFocusId);
-		
-		jQuery.sap.focus(oFocusDomRef);
+
+		// Setting focus to DOM Element which can open the on screen keyboard on mobile device doesn't work
+		// consistently across devices. Therefore setting focus to those elements are disabled on mobile devices
+		// and the keyboard should be opened by the User explicitly
+		if (sap.ui.Device.system.desktop || (oFocusDomRef && !/input|textarea|select/i.test(oFocusDomRef.tagName))) {
+			jQuery.sap.focus(oFocusDomRef);
+		} else {
+			// Set the focus to the popup itself in order to keep the tab chain
+			this.focus();
+		}
+
 	};
 	
 	/**
