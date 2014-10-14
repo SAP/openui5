@@ -25,15 +25,16 @@
 					clearInterval(sId);
 					internalEmpty(oDeferred, sId);
 				}
-	
+
 				var timeDiff = new Date() - startTime;
-	
+
 				// strip the milliseconds
 				timeDiff /= 1000;
-	
+
 				var iPassedSeconds = Math.round(timeDiff % 60);
-	
+
 				if (oOptions.timeout > iPassedSeconds) {
+					// timeout not yet reached
 					return;
 				}
 
