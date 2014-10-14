@@ -145,7 +145,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Image', './TextVi
 	
 		var c = sap.ui.commons,
 			Action = c.MessageBox.Action,
-			Icon = c.MessageBox.Icon,
 			mIconClass = {
 				// Note: keys must be equal to values(!) of the Icon enumeration above
 				INFORMATION : "sapUiMboxInfo",
@@ -260,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Image', './TextVi
 				oMsg = vMessage.addStyleClass("sapUiMboxText");
 			}
 	
-			if ( oIcon !== Icon.NONE ) {
+			if ( oIcon !== MessageBox.Icon.NONE ) {
 				oContent.createRow(cell(image(oIcon)), cell(oMsg));
 			} else {
 				oContent.createRow(cell(oMsg));
@@ -305,7 +304,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Image', './TextVi
 		 * @public
 		 */
 		MessageBox.alert = function(vMessage, fnCallback, sTitle, sDialogId) {
-			return c.MessageBox.show(vMessage, Icon.NONE, sTitle, Action.OK,
+			return c.MessageBox.show(vMessage, MessageBox.Icon.NONE, sTitle, Action.OK,
 					function(oAction) {
 						if ( typeof fnCallback === "function" ) {
 							fnCallback();
@@ -336,7 +335,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Image', './TextVi
 		 * @public
 		 */
 		MessageBox.confirm = function(vMessage, fnCallback, sTitle, sDialogId) {
-			return c.MessageBox.show(vMessage, Icon.QUESTION, sTitle, [Action.OK, Action.CANCEL],
+			return c.MessageBox.show(vMessage, MessageBox.Icon.QUESTION, sTitle, [Action.OK, Action.CANCEL],
 					function(oAction) {
 						if ( typeof fnCallback === "function" ) {
 							fnCallback(oAction === Action.OK);
