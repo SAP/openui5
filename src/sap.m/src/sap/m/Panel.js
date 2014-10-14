@@ -111,6 +111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	}});
 	
 	Panel.prototype.init = function() {
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	/**
