@@ -617,13 +617,13 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 		equal(oResponse.statusCode, 200, "CSRF token fetched");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/SomeNonExistentEntity"
 		});
 		ok(!oResponse.success, "Mock server responded");
 		equal(oResponse.statusCode, 404, "CSRF token fetched");
-		
+
 		oMockServer.destroy();
 
 	});
@@ -769,7 +769,7 @@
 		equal(oResponse.data.d.results.length, 100, "SubscriptionCollection");
 		oMockServer.destroy();
 	});
-	
+
 	test("test Custom Query Options", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -784,38 +784,38 @@
 			dataType : "json"
 		});
 		ok(oResponse.success, "?sap-client=100");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$top=1&sap-client=100",
 			dataType : "json"
 		});
 		ok(oResponse.success, "?$top=1&sap-client=100");
 		equal(oResponse.data.d.results.length, 1, "?$top=1&sap-client=100")
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$sap-client=100",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "?$sap-client=100");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')?sap-client=100",
 			dataType : "json"
 		});
 		ok(oResponse.success, "?sap-client=100");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')?$sap-client=100",
 			dataType : "json"
 		});
 		ok(!oResponse.success, "?$sap-client=100");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?sap-client=100",
 			dataType : "json"
 		});
 		ok(oResponse.success, "?sap-client=100");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights?$sap-client=100",
 			dataType : "json"
@@ -825,7 +825,7 @@
 		oMockServer.destroy();
 
 	});
-	
+
 	test("test request to service uri", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -861,14 +861,14 @@
 		});
 		ok(oResponse.success, "CarrierCollection('carrid 1')?$format=json");
 		ok(oResponse.data.d, "CarrierCollection('carrid 1')?$format=json");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$format=json",
 			dataType : "json"
 		});
 		ok(oResponse.success, "CarrierCollection?$format=json");
 		ok(oResponse.data.d.results, "CarrierCollection?$format=json");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$format=json&$top=3",
 			dataType : "json"
@@ -881,7 +881,7 @@
 			dataType : "json"
 		});
 		ok(!oResponse.success, "CarrierCollection('carrid 1')?$format=xml");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection?$format=xml",
 			dataType : "json"
@@ -892,63 +892,66 @@
 
 	});
 
-	test("test OData get single entry", function() {
-		var oMockServer = new sap.ui.core.util.MockServer({
-			rootUri : "/myservice/"
-		});
-		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
-		oMockServer.simulate(sMetadataUrl);
-		oMockServer.start();
-		ok(oMockServer.isStarted(), "Mock server is started");
+	test(
+			"test OData get single entry",
+			function() {
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri : "/myservice/"
+				});
+				var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+				oMockServer.simulate(sMetadataUrl);
+				oMockServer.start();
+				ok(oMockServer.isStarted(), "Mock server is started");
 
-		var oResponse = jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection('carrid 1')",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		ok(oResponse.data.d, "single entry no OData system query options");
-		equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				var oResponse = jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection('carrid 1')",
+					dataType : "json"
+				});
+				ok(oResponse.success, "Mock server responded");
+				ok(oResponse.data.d, "single entry no OData system query options");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
 
-		jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection(carrid='carrid 1')",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		ok(oResponse.data.d, "single entry no OData system query options");
-		equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
+				jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection(carrid='carrid 1')",
+					dataType : "json"
+				});
+				ok(oResponse.success, "Mock server responded");
+				ok(oResponse.data.d, "single entry no OData system query options");
+				equal(oResponse.data.d.__metadata.uri, "/myservice/CarrierCollection('carrid 1')", "single key");
 
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
-			dataType : "json"
-		});
-		ok(oResponse.success, "Mock server responded");
-		ok(oResponse.data.d.carrid, "single entry with OData system query options");
-		
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/FlightCollection/?$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate,FlightCarrier/CARRNAME&$expand=FlightCarrier",
-			dataType : "json"
-		});
-		ok(oResponse.success, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
-		ok(oResponse.data.d.results[0].flightDetails.cityFrom, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
-		ok(oResponse.data.d.results[0].flightDetails.cityTo, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
-		ok(oResponse.data.d.results[0].fldate, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
-		ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "$top=1&$select=FlightCarrier/CARRNAME&$expand=FlightCarrier");
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection('carrid 1')/?$select=carrid",
+					dataType : "json"
+				});
+				ok(oResponse.success, "Mock server responded");
+				ok(oResponse.data.d.carrid, "single entry with OData system query options");
 
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection('carrid 1')/?$selsdfect=carrid",
-			dataType : "json"
-		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "fake query option");
+				oResponse = jQuery.sap
+						.sjax({
+							url : "/myservice/FlightCollection/?$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate,FlightCarrier/CARRNAME&$expand=FlightCarrier",
+							dataType : "json"
+						});
+				ok(oResponse.success, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
+				ok(oResponse.data.d.results[0].flightDetails.cityFrom, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
+				ok(oResponse.data.d.results[0].flightDetails.cityTo, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
+				ok(oResponse.data.d.results[0].fldate, "$top=1&$select=flightDetails/cityFrom,flightDetails/cityTo,fldate");
+				ok(oResponse.data.d.results[0].FlightCarrier.CARRNAME, "$top=1&$select=FlightCarrier/CARRNAME&$expand=FlightCarrier");
 
-		oResponse = jQuery.sap.sjax({
-			url : "/myservice/CarrierCollection('carrid 1')/?$top=1",
-			dataType : "json"
-		});
-		equal(oResponse.success, false, "Mock server responded");
-		equal(oResponse.statusCode, 400, "query option not valid for single entry");
-		oMockServer.destroy();
-	});
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection('carrid 1')/?$selsdfect=carrid",
+					dataType : "json"
+				});
+				equal(oResponse.success, false, "Mock server responded");
+				equal(oResponse.statusCode, 400, "fake query option");
+
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection('carrid 1')/?$top=1",
+					dataType : "json"
+				});
+				equal(oResponse.success, false, "Mock server responded");
+				equal(oResponse.statusCode, 400, "query option not valid for single entry");
+				oMockServer.destroy();
+			});
 
 	test("test OData get entity set", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
@@ -965,7 +968,7 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 		equal(oResponse.data, 100, "$count on entityset");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection/$count?$top=10",
 			dataType : "json"
@@ -1033,7 +1036,7 @@
 		});
 		ok(oResponse.success, "Mock server responded");
 		equal(oResponse.data, 100, "navigation $count");
-		
+
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count?$skip=10",
 			dataType : "json"
@@ -1219,7 +1222,7 @@
 
 		oMockServer.destroy();
 	});
-	
+
 	test(
 			"test OData $filter",
 			function() {
@@ -1245,7 +1248,7 @@
 				});
 				ok(oResponse.success, "(A or B)");
 				equal(oResponse.data.d.results.length, 2, "(A or B)");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/LeaveHeaderCollection/$count?$filter=(type eq 'Vacation' or type eq 'Sick Leave')",
 					dataType : "json"
@@ -1452,7 +1455,7 @@
 				equal(oResponse.data.d.results[0].type, "Sick Leave", "type%20ne%20%27Vacation%27");
 				equal(oResponse.data.d.results.length, 2, "type%20ne%20%27Vacation%27");
 				oMockServer.destroy();
-				
+
 				oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
@@ -1466,9 +1469,9 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				equal(oResponse.data.d.results.length, 1, "flightDetails/cityFrom eq 'cityFrom 1'");
-				
+
 				oMockServer.destroy();
-				
+
 				oMockServer = new sap.ui.core.util.MockServer({
 					rootUri : "/myservice/"
 				});
@@ -1482,25 +1485,25 @@
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results.length, 3, "$filter=Discontinued eq true");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$top=1&$orderby=ProductID desc",
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results[0].ProductID, 20, "$filter=Discontinued eq 1");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=UnitsInStock lt 40",
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results.length, 15, "$filter=UnitsInStock lt 40");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products?$filter=(UnitsInStock eq 120)",
 					dataType : "json"
 				});
 				equal(oResponse.data.d.results.length, 1, "$filter=(UnitsInStock eq 120)");
-				
+
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/Products(5)/Category",
 					dataType : "json"
@@ -1509,7 +1512,7 @@
 
 				oMockServer.destroy();
 			});
-				
+
 	test("test OData $select", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -1864,7 +1867,7 @@
 
 		//	oMockServer.destroy();
 	});
-	
+
 	test("test filter on complex type properties", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({
 			rootUri : "/myservice/"
@@ -2195,7 +2198,7 @@
 		});
 		ok(oPutResponse.success, "Mock server responded the PUT resquest");
 		equal(oPutResponse.statusCode, 204, "resource successfully updated");
-		
+
 		oPutResponse = jQuery.sap.sjax({
 			url : "/myservice/FlightCollection(carrid='BB',connid='008',fldate=datetime'2010-10-20T00:00:00')",
 			type : 'PUT',
@@ -2696,6 +2699,37 @@
 		oModel.submitBatch(fnSuccess, fnError, false);
 
 		oMockServer.destroy();
+	});
+	
+	asyncTest("test ODataModel update", function() {
+		sURI = "/myservice/";
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : sURI
+		});
+		var sMetadataUrl = "testdata/rmtsampleflight/metadata.xml"// url to the service metadata document
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		var oModel = initModel(sURI, true);
+		oModel.read('CarrierCollection', null, null, true, function(oData, oResponse) {
+			var oEntry = {};
+			oEntry.CARRNAME = "USD";
+			oModel.update("/CarrierCollection('carrid 1')", oEntry, null, function() {
+				var oResponse = jQuery.sap.sjax({
+					url : "/myservice/CarrierCollection('carrid 1')",
+					dataType : "json"
+				});
+				equal(oResponse.data.d.CARRNAME, "USD");
+				equal(oResponse.data.d.mimeType, "mimeType 1");
+				start();
+			}, function() {
+				start();
+				oMockServer.destroy();
+			}, true); // merge:true trigger a MERGE request instead of a PUT request to perform a differential update
+
+		}, function() {
+			ok(false, "Read failed");
+		});
+
 	});
 
 	function countProperties(obj) {

@@ -1815,7 +1815,7 @@ sap.ui
 																// MERGE
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 																		sChangesetRequest.lastIndexOf("}") + 1).replace(/\\/g, '');
-																fnCUDRequest(rMerge, sData, 'PUT');
+																fnCUDRequest(rMerge, sData, 'MERGE');
 															} else if (rPost.test(sChangesetRequest)) {
 																// POST
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
@@ -2220,6 +2220,13 @@ sap.ui
 												method : "POST",
 												path : new RegExp("(" + sEntitySetName + ")(\\(([^/\\?#]+)\\)/?(.*)?)?"),
 												response : function(oXhr, sEntitySetName, group2, sKeys, sNavName) {
+													if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
+														return jQuery.sap.sjax({
+															type : 'MERGE',
+															url : oXhr.url,
+															data : oXhr.requestBody
+														});
+													}
 													jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 													var sRespondData = null;
 													var sRespondContentType = null;
@@ -2272,6 +2279,70 @@ sap.ui
 															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 															if (oExistingEntry) { // Overwrite existing
 																that._oMockdata[sEntitySetName][oExistingEntry.index] = oEntity;
+															}
+															iResult = 204;
+														}
+													}
+													oXhr.respond(iResult, sRespondContentType, sRespondData);
+													jQuery.sap.log
+															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+												}
+											});
+											
+											// support partial update of an entity of a specific type
+											aRequests.push({
+												method : "MERGE",
+												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
+												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
+													jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
+													var iResult = 405; // default: method not allowed 
+													var sRespondData = null;
+													var sRespondContentType = null;
+
+													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+															decodeURIComponent(sKeys), sNavName);
+													if (sTargetEntityName) {
+														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+														if (oEntity) {
+															sRespondContentType = {
+																"Content-Type" : "application/json;charset=utf-8"
+															};
+
+															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+															if (oExistingEntry) { 
+																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+															}
+															iResult = 204;
+														}
+													}
+													oXhr.respond(iResult, sRespondContentType, sRespondData);
+													jQuery.sap.log
+															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+												}
+											});
+											
+											// support partial update of an entity of a specific type
+											aRequests.push({
+												method : "PATCH",
+												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
+												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
+													jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
+													var iResult = 405; // default: method not allowed 
+													var sRespondData = null;
+													var sRespondContentType = null;
+
+													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+															decodeURIComponent(sKeys), sNavName);
+													if (sTargetEntityName) {
+														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+														if (oEntity) {
+															sRespondContentType = {
+																"Content-Type" : "application/json;charset=utf-8"
+															};
+
+															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+															if (oExistingEntry) { 
+																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
 															}
 															iResult = 204;
 														}
