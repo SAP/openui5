@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	
 			// resize suggestion popup to minimum size of the input field
 			setTimeout(function() {
-				if (that._oSuggestionPopup.isOpen() && that._oSuggestionPopup.$().outerWidth() < that.$().outerWidth()) {
+				if (that._oSuggestionPopup && that._oSuggestionPopup.isOpen() && that._oSuggestionPopup.$().outerWidth() < that.$().outerWidth()) {
 					that._oSuggestionPopup.setContentWidth((that.$().outerWidth()) + "px");
 				}
 			}, 0);
