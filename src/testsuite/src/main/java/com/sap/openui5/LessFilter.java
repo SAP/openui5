@@ -3,6 +3,7 @@ package com.sap.openui5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -44,7 +45,7 @@ public class LessFilter implements Filter{
   private static final String CLASSPATH_PREFIX = "META-INF";
 
   /** pattern to identify a theme request */
-  private static final Pattern PATTERN_THEME_REQUEST = Pattern.compile("(.*)/(library\\.css|/library-RTL\\.css|/library-parameters\\.json)$");
+  private static final Pattern PATTERN_THEME_REQUEST = Pattern.compile("(.*)/(library\\.css|library-RTL\\.css|library-parameters\\.json)$");
 
   /** pattern to identify a theme request */
   private static final Pattern PATTERN_THEME_REQUEST_PARTS = Pattern.compile("(/resources/(.*)/themes/)([^/]*)/.*");
@@ -148,19 +149,34 @@ public class LessFilter implements Filter{
       
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
       
       // compile the less if required (up-to-date check happens in the compile function)
       Matcher m = PATTERN_THEME_REQUEST.matcher(path);
       if (m.matches()) {
+        
         String prefixPath = m.group(1);
         String sourcePath = prefixPath + "/library.source.less";
+        
         this.compile(sourcePath, false, false);
-      }
-      
-      // return the cached CSS or JSON file and set it as overlay for the resource servlet
-      if (this.cache.containsKey(path)) {
-        request.setAttribute("OVERLAY", this.cache.get(path));
+        
+        // return the cached CSS or JSON file and set it as overlay for the resource servlet
+        if (this.cache.containsKey(path)) {
+          
+          response.setContentType(this.config.getServletContext().getMimeType(path));
+          httpResponse.addDateHeader("Last-Modified", this.lastModified.get(sourcePath));
+          httpResponse.setHeader("Cache-Control", "no-cache, no-store");
+          
+          OutputStream os = response.getOutputStream();
+          IOUtils.write(this.cache.get(path), os, "UTF-8");
+          IOUtils.closeQuietly(os);
+          
+          os.flush();
+          os.close();
+          
+        }
+          
       }
       
     }
