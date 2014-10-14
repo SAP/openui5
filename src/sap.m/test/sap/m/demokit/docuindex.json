@@ -265,6 +265,7 @@
 					"sap.m.sample.IconTabBarFiori2",
 					"sap.m.sample.IconTabBarNoIcons",
 					"sap.m.sample.IconTabBarProcess",
+					"sap.m.sample.IconTabBarStretchContent",
 					"sap.m.sample.IconTabSeparator"
 				]
 			},
@@ -898,6 +899,11 @@
 				"id": "sap.m.sample.IconTabBarNoIcons",
 				"name": "Icon Tab Bar - Text-only",
 				"description": "This is similar to the 'Icon Tab Bar - Multi' example but has no icons. Instead, the text is highlighted on selection."
+			},
+			{
+				"id": "sap.m.sample.IconTabBarStretchContent",
+				"name": "Icon Tab Bar - Stretch Content Height",
+				"description": "In this example, the IconTabBar height is stretched to the maximum height of the page content. Note: The height of the parent container must be defined as a fixed value. Also, applyContentPadding property is set to false and backgroundDesign property is set to Transparent."
 			},
 			{
 				"id": "sap.m.sample.IconTabSeparator",
