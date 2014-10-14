@@ -786,17 +786,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 	
-		if (this.getFocusDomRef() === document.activeElement) {
-			switch (sValueState) {
-				case sap.ui.core.ValueState.Error:
-				case sap.ui.core.ValueState.Warning:
-					this.openValueStateMessage();
-					break;
-				default:
-					this.closeValueStateMessage();
-			}
-		}
-	
 		if (!this.isActive()) {
 			return this.setProperty("valueState", sValueState);
 		}
@@ -817,6 +806,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// set tooltip based on state (will be undefined when state is None)
 		var sTooltip = sap.ui.core.ValueStateSupport.enrichTooltip(this, this.getTooltip_AsString());
 		this.$().attr("title", sTooltip || "");
+	
+		if (this.getFocusDomRef() === document.activeElement) {
+			switch (sValueState) {
+				case sap.ui.core.ValueState.Error:
+				case sap.ui.core.ValueState.Warning:
+					this.openValueStateMessage();
+					break;
+				default:
+					this.closeValueStateMessage();
+			}
+		}
 	
 		return this;
 	};
