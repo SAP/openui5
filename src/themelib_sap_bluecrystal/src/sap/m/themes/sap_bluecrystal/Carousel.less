@@ -101,16 +101,13 @@
 	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiShadowTint,30%);
 }
 
-
-.sap-desktop { 
-	.sapMCrsl{
-		box-sizing: border-box;
-		border:1px solid transparent;
-	}
-	.sapMCrsl:focus { 
-		outline: none;
-		border: 1px dotted @sapUiFocus;	
-	}
+.sapMCrsl{
+	box-sizing: border-box;
+	border:1px solid transparent;
+}
+.sapMCrsl:focus {
+	outline: none;
+	border: 1px dotted @sapUiFocus;
 }
 
 .sapMCrsl:hover .sapMCrslHud a {
@@ -153,6 +150,11 @@
 
 .sapMCrslHud .sapMCrslNext {
 	right: 0.625rem;
+}
+
+.sapMCrslHud .sapMCrslPrev:focus,
+.sapMCrslHud .sapMCrslNext:focus {
+  outline: 1px dotted @sapUiFocus;
 }
 
 html[dir='rtl'] .sapMCrslPrev > .sapMCrslHudInner > .sapUiIcon,

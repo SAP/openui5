@@ -508,34 +508,18 @@
 			//instead of using the 'onAfterHide' delegate
 			
 		});
-		
-		
-		
-		
-		
+
 		var appCarousel = new sap.m.App("myApp", {initialPage:"carouselPage"});
-		
-		
-		
-		
-		
-		var carouselPage = new sap.m.Page("carouselPage", 
+
+		var carouselPage = new sap.m.Page("carouselPage",
 			{title: "Carousel Test Page", 
 			enableScrolling: false }
 		);
-		var oSegmentedButton1 = new sap.m.SegmentedButton({
-			buttons:[new sap.m.Button({text:'Label'}), new sap.m.Button({text:'Label'}), new sap.m.Button({text:'Label'})]
-		});
-		var oSegmentedButton2 = new sap.m.SegmentedButton({
-			buttons:[new sap.m.Button({text:'Label'}), new sap.m.Button({text:'Label'}), new sap.m.Button({text:'Label'})]
-		});
-		oSegmentedButton1.placeAt("body");
-		
+
 		carouselPage.addContent(carousel);
 		appCarousel.addPage(carouselPage);
 		appCarousel.placeAt("body");
 		
-		oSegmentedButton2.placeAt("body");
 		sap.ui.getCore().applyChanges();
 		
 		
