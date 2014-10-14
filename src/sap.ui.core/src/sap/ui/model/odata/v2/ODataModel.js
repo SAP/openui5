@@ -110,7 +110,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
-
+			this.sRefreshBatchGroupId = undefined;
+			
 			// Load annotations support on demand
 			if (this.sAnnotationURI) {
 				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
@@ -736,6 +737,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * This will check all bindings for updated data and update the controls if data has been changed.
 	 *
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
+	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared. 
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned. 
 	 *
@@ -743,27 +745,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @name sap.ui.model.odata.ODataModel#refresh
 	 * @function
 	 */
-	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData) {
+	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sBatchGroupId) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		if (bRemoveData) {
 			this.removeData();
 		}
-		this._refresh(bForceUpdate);
+		this._refresh(bForceUpdate, sBatchGroupId);
 	};
 	
 	/**
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
+	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @name sap.ui.model.odata.ODataModel#_refresh
 	 * @private
 	 */
-	ODataModel.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
+	ODataModel.prototype._refresh = function(bForceUpdate, sBatchGroupId, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		var aBindings = this.aBindings.slice(0);
+		//the refresh calls read synchronous; we use this.sRefreshBatchGroupId in this case
+		this.sRefreshBatchGroupId = sBatchGroupId;
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
+		this.sRefreshBatchGroupId = undefined;
 	};
 
 	/**
@@ -1448,7 +1454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oRequest.requestUri.indexOf("$count") === -1) {
 				that.checkUpdate(false, mGetEntities);
 				if (that._isRefreshNeeded(oRequest, oResponse)){
-					that.refresh(false, mChangeEntities, mEntityTypes);
+					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 				}
 			}
 		};
@@ -1522,10 +1528,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 				}
 				that.checkUpdate(false, mGetEntities);
-				
-				if (that._isRefreshNeeded(oBatchRequest, oBatchResponse)){
-					that.refresh(false, mChangeEntities, mEntityTypes);
-				}
 			}
 			if (!fnSuccess) {
 				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
@@ -1643,7 +1645,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			});
 		}
 	};
+	
+	/**
+	 * Request queue processing
+	 * 
+	 * @param {object} oGroup The batchGroup
+	 * @param {map} mChangedEntities A map containing the changed entities of the bacthGroup
+	 * @param {map} mEntityTypes Aa map containing the changed EntityTypes
+	 * 
+	 * @private
+	 * @name sap.ui.model.odata.v2.ODataModel#_processRequestQueue
+	 * @function
+	 */
+	ODataModel.prototype._collectChangedEntities = function(oGroup, mChangedEntities, mEntityTypes) {
+		var that = this;
 
+		if (oGroup.changes) {
+			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
+				for (var i = 0; i < aChangeSet.length; i++) {
+					var oRequest = aChangeSet[i].request;
+					if (oRequest.method === "POST") {
+						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + oRequest.requestUri);
+						if (oEntityMetadata) {
+							mEntityTypes[oEntityMetadata.entityType] = true;
+						}
+					} else {
+						mChangedEntities[oRequest.requestUri] = true;
+					}
+				}
+			});
+		}
+	};
+	
 	/**
 	 * Request queue processing
 	 * 
@@ -1658,7 +1691,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sBatchGroupId, fnSuccess, fnError){
 		var that = this,
-		oRequestHandle;
+			oRequestHandle;
 
 		if (this.oRequestTimer) {
 			jQuery.sap.clearDelayedCall(this.oRequestTimer);
@@ -1666,6 +1699,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 		if (this.bUseBatch) {
 			oRequestHandle = [];
+			//auto refresh for batch / for single requests we refresh after the request was successful
+			if (that.bRefreshAfterChange) {
+				jQuery.each(mRequests, function(sGroupId, oGroup) {
+					if (sGroupId === sBatchGroupId || !sBatchGroupId) {
+						var mChangedEntities = {}, 
+							mEntityTypes = {};
+						that._collectChangedEntities(oGroup, mChangedEntities, mEntityTypes);
+						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
+					}
+				});
+			}
 			jQuery.each(mRequests, function(sGroupId, oGroup) {
 				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
 					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet;
@@ -2103,50 +2147,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._isRefreshNeeded = function(oRequest, oResponse) {
 		var bRefreshNeeded = false;
-		/* sErrorCode,
-		aErrorResponses = [],
-		that = this; */
-
-		if (!this.bRefreshAfterChange) {
-			return bRefreshNeeded;
+		
+		if (this.bRefreshAfterChange) {
+			bRefreshNeeded = true;
 		}
-		// if this is a batch request, loop through the batch operations, find change requests
-		// and check every change request individually
-		/*if (oRequest.data && jQuery.isArray(oRequest.data.__batchRequests)) {
-			if(oResponse) {
-				aErrorResponses = that._getBatchErrors(oResponse.data);
-				jQuery.each(aErrorResponses, function(iIndex, oErrorResponse){
-					if (oErrorResponse.response && oErrorResponse.response.statusCode == "412"){
-						sErrorCode = oErrorResponse.response.statusCode;
-						return false;
-					}
-				});
-				if (!!sErrorCode){
-					return false;
-				}
-			}
-			jQuery.each(oRequest.data.__batchRequests, function(iIndex, oBatchRequest) {
-				if (jQuery.isArray(oBatchRequest.__changeRequests)) {
-					jQuery.each(oBatchRequest.__changeRequests, function(iIndex, oChangeRequest) {
-						bRefreshNeeded = bRefreshNeeded || that._isRefreshNeeded(oChangeRequest);
-						return !bRefreshNeeded; //break
-					});
-				}
-				return !bRefreshNeeded; //break
-			});
-		} else { 
-			if (oRequest.method === "GET" ) {
-				return false;
-			} else { 
-				if(oResponse && oResponse.statusCode == "412"){
-					bRefreshNeeded = false;
-				}
-				else{
-					bRefreshNeeded = true;
-				}
-			}
-		//}*/
-		return true;
+		return bRefreshNeeded;
 	};
 
 	/**
@@ -2533,7 +2538,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sBatchGroupId = mParameters.batchGroupId;
 			mHeaders = mParameters.headers;
 		}
-
+		//if the read is triggered via a refresh we should use the refreshBatchGroupId instead
+		if (this.sRefreshBatchGroupId) {
+			sBatchGroupId = this.sRefreshBatchGroupId;
+		}
+		
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 		// Add filter/sorter to URL parameters
