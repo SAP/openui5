@@ -102,8 +102,10 @@
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Element.js,sap/ui/core/UIArea.js,sap/ui/core/Control.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
+        <!-- exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5) -->
+        <exclude name="jquery-*.js" />
+        <exclude name="sap-*" />
         <!-- Other jQuery versions that conflict with jquery-1.11.1 -->
-        <exclude name="jquery-1.7.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.7.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.8.1.js" />
         <exclude name="sap/ui/thirdparty/jquery/jquery-1.10.1.js" />
