@@ -54,21 +54,6 @@ public class ResourceServlet extends HttpServlet {
     String path = request.getServletPath() + request.getPathInfo();
     URL url = this.findResource(path);
     
-    if (request.getAttribute("OVERLAY") != null) {
-      
-      OutputStream os = response.getOutputStream();
-      IOUtils.write((String) request.getAttribute("OVERLAY"), os, "UTF-8");
-      
-      os.flush();
-      os.close();
-      
-      response.setStatus(HttpServletResponse.SC_OK);
-      this.log("[200] " + request.getRequestURI());
-      
-      
-    } else 
-    
-    // return the resource or send 404
     if (url != null) {
       
       URLConnection connection = url.openConnection();
@@ -79,22 +64,12 @@ public class ResourceServlet extends HttpServlet {
       IOUtils.copyLarge(is, os);
       IOUtils.closeQuietly(is);
       
-      // include the LessSupport plugin for local testing
-      /* when the LessFilter is active we do not need to add the LessSupport plugin
-      if ("/resources/sap-ui-core.js".equals(path)) {
-        URL url4less = this.findResource(request.getServletPath() + "/sap/ui/core/plugin/LessSupport.js");
-        InputStream is4less = url4less.openStream();
-        IOUtils.copyLarge(is4less, os);
-        IOUtils.closeQuietly(is4less);
-      }
-      */
-      
       os.flush();
       os.close();
       
       response.setStatus(HttpServletResponse.SC_OK);
       this.log("[200] " + request.getRequestURI());
-      
+        
     } else {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       this.log("[404] " + request.getRequestURI());
@@ -139,6 +114,7 @@ public class ResourceServlet extends HttpServlet {
     
     String url = connection.getURL().toString();
     
+    // determine the content type (special case for properties request)
     String contentType = connection.getContentType();
     if ("content/unknown".equals(contentType)) {
       if (PATTERN_PROPERTIES_REQUEST.matcher(url).matches()) {
@@ -147,8 +123,12 @@ public class ResourceServlet extends HttpServlet {
         contentType = this.getServletContext().getMimeType(url);
       }
     }
+    
+    // set the relevant headers
     response.setContentType(contentType);
     response.addDateHeader("Last-Modified", connection.getLastModified());
+    response.setHeader("Cache-Control", "no-cache, no-store");
+    response.addHeader("x-sap-ResourceUrl", url);
     
   } // method: prepareResponse
 
