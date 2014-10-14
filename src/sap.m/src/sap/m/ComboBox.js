@@ -964,9 +964,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			// add the active state to the control field
 			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
 
-			// clear the filter to make all items visible before the picker pop-up is opened
-			this.clearFilter();
-
 			// call the hook to add additional content to the List
 			this.addContent();
 

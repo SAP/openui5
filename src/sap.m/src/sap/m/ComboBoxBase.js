@@ -361,6 +361,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				}
 
 				if (this.hasContent()) {
+
+					// clear the filter to make all items visible before the picker pop-up is opened
+					this.clearFilter();
 					this.open();
 				}
 			}
@@ -409,6 +412,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			// open only if the combobox has items
 			if (this.hasContent()) {
+
+				// clear the filter to make all items visible before the picker pop-up is opened
+				this.clearFilter();
 				this.open();
 			}
 		};
