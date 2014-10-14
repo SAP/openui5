@@ -153,11 +153,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 					"QUESTION": "sapMMessageBoxQuestion"
 			},
 			mIcons = {
-				"INFORMATION": IconPool.getIconURI("hint"),
-				"WARNING": IconPool.getIconURI("warning2"),
-				"ERROR": IconPool.getIconURI("alert"),
-				"SUCCESS": IconPool.getIconURI("accept"),
-				"QUESTION": IconPool.getIconURI("incident")
+				"INFORMATION": IconPool.getIconURI("message-information"),
+				"WARNING": IconPool.getIconURI("message-warning"),
+				"ERROR": IconPool.getIconURI("message-error"),
+				"SUCCESS": IconPool.getIconURI("message-success"),
+				"QUESTION": IconPool.getIconURI("question-mark")
 			};
 	
 		/**
