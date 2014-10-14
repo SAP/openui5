@@ -425,7 +425,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this._bOpen = false;
 		this._bInitialFocusSet = false;
-		this.oPopup.close(400);
+		if (this.oPopup.isOpen()) {
+			this.oPopup.close(400);
+		}
 	
 		// do this delayed or it possibly won't work because of popup closing animations
 		jQuery.sap.delayedCall(400, this, "restorePreviousFocus");

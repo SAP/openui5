@@ -848,10 +848,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
 					// focus has returned, so it did only move inside the popup => clear timeout
-					if (this._sTimeoutId) {
-						jQuery.sap.clearDelayedCall(this._sTimeoutId);
-						this._sTimeoutId = null;
-					}
+					jQuery.sap.clearDelayedCall(this._sTimeoutId);
+					this._sTimeoutId = null;
 				}
 			}
 		} else if (type == "blur") { // an element inside the popup is loosing focus - remember in case we need to re-set
@@ -862,7 +860,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				// focus/blur for handling autoclose is disabled for desktop browsers which are not in the touch simulation mode
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
 				if (!this.touchEnabled && !this._sTimeoutId) {
-					this._sTimeoutId = jQuery.sap.delayedCall(0, this, "close");
+					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
+					// provide some additional event-parameters: closingDuration, where this delayed call comes from
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close");
 				}
 			}
 		}
@@ -897,6 +897,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @function
 	 */
 	Popup.prototype.close = function(iDuration) {
+		if (this._sTimeoutId) {
+			jQuery.sap.clearDelayedCall(this._sTimeoutId);
+			this._sTimeoutId = null;
+
+			if (arguments.length > 1) {
+				// arguments[0] = iDuration
+				var sAutoclose = arguments[1];
+				var oDomRef = this._$().get(0);
+				/*
+				 * If coming from the delayedCall from the autoclose mechanism 
+				 * but the active element is still in the Popup -> events messed up somehow.
+				 * This is especially needed for the IE because it messes up focus and blur
+				 * events if using a scroll-bar within a Popup
+				 */
+				if ((typeof (sAutoclose) == "string" && sAutoclose == "autocloseBlur") && 
+				     (oDomRef && jQuery.contains(oDomRef, document.activeElement))) {
+					return;
+				}
+			}
+		}
+
 		jQuery.sap.assert(iDuration === undefined || (typeof iDuration === "number" && (iDuration % 1 == 0)), "iDuration must be empty or an integer");
 	
 		if (this.eOpenState == sap.ui.core.OpenState.CLOSED || this.eOpenState == sap.ui.core.OpenState.CLOSING) {
