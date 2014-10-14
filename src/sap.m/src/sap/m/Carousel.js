@@ -195,6 +195,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var $carouselInner = this.$().find(Carousel._INNER_SELECTOR);
 			this._oMobifyCarousel.resize($carouselInner);
 		}, this);
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	
