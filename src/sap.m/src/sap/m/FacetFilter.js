@@ -295,6 +295,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	
 		this._bundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+		
 		// Button map used to quickly get a button for a given list. This avoids having to iterate through the button aggregation
 		// to find a button for a list.
 		this._buttons = {};
@@ -555,22 +557,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		jQuery(this._aRows[0]).focus();
 		oEvent.preventDefault();
 		this.focus();
-	};
-	
-	// Handle F6
-	FacetFilter.prototype.onsapskipforward = function(oEvent) {
-		// do not handle marked events.
-		for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
-			if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
-				jQuery(this.$().find(":sapTabbable")[i]).focus();
-				oEvent.preventDefault();
-				oEvent.setMarked();
-			}
-		}
-	};
-	
-	// Handle SHIFT+F6
-	FacetFilter.prototype.onsapskipback = function(oEvent) {
 	};
 	
 	FacetFilter.prototype.onsapincreasemodifiers = function(oEvent) {
