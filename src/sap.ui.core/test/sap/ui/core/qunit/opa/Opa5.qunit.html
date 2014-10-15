@@ -159,7 +159,7 @@
 	module("matchers in waitfor", {
 		setup : function () { sinon.config.useFakeTimers = true; },
 		teardown : function () { sinon.config.useFakeTimers = false; }
-	})
+	});
 
 	test("Should not call check if no matcher is matching", function() {
 		// Arrange
