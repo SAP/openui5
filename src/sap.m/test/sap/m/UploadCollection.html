@@ -16,26 +16,41 @@
 	// create JSON sample data
 	var oData = {
 		"items" : [{
-			"contributor" : "John Smith",
-			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-			"fileName" : "Notes.txt",
-			"fileSize" : 10,
-			"mimeType" : "text/plain",
-			"thumbnailUrl" : "",
-			"uploadedDate" : "2014-08-01",
-			"url" : "/pathToTheFile/Notes.txt"
-		}, {
 			"contributor" : "Susan Baker",
 			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+			"enableEdit" : false,
+			"enableDelete" : false,
 			"fileName" : "Screenshot.jpg",
 			"fileSize" : 20,
 			"mimeType" : "image/jpg",
 			"thumbnailUrl" : "",
 			"uploadedDate" : "2014-07-30",
-			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
+			"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt",
+		}, {
+			"contributor" : "John Smith",
+			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+			"enableEdit" : true,
+			"enableDelete" : false,
+			"fileName" : "Notes.txt",
+			"fileSize" : 10,
+			"mimeType" : "text/plain",
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-08-01",
+			"url" : "/pathToTheFile/Notes.txt",
+		}, {
+			"contributor" : "J Edgar Hoover",
+			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
+			"fileName" : "Document.txt",
+			"fileSize" : 15,
+			"mimeType" : "text/plain",
+			"thumbnailUrl" : "",
+			"uploadedDate" : "2014-09-01",
+			"url" : "/pathToTheFile/Document.txt",
 		}, {
 			"contributor" : "Sean O'Connel",
 			"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
+			"enableEdit" : false,
+			"enableDelete" : true,
 			"fileName" : "Third Quarter Results.ppt",
 			"fileSize" : 30,
 			"mimeType" : "application/vnd.ms-powerpoint",
@@ -143,9 +158,25 @@
 		};
 	};
 
+	var fnFileRenamed = function(oEvent) {
+		var oData = oModel.getData();
+		var aItems = oData.items;
+		var sDocumentId = oEvent.getParameter("documentId");
+		var bSetData = false;
+
+		jQuery.each(aItems, function(index) {
+			if (aItems[index] && aItems[index].documentId === sDocumentId) {
+				aItems[index].fileName = oEvent.getParameter("fileName");
+			};
+		});
+		oModel.setData(oData);
+	}
+	
 	var oItemTemplate = new sap.m.UploadCollectionItem({
 		contributor : "{contributor}",
 		documentId : "{documentId}",
+		enableEdit : "{enableEdit}",
+		enableDelete : "{enableDelete}",
 		fileName : "{fileName}",
 		fileSize : "{fileSize}",
 		mimeType : "{mimeType}",
@@ -156,12 +187,14 @@
 
 	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
+		maximumFilenameLength : 35,
 		items : {
 			path : "/items",
 			template : oItemTemplate
 		},
 		uploadComplete : fnProcessUpload,
-		fileDeleted : fnFileDeleted
+		fileDeleted : fnFileDeleted,
+		fileRenamed : fnFileRenamed,
 	});
 	// 	}).addStyleClass("sapUiSizeCompact");
 

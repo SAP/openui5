@@ -70,10 +70,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			uploadEnabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
-			/**
-			 * If set to "true", the upload immediately starts after file selection. With the default setting, the upload needs to be explicitly triggered.
-			 */
-			uploadOnChange : {type : "boolean", group : "Behavior", defaultValue : true},
+//			/**
+//			 * If set to "true", the upload immediately starts after file selection. With the default setting, the upload needs to be explicitly triggered.
+//			 */
+//			uploadOnChange : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
 			 * The URL where the uploaded files have to be stored.
@@ -134,7 +134,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					/**
 					 * An unique Id of the attached document.
 					 */
-					documentId : {type : "string"}
+					documentId : {type : "string"},
+			
+					/**
+					 * The new file name
+					 */
+					fileName : {type : "string"}
 				}
 			}, 
 	
@@ -213,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	
 	UploadCollection.prototype.init = function() {
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {
 		});
 	};
@@ -256,44 +261,35 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @function
 	 */
 	UploadCollection.prototype.onAfterRendering = function() {
-		
+
 		var that = this;
-		
-		function handleFocusOut(oEvent) {
-			that._onFocusOut(oEvent, that);
-		}
-		
+		var bEdit = false;
+		this._oList.aDelegates = []; 
+
 		if (this.aItems || (this.aItems == this.getItems())) {
-			var i;
 			var iLength = this.aItems.length;
-			for (i = 0; i < iLength; i++) {
+			for (var i = 0; i < iLength; i++) {
 				var sId = this.aItems[i].sId;
 				if (this.aItems[i].status == "Edit") {
-					var sFileNameId = sId + "-ta_editFileName-inner";
-					var oObj = document.getElementById(sFileNameId);
-					oObj.focus();
-					oObj.select();
-					oObj.addEventListener("focusout", handleFocusOut);
+					bEdit = true;
+					var sEditBoxId = sId + "-ta_editFileName-inner";
+					var oEditBox = document.getElementById(sEditBoxId);
+					oEditBox.focus();
+					oEditBox.select();
+					break;
 				}
 			}
-		}
-	};
-	
-	UploadCollection.prototype._onFocusOut = function(oEvent, oContext) {
-		var i;
-	
-		// change the status
-		var iLength = oContext.aItems.length;
-		for (i = 0; i < iLength; i++) {
-			if (oContext.aItems[i].status == "Edit") {
-				oContext.aItems[i].status = "Display";
-	
-				// trigger re-rendering!
-				oContext.invalidate();
+
+			if (bEdit) {
+				this._oList.addDelegate({
+					onclick: function(oEvent) {
+						sap.m.UploadCollection.prototype._handleClick(oEvent, that, sId);
+					}
+				});
 			}
 		}
 	};
-	
+
 	/**
 	 * Cleans up before destruction.
 	 * 
@@ -327,7 +323,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			return null;
 		}
 		var sItemId = oItem.getId(),
-			sStatus = oItem.status;
+			sStatus = oItem.status,
+			sFileNameLong = oItem.getFileName(),
+			that = this,
+			bEnabled = true;
 		var oBusyIndicator,
 			oOkButton,
 			oCancelButton,
@@ -345,166 +344,184 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			oInputExtensionHL,
 			oTextVL,
 			oHL,
-			oListItem,
-			that = this;
-	
+			oListItem;
+
 		if (sStatus == "Uploading") {
 			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
 				visible: true
-			}).addStyleClass("sapMUCloadingIcon");
+			}).setSize('2.5rem').addStyleClass("sapMUCloadingIcon");
 		}
-	
+
 		// /////////////////// ListItem Button Layout
 		if (sStatus == "Edit") {
 			oOkButton = new sap.m.Button({
 				id : sItemId + "-okButton",
 				text : "Ok",
-				type : sap.m.ButtonType.Transparent,
-				press : function(oEvent) {
-					UploadCollection.prototype._onOk(oEvent, that);
-				}
+				type : sap.m.ButtonType.Transparent
 			}).addStyleClass("sapMUCOkBtn");
-		}
-	
-		if (sStatus == "Edit") {
+			
 			oCancelButton = new sap.m.Button({
 				id : sItemId + "-cancelButton",
 				text : "Cancel",
-				type : sap.m.ButtonType.Transparent
+				type : sap.m.ButtonType.Transparent,
+				press: function(oEvent) {
+					sap.m.UploadCollection.prototype._handleCancel(oEvent, that);
+				}
 			}).addStyleClass("sapMUCCancelBtn");
 		}
-	
+
 		if (sStatus == "Display") {
+			bEnabled = oItem.getEnableEdit();
+			if (this.sErrorState == "Error"){
+				bEnabled = false;
+			}
 			oEditButton = new sap.m.Button({
 				id : sItemId + "-editButton",
 				icon : "sap-icon://edit",
 				type : sap.m.ButtonType.Transparent,
+				enabled : bEnabled,
 				press : function(oEvent) {
-					UploadCollection.prototype._onEdit(oEvent, that);
+					sap.m.UploadCollection.prototype._handleEdit(oEvent, that);
 				}
 			}).addStyleClass("sapMUCEditBtn");
 		}
-	
+
 		if (sStatus == "Display" || sStatus == "Uploading") {
+			bEnabled = oItem.getEnableDelete();
+			if (this.sErrorState == "Error"){
+				bEnabled = false;
+			}
 			oDeleteButton = new sap.m.Button({
 				id : sItemId + "-deleteButton",
 				icon : "sap-icon://sys-cancel",
 				type : sap.m.ButtonType.Transparent,
+				enabled : bEnabled,
 				press : function(oEvent) {
-					UploadCollection.prototype._onDelete(oEvent, that);
+					sap.m.UploadCollection.prototype._handleDelete(oEvent, that);
 				}
 			}).addStyleClass("sapMUCDeleteBtn");
 		}
-	
+
 		oButtonsHL = new sap.ui.layout.HorizontalLayout(sItemId + "-ba_innerHL", {
 			content : [oOkButton, oCancelButton, oEditButton, oDeleteButton],
 			allowWrapping : false
 		}).addStyleClass("sapMUCBtnHL");
-	
-		// if (bUploaded) {
-		// this._oButtonsHL.addStyleClass("sapMFUBtnLoadedHL");
-		// }
-	
+
 		// /////////////////// ListItem Text Layout
 		if (sStatus == "Display" || sStatus == "Uploading") {
 			oFileNameLabel = new sap.m.Link(sItemId + "-ta_filenameHL", {
-				text : oItem.getFileName(),
+				text : sFileNameLong,
 				href : oItem.getUrl()
 			}).addStyleClass("sapMUCFileName");
-	
+
 			if (sStatus == "Uploading"){
 				oFileNameLabel.addStyleClass("sapMUCInner");
 			}
 		}
-	
+
 		if (sStatus == "Display") {
 			oUploadedDateLabel = new sap.m.Label(sItemId + "-ta_date", {
 				text : oItem.getUploadedDate() + " " + oItem.getContributor()
 			});
 		}
-	
+
 		if (sStatus == "Uploading") {
 			oProgressLabel = new sap.m.Label(sItemId + "-ta_progress", {
 				// var sProcent = "50%";
-				text: "Placeholder for test"
 				// text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sProcent]),
 			}).addStyleClass("sapMUCProgress");
-	//		if (sStatus == "Uploading") {
-	//			oFileNameLabel.addStyleClass("sapMUCInner")
-	//		}
+//			if (sStatus == "Uploading") {
+//				oFileNameLabel.addStyleClass("sapMUCInner")
+//			}
 		}
-	
+
 		if (sStatus == "Display" || sStatus == "Uploading") {
 			oTextDescriptionHL = new sap.ui.layout.HorizontalLayout(sItemId + "-ta_descriptionHL", {
 				content : [oUploadedDateLabel, oProgressLabel]
 			}).addStyleClass("sapMUCDescriptionHL");
 		}
-	
+
 		if (sStatus == "Edit") {
+			var aFileName = sFileNameLong.split(".");
+			var sExtension = "." + aFileName[1];
+			var iMaxLength = that.getMaximumFilenameLength();
+			var sValueState = "None";
+			var bShowValueStateMessage = false;
+			var sFileName = aFileName[0];
+
+			// Extension
+			oFileExtensionLabel = new sap.m.Text(sItemId + "-extension", {
+				text : sExtension
+			}).addStyleClass("sapMUCExtension");
+
+			if (oItem.errorState == "Error") {
+				bShowValueStateMessage = true;
+				sValueState = "Error";
+				sFileName = oItem.changedFileName;
+			}
+			
+			// filename
 			oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
 				type : sap.m.InputType.Text,
-				value : UploadCollection.prototype._getFileNameWithoutExtension(oItem.getFileName())
+				valueState : sValueState,
+				valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
+				showValueStateMessage: bShowValueStateMessage,
+				value : sFileName
 			}).addStyleClass("sapMUCEditBox");
-	
+
+			if ((iMaxLength - sExtension.length) > 0) {
+				oFileNameEditBox.setProperty("maxLength", iMaxLength - sExtension.length, true);
+			}
+
 			oFileNameEditBox.setLayoutData(new sap.m.FlexItemData({
 				growFactor : 1
 			}));
-	
-			oFileNameEditBox.attachChange(this._nameChanged, this);
-		}
-	
-		if (sStatus == "Edit") {
-			oFileExtensionLabel = new sap.m.Text(sItemId + "-extension", {
-				text : "." + UploadCollection.prototype._getExtensionFromFilename(oItem.getFileName())
-			}).addStyleClass("sapMUCExtension");
-		}
-	
-		if (sStatus == "Edit") {
+
 			oInputExtensionHL = new sap.m.HBox(sItemId + "-ta_extensionHL", {
 				items : [oFileNameEditBox, oFileExtensionLabel]
 			}).addStyleClass("sapMUCEditHL");
+
 		}
-	
+
 		oTextVL = new sap.ui.layout.VerticalLayout(sItemId + "-ta_textVL", {
-	//		content : [jQuery.proxy(this._determineIcon, this), oFileNameLabel, oInputExtensionHL, oTextDescriptionHL],
 			content : [oFileNameLabel, oInputExtensionHL, oTextDescriptionHL],
 			allowWrapping : true
 		});
-	
+
 		// /////////////////// ListItem Icon
 		if (sStatus == "Display" || sStatus == "Edit") {
 			sThumbnailUrl = oItem.getThumbnailUrl();
 			if (sThumbnailUrl) {
 				oItemIcon = new sap.m.Image(sItemId + "-ia_imageHL", {
-					src : UploadCollection.prototype._getThumbnail(sThumbnailUrl, oItem.getFileName())
+					src : sap.m.UploadCollection.prototype._getThumbnail(sThumbnailUrl, sFileNameLong)
 				}).addStyleClass("sapMUCItemImage");
 				oTextVL.addStyleClass("sapMUCTextPadding");
 			} else {
 				oItemIcon = new sap.ui.core.Icon(sItemId + "-ia_iconHL", {
-					src : UploadCollection.prototype._getThumbnail(undefined, oItem.getFileName())
-				}).addStyleClass("sapMUCItemIcon");
+					src : sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong)
+				}).setSize('2.5rem').addStyleClass("sapMUCItemIcon");
 			}
 		}
-	
+
 		// /////////////////// ListItem Horizontal Layout
 		oHL = new sap.ui.layout.HorizontalLayout(sItemId + "-ta_HL", {
 			content : [
 			oBusyIndicator, oItemIcon, oTextVL, oButtonsHL],
 			allowWrapping : false
 		}).addStyleClass("sapMUCItemHL");
-	
+
 		// /////////////////// ListItem Template Definition
 		oListItem = new sap.m.CustomListItem({
 			content : [oHL]
 		});
-	
+
 		// /////////////////// Add properties to the ListItem
 		for ( var sPropertyName in oItem.mProperties) {
 			if (oItem.mProperties.hasOwnProperty(sPropertyName)) {
 				oListItem.mProperties[sPropertyName] = oItem.mProperties[sPropertyName];
 			}
 		}
-	
+		oListItem.status = sStatus;
 		return oListItem;
 	};
 	
@@ -519,7 +536,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._fillList = function(aItems) {
 		var that = this;
 		var	iMaxIndex = aItems.length - 1;
-	
+
 		jQuery.each(aItems, function (iIndex, oItem) {
 			if (!oItem.status) {
 				//set default status value -> "Display"
@@ -528,7 +545,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			// add a private property to the added item containing a reference
 			// to the corresponding mapped item
 			var oListItem = that._mapItemToListItem(oItem);
-	
+
 			if (iIndex == 0 && iMaxIndex == 0){
 				oListItem.addStyleClass("sapMUCListSingleItem");
 				jQuery.sap.log.debug("List item " + iIndex);
@@ -542,7 +559,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				oListItem.addStyleClass("sapMUCListItem");
 				jQuery.sap.log.debug("List item " + iIndex);
 			}
-	
+
 			// add the mapped item to the List
 			that._oList.addAggregation("items", oListItem, true); // note: suppress re-rendering
 		});
@@ -591,19 +608,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/* Handle UploadCollection events                              */
 	/* =========================================================== */
-	UploadCollection.prototype._onDelete = function(oEvent, oContext) {
+	UploadCollection.prototype._handleDelete = function(oEvent, oContext) {
 		var oParams = oEvent.getParameters();
 		var aItems = oContext.getModel().oData.items;
 		var sItemId = oParams.id.split("-deleteButton")[0];
 		var index = sItemId.split("-").pop();
 		var bCompact = false;
-	
+
 		// popup delete file
-		MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", aItems[index].fileName), {
+		sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", aItems[index].fileName), {
 			title : this._oRb.getText("UPLOADCOLLECTION_DELETE_TITLE"),
-			actions : [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 			onClose : function(oAction) {
-				if (oAction === MessageBox.Action.OK) {
+				if (oAction === sap.m.MessageBox.Action.OK) {
 					// fire event
 					oContext.fireFileDeleted({
 						documentId : aItems[index].documentId
@@ -614,53 +631,114 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			styleClass : bCompact ? "sapUiSizeCompact" : "" // TODO
 		});
 	};
-	
-	UploadCollection.prototype._onEdit = function(oEvent, oContext) {
-		var i;
-		var oParams = oEvent.getParameters();
-		var sId = oParams.id;
-	
-		// get line id
-		sId = sId.split("-editButton")[0];
-	
-		// change the status
-		var iLength = oContext.aItems.length;
-		for (i = 0; i < iLength; i++) {
-			if (sId == oContext.aItems[i].sId) {
-				oContext.aItems[i].status = "Edit";
-	
-				// trigger re-rendering!
-				oContext.invalidate();
-				continue;
-			}
-			if (oContext.aItems[i].status == "Edit") {
-				oContext.aItems[i].status = "Display";
-			}
+
+	UploadCollection.prototype._handleEdit = function(oEvent, oContext) {
+		if (!!oEvent.sId) {
+			var oParams = oEvent.getParameters();
+			var sId = oParams.id;
+			var aId = sId.split("-");
+			var iLength = aId.length;
+			// get line
+			var iSelectdRow = aId[iLength - 2];
+			
+			oContext.aItems[iSelectdRow].status = "Edit";
+
+			// trigger re-rendering!
+			oContext.invalidate();
 		}
 	};
 	
-	UploadCollection.prototype._onOk = function(oEvent, oContext) {
-		var i;
-		var oParams = oEvent.getParameters();
-		var sId = oParams.id;
-	
-		// get line id
-		sId = sId.split("-okButton")[0];
-	
-		// change the status
-		var iLength = oContext.aItems.length;
-		for (i = 0; i < iLength; i++) {
-			if (sId == oContext.aItems[i].sId) {
-				oContext.aItems[i].status = "Display";
-	
-				// trigger re-rendering!
-				oContext.invalidate();
-	
+	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
+		var aTargetId = oEvent.target.parentElement.id.split("-");
+		var aTargetIdLength = aTargetId.length;
+		var sTargetId = aTargetId[aTargetIdLength - 2];
+
+		var aSourceObj = sSourceId.split("-");
+		var aSourceObjLength = aSourceObj.length;
+		var iSourceLine = aSourceObj[aSourceObjLength - 1];
+
+		if ( aTargetId[aTargetIdLength - 1] != "ta_editFileName") {
+				oContext.aItems[iSourceLine].status = "Display";
+		}
+
+		switch (sTargetId) {
+			case 'editButton' :
+				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId);
 				break;
+			case 'cancelButton' :
+				oContext.aItems[iSourceLine].errorState = "None";
+				oContext.aItems[iSourceLine].changedFileName = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
+				oContext.sErrorState = "";
+				break;
+			case 'deleteButton':
+				break;
+			default :
+				if (aTargetId[aTargetIdLength - 1] == "ta_editFileName") {
+					break;
+				}
+				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId);
+				break;
+		}
+	};
+
+	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId) {
+		var bTriggerOk = true;
+		
+		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
+		var sValue = oEditbox.value;
+		// get new/changed file name
+			sValue = sValue.trimLeft();
+
+		if (sValue.length > 0) {
+			var aSourceObj = sSourceId.split("-");
+			var aSourceObjLength = aSourceObj.length;
+			var iSourceLine = aSourceObj[aSourceObjLength - 1];
+			// get original file name
+			var sOriginalValue = oContext.aItems[iSourceLine].getProperty("fileName").split(".")[0];
+			// in case there is a difference additional activities are necessary
+			if (sOriginalValue != sValue) {
+				var sExtension = sap.ui.getCore().byId(sSourceId + "-extension").getProperty("text");
+				// here we have to check possible double items if it's necessary
+				if (!oContext.getSameFilenameAllowed()) {
+					var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
+					// Check double file name
+					if (sap.m.UploadCollection.prototype._checkDoubleFileName(sValue + sExtension, oContext.aItems)) {
+						var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
+						var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
+						oInput.setProperty("valueState", "Error", true);
+						oContext.aItems[iSourceLine].status = "Edit";
+						oContext.aItems[iSourceLine].errorState = "Error";
+						oContext.aItems[iSourceLine].changedFileName = sValue;
+						oContext.sErrorState = "Error";
+						bTriggerOk = false;
+						if (sErrorStateBefore != "Error" || sChangedNameBefore != sValue){
+							oContext.invalidate();
+						}
+					} else {
+						oInput.setValueState = "";
+						oContext.aItems[iSourceLine].errorState = "None";
+						oContext.aItems[iSourceLine].changedFileName = "";
+						oContext.sErrorState = "";
+						oContext.invalidate();
+					}
+				}
+				if (bTriggerOk) {
+					oContext.fireFileRenamed({
+						documentId : oContext.aItems[iSourceLine].getProperty("documentId"),
+						fileName : sValue + sExtension
+					});
+				}
+			} else {
+				// nothing changed -> nothing to do!
+				oContext.invalidate();
 			}
 		}
 	};
-	
+
+	UploadCollection.prototype._handleCancel = function(oEvent, oContext, sSourceLine) {
+		oContext.invalidate();
+	};
+
 	/* =========================================================== */
 	/* Handle FileUploader events                                  */
 	/* =========================================================== */
@@ -710,7 +788,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				multiple : this.getMultiple(),
 				name : "uploadCollection",
 				sameFilenameAllowed : this.getSameFilenameAllowed(),
-				uploadOnChange : this.getUploadOnChange(),
+				uploadOnChange : true,
 				uploadUrl : this.getUploadUrl(),
 				buttonOnly : true,
 				sendXHR : true, // TODO check browser version (set true for all browser except IE8, IE9)
@@ -739,117 +817,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return this._oFileUploader;
 	};
-	
-	/**
-	 * Determines file mime type from the file extension. this is by no means an exhaustive list of mime types but these are the most common ones if a match is not found, the generic
-	 * application/octet-stream is returned.
-	 *
-	 * @param sFilename
-	 * @return {String}
-	 * @private
-	 */
-	UploadCollection.prototype._getMimeTypeFromFilename = function(sFilename) {
-		var sFileExtension = this._getExtensionFromFilename(sFilename);
-	
-		switch (sFileExtension) {
-			case 'avi' :
-				return 'video/avi';
-			case 'bmp' :
-				return 'image/bmp';
-			case 'csv' :
-				return 'text/csv';
-			case 'doc' :
-				return 'application/msword';
-			case 'docm' : // Office Word 2007 macro-enabled document
-				return 'application/vnd.ms-word.document.macroEnabled.12';
-			case 'docx' : // Microsoft Office Word 2007 document
-				return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-			case 'dotm' : // Office Word 2007 macro-enabled document template
-				return 'application/vnd.ms-word.template.macroEnabled.12';
-			case 'dotx' : // Office Word 2007 template
-				return 'application/vnd.openxmlformats-officedocument.wordprocessingml.template';
-			case 'gif' :
-				return 'image/gif';
-			case 'gzip' :
-				return 'application/gzip';
-			case 'html' :
-				return 'text/html';
-			case 'jpeg' :
-			case 'jpg' :
-				return 'image/jpeg';
-			case 'mp3' :
-				return 'audio/mpeg3';
-			case 'mp4' :
-				return 'video/mp4';
-			case 'mpeg' :
-				return 'video/mpeg';
-			case 'msg' : // Outlook mail message
-				return 'application/vnd.ms-outlook';
-			case 'one' : // Microsoft Office OneNote 2007 section
-			case 'onepkg' : // Office OneNote 2007 package'
-			case 'onetmp' : // Office OneNote 2007 temporary file
-			case 'onetoc2' : // Office OneNote 2007 TOC
-				return 'application/msonenote';
-			case 'pdf' :
-				return 'application/pdf';
-			case 'pjpeg' :
-				return 'image/pjpeg';
-			case 'png' :
-				return 'image/png';
-			case 'potm' : // Office PowerPoint 2007 macro-enabled presentation template
-				return 'application/vnd.ms-powerpoint.template.macroEnabled.12';
-			case 'potx' :
-				return 'application/vnd.openxmlformats-officedocument.presentationml.template';
-			case 'ppam' : // Office PowerPoint 2007 add-in
-				return 'application/vnd.ms-powerpoint.addin.macroEnabled.12';
-			case 'ppsm' : // Office PowerPoint 2007 macro-enabled slide show
-				return 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12';
-			case 'ppsx' : // Office PowerPoint 2007 slide show
-				return 'application/vnd.openxmlformats-officedocument.presentationml.slideshow';
-			case 'ppt' :
-				return 'application/vnd.ms-powerpoint';
-			case 'pptm' : // Office PowerPoint 2007 macro-enabled presentation
-				return 'application/vnd.ms-powerpoint.presentation.macroEnabled.12';
-			case 'pptx' :
-				return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-			case 'sldm' : // Office PowerPoint 2007 macro-enabled slide
-				return 'application/vnd.ms-powerpoint.slide.macroEnabled.12';
-			case 'sldx' : // Office PowerPoint 2007 slide
-				return 'application/vnd.openxmlformats-officedocument.presentationml.slide';
-			case 'thmx' : // 2007 Office system release theme
-				return 'application/vnd.ms-officetheme';
-			case 'tif' :
-			case 'tiff' :
-				return 'image/tiff';
-			case 'txt' :
-				return 'text/plain';
-			case 'wmv' :
-				return 'audio/x-ms-wmv';
-			case 'xhtml' :
-				return 'application/xhtml+xml';
-			case 'xlam' : // Office Excel 2007 add-in
-				return 'application/vnd.ms-excel.addin.macroEnabled.12';
-			case 'xls' :
-				return 'application/vnd.ms-excel';
-			case 'xlsb' : // Office Excel 2007 binary workbook
-				return 'application/vnd.ms-excel.sheet.binary.macroEnabled.12';
-			case 'xlsm' : // Office Excel 2007 macro-enabled workbook
-				return 'application/vnd.ms-excel.sheet.macroEnabled.12';
-			case 'xlsx' : // Microsoft Office Excel 2007 workbook
-				return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-			case 'xltm' : // Office Excel 2007 macro-enabled workbook template
-				return 'application/vnd.ms-excel.template.macroEnabled.12';
-			case 'xltx' : // Office Excel 2007 template
-				return 'application/vnd.openxmlformats-officedocument.spreadsheetml.template';
-			case 'xml' :
-				return 'text/xml';
-			case 'zip' :
-				return 'application/zip';
-			default :
-				return 'application/octet-stream';
-		}
-	};
-	
+
 	/**
 	 * Determines the icon from the filename.
 	 * 
@@ -900,7 +868,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			return this._getIconFromFilename(sFilename);
 		}
 	};
-	
+
+	// ================================================================================
+	// Keyboard activities
+	// ================================================================================
+//	UploadCollection.prototype.onkeydown = function(oEvent) {
+//
+//		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
+//
+//		}
+//	};
 	// ================================================================================
 	// helpers
 	// ================================================================================
@@ -913,11 +890,26 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 	
 	/**
-	 * Determines name of the file without extension from filename.
+	 * Determines if the filename is already in usage.
+	 * @param {string} sFilename inclusive file extension
+	 * @param {array} aItems 
+	 * @return {boolean} true for an already existing item with the same file name(independent of the path)
+	 * @private
 	 */
-	UploadCollection.prototype._getFileNameWithoutExtension = function(sFilename) {
-		var aSplit = sFilename.split(".");
-		return aSplit[0]; // the first part of the 'complete' file name is expected to be the name of the file
+	UploadCollection.prototype._checkDoubleFileName = function(sFilename, aItems) {
+		if (aItems.length == 0 || !sFilename) {
+			return false;
+		}
+
+		var iLength = aItems.length;
+		sFilename = sFilename.trimLeft();
+
+		for (var i = 0; i < iLength; i++) {
+			if (sFilename == aItems[i].getProperty("fileName")){
+				return true;
+			}
+		}
+		return false;
 	};
 
 	return UploadCollection;
