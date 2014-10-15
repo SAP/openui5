@@ -532,13 +532,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Keyboard Handling */
 	ListItemBase.prototype.onsapspace = function(oEvent) {
 		
+		// handle only the events that are coming from ListItemBase
+		if (oEvent.srcControl !== this) {
+			return;
+		}
+		
 		// prevent default not to scroll down
 		oEvent.preventDefault();
 		
 		if (!this._listId ||
 			oEvent.isMarked() ||
 			!this.isSelectable() ||
-			oEvent.srcControl !== this ||
 			this._mode == "Delete" ||
 			this._mode == "None") {
 			return;
