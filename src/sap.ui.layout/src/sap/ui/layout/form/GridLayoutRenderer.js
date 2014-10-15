@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 	 * @static
 	 */
 	var GridLayoutRenderer = Renderer.extend(FormLayoutRenderer);
-	
+
 	/**
 	 * Renders the HTML for the given form content, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -21,14 +21,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 	 * @param {sap.ui.layout.form.Form} oForm, a form control to render its content
 	 */
 	GridLayoutRenderer.renderForm = function(rm, oLayout, oForm){
-	
+
 		var bSingleColumn = oLayout.getSingleColumn();
 		var iColumns = 16;
 		var bSeparatorColumn = false;
 		var iColumnsHalf = 0;
 		var aContainers = oForm.getFormContainers();
 		var iContainerLength = aContainers.length;
-	
+
 		if (bSingleColumn) {
 			iColumns = iColumns / 2;
 			iColumnsHalf = iColumns;
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				}
 			}
 		}
-	
+
 		rm.write("<table role=\"presentation\"");
 		rm.writeControlData(oLayout);
 		rm.write(" cellpadding=\"0\" cellspacing=\"0\"");
@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		rm.addStyle("table-layout", "fixed");
 		rm.addStyle("width", "100%");
 		rm.addClass("sapUiGrid");
-	
+
 		rm.writeStyles();
 		rm.writeClasses();
 		rm.write(">");
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			rm.write("<col span=" + iColumnsHalf + ">");
 		}
 		rm.write("</colgroup><tbody>");
-	
+
 		// form header as table header
 		if (oForm.getTitle()) {
 			var iTitleCells = iColumns;
@@ -76,16 +76,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");
 		}
-	
+
 		var i = 0;
+		var oContainer;
+		var oContainerData;
+		var oContainer2;
+		var oContainerData2;
 		while (i < iContainerLength) {
-			var oContainer = aContainers[i];
+			oContainer = aContainers[i];
 			oContainer._checkProperties();
 			if (oContainer.getVisible()) {
-				var oContainerData = this.getContainerData(oLayout, oContainer);
+				oContainerData = this.getContainerData(oLayout, oContainer);
 				if (oContainerData && oContainerData.getHalfGrid() && !bSingleColumn) {
-					var oContainer2 = aContainers[i + 1];
-					var oContainerData2;
+					oContainer2 = aContainers[i + 1];
+					oContainerData2 = undefined;
 					if (oContainer2 && oContainer2.getVisible()) {
 						oContainerData2 = this.getContainerData(oLayout, oContainer2);
 					}
@@ -101,12 +105,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					this.renderContainerFullSize(rm, oLayout, oContainer, iColumns, bSeparatorColumn);
 				}
 			}
-	
+
 			i++;
 		}
-	
+
 		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version >= 9) {
-			// As IE9 is buggy wth colspan and layout fixed if not all columns are defined least once
+			// As IE9 is buggy with colspan and layout fixed if not all columns are defined least once
 			rm.write("<tr style=\"visibility:hidden;\">");
 			for ( var i = 0; i < iColumns; i++) {
 				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
@@ -116,21 +120,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.write("</tr>");
 		}
-	
+
 		rm.write("</tbody></table>");
-	
+
 	};
-	
+
 	GridLayoutRenderer.renderContainerFullSize = function(rm, oLayout, oContainer, iColumns, bSeparatorColumn){
-	
+
 		var bExpandable = oContainer.getExpandable();
-	
+
 		// as container has no own DOM Element no element data is rendered.
 		// This should not be a problem as it is an element, not a control.
-	
+
 		// render Container tooltip at header cell
 		var sTooltip = oContainer.getTooltip_AsString();
-	
+
 		// container header
 		if (oContainer.getTitle()) {
 			var iTitleCells = iColumns;
@@ -145,17 +149,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			this.renderTitle(rm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
 			rm.write("</td></tr>");
 		}
-	
+
 		if (!bExpandable || oContainer.getExpanded()) {
 			// container is not expandable or is expanded -> render elements
 			var aElements = oContainer.getFormElements();
+			var oElement;
 			var aReservedCells = [];
+			var bEmptyRow;
 			for (var j = 0, jl = aElements.length; j < jl; j++) {
-	
-				var oElement = aElements[j];
+
+				oElement = aElements[j];
 				if (oElement.getVisible()) {
-					var bEmptyRow = aReservedCells[0] && (aReservedCells[0][0] == iColumns);
-	
+					bEmptyRow = aReservedCells[0] && (aReservedCells[0][0] == iColumns);
+
 					rm.write("<tr");
 					if (aReservedCells[0] != "full" && !bEmptyRow) {
 						rm.writeElementData(oElement);
@@ -179,26 +185,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (aReservedCells.length > 0) {
 				// still rowspans left -> render dummy rows to fill up
 				for ( var i = 0; i < aReservedCells.length; i++) {
-				rm.write("<tr></tr>");
+					rm.write("<tr></tr>");
 				}
 			}
 		}
-	
+
 	};
-	
+
 	// no bSeparartor needed because between 2 containers there must be a separator
 	GridLayoutRenderer.renderContainerHalfSize = function(rm, oLayout, oContainer1, oContainer2, iColumns){
-	
+
 		var iContainerColumns = iColumns / 2;
-	
+
 		var bExpandable1 = oContainer1.getExpandable();
-	
+
 		var sTooltip1 = oContainer1.getTooltip_AsString();
 		var sTooltip2;
-	
+
 		var oTitle1 = oContainer1.getTitle();
 		var oTitle2;
-	
+
 		var aElements1 = [];
 		if (!bExpandable1 || oContainer1.getExpanded()) {
 			aElements1 = oContainer1.getFormElements();
@@ -206,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		var iLength1 = aElements1.length;
 		var aElements2 = [];
 		var iLength2 = 0;
-	
+
 		var bExpandable2 = false;
 		if (oContainer2) {
 			bExpandable2 = oContainer2.getExpandable();
@@ -217,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			iLength2 = aElements2.length;
 		}
-	
+
 		if (oTitle1 || oTitle2) {
 			// render title row (if one container has a title, the other has none leave the cells empty)
 			rm.write("<tr><td colspan=" + iContainerColumns + " class=\"sapUiGridHeader\"");
@@ -238,18 +244,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.write("</td></tr>");
 		}
-	
+
 		if ((!bExpandable1 || oContainer1.getExpanded()) || (!bExpandable2 || oContainer2.getExpanded())) {
 			var aReservedCells1 = [],
-				aReservedCells2 = [];
+			aReservedCells2 = [];
 			var i1 = 0, i2 = 0;
-	
+			var oElement1;
+			var oElement2;
+			var bEmptyRow1;
+			var bEmptyRow2;
+
 			while (i1 < iLength1 || i2 < iLength2) {
-				var oElement1 = aElements1[i1];
-				var oElement2 = aElements2[i2];
-				var bEmptyRow1 = aReservedCells1[0] && (aReservedCells1[0][0] == iContainerColumns);
-				var bEmptyRow2 = aReservedCells2[0] && (aReservedCells2[0][0] == iContainerColumns);
-	
+				oElement1 = aElements1[i1];
+				oElement2 = aElements2[i2];
+				bEmptyRow1 = aReservedCells1[0] && (aReservedCells1[0][0] == iContainerColumns);
+				bEmptyRow2 = aReservedCells2[0] && (aReservedCells2[0][0] == iContainerColumns);
+
 				if ((oElement1 && oElement1.getVisible()) || (oElement2 && oElement2.getVisible()) || bEmptyRow1 || bEmptyRow2) {
 					rm.write("<tr>");
 					if (!bEmptyRow1) {
@@ -294,24 +304,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (aReservedCells1.length > 0 || aReservedCells2.length > 0) {
 				// still rowspans left -> render dummy rows to fill up
 				for ( var i = 0; i < aReservedCells1.length || i < aReservedCells2.length; i++) {
-				rm.write("<tr></tr>");
+					rm.write("<tr></tr>");
 				}
 			}
 		}
 	};
-	
+
 	/*
 	 * aReservedCells : Array of already used cells of vCells (Rowspan) of previous elements, "full" if a full-size field
 	 */
 	GridLayoutRenderer.renderElement = function(rm, oLayout, oElement, bHalf, iCells, bSeparatorColumn, aReservedCells){
-	
+
 		var oLabel = oElement.getLabelControl(); // do not use getLabel() because it returns just text if only text is maintained
 		var iLabelFromRowspan = 0;
 		var aFields = oElement.getFields();
 		var iCellsUsed = 0;
 		var iAutoCellsUsed = 0;
 		var bMiddleSet = false;
-	
+
 		if (aFields.length == 1 && this.getElementData(oLayout, aFields[0]) && this.getElementData(oLayout, aFields[0]).getHCells() == "full") {
 			// field must be full size - render label in a separate row
 			if (aReservedCells.length > 0 && aReservedCells[0] != "full") {
@@ -344,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				return aReservedCells;
 			}
 		}
-	
+
 		if (aReservedCells.length > 0 && aReservedCells[0][0] > 0) {
 			// already cells reserved by previous lines via vCells
 			// add label cells to free cells because they are reduced by rendering the label
@@ -353,14 +363,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			iLabelFromRowspan = aReservedCells[0][2];
 			aReservedCells.splice(0,1);
 		}
-	
+
 		var iLabelCells = iLabelFromRowspan;
 		if (oLabel || iLabelFromRowspan > 0) {
 			iLabelCells = 3;
 			if (oLabel && iLabelFromRowspan == 0) {
 				// if there is a rowspan in rows above, the label can not have a different size
 				var oElementData = this.getElementData(oLayout, oLabel);
-	
+
 				if (oElementData) {
 					var sColspan = oElementData.getHCells();
 					if (sColspan != "auto" && sColspan != "full") {
@@ -368,7 +378,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					}
 				}
 			}
-	
+
 			rm.write("<td colspan=" + iLabelCells + " class=\"sapUiGridLabel\">");
 			if (oLabel) {
 				rm.renderControl(oLabel);
@@ -376,7 +386,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			iCells = iCells - iLabelCells;
 			rm.write("</td>");
 		}
-	
+
 		if (aFields && aFields.length > 0) {
 			// calculate free cells for auto size
 			var iAutoCells = iCells;
@@ -389,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					iAutoFields = iAutoFields - 1;
 				}
 			}
-	
+
 			for (var i = 0, iAutoI = 0, il = aFields.length; i < il; i++) {
 				var oField = aFields[i];
 				var oElementData = this.getElementData(oLayout, oField);
@@ -426,7 +436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					iCellsUsed = iCellsUsed - iColspan; // to add empty dummy cell
 					break;
 				}
-	
+
 				if (iRowspan > 1) {
 					// Rowspan is used -> reserve cells for next line
 					for ( var x = 0; x < iRowspan - 1; x++) {
@@ -441,7 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 						}
 					}
 				}
-	
+
 				if (bSeparatorColumn && iCellsUsed >= Math.floor(iCells / 2) && !bMiddleSet) {
 					// for the middle cell add the separator column
 					iColspan = iColspan + 1;
@@ -453,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 						}
 					}
 				}
-	
+
 				rm.write("<td");
 				if (iColspan > 1) {
 					rm.write(" colspan=" + iColspan);
@@ -474,21 +484,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.write("<td colspan=" + iEmpty + " ></td>");
 		}
-	
+
 		return aReservedCells;
-	
+
 	};
-	
+
 	GridLayoutRenderer.getContainerData = function(oLayout, oContainer){
-	
+
 		return oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
-	
+
 	};
-	
+
 	GridLayoutRenderer.getElementData = function(oLayout, oControl){
-	
+
 		return oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.form.GridElementData");
-	
+
 	};
 
 	return GridLayoutRenderer;
