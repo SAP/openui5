@@ -25,6 +25,10 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -154,7 +158,6 @@
 		equal(oFloatFormat.format(-123.23), "-123,23", "-123.23");
 	});
 
-
 	test("float custom format", function(){
 		equal(oCustomFloat.format(.1), "00,10", ".1");
 		equal(oCustomFloat.format(0.123), "00,123", "0.123");
@@ -163,8 +166,242 @@
 		equal(oCustomFloat.format(1234), "1234,00", "1234");
 		equal(oCustomFloat.format(12345), "????,00", "12345");
 		equal(oCustomFloat.format(12345.123), "????,123", "12345.123");
-		equal(oCustomFloat.format(12345.12345), "????,1234", "12345.12345");
+		equal(oCustomFloat.format(12345.12345), "????,1235", "12345.12345");
 		equal(oCustomFloat.format(-123.23), "-123,23", "-123.23");
+	});
+
+	test("float format with default rounding mode: HALF_AWAY_FROM_ZERO", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.124", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.1999");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+		
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 2
+		});
+
+		// These two are the famous test cases for problematic rounding in Javascript
+		equal(oFormat.format(35.855), "35.86", "35.855");
+		equal(oFormat.format(1.005), "1.01", "1.005");
+
+		equal(oFormat.format(-35.855), "-35.86", "-35.855");
+		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+	});
+
+	test("float format with rounding mode: CEILING", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.CEILING
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.124", ".1234");
+		equal(oFormat.format(.1235), "0.124", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.1999");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+	});
+
+	test("float format with rounding mode: FLOOR", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.FLOOR
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.123", ".1235");
+		equal(oFormat.format(.1239), "0.123", ".1239");
+		equal(oFormat.format(2.0001), "2", "2.0001");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1234), "-0.124", "-.1234");
+		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+	});
+
+	test("float format with rounding mode: TOWARDS_ZERO", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.TOWARDS_ZERO
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.123", ".1235");
+		equal(oFormat.format(.1239), "0.123", ".1239");
+		equal(oFormat.format(2.0001), "2", "2.0001");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		equal(oFormat.format(-.1236), "-0.123", "-.1236");
+	});
+
+	test("float format with rounding mode: AWAY_FROM_ZERO", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.AWAY_FROM_ZERO
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.124", ".1234");
+		equal(oFormat.format(.1235), "0.124", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.0001");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1234), "-0.124", "-.1234");
+		equal(oFormat.format(-.1235), "-0.124", "-.1235");
+		equal(oFormat.format(-.1236), "-0.124", "-.1236");
+	});
+
+	test("float format with rounding mode: HALF_TOWARDS_ZERO", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.123", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.1999");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 2,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
+		});
+
+		// These two are the famous test cases for problematic rounding in Javascript
+		equal(oFormat.format(35.855), "35.85", "35.855");
+		equal(oFormat.format(1.005), "1", "1.005");
+		
+		equal(oFormat.format(-35.855), "-35.85", "-35.855");
+		equal(oFormat.format(-1.005), "-1", "-1.005");
+	});
+
+	test("float format with rounding mode: HALF_CEILING", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.124", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.1999");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1235), "-0.123", "-.1235");
+		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 2,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
+		});
+
+		// These two are the famous test cases for problematic rounding in Javascript
+		equal(oFormat.format(35.855), "35.86", "35.855");
+		equal(oFormat.format(1.005), "1.01", "1.005");
+
+		equal(oFormat.format(-35.855), "-35.85", "-35.855");
+		equal(oFormat.format(-1.005), "-1", "-1.005");
+	});
+	
+	test("float format with rounding mode: HALF_FLOOR", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
+		});
+
+		equal(oFormat.format(.1230), "0.123", ".123");
+		equal(oFormat.format(.1234), "0.123", ".1234");
+		equal(oFormat.format(.1235), "0.123", ".1235");
+		equal(oFormat.format(.1239), "0.124", ".1239");
+		equal(oFormat.format(2.1999), "2.2", "2.1999");
+		equal(oFormat.format(2.11), "2.11", "2.11");
+		equal(oFormat.format(-.1230), "-0.123", "-.1230");
+		equal(oFormat.format(-.1234), "-0.123", "-.1234");
+		equal(oFormat.format(-.1235), "-0.124", "-.1235");
+		equal(oFormat.format(-.1239), "-0.124", "-.1239");
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 2,
+			roundingMode: sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
+		});
+
+		// These two are the famous test cases for problematic rounding in Javascript
+		equal(oFormat.format(35.855), "35.85", "35.855");
+		equal(oFormat.format(1.005), "1", "1.005");
+
+		equal(oFormat.format(-35.855), "-35.86", "-35.855");
+		equal(oFormat.format(-1.005), "-1.01", "-1.005");
+	});
+
+	test("float format with custom rounding function", function(){
+		var oSpy = this.spy(function(a, b){
+			return a;
+		}), oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			maxFractionDigits: 3,
+			roundingMode: oSpy
+		});
+
+		oFormat.format(1.23456);
+		equal(oSpy.callCount, 1, "Custom rounding function is called");
+		ok(oSpy.calledWith(1.23456, 3), "Custom rounding function is called with correct parameters");
+	});
+
+	test("Currency format with sMeasure", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
+		equal(oFormat.format(123456.789, "EUR"), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), String.fromCharCode(8364) + "-123,456.79", "123456.789 EUR");
+	});
+
+	test("Currency format with sMeasure specific locale ko", function(){
+		// The currency pattern is definde in "ko" as: ¤#,##0.00;(¤#,##0.00) where the pattern after ';'
+		// should be used for negative numbers.
+		var oLocale = new sap.ui.core.Locale("ko");
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oLocale);
+
+		equal(oFormat.format(123456.789, "EUR"), String.fromCharCode(8364) + "123,456.79", "123456.789 EUR");
+		equal(oFormat.format(-123456.789, "EUR"), "(" + String.fromCharCode(8364) + "123,456.79)", "-123456.789 EUR");
+	});
+
+	test("Percent format with default rounding mode", function(){
+		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			maxFractionDigits: 3
+		});
+
+		equal(oFormat.format(12), "1,200%", "12");
+		equal(oFormat.format(12.34), "1,234%", "12.34");
+		equal(oFormat.format(.1234567), "12.346%", ".1234567");
+		equal(oFormat.format(-.1234567), "-12.346%", ".1234567");
+		equal(oFormat.format(.1234), "12.34%", ".1234");
+		equal(oFormat.parse("-12.345%"), -0.12345, "-12.345%");
+		ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
+	});
+
+	test("Percent format with specific locale tr-TR", function(){
+		var oLocale = new sap.ui.core.Locale("tr-TR");
+		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance(oLocale);
+
+		equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		ok(isNaN(oFormat.parse("12,34567%")), "12,34567%");
 	});
 
 	test("parse default format", function(){
@@ -210,11 +447,13 @@
 
 	test("float long style", function(){
 		var oLocale = new sap.ui.core.Locale("de-DE");
-		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({style: "long"}, oLocale);
+		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "long", maxFractionDigits: 1
+		}, oLocale);
 
 		equal(oFormat.format(1.2), "1,2", "1.2 formatted");
 		equal(oFormat.parse("1,2"), 1.2, "\"1,2\" parsed");
-		equal(oFormat.format(1234.5), "1 Tausend", "1234.5 formatted");
+		equal(oFormat.format(1234.5), "1,2 Tausend", "1234.5 formatted");
 		equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
 		equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
 		// other test similar to integer -> skip

@@ -290,10 +290,10 @@
 		
 		equal(floatType.formatValue(22,"string"),"22.00", "format test");
 		equal(floatType.formatValue(-6622.333,"string"),"-6,622.33", "format test");
-		equal(floatType.formatValue(-6622.339,"string"),"-6,622.33", "format test");
+		equal(floatType.formatValue(-6622.339,"string"),"-6,622.34", "format test");
 		equal(floatType.formatValue(1.0,"string"),"1.00", "format test");
 		equal(floatType.formatValue(1.0000,"string"),"1.00", "format test");
-		equal(floatType.formatValue(1.009,"string"),"1.00", "format test");
+		equal(floatType.formatValue(1.009,"string"),"1.01", "format test");
 		equal(floatType.formatValue(1.00001,"string"),"1.00", "format test");
 		
 		
