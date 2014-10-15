@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ODataMetadata.prototype.fireLoaded = function() {
 		this.bLoaded = true;
 		this.fireEvent("loaded");
-		jQuery.sap.log.debug('loaded on Metadata object was fired');
+		jQuery.sap.log.debug(this + " - loaded was fired");
 		return this;
 	};
 
@@ -671,6 +671,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 */
 	ODataMetadata.prototype._getFunctionImportMetadata = function(sFunctionName, sMethod) {
 		var oObject = null;
+		if (sFunctionName.indexOf("/") > -1) {
+			sFunctionName = sFunctionName.substr(sFunctionName.indexOf("/") + 1);
+		}
 		// search in all schemas for the sObjectName
 		jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
 			// check if we found the right schema which will contain the sObjectName
@@ -689,8 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 			return !oObject;
 		});
-	//	jQuery.sap.assert(oObject, "FunctionImport for name " + sFunctionName
-	//			+ " and method " + sMethod + " not found!");
+		jQuery.sap.log.fatal(this + " - FunctionImport for name '" + sFunctionName + "' and method '" + sMethod + "' not found!");
 		return oObject;
 	};
 	
