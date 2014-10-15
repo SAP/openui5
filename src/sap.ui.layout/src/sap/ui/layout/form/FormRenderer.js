@@ -36,6 +36,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<div");
 		rm.writeControlData(oForm);
 		rm.addClass("sapUiForm");
+		rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
 	
 		var sClass = sap.ui.layout.form.FormHelper.addFormClass();
 		if (sClass) {

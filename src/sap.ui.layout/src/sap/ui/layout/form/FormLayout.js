@@ -324,9 +324,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	
 			// goto next container
 			oNewDomRef = this.findFirstFieldOfFirstElementInNextContainer(oForm, iCurrentIndex + 1);
-			if (!oNewDomRef) {
-				oNewDomRef = this.findFirstFieldOfForm(oForm);
-			}
 	
 			if (oNewDomRef) {
 				jQuery.sap.focus(oNewDomRef);
@@ -362,15 +359,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 				}
 				iCurrentIndex = iCurrentIndex - 1;
 			}
-			if (!oNewDomRef) {
-				oNewDomRef = this.findLastFieldOfForm(oForm);
-			}
 	
 			if (oNewDomRef) {
 				jQuery.sap.focus(oNewDomRef);
 				oEvent.preventDefault(); // to avoid moving cursor in next field
 			}
 	
+		};
+		
+		FormLayout.prototype.onBeforeFastNavigationFocus = function(oEvent){
+			if (jQuery.contains(this.getDomRef(), oEvent.source)) {
+				oEvent.srcControl = jQuery(oEvent.source).control(0);
+				if (oEvent.forward) {
+					this.onsapskipforward(oEvent);
+				} else {
+					this.onsapskipback(oEvent);
+				}
+			} else {
+				var oNewDomRef = oEvent.forward ? this.findFirstFieldOfForm(this.getParent()) : this.findFirstFieldOfLastContainerOfForm(this.getParent());
+				if (oNewDomRef) {
+					jQuery.sap.focus(oNewDomRef);
+					oEvent.preventDefault();
+				}
+			}
 		};
 	
 		FormLayout.prototype.findElement = function(oControl){
@@ -541,30 +552,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	
 		};
 	
-		FormLayout.prototype.findLastFieldOfForm = function(oForm){
-			var aContainers = oForm.getFormContainers();
-			var iLength = aContainers.length;
+		FormLayout.prototype.findFirstFieldOfLastContainerOfForm = function(oForm){
 			var oNewDomRef;
-			var oContainer = aContainers[iLength - 1];
-			if (!oContainer.getExpandable() || oContainer.getExpanded()) {
-				oNewDomRef = this.findFirstFieldOfNextElement(oContainer, 0);
-			}
-	
-			return oNewDomRef;
-	
-		};
-	
-			FormLayout.prototype.findFirstFieldOfLastContainerOfForm = function(oForm){
 			var aContainers = oForm.getFormContainers();
-			var iLength = aContainers.length;
-			var oNewDomRef;
-			var oContainer = aContainers[iLength - 1];
-			if (!oContainer.getExpandable() || oContainer.getExpanded()) {
-				oNewDomRef = this.findFirstFieldOfNextElement(oContainer, 0);
+			var iCurrentIndex = aContainers.length;
+			// goto previous container
+			while (!oNewDomRef && iCurrentIndex >= 0) {
+				var oPrevContainer = aContainers[iCurrentIndex - 1];
+				if (!oPrevContainer.getExpandable() || oPrevContainer.getExpanded()) {
+					oNewDomRef = this.findFirstFieldOfFirstElementInPrevContainer(oForm, iCurrentIndex - 1);
+				}
+				iCurrentIndex = iCurrentIndex - 1;
 			}
-	
 			return oNewDomRef;
-	
 		};
 	
 		FormLayout.prototype.findFirstFieldOfFirstElementInNextContainer = function(oForm, iStartIndex, bTabOver){
