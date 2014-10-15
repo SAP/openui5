@@ -381,8 +381,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
 				sValue = this.getValue();
 
-				// deselect the text and move the text cursor at the endmost position (only ie)
-				jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				if (sap.ui.Device.system.desktop) {
+
+					// deselect the text and move the text cursor at the endmost position (only ie)
+					jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				}
 			}
 		};
 
@@ -711,17 +714,28 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// the value state message can not be opened if click on the open area
 				this.bCanNotOpenMessage = true;
 
-				// force the focus to stay in the input field
-				this.focus();
+				// avoid the text-editing mode pop-up to be open on mobile,
+				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
+				// note: This occurs only in some specific mobile devices
+				if (sap.ui.Device.system.desktop) {
+
+					// force the focus to stay in the input field
+					this.focus();
+				}
 
 			// probably the input field is receiving focus
 			} else {
 
-				jQuery.sap.delayedCall(0, this, function() {
-					if (document.activeElement === this.getFocusDomRef()) {
-						this.selectText(0, this.getValue().length);
-					}
-				});
+				// avoid the text-editing mode pop-up to be open on mobile,
+				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
+				// note: This occurs only in some specific mobile devices
+				if (sap.ui.Device.system.desktop) {
+					jQuery.sap.delayedCall(0, this, function() {
+						if (document.activeElement === this.getFocusDomRef()) {
+							this.selectText(0, this.getValue().length);
+						}
+					});
+				}
 
 				// open the message pop-up
 				if (!this.isOpen() && !this.bCanNotOpenMessage) {
