@@ -94,7 +94,6 @@
 	});
 
 	asyncTest("test oDataModel - oMetadata shared across models", function(){
-		var that = this;
 		var mOptions = {
 				json : true,
 				loadMetadataAsync: true
@@ -127,7 +126,7 @@
 					metadataDfd.reject();
 				}
 			});
-			that.clock.tick(1);
+			sinon.clock.tick(1);
 			jQuery.when(metadataDfd).done(function(e){
 					ok(true, 'Metadata loaded fired at model only');
 					start();
@@ -137,7 +136,7 @@
 					clock.restore();
 				});
 		});
-		this.clock.tick(1);
+		sinon.clock.tick(1);
 	});
 	
 	asyncTest("test _isReloadNeeded() - __list check", function(){

@@ -493,11 +493,10 @@
 	});
 
 	asyncTest("No navigation object specified", function() {
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			var iErrorCount = 0,
 				sErrorMessage = "";
-			that.stub(jQuery.sap.log, "error", function(sMsg) {
+			sinon.stub(jQuery.sap.log, "error", function(sMsg) {
 				iErrorCount++;
 				sErrorMessage = sMsg;
 			});
@@ -512,12 +511,12 @@
 	});
 
 	asyncTest("Tried filtering", function() {
-		var that = this;
+
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
 				sMessage = "";
 			
-			that.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});
@@ -879,18 +878,17 @@
 	});
 	
 	asyncTest("Tried filtering", function() {
-		var that = this;
 		oModel.attachMetadataLoaded(function() {
 			//stub error
 			var iErrorCount = 0;
-			that.stub(jQuery.sap.log, "error", function(sMsg) {
+			sinon.stub(jQuery.sap.log, "error", function(sMsg) {
 				iErrorCount++;
 			});
 			
 			//warning stub
 			var iWarningCount = 0,
 				sMessage = "";
-			that.stub(jQuery.sap.log, "warning", function(sMsg) {
+			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
 				iWarningCount++;
 				sMessage = sMsg;
 			});

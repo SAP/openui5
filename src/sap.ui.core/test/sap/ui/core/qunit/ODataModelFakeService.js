@@ -193,10 +193,14 @@ xhr.onCreate = function(request) {
 		function respond(code, headers, data) {
 			if (request.async) {
 				_setTimeout(function() {
-					request.respond(code, headers, data);
+					if (!request.aborted) {
+						request.respond(code, headers, data);
+					}
 				}, responseDelay);
 			} else {
-				request.respond(code, headers, data);
+				if (!request.aborted) {
+					request.respond(code, headers, data);
+				}
 			}
 		}	
 		

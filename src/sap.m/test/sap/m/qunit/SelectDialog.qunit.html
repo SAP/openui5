@@ -423,7 +423,7 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						// the selection is reset immediately ater the cancel event so we do it with clock.tick
-						that.clock.tick(500);
+						sinon.clock.tick(500);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 1, 'After cancelling there should be 1 visible item selected again');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 1, 'After cancelling there should be 4 invisible item selected again (prefiltered items are not added to the contexts initially)');
 						QUnit.start();
@@ -463,7 +463,7 @@
 						assert.ok(true, 'The event "cancel" has been fired');
 
 						// the selection is reset immediately ater the cancel event so we do it with ticks
-						that.clock.tick(100);
+						sinon.clock.tick(100);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 invisible items selected again');
 						QUnit.start();
 					});
@@ -478,7 +478,7 @@
 						fnChecks = function () {
 							assert.ok(true, "Event cancel was fired");
 							// the selection is reset immediately ater the cancel event so we do it with ticks
-							that.clock.tick(100);
+							sinon.clock.tick(100);
 							assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 							QUnit.start();
 						};
