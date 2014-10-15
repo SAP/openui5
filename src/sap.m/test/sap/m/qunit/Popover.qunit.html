@@ -956,6 +956,43 @@
 				oPopover.destroy();
 				oButton.destroy();
 			});
+			
+			test("Restore scroll position on mobile device", function(){
+				var oSystem = {
+					desktop: false,
+					tablet: true,
+					phone: false
+				};
+				
+				this.stub(sap.ui.Device, "system", oSystem);
+				
+				var oButton = new sap.m.Button({
+					text: "Open"
+				});
+				
+				var oPopover = new sap.m.Popover({
+					contentWidth: "200px",
+					contentHeight: "200px",
+					content: new sap.ui.core.HTML({
+						content: "<div style='width: 400px;height: 400px'></div>"
+					})
+				});
+				
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oPopover.openBy(oButton);
+				
+				this.clock.tick(500);
+				ok(oPopover.isOpen(), "Popover is open");
+				oPopover.$("cont").scrollTop(20).scrollLeft(30);
+				
+				oPopover._onOrientationChange();
+				equal(oPopover.$("cont").scrollTop(), 20, "scrollTop is restored");
+				equal(oPopover.$("cont").scrollLeft(), 30, "scrollLeft is restored");
+				
+				oPopover.destroy();
+				oButton.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
