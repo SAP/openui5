@@ -1,7 +1,36 @@
-.sapUiBusy {
-  background-image: none;
+/* =============================================== */
+/* CSS for control sap.m/BusyIndicator.control     */
+/* HCB theme                                       */
+/* =============================================== */
+
+.sapMIBar-CTX >div > .BusyBar{
+	margin: 0;
+	vertical-align: top;
+	min-width: 3rem;
+	text-align: center;
 }
 
-.sapUiBusy:after {
-	content: url(img/Busy.gif);
+svg.sapMBusySvg,
+canvas.sapMSpinCanvas{
+	width: 2em;
+	height: 2em;
+	vertical-align: middle;
+}
+
+/* do not animate hidden SVG */
+.sapMBusyIndicator[style^="visibility: hidden"] > .sapMBusySvg{
+	display: none;
+}
+
+canvas.sapMSpinCanvas{
+	color: @sapHCStandardFG;
+}
+svg.sapMBusySvg{
+	stroke: @sapHCStandardFG;
+}
+.sapMBusyIndicatorLight>canvas.sapMSpinCanvas{
+	color: @sapHCStandardFG;
+}
+.sapMBusyIndicatorLight>svg.sapMBusySvg{
+	stroke: @sapHCStandardFG;
 }
