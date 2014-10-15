@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
 								oNewContext && oContextData && oContextData[oNewContext.getPath()]
 							);
-					});
+					}, true);
 					aContexts.diff = aDiff;
 				}
 			}
