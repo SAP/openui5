@@ -154,9 +154,13 @@ public class VersionHelperMojo extends AbstractMojo {
           }
         }
 
-        Collections.sort(versionsInRange);
-        System.out.println("  - " + versionsInRange.get(versionsInRange.size()-1).toString());
-        versions.put(artifact.getGroupId() + ":" + artifact.getArtifactId(), versionsInRange.get(versionsInRange.size()-1).toString());
+        if (versionsInRange.size() > 0){
+          Collections.sort(versionsInRange);
+          System.out.println("  - " + versionsInRange.get(versionsInRange.size()-1).toString());
+          versions.put(artifact.getGroupId() + ":" + artifact.getArtifactId(), versionsInRange.get(versionsInRange.size()-1).toString());
+        } else {
+          System.out.println(artifact.getGroupId() + ":" + artifact.getArtifactId() + " has no milestone version.");
+        }
         
         /*
         VersionRangeRequest versionRangeRequest = new VersionRangeRequest(a, this.repositories, "project");
