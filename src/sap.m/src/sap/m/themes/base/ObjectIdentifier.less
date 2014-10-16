@@ -6,7 +6,7 @@
 .sapMObjectIdentifier{	
 }
 
-.sapMObjectIdentifierTopRow{	
+.sapMObjectIdentifierTopRow{
 }
 
 .sapMObjectIdentifierIcons{
@@ -22,27 +22,47 @@
     padding-left: 1rem;
 }
 
-.sapMObjectIdentifierTitle{
-	text-overflow: ellipsis;
-	overflow: hidden;
+.sapMObjectIdentifierTitle .sapMLnk,
+.sapMObjectIdentifierTitle .sapMText {
+	overflow: visible;
+	font-weight: bold;
+	font-size: 1rem;
+	display: inline;
+	word-wrap: break-word;
+	white-space: normal;
+}
+
+.sapMObjectIdentifierTitle .sapMText {
 	color: @sapUiDarkText;
-	font-weight: bold;	
 }
 
 .sapMObjectIdentifierText{
 	color: @sapUiLightText;
 	font-size: 0.875rem;
+	padding-top: 0;
 }
 
 .sapMObjectIdentifierTextBellow{
 	margin-top: 0.5rem;
 }
 
-.sapMOITitleActive {
-	color: @sapUiLink;
-	cursor: pointer;
+/* ObjectIdentifier inside a table */
+.sapMListTbl .sapMObjectIdentifierTitle .sapMLnk,
+.sapMListTbl .sapMObjectIdentifierTitle .sapMText {
+	overflow: visible;
+	font-weight: bold;
+	font-size: 0.875rem;
+	display: inline;
+	word-wrap: break-word;
+	white-space: normal;
+	padding-top: 0;
 }
 
-.sapMOITitleActive:hover {
-	text-decoration: underline;
+.sapMListTbl .sapMObjectIdentifierTitle .sapMText {
+	color: @sapUiDarkText;
+}
+
+.sapMListTbl .sapMObjectIdentifierText .sapMText {
+	line-height: 1.4;
+	padding-top: 0;
 }
