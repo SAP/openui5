@@ -601,6 +601,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		}},
 
 		/**
+		 * Pseudo event for pressing the '-' (minus) sign.
+		 * @since 1.25.0
+		 * @experimental Since 1.25.0 Implementation details can be changed in future.
+		 * @public
+		 */
+		sapminus: {sName: "sapminus", aTypes: ["keypress"], fnCheck: function(oEvent) {
+			var sCharCode = String.fromCharCode(oEvent.which);
+			return sCharCode == '-';
+		}},
+
+		/**
 		 * Pseudo event for pseudo 'decrease' event with modifiers (Ctrl, Alt or Shift)
 		 * @public
 		 */
@@ -618,6 +629,17 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 			var iNextKey = bRtl ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT;
 			return (oEvent.keyCode == iNextKey || oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) && !hasModifierKeys(oEvent);
+		}},
+		
+		/**
+		 * Pseudo event for pressing the '+' (plus) sign.
+		 * @since 1.25.0
+		 * @experimental Since 1.25.0 Implementation details can be changed in future.
+		 * @public
+		 */
+		sapplus: {sName: "sapplus", aTypes: ["keypress"], fnCheck: function(oEvent) {
+			var sCharCode = String.fromCharCode(oEvent.which);
+			return sCharCode == '+';
 		}},
 
 		/**
@@ -723,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	 * The array is processed during event analysis (when classifying browser events as pseudo events).
 	 * @private
 	 */
-	var PSEUDO_EVENTS = ["sapdown", "sapdownmodifiers", "sapshow", "sapup", "sapupmodifiers", "saphide", "sapleft", "sapleftmodifiers", "sapright", "saprightmodifiers", "saphome", "saphomemodifiers", "saptop", "sapend", "sapendmodifiers", "sapbottom", "sappageup", "sappageupmodifiers", "sappagedown", "sappagedownmodifiers", "sapselect", "sapselectmodifiers", "sapspace", "sapspacemodifiers", "sapenter", "sapentermodifiers", "sapexpand", "sapbackspace", "sapbackspacemodifiers", "sapdelete", "sapdeletemodifiers", "sapexpandmodifiers", "sapcollapse", "sapcollapsemodifiers", "sapcollapseall", "sapescape", "saptabnext", "saptabprevious", "sapskipforward", "sapskipback", "sapprevious", "sappreviousmodifiers", "sapnext", "sapnextmodifiers", "sapdecrease", "sapdecreasemodifiers", "sapincrease", "sapincreasemodifiers", "sapdelayeddoubleclick"];
+	var PSEUDO_EVENTS = ["sapdown", "sapdownmodifiers", "sapshow", "sapup", "sapupmodifiers", "saphide", "sapleft", "sapleftmodifiers", "sapright", "saprightmodifiers", "saphome", "saphomemodifiers", "saptop", "sapend", "sapendmodifiers", "sapbottom", "sappageup", "sappageupmodifiers", "sappagedown", "sappagedownmodifiers", "sapselect", "sapselectmodifiers", "sapspace", "sapspacemodifiers", "sapenter", "sapentermodifiers", "sapexpand", "sapbackspace", "sapbackspacemodifiers", "sapdelete", "sapdeletemodifiers", "sapexpandmodifiers", "sapcollapse", "sapcollapsemodifiers", "sapcollapseall", "sapescape", "saptabnext", "saptabprevious", "sapskipforward", "sapskipback", "sapprevious", "sappreviousmodifiers", "sapnext", "sapnextmodifiers", "sapdecrease", "sapminus", "sapdecreasemodifiers", "sapincrease", "sapplus", "sapincreasemodifiers", "sapdelayeddoubleclick"];
 
 	//Add mobile touch events if touch is supported
 	(function initTouchEventSupport() {
