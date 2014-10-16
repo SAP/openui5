@@ -26,18 +26,6 @@ sap.ui.define([ 'jquery.sap.global', './ColumnListItem', './P13nColumnItem', './
 		metadata: {
 
 			library: "sap.m",
-			aggregations : {
-
-			/**
-			 * tbd
-			 */
-			items : {
-					type : "sap.m.P13nItem",
-					multiple : true,
-					singularName : "item",
-					bindable : "bindable"
-				}
-			},
 			events: {
 
 				/**
@@ -643,6 +631,7 @@ sap.ui.define([ 'jquery.sap.global', './ColumnListItem', './P13nColumnItem', './
 			// growing: false,
 			// growingScrollToLoad: true,
 			mode: sap.m.ListMode.MultiSelect,
+			rememberSelections : false,
 			itemPress: function(oEvent) {
 				that._itemPressed(oEvent);
 			},
