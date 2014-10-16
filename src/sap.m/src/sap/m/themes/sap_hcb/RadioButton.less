@@ -20,9 +20,7 @@
 	border: 0.125rem solid @sapHCStandardFG;
 	background-color: @sapHCStandardBG;
 	margin: 0.8125rem;
-	
-	/* using padding here so that margin won't collide */
-	padding: 1px;
+	padding: 1px; /* using padding here so that margin won't collide */
 }
 
 .sapMRb:focus .sapMRbBOut {
@@ -49,24 +47,22 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	margin: 3px;
 }
 
-.sapMRbSel .sapMRbBInn,
-.sapMLIBActive .sapMRbSel .sapMRbBInn {
+.sapMRbSel .sapMRbBInn {
 	background-color: @sapHCStandardFG;
 }
 
-/* read-only and disabled state */
-.sapMRbRo .sapMRbBOut,
-.sapMRbDis .sapMRbBOut {
-	background: @sapHCReducedBG;
-	border-color: @sapHCReducedAltFG;
+/* Value states */
+
+.sapMRbErr .sapMRbBOut {
+	background-color: @sapHCHighlightBG;
+	border: 0.125rem dashed @sapHCStandardFG;
+	background-clip: padding-box;
 }
 
-.sapMRbDis.sapMRbSel .sapMRbBInn {
-	background-color: @sapHCReducedAltFG;
-}
-
-.sapMRbDis .sapMRbBOut:focus {
-	outline: 0;
+.sapMRbWarn .sapMRbBOut {
+	background-color: @sapHCStandardBG;
+	border: 0.125rem dashed @sapHCStandardFG;
+	background-clip: padding-box;
 }
 
 /* Compact size */
@@ -134,4 +130,40 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 		line-height: 1.5rem;
 		height: 1.5rem;
 	}
+}
+
+/* HCB Additional Styles */
+
+.sapMRbWarn.sapMRbSel .sapMRbBInn {
+	background-color: @sapHCStandardFG;
+}
+
+.sapMRbRo:not(.sapMRbWarn) .sapMRbBOut,
+.sapMRbDis .sapMRbBOut {
+	border-color: @sapHCReducedAltFG;
+}
+
+.sapMRbRo:not(.sapMRbErr) .sapMRbBOut,
+.sapMRbRo:not(.sapMRbWarn) .sapMRbOut {
+	background-color: @sapHCReducedBG;
+}
+
+.sapMRbDis .sapMRbBOut {
+	background-color: @sapHCReducedBG;
+}
+
+.sapMRbDis.sapMRbSel .sapMRbBInn {
+	background-color: @sapHCReducedAltFG;
+}
+
+.sapMRbDis .sapMRbBOut:focus {
+	outline: 0;
+}
+
+.sapMRbRo.sapMRbWarn .sapMRbBOut {
+	background-color: @sapHCReducedBG;
+}
+
+.sapMRbDis label {
+	color: @sapHCReducedAltFG;
 }
