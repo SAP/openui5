@@ -684,13 +684,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 							if (oSettings.headerText !== false) {
 								$dialog.addClass("sapMDTICustomHdr");
 							}
-	
-							// change button order for RTL
-							if (sap.ui.getCore().getConfiguration().getRTL()) {
-								var $buttonContainer = $dialog.find(".dwbc");
-								var $cancelButton = $buttonContainer.find(".dwb-c");
-								$cancelButton.prependTo($buttonContainer);
-							}
 						}
 					});
 	
