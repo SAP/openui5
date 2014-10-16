@@ -8,11 +8,22 @@ sap.ui.define([
 	], function (fnMatcher) {
 
 	/**
+	 * 	 * AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value
+	 *
+	 * The settings supported by AggregationContainsPropertyEqual are:
+	 * <ul>
+	 *	<li>Properties
+	 *		<ul>
+	 *			<li>{@link #getPropertyName propertyName} : string</li>
+	 *			<li>{@link #getAggregationName aggregationName} : string</li>
+	 *			<li>{@link #getPropertyValue propertyValue} : any</li>
+	 *		</ul>
+	 *	</li>
+	 * </ul>
+	 *
 	 * @class AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value
 	 * @extends sap.ui.test.matchers.Matcher
-	 * @param {string} [aggregationName] the name of the aggregation
-	 * @param {string} [propertyName] the name of the property
-	 * @param {string} [propertyValue] the value of the property
+	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationContainsPropertyEqualMatcher
 	 * @public
 	 * @name sap.ui.test.matchers.AggregationContainsPropertyEqual
 	 * @author SAP SE
