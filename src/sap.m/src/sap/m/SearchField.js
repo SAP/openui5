@@ -160,9 +160,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}());
 	
 	SearchField.prototype.onBeforeRendering = function() {
-		this.$().unbind();
-		jQuery(this._inputElement).unbind();
-		this._inputElement = null;
+		if (this._inputElement) {
+			if (sap.ui.Device.browser.firefox) {
+				this.$().find(".sapMSFB").unbind();
+			}
+			this.$().unbind();
+			jQuery(this._inputElement).unbind();
+			this._inputElement = null;
+		}
 	};
 	
 	SearchField.prototype.onAfterRendering = function() {
@@ -185,6 +190,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Windows Phone has both, one is enough.
 		var pointerDown = sap.ui.Device.os.windows_phone ? "mousedown" : "touchstart mousedown";
 		this.$().bind(pointerDown, jQuery.proxy(this.onButtonPress,  this));
+		
+		// FF does not set :active by preventDefault, use class:
+		if (sap.ui.Device.browser.firefox) { 
+			this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
+				jQuery(oEvent.target).removeClass("sapMSFBA");
+			});
+		}
 	};
 	
 	SearchField.prototype.clear = function() {
@@ -206,6 +218,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// do not remove focus from the inner input but allow it to react on clicks
 		if (document.activeElement === this._inputElement && oEvent.target !== this._inputElement) {
 			oEvent.preventDefault();
+			
+			// FF does not set :active by preventDefault, use class:
+			if (sap.ui.Device.browser.firefox){ 
+				var button = jQuery(oEvent.target);
+				if (button.hasClass("sapMSFB")) {
+					button.addClass("sapMSFBA");
+				}
+			}
 		}
 	};
 	
