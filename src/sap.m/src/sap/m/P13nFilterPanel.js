@@ -325,7 +325,9 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 	
 		var oKeyField = {
 			key : oItem.getKey(),
-			text : oItem.getText()
+			text : oItem.getText(),
+			maxlength : oItem.getMaxlength(),
+			type : oItem.getType()
 		};
 	
 		this._aKeyFields.push(oKeyField);
