@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	
 	
 		// write tool palette area
-		rm.write("<section id='" + sId + "-tp' class='sapUiUx3ShellToolPaletteArea' role='complementary'>");
+		rm.write("<section id='" + sId + "-tp' class='sapUiUx3ShellToolPaletteArea' role='complementary' data-sap-ui-fastnavgroup='true'>");
 		ShellRenderer.renderToolPalette(rm, oControl);
 		rm.write("</section> <!-- end of toolPaletteArea -->");
 	
@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		rm.write("</section>");
 	
-		rm.write("<div id='" + sId + "-paneBarRight' class='sapUiUx3ShellPaneBarRight'>");
+		rm.write("<div id='" + sId + "-paneBarRight' class='sapUiUx3ShellPaneBarRight' data-sap-ui-fastnavgroup='true'>");
 		rm.write("<ul id='" + sId + "-paneBarEntries' class='sapUiUx3ShellPaneEntries' role='tablist'>");
 		ShellRenderer.renderPaneBarItems(rm, oControl);
 		rm.write("</ul>");
