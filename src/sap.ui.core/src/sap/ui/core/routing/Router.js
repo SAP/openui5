@@ -19,7 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @extends sap.ui.base.EventProvider
 		 *
 		 * @param {object|array} [oRoutes] may contain many Route configurations as @see sap.ui.core.routing.Route#constructor.<br/>
-		 * Each of the routes contained in the array/object will be added to the router.
+		 * Each of the routes contained in the array/object will be added to the router.<br/>
+         * The name attribute of a route is special - it may also be a key of the route. Eg a route with the name "RouteName" : { RouteName : { pattern : "ThePattern" } , AnotherRouteName : {...}}
 		 * 
 		 * The values that may be provided are the same as in @see sap.ui.core.routing.Route#constructor
 		 * 
@@ -370,19 +371,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		
 		/**
 		 * Attach event-handler <code>fnFunction</code> to the 'viewCreated' event of this <code>sap.ui.core.routing.Router</code>.<br/>
+		 * @name sap.ui.core.routing.Router#attachViewCreated
 		 *
-		 *
-		 * @param {object}
-		 *            [oData] The object, that should be passed along with the event-object when firing the event.
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs. This function will be called on the
-		 *            oListener-instance (if present) or in a 'static way'.
-		 * @param {object}
-		 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+		 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+		 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
+		 * oListener-instance (if present) or in a 'static way'.
+		 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.routing.Router#attachViewCreated
 		 * @function
 		 */
 		Router.prototype.attachViewCreated = function(oData, fnFunction, oListener) {
@@ -395,10 +392,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * The passed function and listener object must match the ones previously used for event registration.
 		 *
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs.
-		 * @param {object}
-		 *            oListener Object on which the given function had to be called.
+		 * @param {function} fnFunction The function to call, when the event occurs.
+		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
 		 * @name sap.ui.core.routing.Router#detachViewCreated

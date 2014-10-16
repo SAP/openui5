@@ -160,7 +160,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 		var bContentLeft = !!this.getContentLeft().length,
 			bContentMiddle = !!this.getContentMiddle().length,
 			bContentRight = !!this.getContentRight().length;
-	
+
+		//Invisible bars also do not need resize listeners
+		if (!this.getVisible()) {
+			return;
+		}
+
 		//No content was set yet - no need to listen to resizes
 		if (!bContentLeft && !bContentMiddle && !bContentRight) {
 			return;
