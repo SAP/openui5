@@ -14,7 +14,9 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 	jQuery.sap.require("sap.ui.test.Opa");
@@ -39,7 +41,8 @@
 		var bFirstCheck = false,
 			oFirstSuccess = this.spy(),
 			bSecondCheck = false,
-			oSecondSuccess = this.spy();
+			oSecondSuccess = this.spy(),
+			oDoneSpy = this.spy();
 
 		// System under Test
 		var oOpa = new Opa();
@@ -57,7 +60,7 @@
 				return bSecondCheck;
 			},
 			success : oSecondSuccess
-		});
+		}).done(oDoneSpy);
 		sap.ui.test.Opa.emptyQueue();
 
 		this.clock.tick(1000);
@@ -65,12 +68,14 @@
 		// Assert
 		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
 		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+		strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
 
 		bSecondCheck = true;
 		this.clock.tick(1000);
 
 		strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
 		strictEqual(oSecondSuccess.callCount, 0, "Second did not succeed yet");
+		strictEqual(oDoneSpy.callCount, 0, "Did not resolve the deferred yet");
 
 		bFirstCheck = true;
 		this.clock.tick(1000);
@@ -79,8 +84,117 @@
 
 		strictEqual(oFirstSuccess.callCount, 1, "First did succeed");
 		strictEqual(oSecondSuccess.callCount, 1, "Second did succeed");
+		strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
+	test("Should modify the polling interval", function() {
+		// Arrange
+		var bFirstCheck = false,
+				bSecondCheck = false,
+				oFirstCheckSpy = this.spy(function () {
+					return bFirstCheck
+				}),
+				oSecondCheckSpy = this.spy(function () {
+					return bSecondCheck
+				}),
+				oDoneSpy = this.spy();
+
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.extendConfig({
+			pollingInterval : 200
+		});
+
+		oOpa.waitFor({
+			check : oFirstCheckSpy
+		});
+
+		oOpa.waitFor({
+			check : oSecondCheckSpy,
+			pollingInterval : 100
+		});
+
+		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
+
+		this.clock.tick(1000);
+		strictEqual(oFirstCheckSpy.callCount, 5, "Did apply the polling of the extendConfig");
+
+		bFirstCheck = true;
+
+		//second wait for should start after this one
+		this.clock.tick(200);
+
+		//check for faster polling
+		this.clock.tick(1000);
+		strictEqual(oSecondCheckSpy.callCount, 10, "Did apply the polling of the waitFor");
+
+		bSecondCheck = true;
+
+		//clean the queue
+		this.clock.tick(100);
+		strictEqual(oDoneSpy.callCount, 1, "Did clear all waitFors");
+	});
+
+	module("Timeouts", {
+		setup : function () {
+			sinon.config.useFakeTimers = false;
+		},
+		teardown : function () {
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	asyncTest("Should time out if check is returning false", function() {
+		// Arrange
+		var oErrorSpy = this.spy(),
+				oWaitForDoneSpy = this.spy(),
+				oSuccessSpy = this.spy(),
+				oDoneSpy = this.spy();
+
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return false;
+			},
+			timeout : 1,
+			success : oSuccessSpy,
+			error : oErrorSpy
+		}).done(oWaitForDoneSpy);
+
+		oOpa.emptyQueue().fail(function () {
+			strictEqual(oWaitForDoneSpy.callCount, 0, "Done was not called");
+			strictEqual(oDoneSpy.callCount, 0, "Done was not called");
+			strictEqual(oSuccessSpy.callCount, 0, "Success was not called");
+			strictEqual(oErrorSpy.callCount, 1, "Error spy got invoked");
+
+			start();
+		}).done(oDoneSpy);
+
+	});
+
+	asyncTest("Should reject the promise if no error handler is defined", function() {
+		// System under Test
+		var oOpa = new Opa();
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return false;
+			},
+			timeout : 1
+		});
+
+		oOpa.emptyQueue().fail(function () {
+			ok(true, 0, "Promise got rejected");
+			start();
+		});
+
+	});
 })();
 
 

@@ -15,7 +15,9 @@
 	jQuery.sap.require("sap.ui.qunit.qunit-css");
 	jQuery.sap.require("sap.ui.thirdparty.qunit");
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
@@ -53,7 +55,7 @@
 	// TODO: check why the following tests do not work
 	if (window["sap-ui-bootstrap-tests"]) {
 		
-		asyncTest("Should be able to defer the loading of ui5 and replce the hashchanger", function() {
+		asyncTest("Should be able to defer the loading of ui5 and replace the hashchanger", function() {
 			// System under Test
 			var oOpa5 = new Opa5();
 	
@@ -140,21 +142,94 @@
 	
 			strictEqual(oHashChanger.getHash(), "foo");
 
-			oOpa5.iTeardownMyAppFrame().done(function () {
-
-				start();
-
-			});
-
 		});
 
-		oOpa5.emptyQueue();
+		oOpa5.iTeardownMyAppFrame();
+
+		oOpa5.emptyQueue().done(function () {
+			start();
+		});
 	});
 
 	//Sinon timers do not work in IE8 -.-
 	if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
 		return;
 	}
+
+	module("matchers without fake time");
+
+	asyncTest("Should not call check if no matcher is matching on a single control", function() {
+		// Arrange
+		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oCheckSpy = this.spy();
+
+		// System under Test
+		var oOpa5 = new Opa5();
+		var oMatcher = new Opa5.matchers.PropertyStrictEquals({
+			name : "text",
+			value : "bar"
+		});
+		var oMatchSpy = this.spy(oMatcher, "isMatching");
+
+		// Act
+		oOpa5.waitFor({
+			id : "myButton",
+			matchers : [ oMatcher ],
+			check : oCheckSpy,
+			timeout : 1, //second
+			pollingInterval : 200 //millisecond
+		});
+		oOpa5.emptyQueue().fail(function () {
+			// Assert
+			strictEqual(oCheckSpy.callCount, 0, "did not call the check");
+
+			// Cleanup
+			oButton.destroy();
+
+			start();
+		});
+	});
+
+	asyncTest("Should skip a check if matchers filtered out all controls", function() {
+		// Arrange
+		var oButton = new sap.ui.commons.Button("myButton", {text : "foo"});
+		var oButton2 = new sap.ui.commons.Button("myButton2", {text : "bar"});
+		oButton.placeAt("qunit-fixture");
+		oButton2.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oCheckSpy = this.spy();
+
+		var oTextMatcher = new Opa5.matchers.PropertyStrictEquals({
+			name : "text",
+			value : "baz"
+		});
+
+		// System under Test
+		var oOpa5 = new Opa5();
+
+		// Act
+		oOpa5.waitFor({
+			id : ["myButton", "myButton2"],
+			matchers : oTextMatcher,
+			check : oCheckSpy,
+			timeout : 1 //second
+		});
+		Opa5.emptyQueue().fail(function () {
+			// Assert
+			strictEqual(oCheckSpy.callCount, 0, "did not call the check");
+
+			// Cleanup
+			oButton.destroy();
+			oButton2.destroy();
+
+			start();
+		});
+
+	});
 
 	module("matchers in waitfor", {
 		setup : function () { sinon.config.useFakeTimers = true; },
