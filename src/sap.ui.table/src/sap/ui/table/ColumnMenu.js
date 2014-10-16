@@ -335,9 +335,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 					aColumns = aColumns.sort(oSorter);
 				}
 			}
-			
+
+			var oBinding = oTable.getBinding();
+			var bAnalyticalBinding = sap.ui.model && sap.ui.model.analytics && oBinding instanceof sap.ui.model.analytics.AnalyticalBinding;
+
 			for (var i = 0, l = aColumns.length; i < l; i++) {
-				var oMenuItem = this._createColumnVisibilityMenuItem(oColumnVisibiltyMenu.getId() + "-item-" + i, aColumns[i]);
+				var oColumn = aColumns[i];
+				// skip columns which are set to invisible by analytical metadata
+				if (bAnalyticalBinding && oColumn instanceof sap.ui.table.AnalyticalColumn) {
+
+					var oQueryResult = oBinding.getAnalyticalQueryResult();
+					var oEntityType = oQueryResult.getEntityType();
+					var oMetadata = oBinding.getModel().getProperty("/#" + oEntityType.getTypeDescription().name + "/" + oColumn.getLeadingProperty() + "/sap:visible");
+
+					if (oMetadata && (oMetadata.value === "false" || oMetadata.value === false)) {
+						continue;
+					}
+				}
+				var oMenuItem = this._createColumnVisibilityMenuItem(oColumnVisibiltyMenu.getId() + "-item-" + i, oColumn);
 				oColumnVisibiltyMenu.addItem(oMenuItem);
 			}
 		}
