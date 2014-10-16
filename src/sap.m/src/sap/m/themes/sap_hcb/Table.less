@@ -46,7 +46,7 @@
 }
 
 .sapMListTblHeader th{
-	border-bottom: 0.188rem solid @sapHCStandardFG;
+	border-bottom: 0.125rem solid @sapHCStandardFG;
 }
 
 .sapMListTbl {
@@ -124,12 +124,12 @@
 /* table column header */
 .sapMListTbl th {
 	background: @sapHCStandardBG;
-	border-bottom: 0.188rem solid @sapHCStandardFG;
+	border-bottom: 0.125rem solid @sapHCStandardFG;
 }
 
 /* table footer */
 .sapMListTblFooter > td {
-	border-top: 0.188rem solid @sapHCStandardFG;
+	border-top: 0.125rem solid @sapHCStandardFG;
 }
 
 /* footer text should be bold */
@@ -209,7 +209,12 @@
 	padding: 0;
 }
 
+/* reset height of cells when no header is defined */
+.sapMListTblHeaderNone > .sapMListTblCell {
+	height: 0;
+}
+
 /* HCB Additional Styles */
-.sapMListTbl{
+.sapMListTbl {
 	border: 1px solid @sapHCStandardFG;
 }
