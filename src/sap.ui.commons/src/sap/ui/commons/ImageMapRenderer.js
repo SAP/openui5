@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 		var accessibility = sap.ui.getCore().getConfiguration().getAccessibility();
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 	
-		rm.write('<SPAN id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none;">');
+		rm.write('<SPAN id="' + oImageMap.getId() + '-Descr" style="visibility: hidden; display: none; outline: none;">');
 		rm.writeEscaped(rb.getText("IMAGEMAP_DSC"));
 		rm.write('</SPAN>');
 	
@@ -47,11 +47,14 @@ sap.ui.define(['jquery.sap.global'],
 				rm.write("<area ");
 	
 				rm.writeElementData(aAreas[index]);
+				
+				rm.write(' style="display: block;"');
 	
 				if (accessibility) {
 					rm.writeAttribute("aria-describedby", oImageMap.getId() + "-Descr");
 				}
 	
+				
 				// Get the Attributes of the area
 				var sShape = aAreas[index].getShape();
 				var sCoords = aAreas[index].getCoords();
