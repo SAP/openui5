@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FeedListItem.prototype._inactiveHandlingInheritor = function() {
-		var sSrc = this.getIcon();
+		var sSrc = this.getIcon() ? this.getIcon() : sap.ui.core.IconPool.getIconURI("person-placeholder");
 		if (!!this._oImageControl) {
 			this._oImageControl.setSrc(sSrc);
 		}
@@ -340,6 +340,21 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			bTextIsExpandable = true;
 		}
 		return bTextIsExpandable;
+	};
+
+	/**
+	 * Redefinition of sap.m.ListItemBase.setType: type = "sap.m.ListType.Navigation" behaves like type = "sap.m.ListType.Active" for a FeedListItem
+	 * @public
+	 * @param {sap.m.ListType} type	new value for property type
+	 * @returns {sap.m.FeedListItem} this allows method chaining
+	 */
+	sap.m.FeedListItem.prototype.setType = function(type) {
+		if (type == sap.m.ListType.Navigation) {
+			this.setProperty("type", sap.m.ListType.Active);
+		} else {
+			this.setProperty("type", type);
+		}
+		return this;
 	};
 
 	return FeedListItem;

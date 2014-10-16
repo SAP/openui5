@@ -76,12 +76,15 @@
 .sapMLIBActive .sapMFeedListItemFooter,
 .sapMLIBActive .sapMFeedListItemText,
 .sapMLIBActive .sapMFeedListItemTimestamp,
+.sapMLIBActive .sapMFeedListItem .sapMFeedListItemTextText .sapMFeedListItemTextString,
+.sapMLIBActive .sapMFeedListItem:hover .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse,
 .sapMLIBActive .sapMFeedListItemTextText,
 .sapMLIBActive .sapMFeedListItemTextText>.sapMLnk,
 .sapMLIBActive .sapMFeedListItemTextText>.sapMLnk.sapMLnkDsbl
 .sapMLIBActive .sapMFeedListItemTextName>.sapMLnk,
 .sapMLIBActive .sapMFeedListItemTextName>.sapMLnk.sapMLnkDsbl {
 	color: @sapUiTextInverted;
+	opacity: 1;
 	text-decoration: none;
 }
 
@@ -146,7 +149,7 @@ li.sapMLIB.sapMFeedListItemTitleDiv.sapMLIBNoFlex>.sapMLIBContent>.sapMLIBConten
 	color: @sapUiLightText; 
 }
 
-.sap-desktop .sapMFeedListItem:hover .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse {
+.sapMFeedListItem:hover .sapMFeedListItemTextText> .sapMFeedListItemLinkExpandCollapse {
 	color: @sapUiLink;
 }
 
