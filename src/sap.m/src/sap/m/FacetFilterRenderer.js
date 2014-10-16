@@ -77,10 +77,10 @@ sap.ui.define(['jquery.sap.global'],
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("left"));
 			}
-			// dummy after focusable area..
+/*			// dummy after focusable area.
 			oRm.write("<div tabindex='-1'");
 			oRm.writeAttribute("id", oControl.getId() + "-before");
-			oRm.write("></div>");
+			oRm.write("></div>");*/
 			// Render the div for the carousel
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-head");
