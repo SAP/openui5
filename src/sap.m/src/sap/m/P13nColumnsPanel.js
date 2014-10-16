@@ -317,7 +317,7 @@ sap.ui.define([ 'jquery.sap.global', './ColumnListItem', './P13nColumnItem', './
 	/**
 	 * Filters the columns list with the given sValue
 	 * 
-	 * @private
+	 * @private 
 	 */
 	P13nColumnsPanel.prototype._executeSearch = function() {
 		var sValue = this._oSearchField.getValue();
@@ -527,27 +527,13 @@ sap.ui.define([ 'jquery.sap.global', './ColumnListItem', './P13nColumnItem', './
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
-		var iMinHeight, iElementOffset, iViewPortHeight, iViewPortStart, iViewPortEnd;
+		var iElementOffset;
 		if (oItem) {
 			sap.ui.getCore().applyChanges();
 			// oItem needs to be rendered, otherwise we cannot perform necessary calculations
 			if (!!oItem.getDomRef()) {
 				iElementOffset = oItem.$().position().top;
-				// this is the minimal height that should be visible from the selected item
-				// 18 means 18px which corresponds to 3em
-				iMinHeight = 18;
-				iViewPortHeight = this._oScrollContainer.$().height();
-				iViewPortStart = this._oScrollContainer.$().offset().top - this._oTable.$().offset().top;
-				iViewPortEnd = iViewPortStart + iViewPortHeight;
-
-				if (iElementOffset < iViewPortStart) {
-					// selected item is above or below visible viewport -> scroll page to item
-					this._oScrollContainer.scrollTo(0, Math.max(0, iViewPortStart - iViewPortHeight + iMinHeight));
-				} else if (iElementOffset + iMinHeight > iViewPortEnd) {
-					// selected item is above or below visible viewport -> scroll down a page (this is the height of the scroll container)
-					this._oScrollContainer.scrollTo(0, iElementOffset);
-				}
-				// otherwise, the item is already within the scroll container's viewport, so no action is necessary
+				this._oScrollContainer.scrollTo(0, iElementOffset);
 			}
 		}
 	};
