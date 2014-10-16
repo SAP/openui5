@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				oListItem = aItems[i].data(ComboBoxBaseRenderer.CSS_CLASS + "ListItem");
 
 				if (oListItem && oListItem.getVisible()) {
-					aVisibleItems[i] = aItems[i];
+					aVisibleItems.push(aItems[i]);
 				}
 			}
 
