@@ -3,69 +3,95 @@
  */
 
 // Provides control sap.m.P13nDialog.
-sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library', 'sap/ui/core/EnabledPropagator', 'jquery.sap.xml'],
-	function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library',
+		'sap/ui/core/EnabledPropagator', 'jquery.sap.xml'], function(jQuery, Dialog, IconTabBar, IconTabFilter,
+		P13nDialogRenderer, library, EnabledPropagator/* , jQuerySap */) {
 	"use strict";
 
+	/**
+	 * Constructor for a new P13nDialog.
+	 * 
+	 * @param {string}
+	 *          [sId] id for the new control, generated automatically if no id is given
+	 * @param {object}
+	 *          [mSettings] initial settings for the new control
+	 * 
+	 * @class The dialog for personalization
+	 * @extends sap.m.Dialog
+	 * @version ${version}
+	 * 
+	 * @constructor
+	 * @public
+	 * @name sap.m.P13nDialog
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */
+	{
+		metadata : {
 
-
-/**
- * Constructor for a new P13nDialog.
- *
- * @param {string} [sId] id for the new control, generated automatically if no id is given 
- * @param {object} [mSettings] initial settings for the new control
- *
- * @class
- * The dialog for personalization
- * @extends sap.m.Dialog
- * @version ${version}
- *
- * @constructor
- * @public
- * @name sap.m.P13nDialog
- * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
- */
-var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */ { metadata : {
-
-	library : "sap.m",
-	aggregations : {
-
-		/**
-		 * The dialog items displayed on the dialog.
-		 */
-		panels : {type : "sap.m.P13nPanel", multiple : true, singularName : "panel", bindable : "bindable"}
-	},
-	events : {
-
-		/**
-		 * Event is fired when the personalization dialog is closed
-		 */
-		close : {
-			parameters : {
+			library : "sap.m",
+			properties : {
+				/**
+				 * This property decides whether the 'Reset' button is shown inside the dialog. If this property is set to true,
+				 * clicking on the 'Reset' button the 'reset' event will be raised in order to notify that model data should be
+				 * reseted.
+				 */
+				showReset : {
+					type : "boolean",
+					group : "Appearance",
+					defaultValue : false
+				}
+			},
+			aggregations : {
 
 				/**
-				 * Descripes how the dialog was closed. It can be closed via clicking on 'Ok' or 'Cancel' button.
+				 * The dialog items displayed on the dialog.
 				 */
-				type : {type : "string"}
+				panels : {
+					type : "sap.m.P13nPanel",
+					multiple : true,
+					singularName : "panel",
+					bindable : "bindable"
+				}
+			},
+			events : {
+
+				/**
+				 * Event is fired when the personalization dialog is closed
+				 */
+				close : {
+					parameters : {
+
+						/**
+						 * Descripes how the dialog was closed. It can be closed via clicking on 'Ok' or 'Cancel' button.
+						 */
+						type : {
+							type : "string"
+						}
+					}
+				},
+				/**
+				 * Event is fired when button 'reset' on personalization dialog is clicked
+				 */
+				reset : {}
 			}
 		}
-	}
-}});
+	});
 
 	EnabledPropagator.apply(P13nDialog.prototype, [true]);
-	
+
 	P13nDialog.ButtonType = {
 		Ok : "ok",
 		Cancel : "cancel"
 	};
-	
+
 	P13nDialog.prototype.init = function(oEvent) {
 		this.addStyleClass("sapMP13nDialog");
 		Dialog.prototype.init.apply(this, arguments);
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._initDialog();
 	};
-	
+
 	P13nDialog.prototype._initDialog = function() {
 		var that = this;
 		this.setContentWidth("50rem");
@@ -97,8 +123,20 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 				that.close();
 			}
 		}));
+		this._oResetButton = new sap.m.Button({
+			text : this._oResourceBundle.getText("P13NDIALOG_RESET"),
+			visible : this.getShowReset(),
+			press : function() {
+				that.fireReset({});
+			}
+		});
+		this.addButton(this._oResetButton);
 	};
-	
+
+	P13nDialog.prototype.setShowReset = function(bShow) {
+		this._oResetButton.setVisible(bShow);
+	};
+
 	/*
 	 * Adds some DialogItem <code>oDialogItem</code> to the aggregation named <code>DialogItems</code>.
 	 * 
@@ -116,18 +154,19 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 				bVisible = true;
 			}
 			oPanel.setVisible(bVisible);
-			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible); 
+			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible);
 		}
 		return this;
 	};
-	
+
 	/*
 	 * Inserts an item into the aggregation named <code>items</code>.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The <code>0</code>-based
-	 * index the item should be inserted at; for a negative value of <code>iIndex</code>, the item is inserted at
-	 * position 0; for a value greater than the current size of the aggregation, the item is inserted at the last position.
-	 * @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name P13nDialog#insertItem @function
+	 * @param {sap.m.P13nDialogItem} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The
+	 * <code>0</code>-based index the item should be inserted at; for a negative value of <code>iIndex</code>, the
+	 * item is inserted at position 0; for a value greater than the current size of the aggregation, the item is inserted
+	 * at the last position. @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name
+	 * P13nDialog#insertItem @function
 	 */
 	P13nDialog.prototype.insertPanel = function(oPanel, iIndex) {
 		this.insertAggregation("panels", oPanel, iIndex);
@@ -143,7 +182,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 		}
 		return this;
 	};
-	
+
 	/*
 	 * Removes an item from the aggregation named <code>items</code>.
 	 * 
@@ -157,7 +196,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 		}
 		return vPanel;
 	};
-	
+
 	/*
 	 * Removes all the controls in the aggregation named <code>items</code>. Additionally unregisters them from the
 	 * hosting UIArea and clears the selection.
@@ -172,7 +211,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 		}
 		return aPanels;
 	};
-	
+
 	/**
 	 * Getter for the control's TabBar.
 	 * 
@@ -184,7 +223,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 	P13nDialog.prototype._getSegmentedButton = function() {
 		return this.getSubHeader().getContentLeft()[0];
 	};
-	
+
 	/*
 	 * Map an item type of sap.m.P13nDialogItem to an item type of sap.m.IconTabBarFilter.
 	 * 
@@ -195,21 +234,21 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 		if (!oPanel) {
 			return null;
 		}
-	
+
 		var sType = oPanel.getType();
 		var oButton = new sap.m.Button({
 			type : sap.m.ButtonType.Default,
 			text : "{/" + sType + "/title}"
 		});
-	
+
 		oButton.setModel(oPanel.getModel());
 		oPanel.data(P13nDialogRenderer.CSS_CLASS + "Button", oButton);
-	
+
 		this.addContent(oPanel);
-	
+
 		return oButton;
 	};
-	
+
 	/**
 	 * Switch panel.
 	 * 
@@ -233,14 +272,14 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 	 * @private
 	 */
 	P13nDialog.prototype._getPanelByButton = function(oButton) {
-		for ( var i = 0, aPanels = this.getContent(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
+		for (var i = 0, aPanels = this.getContent(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
 			if (aPanels[i].data(P13nDialogRenderer.CSS_CLASS + "Button") === oButton) {
 				return aPanels[i];
 			}
 		}
 		return null;
 	};
-	
+
 	/**
 	 * Cleans up before destruction.
 	 * 
@@ -252,7 +291,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 			this.getSubHeader().destroy();
 		}
 	};
-	
+
 	// /* =========================================================== */
 	//
 	// /* begin: forward aggregation methods to table */
@@ -390,8 +429,7 @@ var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.p
 	// /* =========================================================== */
 	// /* end: forward aggregation methods to table */
 	// /* =========================================================== */
-	
 
 	return P13nDialog;
 
-}, /* bExport= */ true);
+}, /* bExport= */true);
