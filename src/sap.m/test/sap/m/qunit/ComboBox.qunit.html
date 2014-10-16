@@ -8267,36 +8267,49 @@
 			/* ------------------------------ */
 	
 			test("oninput the ComboBox's picker pop-up should open", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
+							key: "EG",
+							text: "Egypt"
+						}),
+						new sap.ui.core.Item({
 							key: "GER",
-							text: "Germany",
+							text: "Germany"
+						}),
+						new sap.ui.core.Item({
+							key: "GH",
+							text: "Ghana"
+						}),
+						new sap.ui.core.Item({
+							key: "GR",
+							text: "Greece"
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
 				var fnOpenSpy = this.spy(oComboBox, "open");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
-	
+
 				// act
 				oComboBox.getFocusDomRef().value = "G";
 				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-	
+
 				// assert
 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-	
+				strictEqual(oComboBox.getVisibleItems().length, 3, "three items are visible");
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("oninput close the picker popup if there not are suggestions", function() {
 	
 				// system under test
