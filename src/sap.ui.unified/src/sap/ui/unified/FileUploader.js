@@ -406,14 +406,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 	FileUploader.prototype.setIconHovered = function(sIconHovered) {
-		this.oBrowse.setIconHovered(sIconHovered);
 		this.setProperty("iconHovered", sIconHovered, false);
+		if (this.oBrowse.setIconHovered) {
+			this.oBrowse.setIconHovered(sIconHovered);
+		}
 		return this;
 	};
 
 	FileUploader.prototype.setIconSelected = function(sIconSelected) {
-		this.oBrowse.setIcon(sIconSelected);
 		this.setProperty("iconSelected", sIconSelected, false);
+		if (this.oBrowse.setIconSelected) {
+			this.oBrowse.setIconSelected(sIconSelected);
+		} else {
+			this.oBrowse.setActiveIcon(sIconSelected);
+		}
 		return this;
 	};
 
