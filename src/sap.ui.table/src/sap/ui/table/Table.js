@@ -1364,7 +1364,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oHSb.bind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.bind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.bind($this.find(".sapUiTableRowHdrScr").get(0));
-	
+
+		jQuery("body").bind('webkitTransitionEnd transitionend',
+			jQuery.proxy(function(oEvent) {
+				if (jQuery(oEvent.target).has($this).length > 0) {
+					this._handleResize();
+				}
+			}, this));
 	};
 	
 	
@@ -1391,7 +1397,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oHSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableRowHdrScr").get(0));
-	
+
+		jQuery("body").unbind('webkitTransitionEnd transitionend');
 	};
 	
 	
