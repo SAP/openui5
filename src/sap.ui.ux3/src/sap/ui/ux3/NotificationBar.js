@@ -531,6 +531,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			jQuery(window).bind("resize", jQuery.proxy(fnOnResize, this));
 	
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
+			
+			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		};
 	
 		NotificationBar.prototype.exit = function() {
