@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * 
 	 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
 	 * 
-	 * Note: If the child control of the flex container has width/height bigger than the flex container itself, the child control will be cropped in the view.
+	 * Note: If the child control of the flex or the fix container has width/height bigger than the flex container itself, the child control will be cropped in the view.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -93,10 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 		$FlexChild = this.$("Flexible");
 	
 		if (this.getVertical()) {
-			$FlexChild.outerHeight(Math.floor($Control.outerHeight(true) - $FixChild.outerHeight(true)));
+			$FlexChild.height(Math.floor($Control.height() - $FixChild.height()));
 		} else {
-			$FlexChild.outerWidth(Math.floor($Control.outerWidth(true) - $FixChild.outerWidth(true)));
-			$FixChild.outerWidth(Math.floor($FixChild.outerWidth(true)));
+			$FlexChild.width(Math.floor($Control.width() - $FixChild.width()));
+			$FixChild.width(Math.floor($FixChild.width()));
 		}
 	};
 	
