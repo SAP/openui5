@@ -51,6 +51,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	}});
 	
+	FacetFilter.prototype.init = function() {
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+	};
 	
 
 	return FacetFilter;
