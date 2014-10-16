@@ -758,7 +758,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					"text": sText
 			}));
 	
-			this._popup.setContent($Content);
+			this._popup.setContent($Content[0]);
 	
 			this._popup.close(0);
 			var that = this;
