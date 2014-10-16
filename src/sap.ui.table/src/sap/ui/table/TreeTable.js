@@ -182,20 +182,16 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			var that = this;
 			jQuery.extend(oBinding, {
 				_init: function(bExpandFirstLevel) {
+					this._bExpandFirstLevel = bExpandFirstLevel;
 					// load the root contexts and create the context info map
 					this.mContextInfo = {};
 					this._initContexts();
 					// expand the first level if required
-					if (bExpandFirstLevel) {
-						var that = this;
-						if (this.aContexts) {
-							jQuery.each(this.aContexts.slice(), function(iIndex, oContext) {
-								that._loadChildContexts(oContext);
-								that._getContextInfo(oContext).bExpanded = true;
-							});
-						}
+					if (bExpandFirstLevel && !this._bFirstLevelExpanded) {
+						this._expandFirstLevel();
 					}
 				},
+
 				_initContexts: function() {
 					// load the root contexts and create the context info map entry (if missing)
 					this.aContexts = this.getRootContexts();
@@ -207,7 +203,24 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 							bExpanded: oldContextInfo ? oldContextInfo.bExpanded : false
 						});
 					}
+
+					if (this._bExpandFirstLevel && !this._bFirstLevelExpanded) {
+						this._expandFirstLevel();
+					}
 				},
+
+				_expandFirstLevel: function () {
+					var that = this;
+					if (this.aContexts && this.aContexts.length > 0) {
+						jQuery.each(this.aContexts.slice(), function(iIndex, oContext) {
+							that._loadChildContexts(oContext);
+							that._getContextInfo(oContext).bExpanded = true;
+						});
+
+						this._bFirstLevelExpanded = true;
+					}
+				},
+
 				_fnFireFilter: oBinding._fireFilter,
 				_fireFilter: function() {
 					this._fnFireFilter.apply(this, arguments);
