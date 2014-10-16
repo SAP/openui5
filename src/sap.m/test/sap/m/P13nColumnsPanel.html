@@ -28,22 +28,26 @@
 						key: '4711',
 						selected: true,
 						visible: true,
-						text: "Column1"
+						text: "Column1",
+						tooltip: "Column1_Tooltip"
 					}, {
 						key: '4712',
 						selected: true,
 						visible: true,
-						text: "Column2"
+						text: "Column2",
+						tooltip: "Column2_Tooltip"						
 					}, {
 						key: '4713',
 						selected: false,
 						visible: true,
-						text: "Column3"
+						text: "Column3",
+						tooltip: "Column3_Tooltip"						
 					},{
 						key: '4714',
 						selected: true,
 						visible: true,
-						text: "Column4"
+						text: "Column4",
+						tooltip: "Column4_Tooltip"						
 					} ]
 				}
 	};
@@ -55,6 +59,7 @@
 		cells: [ new sap.m.Text({text: '{text}'})],
 		visible: '{visible}',
 		selected: '{selected}',
+		tooltip: '{tooltip}',
 		type: sap.m.ListType.Active
 	});
 
