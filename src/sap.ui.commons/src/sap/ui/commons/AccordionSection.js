@@ -98,6 +98,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	AccordionSection.prototype.init = function(){
 	   this.bIgnoreScrollEvent = true; // do not fire a scroll event initially
 	   this.oScrollDomRef = null;      // points to the content area
+	   
+	   this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	/**
