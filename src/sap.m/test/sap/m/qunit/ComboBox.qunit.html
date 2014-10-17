@@ -8272,19 +8272,15 @@
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
-							key: "EG",
 							text: "Egypt"
 						}),
 						new sap.ui.core.Item({
-							key: "GER",
 							text: "Germany"
 						}),
 						new sap.ui.core.Item({
-							key: "GH",
 							text: "Ghana"
 						}),
 						new sap.ui.core.Item({
-							key: "GR",
 							text: "Greece"
 						})
 					]
@@ -8304,7 +8300,7 @@
 				// assert
 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(oComboBox.getVisibleItems().length, 3, "three items are visible");
+				strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
 
 				// cleanup
 				oComboBox.destroy();
