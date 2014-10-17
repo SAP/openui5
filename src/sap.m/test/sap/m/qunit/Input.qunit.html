@@ -1143,6 +1143,44 @@
 		oInput.destroy();
 	});
 
+	test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(){
+		var oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			suggest: function(oEvent) {
+				var sValue = oEvent.getParameter("suggestValue");
+				if (sValue) {
+					this.addSuggestionItem(new sap.ui.core.Item({
+						value: sValue
+					}));
+				}
+			}
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().trigger("click");
+		this.clock.tick(500);
+
+		var oSpy = this.spy(oInput._oSuggestionPopup, "invalidate");
+		oInput._oPopupInput._$input.focus().val("abc").trigger("input");;
+		this.clock.tick(400);
+
+		equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
+		equal(oSpy.callCount, 0, "invalidate isn't called on dialog instance");
+
+		oInput.destroy();
+	});
+
 	test("Tabular Suggestions on Desktop", function(){
 		var oInput = new sap.m.Input({
 			width: "100px",
