@@ -145,6 +145,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._bFocusCollapseIcon = false; // indicates whether the collapse icon should be focused after the next rendering
 		this._resizeDelayTimer = null;    // the timer for delayed reaction to resize events in browsers not supporting FlexBox layout
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	Panel.prototype.exit = function() {

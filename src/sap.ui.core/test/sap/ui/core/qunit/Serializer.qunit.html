@@ -77,7 +77,7 @@
 				var oControlSerializer = new sap.ui.core.util.serializer.Serializer(aContent[i], oHTML, false);
 				aCode.push(oControlSerializer.serialize());
 			}
-			equals(aCode.join(""), '<div id=\"myPanel\" data-sap-ui-type=\"sap.ui.commons.Panel\" data-text=\"My Panel\"><div data-sap-ui-aggregation=\"content\"><div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\" data-aria-described-by=\"myButton2\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"myCustomData\" data-value=\"myValue\"></div></div></div></div><div data-sap-ui-aggregation=\"title\"><div id=\"myTitle\" data-sap-ui-type=\"sap.ui.commons.Title\" data-text=\"My Panel\"></div></div></div>', "The generated string is right");
+			equals(aCode.join(""), '<div id=\"myPanel\" data-sap-ui-type=\"sap.ui.commons.Panel\" data-text=\"My Panel\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"sap-ui-fastnavgroup\" data-value=\"true\" data-write-to-dom=\"true\"></div></div><div data-sap-ui-aggregation=\"content\"><div id=\"myButton\" data-sap-ui-type=\"sap.ui.commons.Button\" data-aria-described-by=\"myButton2\"><div data-sap-ui-aggregation=\"customData\"><div data-sap-ui-type=\"sap.ui.core.CustomData\" data-key=\"myCustomData\" data-value=\"myValue\"></div></div></div></div><div data-sap-ui-aggregation=\"title\"><div id=\"myTitle\" data-sap-ui-type=\"sap.ui.commons.Title\" data-text=\"My Panel\"></div></div></div>', "The generated string is right");
 		});
 
 	</script>
