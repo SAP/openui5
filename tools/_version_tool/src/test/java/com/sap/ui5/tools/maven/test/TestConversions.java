@@ -146,7 +146,7 @@ public class TestConversions {
     String destPath = setup(scenario, src);
     Properties contributorsVersions = new Properties();
     contributorsVersions.load(new FileInputStream(new File("src/test/resources/input/LatestVersions.prop")));
-    MyReleaseButton.updateVersion(new File(destPath), "1.22.8-SNAPSHOT", "1.22.9", contributorsVersions, null);
+    MyReleaseButton.updateVersion(new File(destPath), "1.22.9-SNAPSHOT", "1.22.9", contributorsVersions, null);
     compare(scenario, src);
   }
 

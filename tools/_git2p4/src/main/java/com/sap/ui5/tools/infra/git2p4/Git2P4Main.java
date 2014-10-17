@@ -34,6 +34,7 @@ public class Git2P4Main {
   static String p4depotPath = null;
   static String p4change = null;
   static String resumeAfter = null;
+  static boolean applyContributorsVersions = false; 
   static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -114,7 +115,7 @@ public class Git2P4Main {
       git.repository = repo.gitRepository;
 
       git.checkout("origin/" + branch);
-
+      
       Map<String,String> info = repo.getRootPOMInfo();
       String v = info.get("version");
       if ( v != null ) {
@@ -259,6 +260,9 @@ public class Git2P4Main {
 
   private static Properties retrieveLatestVersions(String fromVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
     //Filter operations to apply to
+    if (!applyContributorsVersions) {
+      return null;
+    }
     if (!(op.equals(ReleaseOperation.PatchRelease)||op.equals(ReleaseOperation.PatchDevelopment))){
       return null;
     }
@@ -273,11 +277,15 @@ public class Git2P4Main {
     contributorsVersions.load(new FileInputStream(versionFile));
     Log.println("Versions loaded from file: " + contributorsVersions.toString());
     if (op.equals(ReleaseOperation.PatchDevelopment)){
+      //get core version
+      String coreVersion = contributorsVersions.get("com.sap.ui5:core").toString();
       //set all versions to version range
       Object devRange = "[" + new Version(fromV.major, fromV.minor, 0, "-SNAPSHOT").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "-SNAPSHOT").toString() + ")";
       for (Object key : contributorsVersions.keySet()){
         contributorsVersions.put(key, devRange);
       }
+      //set next snapshot core version 
+      contributorsVersions.put("com.sap.ui5:core",  new Version(coreVersion).nextVersion(op).toString());
     }
     return contributorsVersions;
   }
@@ -551,6 +559,7 @@ public class Git2P4Main {
       } else if ( "-v".equals(args[i]) || "--verbose".equals(args[i]) ) {
         p4.verbose = true;
         git.verbose = true;
+        MvnClient.verbose = true;
       } else if ( "-l".equals(args[i]) || "--log-file".equals(args[i]) ) {
         Log.setLogFile(new File(args[++i]), false);
       } else if ( "-lt".equals(args[i]) || "--log-file-template".equals(args[i]) ) {
@@ -580,6 +589,8 @@ public class Git2P4Main {
         git.password = args[++i];
       } else if ( "--git-no-fetch".equals(args[i]) ) {
         context.noFetch = true;
+      } else if ( "--git-no-checkout".equals(args[i]) ) {
+        git.noCheckout = true;
       } else if ( "--ui5-git-root".equals(args[i]) ) {
         gitDir = new File(args[++i]);
         mappingSet = "runtime";
@@ -704,6 +715,7 @@ public class Git2P4Main {
       createUI5Mappings(gitDir, p4depotPath, branch);
     } else if ( "dist".equals(mappingSet) ) {
       createUI5DistMappings(gitDir, p4depotPath, branch);
+      applyContributorsVersions = true;
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }

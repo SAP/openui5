@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.ui5.dist</groupId>
 		<artifactId>reactor</artifactId>
-		<version>1.22.8-SNAPSHOT</version>
+		<version>1.22.9-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

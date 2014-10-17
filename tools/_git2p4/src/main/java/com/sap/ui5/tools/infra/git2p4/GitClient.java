@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ public class GitClient {
   String password = null;
 
   boolean verbose = false;
+  boolean noCheckout = false;
   private int lastExitValue;
   private List<String> lastOutput;
   Map<String,GitClient.Commit> lastCommits;
@@ -248,6 +251,9 @@ public class GitClient {
   }
 
   public boolean checkout(String commit) throws IOException {
+    if (noCheckout){
+      return false;
+    }
     return execute("checkout", "--force", "--detach", commit);
   }
 
@@ -298,16 +304,16 @@ public class GitClient {
     return execute("push", createGitBaseUrl(useHTTPS) + gitUrl, refSpecOrTagsOption);
   }
   
-  private String createGitBaseUrl(boolean useHTTPS) {
+  private String createGitBaseUrl(boolean useHTTPS) throws IOException {
   	StringBuffer baseUrl = new StringBuffer();
   	if (useHTTPS) {
   		baseUrl.append("https://");
     	if (user != null) {
-    		baseUrl.append(user);
-    		if (password != null) {
-    			baseUrl.append(":");
-    			baseUrl.append(password);
-    		}
+          baseUrl.append(URLEncoder.encode(user, "UTF-8"));
+          if (password != null) {
+            baseUrl.append(":");
+            baseUrl.append(URLEncoder.encode(password, "UTF-8"));
+          }
     		baseUrl.append("@");
     	}
   	} else {

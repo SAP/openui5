@@ -9,12 +9,17 @@ import java.util.Scanner;
 
 
 public class MvnClient {
+  
+  static boolean verbose = false;
 
   static boolean execute(File pomPath, String... cmds) throws IOException {
     ProcessBuilder pb = new ProcessBuilder();
     pb.directory(pomPath);
     List<String> args = pb.command();
     args.add("mvn.bat");
+    if (verbose){
+      args.add("-X");
+    }
     for (String cmd : cmds) {
       args.add(cmd);
     }

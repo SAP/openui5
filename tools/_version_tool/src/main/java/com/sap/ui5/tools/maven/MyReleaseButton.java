@@ -156,9 +156,7 @@ public class MyReleaseButton {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.VersionWithQualifier_POM);
       processingTypes.add(ProcessingTypes.VersionWithTimestamp);
-      if (path.contains("uilib-collection")) {
-        processingTypes.add(ProcessingTypes.ContributorsVersions);
-      }
+      processingTypes.add(ProcessingTypes.ContributorsVersions);
     } else if (file.getName().endsWith(".library")) {
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     } else if (file.getName().endsWith(".target")) {
@@ -370,6 +368,10 @@ public class MyReleaseButton {
     }
     for (Object artifactKey : contributorsVersions.keySet()) {
       String[] artifact = artifactKey.toString().split(":");
+      if("com.sap.ui5:core".equals(artifactKey)){
+        contributorsPatterns.put(Pattern.compile("(?<=<version>).*(?=</version><!--SAPUI5CoreVersion-->)"), contributorsVersions.getProperty(artifactKey.toString()));
+        continue;
+      }
       // artifact[0] - groupId, artifact[1] - artifactId
       String propName = !artifact[0].startsWith("com.sap.ui5") ? artifact[0] : artifact[1].contentEquals("vbm") ? "com.sap.ui5.vbm" : "";
       if (!"".equals(propName)) {
