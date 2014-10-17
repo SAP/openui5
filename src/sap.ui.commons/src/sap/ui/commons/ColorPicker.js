@@ -380,6 +380,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.oSlider.attachChange(jQuery.proxy(this._handleSliderChange,this));
 		this.oAlphaSlider.attachLiveChange(jQuery.proxy(this._handleAlphaSliderLiveChange,this));
 		this.oAlphaSlider.attachChange(jQuery.proxy(this._handleAlphaSliderChange,this));
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	
