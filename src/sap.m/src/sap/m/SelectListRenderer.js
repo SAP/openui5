@@ -69,7 +69,8 @@ sap.ui.define(['jquery.sap.global'],
 		SelectListRenderer.renderItem = function(oRm, oList, oItem) {
 			var bEnabled = oItem.getEnabled(),
 				oSelectedItem = oList.getSelectedItem(),
-				CSS_CLASS = SelectListRenderer.CSS_CLASS;
+				CSS_CLASS = SelectListRenderer.CSS_CLASS,
+				sTooltip = oItem.getTooltip_AsString();
 
 			if (oItem instanceof sap.ui.core.Element) {
 				oRm.write("<li");
@@ -98,6 +99,11 @@ sap.ui.define(['jquery.sap.global'],
 				}
 
 				oRm.writeClasses();
+
+				if (sTooltip) {
+					oRm.writeAttributeEscaped("title", sTooltip);
+				}
+
 				oRm.write(">");
 				oRm.writeEscaped(oItem.getText());
 				oRm.write("</li>");

@@ -41,7 +41,8 @@
 						new sap.ui.core.Item({
 							id: "item-id",
 							key: "0",
-							text: "item 0"
+							text: "item 0",
+							tooltip: "first item"
 						}),
 	
 						new sap.ui.core.Item({
@@ -69,6 +70,7 @@
 				ok(oSelectList.getSelectedItem() === oSelectList.getFirstItem(), "By default the selected items of the SelectList control is the first item");
 				strictEqual(oSelectList.getSelectedItemId(), "item-id", "By default the selected items id of the SelectList control is the id of the first item");
 				strictEqual(oSelectList.getSelectedKey(), "0", "By default the selected key of the SelectList control is the key property of the first item");
+				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
 	
 				// cleanup
 				oSelectList.destroy();
