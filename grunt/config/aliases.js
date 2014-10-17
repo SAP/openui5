@@ -58,6 +58,7 @@ module.exports = function(grunt, config) {
 		'build': [
 			'copy',
 			'replace',
+			'concat',
 			'openui5_library_preload',
 			'openui5_theme'
 		],
@@ -72,6 +73,7 @@ module.exports = function(grunt, config) {
 			'lint',
 			'clean',
 			'build',
+			'mochaTest',
 			'test'
 		]
 
