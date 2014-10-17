@@ -6124,14 +6124,17 @@
 				});
 	
 				// assert
-				ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once on " + oComboBox);
+				ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once");
 				strictEqual(fnPickerCloseSpy.callCount, 0, "close() method of the popover must not be called");
 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The ComboBox must have the css class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed"');
 				this.clock.tick(0);
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
-	
+
+				if (sap.ui.Device.system.desktop) {
+					strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
+					strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
+				}
+
 				// cleanup
 				oComboBox.destroy();
 			});
@@ -8385,29 +8388,41 @@
 			/* ------------------------------ */
 			/* onfocusin                      */
 			/* ------------------------------ */
-	
+
 			test("onfocusin", function() {
-	
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox();
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-	
+
 				// act
 				sap.ui.qunit.QUnitUtils.triggerEvent("focusin", oComboBox.getOpenArea(), {
 					target: oComboBox.getOpenArea()
 				});
-	
+
 				// assert
 				ok(document.activeElement === oComboBox.getFocusDomRef(), "If the ComboBox's arrow recive the focusin event, revert it to the input field");
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onfocusin select the text", function() {
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
 	
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
