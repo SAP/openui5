@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var that = this;
 		this._$window = jQuery(window);
 	
-		this._busyIndicator = new sap.m.BusyIndicator(this.getId() + '-busyInd', {}).addStyleClass('sapMBsyInd');
+		this._busyIndicator = new sap.m.BusyIndicator(this.getId() + '-busyInd', {visible: false}).addStyleClass('sapMBsyInd');
 		this.setAggregation("_busyIndicator", this._busyIndicator, true);
 		
 		this.iOldWinHeight = 0;
@@ -274,6 +274,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oPopup.attachClosed(this._handleClosed, this);
 			jQuery.sap.log.debug("sap.m.BusyDialog.close called at " + new Date().getTime());
 			oPopup.close();
+			// stop busy indicator
+			this._busyIndicator.setVisible(false);
+
 			this.fireClose({
 				cancelPressed: !!bFromCancelButton
 			});
@@ -375,6 +378,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	BusyDialog.prototype._handleOpened = function(){
 		this._oPopup.detachOpened(this._handleOpened, this);
+		// start busy indicator
+		this._busyIndicator.setVisible(true);
 		// bind to window resize
 		// In android, the orientationchange fires before the size of the window changes
 		//  that's why the resize event is used here.
