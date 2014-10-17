@@ -24,25 +24,32 @@
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<script src="OData4AnalyticsFakeService.js"></script>
+<!-- <script src="OData4AnalyticsFakeService.js"></script> -->
+
+<!-- Fake Service Implementaton -->
+<script src="analytics/o4aFakeService.js"></script>
+<!-- Fake Service Content -->
+<script src="analytics/o4aMetadata.js"></script>
 
 <!-- Test functions -->
 <script type="text/javascript">
+
 	jQuery.sap.require("sap.ui.model.analytics.odata4analytics");
 	var odata4analytics = sap.ui.model.analytics.odata4analytics;
-
-	var sServiceName = "servicemock",
-		sServiceRoot = "rooturi.sap.corp:1234",
-		sServiceDir = "/servicedir/",
-		sServiceURI = sServiceRoot + sServiceDir + sServiceName, sProxyBaseURI = "../../../../../proxy/http/",
-
-		sCompleteServiceURI = sProxyBaseURI + sServiceURI;
-
-
-
+	
+	//start the fake service
+	var sCompleteServiceURI = "http://o4aFakeService:8080/";
+	o4aFakeService.fake({
+		baseURI: sCompleteServiceURI
+	});
+	
 	function getModelInstance(sServiceURI) {
 		// TODO removeShared MetaData?
 		sServiceURI = sServiceURI || sCompleteServiceURI;
+		
+		//set base URI for the fake service if necessray
+		o4aFakeService.setBaseURI(sServiceURI);
+		
 		return new odata4analytics.Model({
 			oModel: new sap.ui.model.odata.ODataModel(sServiceURI)
 		});
