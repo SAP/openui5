@@ -221,6 +221,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oList = new sap.m.List(this.getId() + "-list", {
 		});
+		this._oList.addStyleClass("sapMUCList");
 	};
 	
 	/* =========================================================== */
@@ -522,6 +523,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 		}
 		oListItem.status = sStatus;
+		oListItem.addStyleClass("sapMUCListItem");
 		return oListItem;
 	};
 	
@@ -872,15 +874,80 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	// ================================================================================
 	// Keyboard activities
 	// ================================================================================
-//	UploadCollection.prototype.onkeydown = function(oEvent) {
-//
-//		if (oEvent.which === jQuery.sap.KeyCodes.ENTER) {
-//
-//		}
-//	};
+	/**
+	 * handle the TAB key:
+//	 * <ul>
+//	 *   <li>Navigation Mode: jump to the next focusable control after the table</li>
+//	 *   <li>Action Mode: focus next focusable control (wrap at the end)</li>
+//	 * </ul>
+	 * @private
+	 */
+	UploadCollection.prototype.onsaptabnext = function(oEvent) {
+		
+	};
+	
+	UploadCollection.prototype.onsaptabprevious = function(oEvent) {
+		
+	};
+	
+	UploadCollection.prototype.onsapup = function(oEvent) {
+		sap.m.UploadCollection.prototype._handleArrowUpAndLeft(oEvent);
+	};
+	
+	UploadCollection.prototype.onsapleft = function(oEvent) {
+		sap.m.UploadCollection.prototype._handleArrowUpAndLeft(oEvent);
+	};
+	
+	UploadCollection.prototype.onsapdown = function(oEvent) {
+		sap.m.UploadCollection.prototype._handleArrowDownAndRight(oEvent);
+	};
+	
+	UploadCollection.prototype.onsapright = function(oEvent) {
+		sap.m.UploadCollection.prototype._handleArrowDownAndRight(oEvent);
+	};
+	
 	// ================================================================================
 	// helpers
 	// ================================================================================
+	/**
+	 * handle of keyboard activity Arrow Up and Arrow Left.
+	 * @param {Object} ListItem 
+	 * @private
+	 */
+	UploadCollection.prototype._handleArrowUpAndLeft = function(oEvent) {
+		var $this = this.$();
+		if ($this.find(".sapMUCListItem").first() === oEvent.target) {
+			//event was triggered at the first item -> nothing to do
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		} else {
+			var oObj = jQuery.sap.byId(oEvent.target.id);
+			if (oObj.hasClass("sapMUCListItem")) {
+				oObj.prev().focus();
+			}
+		}
+	};
+	
+	/**
+	 * handle of keyboard activity Arrow Down and Arrow RightLeft.
+	 * @param {Object} ListItem 
+	 * @private
+	 */
+	UploadCollection.prototype._handleArrowDownAndRight = function(oEvent) {
+		var $this = this.$();
+		if ($this.find(".sapMUCListItem").last() === oEvent.target) {
+			//event was triggered at the last item -> nothing to do
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		} else {
+			var oObj = jQuery.sap.byId(oEvent.target.id);
+			if (oObj.hasClass("sapMUCListItem")) {
+				oObj.next().focus();
+			}
+		}
+	};
+	
+	
 	/**
 	 * Determines extension from the file name.
 	 */
