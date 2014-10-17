@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				result.copyright = $data.find("copyright").text();
 				result.version = $data.find("version").text();
 				result.documentation = $data.find("documentation").text();
+				result.releasenotes = $data.find("releasenotes").attr("url"); // in the appdata section
 			}
 			
 			fnCallback(result);
