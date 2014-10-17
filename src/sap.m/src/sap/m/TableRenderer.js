@@ -201,20 +201,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<tr");
+		rm.writeAttribute("tabindex", "-1");
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListTblRow sapMLIBTypeInactive");
 		if (!oControl._headerHidden || (!oControl.getHeaderText() && !oControl.getHeaderToolbar()) ) {
 			rm.addClass("sapMLIBShowSeparator");
 		}
 		rm.writeClasses();
-		rm.write("><td");
+		rm.write(">");
+		
+		rm.write("<td");
 		rm.writeAttribute("id", oControl.getId("nodata-text"));
 		rm.writeAttribute("colspan", oControl.getColCount());
 		rm.addClass("sapMListTblCell sapMListTblCellNoData");
 		rm.writeClasses();
 		rm.write(">");
 		rm.writeEscaped(oControl.getNoDataText());
-		rm.write("</td></tr>");
+		rm.write("</td>");
+		
+		rm.write("</tr>");
 	};
 
 	return TableRenderer;

@@ -258,6 +258,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				onsapspace : function(oEvent) {
 					this.requestNewPage(oEvent);
 					oEvent.preventDefault();
+				},
+				onAfterRendering : function(oEvent) {
+					this._oTrigger.$().prop("tabindex", 0);
 				}
 			}, this));
 		},

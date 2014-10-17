@@ -55,6 +55,27 @@
 	var page = new sap.m.Page({
 		title : "Table",
 		enableScrolling : true,
+		footer: new sap.m.Toolbar({
+			content : [
+						new sap.m.Text({
+							text : "Items (5)",
+							wrapping : false
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							icon: "sap-icon://drop-down-list",
+							press : function() {
+								sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
+							}
+						}),
+						new sap.m.Button({
+							icon: "sap-icon://action-settings",
+							press : function() {
+								sap.m.MessageToast.show("Table personalization popup will be shown on press.");
+							}
+						})
+					]
+				}),
 		content : [oTable = new sap.m.Table("items", {
 			growing : false,
 			growingThreshold: 2,
@@ -170,12 +191,12 @@
 		unread : false,
 		vAlign : "Middle",
 		cells : [
-			new sap.m.Text({
-				text : "{name}",
+			new sap.m.Input({
+				value : "{name}",
 				wrapping : true
 			}),
-			new sap.m.Text({
-				text: "{qty}",
+			new sap.m.Input({
+				value: "{qty}",
 				wrapping : false
 			}),
 			new sap.m.Text({

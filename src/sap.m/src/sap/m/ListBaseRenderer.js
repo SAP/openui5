@@ -119,6 +119,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		// run hook method to finish building list
 		this.renderListEndAttributes(rm, oControl);
 	
+		// dummy after focusable area
+		rm.write("<div tabindex='0'");
+		rm.writeAttribute("id", oControl.getId("after"));
+		rm.write("></div>");
+		
 		// render growing delegate if available
 		if (bRenderItems && oControl._oGrowingDelegate) {
 			oControl._oGrowingDelegate.render(rm);
@@ -130,11 +135,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.writeEscaped(oControl.getFooterText());
 			rm.write("</footer>");
 		}
-	
-		// dummy after focusable area
-		rm.write("<div tabindex='0'");
-		rm.writeAttribute("id", oControl.getId("after"));
-		rm.write("></div>");
 	
 		// done
 		rm.write("</div>");
@@ -186,10 +186,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderNoData = function(rm, oControl) {
-		rm.write("<li id='" + oControl.getId("nodata") + "' class='sapMLIB sapMListNoData sapMLIBTypeInactive'>");
-		rm.write("<span id='" + oControl.getId("nodata-text") + "'>");
+		rm.write("<li");
+		rm.writeAttribute("tabindex", "-1");
+		rm.writeAttribute("id", oControl.getId("nodata"));
+		rm.addClass("sapMLIB sapMListNoData sapMLIBTypeInactive");
+		rm.writeClasses();
+		rm.write(">");
+		
+		rm.write("<span");
+		rm.writeAttribute("id", oControl.getId("nodata-text"));
+		rm.write(">");
 		rm.writeEscaped(oControl.getNoDataText(true));
-		rm.write("</span></li>");
+		rm.write("</span>");
+		
+		rm.write("</li>");
 	};
 
 	return ListBaseRenderer;
