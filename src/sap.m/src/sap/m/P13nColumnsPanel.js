@@ -257,8 +257,7 @@ sap.ui.define([ 'jquery.sap.global', './ColumnListItem', './P13nColumnItem', './
 		if (this._bSearchFilterActive) {
 			sSearchText = this._oSearchField.getValue();
 			if (sSearchText !== null) {
-				sSearchText = '^' + sSearchText;
-				regExp = new RegExp(sSearchText, 'igm'); // ^ = search from beginning; i = ignore case; g = global; m = multiline
+				regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
 			}
 		}
 
