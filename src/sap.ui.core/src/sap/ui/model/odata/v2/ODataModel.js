@@ -1574,7 +1574,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		sUrl = this.sServiceUrl	+ "/$batch";
 
-		if (this.aUrlParams) {
+		if (this.aUrlParams.length > 0) {
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
