@@ -88,18 +88,15 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			return null;
 		}
 		
-		if (key != jQuery.sap._FASTNAVIGATIONKEY && key.indexOf("sap-ui") == 0) {
+		if (key == jQuery.sap._FASTNAVIGATIONKEY) {
+			value = /^\s*(x|true)\s*$/i.test(value) ? "true" : "false"; // normalize values
+		} else if (key.indexOf("sap-ui") == 0) {
 			jQuery.sap.log.error("CustomData with key " + key + " should be written to HTML of " + oRelated + " but the key is not valid (may not start with 'sap-ui').");
 			return null;
 		}
 		
-		var result = {key: "data-" + key, value: value};
+		return {key: "data-" + key, value: value};
 		
-		if (key == jQuery.sap._FASTNAVIGATIONKEY) {
-			result.value = (value && (value.trim().toLowerCase() == "x" || value.trim().toLowerCase() == "true")) ? "true" : "false";
-		}
-		
-		return result;
 	};
 	
 
