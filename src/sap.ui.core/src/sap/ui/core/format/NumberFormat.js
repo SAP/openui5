@@ -639,7 +639,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
-					sCldrFormat = sCldrFormat.replace(/\s/g, "");
+					// Note: CLDR uses a non-breaking space in the forma tstring 
+					sCldrFormat = sCldrFormat.replace(/[\s\u00a0]/g, "");
 					var match = sCldrFormat.match(/0+\.*0*/);
 					if (match) {
 						// determine unit -> may be on the beginning e.g. for he
