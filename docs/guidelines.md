@@ -282,7 +282,7 @@ Some of the target platforms of UI5 impose technical restrictions on the naming 
 Git Guidelines
 --------------
 
-Set the Git `core.autocrlf` configuration property to "false" (and make sure to use Unix-style linebreaks (LR-only))
+Set the Git `core.autocrlf` configuration property to "false" (and make sure to use Unix-style linebreaks (LF-only))
 
 The commit message consists of two or three parts, separated by empty lines:
 
@@ -293,7 +293,7 @@ The commit message consists of two or three parts, separated by empty lines:
 -   The summary line must be prefixed by `[FIX]` or `[FEATURE]` and should start with the control/component which was the main subject of the change
 -   Instead of FIX/FEATURE and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which are not supposed to be part of the release notes because they are not relevant for users of UI5
 -   The data section consists of name-value pairs
-    -   A mandatory `Change-Id` (note: this does not need to be supplied byexternal contributors)
+    -   A mandatory `Change-Id` (note: this does not need to be supplied by external contributors)
     -   Further information like `Bug-URL` (for GitHub-reported bugs; use the pull request URL when there is no bug report), `CSS` (for SAP-internally reported bugs), `BCS` for customer messages reported at SAP, and `CR-Id` ("Change Request", mandatory for maintenance codelines)
 -   A commit message can thus look like this:
 
