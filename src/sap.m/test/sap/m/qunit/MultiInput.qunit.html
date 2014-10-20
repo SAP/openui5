@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<title>Test Page for sap.ui.m.Input</title>
+<title>Test Page for sap.m.MultiInput</title>
 <script id="sap-ui-bootstrap"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
@@ -276,30 +276,6 @@
 		
 		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 	});
-	
-	test("test keyboard select all", function() {
-		var token1 = new sap.m.Token();
-		var token2 = new sap.m.Token();
-		var token3 = new sap.m.Token();
-		multiInput1.setTokens([token1, token2, token3]);
-		
-		multiInput1.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
-		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
-		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
-		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
-		
-		token1.setSelected(false);
-		token2.setSelected(false);
-		token3.setSelected(false);
-		
-		multiInput1.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
-		equals(token1.getSelected(), true, "Token1 got selected using metaKey+a");
-		equals(token2.getSelected(), true, "Token2 got selected using metaKey+a");
-		equals(token3.getSelected(), true, "Token3 got selected using metaKey+a");		
-	});
-
-	
-	
 	
 	test("test exit", function() {	
 		
