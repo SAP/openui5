@@ -641,10 +641,9 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		Slider.prototype.onsapincrease = function(oEvent) {
 			var fValue,
 				fNewValue;
+
 			// note: prevent document scrolling when arrow keys are pressed
-			if (oEvent.type == "sapincrease") {
-				oEvent.preventDefault();
-			}
+			oEvent.preventDefault();
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -686,10 +685,9 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		Slider.prototype.onsapdecrease = function(oEvent) {
 			var fValue,
 				fNewValue;
+
 			// note: prevent document scrolling when arrow keys are pressed
-			if (oEvent.type == 'sapdecrease') {
-				oEvent.preventDefault();
-			}
+			oEvent.preventDefault();
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -728,7 +726,24 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Slider.prototype.onsapplus = Slider.prototype.onsapincrease;
+		Slider.prototype.onsapplus = function(oEvent) {
+			var fValue,
+				fNewValue;
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			if (this.getEnabled()) {
+
+				fValue = this.getValue();
+				this.stepUp(1);
+				fNewValue = this.getValue();
+
+				if (fValue < fNewValue) {
+					this._fireChangeAndLiveChange({ value: fNewValue });
+				}
+			}
+		};
 
 		/**
 		 * Handle when "-" is pressed.
@@ -736,7 +751,24 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Slider.prototype.onsapminus = Slider.prototype.onsapdecrease;
+		Slider.prototype.onsapminus = function(oEvent) {
+			var fValue,
+				fNewValue;
+
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+
+			if (this.getEnabled()) {
+
+				fValue = this.getValue();
+				this.stepDown(1);
+				fNewValue = this.getValue();
+
+				if (fValue > fNewValue) {
+					this._fireChangeAndLiveChange({ value: fNewValue });
+				}
+			}
+		};
 
 		/**
 		 * Handle when page up is pressed.
