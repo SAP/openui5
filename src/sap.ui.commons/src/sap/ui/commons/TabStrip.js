@@ -116,6 +116,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	
 	
+	TabStrip.prototype.init = function() {
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+	};
+	
 	TabStrip.prototype.onAfterRendering = function() {
 		// find a collection of all tabs
 		var oFocusRef = this.getFocusDomRef(),
