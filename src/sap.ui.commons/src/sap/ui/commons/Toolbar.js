@@ -98,6 +98,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oItemDelegate = {
 			onAfterRendering: jQuery.proxy(that._itemRendered, that)
 		};
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	Toolbar.prototype.onBeforeRendering = function() {
