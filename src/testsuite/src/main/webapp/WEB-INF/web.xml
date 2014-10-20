@@ -8,6 +8,15 @@
 	<display-name>testsuite</display-name>
 
 	<filter>
+		<filter-name>ConcatFilter</filter-name>
+		<filter-class>com.sap.openui5.ConcatFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>ConcatFilter</filter-name>
+		<url-pattern>/resources/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>LessFilter</filter-name>
 		<filter-class>com.sap.openui5.LessFilter</filter-class>
 	</filter>

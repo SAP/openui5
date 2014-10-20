@@ -266,7 +266,7 @@ public class LessFilter implements Filter{
    * @param compressCSS true, if CSS should be compressed
    * @param compressJSON true if JSON should be compressed
    */
-  private void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
+  private synchronized void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
     
     try {
       
