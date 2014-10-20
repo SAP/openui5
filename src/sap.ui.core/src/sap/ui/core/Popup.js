@@ -816,7 +816,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._addFocusEventListeners();
 		}
 		
-		this._$().on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
+		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
 
 		//autoclose implementation for mobile or desktop browser in touch mode
 		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
@@ -1001,7 +1001,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._removeFocusEventListeners();
 		}
 		
-		this._$().off("keydown", this._F6NavigationHandler);
+		this._$(false, true).off("keydown", this._F6NavigationHandler);
 	
 		//deregister the autoclose handler for mobile
 		if (this.touchEnabled) {
@@ -2384,7 +2384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._addFocusEventListeners();
 		}
 		
-		this._$().on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
+		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
 	};
 	
 	/**
@@ -2405,7 +2405,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 			this._removeFocusEventListeners();
 		}
 		
-		this._$().off("keydown", this._F6NavigationHandler);
+		this._$(false, true).off("keydown", this._F6NavigationHandler);
 	};
 	
 	/**
