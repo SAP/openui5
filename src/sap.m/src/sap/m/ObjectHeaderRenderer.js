@@ -329,6 +329,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.writeAttribute("id", oOH.getId() + "-title");
 			rm.addClass("sapMOHTitle");
 			if (oOH.getTitleActive()) {
+				rm.writeAttribute("tabindex", "0");
 				rm.addClass("sapMOHTitleActive");
 			}
 			if (oOH.getShowTitleSelector()) {
@@ -393,6 +394,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.write(">");
 			rm.write("<span");
 			rm.writeAttribute("id", oOH.getId() + "-intro");
+			if (oOH.getIntroActive()) {
+				rm.writeAttribute("tabindex", "0");
+			}
 			rm.write(">");
 			rm.writeEscaped(oOH.getIntro());
 			rm.write("</span>");
@@ -423,6 +427,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			rm.write("<div"); // Start icon container
 			rm.addClass("sapMOHIcon");
 			if (oOH.getIconActive()) {
+				rm.writeAttribute("tabindex", "0");
 				rm.addClass("sapMPointer");
 			}
 			rm.writeClasses();
