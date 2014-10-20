@@ -274,7 +274,23 @@
 		equals(token2.getSelected(), true, "Token2 got selected using metaKey+a");
 		equals(token3.getSelected(), true, "Token3 got selected using metaKey+a");		
 		
-		oTokenizer.destroy()
+		oTokenizer.removeAllTokens();
+	});
+
+
+	test("token editable in tokenizer", function() {
+		
+		var oToken1 = new sap.m.Token({text:"Dente", editable: false});
+		var oToken2 = new sap.m.Token({text:"Friese", editable: false});
+		var oToken3 = new sap.m.Token({text:"Mann", editable: true});
+
+		tokenizer1.setTokens([oToken1, oToken2, oToken3]);
+
+		equals(oToken1.$().hasClass("sapMTokenReadOnly"), true, "token1 is not editable");
+		equals(oToken2.$().hasClass("sapMTokenReadOnly"), true, "token2 is not editable");
+		equals(oToken3.$().hasClass("sapMTokenReadOnly"), false, "token3 is editable");
+		
+		tokenizer1.removeAllTokens();
 	});
 
 </script>
