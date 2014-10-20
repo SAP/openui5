@@ -224,6 +224,13 @@ Licensor: Mozilla Developer Network
 Website: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/ReduceRight
 License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
+Component: blanket.js 1.1.5
+Licensor: Alex Seville
+Website: http://blanketjs.org/
+License: MIT License
+<year> = 2013
+<copyright holders>: Alex Seville
+
 Component: crossroads.js 0.12.0
 Licensor: Miller Medeiros
 Website: http://github.com/millermedeiros/crossroads.js/
