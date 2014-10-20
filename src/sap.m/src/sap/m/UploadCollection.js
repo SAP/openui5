@@ -100,6 +100,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		events : {
 	
 			/**
+			 * Event is fired when file(s) selected.
+			 */
+			change : {
+				parameters : {
+	
+					/**
+					 * An unique Id of the attached document.
+					 */
+					documentId : {type : "string"}
+				}
+			}, 
+	
+			/**
 			 * Event is fired when a file delete event occurs - typically by clicking at the delete icon.
 			 */
 			fileDeleted : {
@@ -733,35 +746,35 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/* Handle FileUploader events                                  */
 	/* =========================================================== */
-	UploadCollection.prototype._onUploadAborted = function(oEvent) {
-		// TODO not implemented, call abort in FileUploader
-	};
-	
 	UploadCollection.prototype._onUploadChange = function(oEvent) {
-		// nothing to do
+		this.fireChange(oEvent);
 	};
-	
-	UploadCollection.prototype._onUploadComplete = function(oEvent) {
-		this.fireUploadComplete(oEvent);
-	};
-	
 	UploadCollection.prototype._onUploadFileAllowed = function(oEvent) {
-		// nothing to do
+		// TODO not implemented
 	};
-	
+	UploadCollection.prototype._onUploadFileDeleted = function(oEvent) {
+		// TODO not implemented
+	};
+	UploadCollection.prototype._onUploadFileRenamed = function(oEvent) {
+		// TODO not implemented
+	};	
 	UploadCollection.prototype._onUploadFileSizeExceed = function(oEvent){
 		this.fireFileSizeExceed(oEvent);
 		MessageToast.show(oEvent.getId());
 	};
-	UploadCollection.prototype._onUploadProgress = function(oEvent) {
-		// TODO not implemented
-	};
-	
 	UploadCollection.prototype._onUploadTypeMissmatch = function(oEvent) {
 		this.fireTypeMissmatch(oEvent);
 		MessageToast.show(oEvent.getId());
 	};
-	
+	UploadCollection.prototype._onUploadAborted = function(oEvent) {
+		// TODO not implemented
+	};
+	UploadCollection.prototype._onUploadComplete = function(oEvent) {
+		this.fireUploadComplete(oEvent);
+	};
+	UploadCollection.prototype._onUploadProgress = function(oEvent) {
+		// TODO not implemented
+	};
 	
 	/**
 	 * Access and initialization for the FileUploader
@@ -770,9 +783,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	var that = this;
 		if (!this._oFileUploader) {
 			this._oFileUploader = new sap.ui.unified.FileUploader({
-				buttonText : "Upload",
+				buttonOnly : true,
+				buttonText : " ",
 				enabled : this.getUploadEnabled(),
 				fileType : this.getFileType(),
+				icon : "sap-icon://add",
+				iconFirst : false,
 				maximumFilenameLength : this.getMaximumFilenameLength(),
 				maximumFileSize : this.getMaximumFileSize(),
 				mimeType : this.getMimeType(),
@@ -781,28 +797,33 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				sameFilenameAllowed : this.getSameFilenameAllowed(),
 				uploadOnChange : true,
 				uploadUrl : this.getUploadUrl(),
-				buttonOnly : true,
 				sendXHR : true, // TODO check browser version (set true for all browser except IE8, IE9)
-				uploadAborted : function(oEvent) { // only supported with property sendXHR set to true
-					UploadCollection.prototype._onUploadAborted.apply(that, [oEvent]);
-				},
 				change : function(oEvent) {
 					UploadCollection.prototype._onUploadChange.apply(that, [oEvent]);
-				},
-				uploadComplete : function(oEvent) {
-					UploadCollection.prototype._onUploadComplete.apply(that, [oEvent]);
 				},
 				fileAllowed : function(oEvent) {
 					UploadCollection.prototype._onUploadFileAllowed.apply(that, [oEvent]);
 				},
+				fileDeleted : function(oEvent) {
+					UploadCollection.prototype._onUploadFileDeleted.apply(that, [oEvent]);
+				},
+				fileRenamed : function(oEvent) {
+					UploadCollection.prototype._onUploadFileRenamed.apply(that, [oEvent]);
+				},
 				fileSizeExceed : function(oEvent) {
 					UploadCollection.prototype._onUploadFileSizeExceed.apply(that, [oEvent]);
 				},
-				uploadProgress : function(oEvent) { // only supported with property sendXHR set to true
-					UploadCollection.prototype._onUploadProgress.apply(that, [oEvent]);
-				},
 				typeMissmatch : function(oEvent) {
 					UploadCollection.prototype._onUploadTypeMissmatch.apply(that, [oEvent]);
+				},
+				uploadAborted : function(oEvent) { // only supported with property sendXHR set to true
+					UploadCollection.prototype._onUploadAborted.apply(that, [oEvent]);
+				},
+				uploadComplete : function(oEvent) {
+					UploadCollection.prototype._onUploadComplete.apply(that, [oEvent]);
+				},
+				uploadProgress : function(oEvent) { // only supported with property sendXHR set to true
+					UploadCollection.prototype._onUploadProgress.apply(that, [oEvent]);
 				}
 			});
 		}

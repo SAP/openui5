@@ -132,25 +132,13 @@
 		return day + '.' + month + '.' + year;
 	};
 
-	var fnProcessUpload = function(oEvent) {
-		if (oEvent) {
-			var oData = oModel.getData();
-			var oItem = {
-				"contributor" : "You",
-				"documentId" : new Date().getTime().toString(),
-				"fileName" : oEvent.getParameters().oSource.mProperties.value,
-				"fileSize" : 80, // TODO get file size
-				"mimeType" : "",
-				"thumbnailUrl" : "",
-				"uploadedDate" : fnCurrentDate(),
-				"url" : "myUrl"
-			};
-			oData.items.unshift(oItem);
-			oModel.setData(oData);
-			sap.m.MessageToast.show("Upload successful");
-		}
+	/* =========================================================== */
+	/* Handle FileUploader events                                  */
+	/* =========================================================== */
+	var fnChange = function(oEvent){
 	};
-
+	var fnFileAllowed = function(oEvent) {
+	};
 	var fnFileDeleted = function(oEvent) {
 		var oData = oModel.getData();
 		var aItems = oData.items;
@@ -167,7 +155,6 @@
 			oModel.setData(oData);
 		};
 	};
-
 	var fnFileRenamed = function(oEvent) {
 		var oData = oModel.getData();
 		var aItems = oData.items;
@@ -180,7 +167,40 @@
 			};
 		});
 		oModel.setData(oData);
-	}
+	};
+	var fnFileSizeExceed = function(oEvent) {
+	};
+	var fnTypeMissmatch = function(oEvent) {
+	};
+	var fnUploadAborted = function(oEvent) {
+	};
+	var fnUploadComplete = function(oEvent) {
+		if (oEvent) {
+			var oData = oModel.getData();
+			var oItem = {};
+			var sUploadedFiles = oEvent.getParameters().oSource.mProperties.value;
+			sUploadedFiles = sUploadedFiles.substring(1, sUploadedFiles.length - 2);
+			var aUploadedFiles = sUploadedFiles.split(/\" "/);
+			for (var i = 0; i < aUploadedFiles.length; i++) {
+				oItem = {
+					"contributor" : "You",
+					"documentId" : new Date().getTime().toString(),
+					"fileName" : aUploadedFiles[i],
+					"fileSize" : 10, // TODO get file size
+					"mimeType" : "",
+					"thumbnailUrl" : "",
+					"uploadedDate" : fnCurrentDate(),
+					"url" : "myUrl"
+				};
+				oData.items.unshift(oItem);
+			};
+			oModel.setData(oData);
+			sap.m.MessageToast.show("Upload successful");
+		}
+	};
+	var fnUploadProgress = function(oEvent) {
+	};
+
 	
 	var oItemTemplate = new sap.m.UploadCollectionItem({
 		contributor : "{contributor}",
@@ -202,9 +222,17 @@
 			path : "/items",
 			template : oItemTemplate
 		},
-		uploadComplete : fnProcessUpload,
+		multiple : true,
+		// events
+		change : fnChange,
+		fileAllowed : fnFileAllowed,
 		fileDeleted : fnFileDeleted,
 		fileRenamed : fnFileRenamed,
+		fileSizeExceed : fnFileSizeExceed,
+		typeMissmatch : fnTypeMissmatch,
+		uploadAborted : fnUploadAborted,
+		uploadComplete : fnUploadComplete,
+		uploadProgress : fnUploadProgress
 	});
 	// 	}).addStyleClass("sapUiSizeCompact");
 
