@@ -101,6 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	
 			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 	
+			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		};
 	
 		Calendar.prototype.exit = function(){
