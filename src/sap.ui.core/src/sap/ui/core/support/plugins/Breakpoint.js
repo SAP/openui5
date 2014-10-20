@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				var aModules = jQuery.sap.getAllDeclaredModules();
 	
 				for (var i = 0; i < aModules.length; i++) {
-					if (aClasses.indexOf(aModules[i]) > -1) {
+					if (jQuery.inArray(aModules[i], aClasses) > -1) {
 						continue;
 					}
 	

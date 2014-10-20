@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			return false;
 		}
 		// children exist if it is not the rightmost grouped column or there is at least one further level with an ungrouped groupable columns.
-		return this.aMaxAggregationLevel.indexOf(this.aAggregationLevel[iContextLevel - 1]) < this.aMaxAggregationLevel.length - 1;
+		return jQuery.inArray(this.aAggregationLevel[iContextLevel - 1], this.aMaxAggregationLevel) < this.aMaxAggregationLevel.length - 1;
 	};
 	
 	AnalyticalBinding.prototype.hasMeasures = function() {
@@ -442,7 +442,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 				}
 				if (aColumns[i].grouped == true) {
-					if (this.getSortablePropertyNames().indexOf(oDimension.getName()) == -1) {
+					if (jQuery.inArray(oDimension.getName(), this.getSortablePropertyNames()) == -1) {
 						jQuery.sap.log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
 					}
 					oDimensionDetails.grouped = true;
@@ -924,7 +924,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
+						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -935,7 +935,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for ( var i in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[i])) != -1) {
+				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[i], aSelectedUnitPropertyName)) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -1230,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
+						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -1241,7 +1241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// exclude those unit properties from the selected that are included in the current aggregation level
 			for ( var i in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[i])) != -1) {
+				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[i], aSelectedUnitPropertyName)) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -1308,7 +1308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					if (!sGroupIdAtParentLevel) {
 						jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
 					}
-					var iStartIndex = this.mKey[sGroupIdAtParentLevel].indexOf(this.mOwnKey[sGroupIdAtLevel]);
+					var iStartIndex = jQuery.inArray(this.mOwnKey[sGroupIdAtLevel], this.mKey[sGroupIdAtParentLevel]);
 					if (iStartIndex == -1) {
 						jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
 					}
@@ -1916,7 +1916,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				&& (that.mKey[oGroupMembersRequestDetails.sGroupId] === undefined || that.mKey[oGroupMembersRequestDetails.sGroupId][oRequestDetails.iStartIndex - 1] === undefined)) {
 				// pendant to bIncompleteGroupMembersSet: set the finalLength of the previous group
 				var sParentGroupId = that._getParentGroupId(oGroupMembersRequestDetails.sGroupId);
-				var iPositionInParentGroup = that.mKey[sParentGroupId].indexOf(that.mOwnKey[oGroupMembersRequestDetails.sGroupId]);
+				var iPositionInParentGroup = jQuery.inArray(that.mOwnKey[oGroupMembersRequestDetails.sGroupId], that.mKey[sParentGroupId]);
 				if (iPositionInParentGroup == -1) {
 					jQuery.sap.log.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
 				}
@@ -2202,7 +2202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
 						return oNO_MISSING_MEMBER;
 					}
-					var iGroupIndex = this.mKey[sParentGroupId].indexOf(sGroupKey);
+					var iGroupIndex = jQuery.inArray(sGroupKey, this.mKey[sParentGroupId]);
 					if (iGroupIndex == -1) {
 						jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
 						return oNO_MISSING_MEMBER;
@@ -2901,7 +2901,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var fRender = function (aMsg) {
 			var s = "";
 			for (var i = 0; i < aMsg.length; i++) {
-				if (!aGroupId || aGroupId.indexOf (aMsg[i].group) != -1) s += fRenderMessage(aMsg[i]);
+				if (!aGroupId || jQuery.inArray(aMsg[i].group, aGroupId) != -1) s += fRenderMessage(aMsg[i]);
 			}
 			return s;
 		} 
