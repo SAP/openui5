@@ -270,7 +270,7 @@ Licensor: Various
 Website: http://code.google.com/p/google-caja/
 License: Apache License 2.0
 
-Component: google-code-prettify 20080701
+Component: google-code-prettify 20130304
 Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0

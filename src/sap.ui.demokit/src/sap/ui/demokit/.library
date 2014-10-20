@@ -26,6 +26,23 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
       <exclude name="sap.ui.demokit.js." />
     </jscoverage>
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <module-infos>
+        <raw-module name="sap/ui/demokit/js/highlight-query-terms.js" depends="sap/ui/thirdparty/jquery/jquery-1.11.1.js"/>
+        <raw-module name="sap/ui/demokit/js/google-code-prettify/lang-css.js" depends="sap/ui/demokit/js/google-code-prettify/prettify.js" />
+        <raw-module name="sap/ui/demokit/js/google-code-prettify/prettify.js"/>
+        <raw-module name="sap/ui/demokit/js/google-code-prettify/run_prettify.js"/>
+      </module-infos>
+      <all-in-one>
+        <exclude name="sap/ui/demokit/js/google-code-prettify/run_prettify.js" />
+      </all-in-one>
+    </packaging>
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+      <lib name="google-code-prettify" displayName="google-code-prettify" homepage="https://code.google.com/p/google-code-prettify/">
+        <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="./js/licenses/google-code-prettify-Apache-LICENSE.txt" />
+      </lib>
+    </thirdparty>
   </appData>
 
 </library>
