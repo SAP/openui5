@@ -26,6 +26,7 @@
 				fileType: ["pptx", "txt", "js"],
 				maximumFileSize: 2,
 				uploadOnChange: false,
+				multiple: true,
 				buttonText: "Choose!",
 				additionalData: "abc=123&test=456",
 				uploadProgress: function (oEvent) {
@@ -52,7 +53,7 @@
 				}
 			});
 
-			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the local server: ", labelFor: oFileUploader1});
+			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the local server (multiple allowed): ", labelFor: oFileUploader1});
 			oLabel.placeAt("target1");
 			oFileUploader1.placeAt("target1");
 

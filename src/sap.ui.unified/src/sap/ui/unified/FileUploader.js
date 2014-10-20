@@ -1031,8 +1031,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			if (iIndex >= 0) {
 				sValue = sValue.substring(iIndex + 1);
 			}
-			if (this.getMultiple() && !sap.ui.Device.browser.internet_explorer) {
-				sValue = sFileString;
+			if (this.getMultiple()) {
+				//multiple is not supported in IE <= 9
+				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					sValue = sFileString;
+				}
 			}
 
 			//sValue has to be filled to avoid clearing the FilePath by pressing cancel
@@ -1081,14 +1084,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			aFileUpload.push('<input ');
 			aFileUpload.push('type="file" ');
 			if (this.getName()) {
-				if (this.getMultiple() && !sap.ui.Device.browser.internet_explorer) {
-					aFileUpload.push('name="' + this.getName() + '[]" ');
+				if (this.getMultiple()) {
+					//multiple is not supported in IE <= 9
+					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+						aFileUpload.push('name="' + this.getName() + '[]" ');
+					}
 				} else {
 					aFileUpload.push('name="' + this.getName() + '" ');
 				}
 			} else {
-				if (this.getMultiple() && !sap.ui.Device.browser.internet_explorer) {
-					aFileUpload.push('name="' + this.getId() + '[]" ');
+				if (this.getMultiple()) {
+					//multiple is not supported in IE <= 9
+					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+						aFileUpload.push('name="' + this.getId() + '[]" ');
+					}
 				} else {
 					aFileUpload.push('name="' + this.getId() + '" ');
 				}
@@ -1114,8 +1123,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			if (!this.getEnabled()) {
 				aFileUpload.push('disabled="disabled" ');
 			}
-			if (this.getMultiple() && !sap.ui.Device.browser.internet_explorer) {
-				aFileUpload.push('multiple ');
+			if (this.getMultiple()) {
+				//multiple is not supported in IE <= 9
+				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					aFileUpload.push('multiple ');
+				}
 			}
 			if (this.getMimeType() && window.File) {
 				var aMimeTypes = this.getMimeType();
