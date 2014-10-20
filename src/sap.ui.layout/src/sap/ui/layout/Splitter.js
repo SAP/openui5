@@ -896,16 +896,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Connects the keyboard event listeners so resizing via keyboard will be possible
 	 */
 	Splitter.prototype._enableKeyboardListeners = function() {
-		this.onsapincrease          = this._keyListeners.increase;
-		this.onsapincreasemodifiers = this._keyListeners.increase;
-		this.onsapdecrease          = this._keyListeners.decrease;
-		this.onsapdecreasemodifiers = this._keyListeners.decrease;
-		this.onsappageup            = this._keyListeners.decreaseMore;
-		this.onsappagedown          = this._keyListeners.increaseMore;
-		this.onsapend               = this._keyListeners.max;
-		this.onsapendmodifiers      = this._keyListeners.max;
-		this.onsaphome              = this._keyListeners.min;
-		this.onsaphomemodifiers     = this._keyListeners.min;
+		this.onsapright              = this._keyListeners.increase;
+		this.onsapdown               = this._keyListeners.increase;
+		this.onsapleft               = this._keyListeners.decrease;
+		this.onsapup                 = this._keyListeners.decrease;
+		this.onsappageup             = this._keyListeners.decreaseMore;
+		this.onsappagedown           = this._keyListeners.increaseMore;
+		this.onsapend                = this._keyListeners.max;
+		this.onsaphome               = this._keyListeners.min;
 
 		this._keyboardEnabled = true;
 	};
