@@ -5,6 +5,7 @@
  */
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.if_sample.Component");
 
+
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.if_sample.Component", {
 	metadata: "json", //TODO Use component metadata from manifest file
 
@@ -48,3 +49,25 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.if_sample.Compon
 		return oLayout;
 	}
 });
+
+
+/**
+ * A very simple formatter helping to interpret the annotations when pre-processing the view.
+ *
+ * @param {object} oRawValue
+ *    the value in the annotations
+ * @returns {string}
+ *    the value to write into the processed XML
+ */
+sap.ui.core.sample.ViewTemplate.if_sample.Component.help = function (oRawValue) {
+	if (!oRawValue) {
+		return oRawValue;
+	}
+	if (oRawValue.String) {
+		return oRawValue.String;
+	}
+	if (oRawValue.Path) {
+		return "{" + oRawValue.Path + "}";
+	}
+	return oRawValue;
+};
