@@ -297,7 +297,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
 
 			// set the page size
-			this._oItemNavigation.setPageSize(20);
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/**
