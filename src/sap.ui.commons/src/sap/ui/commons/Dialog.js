@@ -250,16 +250,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Dialog.prototype.init = function() {
-	   // do something for initialization...
-	   this.oPopup = new Popup(this, true, true);
-	   var eDock = Popup.Dock;
-	   this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
+		// do something for initialization...
+		this.oPopup = new Popup(this, true, true);
+		var eDock = Popup.Dock;
+		this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
 	
-	   this._minWidth = 64; // the technical minWidth, not the one set via API; will be calculated after rendering
-	   this._minHeight = 48; // the technical minHeight, not the one set via API; will be calculated after rendering
-	   // TODO: re-calculate after theme switch?!!
+		this._minWidth = 64; // the technical minWidth, not the one set via API; will be calculated after rendering
+		this._minHeight = 48; // the technical minHeight, not the one set via API; will be calculated after rendering
+		// TODO: re-calculate after theme switch?!!
 	
-	   this.allowTextSelection(false);
+		this.allowTextSelection(false);
 	};
 	
 	Dialog.prototype.setInitialFocus = function(sId) {
@@ -375,6 +375,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Dialog.prototype._handleOpened = function() {
+		// Make sure the dom content is shown (in the static area)
+		this.$().show();
+
 		var sInitFocus = this.getInitialFocus(),
 		oFocusCtrl;
 		if (sInitFocus && (oFocusCtrl = sap.ui.getCore().getControl(sInitFocus))) { // an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
@@ -444,6 +447,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this.fireClosed(this._oRect);
 		this.close();
+		// Make sure the dom content is not shown any more (in the static area)
+		this.$().hide();
 	};
 	
 	/**
