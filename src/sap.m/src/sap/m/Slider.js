@@ -641,9 +641,10 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		Slider.prototype.onsapincrease = function(oEvent) {
 			var fValue,
 				fNewValue;
-
 			// note: prevent document scrolling when arrow keys are pressed
-			oEvent.preventDefault();
+			if (oEvent.type == "sapincrease") {
+				oEvent.preventDefault();
+			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -685,9 +686,10 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		Slider.prototype.onsapdecrease = function(oEvent) {
 			var fValue,
 				fNewValue;
-
 			// note: prevent document scrolling when arrow keys are pressed
-			oEvent.preventDefault();
+			if (oEvent.type == 'sapdecrease') {
+				oEvent.preventDefault();
+			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -726,7 +728,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Slider.prototype.onsapexpand = Slider.prototype.onsapincrease;
+		Slider.prototype.onsapplus = Slider.prototype.onsapincrease;
 
 		/**
 		 * Handle when "-" is pressed.
@@ -734,7 +736,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		Slider.prototype.onsapcollapse = Slider.prototype.onsapdecrease;
+		Slider.prototype.onsapminus = Slider.prototype.onsapdecrease;
 
 		/**
 		 * Handle when page up is pressed.
