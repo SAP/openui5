@@ -492,7 +492,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oNextSelectableItem,
-				aSelectableItems = this.getSelectableItems();
+				aSelectableItems = this.getSelectableItems(),
+				oDomRef = this.getFocusDomRef(),
+				iSelectionStart = oDomRef.selectionStart;
 
 			oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
 
@@ -500,7 +502,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.updateDomValue(oNextSelectableItem.getText());
 				this.setSelection(oNextSelectableItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				this.selectText(0, this.getFocusDomRef().value.length);
+
+				if (!this.isFiltered()) {
+					iSelectionStart = 0;
+				}
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
 			}
 
 			this.scrollToItem(this.getList().getSelectedItem());
@@ -528,7 +535,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oPrevSelectableItem,
-				aSelectableItems = this.getSelectableItems();
+				aSelectableItems = this.getSelectableItems(),
+				oDomRef = this.getFocusDomRef(),
+				iSelectionStart = oDomRef.selectionStart;
 
 			oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
 
@@ -536,7 +545,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.updateDomValue(oPrevSelectableItem.getText());
 				this.setSelection(oPrevSelectableItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				this.selectText(0, this.getFocusDomRef().value.length);
+
+				if (!this.isFiltered()) {
+					iSelectionStart = 0;
+				}
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
 			}
 
 			this.scrollToItem(this.getList().getSelectedItem());
@@ -881,6 +895,19 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(vItem, { suppressInvalidate: true });
 			}
+		};
+
+		/*
+		 * Determines whether the list is filtered out from the input field.
+		 *
+		 * @returns {boolean} Whether the list is filtered out.
+		 * @protected
+		 * @since 1.26.0
+		 * @name sap.m.ComboBox#isFiltered
+		 * @function
+		 */
+		ComboBox.prototype.isFiltered = function() {
+			return this.getVisibleItems().length !== this.getItems().length;
 		};
 
 		/**
