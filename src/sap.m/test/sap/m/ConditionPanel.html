@@ -82,7 +82,7 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10"}, {key: "CompanyName", text: "Name", type: "text"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10", tooltip : "Company Code"}, {key: "CompanyName", text: "Name", type: "text", isDefault: true}, {key: "CompanyDate", text: "Date", type: "date"}]);
  			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.BT, 
 				                     		sap.m.P13nConditionOperation.EQ, 
 		                             		sap.m.P13nConditionOperation.Contains, 
