@@ -375,6 +375,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		this._oContentDelegate = {
 			onAfterRendering: this._onAfterContentRendering
 		};
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	Toolbar.prototype.onBeforeRendering = function() {
