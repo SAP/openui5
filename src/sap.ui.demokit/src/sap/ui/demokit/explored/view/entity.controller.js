@@ -187,7 +187,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 				oProp.typeText = this._formatTypeText(oProp.type);
 				oProp.typeNav = this._formatTypeNav(oProp.type);
 				oProp.type = this._formatType(oProp.type);
-				oProp.defaultValue = (oProp.defaultValue) ? oProp.defaultValue.replace("empty/undefined", "-") : "";
+				oProp.defaultValue = (oProp.defaultValue) ? String(oProp.defaultValue).replace("empty/undefined", "-") : "";
 				oData.properties.push(oProp);
 			}
 		}
@@ -341,15 +341,22 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 		"sap.ui.core.any",
 		"sap.ui.core.object",
 		"sap.ui.core.function",
-		"sap.ui.core.number",
+		"sap.ui.core.number", // TODO discuss with Thomas, type does not exist
 		"sap.ui.core.float",
 		"sap.ui.core.int",
 		"sap.ui.core.boolean",
 		"sap.ui.core.string",
-		"sap.ui.core.URI",
-		"sap.ui.core.ID",
+		"sap.ui.core.URI", // TODO discuss with Thomas, type is not a base type (it has documentation)
+		"sap.ui.core.ID", // TODO discuss with Thomas, type is not a base type (it has documentation)
 		"sap.ui.core.void",
-		"sap.ui.core.CSSSize"
+		"sap.ui.core.CSSSize", // TODO discuss with Thomas, type is not a base type (it has documentation)
+		"any",
+		"object",
+		"function",
+		"float",
+		"int",
+		"boolean",
+		"string"
 	],
 	_formatTypeNav : function (sType) {
 		return this._baseTypes.indexOf(sType) === -1;

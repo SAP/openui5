@@ -30,6 +30,24 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	//chain the prototypes
 	ManagedObjectMetadata.prototype = jQuery.sap.newObject(Metadata.prototype);
 	
+	var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
+	var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
+
+	/**
+	 * Guess a singular name for a given plural name.
+	 * 
+	 * This method is not guaranteed to return a valid result. If the result is not satisfying, 
+	 * the singular name for an aggregation/association should be specified in the class metadata.
+	 * 
+	 * @private
+	 */
+	ManagedObjectMetadata._guessSingularName = function(sName) {
+		return sName.replace(rPlural, function($,sPlural) {
+			var vRepl = mSingular[sPlural.toLowerCase()];
+			return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
+		});
+	};
+	
 	/**
 	 * @private
 	 * @name sap.ui.base.ManagedObjectMetadata#applySettings
@@ -40,9 +58,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		var oStaticInfo = oClassInfo.metadata;
 	
 		Metadata.prototype.applySettings.call(this, oClassInfo);
-	
-		var rPlural = /(children|ies|ves|oes|ses|ches|shes|xes|s)$/i;
-		var mSingular = {'children' : -3, 'ies' : 'y', 'ves' : 'f', 'oes' : -2, 'ses' : -2, 'ches' : -2, 'shes' : -2, 'xes' : -2, 's' : -1 };
 	
 		function normalize(mInfoMap, sDefaultName, oDefaultValues) {
 			var sName,oInfo;
@@ -58,10 +73,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 				oInfo.name = sName;
 				// if info contains a multiple flag but no singular name, calculate one
 				if ( oInfo.multiple === true && !oInfo.singularName) {
-					oInfo.singularName = sName.replace(rPlural, function($,sPlural) {
-						var vRepl = mSingular[sPlural.toLowerCase()];
-						return typeof vRepl === "string" ? vRepl : sPlural.slice(0,vRepl);
-					});
+					oInfo.singularName = ManagedObjectMetadata._guessSingularName(sName);
 				}
 				mInfoMap[sName] = oInfo;
 			}

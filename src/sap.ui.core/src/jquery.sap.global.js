@@ -1424,7 +1424,8 @@
 				'sap/ui/thirdparty/require.js': true,
 				'sap/ui/thirdparty/SecondLevelDomains.js': true,
 				'sap/ui/thirdparty/signals.js': true,
-				'sap/ui/thirdparty/URI.js' : true
+				'sap/ui/thirdparty/URI.js' : true,
+				'sap/ui/demokit/js/esprima.js' : true
 		  },
 		  
 		/**
