@@ -1528,6 +1528,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 				}
 				that.checkUpdate(false, mGetEntities);
+
+				that._updateChangedEntities(mChangeEntities);
+
 			}
 			if (!fnSuccess) {
 				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
@@ -1844,8 +1847,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		this._updateETag(oRequest, oResponse);
 
-		//TODO: check wether changeKey will survive refactoring
-	
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
@@ -2679,22 +2680,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 
 	/*
-	 * updateRequestQueue
+	 * updateChangedEntities
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_updateRequestQueue
+	 * @name sap.ui.model.odata.v2.ODataModel#_updateChangedEntities
+	 * @param {map} mChangedEntities Map of changedEntities
 	 * @function
 	 */
-	ODataModel.prototype._updateRequestQueue = function(oResponse) {
+	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
 		var that = this;
 
-		jQuery.each(this.oRequestQueue, function(sKey,oCurrentRequest) {
-			if (oCurrentRequest.requestUri === oResponse.requestUri && sKey !== that.sChangeKey) {
-				delete that.oRequestQueue[sKey];
-				delete that.oData[sKey];
-				delete that.mContexts["/" + sKey];
-			} else if (that.sChangeKey && sKey === that.sChangeKey) {
-				delete that.oRequestQueue[sKey];
-				that.sChangeKey = null;
+		jQuery.each(mChangedEntities, function(sKey, bChanged) {
+			if (sKey in that.mChangedEntities) {
+				delete that.mChangedEntities[sKey];
 			}
 		});
 	};
