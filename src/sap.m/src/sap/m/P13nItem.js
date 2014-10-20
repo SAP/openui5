@@ -33,7 +33,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			/**
 			 * tbd
 			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : null}
+			visible : {type : "boolean", group : "Misc", defaultValue : null},
+
+			/**
+			 * tbd
+			 */
+			type : {type : "string", group : "Misc", defaultValue : "text"},
+			
+			/**
+			 * tbd
+			 */
+			maxlength : {type : "string", group : "Misc", defaultValue : null}
 		}
 	}});
 	

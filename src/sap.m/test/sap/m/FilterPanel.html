@@ -21,6 +21,7 @@
 <script type="text/javascript">	
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nFilterPanel");
+	jQuery.sap.require("sap.ui.core.format.DateFormat");
 	
 	var oCondition1= { "key": "i1", "text": "CompanyCode: a..z"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": "a", "value2": "z"};
 	var oCondition2= { "key": "i2", "text": "CompanyCode: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyCode", "value1": "foo", "value2": ""};
@@ -80,17 +81,21 @@
 					"text" : "Name"
 				}, {
 					"key" : "c1",
-					"text" : "Color"
+					"text" : "Date",
+					
+					"type" : "date" 
 				}, {
 					"key" : "c2",
-					"text" : "Number"
+					"text" : "Number",
+					"maxlength" : "10", 
+					"type" : "numeric"
 				}],
 				"filterItems" : [{
 					"key" : "f0",
-					"columnKey" : "c1",
+					"columnKey" : "c2",
 					"operation" : "BT",
-					"value1" : "a",
-					"value2" : "c"
+					"value1" : "1",
+					"value2" : "100"
 				}, {
 					"key" : "f1",
 					"columnKey" : "c0",
@@ -100,10 +105,10 @@
 				}, {
 					"key" : "f2",
 					"exclude": true,
-					"columnKey" : "c2",
+					"columnKey" : "c1",
 					"operation" : "EQ",
-					"value1" : "100",
-					"value2" : ""
+					"value1" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date()),
+					"value2" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
 				}]
 			};
 	
@@ -149,15 +154,17 @@
 			oFilterPanel.setModel(oModel);
 			oFilterPanel.bindItems("/items", new sap.m.P13nItem({
 				key : "{key}",
-				text : "{text}"
+				text : "{text}",
+				type : "{type}",
+				maxlength : "{maxlength}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key : "{key}",
 				exclude : "{exclude}",
+				columnKey : "{columnKey}",
 				operation : "{operation}",
 				value1 : "{value1}",
-				value2 : "{value2}",
-				columnKey : "{columnKey}"
+				value2 : "{value2}"
 			}));
 			
 			show(oFilterPanel, "Filter");
