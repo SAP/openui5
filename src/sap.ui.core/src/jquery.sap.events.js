@@ -1509,8 +1509,20 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	// CustomData attribute name for fast navigation groups (in DOM additional prefix "data-" is needed)
 	jQuery.sap._FASTNAVIGATIONKEY = "sap-ui-fastnavgroup";
 	
-	// Returns the nearest parent DomRef with attribute data-sap-ui-fastnavgroup="true" of the given DomRef. 
+	// Returns the nearest parent DomRef of the given DomRef with attribute data-sap-ui-customfastnavgroup="true". 
+	function findClosestCustomGroup(oRef) {
+		var $Group = jQuery(oRef).closest('[data-sap-ui-customfastnavgroup="true"]');
+		return $Group[0];
+	}
+	
+	// Returns the nearest parent DomRef of the given DomRef with attribute data-sap-ui-fastnavgroup="true" or
+	// (if available) the nearest parent with attribute data-sap-ui-customfastnavgroup="true". 
 	function findClosestGroup(oRef) {
+		var oGroup = findClosestCustomGroup(oRef);
+		if (oGroup) {
+			return oGroup;
+		}
+		
 		var $Group = jQuery(oRef).closest('[data-' + jQuery.sap._FASTNAVIGATIONKEY + '="true"]');
 		return $Group[0];
 	}
@@ -1519,7 +1531,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 	function findTabbables(oRef, aScopes, bNext) {
 		var $Ref = jQuery(oRef);
 		var $All = bNext ? jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()) : jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
-		var $Tabbables = $All.find(':sapTabbable');
+		var $Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
 		return $Tabbables.filter(function(){
 			return isContained(aScopes, this);
 		});
@@ -1639,7 +1651,24 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		}
 		
 		if ($Target && $Target.length) {
-			jQuery.sap.focus($Target[0]);
+			var oTarget = $Target[0],
+				oEvent = null,
+				oCustomGroup = findClosestCustomGroup(oTarget);
+			
+			if (oCustomGroup && oCustomGroup.id) {
+				var oControl = sap.ui.getCore().byId(oCustomGroup.id);
+				if (oControl) {
+					oEvent = jQuery.Event("BeforeFastNavigationFocus");
+					oEvent.target = oTarget;
+					oEvent.source = oSource;
+					oEvent.forward = bForward;
+					oControl._handleEvent(oEvent);
+				}
+			}
+			
+			if (!oEvent || !oEvent.isDefaultPrevented()) {
+				jQuery.sap.focus(oTarget);
+			}
 		}
 	}
 	
