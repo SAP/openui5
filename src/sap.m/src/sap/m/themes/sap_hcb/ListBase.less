@@ -115,7 +115,7 @@
 .sapMGrowingListTrigger,
 .sapMGrowingListLoading {
 	border-top: 0.0625em solid @sapHCStandardFG;
-	height: 5.0rem;
+	height: 3.0rem;
 }
  .sapMGrowingListBusyIndicator {
 	margin: 1.5rem 1.0rem ;
@@ -171,4 +171,28 @@
 	-webkit-box-sizing:   border-box;
 	-moz-box-sizing:      border-box;
 	box-sizing:           border-box;
+}
+
+/*HCB additional styles for Growing feature*/
+.sapMLIBContent .sapMGrowingListTrigger{
+  margin: 0.25rem;
+  box-sizing: border-box;
+  border-radius: 0.375rem;
+  background: @sapHCStandardBG;
+  border: 0.0625em solid @sapHCStandardFG;
+}
+
+.sapMLIBContent .sapMGrowingListTrigger:hover{
+	background: @sapHCHighlightBG;
+}
+.sapMGrowingList > li:hover{
+	background: @sapHCStandardBG !important;
+}
+
+.sapMGrowingList  li.sapMCLI.sapMLIB.sapMLIB-CTX:focus{
+	outline:none;
+}
+
+.sapMGrowingList  li.sapMCLI.sapMLIB.sapMLIB-CTX:focus > .sapMLIBContent .sapMGrowingListTrigger{
+  border: 0.125rem dotted @sapHCStandardFG; 
 }
