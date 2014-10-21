@@ -166,7 +166,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			 * If set to true (default), the display sequence is 1. icon 2. control text.
 			 * @since 1.26.0
 			 */
-			iconFirst : {type : "boolean", group : "Appearance", defaultValue : true}
+			iconFirst : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set to true, the button is displayed without any text.
+			 * @since 1.26.0
+			 */
+			iconOnly : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -389,14 +395,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.oFileUpload = null;
 
 		//retrieving the default browse button text from the resource bundle
-		this.oBrowse.setText(this.getBrowseText());
+		if (!this.getIconOnly()) {
+			this.oBrowse.setText(this.getBrowseText());
+		}
 
 	};
 
 	FileUploader.prototype.setButtonText = function(sText) {
-		this.oBrowse.setText(sText || this.getBrowseText());
-		this.setProperty("buttonText", sText, false);
-		return this;
+		if (!this.getIconOnly()) {
+			this.oBrowse.setText(sText || this.getBrowseText());
+			this.setProperty("buttonText", sText, false);
+			return this;
+		}
 	};
 
 	FileUploader.prototype.setIcon = function(sIcon) {
@@ -426,6 +436,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	FileUploader.prototype.setIconFirst = function(bIconFirst) {
 		this.oBrowse.setIconFirst(bIconFirst);
 		this.setProperty("iconFirst", bIconFirst, false);
+		return this;
+	};
+
+	FileUploader.prototype.setIconOnly = function(bIconOnly) {
+		this.oBrowse.setText("");
+		this.setProperty("iconOnly", bIconOnly, false);
 		return this;
 	};
 
