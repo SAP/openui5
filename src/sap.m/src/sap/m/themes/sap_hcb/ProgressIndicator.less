@@ -43,3 +43,70 @@
 .sapUiSizeCondensed .sapMPIText {
 	line-height: 1.25rem;
 }
+
+/* HCB Additional Styles */
+.sapMPIText {
+	color: @sapHCStandardFG;
+}
+
+.sapMPITextLeft {
+	color: @sapHCStandardBG;
+}
+
+.sapMPIText::before {
+	font-family: 'SAP-icons';
+	font-size: 0.875rem;
+	margin-right: 0.5rem;
+}
+
+.sapMPIBarPositive > .sapMPITextLeft::before,
+.sapMPIBarPositive + .sapMPITextRight::before {
+	content: '\e1ab';
+}
+
+.sapMPIBarPositive + .sapMPITextRight::before {
+	color: @sapHCPositive;
+}
+
+.sapMPIBarNegative > .sapMPITextLeft::before,
+.sapMPIBarNegative + .sapMPITextRight::before {
+	content: '\e1ac';
+}
+
+.sapMPIBarNegative + .sapMPITextRight::before {
+	color: @sapHCNegative;
+}
+
+.sapMPIBarCritical > .sapMPITextLeft::before,
+.sapMPIBarCritical + .sapMPITextRight::before {
+	content: '\e1ae';
+}
+
+.sapMPIBarCritical + .sapMPITextRight::before {
+	color: @sapHCCritical;
+}
+
+.sapMPIBarDisabled {
+	opacity: 1;
+	border-color: @sapHCReducedAltFG;
+
+	.sapMPITextLeft {
+		color: @sapHCReducedAltFG;
+	}
+
+	.sapMPITextLeft::before {
+		color: @sapHCStandardBG;
+	}
+
+	.sapMPITextRight,
+	.sapMPITextRight::before {
+		color: @sapHCReducedFG;
+	}
+
+	.sapMPIBarNeutral,
+	.sapMPIBarPositive,
+	.sapMPIBarNegative,
+	.sapMPIBarCritical {
+		background: @sapHCReducedFG;
+	}
+}
