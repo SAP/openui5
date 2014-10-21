@@ -247,6 +247,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		oEvent.preventDefault();
 	};
 
+	/**
+	 * Function is called on keyboard space, select/deselect token
+	 * @private
+	 * @param {jQuery.event}
+	 *          oEvent
+	 */
+	Token.prototype.onsapspace = function(oEvent) {
+		
+		var bSelected = this.getSelected();
+		this.setSelected(!bSelected);
+		// stop browsers default behavior
+		if (oEvent) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
+	};
+	
 	return Token;
 
 }, /* bExport= */ true);
