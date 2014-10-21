@@ -468,25 +468,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			oPopover._setWidth = function(sWidth) {
 				var bAutoAdjustWidth = that.getAutoAdjustWidth(),
 					bIconOnly = that.getType() === "IconOnly",
-					oPickerContentDomRef;
+					oPickerDomRef = this.getDomRef();
 
 				// set the width of the content
 				if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
 
-					oPickerContentDomRef = this.getContent()[0];
-
 					if (bAutoAdjustWidth) {
-						oPickerContentDomRef.setWidth("auto");
-						oPickerContentDomRef.getDomRef().style.minWidth = sWidth;
+						oPickerDomRef.style.width = "auto";
+						oPickerDomRef.style.minWidth = sWidth;
 					} else {
-						oPickerContentDomRef.setWidth(sWidth);
+						oPickerDomRef.style.width = sWidth;
 					}
 				}
 
 				if (!bIconOnly) {
 
 					// set the width of the popover
-					this.getDomRef().style.minWidth = sWidth;
+					oPickerDomRef.style.minWidth = sWidth;
 				}
 			};
 
