@@ -29,7 +29,11 @@
 	border-radius: 0.125rem;
 }
 
-.sapMTokenSelected, .sapMToken:focus{
+.sapMToken:focus{
+	border: 0.0625rem dotted @sapUiFocus;
+}
+
+.sapMTokenSelected{
 	color: @sapUiTextInverted;
 	background: @sapUiHighlight;
 	border: darken(@sapUiHighlight,5) 1px solid;
@@ -42,7 +46,7 @@
 	border-radius: 0.125rem;
 }
 
-.sapMTokenSelected .sapMTokenIcon, .sapMToken:focus .sapMTokenIcon{
+.sapMTokenSelected .sapMTokenIcon{
 	color: @sapUiInvertedElement;		
 }
 

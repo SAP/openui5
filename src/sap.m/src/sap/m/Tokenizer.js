@@ -827,7 +827,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Tokenizer.prototype._onTokenPress = function(oEvent) {
 		var sourceToken = oEvent.oSource;
-		sourceToken.setSelected(true);
+		var bSelected = sourceToken.getSelected();
+		sourceToken.setSelected(!bSelected);
+			
 	};
 	
 	Tokenizer.prototype.setEditable = function(bEditable) {
