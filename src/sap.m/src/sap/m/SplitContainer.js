@@ -1148,6 +1148,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				}
 			});
+
+			// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
+			oRealPage.setCustomHeader = function(oHeader) {
+				sap.m.Page.prototype.setCustomHeader.apply(this, arguments);
+				if (oHeader && (that._portraitHide() || that._hideMode() || that._portraitPopover()) && (!that._bMasterisOpen || that._bMasterClosing)) {
+					that._setMasterButton(oRealPage);
+				}
+			};
 		}
 	
 		// When the same NavContainer is used for both aggregations, calling "addPage()" will not do anything in case the oPage is already
@@ -1197,11 +1205,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	SplitContainer.prototype.removeDetailPage = function(oPage, bSuppressInvalidate) {
+		var oRealPage = this._getRealPage(oPage);
+		if (oRealPage) {
+			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
+			delete oRealPage.setCustomHeader;
+		}
+
 		return this._removePage(this._aDetailPages, "detailPages", oPage, bSuppressInvalidate);
 	};
 	
 	SplitContainer.prototype.removeAllDetailPages = function(bSuppressInvalidate) {
+		var aPages = this.getDetailPages(),
+				oRealPage;
+
+		// restore the original setCustomHeader function
+		for (var i = 0 ; i < aPages.length ; i++) {
+			oRealPage = this._getRealPage(aPages[i]);
+			if (!oRealPage) {
+				continue;
+			}
+			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
+			delete oRealPage.setCustomHeader;
+		}
+
 		this._aDetailPages = [];
+
 		return this.removeAllAggregation("detailPages", bSuppressInvalidate);
 	};
 	

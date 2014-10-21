@@ -297,6 +297,45 @@
 				equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
 				oSplitContainer.destroy();
 			});
+
+			test("Set custom header to current detail page after master button is already inserted", function(){
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					}, oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oPage = new sap.m.Page({
+					title: "Detail Page"
+				}), oSplitContainer = new sap.m.SplitContainer({
+					detailPages: [
+						oPage
+					]
+				});
+
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+
+				var oHeader = new sap.m.Bar();
+				oPage.setCustomHeader(oHeader);
+				sap.ui.getCore().applyChanges();
+
+				ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
+
+				oSplitContainer.removeDetailPage(oPage);
+				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
+
+				oPage.destroy();
+				oSplitContainer.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
