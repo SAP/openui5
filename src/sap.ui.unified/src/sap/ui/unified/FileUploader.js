@@ -198,7 +198,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 					/**
 					 * New file path value.
 					 */
-					newValue : {type : "string"}
+					newValue : {type : "string"},
+
+					/**
+					 * Files.
+					 */
+					files : {type : "object[]"}
 				}
 			},
 
@@ -699,7 +704,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			// only fire event when triggered by user interaction
 			if (bFireEvent) {
-				this.fireChange({id:this.getId(), newValue:sValue});
+				if (window.File) {
+					var oFiles = jQuery.sap.domById(this.getId() + "-fu").files;
+				}
+				this.fireChange({id:this.getId(), newValue:sValue, files:oFiles});
 			}
 			if (bUpload) {
 				this.upload();
