@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		_processAndStoreIndices : function (oDocIndicies) {
 	
-			var aCategoryWhiteList = [ "Action", "Container", "Display", "Chart", "Mini Chart", "Layout", "List", "Popup", "Tile", "User Input", "Testing" ];
+			var aCategoryWhiteList = [ "Action", "Container", "Display", "Chart", "Mini Chart", "Layout", "List", "Popup", "Tile", "User Input", "Testing" ,"Theming"];
 			var afilterProps = [ "namespace", "since", "category", "appComponent"]; // form factors are set manually
 			var oFilterSets = {
 				namespace : {},
