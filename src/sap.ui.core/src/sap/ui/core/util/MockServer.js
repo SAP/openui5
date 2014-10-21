@@ -1541,6 +1541,7 @@ sap.ui
 						
 						// helper to find the entity set entry for a given entity set name and the keys of the entry
 						var fnGetEntitySetEntry = function(sEntitySetName, sKeys) {
+							sKeys = decodeURIComponent(sKeys);
 							var oFoundEntry;
 							var oEntitySet = that._mEntitySets[sEntitySetName];
 							var aKeys = oEntitySet.keys;
@@ -1978,7 +1979,6 @@ sap.ui
 															var mHeaders = {
 																	"Content-Type" : "application/json;charset=utf-8"
 															};
-															fnHandleXsrfTokenHeader(oXhr, mHeaders);
 															var oEntry = jQuery
 																	.extend(true, {}, fnGetEntitySetEntry(sEntitySetName, sKeys));
 															if (!jQuery.isEmptyObject(oEntry)) {
@@ -2034,7 +2034,7 @@ sap.ui
 																		};
 																		fnHandleXsrfTokenHeader(oXhr, mHeaders);
 
-																		var oEntry = fnGetEntitySetEntry(sEntitySetName, decodeURIComponent(sKeys));
+																		var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 																		if (oEntry) {
 																			var aEntries, oFilteredData = {};
 																			try {
@@ -2134,8 +2134,7 @@ sap.ui
 																						"Content-Type" : "application/json;charset=utf-8"
 																				};
 																				fnHandleXsrfTokenHeader(oXhr, mHeaders);
-																				var oEntry = fnGetEntitySetEntry(sEntitySetName,
-																						decodeURIComponent(sKeys));
+																				var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 																				if (oEntry) {
 																					var aEntries, oFilteredData = {};
 																					try {
@@ -2361,7 +2360,7 @@ sap.ui
 													jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 
 													var iResult = 204;
-													var oEntry = fnGetEntitySetEntry(sEntitySetName, decodeURIComponent(sKeys));
+													var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 													if (oEntry) {
 														that._oMockdata[sEntitySetName].splice(oEntry.index, 1);
 													} else {
