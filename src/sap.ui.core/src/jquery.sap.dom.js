@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				return oDomRef.value.substring(oDomRef.selectionStart, oDomRef.selectionEnd);
 			}
 
-			// older version of Internet Explorer do not support the HTML5 "selectionStart" and "selectionEnd" properties, ie8
+			// older versions of Internet Explorer do not support the HTML5 "selectionStart" and "selectionEnd" properties
 			if (document.selection) {
 				return document.selection.createRange().text;
 			}
@@ -957,7 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		return _oScrollbarSize[sKey];
 	};
-	
+
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
 	 * If the class name is found, set it to the root DOM element of the target control.

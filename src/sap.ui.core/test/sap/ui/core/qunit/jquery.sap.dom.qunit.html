@@ -103,9 +103,77 @@
 
 			// assertions
 			strictEqual(oReturnValue, $DomRef, "No exception is thrown");
+			strictEqual($DomRef.getSelectedText(), "", "No exception is thrown");
 
 			// cleanup
 			$DomRef.remove();
+		});
+
+		function fnGetSelectedTextCase(mSettings) {
+
+			test("getSelectedText()", function() {
+
+				// arrange
+				var $DomRef = mSettings.input;
+
+				jQuery(document.body).append($DomRef);
+				$DomRef.selectText(mSettings.selectionStart , mSettings.selectionEnd);
+
+				// assertions
+				strictEqual($DomRef.getSelectedText(), mSettings.output);
+
+				// cleanup
+				$DomRef.remove();
+			});
+		}
+
+		fnGetSelectedTextCase({
+			input: jQuery("<input>", {
+				value: "Hello World!"
+			}),
+			output: "World",
+			selectionStart: 6,
+			selectionEnd: 11
+		});
+
+		fnGetSelectedTextCase({
+			input: jQuery("<input>", {
+				type: "url",
+				value: "www.sap.com"
+			}),
+			output: "www",
+			selectionStart: 0,
+			selectionEnd: 3
+		});
+
+		fnGetSelectedTextCase({
+			input: jQuery("<input>", {
+				type: "search",
+				value: "Hello World!"
+			}),
+			output: "World",
+			selectionStart: 6,
+			selectionEnd: 11
+		});
+
+		fnGetSelectedTextCase({
+			input: jQuery("<input>", {
+				type: "tel",
+				value: "7818523054"
+			}),
+			output: "852",
+			selectionStart: 3,
+			selectionEnd: 6
+		});
+
+		fnGetSelectedTextCase({
+			input: jQuery("<input>", {
+				type: "password",
+				value: "Hello World!"
+			}),
+			output: "World",
+			selectionStart: 6,
+			selectionEnd: 11
 		});
 
 		test("OuterHTML", function () {
