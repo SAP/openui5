@@ -643,8 +643,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
 		oToken.attachDelete(this._onDeleteToken, this);
 		oToken.attachPress(this._onTokenPress, this);
-	
-		oToken.setEditable(this.getEditable());
+		
+		oToken.setEditable = function (bEnabled) {
+			//ReadOnly css is handled by Token, using overwrite for further developing 
+			//in case the token in tokenizer has different design for editable property
+			sap.m.Token.prototype.setEditable.apply(oToken, arguments);
+		};
 		
 		this.scrollToEnd();
 	
@@ -828,15 +832,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	Tokenizer.prototype.setEditable = function(bEditable) {
 		this.setProperty("editable", bEditable);
-	
+		
 		var tokens = this.getTokens();
 		var length = tokens.length;
 		for (var i = 0; i < length; i++) {
 			var currentToken = tokens[i];
 			currentToken.setEditable(bEditable);
 		}
-	
+
 		return this;
+
 	};
 	
 	Tokenizer.prototype.setWidth = function(sWidth) {
