@@ -214,7 +214,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	};
 
 	/**
-	 * Sets the text selection in the first element of the collection
+	 * Sets the text selection in the first element of the collection.
+	 * note: This feature is only supported for input element’s type of text, search, url, tel and password.
 	 *
 	 * @param {int} iStart Start position of the selection (inclusive)
 	 * @param {int} iEnd End position of the selection (exclusive)
@@ -258,11 +259,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				oTextEditRange.moveEnd('character', iEnd - iStart);
 				oTextEditRange.select();
 			}
-		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement: The input element's type "number" does not support selection.
+		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
 
 		return this;
 	};
 
+	/**
+	 * Retrieve the selected text in the first element of the collection.
+	 * note: This feature is only supported for input element’s type of text, search, url, tel and password.
+	 *
+	 * @return {string} The selected text.
+	 * @public
+	 * @name jQuery#getSelectedText
+	 * @author SAP SE
+	 * @since 1.26.0
+	 * @function
+	 */
+	jQuery.fn.getSelectedText = function() {
+		var oDomRef = this.get(0);
+
+		if (!oDomRef) {
+			return "";
+		}
+
+		try {
+			if (typeof oDomRef.selectionStart === "number") {
+				return oDomRef.value.substring(oDomRef.selectionStart, oDomRef.selectionEnd);
+			}
+
+			// older version of Internet Explorer do not support the HTML5 "selectionStart" and "selectionEnd" properties, ie8
+			if (document.selection) {
+				return document.selection.createRange().text;
+			}
+		} catch (e) {}	// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
+
+		return "";
+	};
 
 	/**
 	 * Returns the outer HTML of the given HTML element
