@@ -207,3 +207,57 @@
 .sap-phone .sapUiLoSplitterV .sapUiLoSplitterBarIcon {
 	height: 1px;
 }
+
+
+/*********************************** IE Focus outline workaround **********************************/
+
+html[data-sap-ui-browser^=ie] .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
+	outline: 0px solid black;
+	outline-offset: 0;
+}
+
+html[data-sap-ui-browser^=ie] .sapUiLoSplitter > .sapUiLoSplitterBar:focus::after {
+	content: "";
+	display: block;
+	position: relative;
+}
+
+html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	top: -1em;
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	height: 100%;
+	width: 6px;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	height: 100%;
+	width: 16px;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	height: 100%;
+	width: 1px;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+
+html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
+	top: -6px;
+	height: 6px;
+	width: 100%;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
+	top: -16px;
+	height: 16px;
+	width: 100%;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
+	top: -1px;
+	height: 1px;
+	width: 100%;
+	border: 1px dotted darken(@sapUiHighlight, 12);
+}
+
