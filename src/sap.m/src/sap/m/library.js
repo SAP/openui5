@@ -159,6 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Tokenizer",
 			"sap.m.Toolbar",
 			"sap.m.ToolbarSpacer",
+			"sap.m.ToolbarSeparator",
 			"sap.m.UploadCollection",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog"

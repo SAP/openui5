@@ -136,6 +136,23 @@
 		//Cleanup
 		oTB.destroy();
 	});
+	
+	test("test that Toolbar Separator is rendered", function() {
+		var oToolbarSeparator = new sap.m.ToolbarSeparator();
+		var oTB = createToolbar({
+			Toolbar : {
+				content : [oToolbarSeparator]
+			}
+		});
+		
+		// Assert
+		ok(oToolbarSeparator.$().hasClass("sapMTBSeparator"), "Separator does have the expected CSS class");
+		ok(oToolbarSeparator.$().width() > 0, "Separator does have a width");
+		ok(oToolbarSeparator.$().height() > 0, "Separator does have a height");
+		
+		//Cleanup
+		oTB.destroy();
+	});
 
 	module("Properties");
 
