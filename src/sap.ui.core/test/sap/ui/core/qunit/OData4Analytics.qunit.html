@@ -6,7 +6,7 @@
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <link rel="stylesheet"
@@ -23,8 +23,6 @@
 	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <![endif]-->
 <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<!-- <script src="OData4AnalyticsFakeService.js"></script> -->
 
 <!-- Fake Service Implementaton -->
 <script src="analytics/o4aFakeService.js"></script>
@@ -99,7 +97,7 @@
 	test("Find query result by name", function() {
 		var oModel = getModelInstance(), mQueryResults = oModel.getAllQueryResults(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
-	
+
 		ok(oQueryResult, "Query result 'ActualPlannedCostsResults' could be found.");
 		deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
 	});
@@ -109,7 +107,7 @@
 	test("Get all parameter names", function() {
 		var oModel = getModelInstance(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
-		oParameterization = oQueryResult.getParameterization(), 
+		oParameterization = oQueryResult.getParameterization(),
 		aParameterNames = oParameterization.getAllParameterNames();
 
 		ok(jQuery.isArray(aParameterNames), "Parameter names were loaded.");
@@ -119,7 +117,7 @@
 	test("Try to fetch parameters from the parameterization", function() {
 		var oModel = getModelInstance(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
-		oParameterization = oQueryResult.getParameterization(), 
+		oParameterization = oQueryResult.getParameterization(),
 		oParameter = oParameterization.findParameterByName("P_CostCenter");
 
 		ok(oParameter instanceof odata4analytics.Parameter, "Parameter could be fetched by name.");
@@ -127,8 +125,8 @@
 	});
 
 	test("Fetch peer boundary of an interval boundary parameter", function() {
-		var oModel = getModelInstance(); 
-		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"); 
+		var oModel = getModelInstance();
+		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 
 		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
 		ok(oParameter.isIntervalBoundary(), "Parameter "+oParameter.getName()+" is correctly marked as interval boundary.");
@@ -151,7 +149,7 @@
 	test("Try to fetch specific dimensions from the query result", function() {
 		var oModel = getModelInstance(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
-		oDimensionByName = oQueryResult.findDimensionByName("Currency"), 
+		oDimensionByName = oQueryResult.findDimensionByName("Currency"),
 		oDimensionByAccess = oQueryResult.getAllDimensions()["Currency"];
 
 		ok(oDimensionByName instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
@@ -164,7 +162,7 @@
 	});
 
 	test("Getting attribute names from Dimensions", function() {
-		var oModel = getModelInstance(), 
+		var oModel = getModelInstance(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
 		oDimensionByName = oQueryResult.findDimensionByName("ControllingArea"),
 		aDimensionAttributeNames = oDimensionByName.getAllAttributeNames();
@@ -190,7 +188,7 @@
 	});
 
 	test("Try to fetch specific measures from the query result", function() {
-		var oModel = getModelInstance(), 
+		var oModel = getModelInstance(),
 		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
 		oMeasureByName = oQueryResult.findMeasureByName("ActualCosts"),
 		oMeasureByAccess = oQueryResult.getAllMeasures()["ActualCosts"];
@@ -260,41 +258,36 @@
 		equal(iUpdatablePropertyCount, iCount, "getUpdatablePropertyNameSet() delivered correct a count.")
 	});
 
-	
-	/*test("Access query with hierarchy from entity type", function() {
+
+	test("Access query with hierarchy from entity type", function() {
 		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
 		var sHierarchyDimensionName = "CostCenter";
 
 		var aHierPropNames = oQueryResult.getEntityType().getAllHierarchyPropertyNames();
 		ok(jQuery.isArray(aHierPropNames) &&  typeof aHierPropNames[0] === "string", "Hierarchy property names correctly fetched.");
-		var oHierarchy = oQueryResult.getEntityType().getHierarchy(sHierarchyDimensionName);
-		if (!oHierarchy)
-			throw "Failed to access hierarchy";
+		var oHierarchy = oQueryResult.getEntityType().getHierarchy("ControllingArea");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
 
 	});
 
 	test("Access hierarchy from dimension", function() {
 		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
-		
+
 		var sHierarchyDimensionName = "CostCenter";
-		var sOtherDimensionName = "Currency";
+		var sOtherDimensionName = "ControllingArea";
 
 		var oDimension = oQueryResult.findDimensionByName(sHierarchyDimensionName);
-		if (!oDimension)
-			throw "Failed to access dimension";
-		var oHierarchy = oDimension.getHierarchy();
-		if (!oHierarchy)
-			throw "Failed to access hierarchy";
+		ok(!!oDimension, "Dimension correctly fetched.");
+		var oHierarchy = oDimension.getHierarchy("CostCenter");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
 
 		var oDimension = oQueryResult.findDimensionByName(sOtherDimensionName); // negative
 		// test
-		if (!oDimension)
-			throw "Failed to access dimension";
-		var oHierarchy = oDimension.getHierarchy();
-		if (oHierarchy)
-			throw "Failed assertin not to be able to access hierarchy";
-		
-	});*/
+		ok(!!oDimension, "Dimension correctly fetched.");
+		var oHierarchy = oDimension.getHierarchy("ControllingArea");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+
+	});
 
 	module("Parametrization");
 
@@ -405,8 +398,8 @@
 
 		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
 		ok(oParameter, "Parameter was found.");
-		//TODO fails with current metadata 
-		// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+		//TODO fails with current metadata
+// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
 
 		// 1. plain list
 		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
@@ -426,7 +419,9 @@
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
 		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterExpression URI correctly constructed.");
 
-		var sURI = oParamValueSetRequest.getURIToParameterValueSetEntries();
+		var sURIToPVS = oParamValueSetRequest.getURIToParameterValueSetEntries();
+		var sRefURIToPVS = "/ActualPlannedCosts?$select=P_CostCenter&$filter=(P_ControllingArea eq %27US01%27)";
+		strictEqual(sURIToPVS, sRefURIToPVS, "URI to param value set correctly constructed.");
 	});
 
 	test("Fetch value help for some query result dimension", function() {
@@ -504,48 +499,37 @@
 		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed without sorters.");
 	});
 
-	/*test("Fetch value help for some parameter with sorting", function() {
+	test("Fetch value help for some parameter with sorting", function() {
 		var oModel = getModelInstance();
 		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
 		oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
-	
-		oParamRequest.setParameterValue("P_ControllingArea", "US01");
-		oParamRequest.setParameterValue("P_CostCenter", "");
-		oParamRequest.setParameterValue("P_CostCenterTo", "");
-	
+
 		var oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
 		oQueryResultRequest.setParameterizationRequest(oParamRequest);
-		
-		oQueryResultRequest.setAggregationLevel([
-			"ControllingArea", "CostCenter"
-		]);
-		oQueryResultRequest.setMeasures();
 
-		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
+		var oParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
 		ok(oParameter, "Parameter was found.");
-
+		//TODO fails with current metadata
+// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+		
 		// 1. plain list
 		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
 		oParamValueSetRequest.includeParameterText(true);
-		var sRefParameterValueSetURI = "/ActualPlannedCosts?$select=P_CostCenter";
+		var sRefParameterValueSetURI = "/ActualPlannedCosts?$select=P_ControllingArea";
 		var sParameterValueSetURI = oParamValueSetRequest.getURIToParameterValueSetEntries();
 		strictEqual(sParameterValueSetURI, sRefParameterValueSetURI, "ParamValueSet URI correctly constructed.");
 
-		// 2. filtered list
+		// 2. sorted list
 		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
-		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
+		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");		
+		//TODO make this work
+// 		var oSortExpression = oQueryResultRequest.getSortExpression();
+// 		oSortExpression.addSorter("P_ControllingArea", odata4analytics.SortOrder.Ascending);
+// 		var sURIToPVS = oParamValueSetRequest.getURIToParameterValueSetEntries();
+// 		var sRefURIToPVS = "";
+// 		strictEqual(sURIToPVS, sRefURIToPVS, "URI to param value set correctly constructed.");
 
-		var oFilterExpression = oParamValueSetRequest.getFilterExpression();
-		oFilterExpression.addCondition(oBaseParameter.getName(), sap.ui.model.FilterOperator.EQ, "US01");
-
-		var oSortExpression = oParamValueSetRequest.getSortExpression();
-		oSortExpression.addSorter("P_CostCenter", odata4analytics.SortOrder.Ascending);
-
-		var sRefURI = "/ActualPlannedCosts?$select=P_CostCenter&$filter=(P_ControllingArea eq %27US01%27)&$orderby=P_CostCenter asc";
-		var sURI = oParamValueSetRequest.getURIToParameterValueSetEntries();
-		strictEqual(sURI, sRefURI, "I am not sure what is done here...");
-
-	});*/
+	});
 
 	test("Add paging and a count to the query result", function() {
 		var oQueryResultRequest = getQueryResultRequest();
