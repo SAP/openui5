@@ -31,6 +31,10 @@
 	width: 3rem;
 }
 
+.sapMListTblNavCol .sapMLIBIconDet {
+	margin-left: 0;
+}
+
 .sapMListModeSingleSelect .sapMListTblSelCol{
 	padding: 0;
 }
@@ -99,7 +103,6 @@
 }
 
 .sapMListTblHasNav .sapMListTblRow > :nth-last-child(2),
-.sapMListModeSingleSelect .sapMListTblRow > :nth-last-child(3),
 .sapMListModeSingleSelect.sapMListTblHasNav .sapMListTblRow > :nth-last-child(2) {
 	padding-right: 0;
 }
@@ -206,6 +209,20 @@
 
 .sapUiSizeCompact .sapMListTbl .sapMLIBSelectD > .sapUiIcon {
 	font-size: 1rem;
+	padding: 0;
+}
+
+.sapUiSizeCompact .sapMListTblNavCol .sapMLIBIconDet {
+	margin-right: 0;
+	width: 2rem;
+	height: 2rem;
+	line-height: 2rem;
+}
+
+/* align relative float left checkbox in table cell */
+.sapUiSizeCompact .sapMListTblSelCol > .sapMLIBSelectS .sapMRbB,
+.sapUiSizeCompact .sapMListTblSelCol >.sapMLIBSelectSL .sapMRbB {
+	margin-left: 0.25rem;
 	padding: 0;
 }
 

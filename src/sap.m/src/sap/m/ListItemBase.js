@@ -648,6 +648,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oEvent.srcControl !== this) {
 			return;
 		}
+		
+		// F2 should fire detail event
+		if (oEvent.which == mKeyCodes.F2 && this.getType().indexOf("Detail") == 0) {
+			this.fireDetailTap({});
+			this.fireDetailPress({});
+			oEvent.preventDefault();
+			oEvent.setMarked();
+			return;
+		}
 	
 		// Ctrl + A to switch select all/none
 		if (oEvent.which == mKeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
