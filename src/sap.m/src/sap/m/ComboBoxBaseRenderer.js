@@ -41,6 +41,10 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 
 			oRm.addClass(CSS_CLASS);
 			oRm.addClass(CSS_CLASS + "Input");
+
+			if (!oControl.getEnabled()) {
+				oRm.addClass(CSS_CLASS + "Disabled");
+			}
 		};
 
 		/**
