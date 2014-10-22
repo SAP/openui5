@@ -616,11 +616,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	ListItemBase.prototype._switchFocus = function(oEvent) {
+		var oParent = this.getParent();
+		var $Tabbables = this.getTabbables();
+		
 		if (oEvent.srcControl !== this) {
-			this._oLastFocused = oEvent.target;
-			this.getDomRef().focus();
-		} else if (this._oLastFocused) {
-			this._oLastFocused.focus();
+			oParent._iLastFocusPosOfItem = $Tabbables.index(oEvent.target);
+			this.$().focus();
+		} else if ($Tabbables.length) {
+			var iFocusPos = oParent._iLastFocusPosOfItem || 0;
+			iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
+			$Tabbables.eq(iFocusPos).focus();
 		}
 	};
 	
@@ -644,9 +649,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 	
-		// Ctrl + A to select all
+		// Ctrl + A to switch select all/none
 		if (oEvent.which == mKeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
-			sap.ui.getCore().byId(this._listId).selectAll(true);
+			var oList = sap.ui.getCore().byId(this._listId);
+			if (oList.isAllSelectableSelected()) {
+				oList.removeSelections(false, true);
+			} else {
+				oList.selectAll(true);
+			}
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
