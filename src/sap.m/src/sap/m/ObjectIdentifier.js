@@ -73,6 +73,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			titleActive : {type : "boolean", group : "Misc", defaultValue : false}
 		},
+		aggregations : {
+	
+			/**
+			 * Text control to display the object title
+			 * 
+			 * @private
+			 */
+			_titleTextControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			
+			/**
+			 * Link control to display the clickable object title (titleActive = true)
+			 * 
+			 * @private
+			 */
+			_titleLinkControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			
+			/**
+			 * Text control to display the object text
+			 * 
+			 * @private
+			 */
+			_textControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
+		},
 		events : {
 	
 			/**
@@ -95,6 +118,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// * This file defines behavior for the control
 	// */
 	
+	/**
+	 *  Initialize member variables
+	 * 
+	 * @private
+	 */
+	sap.m.ObjectIdentifier.prototype.init = function() {
+		this.setAggregation("_textControl", new sap.m.Text());
+		this.setAggregation("_titleTextControl", new sap.m.Text());
+		this.setAggregation("_titleLinkControl", new sap.m.Link());
+	};
 	
 	/**
 	 * Called when the control is destroyed.
@@ -183,6 +216,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
+	 * Get the proper control for the title.
+	 * 
+	 * @private
+	 */
+	sap.m.ObjectIdentifier.prototype._getTitleControl = function() {
+		if (this.getProperty("titleActive")) {
+			return this.getAggregation("_titleLinkControl");
+		} else {
+			return this.getAggregation("_titleTextControl");
+		}
+	};
+	
+	/**
+	 * Updates the text of the title control and rerenders it
+	 * If titleActive = true, a Link control is rendered,
+	 * otherwise a Text control will be rendered
+	 * 
+	 * @private
+	 */
+	ObjectIdentifier.prototype._rerenderTitle = function() {
+		this._getTitleControl().setProperty("text", this.getTitle());
+		var oRm = sap.ui.getCore().createRenderManager();
+		oRm.renderControl(this._getTitleControl());
+		oRm.flush(this.$("title")[0]);
+		oRm.destroy();
+	};
+	
+	/**
 	 * Setter for property title.
 	 * Default value is empty/undefined
 	 * @public
@@ -193,7 +254,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//always suppress rerendering because title div is rendered
 		//if text is empty or not
 		this.setProperty("title", sTitle, true);
-		this.$("title").text(this.getTitle());
+		
+		var oTitleControl = this._getTitleControl();
+		oTitleControl.setProperty("text", this.getTitle());
 		
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow", 
 				!!this.getProperty("text") && !!this.getProperty("title"));
@@ -213,10 +276,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if text is empty or not
 		this.setProperty("text", sText, true);
 		
-		var $textElement = this.$("text");
-		$textElement.text(this.getText());
+		var oTextControl = this.getAggregation("_textControl");
+		oTextControl.setProperty("text", this.getText());
 		
-		$textElement.toggleClass("sapMObjectIdentifierTextBellow", 
+		this.$("text").toggleClass("sapMObjectIdentifierTextBellow", 
 				!!this.getProperty("text") && !!this.getProperty("title"));
 	
 		return this;
@@ -230,12 +293,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitleActive = function(bValue) {
+		var bPrevValue = this.getProperty("titleActive");
 		this.setProperty("titleActive", bValue, true);
+
+		// If titleActive is actually changed and the title is already rendered,
+		// then the title control has to be updated and rerendered
+		if ((bPrevValue != bValue) && (this.$("title").children().length > 0)) {
+			this._rerenderTitle();
+		}
 		
-		var $titleElement = this.$("title");
-		$titleElement.toggleClass("sapMOITitleActive", bValue);
-		$titleElement.attr("tabindex", bValue ? 0 : -1);
-	
 		return this;
 	};
 	
@@ -247,9 +313,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectIdentifier.prototype._handlePress = function(oEvent) {
 		var oClickedItem = oEvent.target;
-		if (this.getTitleActive() && this.$("title")[0] == oClickedItem) { // checking if the title is clicked
+		if (this.getTitleActive() && this.$("title")[0].firstChild == oClickedItem) { // checking if the title is clicked
 			this.fireTitlePress({
-				domRef : oClickedItem
+				domRef: oClickedItem
 			});
 		}
 	};

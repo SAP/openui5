@@ -75,15 +75,10 @@ sap.ui.define(['jquery.sap.global'],
 	
 		oRm.write("<div id='" + oOI.getId() + "-title'"); // Title begins 
 		oRm.addClass("sapMObjectIdentifierTitle");
-	
-		if (oOI.getTitleActive()) {
-			oRm.addClass("sapMOITitleActive");
-			oRm.writeAttributeEscaped("tabindex", "1");
-		}
-	
+		
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.writeEscaped(oOI.getTitle());
+		oRm.renderControl(oOI._getTitleControl());
 		oRm.write("</div>"); // Title ends
 	
 		oRm.write("</div>"); // Top row ends
@@ -96,7 +91,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.writeEscaped(oOI.getText());
+		oRm.renderControl(oOI.getAggregation("_textControl"));
 		oRm.write("</div>"); // Text ends
 	
 		oRm.write("</div>"); // Identifier ends
