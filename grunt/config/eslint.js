@@ -7,6 +7,12 @@ module.exports = function(grunt, config) {
 		}
 	};
 
+	// Lint JS files in testsuite
+	eslint['testsuite'] = [
+		config.testsuite.path
+	];
+
+	// Lint all libraries
 	config.libraries.forEach(function(library) {
 		eslint[library.name] = [
 			library.path
