@@ -80,7 +80,7 @@
 						
 						<span class="headertitle"><a href="planet/">Feed</a></span>
 						
-						<span class="headertitle"><a href="bugreports.html">Report a Bug</a></span>
+						<span class="headertitle"><a href="faq.html">FAQ</a></span>
 					</h2>
 				</div>
 			</div>
@@ -97,40 +97,43 @@
 					You can use OpenUI5 in any HTML file with the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
 				</p>
 				<pre class="codeblock">
-&lt;script id="sap-ui-bootstrap"
-   src="resources/sap-ui-core.js"
-   data-sap-ui-theme="sap_bluecrystal"
-   data-sap-ui-libs="sap.ui.commons"&gt;&lt;/script&gt;</pre>
+<span class="shTag">&lt;script</span><span class="shAttr"> id</span>=<sspan class="shString">"sap-ui-bootstrap"</span>
+   <span class="shAttr">src</span>=<span class="shString">"resources/sap-ui-core.js"</span>
+   <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">"sap_bluecrystal"</span>
+   <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.ui.commons"</span><span class="shTag">&gt;
+&lt;/script&gt;</span>
+</pre>
 				<p>
 					A simple application looks like this:<br>
 					<span class="smaller">(Note: it uses the "sap.ui.commons" control library. To run it with the reduced mobile package of OpenUI5, use the "sap.m" library instead.)</span>
 				</p>
 				<pre class="codeblock">
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;&lt;head&gt;
-    &lt;meta http-equiv='X-UA-Compatible' content='IE=edge' /&gt;
-    &lt;title&gt;Hello World&lt;/title&gt;
+<span class="shTag">&lt;!DOCTYPE html&gt;</span>
+<span class="shTag">&lt;html&gt;&lt;head&gt;</span>
+<span class="shTag">&lt;meta </span><span class="shAttr">http-equiv</span>=<span class="shString">'X-UA-Compatible'</span> <spa class="shAttr">content</spa>=<span class="shString">'IE=edge'</span> <span class="shTag">/&gt;</span>
+<span class="shTag">&lt;title&gt;</span>Hello World<span class="shTag">&lt;/title&gt;</span>
 
-    &lt;script id='sap-ui-bootstrap'
-        src='resources/sap-ui-core.js'
-        data-sap-ui-theme='sap_bluecrystal'
-        data-sap-ui-libs='sap.ui.commons'&gt;&lt;/script&gt;
+<span class="shTag">&lt;script</span> <span class="shAttr">id</span>=<span class="shString">'sap-ui-bootstrap'</span>
+    <span class="shAttr">src</span>=<span class="shString">'resources/sap-ui-core.js'</span>
+    <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">'sap_bluecrystal'</span>
+    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">'sap.ui.commons'</span><span class="shTag">&gt;</span>
+<span class="shTag">&lt;/script&gt;</span>
 
-&lt;script&gt;
-    var btn = new sap.ui.commons.Button({
-        text:'Press me!',
-        press: function() {
-            alert("Hello!")
+<span class="shTag">&lt;script&gt;</span>
+    <span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button({
+        <span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
+        <span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
+            alert(<span class="shString">"Hello!"</span>)
         }
     });
-    btn.placeAt('content');
-&lt;/script&gt;
+    btn.placeAt(<span class="shString">'content'</span>);
+<span class="shTag">&lt;/script&gt;</span>
 
-&lt;/head&gt;
-&lt;body class='sapUiBody'&gt;
-    &lt;div id='content'>&lt;/div&gt;
-&lt;/body&gt;
-&lt;/html&gt;</pre>
+<span class="shTag">&lt;/head&gt;</span>
+<span class="shTag">&lt;body</span> <span class="shAttr">class</span>=<span class="shString">'sapUiBody'</span><span class="shTag">&gt;</span>
+    <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
+<span class="shTag">&lt;/body&gt;</span>
+<span class="shTag">&lt;/html&gt;</span></pre>
 
 
 				<div class="result">
@@ -143,7 +146,7 @@
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/8/embed?html,output&height=600px&width=760px">Hello World</a>
+						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/1347/embed?html,output&height=600px&width=760px">Hello World</a>
 						<script src="http://static.jsbin.com/js/embed.js"></script>
 					</div>
 				</div>
