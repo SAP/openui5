@@ -273,8 +273,7 @@ BODY.welcome {
 	background-repeat: no-repeat;
 	cursor: pointer;
 	cursor: hand;
-	z-index
-	=2;
+	z-index: 2;
 }
 
 .expander.more {
