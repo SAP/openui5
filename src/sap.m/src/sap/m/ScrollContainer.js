@@ -64,7 +64,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * Note that this is off by default because typically a Page is used as fullscreen element which can handle vertical scrolling. If this is not the case and vertical scrolling is required, this flag needs to be set to "true".
 			 * Important: it is not supported to have nested controls that both enable scrolling into the same dimension.
 			 */
-			vertical : {type : "boolean", group : "Behavior", defaultValue : false}
+			vertical : {type : "boolean", group : "Behavior", defaultValue : false},
+			
+			/**
+			 * Whether the scroll container can be focused.
+			 * 
+			 * Note that it should be set to "true" when there are no focusable elements inside or when keyboard interaction  requires an additional tab stop on the container.
+			 */
+			focusable : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -101,22 +108,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	
 	/*
-	 * Better nested scrolling capabilities can be added to iScroll like this (in the _move method).
-	 * eDir is the direction into which scrolling is handled (if locked) and bOutside is true when we are outside the scolling boundary already; both
-	 * need to be initialized a couple of lines before this code.
-	 * 
-	 * 		e._handled = e._handled || {};
-	 *		if (e._handled[eDir]) { // current direction already handled
-	 *			return;
-	 *		}
-	 *		
-	 *		// add information about what this handler handles
-	 *		e._handled.x = e._handled.x || ((eDir == "x") && !bOutside);
-	 *		e._handled.y = e._handled.y || ((eDir == "y") && !bOutside);
-	 *		
-	 */
-	
-	/*
 	 * TODO:
 	 * - events when scrolling is ongoing
 	 */
@@ -139,7 +130,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._oScroller.setHorizontal(this.getHorizontal());
 		this._oScroller.setVertical(this.getVertical());
 	};
-	
 	
 	/**
 	 * Called when the control is destroyed.
@@ -176,7 +166,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 	
-	
 	ScrollContainer.prototype.setHorizontal = function(horizontal) {
 		this._oScroller.setHorizontal(horizontal);
 		this.setProperty("horizontal", horizontal, true); // no rerendering
@@ -187,7 +176,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.setProperty("vertical", vertical, true); // no rerendering
 	};
 	
-
 	return ScrollContainer;
-
+	
 }, /* bExport= */ true);

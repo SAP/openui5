@@ -26,6 +26,24 @@
 
 		<script>
 		
+		function _getMaxScrollLeft(container) {
+			var oDomRef = container.getDomRef();
+			if (!oDomRef) {
+				return -1;
+			}
+			
+			return oDomRef.scrollWidth - oDomRef.clientWidth;
+		};
+		
+		function _getMaxScrollTop(container) {
+			var oDomRef = container.getDomRef();
+			if (!oDomRef) {
+				return -1;
+			}
+			
+			return oDomRef.scrollHeight - oDomRef.clientHeight;
+		};
+		
 		var eventX, eventY;
 
 		var oSC = new sap.m.ScrollContainer("sc1", {
@@ -50,24 +68,34 @@
 		var oSC3 = new sap.m.ScrollContainer("sc3", {
 			visible: false
 		});
-
+		
+		var bigContent = new sap.ui.core.HTML({content:"<div id='cont1'>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
+		//var bigContent = new sap.ui.core.HTML({content:"<div style=\"overflow:scroll; -webkit-overflow-scrolling: touch; width:200px; height:200px; border: 1px solid red;\">abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br>abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz<br>123<br>456<br>789<br>1<br>2<br>3<br>4<br></div>"});
+		var oSC4 = new sap.m.ScrollContainer({
+			vertical: true,
+			content:[bigContent],
+			height: "100px",
+			width: "200px"
+		});
+		
+		// Approximation coefficient used to mimic page down and page up behaviour when [CTRL] + [RIGHT] and [CTRL] + [LEFT] is used
+		var SCROLL_COEF = 0.9;
+		
 		var app = new sap.m.App("app", {
 			initialPage: "page1",
 			pages: [ 
 			        new sap.m.Page("page1", {
 			        	title: "Page 1",
-			        	content: [oSC, oSC2, oSC3]
+			        	content: [oSC, oSC2, oSC3, oSC4]
 			        })
 			        ]
 		});
 		app.placeAt("content");
 
-
 		QUnit.config.autostart = false;
 		jQuery(document).ready(function() {
 			QUnit.start();
 		});
-
 
 		test("ScrollContainer rendered", function() {
 			ok(jQuery.sap.domById("sc1"), "ScrollContainer 1 should be rendered");
@@ -144,7 +172,7 @@
 				equal(getScrollPos(), -110, "ScrollContainer 2 should be scrolled to position 110");
 				equal(oSC2._oScroller._scrollX, 110, "Internally stored x scrolling position should be 110");
 				equal(oSC2._oScroller._scrollY, 0, "Internally stored y scrolling position should be 0");
-
+				
 			});
 
 
@@ -162,7 +190,7 @@
 				}, 510); // need to wait because iscroll has a snap-back animation to go to the real end of the content
 			});
 
-			
+
 			asyncTest("Scrolling after resize", function() {
 				expect(3);
 
@@ -182,9 +210,76 @@
 				}, 300);
 			});
 
+
+			test("Press [CTRL] + [DOWN]", function() {
+				equal(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
+				
+				equal(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
+				
+			});
+			
+			test("Press [CTRL] + [UP]", function() {
+				equal(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_UP", false, false, true);
+				
+				equal(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
+			});
+			
+			test("Press [CTRL] + [RIGHT]", function() {
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to horizontal position 0");
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_RIGHT", false, false, true);
+				
+				equal(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
+			});
+			
+			test("Press [CTRL] + [LEFT]", function() {
+				equal(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "ARROW_LEFT", false, false, true);
+				
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
+			});
+			
+			test("Press [CTRL] + [END]", function() {
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
+				equal(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "END", false, false, true);
+				
+				equal(oSC4.$().scrollLeft(), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
+				equal(oSC4.$().scrollTop(), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
+			});
+			
+			test("Press [CTRL] + [HOME]", function() {
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "HOME", false, false, true);
+				
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
+				equal(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
+			});
+			
+			test("Press [ALT] + [PAGE DOWN]", function() {
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_DOWN", false, true, false);
+				
+				equal(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
+			});
+			
+			test("Press [ALT] + [PAGE UP]", function() {
+				equal(oSC4.$().scrollLeft(), parseInt(oSC4.getDomRef().clientWidth), "ScrollContainer 4 should be scrolled horizontally to position " + parseInt(oSC4.getDomRef().clientWidth));
+				
+				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "PAGE_UP", false, true, false);
+				
+				equal(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to position 0");
+			});
+
 		} // end of if-block that excludes IE8
 		
-	    </script>
+		</script>
 	
 		<style>
 			#sc2 {
