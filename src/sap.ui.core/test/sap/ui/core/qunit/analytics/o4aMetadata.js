@@ -25,8 +25,11 @@ o4aFakeService.addResponse({
 	"				<Property Name=\"ControllingArea\" Type=\"Edm.String\"\n" + 
 	"					MaxLength=\"4\" sap:aggregation-role=\"dimension\" sap:label=\"Controlling Area\"\n" + 
 	"					sap:text=\"ControllingAreaText\" />\n" + 
+	"				<Property Name=\"ControllingAreaLevel\" Type=\"Edm.Integer\" sap:hierarchy-level-for=\"ControllingArea\"/>\n" + 
 	"				<Property Name=\"CostCenter\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
-	"					sap:aggregation-role=\"dimension\" sap:label=\"Cost Center\" sap:text=\"CostCenterText\" sap:super-ordinate=\"ControllingArea\"/>\n" + 
+	"					sap:aggregation-role=\"dimension\" sap:label=\"Cost Center\" sap:text=\"CostCenterText\"\n" + 
+	"					sap:super-ordinate=\"ControllingArea\" />\n" + 
+	"				<Property Name=\"CostCenterLevel\" Type=\"Edm.Integer\" sap:hierarchy-level-for=\"CostCenter\"/>\n" + 
 	"				<Property Name=\"FiscalVariant\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
 	"					sap:aggregation-role=\"dimension\" sap:label=\"Fiscal Variant\" />\n" + 
 	"				<Property Name=\"FiscalPeriod\" Type=\"Edm.String\" MaxLength=\"7\"\n" + 
@@ -34,20 +37,22 @@ o4aFakeService.addResponse({
 	"				<Property Name=\"FiscalYear\" Type=\"Edm.String\" MaxLength=\"4\"\n" + 
 	"					sap:aggregation-role=\"dimension\" sap:label=\"Fiscal Year\" />\n" + 
 	"				<Property Name=\"CostElement\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
-	"					sap:aggregation-role=\"dimension\" sap:label=\"Cost Element\" sap:text=\"CostElementText\"  sap:super-ordinate=\"ControllingArea\"/>\n" + 
+	"					sap:aggregation-role=\"dimension\" sap:label=\"Cost Element\" sap:text=\"CostElementText\"\n" + 
+	"					sap:super-ordinate=\"ControllingArea\" />\n" + 
 	"				<Property Name=\"ValueType\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
 	"					sap:aggregation-role=\"dimension\" sap:label=\"Value Type\" />\n" + 
 	"				<Property Name=\"CurrencyType\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
-	"					sap:aggregation-role=\"dimension\" sap:label=\"Currency Type\" sap:attribute-for=\"Currency\" />\n" + 
+	"					sap:aggregation-role=\"dimension\" sap:label=\"Currency Type\"\n" + 
+	"					sap:attribute-for=\"Currency\" />\n" + 
 	"				<Property Name=\"Currency\" Type=\"Edm.String\" MaxLength=\"5\"\n" + 
 	"					sap:semantics=\"currency-code\" sap:aggregation-role=\"dimension\"\n" + 
 	"					sap:label=\"Currency\" />\n" + 
 	"				<Property Name=\"CostElementText\" Type=\"Edm.String\"\n" + 
-	"					MaxLength=\"40\" sap:label=\"Cost Element\" sap:attribute-for=\"CostElement\"/>\n" + 
+	"					MaxLength=\"40\" sap:label=\"Cost Element\" sap:attribute-for=\"CostElement\" />\n" + 
 	"				<Property Name=\"CostCenterText\" Type=\"Edm.String\"\n" + 
-	"					MaxLength=\"40\" sap:label=\"Cost Center\" sap:attribute-for=\"CostCenter\"/>\n" + 
+	"					MaxLength=\"40\" sap:label=\"Cost Center\" sap:attribute-for=\"CostCenter\" />\n" + 
 	"				<Property Name=\"ControllingAreaText\" Type=\"Edm.String\"\n" + 
-	"					MaxLength=\"40\" sap:label=\"Controlling Area\" sap:attribute-for=\"ControllingArea\"/>\n" + 
+	"					MaxLength=\"40\" sap:label=\"Controlling Area\" sap:attribute-for=\"ControllingArea\" />\n" + 
 	"				<Property Name=\"ActualCosts\" Type=\"Edm.Decimal\" Precision=\"34\"\n" + 
 	"					sap:filterable=\"false\" sap:aggregation-role=\"measure\" sap:label=\"Actual Costs\"\n" + 
 	"					sap:unit=\"Currency\" />\n" + 
@@ -62,27 +67,31 @@ o4aFakeService.addResponse({
 	"					sap:label=\"Actual Planned Costs Percentage\" />\n" + 
 	"				<NavigationProperty Name=\"ControllingAreaDetails\"\n" + 
 	"					Relationship=\"servicemock.ControllingAreaToMasterDataType\"\n" + 
-	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"ControllingAreasPrincipal\" />\n" + 
+	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"ControllingAreasPrincipal\" sap:hierarchy-node-for=\"ControllingArea\"/>\n" + 
 	"				<NavigationProperty Name=\"CostCenterDetails\"\n" + 
 	"					Relationship=\"servicemock.CostCenterToMasterDataType\"\n" + 
-	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"CostCentersPrincipal\" />\n" + 
+	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"CostCentersPrincipal\" sap:hierarchy-node-for=\"CostCenter\"/>\n" + 
 	"				<NavigationProperty Name=\"CostElementDetails\"\n" + 
 	"					Relationship=\"servicemock.CostElementToMasterDataType\"\n" + 
-	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"CostElementsPrincipal\" />\n" + 
+	"					FromRole=\"ActualPlannedCostsResultsDependent\" ToRole=\"CostElementsPrincipal\" sap:hierarchy-node-for=\"CostElement\"/>\n" + 
 	"			</EntityType>\n" + 
 	"			<EntityType Name=\"ActualPlannedCostsType\" sap:semantics=\"parameters\">\n" + 
 	"				<Key>\n" + 
 	"					<PropertyRef Name=\"P_ControllingArea\" />\n" + 
-	"					<PropertyRef Name=\"P_CostCenter\"/>\n" + 
+	"					<PropertyRef Name=\"P_CostCenter\" />\n" + 
 	"					<PropertyRef Name=\"P_CostCenterTo\" />\n" + 
 	"				</Key>\n" + 
 	"				<Property Name=\"P_ControllingArea\" Type=\"Edm.String\"\n" + 
 	"					Nullable=\"false\" MaxLength=\"4\" sap:label=\"Controlling Area\"\n" + 
-	"					sap:parameter=\"mandatory\"/>\n" + 
+	"					sap:parameter=\"mandatory\" />\n" + 
 	"				<Property Name=\"P_CostCenter\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
-	"					MaxLength=\"10\" sap:label=\"Cost Center\" sap:parameter=\"mandatory\" sap:upper-boundary=\"P_CostCenterTo\"  sap:super-ordinate=\"ControllingArea\" sap:filterable=\"false\"/>\n" + 
+	"					MaxLength=\"10\" sap:label=\"Cost Center\" sap:parameter=\"mandatory\"\n" + 
+	"					sap:upper-boundary=\"P_CostCenterTo\" sap:super-ordinate=\"ControllingArea\"\n" + 
+	"					sap:filterable=\"false\" />\n" + 
 	"				<Property Name=\"P_CostCenterTo\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
-	"					MaxLength=\"10\" sap:label=\"Cost Center To\" sap:parameter=\"mandatory\" sap:lower-boundary=\"P_CostCenter\"  sap:super-ordinate=\"ControllingArea\" sap:filterable=\"false\"/>\n" + 
+	"					MaxLength=\"10\" sap:label=\"Cost Center To\" sap:parameter=\"mandatory\"\n" + 
+	"					sap:lower-boundary=\"P_CostCenter\" sap:super-ordinate=\"ControllingArea\"\n" + 
+	"					sap:filterable=\"false\" />\n" + 
 	"				<NavigationProperty Name=\"Results\"\n" + 
 	"					Relationship=\"servicemock.ActualPlannedCosts_ActualPlannedCostsResultsType\"\n" + 
 	"					FromRole=\"ActualPlannedCostsPrincipal\" ToRole=\"ActualPlannedCostsResultsDependent\" />\n" + 
@@ -218,7 +227,7 @@ o4aFakeService.addResponse({
 	"					</Dependent>\n" + 
 	"				</ReferentialConstraint>\n" + 
 	"			</Association>\n" + 
-	"			<EntityContainer Name=\"EC\"\n" + 
+	"			<EntityContainer Name=\"CCA\"\n" + 
 	"				m:IsDefaultEntityContainer=\"true\">\n" + 
 	"				<EntitySet Name=\"ActualPlannedCostsResults\"\n" + 
 	"					EntityType=\"servicemock.ActualPlannedCostsResultsType\"\n" + 
