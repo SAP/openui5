@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				var oModel;
 				if (sType === "sap.ui.model.resource.ResourceModel") {
 					oModel = new oClass({bundleUrl: sUri});
-				} else if (sType === "sap.ui.model.odata.ODataModel") {
+				} else if (sType === "sap.ui.model.odata.ODataModel" || sType === "sap.ui.model.odata.v2.ODataModel") {
 					// check for a mock server configuration and start the mock server
 					if (oConfig.mockserver) {
 						fnCreateMockServer.call(this, sName, sUri, oConfig.mockserver.model, oConfig.mockserver.data);
