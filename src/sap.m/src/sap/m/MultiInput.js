@@ -338,6 +338,39 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
+	 * Handle the key down event for Ctrl+ a
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	MultiInput.prototype.onkeydown = function(oEvent) {
+		
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+				
+			if ( this._tokenizer){
+				
+				if (this.getValue().length !== 0 && this._$input.getSelectedText() === this.getValue()) {
+					
+					// if all text are selected, select the complete content of the input field
+					this._tokenizer.selectAllTokens();
+						
+				} else if ( this._tokenizer.getTokens().length !== 0 && this._tokenizer.getSelectedTokens().length === this._tokenizer.getTokens().length){
+					
+					// if all tokens are selected, select the complete content of the input field
+					if (!this._tokenizer.bSelectAllToken){
+							
+						this.selectText(0, this.getValue().length);
+					}
+						
+				} 
+			}
+			
+		}
+		
+	};
+	
+	/**
 	 * Handle the backspace button, gives backspace to tokenizer if text cursor was on first character
 	 *
 	 * @param {jQuery.Event}

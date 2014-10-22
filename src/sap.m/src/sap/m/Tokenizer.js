@@ -313,14 +313,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @private
 	 */
 	Tokenizer.prototype.onkeydown = function(oEvent) {
+		
 		if (oEvent.which === jQuery.sap.KeyCodes.TAB) {
 			this.selectAllTokens(false);
 		}
 		
-		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command		
-			this.focus();
-			this.selectAllTokens(true);
-			oEvent.preventDefault();
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command
+			
+			// flag used for ctrl + a in MultiInput check
+			this.bSelectAllToken = false;
+			
+			if (this.getTokens().length !== this.getSelectedTokens().length){
+				this.focus();
+				this.selectAllTokens(true);
+				oEvent.preventDefault();
+				this.bSelectAllToken = true;
+			}
+			
+			
 		}
 
 	};
