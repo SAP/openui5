@@ -721,12 +721,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		return this.setValue("", false, true);
 	};
 
-	FileUploader.prototype.onmouseover = function () {
-		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdHover');
+	FileUploader.prototype.onmousedown = function(oEvent) {
+		this.oBrowse.onmousedown(oEvent);
 	};
 
-	FileUploader.prototype.onmouseout = function () {
+	FileUploader.prototype.onmouseup = function(oEvent) {
+		this.oBrowse.onmouseup(oEvent);
+	};
+
+	FileUploader.prototype.onmouseover = function (oEvent) {
+		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdHover');
+		this.oBrowse.onmouseover(oEvent);
+	};
+
+	FileUploader.prototype.onmouseout = function (oEvent) {
 		jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdHover');
+		this.oBrowse.onmouseout(oEvent);
 	};
 
 	FileUploader.prototype.onfocusin = function () {
