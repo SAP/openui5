@@ -383,6 +383,21 @@ Full-Width Styles
 
 
 /*******************************************************************************
+FAQ Styles
+*******************************************************************************/
+
+.faq-topicHeader {
+  padding: 60px 0 0 0;
+}
+.faq-list {
+  min-width: 280px
+}
+.faq-container {
+  background: #F5F5F5;
+  min-height: 220px;
+}
+
+/*******************************************************************************
 Feature Styles
 *******************************************************************************/
 
@@ -469,6 +484,9 @@ Small Device Styles
   .teaser-pic {
     width: 400px;
   }
+  .faq-container {
+    min-height: 0px;
+  }
 }
 
 @media screen and (max-width: 840px) {
@@ -504,7 +522,7 @@ Small Device Styles
   
   .headertitle {
   display: block;
-  padding-right: 16px; 
+  padding-right: 18px; 
   }
   
   .headerdivide {
@@ -603,4 +621,42 @@ Download links and page
 
 .downloadpage h3:first-child {
 	margin-top: 32px;
+}
+
+
+
+/*******************************************************************************
+Simple Syntax Highlighter
+*******************************************************************************/
+
+
+.shKeyword {
+  color: #333;
+  font-weight: bold;
+}
+
+.shString {
+  color: #d14;
+}
+
+.shFunc {
+  color: #0086b3;
+}
+
+.shComment {
+  color: #998;
+  font-style: italic;
+}
+
+.shTag {
+  color: #000080;
+  font-weight: normal;
+}
+
+.shAttr {
+  color: #008080;
+}
+
+.sh-js-keyword{
+  color: #c26230;
 }
