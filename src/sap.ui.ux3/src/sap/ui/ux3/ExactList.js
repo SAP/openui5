@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 		this._lb = null; //Destroy is called when the aggregation "controls" is cleaned up
 		this._closeHandle = null;
 		this._scrollCheckHandle = null;
-		this._rb = null;
+		this._rb = {getText: function(){return "";}};
 		this._oTopList = null;
 		if (this._dirtyListsCleanupTimer) {
 			jQuery.sap.clearDelayedCall(this._dirtyListsCleanupTimer);
