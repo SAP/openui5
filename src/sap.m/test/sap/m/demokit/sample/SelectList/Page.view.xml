@@ -1,0 +1,14 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.SelectList.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<SelectList
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</SelectList>
+</mvc:View>
