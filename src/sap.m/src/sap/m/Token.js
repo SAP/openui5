@@ -264,6 +264,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 	
+	/**
+	 * Handle the key down event for Ctrl+ space
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Token.prototype.onkeydown = function(oEvent) {
+		
+		if ((oEvent.ctrlKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { //metaKey for MAC command		
+			this.onsapspace(oEvent);
+			oEvent.preventDefault();
+		}
+
+	};
+	
 	return Token;
 
 }, /* bExport= */ true);
