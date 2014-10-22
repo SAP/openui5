@@ -31,8 +31,23 @@
 	color: @sapUiContentDisabledTextColor;
 }
 
-/* IE10/IE11 bug: it does not show the outline when clicking to focus */
-html[data-sap-ui-browser=ie10] .sapUiRb:focus,
-html[data-sap-ui-browser=ie11] .sapUiRb:focus {
-	outline: 1px dotted @sapUiText;
+/* make outline on control borders because otherwise it is cut in layout containers using overflow: hidden */
+.sapUiRb:focus{
+	outline: 1px dotted @sapUiBaseBorder;
+	outline-offset: -1px;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiRb:focus{
+	outline: none;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiRb:focus:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: block;
+	border: 1px dotted @sapUiBaseBorder;
 }

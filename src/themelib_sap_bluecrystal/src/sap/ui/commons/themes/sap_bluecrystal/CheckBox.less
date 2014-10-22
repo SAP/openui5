@@ -7,6 +7,14 @@
 	position: relative;
 }
 
+.sapUiCb:focus{
+	outline-color: @sapUiKeyboardFocus;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiCb:focus:after {
+	border-color: @sapUiKeyboardFocus;
+}
+
 .sapUiCb > input { /* make the real checkbox vanish from the screen */
 	position: absolute;
 	visibility: hidden;
