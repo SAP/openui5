@@ -204,6 +204,12 @@ sap.ui
 						}
 					};
 
+					P13nFilterPanel.prototype.getIncludeOperations = function() {
+						if (this._oIncludeFilterPanel) {
+							return this._oIncludeFilterPanel.getOperations();
+						}
+					};
+
 					/**
 					 * setter for the supported Exclude operations array
 					 * 
@@ -216,6 +222,12 @@ sap.ui
 
 						if (this._oExcludeFilterPanel) {
 							this._oExcludeFilterPanel.setOperations(this._aExcludeOperations);
+						}
+					};
+
+					P13nFilterPanel.prototype.getExcludeOperations = function() {
+						if (this._oExcludeFilterPanel) {
+							return this._oExcludeFilterPanel.getOperations();
 						}
 					};
 
