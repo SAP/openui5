@@ -501,7 +501,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oNextSelectableItem) {
 				this.updateDomValue(oNextSelectableItem.getText());
 				this.setSelection(oNextSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oNextSelectableItem });
 
 				if (!this.isFiltered()) {
 					iSelectionStart = 0;
@@ -544,7 +544,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oPrevSelectableItem) {
 				this.updateDomValue(oPrevSelectableItem.getText());
 				this.setSelection(oPrevSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oPrevSelectableItem });
 
 				if (!this.isFiltered()) {
 					iSelectionStart = 0;
@@ -583,7 +583,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
 				this.updateDomValue(oFirstSelectableItem.getText());
 				this.setSelection(oFirstSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oFirstSelectableItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -617,7 +617,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
 				this.updateDomValue(oLastSelectableItem.getText());
 				this.setSelection(oLastSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oLastSelectableItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -661,7 +661,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
