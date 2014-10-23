@@ -1,0 +1,109 @@
+/* ===============================================================*/
+/* CSS for control sap.m/Select.control High Contrast Black theme */
+/* ============================================================== */
+
+/* ====================================================== */
+/* Select List                                            */
+/* ====================================================== */
+
+/* ------------------------------ */
+/* List                           */
+/* ------------------------------ */
+
+.sapMSelectList {
+	background: @sapHCStandardBG;
+}
+
+/* ------------------------------ */
+/* Item                           */
+/* ------------------------------ */
+
+.sapMSelectListItem {
+	font-size: @sapMFontMediumSize;
+	padding: 0 1rem 0 1rem;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	cursor: pointer;
+	border-bottom: 0.0625rem @sapHCReducedAltFG solid;
+}
+
+/* selected */
+
+.sapMSelectListItemSelected {
+	background: @sapHCHighlightAltBG;
+}
+
+/* hover */
+
+.sapMSelectListItemHoverable:hover {
+	background: @sapHCHighlightBG;
+}
+
+/* pressed */
+
+.sapMSelectListItem.sapMSelectListItemPressed {
+	color: @sapHCStandardFG;
+	background: @sapHCHighlightBG;
+}
+
+/* disabled */
+
+.sapMSelectListItemDisabled {
+	opacity: 0.5;
+	color: @sapHCReducedFG;
+}
+
+/* focus */
+
+.sap-desktop .sapMSelectListItem:focus {
+	outline: none;
+}
+
+.sap-desktop li.sapMSelectListItem:focus:not(.sapMSelectListItemPressed):not(.sapMSelectListItemSelected) {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.125rem;
+}
+
+// IE does not support css outline-offset
+html[data-sap-ui-browser^="ie"] {
+	li.sapMSelectListItem:not(.sapMSelectListItemPressed):not(.sapMSelectListItemSelected) {
+		outline: none;
+		position: relative;
+	}
+
+	li.sapMSelectListItem:focus:not(.sapMSelectListItemPressed):not(.sapMSelectListItemSelected)::before {
+		content: "";
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		outline: none;
+		border: 0.125rem dotted @sapHCStandardFG;
+	}
+}
+
+/* ------------------------------ */
+/* SeparatorItem                  */
+/* ------------------------------ */
+
+.sapMSelectListSeparatorItem {
+	border: 1px solid @sapHCStandardFG;
+}
+
+/* ========================================================================= */
+/* CSS for control sap.m/SelectList.control BlueCrystal theme smaller sizes  */
+/* ========================================================================= */
+
+/* ------------------------------ */
+/* commons styles                 */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMSelectListItem,
+.sapUiSizeCondensed .sapMSelectListItem {
+	height: 2rem;
+	line-height: 2rem;
+}
