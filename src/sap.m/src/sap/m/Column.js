@@ -547,50 +547,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 	
 	/**
-	 * Checks if box-sizing border-box works for columns
-	 * Most of the browser does not respect this CSS property, even buggy
-	 * https://bugs.webkit.org/show_bug.cgi?id=18565
-	 *
-	 * @protected
-	 * @readonly
-	 * @static
-	 */
-	Column.hasBorderBoxSupport = (function() {
-		var width = 5,
-			hasBorderBoxSupport = false,
-			table = "<table style='table-layout:fixed; width:" + width + "px; position:absolute; left:-99px; top:-99px'>" +
-						"<tr><td style='width:" + width + "px; padding:1px; border:1px solid transparent;'></td></tr>" +
-					"</table>",
-			$table = jQuery(table);
-	
-		jQuery(document.body).append($table);
-		if ($table.find("td").width() == width) {
-			hasBorderBoxSupport = true;
-		}
-	
-		$table.remove();
-		return hasBorderBoxSupport;
-	}());
-	
-	/**
-	 * This method is called from parent after all cells in column are rendered
-	 *
-	 * @param {jQuery} $table Table jQuery reference
-	 * @protected
-	 */
-	Column.prototype.onColumnRendered = function($table) {
-		// If there is no borderBox support and column is visible then run the workaround for box sizing
-		if (!Column.hasBorderBoxSupport && this._index >= 0 && this.getWidth() && this.getVisible() && !this.isPopin() && !this.isNeverVisible()) {
-			var $header = $table.find("th:nth-child(" +  (this._index + 1) + ")"),
-				outerWidth = $header.outerWidth(),
-				width = $header.width();
-	
-			// set the outer-width as column width
-			$header.width(2 * outerWidth - width);
-		}
-	};
-	
-	/**
 	 * Sets the last value of the column if mergeDuplicates property is true
 	 *
 	 * @param {any} value Any Value
