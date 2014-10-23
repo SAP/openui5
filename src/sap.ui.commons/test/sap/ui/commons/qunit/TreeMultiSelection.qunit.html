@@ -113,7 +113,7 @@
 
 	test("Node selection and collapsing (old)", function() {
 		var tree = sap.ui.getCore().getControl("tree");
-		equal(tree.getSelectionMode(), "Single", "SelectionMode should be 'Single' by default");
+		equal(tree.getSelectionMode(), "Legacy", "SelectionMode should be 'Legacy' by default");
 		var node1 = sap.ui.getCore().getControl("node1");
 		ok(node1.getExpanded(), "Node 1 is expanded");
 		var node11 = sap.ui.getCore().getControl("node11");
