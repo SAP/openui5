@@ -19,8 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * The FixFlex control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container. The fix container can hold any number of controls, while the flexible container can hold only one. 
 	 * 
 	 * In order for the FixFlex to stretch properly, the parent element, in which the control is placed, needs to have a specified height or needs to have an absolute position.
-	 * 
-	 * Note: If the child control of the flex or the fix container has width/height bigger than the flex container itself, the child control will be cropped in the view.
+	 *
+	 * Note: If the child control of the flex or the fix container has width/height bigger than the container itself, the child control will be cropped in the view.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
