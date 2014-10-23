@@ -16,7 +16,13 @@ module.exports = function(grunt, config) {
 
 			livereload: grunt.option('watch') || false,
 
-			contextpath: config.testsuite.name
+			contextpath: config.testsuite.name,
+
+			cors: {
+				
+				origin: "*"
+					
+			}
 
 		},
 
