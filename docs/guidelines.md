@@ -7,12 +7,12 @@ When a file is consistently not following these rules and adhering to the rules 
 ### Table of Contents
 
 1.  [General](#general)
-2.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
+1.  [JavaScript Coding Guidelines](#javascript-coding-guidelines)
     *  [Code Formatting](#code-formatting)
     *  [Naming Conventions](#naming-conventions)
     *  [Creating Classes](#creating-classes)
     *  [Documentation (JSDoc)](#documentation-jsdoc)
-3.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
+1.  [UI5 Control Development Guidelines](#ui5-control-development-guidelines)
     *  [API](#api)
     *  [Behavior](#behavior)
     *  [Renderer](#renderer)
@@ -20,10 +20,10 @@ When a file is consistently not following these rules and adhering to the rules 
         *  [General](#general-1)
         *  [Naming](#naming)
         *  [LESS Theme Parameters](#less-theme-parameters)
-4.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
-5.  [File Names and Encoding](#file-names-and-encoding)
-<!-- 6.  [Git Guidelines](#git-guidelines) -->
-6.  [Tools](#tools)
+1.  [Product Standards / Acceptance Criteria](#product-standards--acceptance-criteria)
+1.  [File Names and Encoding](#file-names-and-encoding)
+1.  [Git Guidelines](#git-guidelines)
+1.  [Tools](#tools)
     *  [ESLint](#eslint)
 
 
@@ -35,7 +35,7 @@ General
 -   Use tabs, not spaces, for indentation (but adhere to any local standard in the file)
 -   Use Unix line endings (LF-only)
     -   In Eclipse, this is configured in "Preferences - General - Workspace - New text file line delimiter"
--   Text files must be UTF-8 encoded, only `\*.properties` and `\*.hdbtextbundle` files must be ISO8859-1 encoded (as defined in the corresponding standard)
+-   Text files must be UTF-8 encoded, only `*.properties` and `*.hdbtextbundle` files must be ISO8859-1 encoded (as defined in the corresponding standard)
     -   This is at least the current state, which does cause some issues, so a change is not ruled out
     -   In Eclipse, this is configured in "Preferences - General - Workspace - Text File Encoding"
 -   There is *no* 80-character line length guideline
@@ -63,23 +63,23 @@ JavaScript Coding Guidelines
     -   Use `===` and `!==` instead of `==` and `!=` (see the ESLint docu for special cases where `==` is allowed)
     -   The code should therefore look like this:
 
-    ```js
-        function outer(c, d) {
-            var e = c * d;
-            if (e === 0) {
-                e++;
-            }
-            for (var i = 0; i < e; i++) {
-                // do nothing
-            }
-    
-            function inner(a, b) {
-                return (e * a) + b;
-            }
-    
-            return inner(0, 1);
-        }
-    ```
+  ```js
+  function outer(c, d) {
+      var e = c * d;
+      if (e === 0) {
+          e++;
+      }
+      for (var i = 0; i < e; i++) {
+          // do nothing
+      }
+
+      function inner(a, b) {
+          return (e * a) + b;
+      }
+
+      return inner(0, 1);
+  }
+  ```
 
     -   The Eclipse default settings for the JavaScript editor are pretty fine, but make sure tabs are used for indentation
 
@@ -89,20 +89,20 @@ JavaScript Coding Guidelines
 But do NOT use hungarian notation for API method parameters: the documentation will specify the type in this case. When using hungarian notation, use the prefixes highlighted below and continue with an uppercase letter (camelCase):
 
 
-| Sample          | Type               |
-|-----------------|--------------------|
-| **s**Id         | string             |
-| **o**DomRef     | object             |
-| **$**DomRef     | jQuery object      |
-| **i**Count      | int                |
-| **m**Parameters | map / assoc. array |
-| **a**Entries    | array              |
-| **d**Today      | date               |
-| **f**Decimal    | float              |
-| **b**Enabled    | boolean            |
-| **r**Pattern    | RegExp             |
-| **fn**Function  | function           |
-| **v**Variant    | variant types      |
+| Sample             | Type               |
+|--------------------|--------------------|
+| <b>s</b>Id         | string             |
+| <b>o</b>DomRef     | object             |
+| <b>$</b>DomRef     | jQuery object      |
+| <b>i</b>Count      | int                |
+| <b>m</b>Parameters | map / assoc. array |
+| <b>a</b>Entries    | array              |
+| <b>d</b>Today      | date               |
+| <b>f</b>Decimal    | float              |
+| <b>b</b>Enabled    | boolean            |
+| <b>r</b>Pattern    | RegExp             |
+| <b>fn</b>Function  | function           |
+| <b>v</b>Variant    | variant types      |
 
 -   Class names should use CamelCase, starting with an uppercase letter
 -   HTML element IDs starting with `sap-ui-` are reserved for UI5.
