@@ -6628,45 +6628,54 @@
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onsapescape - close the picker popup", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
+							text: "Algeria"
 						}),
-	
+
 						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);
-	
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+
 				var fnEscapeSpy = this.spy(oComboBox, "onsapescape");
 				var fnCloseSpy = this.spy(oComboBox, "close");
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-	
+
 				// assert
 				strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
 				strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
-	
+				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onsapescape - when escape is pressed and the controls's field is not editable, the picker pop-up should not close", function() {
 	
 				// system under test
