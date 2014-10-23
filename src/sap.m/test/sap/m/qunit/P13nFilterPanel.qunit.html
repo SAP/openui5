@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>Test Page for sap.m.P13nFilterPanel</title>
+<script id="sap-ui-bootstrap" 
+	data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" 
+	data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" 
+	src="../../../../resources/sap-ui-core.js">
+</script>
+
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript">
+(function() {
+	jQuery.sap.require("sap.m.P13nFilterPanel");
+
+	module("Properties", {
+		setup: function() {
+		},
+		teardown: function() {
+		}
+	});
+
+	var bindFilterPanel = function(oP13nFilterPanel) {
+		var oData = {
+			"items" : [{
+				"key" : "c0",
+				"text" : "Name"
+			}, {
+				"key" : "c1",
+				"text" : "Date",
+				"type" : "date" 
+			}, {
+				"key" : "c2",
+				"text" : "Number",
+				"tooltip" : "My Tooltip",
+				"maxlength" : "10", 
+				"type" : "numeric"
+			}],
+			"filterItems" : [{
+				"key" : "f0",
+				"columnKey" : "c2",
+				"operation" : "BT",
+				"value1" : "1",
+				"value2" : "100"
+			}, {
+				"key" : "f1",
+				"columnKey" : "c0",
+				"operation" : "GT",
+				"value1" : "A",
+				"value2" : ""
+			}, {
+				"key" : "f2",
+				"exclude": true,
+				"columnKey" : "c1",
+				"operation" : "EQ",
+				"value1" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date()),
+				"value2" : sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
+			}]
+		};
+
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		
+		oP13nFilterPanel.setModel(oModel);
+		oP13nFilterPanel.bindItems("/items", new sap.m.P13nItem({
+			columnKey : "{key}",
+			text : "{text}",
+			tooltip : "{tooltip}",
+			type : "{type}",
+			maxlength : "{maxlength}"
+		}));
+		oP13nFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
+			key : "{key}",
+			exclude : "{exclude}",
+			columnKey : "{columnKey}",
+			operation : "{operation}",
+			value1 : "{value1}",
+			value2 : "{value2}"
+		}));
+		
+	};
+	
+	test("Default Values", function(){
+		
+		// system under test
+		var oP13nFilterPanel = new sap.m.P13nFilterPanel({
+			maxIncludes : -1,
+			maxExcludes : 2,
+			layoutMode : "Desktop"
+		});
+
+		// arrange
+		oP13nFilterPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems = "-1";
+		strictEqual(oP13nFilterPanel.getMaxIncludes(), nItems, "getMaxIncludes should be '" + nItems + "'");
+		nItems = "2";
+		strictEqual(oP13nFilterPanel.getMaxExcludes(), nItems, "getMaxExcludes should be '" + nItems + "'");
+
+		strictEqual(oP13nFilterPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
+
+		// cleanup
+		oP13nFilterPanel.destroy();
+	});
+
+	test("bind Items test", function(){
+		
+		// system under test
+		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
+
+		bindFilterPanel(oP13nFilterPanel);
+
+		// arrange
+		oP13nFilterPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 3;
+		strictEqual(oP13nFilterPanel.getKeyFields().length, nItems, "length of getKeyFields should be '" + nItems + "'");
+
+		// cleanup
+		oP13nFilterPanel.destroy();
+	});
+	
+	test("bind FilterItems test", function(){
+		
+		// system under test
+		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
+
+		bindFilterPanel(oP13nFilterPanel);
+
+		// arrange
+		oP13nFilterPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 3;
+		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+
+		// cleanup
+		oP13nFilterPanel.destroy();
+	});
+	
+	test("test operations", function(){
+		
+		// system under test
+		var oP13nFilterPanel = new sap.m.P13nFilterPanel();
+
+		oP13nFilterPanel.setIncludeOperations([ sap.m.P13nConditionOperation.BT, 
+			               						sap.m.P13nConditionOperation.EQ, 
+	                       						sap.m.P13nConditionOperation.Contains, 
+	                       						sap.m.P13nConditionOperation.StartsWith,
+	                       						sap.m.P13nConditionOperation.EndsWith, 
+	                       						sap.m.P13nConditionOperation.LT, 
+	                       						sap.m.P13nConditionOperation.LE, 
+	                       						sap.m.P13nConditionOperation.GT ]);
+
+		oP13nFilterPanel.setExcludeOperations([sap.m.P13nConditionOperation.EQ, 
+		             	                       sap.m.P13nConditionOperation.StartsWith,
+		             	                       sap.m.P13nConditionOperation.GT ]);
+
+		// arrange
+		oP13nFilterPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		var nItems= 8;
+		strictEqual(oP13nFilterPanel.getIncludeOperations().length, nItems, "length of getIncludeOperations should be '" + nItems + "'");
+		nItems= 3;
+		strictEqual(oP13nFilterPanel.getExcludeOperations().length, nItems, "length of getExcludeOperations should be '" + nItems + "'");
+
+		// cleanup
+		oP13nFilterPanel.destroy();
+	});	
+	
+	test("test model update events", function(){
+		
+		// system under test
+		var oP13nFilterPanel = new sap.m.P13nFilterPanel({
+			removeFilterItem: function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				oData.filterItems.forEach(function(oItem, iIndex) {
+					if (oItem.key === params.key) {
+						oData.filterItems.splice(iIndex, 1);
+						oModel.setData(oData, true);
+						return;
+					}
+				});							
+			},
+			addFilterItem: function(oEvent) {
+				var params = oEvent.getParameters();
+				var oModel = oP13nFilterPanel.getModel();
+				var oData = oModel.getData();
+				var oFilterItem = {
+					key : params.key,
+					columnKey : params.newItem.getColumnKey(),
+					operation : params.newItem.getOperation(),
+					exclude : params.newItem.getExclude(),
+					value1 : params.newItem.getValue1(),
+					value2 : params.newItem.getValue2()
+				};
+				if (params.index) {
+					oData.filterItems.splice(params.index, 0, oFilterItem);
+				} else {
+					oData.filterItems.push(oFilterItem);
+				}
+				oModel.setData(oData, true);
+			}				
+		});
+
+		bindFilterPanel(oP13nFilterPanel);
+
+		// arrange
+		oP13nFilterPanel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		// Remove item
+ 		var nItems= 2;
+		var oConditionPanel= oP13nFilterPanel._oIncludeFilterPanel;
+		oConditionPanel._triggerRemoveCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+		
+		
+		// Change item
+		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
+		oConditionGrid.value1.setValue("foo");
+		oConditionPanel._changeField(oConditionPanel, oConditionGrid);		
+		var sValue1 = "foo";
+		strictEqual(oP13nFilterPanel.getConditions()[1].value1, sValue1, "Value1 of first condition must be '" + sValue1 + "'.");
+		
+		// Add item
+		nItems= 3;
+ 		oConditionPanel._triggerAddCondition(oConditionPanel, oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+		strictEqual(oP13nFilterPanel.getConditions().length, nItems, "length of getConditions should be '" + nItems + "'");
+
+		// cleanup
+		oP13nFilterPanel.destroy();
+	});
+
+
+}());
+
+</script>
+
+
+</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.P13nFilterPanel</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+				
+		<div id="content"></div>
+	</body>
+</html>
