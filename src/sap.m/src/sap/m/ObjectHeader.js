@@ -386,11 +386,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireIconPress({
 				domRef : iconOrImg
 			});
-		} else if (jQuery(oEvent.target).hasClass('sapMObjectAttributeActive')) {
-			var sFocusedAttr = sap.ui.getCore().byId(oEvent.target.id);
-			sFocusedAttr.firePress({
-				domRef : sFocusedAttr.getDomRef()
-			});
 		}
 
 		oEvent.preventDefault();
