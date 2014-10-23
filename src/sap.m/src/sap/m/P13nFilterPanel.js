@@ -339,7 +339,7 @@ sap.ui
 						P13nPanel.prototype.addItem.apply(this, arguments);
 
 						var oKeyField = {
-							key : oItem.getKey(),
+							key : oItem.getColumnKey(),
 							text : oItem.getText(),
 							tooltip : oItem.getTooltip(),
 							maxlength : oItem.getMaxlength(),

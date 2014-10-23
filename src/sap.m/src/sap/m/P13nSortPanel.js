@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				P13nPanel.prototype.addItem.apply(this, arguments);
 
 				var oKeyField = {
-					key : oItem.getKey(),
+					key : oItem.getColumnKey(),
 					text : oItem.getText(),
 					tooltip : oItem.getTooltip()
 				};
