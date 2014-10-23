@@ -984,9 +984,9 @@
 				// Clean up
 				oIconTabBar.destroy();
 			});
-			
+
 			test("showAll Filter", function() {
-				
+
 				// Arrange
 				var oIconTabBar = new sap.m.IconTabBar({
 					items: [
@@ -998,16 +998,121 @@
 						})
 					]
 				});
-			
+
 				// System under Test
 				oIconTabBar.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-				
+
 				// Assert
 				ok(oIconTabBar.getItems()[0].$().hasClass("sapMITBAll"), "should have class for showAll property");
 				ok(!oIconTabBar.getItems()[1].$().hasClass("sapMITBAll"), "should not have class for showAll property");
-		
+
 				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("stretchContentHeight", function () {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					stretchContentHeight: true,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				ok(oIconTabBar.$().hasClass("sapMITBStretch"), "should have class for stretchContentHeight property");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("applyContentPadding", function () {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					applyContentPadding: false,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				ok(oIconTabBar.$().hasClass("sapMITBNoContentPadding"), "should have class for applyContentPadding property");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
+			test("backgroundDesign transparent", function () {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					backgroundDesign: sap.m.BackgroundDesign.Transparent,
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://task"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				ok(oIconTabBar.$().hasClass("sapMITBBackgroundDesignTransparent"), "should have class for backgroundDesign: transparent");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+		
+			test("no flexbox support", function() {
+				var	$FlexChild, 
+					iFlexChildWidth, 
+					iFlexChildHeight;
+				
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://instance",
+							key: "key1"
+						})
+					],
+					selectedKey: "key1",
+					content: new sap.m.Label({text:"label"})
+				});
+
+				// System under test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				$FlexChild = oIconTabBar.$("containerContent");
+				
+				iFlexChildHeight = $FlexChild.height();
+
+				// Act
+				oIconTabBar._getIconTabHeader()._fnResizeNoFlexboxSupport();
+				sap.ui.getCore().applyChanges();
+				
+				// Assert
+				strictEqual(iFlexChildHeight, $FlexChild.height(), "Height is not changed");
+
+				// Cleanup
 				oIconTabBar.destroy();
 			});
 
@@ -1643,7 +1748,6 @@
 				sap.m.IconTabBar.prototype.fireSelect.restore();
 				oIconTabBar.destroy();
 			});
-		
 		</script>
 
 

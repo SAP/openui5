@@ -69,12 +69,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.15.0
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Determines whether the text of the icon tab filter (not the count) is uppercased.
 			 * @since 1.22
 			 */
-			upperCase : {type : "boolean", group : "Appearance", defaultValue : false}
+			upperCase : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Determines whether the IconTabBar height is stretched to the maximum possible height of its parent container. As a
+			 * prerequisite, the height of the parent container must be defined as a fixed value.
+			 * 
+			 * @since 1.26
+			 */
+			stretchContentHeight : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Determines whether the IconTabBar content will fit to the full area (if set to false paddings are removed).
+			 * 
+			 * @since 1.26
+			 */
+			applyContentPadding : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * This property is used to set the background color of the IconTabBar. Depending on the theme you can change the state of the background
+			 * from "Solid" over "Translucent" to "Transparent".
+			 * 
+			 * @since 1.26
+			 */
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Solid}
 		},
 		aggregations : {
 	
@@ -194,7 +217,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			rm.destroy();
 		}
 	};
-	
+
 	/**
 	 * Opens and closes the content Container
 	 *
@@ -204,7 +227,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	IconTabBar.prototype._toggleExpandCollapse = function(bExpanded) {
 		var $content = this.$("content");
-	
+
 		// use inverted control state if not specified by parameter
 		if (bExpanded === undefined) {
 			bExpanded = !this.getExpanded();
