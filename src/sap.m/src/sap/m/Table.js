@@ -81,19 +81,12 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 	
-		// table root
-		var $table = jQuery(this.getTableDomRef());
-	
 		// if any item has navigation, add required class
-		this._navRenderedBy && $table.addClass("sapMListTblHasNav");
+		if (this._navRenderedBy) {
+			jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
+		}
 	
-		// notify columns after rendering
-		this._notifyColumns("ColumnRendered", $table);
-	
-		// update select-all
 		this.updateSelectAllCheckbox();
-	
-		// render the overlay if necessary
 		this._renderOverlay();
 	};
 	
