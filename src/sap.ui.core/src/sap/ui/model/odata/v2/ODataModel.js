@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders, bTokenHandling,
 			bWithCredentials, sMaxDataServiceVersion,
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-			sDefaultCountMode, mMetadataNamespaces, mServiceUrlParams,
+			sDefaultCountMode, sDefaultBindingMode, mMetadataNamespaces, mServiceUrlParams,
 			mMetadataUrlParams, bJSON, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				bRefreshAfterChange = mParameters.refreshAfterChange;
 				sAnnotationURI = mParameters.annotationURI;
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
+				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
 				mMetadataNamespaces = mParameters.metadataNamespaces;
 				mServiceUrlParams = mParameters.serviceUrlParams;
@@ -89,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
-			this.sDefaultBindingMode = mParameters.defaultBindingMode || sap.ui.model.BindingMode.OneWay;
+			this.sDefaultBindingMode = sDefaultBindingMode || sap.ui.model.BindingMode.OneWay;
 
 			this.bJSON = bJSON !== false;
 			this.aPendingRequestHandles = [];
@@ -1629,7 +1630,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oRequestGroup.changes = {};
 			}
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
-				oRequestGroup.map[oRequest.key].data = oRequest.data; 
+				if (oRequest.method === "POST") {
+					//failed create Entry createEntry
+					oRequestGroup.map[oRequest.key].method = "POST";
+				}
+				oRequestGroup.map[oRequest.key].data = oRequest.data;
 			} else {
 				oChangeGroup = oRequestGroup.changes[sChangeSetId];
 				if (!oChangeGroup) {
@@ -1874,12 +1879,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		//default to true
 		bMerge = bMerge !== false;
 
-		if (bMerge){
+		if (oData.__metadata && oData.__metadata.created){
+			sMethod = "POST";
+			sKey = oData.__metadata.created.key;
+		} else if (bMerge) {
 			sMethod = "MERGE";
 		} else {
 			sMethod = "PUT";
 		}
-
+		
 		// do a copy of the payload or the changes will be deleted in the model as well (reference)
 		oPayload = jQuery.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
@@ -2691,7 +2699,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		jQuery.each(mChangedEntities, function(sKey, bChanged) {
 			if (sKey in that.mChangedEntities) {
+				var oEntry = this._getObject(sKey);
+				jQuery.extend(true, oEntry, that.mChangedEntities[sKey]);
 				delete that.mChangedEntities[sKey];
+				
 			}
 		});
 	};
@@ -2776,11 +2787,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			aParts.splice(i,1);
 		}
-		if (!oEntry.__metadata.created) {
+		
+		if (!this.mChangedEntities[sKey]) {
 			oEntry = jQuery.extend(true,{},oEntry);
-			this.mChangedEntities[sKey] = oEntry;
 		}
-
+		this.mChangedEntities[sKey] = oEntry;
+		
 		oEntry[sProperty] = oValue;
 
 		oGroupInfo = this._resolveGroup(sKey);
@@ -2977,6 +2989,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				sPath = sPath.substr(1);
 			}
 			delete this.oRequestQueue[sPath];
+			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 
 		}
@@ -3024,7 +3037,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
 			sKey, aUrlParams, sBatchGroupId, sChangeSetId,
-			mUrlParams, mHeaders, vProperties, oEntity = {},	
+			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},	
 			sMethod = "POST";
 
 		if (mParameters) {
@@ -3073,7 +3086,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		this.oData[sKey] = oEntity;
 
-		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: true};
+		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: {key: sKey}};
 
 		sUrl = this._createRequestUrl(sPath, oContext, aUrlParams, this.bUseBatch);
 
@@ -3081,9 +3094,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		oContext =  this.getContext("/" + sKey); // context wants a path
 		oRequest.context = oContext;
-
-		this._pushToRequestQueue(this.mDeferredRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
+		oRequest.key = sKey;
+		
+		mRequests = this.mRequests;
+		if (sBatchGroupId in this.mDeferredBatchGroups) {
+			mRequests = this.mDeferredRequests;
+		}
+		
+		this._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
+		
+		if (this.bUseBatch) {
+			if (!this.oRequestTimer) {
+				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
+			}
+		} else {
+			this._processRequestQueue(this.mRequests);
+		}
+		
 		return oContext;
 	};
 
