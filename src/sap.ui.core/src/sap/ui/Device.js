@@ -564,6 +564,7 @@ if (typeof window.sap.ui !== "object") {
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
 		if ( b.mozilla ) {
+			oExpMobile = /Mobile/;
 			if ( _ua.match(/Firefox\/(\d+\.\d+)/) ) {
 				var version = parseFloat(RegExp.$1);
 				return {
@@ -571,7 +572,7 @@ if (typeof window.sap.ui !== "object") {
 					versionStr: "" + version,
 					version: version,
 					mozilla: true,
-					mobile: false
+					mobile: oExpMobile.test(_ua)
 				};
 			} else {
 				// unknown mozilla browser
