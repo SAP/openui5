@@ -1701,12 +1701,11 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.keycodes'],
 		
 		oEvent.setMark("sapui5_handledF6GroupNavigation");
 		oEvent.setMarked();
+		oEvent.preventDefault();
 		
 		if (oSettings && oSettings.skip) {
 			return;
 		}
-		
-		oEvent.preventDefault();
 		
 		var oTarget = oSettings && oSettings.target ? oSettings.target : document.activeElement,
 			aScopes = null;
