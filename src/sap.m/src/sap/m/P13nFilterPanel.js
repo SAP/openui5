@@ -428,7 +428,8 @@ sap.ui
 							}
 							if (sOperation === "remove") {
 								that.fireRemoveFilterItem({
-									key : sKey
+									key : sKey,
+									index : oEvent.getParameter("index")
 								});
 							}
 						};

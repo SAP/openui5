@@ -287,7 +287,8 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
-							key : sKey
+							key : sKey,
+							index : oEvent.getParameter("index")
 						});
 					}
 				};
