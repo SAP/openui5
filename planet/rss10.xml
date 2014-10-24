@@ -18,6 +18,7 @@
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138885150" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138078515" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/89849494395" />
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/100831992435" />
 		</rdf:Seq>
 	</items>
 </channel>
@@ -54,6 +55,14 @@
 Have a look at this great world cup prediction game app built with OpenUI5. It shows your game predictions and infos on the stadiums as well.
 [source: http://www.tippfieber.de]</content:encoded>
 	<dc:date>2014-06-25T10:26:00+00:00</dc:date>
+</item>
+<item rdf:about="http://openui5picks.tumblr.com/post/100831992435">
+	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>
+	<link>http://openui5picks.tumblr.com/post/100831992435</link>
+	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/603348149b5887622ec8085ab44c052f/tumblr_inline_ndyeu9jW2S1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+This blog demonstrates how to load, transform and analyse UK road traffic accident data on mobile devices with HANA, SAPUI5 and Google Maps.  The end results look like this on an iPhone, analysing...</content:encoded>
+	<dc:date>2013-12-08T16:37:00+00:00</dc:date>
 </item>
 
 </rdf:RDF>

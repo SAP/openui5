@@ -45,6 +45,15 @@ Have a look at this great world cup prediction game app built with OpenUI5. It 
 [source: http://www.tippfieber.de]</description>
 	<pubDate>Wed, 25 Jun 2014 10:26:00 +0000</pubDate>
 </item>
+<item>
+	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>
+	<guid>http://openui5picks.tumblr.com/post/100831992435</guid>
+	<link>http://openui5picks.tumblr.com/post/100831992435</link>
+	<description>&lt;img src=&quot;https://31.media.tumblr.com/603348149b5887622ec8085ab44c052f/tumblr_inline_ndyeu9jW2S1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+
+This blog demonstrates how to load, transform and analyse UK road traffic accident data on mobile devices with HANA, SAPUI5 and Google Maps.  The end results look like this on an iPhone, analysing...</description>
+	<pubDate>Sun, 08 Dec 2013 16:37:00 +0000</pubDate>
+</item>
 
 </channel>
 </rss>
