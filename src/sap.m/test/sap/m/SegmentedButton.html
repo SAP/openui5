@@ -121,46 +121,45 @@
 				text: "Label Footer",
 				enabled: true,
 			})
-			
-				var Bar = new sap.m.Bar({ 
-					contentLeft: [new sap.m.Button('Button', {text: "Back", type:sap.m.ButtonType.Back})],	
-					contentMiddle: [ new sap.m.SegmentedButton('SegmentedBar1', {
-		  				buttons: [button1, button2, button3], 
-		  				selectedButton: button2,
-		  				visible: true,
-		  				select: function(oEvent) {
-		  					jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
-		  					}
-		  			})],
-					contentRight: [new sap.m.Button('Button1', {text: "Edit"})]
-				});
-				page.setCustomHeader(Bar);
-			        
-			
+
+			var Bar = new sap.m.Bar({ 
+				contentLeft: [new sap.m.Button('Button', {text: "Back", type:sap.m.ButtonType.Back})],	
+				contentMiddle: [ new sap.m.SegmentedButton('SegmentedBar1', {
+					buttons: [button1, button2, button3], 
+					selectedButton: button2,
+					visible: true,
+					select: function(oEvent) {
+						jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+						}
+				})],
+				contentRight: [new sap.m.Button('Button1', {text: "Edit"})]
+			});
+			page.setCustomHeader(Bar);
+
 			//---CONTENT---
-			var Segmented2 = new sap.m.SegmentedButton('SegmentedCnt1', {
+			var oSegmented2 = new sap.m.SegmentedButton('SegmentedCnt1', {
 				select: function(oEvent) {
 					jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
 					},
 				width: '100%'
 			});		
-			Segmented2.addButton(button4);
-			Segmented2.setSelectedButton(button4);
-			Segmented2.createButton('100% Width', null, true);
-			Segmented2.createButton('This is a Very Very Very Long Text', null, true);
-			Segmented2.addStyleClass('segCont')
-			page.addContent(Segmented2);
+			oSegmented2.addButton(button4);
+			oSegmented2.setSelectedButton(button4);
+			oSegmented2.createButton('100% Width', null, true);
+			oSegmented2.createButton('This is a Very Very Very Long Text', null, true);
+			oSegmented2.addStyleClass('segCont')
+			page.addContent(oSegmented2);
 			
-			var Segmented3 = new sap.m.SegmentedButton('SegmentedCnt2', {
+			var oSegmented3 = new sap.m.SegmentedButton('SegmentedCnt2', {
 				buttons: [button5, button6], 
 				selectedButton: button5,
 				select: function(oEvent) {
 					jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
 					},
 			});
-			page.addContent(Segmented3);
+			page.addContent(oSegmented3);
 			
-			var SegmentedIcons = new sap.m.SegmentedButton('SegmentedIcons', {
+			var oSegmentedIcons = new sap.m.SegmentedButton('SegmentedIcons', {
 				buttons: [
 					new sap.m.Button('buttonIcon1', {
 						type: sap.m.ButtonType.Default,
@@ -185,10 +184,10 @@
 					], 
 				select: function(oEvent) {
 					jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
-					}
+				}
 			}).addStyleClass('segCont');
-			page.addContent(SegmentedIcons);
-			
+			page.addContent(oSegmentedIcons);
+
 			var Segmented4 = new sap.m.SegmentedButton('SegmentedFooter', {
 				buttons: [button13, button14,button15], 
 				selectedButton: button14,
@@ -299,9 +298,66 @@
 					],
 					select: function(oEvent) {
 						jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
-					},
+					}
 				});
 				page2.addContent(oSegmentedButtonImage);
+
+				page2.addContent(createSpacer());
+
+				var oSegmentedImageAndText = new sap.m.SegmentedButton('SegmentedImageAndText', {
+					buttons: [
+						new sap.m.Button({
+							icon: "images/candy_v_46x46.png",
+							text: "one",
+							enabled: true,
+						}),
+						new sap.m.Button({
+							icon: "images/candy_x_46x46.png",
+							text: "two",
+							enabled: true,
+						}),
+						new sap.m.Button({
+							icon: "images/candy_star_46x46.png",
+							text: "three",
+							enabled: false
+						})
+					], 
+					select: function(oEvent) {
+						jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+					}
+				})
+				page2.addContent(oSegmentedImageAndText);
+
+				page2.addContent(createSpacer());
+
+				var oSegmentedIconAndText = new sap.m.SegmentedButton('SegmentedIconAndText', {
+					buttons: [
+						new sap.m.Button({
+							icon: sap.ui.core.IconPool.getIconURI("add"),
+							text: "one",
+							enabled: true,
+						}), 
+						new sap.m.Button({
+							icon: sap.ui.core.IconPool.getIconURI("attachment"),
+							text: "two",
+							enabled: true,
+						}), 
+						new sap.m.Button({
+							icon: sap.ui.core.IconPool.getIconURI("paper-plane"),
+							text: "three",
+							enabled: false,
+						}), 
+						new sap.m.Button({
+							icon: sap.ui.core.IconPool.getIconURI("synchronize"),
+							text: "four",
+							enabled: true,
+						})
+						], 
+					select: function(oEvent) {
+						jQuery.sap.log.info('press event segmented: ' + oEvent.getParameter('id'));
+					}
+				})
+				page2.addContent(oSegmentedIconAndText);
 
 				page2.addContent(createSpacer());
 

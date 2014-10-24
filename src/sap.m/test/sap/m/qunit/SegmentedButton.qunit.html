@@ -312,6 +312,38 @@
 		oSegmentedButton.destroy();
 	});
 
+	test("Check icon and text button", function() {
+		// Arrange
+		var oButton1 = new sap.m.Button({
+			type : sap.m.ButtonType.Default,
+			icon : "../images/settings_64.png",
+			text : "My Mixed Button 1"
+		})
+		var oButton2 = new sap.m.Button({
+			type : sap.m.ButtonType.Default,
+			icon : "sap-icon://task",
+			text : "My Mixed Button 2"
+		});
+		// System under Test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			buttons : [oButton1, oButton2]
+		});
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		equal(oButton1.$().text(), "My Mixed Button 1", "Button1 should have text: My Mixed Button 1");
+		ok(oButton1.$('img').hasClass("sapMBtnIcon"), "Button2 should have class: sapMBtnIcon");
+		ok(oButton1.$('img').hasClass("sapMImg"), "Button2 should have class: sapMImg");
+		equal(oButton2.$().text(), "My Mixed Button 2", "Button2 should have text: My Mixed Button 2");
+		ok(oButton2.$('img').hasClass("sapMBtnIcon"), "Button3 should have class: sapMBtnIcon");
+		ok(oButton2.$('img').hasClass("sapUiIcon"), "Button3 should have class: sapUiIcon");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
 	/* =========================================================== */
 	/* Event module                                                */
 	/* =========================================================== */
