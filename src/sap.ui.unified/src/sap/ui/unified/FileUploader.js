@@ -398,12 +398,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.oBrowse.setParent(this);
 
 		this.oFileUpload = null;
+		
+		// check if sap.m library is used
+		this.bMobileLib = this.oBrowse instanceof sap.m.Button;
 
 		//retrieving the default browse button text from the resource bundle
 		if (!this.getIconOnly()) {
 			this.oBrowse.setText(this.getBrowseText());
 		}
-
 	};
 
 	FileUploader.prototype.setButtonText = function(sText) {
@@ -540,7 +542,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			this.oFilePath.getDomRef().style.visibility = "hidden";
 			jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfBrd');
 		} else {
-			this.oFilePath.$().attr("tabindex", "-1");
+			if (!this.bMobileLib) {
+				this.oFilePath.$().attr("tabindex", "-1");
+			} else {
+				this.oFilePath.$().find('input').attr("tabindex", "-1");
+			}
 			// in case of IE9 we prevent the browse button from being focused because the
 			// native file uploader requires the focus for catching the keyboard events
 			if ((!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
@@ -722,31 +728,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 	FileUploader.prototype.onmousedown = function(oEvent) {
-		this.oBrowse.onmousedown(oEvent);
+		if (!this.bMobileLib) {
+			this.oBrowse.onmousedown(oEvent);
+		}
 	};
 
 	FileUploader.prototype.onmouseup = function(oEvent) {
-		this.oBrowse.onmouseup(oEvent);
+		if (!this.bMobileLib) { 
+			this.oBrowse.onmouseup(oEvent);
+		}
 	};
 
 	FileUploader.prototype.onmouseover = function (oEvent) {
-		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdHover');
-		this.oBrowse.onmouseover(oEvent);
+		if (!this.bMobileLib) {
+			jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdHover');
+			this.oBrowse.onmouseover(oEvent);
+		}
 	};
 
 	FileUploader.prototype.onmouseout = function (oEvent) {
-		jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdHover');
-		this.oBrowse.onmouseout(oEvent);
+		if (!this.bMobileLib) {
+			jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdHover');
+			this.oBrowse.onmouseout(oEvent);
+		}
 	};
 
-	FileUploader.prototype.onfocusin = function () {
-		jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdFocus').attr("tabindex", "-1");
-		jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfFoc');
-		this.focus();
+	FileUploader.prototype.onfocusin = function () {		
+		if (!this.bMobileLib) {
+			jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdFocus').attr("tabindex", "-1");
+			jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfFoc');
+			this.focus();
+		}
 	};
 
 	FileUploader.prototype.onfocusout = function () {
-		jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdFocus').attr("tabindex", "0");
+		if (!this.bMobileLib) {
+			jQuery(this.oBrowse.getDomRef()).removeClass('sapUiBtnStdFocus').attr("tabindex", "0");
+		}
 	};
 
 	FileUploader.prototype.setAdditionalData = function(sAdditionalData) {

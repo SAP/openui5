@@ -57,6 +57,11 @@
 	font-size: 500px; /* to make the field high enough for most themes; for themes with very large fonts this needs to be increased further */
 }
 
+html[data-sap-ui-browser^="ie"] .sapUiFup > form input {
+	display: block;
+}
+
+
 html[data-sap-ui-browser="ie8"] .sapUiFupInputMask > input { /* for IE8 the file input should be native */
 	position: relative;
 	left: auto;
