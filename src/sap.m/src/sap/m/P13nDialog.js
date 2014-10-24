@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		var sType = oPanel.getType();
 		var oButton = new sap.m.Button({
 			type : sap.m.ButtonType.Default,
-			text : "{/" + sType + "/title}"
+			text : "{/transientData/" + sType + "/title}"
 		});
 
 		oButton.setModel(oPanel.getModel());
