@@ -1484,6 +1484,7 @@ sap.ui
 							this._bIgnoreSetConditions = true;
 							this.fireDataChange({
 								key : sKey,
+								index : oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
 								operation : "remove",
 								newData : null
 							});
@@ -1531,6 +1532,7 @@ sap.ui
 							this._bIgnoreSetConditions = true;
 							this.fireDataChange({
 								key : sKey,
+								index : oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
 								operation : "remove",
 								newData : null
 							});
@@ -1570,7 +1572,7 @@ sap.ui
 					P13nConditionPanel.prototype._removeCondition = function(oThat, oTargetGrid, oConditionGrid) {
 						if (oConditionGrid.getContent().length > 1) {
 							var sKey = oConditionGrid.data("_key");
-							//var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
+							var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
 							delete oThat._oConditionsMap[sKey];
 							oConditionGrid.destroy();
 
@@ -1582,7 +1584,7 @@ sap.ui
 
 							this.fireDataChange({
 								key : sKey,
-								//index : iIndex,
+								index : iIndex,
 								operation : "remove",
 								newData : null
 							});
