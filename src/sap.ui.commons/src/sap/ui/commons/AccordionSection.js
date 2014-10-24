@@ -273,13 +273,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 					cont.setAttribute("aria-hidden", "true");
 				}
 	
-				this.rerender();
+				this.invalidate();
 	
 			} else {
 				// expanding
 				if (!this.getDomRef("cont")) {
 					// content has not been rendered yet, so render it now
-					this.rerender(); // TODO: potentially restore focus to collapse icon/button
+					this.invalidate(); // TODO: potentially restore focus to collapse icon/button
 				} else {
 					// content exists already, just make it visible again
 					jQuery(this.getDomRef()).removeClass("sapUiAcdSectionColl");
