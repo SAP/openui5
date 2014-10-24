@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.removeAllValidators = function() {
 		this._tokenizer.removeAllValidators();
 	};
-	
+
 	/**
 	 * Called when the user presses the down arrow key
 	 * @param {jQuery.Event} oEvent The event triggered by the user
@@ -338,7 +338,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
-	 * Handle the key down event for Ctrl+ a
+	 * Handle the key down event for Ctrl + A
 	 *
 	 * @param {jQuery.Event}
 	 *            oEvent - the occuring event
@@ -350,7 +350,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				
 			if ( this._tokenizer){
 				
-				if (this.getValue().length !== 0 && this._$input.getSelectedText() === this.getValue()) {
+				if (this._$input.getSelectedText() === this.getValue()) {
 					
 					// if all text are selected, select the complete content of the input field
 					this._tokenizer.selectAllTokens();
