@@ -66,6 +66,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		}
 	}});
 	
+	// class name for the navigation items
+	Table.prototype.sNavItemClass = "sapMListTblRow";
+	
 	Table.prototype.init = function() {
 		this._hasPopin = false;
 		this._selectAllCheckBox = null;
@@ -241,12 +244,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		var $Footer = this.$("tblFooter");
 		var $Rows = this.$("tblBody").find(".sapMLIB");
 		
-		var oRootDomRef = this.getTableDomRef();
 		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
-		
-		this._oItemNavigation.setRootDomRef(oRootDomRef);
 		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
 		
+		// header and footer in the item navigation but initial focus is the first item row 
 		if ($Header[0] && aItemDomRefs.length && oItemNavigation.getFocusedIndex() == -1) {
 			oItemNavigation.setFocusedIndex(1);
 		}
@@ -487,7 +488,9 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		}
 		
 		var $Row = jQuery();
-		if (this.isHeaderRowEvent(oEvent)) {
+		if (oEvent.target.id == this.getId("nodata")) {
+			$Row = this.$("nodata");
+		} if (this.isHeaderRowEvent(oEvent)) {
 			$Row = this.$("tblHeader");
 		} else if (this.isFooterRowEvent(oEvent)) {
 			$Row = this.$("tblFooter");
@@ -502,7 +505,8 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	// Handle shift-tab key 
 	Table.prototype.onsaptabprevious = function(oEvent) {
 		var sTargetId = oEvent.target.id;
-		if (sTargetId == this.getId("tblHeader") || 
+		if (sTargetId == this.getId("nodata") ||
+			sTargetId == this.getId("tblHeader") || 
 			sTargetId == this.getId("tblFooter")) {
 			this.forwardTab(false);
 		} else {

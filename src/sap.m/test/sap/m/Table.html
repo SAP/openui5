@@ -32,6 +32,18 @@
 		{lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR"},
 		{lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR"}
 	];
+	
+	jQuery.sap.require("sap.m.MessageBox");
+	jQuery.sap.require("sap.m.MessageToast");
+	
+	function openViewSettingsDialog() {
+		sap.m.MessageToast.show("View Settings Dialog");
+	}
+	
+	function openPersonalizationDialog() {
+		sap.m.MessageToast.show("Personalization Dialog");
+	}
+	
 	var oSalaryFooter = new sap.m.Label({
 		text : "9.470.095 EUR"
 	});
@@ -48,7 +60,7 @@
 	});
 	
 	var oModes = new sap.m.Select({
-		title: "Mode",
+		tooltip: "Mode",
 		items: aModes,
 		adjustAutoWidth: true,
 		change: function(oEvent) {
@@ -65,13 +77,13 @@
 	});
 	
 	var oTypes = new sap.m.Select({
-		title: "Item Type",
+		tooltip: "Item Type",
 		items: aTypes,
 		adjustAutoWidth: true,
 		change: function(oEvent) {
 			var sType = oEvent.getParameter("selectedItem").getKey();
 			oTable.getItems().forEach(function(oItem) {
-				oItem.setType(sType);
+				oItem.setProperty("type", sType, true);
 			});
 			oTable.rerender();
 		}
@@ -160,15 +172,11 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Button({
 				icon: "sap-icon://drop-down-list",
-				press: function() {
-					sap.m.MessageToast.show("View Settings");
-				}
+				press: openViewSettingsDialog
 			}),
 			new sap.m.Button({
 				icon: "sap-icon://action-settings",
-				press: function() {
-					sap.m.MessageToast.show("Personalization Dialog");
-				}
+				press: openPersonalizationDialog
 			})
 		]
 	});
@@ -230,9 +238,7 @@
 			demandPopin : true
 		}),
 	];
-	
-	var oVSD = new sap.m.ViewSettingsDialog();
-	
+		
 	var oTemplate = new sap.m.ColumnListItem({
 		vAlign: "Middle",
 		detailPress: function() {
@@ -281,6 +287,20 @@
 		}
 	});
 	
+	var oKeyDownDelegate = {
+		onkeydown : function(oEvent) {
+			var mKeyCodes = jQuery.sap.KeyCodes;
+			var bControlKey = oEvent.metaKey || oEvent.ctrlKey;
+			
+			if (bControlKey && oEvent.which === mKeyCodes.DOT) {
+				openViewSettingsDialog();
+			} else if (bControlKey && oEvent.which === mKeyCodes.COMMA) {
+				openPersonalizationDialog();
+			}
+			
+		}
+	};
+	
 	var oTable = new sap.m.Table({
 		growingThreshold: 5,
 		growingScrollToLoad : false,
@@ -288,26 +308,34 @@
 		headerToolbar : oTableHeader,
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
-		columns: aColumns,
+		columns : aColumns,
 		selectionChange : function(e) {
 			sap.m.MessageToast.show("selection is changed");
 		},
-		delete : function() {
-			sap.m.MessageToast.show("item is delete");
+		delete : function(oEvent) {
+			var oItem = oEvent.getParameter("listItem");
+			
+			sap.m.MessageBox.confirm("Are you sure to delete this record?", {
+				onClose: function(sResult){
+					if (sResult == sap.m.MessageBox.Action.CANCEL) {
+						return;
+					}
+					
+					oTable.removeItem(oItem);
+					setTimeout(function() {
+						oTable.focus();
+					}, 0);
+				}
+			});
 		},
 		itemPress : function(e) {
 			sap.m.MessageToast.show("item is pressed");
-		},
-		updateStarted : function(e) {
-			jQuery.sap.log.info("updateStarted", JSON.stringify(e.getParameters()), Date.now());
-		},
-		updateFinished : function(e) {
-			jQuery.sap.log.info("updateFinished ", JSON.stringify(e.getParameters()), Date.now());
 		}
 	});
 	
 	oTable.setModel(oModel);
 	oTable.bindItems("/modelData", oTemplate);
+	oTable.addEventDelegate(oKeyDownDelegate);
 	
 	var oPage = new sap.m.Page({
 		title : "Table Test Page",

@@ -499,6 +499,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	
+	// class name for the navigation items
+	ListBase.prototype.sNavItemClass = "sapMLIB";
 	
 	ListBase.prototype.init = function() {
 		this._oGrowingDelegate = null;
@@ -1198,6 +1200,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this.removeEventDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
+			this._oLastNavItem = null;
 		}
 	};
 	
@@ -1440,6 +1443,22 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	};
 	
 	/* Keyboard Handling */
+	ListBase.prototype.getNavigationRoot = function() {
+		return this.getDomRef("listUl");
+	};
+	
+	ListBase.prototype.getFocusDomRef = function() {
+		// let the item navigation handle focus
+		return this.getNavigationRoot();
+	};
+	
+	ListBase.prototype.applyFocusInfo = function(oFocusInfo) {
+		// for backwards compatibility we focus to the root dom ref
+		// instead of focus dom ref
+		this.getDomRef().focus();
+		return this;
+	};
+	
 	ListBase.prototype._startItemNavigation = function() {
 		// clear invalidation
 		this._bItemNavigationInvalidated = false;
@@ -1471,9 +1490,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				sapprevious : ["alt"]
 			});
 		}
-	
+		// configure navigation root
+		var oNavigationRoot = this.getNavigationRoot();
+		this._oItemNavigation.setRootDomRef(oNavigationRoot);
+		
 		// configure navigatable items
-		this.setNavigationItems(this._oItemNavigation);
+		this.setNavigationItems(this._oItemNavigation, oNavigationRoot);
 		
 		// configure invalid focus index incase of item remove
 		var iFocusIndex = this._oItemNavigation.getFocusedIndex();
@@ -1487,14 +1509,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * Sets DOM References for keyboard navigation
 	 *
 	 * @param {sap.ui.core.delegate.ItemNavigation} oItemNavigation
+	 * @param {HTMLElement} [oNavigationRoot]
 	 * @protected
 	 * @since 1.26
 	 */
-	ListBase.prototype.setNavigationItems = function(oItemNavigation) {
-		var oItemsContainer = this.getItemsContainerDomRef();
-		if (oItemsContainer) {
-			this._oItemNavigation.setRootDomRef(oItemsContainer);
-			this._oItemNavigation.setItemDomRefs([].slice.call(oItemsContainer.children));
+	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
+		if (oNavigationRoot) {
+			this._oItemNavigation.setItemDomRefs([].slice.call(oNavigationRoot.children));
 		}
 	};
 	
@@ -1540,9 +1561,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this.$(bForward ? "after" : "listUl").focus();
 	};
 	
+	// move focus out of the table for nodata row
+	ListBase.prototype.onsaptabnext = function(oEvent) {
+		if (oEvent.target.id == this.getId("nodata")) {
+			this.forwardTab(true);
+		}
+	};
+	
+	// move focus out of the table for nodata row
+	ListBase.prototype.onsaptabprevious = function(oEvent) {
+		if (oEvent.target.id == this.getId("nodata")) {
+			this.forwardTab(false);
+		}
+	};
+	
 	// navigate to previous or next section according to current focus position
 	ListBase.prototype._navToSection = function(bForward) {
-		var $Section;
+		var $TargetSection;
 		var iIndex = 0;
 		var iStep = bForward ? 1 : -1;
 		var iLength = this._aNavSections.length;
@@ -1555,19 +1590,37 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 				return true;
 			}
 		});
+		
+		// if current section is items container then save the current focus position
+		var oItemsContainerDomRef = this.getItemsContainerDomRef();
+		var $CurrentSection = jQuery.sap.byId(this._aNavSections[iIndex]);
+		if ($CurrentSection[0] === oItemsContainerDomRef) {
+			$CurrentSection.data("redirect", this._oItemNavigation.getFocusedIndex());
+		}
 	
 		// find the next focusable section
 		this._aNavSections.some(function() {
 			iIndex = (iIndex + iStep + iLength) % iLength;	// circle
-			$Section = jQuery.sap.byId(this._aNavSections[iIndex]);
-			if ($Section.is(":focusable")) {
-				$Section.focus();
+			$TargetSection = jQuery.sap.byId(this._aNavSections[iIndex]);
+			
+			// if target is items container
+			if ($TargetSection[0] === oItemsContainerDomRef) {
+				var iRedirect = $TargetSection.data("redirect");
+				var oItemDomRefs = this._oItemNavigation.getItemDomRefs();
+				var oTargetSection = oItemDomRefs[iRedirect] || oItemsContainerDomRef.children[0];
+				$TargetSection = jQuery(oTargetSection);
+			}
+			
+			if ($TargetSection.is(":focusable")) {
+				$TargetSection.focus();
 				return true;
 			}
+			
+			
 		}, this);
 	
 		// return the found section
-		return $Section;
+		return $TargetSection;
 	};
 	
 	// Handle Alt + Down
@@ -1582,6 +1635,29 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
+	};
+	
+	// Ctrl + A to switch select all/none
+	ListBase.prototype.onkeydown = function(oEvent) {
+		
+		var bCtrlA = (oEvent.which == jQuery.sap.KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
+		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
+			return;
+		}
+		
+		oEvent.preventDefault();
+		
+		if (this.getMode() !== sap.m.ListMode.MultiSelect) {
+			return;
+		}
+		
+		if (this.isAllSelectableSelected()) {
+			this.removeSelections(false, true);
+		} else {
+			this.selectAll(true);
+		}
+		
+		oEvent.setMarked();
 	};
 	
 	// Handle Alt + Up
