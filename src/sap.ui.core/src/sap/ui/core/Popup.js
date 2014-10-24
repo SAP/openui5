@@ -782,7 +782,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		}
 	
 		// get (and 'show' i.e. activate) the BlindLayer
-		if (!!sap.ui.Device.browser.internet_explorer && Popup._activateBlindLayer) {
+		if (!!sap.ui.Device.browser.internet_explorer && !sap.ui.Device.os.windows_phone && Popup._activateBlindLayer) {
 			this._oBlindLayer = this.oBlindLayerPool.borrowObject($Ref, this._iZIndex - 1);
 		} // -1 = BlindLayer, -2 = BlockLayer
 	
