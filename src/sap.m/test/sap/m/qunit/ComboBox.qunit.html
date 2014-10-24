@@ -6757,9 +6757,9 @@
 			/* ------------------------------ */
 			/* onsapenter                     */
 			/* ------------------------------ */
-	
+
 			test("onsapenter - close control's picker pop-up", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
@@ -6769,30 +6769,71 @@
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);
-	
+
 				var fnEnterSpy = this.spy(oComboBox, "onsapenter");
 				var fnCloseSpy = this.spy(oComboBox, "close");
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-	
+
 				// assert
 				strictEqual(fnEnterSpy.callCount, 1, "onsapenter() method was called exactly once");
 				strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
+			test("onsapenter - close control's picker pop-up and clear the filter", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+				// assert
+				strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			test("onsapenter - when enter key is pressed and the control's field is not editable, the control's picker pop-up should not close", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					editable: false,
@@ -6803,27 +6844,27 @@
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-	
+
 				// assert
 				strictEqual(oComboBox.getPicker().oPopup.getOpenState(), sap.ui.core.OpenState.OPEN, "Control's picker pop-up is open");
 				strictEqual(oComboBox.isOpen(), true);
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onsapenter", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
@@ -6832,10 +6873,10 @@
 							text: "item 0"
 						})
 					],
-	
+
 					selectedKey: "0"
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
@@ -6843,22 +6884,22 @@
 				oComboBox.open();
 				this.clock.tick(1000);
 				oComboBox.selectText(0, 6);
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
 				// note: after the onsapenter() method is called, the cursor position change
-	
+
 				// assert
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 6, "The text should not be selected");
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 6, "The text should not be selected");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).cursorPos(), 6, "The cursor position is at the end of the text");
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onsapenter", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
@@ -6868,27 +6909,27 @@
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-	
+
 				// assert
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).cursorPos(), 6, "The cursor position is at the end of the text");
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			test("onsapenter", function() {
-	
+
 				// system under test
 				var oComboBox = new sap.m.ComboBox({
 					items: [
@@ -6902,24 +6943,24 @@
 						})
 					]
 				});
-	
+
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
-	
+
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
-	
+
 				// assert
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 7, "The text should not be selected");
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should not be selected");
-	
+
 				// cleanup
 				oComboBox.destroy();
 			});
-	
+
 			/* ------------------------------ */
 			/* onsapdown                      */
 			/* ------------------------------ */
