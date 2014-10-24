@@ -184,10 +184,13 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
     -   When you have several commits, squash them into one
 
 4.  In the Commit message, state that you agree to our CLA (see above)
-5.  Create a Pull Request to github.com/SAP/openui5
-6.  Wait for our code review and approval, possibly enhancing your change on request
+5.  If your change fixes an issue reported at GitHub, add the following line to the commit message: 
+    - ```Fixes https://github.com/SAP/openui5/issues/(issueNumber)```
+    - Do NOT add a colon after "Fixes" - this prevents automatic closing.
+6.  Create a Pull Request to github.com/SAP/openui5
+7.  Wait for our code review and approval, possibly enhancing your change on request
     -   Note that the UI5 developers also have their regular duties, so depending on the required effort for reviewing, testing and clarification this may take a while
 
-7.  Once the change has been approved we will inform you in a comment
-8.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
-9.  We will close the pull request, feel free to delete the now obsolete branch
+8.  Once the change has been approved we will inform you in a comment
+9.  Your pull request cannot be merged directly into the branch (internal SAP processes), but will be merged internally and immediately appear in the public repository as well. Pull requests for non-code branches (like "gh-pages" for the website) can be directly merged.
+10.  We will close the pull request, feel free to delete the now obsolete branch

@@ -291,10 +291,10 @@ The commit message consists of two or three parts, separated by empty lines:
 3.  A data section
 
 -   The summary line must be prefixed by `[FIX]` or `[FEATURE]` and should start with the control/component which was the main subject of the change
--   Instead of FIX/FEATURE and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which are not supposed to be part of the release notes because they are not relevant for users of UI5
+-   Instead of `[FIX]`/`[FEATURE]` and at any other location in the commit message `[INTERNAL]` can be used for commits/explanations which are not supposed to be part of the release notes because they are not relevant for users of UI5
 -   The data section consists of name-value pairs
-    -   A mandatory `Change-Id` (note: this does not need to be supplied by external contributors)
-    -   Further information like `Bug-URL` (for GitHub-reported bugs; use the pull request URL when there is no bug report), `CSS` (for SAP-internally reported bugs), `BCS` for customer messages reported at SAP, and `CR-Id` ("Change Request", mandatory for maintenance codelines)
+	-   `Fixes https://github.com/SAP/openui5/issues/(issueNumber)` (when the change fixes a GitHub-reported bug; it is important that there is NO colon between "Fixes" and the URL!)
+    -   Further internal information like `CSS` (for SAP-internally reported bugs), `BCS` (for customer messages reported at SAP), a mandatory `Change-Id`, and `CR-Id` ("Change Request", mandatory for maintenance codelines) - is added by SAP developers when required
 -   A commit message can thus look like this:
 
     ``` wiki
@@ -307,7 +307,7 @@ The commit message consists of two or three parts, separated by empty lines:
     focus/blur event listener in onBefore/AfterRerendering
 
     Change-Id: I3c7d6e4d52fa71e9412b729b7a234a112915c2a4
-    Bug-URL: https://github.com/SAP/openui5/issues/1
+    Fixes https://github.com/SAP/openui5/issues/1
     ```
 
 
