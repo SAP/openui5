@@ -459,7 +459,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				return;
 			}
 
-			var sValue = this.getFocusDomRef().value;
+			var sValue = this.getValue();
 			this.setValue(sValue);
 
 			// no text selection
@@ -467,6 +467,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (this.isOpen()) {
 				this.close();
+
+				// clear the filter to make all items visible
+				this.clearFilter();
 			}
 		};
 
