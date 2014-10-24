@@ -1,261 +1,55 @@
-/* ============================================= */
-/* CSS for control sap.m/UploadCollection.control      */
-/* BlueCrystal theme                             */
-/* ============================================= */
+/* ===================================================================================== */
+/* CSS for control sap.m/UploadCollection.control                                        */
+/*                                                                                       */
+/* BlueCrystal Theme                                                                     */
+/* ===================================================================================== */
 
-/************************************/
-/* Common styles        */
-/************************************/
+
+/* ************************************************************************************* */
+/* Common Styles                                                                         */
+/* ************************************************************************************* */
 /* List Header */
 .sapMTB.sapMUCListHeader {
-	width:				100%;
-	height:				3rem;
-	padding-left:		1rem;
-	padding-right:		1rem;
-	background-color:	fade(@sapUiLightestBG,0%);
-	border-bottom: 		0.0625rem solid @sapUiMediumBorder;
-	font-family:		@sapUiFontHeaderFamily;
-	font-size:			@sapMFontHeader4Size;
-	font-weight:		@sapUiFontHeaderWeight;
-	color: 				@sapUiHeaderText;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	text-shadow:		@sapUiLightShadowTint, 0.0625rem;
-	position:			vertically centered
-}
-
-.sapMUCInner {
-	position:			absolute;
-	left:				4.5rem;
+	background-color:		fade(@sapUiLightestBG,0%);
+	border-bottom-color:	@sapUiMediumBorder;
+	font-size:				@sapMFontHeader4Size;
+	font-weight:			@sapUiFontHeaderWeight;
+	color:					@sapUiHeaderText;
+	text-shadow:			0.0625rem 0rem @sapUiLightShadowTint;
 }
 
 .sapMLIB.sapMUCListSingleItem,
 .sapMLIB.sapMUCListFirstItem,
 .sapMLIB.sapMUCListLastItem,
 .sapMLIB.sapMUCListItem {
-	padding-top:		1rem;
-	padding-bottom: 	1rem;
-	height: 			5rem;
-	border-bottom:		0.0625rem solid @sapUiMediumBorder;
-}
-
-.sapMUCItemHL {
-	height:				5rem;
-	width:				100%;
-	padding-left:		1rem;
-	padding-right:		1rem;
-	box-sizing:			border-box;
-	flex: 				auto;
-}
-
-/* Busy Indicator */
-.sapMBusyIndicator.sapMUCloadingIcon {
-	padding:			1rem 1rem 1rem 0rem;
-}
-
-.sapMBusyIndicator.sapMUCloadingIcon .sapMBusySvg {
-	height:				2.5rem;
-	width:				2.5rem;
+	border-bottom-color:	@sapUiMediumBorder;
 }
 
 /* Item Icon */
 span[id*="ia_iconHL"] {
-	font-family:		SAP-icons;
-	font-size:			2.5rem;
-	color: 				@sapUiElement;
-	padding:			1rem 1rem 1rem 0rem;
-}
-
-.sapMImg.sapMUCItemImage{
-	height:				3rem;
-	padding:			1rem 0.75rem 1rem 0rem;
-}
-
-div[id*="ta_textVL"] {
-	margin:				1rem 0rem 1rem 0rem;
-}
-
-
-/* Button Horizontal Layout  */
-.sapMUCBtnHL {
-	position:			absolute;
-	right:				0rem;
-	padding:			1rem 1rem 1rem 0rem;
-	display:			flex;
-}
-
-/* Buttons */
-.sapMUCEditBtn,
-.sapMUCDeleteBtn,
-.sapMUCCancelBtn,
-.sapMUCOkBtn {
-	margin-left:		0.125rem;
+	color:					@sapUiElement;
 }
 
 .sapMUCDeleteBtn>.sapMBtnTransparent>.sapMBtnIcon {
-	color:				@sapUiNegativeElement;
+	color:					@sapUiNegativeElement;
 }
 
-/* Text */
+/* Text: Filename */
 .sapMUCFileName.sapMLnk {
-	font-family:		@sapUiFontFamily;
 	font-size:			@sapMFontLargeSize;
-	font-weight:		normal;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		top;
 }
 
-.sapMUCDescriptionHL {
-	font-family: 		@sapUiFontFamily;
-	font-size:			@sapMFontMediumSize;
-	font-weight:		normal;
-	color:				@sapUiLightText;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		bottom;
-	padding:			0.625rem 0rem 0rem 0rem;
-}
-
-.sapMUCTextPadding {
-	padding:			0.125rem 0rem 0.125rem 0rem;
-}
-
-.sapMUCProgress {
-	padding:			1rem 0rem 1rem 0rem;
-}
-
-.sapMUCItemHL > .sapUiHLayoutChildWrapper {
-	height:				3rem;
-	vertical-align: 	middle;
-}
-
-.sapMUCEditHL {
-	position:			absolute;
-	width:				50%;
-}
-
-.sapMUCExtension {
-	padding-left:		0.5rem;
-	margin:				1rem 0rem 0.5rem 0rem;
-	vertical-align:		middle;
+/* Text: Description (/Progress) */
+.sapMUCDescriptionHL .sapMLabel{
+	font-size:				@sapMFontMediumSize;
+	color:					@sapUiLightText;
 }
 
 /* ************************************************************************************* */
-/* Compact Mode */
+/* Compact Mode                                                                          */
+/* ************************************************************************************* */
 .sapUiSizeCompact {
-	.sapMUCEditHL {
-		margin-top: 		0.5rem;
-	}
-
 	.sapMUCFileName.sapMLnk {
 		font-size:			@sapMFontMediumSize;
 	}
-
-/* Single List Item in Compact Mode */	
-	.sapMLIB.sapMUCListSingleItem {
-		padding-top:		1rem;
-		padding-bottom: 	1rem;
-		height: 			5rem;
-
-		.sapMUCItemHL {
-			height:			5rem;
-		}
-
-		/* Item Icon */
-		span[id*="ia_iconHL"] {
-			padding:		1rem 1rem 1rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			padding:		1rem 1rem 1rem 0rem;
-			margin-top:		1rem;
-		}
-	}
-
-/* First List Item in Compact Mode */
-	.sapMLIB.sapMUCListFirstItem {
-		height: 			4.5rem;
-		border-bottom:		none;
-
-		.sapMUCItemHL {
-			height:			4.5rem;
-		}
-
-		.sapMUCBtnHL {
-			padding:		1rem 1rem 0.5rem 0rem;
-			margin-top:		1rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper {
-			height:			3rem;
-			vertical-align: middle;
-		}
-
-		/* Item Icon */
-		span[id*="ia_iconHL"] {
-			padding:		1rem 1rem 0.5rem 0rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin:			1rem 0rem 0.5rem 0rem;
-		}
-	}
-
-/* Last List Item in Compact Mode */
-	.sapMLIB.sapMUCListLastItem {
-		height:				4.5rem;
-
-		.sapMUCItemHL {
-			height:			4.5rem;
-		}
-
-		/* Item Icon */
-		span[id*="ia_iconHL"] {
-			padding:		0.5rem 1rem 1rem 0rem;
-		}
-
-		.sapMImg.sapMUCItemImage {
-			padding: 		0.5rem 0.75rem 1rem 0rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin: 		0.5rem 0rem 1rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			margin-top:		1rem;
-			padding:		0.5rem 1rem 0.5rem 0rem;
-		}
-	}
-
-/* General List Item in Compact Mode */
-	.sapMLIB.sapMUCListItem {
-		padding-top:		0.5rem;
-		padding-bottom:		0.5rem;
-		height:				4rem;
-		border-bottom:		none;		
-
-		.sapMUCItemHL {
-			height:			4rem;
-		}
-
-		/* Item Icon */
-		span[id*="ia_iconHL"] {
-			padding:		0.5rem 1rem 0.5rem 0rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin:			0.5rem 0rem 0.5rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			margin-top:		1rem;
-			padding:		0.5rem 1rem 0.5rem 0rem;
-		}
-	}
 }
-

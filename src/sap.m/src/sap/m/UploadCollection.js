@@ -413,10 +413,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				text : sFileNameLong,
 				href : oItem.getUrl()
 			}).addStyleClass("sapMUCFileName");
-
-			if (sStatus == "Uploading"){
-				oFileNameLabel.addStyleClass("sapMUCInner");
-			}
 		}
 
 		if (sStatus == "Display") {
@@ -430,9 +426,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				// var sProcent = "50%";
 				// text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sProcent]),
 			}).addStyleClass("sapMUCProgress");
-//			if (sStatus == "Uploading") {
-//				oFileNameLabel.addStyleClass("sapMUCInner")
-//			}
 		}
 
 		if (sStatus == "Display" || sStatus == "Uploading") {
@@ -528,10 +521,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}
 		}
 		oListItem.status = sStatus;
-		oListItem.addStyleClass("sapMUCListItem");
+		oListItem.addStyleClass("sapMUCItem");
 		return oListItem;
 	};
-	
+
 	/**
 	 * Fill the list of items.
 	 *
@@ -1008,24 +1001,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * handle of keyboard activity Arrow Up and Arrow Left.
-	 * @param {Object} ListItem 
+	 * @param {Object} ListItem
 	 * @private
 	 */
 	UploadCollection.prototype._handleArrowUpAndLeft = function(oEvent) {
 			var oObj = jQuery.sap.byId(oEvent.target.id);
-			if (oObj.hasClass("sapMUCListItem")) {
+			if (oObj.hasClass("sapMUCItem")) {
 				oObj.prev().focus();
 		}
 	};
 
 	/**
 	 * handle of keyboard activity Arrow Down and Arrow RightLeft.
-	 * @param {Object} ListItem 
+	 * @param {Object} ListItem
 	 * @private
 	 */
 	UploadCollection.prototype._handleArrowDownAndRight = function(oEvent) {
 			var oObj = jQuery.sap.byId(oEvent.target.id);
-			if (oObj.hasClass("sapMUCListItem")) {
+			if (oObj.hasClass("sapMUCItem")) {
 				oObj.next().focus();
 		}
 	};
