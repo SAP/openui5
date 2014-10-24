@@ -610,16 +610,18 @@ if (typeof window.sap.ui !== "object") {
 					webkitVersion: webkitVersion
 				};
 			} else { // Safari might have an issue with _ua.match(...); thus changing
-				var oExp = /Version\/(\d+\.\d+).*Safari/;
+				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
 				if (oExp.test(_ua)) {
-					var version = parseFloat(oExp.exec(_ua)[1]);
+					var aParts = oExp.exec(_ua);
+					var version = parseFloat(aParts[2]);
 					return {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
-						webkitVersion: webkitVersion
+						webkitVersion: webkitVersion,
+						phantomJS: aParts[1] === "PhantomJS"
 					};
 				} else {
 					// unknown webkit browser
