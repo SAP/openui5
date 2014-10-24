@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new Notifier.
 	 *
@@ -28,45 +28,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Notifier = Element.extend("sap.ui.ux3.Notifier", /** @lends sap.ui.ux3.Notifier.prototype */ { metadata : {
-	
+
 		library : "sap.ui.ux3",
 		properties : {
-	
+
 			/**
 			 * Icon of the control that should be displayed within the corresponding bar
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
-	
+
 			/**
 			 * Defines the title that should be displayed within the opening popup
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null}
 		},
 		aggregations : {
-	
+
 			/**
 			 * Messages of this notifier.
 			 */
 			messages : {type : "sap.ui.core.Message", multiple : true, singularName : "message"}, 
-	
+
 			/**
 			 * Views aggregated with this Notifier and managed by the parent NotificationBar.
 			 */
 			views : {type : "sap.ui.core.Control", multiple : true, singularName : "view", visibility : "hidden"}
 		},
 		events : {
-	
+
 			/**
 			 * Event is fired when a message of the notifiers was selected.
 			 */
 			messageSelected : {
 				parameters : {
-	
+
 					/**
 					 * The message that was selected
 					 */
 					message : {type : "sap.ui.core.Message"}, 
-	
+
 					/**
 					 * The notifier that contains the selected message
 					 */
@@ -75,8 +75,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * This method checks if the notifier has any items.
 	 *
@@ -86,12 +86,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
-	
+
+
 	/**
 	 * This file defines behavior for the control,
 	 */
-	
+
 	(function() {
 		var fBeforeOpen = function() {
 			this.fireEvent("_childControlCalling", {
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				notifier : this
 			});
 		};
-	
+
 		/**
 		 * This is to ensure that all content is destroyed when the Callout is
 		 * closed. Otherwise the content is destroyed when the Callout should be
@@ -114,16 +114,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				this._oCallout.$().css("display", "none");
 			}
 		};
-	
+
 		Notifier.prototype.hasItems = function() {
 			if (this.getMessages().length > 0) {
 				return true;
 			}
 			return false;
 		};
-	
+
 		Notifier.prototype.init = function() {
-	
+
 			/*
 			 * Setting a parent isn't needed due to it will be set below when
 			 * Callout is set as Tooltip
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 					// to prevent that the Callout moves if the window is scrolled
 					this.$().css({
 						position : "fixed",
-						display  : "block"
+						display : "block"
 					});
 				},
 				close : jQuery.proxy(fCalloutClosed, this),
@@ -147,14 +147,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				// open delay of the callout has to be eleminated.
 				this._oCallout.setOpenDelay(0);
 			}
-	
+
 			/*
 			 * Though it seems that these are properties -> they're not. There are
 			 * only methods to do this so a method-call is needed.
 			 */
 			this._oCallout.setMyPosition("begin bottom");
 			this._oCallout.setAtPosition("begin top");
-	
+
 			/*
 			 * The method needs to be overwritten since the positioning of the
 			 * callout's arrow does currently not work for transparent arrows. The
@@ -164,14 +164,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 			 */
 			this._oCallout.setTip = function() {
 				Callout.prototype.setTip.apply(this, arguments);
-	
+
 				/*
 				 * Since the arrow is set with another CSS technique the position
 				 * needs to be corrected as well
 				 */
 				var $arrow = this.$("arrow");
 				$arrow.css("bottom", "-24px");
-	
+
 				/*
 				 * Since the calculation of the callout's arrow works fine for RTL
 				 * and must be corrected for LTR only a manipulation of the arrow's
@@ -182,16 +182,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 					$arrow.css("left", "6px");
 				}
 			};
-	
+
 			this.setTooltip(this._oCallout);
 			this.setTooltip = function() {
 				jQuery.sap.log.warning("Setting toolstips for notifiers deactivated");
 			};
-	
+
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
 			this.attachEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, this._proxyEnableMessageSelect);
 		};
-	
+
 		/**
 		 * Checks if the 'messageSelected' event was attached to the Notifier. If so
 		 * the corresponding event is fired and e.g. the NotificationBar can react
@@ -199,24 +199,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 		 */
 		var fnEnableMessageSelect = function(oEvent) {
 			var sEventId = oEvent.getParameter("EventId");
-	
+
 			if (sEventId === "messageSelected") {
 				if (oEvent.getParameter("type") === "listenerAttached") {
 					this._bEnableMessageSelect = true;
 				} else if (oEvent.getParameter("type") === "listenerDetached") {
 					this._bEnableMessageSelect = false;
 				}
-	
+
 				this.fireEvent("_enableMessageSelect", {
 					enabled : this._bEnableMessageSelect,
 					notifier : this
 				});
 			}
 		};
-	
+
 		Notifier.prototype.exit = function(oEvent) {
 			this._oCallout = undefined;
-	
+
 			/*
 			 * Instance is created when adding the Notifier as MessageNotifier to
 			 * the NotificationBar
@@ -225,20 +225,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				this._oMessageView.destroy();
 				delete this._oMessageView;
 			}
-	
+
 			this.detachEvent(sap.ui.base.EventProvider.M_EVENTS.EventHandlerChange, this._proxyEnableMessageSelect);
 			delete this._proxyEnableMessageSelect;
 		};
-	
+
 		Notifier.prototype.onclick = function(oEvent) {
 			oEvent.preventDefault();
-	
+
 			this.$().trigger("mouseover");
 		};
-	
+
 		var fnFireChildControlCalling = function(sType, oMessage, oThat) {
 			var sLevel = oMessage ? oMessage.getLevel() : sap.ui.core.MessageType.None;
-	
+
 			oThat.fireEvent("_childControlCalling", {
 				type : sType,
 				notifier : oThat,
@@ -248,52 +248,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Callout', 'sap/ui/core/Eleme
 				callout : oThat._oCallout
 			});
 		};
-	
+
 		Notifier.prototype.addMessage = function(oMessage) {
 			this.addAggregation("messages", oMessage);
 			fnFireChildControlCalling("added", oMessage, this);
-	
+
 			return this;
 		};
-	
+
 		Notifier.prototype.insertMessage = function(oMessage, index) {
 			this.insertAggregation("messages", oMessage, index);
 			fnFireChildControlCalling("added", oMessage, this);
-	
+
 			return this;
 		};
-	
+
 		Notifier.prototype.removeMessage = function(oMessage) {
 			var oRemovedMessage = this.removeAggregation("messages", oMessage);
 			if (oRemovedMessage) {
 				fnFireChildControlCalling("removed", oRemovedMessage, this);
 			}
-	
+
 			return oRemovedMessage;
 		};
-	
+
 		Notifier.prototype.removeAllMessages = function() {
 			var aRemovedMessages = this.removeAllAggregation("messages");
 			if (aRemovedMessages.length > 0) {
 				// only re-render if there were messages removed
 				fnFireChildControlCalling("removed", null, this);
 			}
-	
+
 			return aRemovedMessages;
 		};
 		Notifier.prototype.destroyMessages = function() {
 			var iLength = this.getMessages().length;
 			this.destroyAggregation("messages");
-	
+
 			if (iLength > 0) {
 				// only re-render if there were messages removed
 				fnFireChildControlCalling("removed", null, this);
 			}
-	
+
 			return this;
 		};
 	}());
-	
 
 	return Notifier;
 
