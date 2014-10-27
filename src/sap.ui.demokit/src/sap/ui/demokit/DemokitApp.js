@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				var oNode = new sap.ui.commons.TreeNode({
 					text: aLinks[i].text,
 					tooltip: aLinks[i].tooltip,
-					expanded: iLevel < 4,
+					expanded: iLevel < 1,
 					selectable: !!aLinks[i].ref,
 					icon: aLinks[i].ico || null,
 					selected: selected
