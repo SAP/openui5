@@ -268,20 +268,20 @@ public class LessFilter implements Filter{
    */
   private synchronized void compile(String sourcePath, boolean compressCSS, boolean compressJSON) {
     
-    try {
+    Matcher m = PATTERN_THEME_REQUEST_PARTS.matcher(sourcePath);
+    if (m.matches()) {
       
-      Matcher m = PATTERN_THEME_REQUEST_PARTS.matcher(sourcePath);
-      if (m.matches()) {
-        
-        // extract the relevant parts from the request path
-        String prefixPath = m.group(1);
-        String library = m.group(2);
-        String libraryName = library.replace('/', '.');
-        String theme = m.group(3);
-        String path = prefixPath + theme + "/";
-        
-        // some info
-        this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
+      // extract the relevant parts from the request path
+      String prefixPath = m.group(1);
+      String library = m.group(2);
+      String libraryName = library.replace('/', '.');
+      String theme = m.group(3);
+      String path = prefixPath + theme + "/";
+      
+      // some info
+      this.log("Compiling CSS/JSON of library " + libraryName + " for theme " + theme);
+      
+      try {
         
         URL url = this.findResource(sourcePath);
         if (url != null) {
@@ -327,11 +327,17 @@ public class LessFilter implements Filter{
         } else {
           this.log("The less source file cannot be found: " + sourcePath);
         }
-        
+      
+      } catch (Exception ex) {
+        // in case of error we also cleanup the cache!
+        this.log("Failed to compile CSS for " + sourcePath, ex);
+        this.cache.remove(path + "library.css");
+        this.cache.remove(path + "library-RTL.css");
+        this.cache.remove(path + "library-parameters.json");
+        this.cache.remove(path + "resources");
+        this.lastModified.remove(sourcePath);
       }
       
-    } catch (Exception ex) {
-      this.log("Failed to compile CSS for " + sourcePath, ex);
     }
     
   } // method: compile

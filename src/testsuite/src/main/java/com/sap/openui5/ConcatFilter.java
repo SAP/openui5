@@ -161,6 +161,7 @@ public class ConcatFilter implements Filter{
    * @param msg the message
    * @param t the <code>Throwable</code>
    */
+  @SuppressWarnings("unused")
   private void log(String msg, Throwable t) {
     this.config.getServletContext().log(this.config.getFilterName() + ": "+ msg, t);
   } // method: log
