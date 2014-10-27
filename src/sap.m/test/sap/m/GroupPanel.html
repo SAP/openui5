@@ -23,9 +23,9 @@
 	jQuery.sap.require("sap.m.P13nGroupItem");
 	jQuery.sap.require("sap.m.P13nGroupPanel");
 	
-	var oCondition0= { "key": "i0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date"};
-	var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode"};
-	var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName"};
+	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", grouping: true};
+	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", grouping: true};
+	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", grouping: false};
 	aConditions= [oCondition0, oCondition1, oCondition2];    	
 	var oGroupPanel;
 	var oModel;
@@ -87,13 +87,15 @@
 					"text" : "Number"
 				}],
 				"groupItems" : [ {
-					"key" : "s0",
+					"key" : "g0",
 					"columnKey" : "c1",
-					"operation" : "GroupAscending"
+					"operation" : "GroupAscending",
+					"grouping" : true
 				}, {
-					"key" : "s1",
+					"key" : "g1",
 					"columnKey" : "c0",
-					"operation" : "GroupDescending"
+					"operation" : "GroupDescending",
+					"grouping" : false
 				} ]
 			};
 	
@@ -119,7 +121,8 @@
 					var oGroupItem = {
 						key : params.key,
 						columnKey : params.newItem.getColumnKey(),
-						operation : params.newItem.getOperation()
+						operation : params.newItem.getOperation(),
+						grouping : params.newItem.getGrouping()
 					};
 					if (params.index) {
 						oData.groupItems.splice(params.index, 0, oGroupItem);
@@ -140,7 +143,8 @@
 			oGroupPanel.bindGroupItems("/groupItems", new sap.m.P13nGroupItem({
 				key : "{key}",
 				operation : "{operation}",
-				columnKey : "{columnKey}"
+				columnKey : "{columnKey}",
+				grouping : "{grouping}"
 			}));
 			
 			show(oGroupPanel, "Group");
@@ -169,7 +173,7 @@
 			var sConditions= ""; 
 			for (i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
-				sConditions+= "'"+oCondition.text + "' ";
+				sConditions+= "'" + oCondition.text + "' ";
 			}					
 	
 			sap.m.MessageToast.show("Conditions= "+sConditions);
@@ -183,7 +187,8 @@
 			oData.groupItems.push({
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
-					"operation" : "Ascending"
+					"operation" : "Ascending",
+					"grouping" : true
 			});
 			oModel.setData(oData, true);
 
@@ -198,7 +203,8 @@
 			oData.groupItems.splice(0,0,{
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
-					"operation" : "Ascending"
+					"operation" : "Ascending",
+					"grouping" : true
 			});
 			oModel.setData(oData, true);
 

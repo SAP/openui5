@@ -244,7 +244,8 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					aConditions.push({
 						key : oGroupItem_.getKey(),
 						keyField : oGroupItem_.getColumnKey(),
-						operation : oGroupItem_.getOperation()
+						operation : oGroupItem_.getOperation(),
+						grouping :  oGroupItem_.getGrouping()
 					});
 				});
 
@@ -266,6 +267,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						if (oGroupItem) {
 							oGroupItem.setColumnKey(oNewData.keyField);
 							oGroupItem.setOperation(oNewData.operation);
+							oGroupItem.setGrouping(oNewData.grouping);
 
 							// sap.m.MessageToast.show("update GroupItem ---> " + sKey);
 						}
@@ -275,7 +277,8 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						var oGroupItem = new sap.m.P13nGroupItem({
 							key : sKey,
 							columnKey : oNewData.keyField,
-							operation : oNewData.operation
+							operation : oNewData.operation,
+							grouping : oNewData.grouping
 						});
 
 						that.fireAddGroupItem({

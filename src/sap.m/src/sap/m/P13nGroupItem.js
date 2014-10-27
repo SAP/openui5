@@ -38,7 +38,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			/**
 			 * tbd
 			 */
-			columnKey : {type : "string", group : "Misc", defaultValue : null}
+			columnKey : {type : "string", group : "Misc", defaultValue : null},
+			
+			/**
+			 * tbd
+			 */
+			grouping : {type : "boolean", group : "Misc", defaultValue : false}
 		}
 	}});
 	
