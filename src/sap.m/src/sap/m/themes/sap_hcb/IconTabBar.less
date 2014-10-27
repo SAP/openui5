@@ -1,8 +1,6 @@
-
 /* ==================================================== */
 /* CSS for control sap.m/IconTabBar.control             */
 /* High Contrast Black theme                            */
-
 
 /* Head Container */
 
@@ -50,7 +48,6 @@ html[data-sap-ui-os=win8] .sapMITBHead {
 	display: none;
 }
 
-
 .sap-tablet .sapMITBScrollContainer,
 html[data-sap-ui-os=win8] .sapMITBScrollContainer {
 	margin-right: 2rem;
@@ -65,30 +62,12 @@ html[data-sap-ui-os=win8] .sapMITBScrollContainer {
 /* Arrow */
 
 .sapMITBContentArrow {
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	height: 1rem;
 	border-bottom: 0.25rem solid transparent;
 }
 
 .sapMITBSelected > .sapMITBContentArrow {
-	border-bottom-color: @sapHCStandardFG;
-}
-
-.sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
-	border-bottom-color: @sapHCStandardFG;
-}
-
-.sapMITBSelected.sapMITBFilterPositive > .sapMITBContentArrow {
-	border-bottom-color: @sapHCStandardFG;
-}
-
-.sapMITBSelected.sapMITBFilterNegative > .sapMITBContentArrow {
-	border-bottom-color: @sapHCStandardFG;
-}
-
-.sapMITBSelected.sapMITBFilterCritical > .sapMITBContentArrow {
 	border-bottom-color: @sapHCStandardFG;
 }
 
@@ -107,6 +86,7 @@ html[data-sap-ui-os=win8] .sapMITBScrollContainer {
 
 .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
 	height: 1rem;
+	border-bottom-width: 0.375rem;
 }
 
 .sap-phone .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .sapMITBContentArrow {
@@ -137,13 +117,12 @@ html[dir='rtl'] .sapMITBContentArrow {
 .sap-phone .sapMITBContent {
 	padding: 0;
 }
+
 .sapMITBContainerContent {
 	position: relative;
 	padding: 0;
 	margin-top: 0;
 	border-top: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
 	border: 0.125rem solid @sapHCStandardFG;
 }
 
@@ -253,7 +232,6 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 .sapMITBFilter .sapMITBText {
 	position: relative;
 	color: @sapHCStandardFG;
-	text-shadow: none;
 	padding: 0.375rem 0 0;
 	width: 5rem;
 	overflow: hidden;
@@ -335,33 +313,15 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 
 .sapMITBTextOnly .sapMITBFilterDefault > .sapMITBText {
 	color: @sapHCStandardFG;
-	text-shadow: none;
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
 	color: @sapHCStandardFG;
 }
 
-.sapMITBTextOnly .sapMITBFilterNeutral > .sapMITBText {
-	color: @sapHCStandardFG;
-}
-
-.sapMITBTextOnly .sapMITBFilterPositive > .sapMITBText {
-	color: @sapHCStandardFG;
-}
-
-.sapMITBTextOnly .sapMITBFilterNegative > .sapMITBText {
-	color: @sapHCStandardFG;
-}
-
-.sapMITBTextOnly .sapMITBFilterCritical > .sapMITBText {
-	color: @sapHCStandardFG;
-}
-
 .sapMITBFilter .sapMITBCount {
 	position: absolute;
 	color: @sapHCStandardFG;
-	text-shadow: none;
 	max-width: 2rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -397,8 +357,6 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 	border: 1px solid @sapHCStandardFG;
 	width: 3rem;
 	height: 3rem;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -416,51 +374,11 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 	color: @sapHCStandardFG;
 }
 
-.sapMITBFilterNeutral {
-	color: @sapHCStandardFG;
-	border-color: @sapHCStandardFG;
-}
-
-.sapMITBFilterPositive {
-	color: @sapHCStandardFG;
-	border-color: @sapHCStandardFG;
-}
-
-.sapMITBFilterNegative {
-	color: @sapHCStandardFG;
-	border-color: @sapHCStandardFG;
-}
-
-.sapMITBFilterCritical {
-	color: @sapHCStandardFG;
-	border-color: @sapHCStandardFG;
-}
-
 .sapMITBCount {
 	color: @sapHCStandardFG;
 }
 
-.sapMITBSelected .sapMITBFilterDefault {
-	background: @sapHCHighlightAltBG;
-	color: @sapHCStandardFG;
-}
-
-.sapMITBSelected .sapMITBFilterNeutral {
-	background: @sapHCHighlightAltBG;
-	color: @sapHCStandardFG;
-}
-
-.sapMITBSelected .sapMITBFilterPositive {
-	background: @sapHCHighlightAltBG;
-	color: @sapHCStandardFG;
-}
-
-.sapMITBSelected .sapMITBFilterNegative {
-	background: @sapHCHighlightAltBG;
-	color: @sapHCStandardFG;
-}
-
-.sapMITBSelected .sapMITBFilterCritical {
+.sapMITBSelected .sapMITBFilterIcon {
 	background: @sapHCHighlightAltBG;
 	color: @sapHCStandardFG;
 }
@@ -491,7 +409,6 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 	padding: 0 0.5rem;
 	display: inline-block;
 	width: auto;
-	text-shadow: none;
 }
 
 .sap-phone .sapMITBAll > .sapMITBTab > .sapMITBCount {
@@ -517,7 +434,6 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 	max-height: 3rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	text-shadow: none;
 }
 
 .sap-phone .sapMITBAll .sapMITBText {
@@ -562,11 +478,6 @@ html[data-sap-ui-os=win8] .sapMITBNoText .sapMITBFilter:last-child {
 	top: 1px;
 	color: @sapHCStandardFG;
 	cursor: pointer;
-}
-
-.sap-desktop .sapMITBArrowScroll:hover,
-.sap-desktop .sapMITBArrowScroll:active {
-	color: @sapHCStandardFG;
 }
 
 .sap-phone .sapMITBArrowScroll,
@@ -646,10 +557,6 @@ html[data-sap-ui-os=win8] .sapMITBArrowScroll {
 }
 
 /* HCB Additional Styles */
-
-.sapMITBTextOnly .sapMITBContentArrow {
-	border-bottom-width: 0.375rem;
-}
 
 .sapMITBFilterPositive .sapMITBText:before,
 .sapMITBFilterNegative .sapMITBText:before,
