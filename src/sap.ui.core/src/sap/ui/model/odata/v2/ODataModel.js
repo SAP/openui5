@@ -1736,6 +1736,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//clear metadata.create
+								if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
+									delete aChangeSet[i].request.data.__metadata.created;
+								}
 								oChangeSet.__changeRequests.push(aChangeSet[i].request);
 							}
 							aReadRequests.push(oChangeSet);
@@ -1846,7 +1850,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			// for createEntry entities change context path to new one
 			if (oRequest.context) {
-				oRequest.context.sPath = '/' + this._getKey(oResultData);
+				var sKey = this._getKey(oResultData);
+				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
+				delete this.oData[oRequest.context.sPath.substr(1)];
+				oRequest.context.sPath = '/' + sKey;
 			}
 		}
 
@@ -2699,9 +2706,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		jQuery.each(mChangedEntities, function(sKey, bChanged) {
 			if (sKey in that.mChangedEntities) {
-				var oEntry = this._getObject(sKey);
-				jQuery.extend(true, oEntry, that.mChangedEntities[sKey]);
+				var oChangedEntry = that._getObject('/' + sKey);
 				delete that.mChangedEntities[sKey];
+				var oEntry = that._getObject('/' + sKey);
+				jQuery.extend(true, oEntry, oChangedEntry);
 				
 			}
 		});
