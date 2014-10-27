@@ -686,7 +686,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 * No rows can be selected.
 		 * @public
 		 */
-		None : "None"
+		None : "None",
+		
+		/**
+		 * Behavior of the former Tree. It is possible to select a plurality of nodes via the API.
+		 * @public
+		 */
+		Legacy : "Legacy"
 	
 	};
 	
