@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new RatingIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -30,93 +30,93 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RatingIndicator = Control.extend("sap.m.RatingIndicator", /** @lends sap.m.RatingIndicator.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * If set to invisible, the control is not rendered.
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
 			/**
 			 * The number of displayed rating symbols
 			 */
 			maxValue : {type : "int", group : "Behavior", defaultValue : 5},
-	
+
 			/**
 			 * The indicated value of the rating
 			 */
 			value : {type : "float", group : "Behavior", defaultValue : 0, bindable : "bindable"},
-	
+
 			/**
 			 * The Size of the image or icon to be displayed. The default value depends on the theme. Please be sure that the size is corresponding to a full pixel value as some browsers don't support subpixel calculations. Recommended size is 1.375rem (22px) for normal, 1rem (16px) for small, and 2rem (32px) for large icons correspondingly.
 			 */
 			iconSize : {type : "sap.ui.core.CSSSize", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * The URI to the icon font icon or image that will be displayed for selected rating symbols. A star icon will be used if the property is not set
 			 */
 			iconSelected : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * The URI to the icon font icon or image that will be displayed for all unselected rating symbols. A star icon will be used if the property is not set
 			 */
 			iconUnselected : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * The URI to the icon font icon or image that will be displayed for hovered rating symbols. A star icon will be used if the property is not set
 			 */
 			iconHovered : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : null},
-	
+
 			/**
 			 * Defines how float values are visualized: Full, Half (see enumeration RatingIndicatorVisualMode)
 			 */
 			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.m.RatingIndicatorVisualMode.Half}
 		},
 		aggregations : {
-	
+
 			/**
 			 * The internal selected rating icons are managed in this aggregation
 			 */
-			_iconsSelected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsSelected", visibility : "hidden"}, 
-	
+			_iconsSelected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsSelected", visibility : "hidden"},
+
 			/**
 			 * The internal unselected rating icons are managed in this aggregation
 			 */
-			_iconsUnselected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsUnselected", visibility : "hidden"}, 
-	
+			_iconsUnselected : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsUnselected", visibility : "hidden"},
+
 			/**
 			 * The internal hovered rating icons are managed in this aggregation
 			 */
 			_iconsHovered : {type : "sap.ui.core.Control", multiple : true, singularName : "_iconsHovered", visibility : "hidden"}
 		},
 		events : {
-	
+
 			/**
 			 * The event is fired when the user has done a rating.
 			 */
 			change : {
 				parameters : {
-	
+
 					/**
 					 * The rated value
 					 */
 					value : {type : "int"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * This event is triggered during the dragging period, each time the rating value changes.
 			 */
 			liveChange : {
 				parameters : {
-	
+
 					/**
 					 * The current value of the rating after a live change event.
 					 */
@@ -125,37 +125,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
+
 	///**
 	// * This file defines behavior for the control,
 	// */
-	
+
 	/* =========================================================== */
 	/*           temporary flags for jslint syntax check           */
 	/* =========================================================== */
 	/*jslint nomen: false */
-	
+
 	/* =========================================================== */
 	/*           begin: API methods                                */
 	/* =========================================================== */
-	
+
 	/**
 	 * Initializes the control.
 	 *
 	 * @private
 	 */
 	RatingIndicator.prototype.init = function () {
-	
+
 		// deactivate text selection on drag events
 		this.allowTextSelection(false);
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
-		
+
 		if (RatingIndicator._pxCalculations === undefined) {
 			RatingIndicator._pxCalculations = [];
 		}
 	};
-	
+
 	/**
 	 * Sets the rating value. The method is automatically checking whether the value is in the valid range of 0-{@link #getMaxValue maxValue} and if it is a valid number.
 	 *
@@ -165,16 +165,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setValue = function (fValue) {
-	
+
 		// do not set negative values (will be returned by calculation function if there is an error)
 		if (fValue < 0) {
 			return this;
 		}
-	
+
 		// check for valid numbers
 		if (isNaN(fValue)) {
 			jQuery.sap.log.warning('Ignored new rating value "' + fValue + '" because it is NAN');
-	
+
 		// check if the number is in the range 0-maxValue (only if control is rendered)
 		// if control is not rendered it is handled by onBeforeRendering()
 		} else if (this.$().length && (fValue > this.getMaxValue())) {
@@ -182,10 +182,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else {
 			fValue = this._roundValueToVisualMode(fValue);
 			this.setProperty("value", fValue, true);
-	
+
 			// always set hover value to current value to allow keyboard / mouse / touch navigation
 			this._fHoverValue = fValue;
-	
+
 			// if control is already rendered reflect the changes in the UI as well
 			if (this.$().length) {
 				this._updateUI(fValue);
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return this;
 	};
-	
+
 	/**
 	 * Sets the icon size value. The method is automatically updating the UI components if the control has been rendered before.
 	 *
@@ -203,17 +203,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSize = function (sIconSize) {
-	
+
 		// if control is already rendered we calculate the new pixel values for the icon size once
 		if (this.$().length) {
 			this._iPxIconSize = this._toPx(sIconSize) || 16;
 		}
-	
+
 		// then update the property and rerender since updating all widths would be too complex here
 		this.setProperty("iconSize", sIconSize, false);
 		return this;
 	};
-	
+
 	/**
 	 * Sets the selected icon without rerendering the control.
 	 *
@@ -223,19 +223,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSelected = function (sURI) {
+		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			return;
+		}
+
 		var oItems = this.getAggregation("_iconsSelected"),
 			i = 0;
-	
+
 		if (oItems) {
 			for (; i < oItems.length; i++) {
 				oItems[i].setSrc(sURI);
 			}
 		}
-	
+
 		this.setProperty("iconSelected", sURI, true);
 		return this;
 	};
-	
+
 	/**
 	 * Sets the unselected icon without rerendering the control.
 	 *
@@ -245,19 +249,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconUnselected = function (sURI) {
+		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			return;
+		}
+
 		var oItems = this.getAggregation("_iconsUnselected"),
 			i = 0;
-	
+
 		if (oItems) {
 			for (; i < oItems.length; i++) {
 				oItems[i].setSrc(sURI);
 			}
 		}
-	
+
 		this.setProperty("iconUnselected", sURI, true);
 		return this;
 	};
-	
+
 	/**
 	 * Sets the hovered icon without rerendering the control.
 	 *
@@ -267,19 +275,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconHovered = function (sURI) {
+		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			return;
+		}
+
 		var oItems = this.getAggregation("_iconsHovered"),
 			i = 0;
-	
+
 		if (oItems) {
 			for (; i < oItems.length; i++) {
 				oItems[i].setSrc(sURI);
 			}
 		}
-	
+
 		this.setProperty("iconHovered", sURI, true);
 		return this;
 	};
-	
+
 	/**
 	 * Called before rendering starts by the renderer to readjust values outside the range.
 	 *
@@ -288,7 +300,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onBeforeRendering = function () {
 		var fVal = this.getValue(),
 			iMVal = this.getMaxValue();
-	
+
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
 			jQuery.sap.log.warning("Set value to maxValue because value is > maxValue (" + fVal + " > " + iMVal + ").");
@@ -296,11 +308,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setValue(0);
 			jQuery.sap.log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
 		}
-	
+
 		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
 		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding")) || 4;
 	};
-	
+
 	/**
 	 * Destroys the control.
 	 *
@@ -313,20 +325,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		delete this._iPxPaddingSize;
 		delete this._fHoverValue;
 	};
-	
+
 	/* =========================================================== */
 	/*           end: API methods                                  */
 	/* =========================================================== */
-	
+
 	/* =========================================================== */
 	/*           begin: internal methods and properties            */
 	/* =========================================================== */
-	
+
 	RatingIndicator.prototype._toPx = function (cssSize) {
 		cssSize = cssSize || 0;
 		var  scopeVal = RatingIndicator._pxCalculations[cssSize],
 			scopeTest;
-	
+
 		if (scopeVal === undefined) {
 			if (cssSize) {
 				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
@@ -337,11 +349,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			scopeTest.remove();
 		}
-	
+
 		RatingIndicator._pxCalculations[cssSize] = Math.round(scopeVal);
 		return RatingIndicator._pxCalculations[cssSize];
 	};
-	
+
 	/**
 	 * Updates the controls's interface to reflect a value change of the rating.
 	 *
@@ -350,33 +362,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._updateUI = function (fValue, bHover) {
-	
+
 		// save a reference on all needed DOM elements
 		var $SelectedDiv = this.$("sel"),
 			$UnselectedContainerDiv = this.$("unsel-wrapper"),
 			$HoveredDiv = this.$("hov"),
-	
+
 			// calculate padding, size, and measurement
 			fIconSize = this._iPxIconSize,
 			fIconPadding = this._iPxPaddingSize,
 			sIconSizeMeasure = "px",
 			iSymbolCount = this.getMaxValue(),
-	
+
 			// calculate the width for the selected elements and the complete width
 			iSelectedWidth = fValue * fIconSize + (Math.round(fValue) - 1) * fIconPadding,
-	
+
 			iWidth = iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
-	
+
 		// always set hover value to current value to allow keyboard / mouse / touch navigation
 		this._fHoverValue = fValue;
-	
+
 		if (iSelectedWidth < 0) {	// width should not be negative
 			iSelectedWidth = 0;
 		}
-	
+
 		// adjust unselected container with the remaining width
 		$UnselectedContainerDiv.width((iWidth - iSelectedWidth) + sIconSizeMeasure);
-	
+
 		// update the DOM elements to reflect the value by setting the width of the div elements
 		if (bHover) { // hide selected div & adjust hover div
 			$HoveredDiv.width(iSelectedWidth + sIconSizeMeasure);
@@ -387,10 +399,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$HoveredDiv.hide();
 			$SelectedDiv.show();
 		}
-	
+
 		jQuery.sap.log.debug("Updated rating UI with value " + fValue + " and hover mode " + bHover);
 	};
-	
+
 	/**
 	 * Load the icons/images of the rating for the different rating states.
 	 *
@@ -399,30 +411,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._getIcon = function (iState) {
-	
+
 		// single initialization
 		var oImage = null,
 			sURI = null;
-	
-		// preset the variables based on the state requested
-		switch (iState) {
-		case 1: // unselected
-			sURI = this.getIconUnselected() || IconPool.getIconURI("favorite");
-			break;
-		case 2: // Hovered
-			sURI = this.getIconHovered() || IconPool.getIconURI("favorite");
-			break;
-		case 0: // Selected
-			sURI = this.getIconSelected() || IconPool.getIconURI("favorite");
-			break;
+
+		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === false) {
+			// preset the variables based on the state requested
+			switch (iState) {
+				case 1: // unselected
+					sURI = this.getIconUnselected() || IconPool.getIconURI("favorite");
+					break;
+				case 2: // Hovered
+					sURI = this.getIconHovered() || IconPool.getIconURI("favorite");
+					break;
+				case 0: // Selected
+					sURI = this.getIconSelected() || IconPool.getIconURI("favorite");
+					break;
+			}
+		} else {
+			// preset the variables based on the state requested
+			switch (iState) {
+				case 1: // unselected
+					if (this.getEnabled() === false) {
+						sURI = IconPool.getIconURI("favorite");
+					} else {
+						sURI = IconPool.getIconURI("unfavorite");
+					}
+					break;
+				case 2: // Hovered
+					sURI = IconPool.getIconURI("favorite");
+					break;
+				case 0: // Selected
+					sURI = IconPool.getIconURI("favorite");
+					break;
+			}
 		}
-	
+
+
 		if (sURI) {
 			oImage = IconPool.createControlByURI({
 				id: this.getId() + "__icon" + this._iIconCounter++,
 				src: sURI
 			}, sap.m.Image);
-	
+
 			// store the icons in the corresponding internal aggregation
 			switch (iState) {
 			case 1: // unselected
@@ -436,10 +468,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				break;
 			}
 		}
-	
+
 		return oImage;
 	};
-	
+
 	/**
 	 * Calculated the selected value based on the event position of the tap/move/click event.
 	 * This function is called by the event handlers to determine the {@link #getValue value} of the rating.
@@ -455,13 +487,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			fControlPadding = (oControlRoot.innerWidth() - oControlRoot.width()) / 2,
 			oEventPosition,
 			bRtl = sap.ui.getCore().getConfiguration().getRTL();
-	
+
 		if (oEvent.targetTouches) {
 			oEventPosition = oEvent.targetTouches[0];
 		} else {
 			oEventPosition = oEvent;
 		}
-	
+
 		// get the event position for tap/touch/click events
 		if (!oEventPosition || !oEventPosition.pageX) { // desktop fallback
 			oEventPosition = oEvent;
@@ -469,33 +501,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oEventPosition = oEvent.changedTouches[0];
 			}
 		}
-	
+
 		// if an event position is not present we stop
 		if (!oEventPosition.pageX) { // TODO: find out why this happens
 			return parseFloat(selectedValue);
 		}
-	
+
 		// check if event is happening inside of the control area (minus padding of the control)
 		if (oEventPosition.pageX < oControlRoot.offset().left) {
 			selectedValue = 0;
 		} else if ((oEventPosition.pageX - oControlRoot.offset().left) >  oControlRoot.innerWidth() - fControlPadding) {
 			selectedValue = this.getMaxValue();
 		} else {
-	
+
 			// calculate the selected value based on the percentage value of the event position
 			percentageWidth = (oEventPosition.pageX - oControlRoot.offset().left - fControlPadding) / oControlRoot.width();
 			selectedValue = percentageWidth * this.getMaxValue();
 		}
-	
+
 		// rtl support
 		if (bRtl) {
 			selectedValue = this.getMaxValue() - selectedValue;
 		}
-		
+
 		// return rounded value based on the control's visual mode
 		return this._roundValueToVisualMode(selectedValue, true);
 	};
-	
+
 	/**
 	 * Rounds the float value according to the parameter {@link #getVisualMode visualMode}:
 	 * - A value of "Full" will result in integer values.
@@ -521,18 +553,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fValue = Math.round(fValue * 2) / 2;
 			}
 		}
-	
+
 		return parseFloat(fValue);
 	};
-	
+
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
-	
+
 	/* =========================================================== */
 	/*           begin: event handlers                             */
 	/* =========================================================== */
-	
+
 	/**
 	 * Handle the touch start event happening on the rating.
 	 * The UI will be updated accordingly to show a preview of the rating value without actually setting the value.
@@ -541,28 +573,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.ontouchstart = function (oEvent) {
-	
+
 		if (this.getEnabled()) {
-	
+
 			// mark the event for components that needs to know if the event was handled by this Control
 			oEvent.setMarked();
-	
+
 			if (!this._touchEndProxy) {
 				this._touchEndProxy = jQuery.proxy(this._ontouchend, this);
 			}
-	
+
 			if (!this._touchMoveProxy) {
 				this._touchMoveProxy = jQuery.proxy(this._ontouchmove, this);
 			}
-	
+
 			// here also bound to the mouseup mousemove event to enable it working in
 			// desktop browsers
 			jQuery(document).on("touchend touchcancel mouseup", this._touchEndProxy);
 			jQuery(document).on("touchmove mousemove", this._touchMoveProxy);
-	
+
 			this._fStartValue = this.getValue();
 			var fValue = this._calculateSelectedValue(oEvent);
-	
+
 			if (fValue >= 0 && fValue <= this.getMaxValue()) {
 				this._updateUI(fValue, true);
 				if (this._fStartValue !== fValue) {	// if the value if not the same
@@ -571,7 +603,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Handle the touch move event on the rating.
 	 * The UI will be updated accordingly to show a preview of the rating value without actually setting the value.
@@ -580,17 +612,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._ontouchmove = function (oEvent) {
-	
+
 		if (oEvent.isMarked("delayedMouseEvent")) {
 			return;
 		}
-	
+
 		// note: prevent native document scrolling
 		oEvent.preventDefault();
-	
+
 		if (this.getEnabled()) {
 			var fValue = this._calculateSelectedValue(oEvent);
-	
+
 			if (fValue >= 0 && fValue <= this.getMaxValue()) {
 				this._updateUI(fValue, true);
 				if (this._fStartValue !== fValue) {	// if the value if not the same
@@ -599,7 +631,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	};
-	
+
 	/**
 	 * Handle the touch end event on the rating.
 	 * A change event will be fired when the touch ends, the value will be set, and the UI will be updated accordingly.
@@ -608,29 +640,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._ontouchend = function (oEvent) {
-	
+
 		if (oEvent.isMarked("delayedMouseEvent")) {
 			return;
 		}
-	
+
 		if (this.getEnabled()) {
 			var fValue = this._calculateSelectedValue(oEvent);
 			this.setProperty("value", fValue, true);
 			this._updateUI(fValue, false);
-	
+
 			if (this._fStartValue !== fValue) {	// if the value if not the same
 				this.fireLiveChange({ value: fValue });
 				this.fireChange({ value: fValue });
 			}
-	
+
 			jQuery(document).off("touchend touchcancel mouseup", this._touchEndProxy);
 			jQuery(document).off("touchmove mousemove", this._touchMoveProxy);
-	
+
 			// remove unused properties
 			delete this._fStartValue;
 		}
 	};
-	
+
 	/**
 	 * Handle the touch end event.
 	 *
@@ -638,7 +670,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.ontouchcancel = RatingIndicator.prototype.ontouchend;
-	
+
 	/**
 	 * Keyboard navigation event when the user presses Arrow Right (Left in RTL case) or Arrow Up.
 	 *
@@ -649,35 +681,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var fValue = this.getValue(),
 			fOldValue = this.getValue(),
 			iMaxValue = this.getMaxValue();
-	
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-	
+
 		if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
 			fValue += 1;
 		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
 			fValue += 0.5;
 		}
-	
+
 		if (fValue > iMaxValue) {
 			fValue = iMaxValue;
 		}
-	
+
 		this.setValue(fValue);
-	
+
 		if (fValue !== fOldValue) {
 			this.fireLiveChange({ value: fValue });
 			this.fireChange({ value: fValue });
 		}
-	
+
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * Keyboard navigation event when the user presses Arrow Left (Right in RTL case) or Arrow Down.
 	 *
@@ -687,35 +719,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onsapdecrease = function (oEvent) {
 		var fValue = this.getValue(),
 			fOldValue = this.getValue();
-	
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-	
+
 		if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
 			fValue -= 1;
 		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
 			fValue -= 0.5;
 		}
-	
+
 		if (fValue < 0) {
 			fValue = 0;
 		}
-	
+
 		this.setValue(fValue);
-	
+
 		if (fValue !== fOldValue) {
 			this.fireLiveChange({ value: fValue });
 			this.fireChange({ value: fValue });
 		}
-	
+
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	* Keyboard navigation event when the user presses Home.
 	*
@@ -725,25 +757,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onsaphome = function (oEvent) {
 		var fValue =  0,
 			fOldValue = this.getValue();
-	
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-	
+
 		this.setValue(fValue);
-	
+
 		if (fValue !== fOldValue) {
 			this.fireLiveChange({ value: fValue });
 			this.fireChange({ value: fValue });
 		}
-	
+
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * Keyboard navigation event when the user presses End.
 	 *
@@ -753,25 +785,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onsapend = function (oEvent) {
 		var fValue =  this.getMaxValue(),
 			fOldValue = this.getValue();
-	
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-	
+
 		this.setValue(fValue);
-	
+
 		if (fValue !== fOldValue) {
 			this.fireLiveChange({ value: fValue });
 			this.fireChange({ value: fValue });
 		}
-	
+
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	 * Keyboard navigation event when the user presses Enter or Space.
 	 *
@@ -782,11 +814,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var fValue = this.getValue(),
 			iMaxValue = this.getMaxValue(),
 			fOldValue = this.getValue();
-	
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-	
+
 		if (fValue === iMaxValue) {
 			fValue = 0; // start with 0 if we are at maximum
 		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Full) {
@@ -794,25 +826,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else if (this.getVisualMode() === sap.m.RatingIndicatorVisualMode.Half) {
 			fValue += 0.5;
 		}
-	
+
 		if (fValue > iMaxValue) {
 			fValue = iMaxValue;
 		}
-	
+
 		this.setValue(fValue);
-	
+
 		if (fValue !== fOldValue) {
 			this.fireLiveChange({ value: fValue });
 			this.fireChange({ value: fValue });
 		}
-	
+
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 		}
 	};
-	
+
 	/**
 	* Keyboard handling event when the user presses number keys.
 	*
@@ -821,11 +853,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	*/
 	RatingIndicator.prototype.onkeyup = function(oEvent) {
 		var iMaxValue = this.getMaxValue();
-		
+
 		if (!this.getEnabled()) {
 			return false;
 		}
-		
+
 		if (oEvent.which === jQuery.sap.KeyCodes.DIGIT_0 || oEvent.which === jQuery.sap.KeyCodes.NUMPAD_0) {
 			this.setValue(0);
 		}
@@ -857,7 +889,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setValue(Math.min(9, iMaxValue));
 		}
 	};
-	
+
 	/* =========================================================== */
 	/*           end: event handlers                               */
 	/* =========================================================== */
