@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				/**
 				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : null},
+				name : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
 				 * The minimum value of the slider.
