@@ -260,9 +260,10 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					var oNewData = oEvent.getParameter("newData");
 					var sOperation = oEvent.getParameter("operation");
 					var sKey = oEvent.getParameter("key");
-
+					var iIndex = oEvent.getParameter("index");
+					
 					if (sOperation === "update") {
-						var oSortItem = that._getSortItem(sKey);
+						var oSortItem = that.getSortItems()[iIndex];
 						if (oSortItem) {
 							oSortItem.setColumnKey(oNewData.keyField);
 							oSortItem.setOperation(oNewData.operation);
@@ -279,7 +280,6 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						});
 
 						that.fireAddSortItem({
-							key : sKey,
 							index : oEvent.getParameter("index"),
 							newItem : oSortItem
 						});
@@ -287,22 +287,10 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
-							key : sKey,
 							index : oEvent.getParameter("index")
 						});
 					}
 				};
-			};
-
-			P13nSortPanel.prototype._getSortItem = function(sKey) {
-				var oSortItem = null;
-				this.getSortItems().forEach(function(oSortItem_) {
-					if (oSortItem_.getKey() === sKey) {
-						oSortItem = oSortItem_;
-						return;
-					}
-				});
-				return oSortItem;
 			};
 
 			return P13nSortPanel;
