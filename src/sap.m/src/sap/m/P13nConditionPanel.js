@@ -287,7 +287,7 @@ sap.ui
 								var sValue = oCondition.value;
 								if (!sValue) {
 									sValue = this._getFormatedConditionText(oCondition.operation, oCondition.value1,
-											oCondition.value2, oCondition.exclude, oCondition.keyField);
+											oCondition.value2, oCondition.exclude, oCondition.keyField, oCondition.grouping);
 								}
 
 								if (!oCondition._oGrid || oCondition._oGrid.select.getSelected()) {
@@ -775,7 +775,11 @@ sap.ui
 									if (field["ID"] === "grouping") {
 										oControl.setEnabled(true);
 										oControl.setText(field["Label"]);
-
+										oControl.setTooltip(field["Label"]);
+										oControl.attachSelect(function() {
+											oThat._changeField(oThat, oConditionGrid);
+										});
+										
 										if (typeof oConditionGridData !== "undefined") {
 											oControl.setSelected(oConditionGridData.grouping);
 										} else {
@@ -992,7 +996,7 @@ sap.ui
 						if (typeof oConditionGridData !== "undefined") {
 							var sConditionText = oThat._getFormatedConditionText(oConditionGridData.operation,
 									oConditionGridData.value1, oConditionGridData.value2, oConditionGridData.exclude,
-									oConditionGridData.keyField);
+									oConditionGridData.keyField, oConditionGridData.grouping);
 
 							oConditionGridData._oGrid = oConditionGrid;
 							oConditionGridData.value = sConditionText;
@@ -1387,9 +1391,9 @@ sap.ui
 								oCheckvalue.setVisible(true);
 
 								// correct field span
-								oKeyfield.getLayoutData().setSpanL(4);
-								oOperation.getLayoutData().setSpanL(4);
-								oCheckvalue.getLayoutData().setSpanL(2);
+								oKeyfield.getLayoutData().setSpan("L4 M4 S4");
+								oOperation.getLayoutData().setSpan("L4 M4 S4");
+								oCheckvalue.getLayoutData().setSpan("L2 M2 S2");
 							} else {
 								if (sOperation === sap.m.P13nConditionOperation.Initial
 										|| sOperation === sap.m.P13nConditionOperation.Ascending
@@ -1494,7 +1498,7 @@ sap.ui
 
 						this._enableCondition(oThat, oConditionGrid, true);
 
-						sValue = oThat._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField);
+						sValue = oThat._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bGrouping);
 
 						var oConditionData = {
 							"value" : sValue,
@@ -1712,7 +1716,7 @@ sap.ui
 					 * @returns {string} the condition text
 					 */
 					P13nConditionPanel.prototype._getFormatedConditionText = function(sOperation, sValue1, sValue2,
-							bExclude, sKeyField) {
+							bExclude, sKeyField, bGrouping) {
 						var sConditionText = "";
 
 						var sKeyFieldText = null;
@@ -1775,11 +1779,13 @@ sap.ui
 								case sap.m.P13nConditionOperation.Ascending :
 								case sap.m.P13nConditionOperation.GroupAscending :
 									sConditionText = "ascending";
+									sConditionText += " g:" + bGrouping;
 									break;
 
 								case sap.m.P13nConditionOperation.Descending :
 								case sap.m.P13nConditionOperation.GroupDescending :
 									sConditionText = "descending";
+									sConditionText += " g:" + bGrouping;
 									break;
 
 								case sap.m.P13nConditionOperation.Total :
