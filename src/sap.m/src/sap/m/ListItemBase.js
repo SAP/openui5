@@ -621,7 +621,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		
 		if (oEvent.srcControl !== this) {
 			oParent._iLastFocusPosOfItem = $Tabbables.index(oEvent.target);
-			this.$().focus();
+			this.focus();
 		} else if ($Tabbables.length) {
 			var iFocusPos = oParent._iLastFocusPosOfItem || 0;
 			iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
@@ -656,18 +656,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
-		}
-	
-		// Ctrl + A to switch select all/none
-		if (oEvent.which == mKeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
-			var oList = sap.ui.getCore().byId(this._listId);
-			if (oList.isAllSelectableSelected()) {
-				oList.removeSelections(false, true);
-			} else {
-				oList.selectAll(true);
-			}
-			oEvent.preventDefault();
-			oEvent.setMarked();
 		}
 	};
 	
