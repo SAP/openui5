@@ -285,6 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			jQuery.sap.assert(undefined, "No metadata loaded!");
 			return null;
 		}
+		
 		// remove starting and trailing /
 		var sCandidate = sPath.replace(/^\/|\/$/g, ""),
 			aParts = sCandidate.split("/"),
@@ -340,6 +341,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (!oEntityType) {
 			var sFuncCandName = aParts[aParts.length - 1]; // last segment is always a function import
 			var oFuncType = this._getFunctionImportMetadata(sFuncCandName, "GET");
+			if (!oFuncType) {
+				oFuncType = this._getFunctionImportMetadata(sFuncCandName, "POST");
+			}
 			if (oFuncType && oFuncType.entitySet) { // only collections supported which have an entitySet
 				oEntityType = this._getEntityTypeByPath(oFuncType.entitySet);
 				if (oEntityType) {
