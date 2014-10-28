@@ -1340,7 +1340,7 @@ sap.ui
 											oEntity[sKey]  = this._getJsonDate(oKeys[sKey]);
 											break;
 										case "Edm.Guid":
-											oEntity[sKey]  = oKeys[sKey].substring(5, oKeys[sKey].length - 2);
+											oEntity[sKey]  = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
 											break;
 										default:
 											oEntity[sKey] = oKeys[sKey];
