@@ -174,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 								oOldContext && that.oLastContextData && that.oLastContextData[oOldContext.getPath()],
 								oNewContext && oContextData && oContextData[oNewContext.getPath()]
 							);
-					});
+					}, true);
 					aContexts.diff = aDiff;
 				}
 			}
@@ -789,31 +789,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @name sap.ui.model.odata.ODataListBinding#sort
 	 * @function
 	 */
-	ODataListBinding.prototype.sort = function(aSorters) {
+	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
+		
+		var bSuccess = false;
 		
 		if (aSorters instanceof sap.ui.model.Sorter) {
 			aSorters = [aSorters];
 		}
-		
+
 		this.aSorters = aSorters;
 		this.createSortParams(aSorters);
-	
-		// Only reset the keys, length usually doesn't change when sorting
-		this.abortPendingRequest();
-		this.aKeys = [];
-	
+
 		if (!this.bInitial) {
-			if (this.oRequestHandle) {
-				this.oRequestHandle.abort();
-				this.oRequestHandle = null;
-				this.bPendingRequest = false;
-			}
+			// Only reset the keys, length usually doesn't change when sorting
+			this.aKeys = [];
+			this.abortPendingRequest();
 			this.sChangeReason = sap.ui.model.ChangeReason.Sort;
 			this._fireRefresh({reason : this.sChangeReason});
 			// TODO remove this if the sort event gets removed which is now deprecated
 			this._fireSort({sorter: aSorters});
+			bSuccess = true;
 		}
-		return this;
+		if (bReturnSuccess) {
+			return bSuccess;
+		} else {
+			return this;
+		}
 	};
 	
 	ODataListBinding.prototype.createSortParams = function(aSorters) {
@@ -838,7 +839,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @name sap.ui.model.odata.ODataListBinding#filter
 	 * @function
 	 */
-	ODataListBinding.prototype.filter = function(aFilters, sFilterType) {
+	ODataListBinding.prototype.filter = function(aFilters, sFilterType, bReturnSuccess) {
+		
+		var bSuccess = false;
 		
 		if (!aFilters) {
 			aFilters = [];
@@ -864,15 +867,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		
 		//if we have some Application Filters, they will ANDed to the Control-Filters
 		this.createFilterParams(this.aFilters, this.aApplicationFilters);
-		this.abortPendingRequest();
-		this.resetData();
-		
+	
 		if (!this.bInitial) {
-			if (this.oRequestHandle) {
-				this.oRequestHandle.abort();
-				this.oRequestHandle = null;
-				this.bPendingRequest = false;
-			}
+			this.resetData();
+			this.abortPendingRequest();
 			this.sChangeReason = sap.ui.model.ChangeReason.Filter;
 			this._fireRefresh({reason : this.sChangeReason});
 			// TODO remove this if the filter event gets removed which is now deprecated
@@ -881,9 +879,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			} else {
 				this._fireFilter({filters: this.aFilters});
 			}
+			bSuccess = true;
 		}
 		
-		return this;
+		if (bReturnSuccess) {
+			return bSuccess;
+		} else {
+			return this;
+		}
 	};
 
 	/**

@@ -5,6 +5,8 @@
 .sapMToken{
 	font-size: @sapMFontMediumSize;	
 	background: @sapUiLightBG;
+	border: darken(@sapUiButtonStandardBG,10) 1px solid;
+	border-radius: 0.125rem;
 	color: @sapUiDarkText;		
 	padding-left: 0.375rem;
 }
@@ -18,23 +20,33 @@
 }
 
 
-.sapMTokenText{	
+.sapMTokenText{
 }
 
 .sapMToken:hover{	
-	background: darken(@sapUiLightBG, 5);		
+	background: darken(@sapUiLightBG, 5);
+	border: darken(@sapUiButtonStandardBG,10) 1px solid;
+	border-radius: 0.125rem;
 }
 
-.sapMTokenSelected, .sapMToken:focus{
+.sapMToken:focus{
+	border: 0.0625rem dotted @sapUiFocus;
+}
+
+.sapMTokenSelected{
 	color: @sapUiTextInverted;
-	background: @sapUiHighlight;	
+	background: @sapUiHighlight;
+	border: darken(@sapUiHighlight,5) 1px solid;
+	border-radius: 0.125rem;
 }
 
 .sapMTokenSelected:hover{	
-	background: darken(@sapUiHighlight, 5);	
+	background: darken(@sapUiHighlight, 5);
+	border: darken(@sapUiHighlight,5) 1px solid;
+	border-radius: 0.125rem;
 }
 
-.sapMTokenSelected .sapMTokenIcon, .sapMToken:focus .sapMTokenIcon{
+.sapMTokenSelected .sapMTokenIcon{
 	color: @sapUiInvertedElement;		
 }
 

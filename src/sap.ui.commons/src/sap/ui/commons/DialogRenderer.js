@@ -49,6 +49,9 @@ sap.ui.define(['jquery.sap.global'],
 		rm.addStyle("min-height", oControl.getMinHeight());
 		rm.addStyle("max-width", oControl.getMaxWidth());
 		rm.addStyle("max-height", oControl.getMaxHeight());
+		// Do not display the dialog content directly after rerendering, since it might just be 
+		// rendered inside the static area, whithout being in a popup
+		rm.addStyle("display", "none");
 	
 		if (!heightSet) {
 			rm.addClass("sapUiDlgFlexHeight");

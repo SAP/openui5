@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		
-		<title>Input - sap.m</title>
+		<title>Tokenizer - sap.m</title>
 
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
@@ -65,6 +65,13 @@
 			         tokenChange: fEventWriter,
 		});
 		//*******************************
+		oTokenizer3 = new sap.m.Tokenizer({
+			tokens:[
+			        new sap.m.Token({text:"Dente", editable: false}),
+			        new sap.m.Token({text:"Friese", editable: false}),
+			        new sap.m.Token({text:"Mann", editable: true})
+			        ]
+		});
 		
 		var app = new sap.m.App("myApp");		
 		
@@ -74,7 +81,9 @@
 					new sap.m.Label({ text : "Tokenizer.editable = true", width:"100%"}),
 					oTokenizer1,										
 					new sap.m.Label({ text : "Tokenizer.editable = false", width:"100%"}),
-					oTokenizer2,					
+					oTokenizer2,
+					new sap.m.Label({ text : "set the first two tokens editable property to false", width:"100%"}),
+					oTokenizer3,
 					new sap.m.Label({ text : "Token events:", width: "100%"}),
 					oEventList
 			]			

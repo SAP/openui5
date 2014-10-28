@@ -224,6 +224,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._animationId = this._requestAnimation(this._fAnimateCallback, this.oCanvas);
 	};
 	
+	// Start/stop SVG animation
+	// Though SVG animates itself, stop it when invisible to avoid unneeded layer updates
+	BusyIndicator.prototype._setSvg = function(){
+		var oSvg = this.getDomRef("svg");
+		if (oSvg) {
+			if ( this.getVisible() ) {
+				oSvg.unpauseAnimations();
+			} else {
+				oSvg.pauseAnimations();
+			}
+		}
+	};
+	
 	// Create internal icon image
 	BusyIndicator.prototype._createCustomIcon = function(sName, sValue){
 		var that = this;
@@ -331,6 +344,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// SVG animates itself, canvas animates by JavaScript:
 		if (this._bUseCanvas) {
 			this._doCanvas();
+		} else {
+			this._setSvg();
 		}
 	};
 	
@@ -407,8 +422,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		
 		if (oDomRef) {
 			this.getDomRef().style.visibility = bVisible ? "visible" : "hidden";
-			if (bVisible && !this._animationId) {
-				this._animateCanvas();
+			if (this._bUseCanvas) {
+				if (bVisible && !this._animationId) {
+					this._animateCanvas();
+				}
+			} else {
+				this._setSvg();
 			}
 		}
 		

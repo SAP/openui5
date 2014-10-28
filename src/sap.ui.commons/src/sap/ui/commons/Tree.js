@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Selection mode of the Tree.
 			 */
-			selectionMode : {type : "sap.ui.commons.TreeSelectionMode", group : "Behavior", defaultValue : sap.ui.commons.TreeSelectionMode.Single}
+			selectionMode : {type : "sap.ui.commons.TreeSelectionMode", group : "Behavior", defaultValue : sap.ui.commons.TreeSelectionMode.Legacy}
 		},
 		defaultAggregation : "nodes",
 		aggregations : {
@@ -630,9 +630,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (!bSuppressEvent) {
 			bDoSelect = this.fireSelect({node: oNode, nodeContext: oNode && oNode.getBindingContext()});
 		}
-		
+
 		if (bDoSelect) {
 			switch (this.getSelectionMode()) {
+			case sap.ui.commons.TreeSelectionMode.Legacy:
 			case sap.ui.commons.TreeSelectionMode.Single:
 				this._setSelectedNode(oNode, bSuppressEvent);
 				break;
@@ -688,6 +689,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 						jQuery.sap.log.warning("Added selected nodes in a tree with disabled selection");
 						oNode.setIsSelected(false);
 						break;
+					case sap.ui.commons.TreeSelectionMode.Legacy:
+						if (jQuery.isEmptyObject(that.oSelectedNodeMap)) {
+							that.oSelectedNodeMap[oNode.getId()] = oNode;
+						}
+						break;
 					case sap.ui.commons.TreeSelectionMode.Single:
 						if (jQuery.isEmptyObject(that.oSelectedNodeMap) == false) {
 							jQuery.sap.log.warning("Added multiple selected nodes in single select tree");
@@ -723,11 +729,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		jQuery.each(this.oSelectedNodeMap, function(sId, oNode){
 			that._delMultiSelection(oNode, bSuppressEvent);
 		});
-	
-		if (oNode) {
-			oNode._select(bSuppressEvent, true);
-		}
-	
+
+		oNode._select(bSuppressEvent, true);
 		this.oSelectedNodeMap[oNode.getId()] = oNode;
 		this.oSelectedContextMap[oNode.getId()] = oNode && oNode.getBindingContext();
 		this.oLeadSelection = oNode;

@@ -508,6 +508,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._aSelectedPaths = [];
 		this._aNavSections = [];
 		this._bUpdating = false;
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ListBase.prototype.onBeforeRendering = function() {
@@ -750,7 +752,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 		if (this._bSelectionMode) {
-			oListItem.setSelected((typeof bSelect == "undefined") ? true : !!bSelect);
+			oListItem.setSelected((bSelect === undefined) ? true : !!bSelect);
 			bFireEvent && this._fireSelectionChangeEvent([oListItem]);
 		}
 	};
@@ -854,6 +856,20 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		!this.getRememberSelections() && (this._aSelectedPaths.length = 0);
 		return this;
 	};
+	
+	/* Determines is whether all selectable items are selected or not
+	 * @protected
+	 */
+	ListBase.prototype.isAllSelectableSelected = function() {
+		var aItems = this.getItems(),
+			iSelectedItemCount = this.getSelectedItems().length,
+			iSelectableItemCount = aItems.filter(function(oItem) {
+				return oItem.isSelectable();
+			}).length;
+
+		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
+	};
+	
 	
 	/*
 	 * Returns only visible items
@@ -1161,7 +1177,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 	
-		bSelect = (typeof bSelect == "undefined") ? oItem.getSelected() : bSelect;
+		bSelect = (bSelect === undefined) ? oItem.getSelected() : bSelect;
 		var iIndex = this._aSelectedPaths.indexOf(sPath);
 		if (bSelect) {
 			iIndex < 0 && this._aSelectedPaths.push(sPath);
@@ -1180,8 +1196,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	ListBase.prototype._destroyItemNavigation = function() {
 		if (this._oItemNavigation) {
 			this.removeEventDelegate(this._oItemNavigation);
-			this.$("listUl").attr("tabindex", "-1");
-			this.$("after").attr("tabindex", "-1");
 			this._oItemNavigation.destroy();
 			this._oItemNavigation = null;
 		}
@@ -1435,15 +1449,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			return;
 		}
 	
-		if (!this.getVisibleItems().length) {
-			this._destroyItemNavigation();
-			return;
-		}
-	
 		if (!this._oItemNavigation) {
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setCycling(false);
 			this.addEventDelegate(this._oItemNavigation);
+			
+			// root element should still be tabbable
+			this._oItemNavigation.setTabIndex0();
 	
 			// TODO: Maybe we need a real paging algorithm here
 			this._oItemNavigation.setPageSize(this.getGrowingThreshold());
@@ -1460,25 +1472,30 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			});
 		}
 	
-		// set navigation items
-		var oItemsContainer = this.getItemsContainerDomRef();
-		if (oItemsContainer) {
-			var aItemDomRefs = this.getNavigationItemDomRefs(oItemsContainer);
-			this._oItemNavigation.setRootDomRef(oItemsContainer);
-			this._oItemNavigation.setItemDomRefs(aItemDomRefs);
+		// configure navigatable items
+		this.setNavigationItems(this._oItemNavigation);
+		
+		// configure invalid focus index incase of item remove
+		var iFocusIndex = this._oItemNavigation.getFocusedIndex();
+		var iNavigationItemsLength = this._oItemNavigation.getItemDomRefs().length;
+		if (iFocusIndex > iNavigationItemsLength - 1) {
+			this._oItemNavigation.setFocusedIndex(iNavigationItemsLength - 1);
 		}
 	};
 	
 	/*
-	 * Returns DOM References of items for keyboard navigation
+	 * Sets DOM References for keyboard navigation
 	 *
-	 * @param {HTMLElement} oItemsContainer Container of the items
-	 * @returns {HTMLElement[]}
+	 * @param {sap.ui.core.delegate.ItemNavigation} oItemNavigation
 	 * @protected
 	 * @since 1.26
 	 */
-	ListBase.prototype.getNavigationItemDomRefs = function(oItemsContainer) {
-		return oItemsContainer.children;
+	ListBase.prototype.setNavigationItems = function(oItemNavigation) {
+		var oItemsContainer = this.getItemsContainerDomRef();
+		if (oItemsContainer) {
+			this._oItemNavigation.setRootDomRef(oItemsContainer);
+			this._oItemNavigation.setItemDomRefs([].slice.call(oItemsContainer.children));
+		}
 	};
 	
 	/**
@@ -1498,9 +1515,13 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @protected
 	 */
 	ListBase.prototype.setItemFocusable = function(oListItem) {
-		var aVisibleItems = this.getVisibleItems();
-		var iIndex = aVisibleItems.indexOf(oListItem);
-		if (iIndex >= 0 && this._oItemNavigation) {
+		if (!this._oItemNavigation) {
+			return;
+		}
+		
+		var aItemDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iIndex = aItemDomRefs.indexOf(oListItem.getDomRef());
+		if (iIndex >= 0) {
 			this._oItemNavigation.setFocusedIndex(iIndex);
 		}
 	};
@@ -1549,68 +1570,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return $Section;
 	};
 	
-	// move focus to the next/prev tabbable element after or before the list
-	// TODO: This implementation search parent which means we are out of our sandbox!
-	ListBase.prototype._navToTabChain = function(bForward) {
-		var $Current = this.$();
-		var $Tabbables = $Current.find(":sapTabbable");
-		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
-		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
-		var sTabIndex = $Reference.attr("tabindex");
-		var iStep = bForward ? 1 : -1;
-	
-		// make the dummy tabbable
-		$Reference.attr("tabindex", "0");
-	
-		// search all dom parents to find next/prev tabbable item
-		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
-			$Tabbables = $Current.find(":sapTabbable");
-			var iLimit = bForward ? $Tabbables.length - 1 : 0;
-			var iIndex = $Tabbables.index($Reference);
-	
-			// should have more tabbables element then before or after reference
-			// should keep searching if the $Reference is the first or last one
-			if ($Tabbables.length > 1 && iIndex != iLimit) {
-				break;
-			}
-		}
-	
-		// find next/prev tabbable item and reset tabindex
-		iIndex = $Tabbables.index($Reference) + iStep;
-		$Reference.attr("tabindex", sTabIndex);
-	
-		// focus and return the found tabbable if possible
-		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
-	};
-	
-	// Handle F6
-	ListBase.prototype.onsapskipforward = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
-		}
-	
-		// focus to the next tabbable element after the control
-		if (this._navToTabChain(true)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
-	};
-	
-	// Handle Shift + F6
-	ListBase.prototype.onsapskipback = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
-			return;
-		}
-	
-		// focus to the previous tabbable element before the control
-		if (this._navToTabChain(false)) {
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
-	};
-	
 	// Handle Alt + Down
 	ListBase.prototype.onsapshow = function(oEvent) {
 		// do not handle marked events and ignore F4
@@ -1641,9 +1600,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handles focus to reposition the focus to correct place
 	ListBase.prototype.onfocusin = function(oEvent) {
+		
 		// ignore self focus
 		if (this._bIgnoreFocusIn) {
 			this._bIgnoreFocusIn = false;
+			oEvent.stopImmediatePropagation(true);
 			return;
 		}
 	
@@ -1652,29 +1613,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			this._startItemNavigation();
 		}
 	
-		// do not handle marked events
-		var aItems = this.getVisibleItems();
-		if (!this._oItemNavigation || oEvent.isMarked() || !aItems.length) {
+		// handle only for backward navigation
+		if (oEvent.isMarked() ||
+			!this._oItemNavigation || 
+			oEvent.target.id != this.getId("after")) {
 			return;
 		}
 	
-		// handle only backward/forward navigation
-		var sTargetId = (oEvent.target || {}).id;
-		var bBackwardNavigation = (sTargetId == this.getId("after"));
-		if (!bBackwardNavigation && sTargetId != this.getId("listUl")) {
-			return;
-		}
-	
-		// get the last focused item from the ItemNavigation
-		var iIndex = this._oItemNavigation.getFocusedIndex();
-		var oItem = aItems[iIndex] || aItems[0];
-	
-		// get the last tabbable item for backwards navigation or item itself
-		var oFocusDomRef = bBackwardNavigation && oItem.getTabbables().get(-1);
-		oFocusDomRef = oFocusDomRef || oItem.getDomRef();
-	
-		// apply focus and mark event
-		oFocusDomRef.focus();
+		// get the last focused element from the ItemNavigation
+		var $LastFocused = jQuery(this._oItemNavigation.getFocusedDomRef());
+		
+		// find related item control to get tabbables
+		var oRelatedControl = $LastFocused.control(0) || {};
+		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
+		
+		// get the last tabbable item or itself and focus
+		var $FocusElement = $Tabbables.eq(-1).add($LastFocused).eq(-1);
+		$FocusElement.focus();
 		oEvent.setMarked();
 	};
 

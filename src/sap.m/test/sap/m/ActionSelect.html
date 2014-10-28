@@ -27,6 +27,7 @@
 			.labelSelectTestPageHeader {
 				margin: 1rem 2rem 0 2rem;
 			}
+			
 		</style>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
@@ -96,6 +97,45 @@
 				}
 			}),
 
+			// select controls
+			oActionSelect4 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
+				width: "33%",
+				items: [
+					oItem0 = new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oItem1 = new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oItem2 = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oItem3 = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oItem4 = new sap.ui.core.Item({
+						key: "4",
+						text: "item 4"
+					}),
+
+					oItem5 = new sap.ui.core.Item({
+						key: "5",
+						text: "item 5"
+					})
+				],
+
+				change: function(oControlEvent) {
+					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				}
+			}),
 			oActionSelect1 = new sap.m.ActionSelect({	// the selected item is not specified, the first one will be selected
 				width: "5rem",
 				items: [
@@ -257,7 +297,7 @@
 					})
 				}),
 
-				content: [oActionSelect0],
+				content: [oActionSelect0, oActionSelect4],
 
 				footer: oBar1 = new sap.m.Bar({
 					contentLeft: oActionSelect3,

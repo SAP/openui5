@@ -1541,6 +1541,7 @@ sap.ui
 						
 						// helper to find the entity set entry for a given entity set name and the keys of the entry
 						var fnGetEntitySetEntry = function(sEntitySetName, sKeys) {
+							sKeys = decodeURIComponent(sKeys);
 							var oFoundEntry;
 							var oEntitySet = that._mEntitySets[sEntitySetName];
 							var aKeys = oEntitySet.keys;
@@ -1815,7 +1816,7 @@ sap.ui
 																// MERGE
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
 																		sChangesetRequest.lastIndexOf("}") + 1).replace(/\\/g, '');
-																fnCUDRequest(rMerge, sData, 'PUT');
+																fnCUDRequest(rMerge, sData, 'MERGE');
 															} else if (rPost.test(sChangesetRequest)) {
 																// POST
 																sData = sChangesetRequest.substring(sChangesetRequest.indexOf("{"),
@@ -1978,7 +1979,6 @@ sap.ui
 															var mHeaders = {
 																	"Content-Type" : "application/json;charset=utf-8"
 															};
-															fnHandleXsrfTokenHeader(oXhr, mHeaders);
 															var oEntry = jQuery
 																	.extend(true, {}, fnGetEntitySetEntry(sEntitySetName, sKeys));
 															if (!jQuery.isEmptyObject(oEntry)) {
@@ -2034,7 +2034,7 @@ sap.ui
 																		};
 																		fnHandleXsrfTokenHeader(oXhr, mHeaders);
 
-																		var oEntry = fnGetEntitySetEntry(sEntitySetName, decodeURIComponent(sKeys));
+																		var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 																		if (oEntry) {
 																			var aEntries, oFilteredData = {};
 																			try {
@@ -2134,8 +2134,7 @@ sap.ui
 																						"Content-Type" : "application/json;charset=utf-8"
 																				};
 																				fnHandleXsrfTokenHeader(oXhr, mHeaders);
-																				var oEntry = fnGetEntitySetEntry(sEntitySetName,
-																						decodeURIComponent(sKeys));
+																				var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 																				if (oEntry) {
 																					var aEntries, oFilteredData = {};
 																					try {
@@ -2220,6 +2219,13 @@ sap.ui
 												method : "POST",
 												path : new RegExp("(" + sEntitySetName + ")(\\(([^/\\?#]+)\\)/?(.*)?)?"),
 												response : function(oXhr, sEntitySetName, group2, sKeys, sNavName) {
+													if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
+														return jQuery.sap.sjax({
+															type : 'MERGE',
+															url : oXhr.url,
+															data : oXhr.requestBody
+														});
+													}
 													jQuery.sap.log.debug("MockServer: incoming create request for url: " + oXhr.url);
 													var sRespondData = null;
 													var sRespondContentType = null;
@@ -2281,6 +2287,70 @@ sap.ui
 															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
 												}
 											});
+											
+											// support partial update of an entity of a specific type
+											aRequests.push({
+												method : "MERGE",
+												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
+												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
+													jQuery.sap.log.debug("MockServer: incoming merge update request for url: " + oXhr.url);
+													var iResult = 405; // default: method not allowed 
+													var sRespondData = null;
+													var sRespondContentType = null;
+
+													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+															decodeURIComponent(sKeys), sNavName);
+													if (sTargetEntityName) {
+														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+														if (oEntity) {
+															sRespondContentType = {
+																"Content-Type" : "application/json;charset=utf-8"
+															};
+
+															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+															if (oExistingEntry) { 
+																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+															}
+															iResult = 204;
+														}
+													}
+													oXhr.respond(iResult, sRespondContentType, sRespondData);
+													jQuery.sap.log
+															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+												}
+											});
+											
+											// support partial update of an entity of a specific type
+											aRequests.push({
+												method : "PATCH",
+												path : new RegExp("(" + sEntitySetName + ")\\(([^/\\?#]+)\\)/?(.*)?"),
+												response : function(oXhr, sEntitySetName, sKeys, sNavName) {
+													jQuery.sap.log.debug("MockServer: incoming patch update request for url: " + oXhr.url);
+													var iResult = 405; // default: method not allowed 
+													var sRespondData = null;
+													var sRespondContentType = null;
+
+													var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
+															decodeURIComponent(sKeys), sNavName);
+													if (sTargetEntityName) {
+														var oEntity = initNewEntity(oXhr, sTargetEntityName, sKeys, sNavName);
+														if (oEntity) {
+															sRespondContentType = {
+																"Content-Type" : "application/json;charset=utf-8"
+															};
+
+															var oExistingEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
+															if (oExistingEntry) { 
+																jQuery.extend(that._oMockdata[sEntitySetName][oExistingEntry.index], oEntity);
+															}
+															iResult = 204;
+														}
+													}
+													oXhr.respond(iResult, sRespondContentType, sRespondData);
+													jQuery.sap.log
+															.debug("MockServer: response sent with: " + iResult + ", " + sRespondData);
+												}
+											});
 
 											// support deletion of an entity of a specific type
 											aRequests.push({
@@ -2290,7 +2360,7 @@ sap.ui
 													jQuery.sap.log.debug("MockServer: incoming delete request for url: " + oXhr.url);
 
 													var iResult = 204;
-													var oEntry = fnGetEntitySetEntry(sEntitySetName, decodeURIComponent(sKeys));
+													var oEntry = fnGetEntitySetEntry(sEntitySetName, sKeys);
 													if (oEntry) {
 														that._oMockdata[sEntitySetName].splice(oEntry.index, 1);
 													} else {

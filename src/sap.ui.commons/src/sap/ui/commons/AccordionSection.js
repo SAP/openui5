@@ -98,6 +98,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 	AccordionSection.prototype.init = function(){
 	   this.bIgnoreScrollEvent = true; // do not fire a scroll event initially
 	   this.oScrollDomRef = null;      // points to the content area
+	   
+	   this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	/**
@@ -271,13 +273,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 					cont.setAttribute("aria-hidden", "true");
 				}
 	
-				this.rerender();
+				this.invalidate();
 	
 			} else {
 				// expanding
 				if (!this.getDomRef("cont")) {
 					// content has not been rendered yet, so render it now
-					this.rerender(); // TODO: potentially restore focus to collapse icon/button
+					this.invalidate(); // TODO: potentially restore focus to collapse icon/button
 				} else {
 					// content exists already, just make it visible again
 					jQuery(this.getDomRef()).removeClass("sapUiAcdSectionColl");

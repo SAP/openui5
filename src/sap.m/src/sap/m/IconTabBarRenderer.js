@@ -40,6 +40,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRm.write("<div ");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMITB");
+		if (oControl.getStretchContentHeight()) {
+			oRm.addClass("sapMITBStretch");
+		}
+		if (!oControl.getApplyContentPadding()) {
+			oRm.addClass("sapMITBNoContentPadding");
+		}
+		oRm.addClass("sapMITBBackgroundDesign" + oControl.getBackgroundDesign());
 		oRm.writeClasses();
 		oRm.write(">");
 	

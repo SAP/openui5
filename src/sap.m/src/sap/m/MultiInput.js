@@ -157,6 +157,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 */
 	MultiInput.prototype.exit = function() {
 	
+		Input.prototype.exit.apply(this, arguments);
+	
 		if (this._sResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
@@ -268,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.removeAllValidators = function() {
 		this._tokenizer.removeAllValidators();
 	};
-	
+
 	/**
 	 * Called when the user presses the down arrow key
 	 * @param {jQuery.Event} oEvent The event triggered by the user
@@ -336,21 +338,36 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	};
 	
 	/**
-	 * Handle the key down event for Ctrl+ a
+	 * Handle the key down event for Ctrl + A
 	 *
 	 * @param {jQuery.Event}
 	 *            oEvent - the occuring event
 	 * @private
 	 */
 	MultiInput.prototype.onkeydown = function(oEvent) {
-		if (this.getValue().length === 0) {
-			// only if there is no text
-			if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command		
-				this._tokenizer.focus();
-				this._tokenizer.selectAllTokens(true);
-				oEvent.preventDefault();
+		
+		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+				
+			if ( this._tokenizer){
+				
+				if (this._$input.getSelectedText() === this.getValue()) {
+					
+					// if all text are selected, select the complete content of the input field
+					this._tokenizer.selectAllTokens();
+						
+				} else if ( this._tokenizer.getTokens().length !== 0 && this._tokenizer.getSelectedTokens().length === this._tokenizer.getTokens().length){
+					
+					// if all tokens are selected, select the complete content of the input field
+					if (!this._tokenizer.bSelectAllToken){
+							
+						this.selectText(0, this.getValue().length);
+					}
+						
+				} 
 			}
+			
 		}
+		
 	};
 	
 	/**

@@ -583,7 +583,8 @@
 			qutils.triggerKeyboardEvent("C7E6_T1", "HOME");
 			equal(jQuery.sap.byId("C7E1_T1").is(":focus"), true, "HOME: Container 7, Element 1, Field 1 - Selected");
 			qutils.triggerKeyboardEvent("C7E1_T1", "F6");
-			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), true, "F6: Container 1, Element 1, Field 1 - Selected");
+			equal(jQuery.sap.byId("C1E1_T1").is(":focus"), false, "F6: Container 1, Element 1, Field 1 - NOT Selected (No cycling!)");
+			jQuery.sap.byId("C1E1_T1").focus();
 			qutils.triggerKeyboardEvent("C1E1_T1", "F6");
 			equal(jQuery.sap.byId("C2E1_T1").is(":focus"), true, "F6: Container 2, Element 1, Field 1 - Selected");
 			qutils.triggerKeyboardEvent("C2E1_T1", "ARROW_RIGHT");

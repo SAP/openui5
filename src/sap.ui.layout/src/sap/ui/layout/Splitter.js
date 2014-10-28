@@ -114,6 +114,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		// Context bound method for easy (de-)registering at the ResizeHandler
 		this._resizeCallback    = this._delayedResize.bind(this);
 		this._resizeHandlerId   = null;
+		// We need the information whether auto resize is enabled to temporarily disable it
+		// during live resize and then set it back to the value before
+		this._autoResize = true;
 		this.enableAutoResize();
 		
 		// Bound versions for event handler registration
@@ -184,31 +187,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * in every control instance by default.
 	 * For performance reasons this behavior can be disabled by calling disableAutoResize()
 	 * 
+	 * @param {bool} [bTemporarily=false] Only enables autoResize if it was previously disabled temporarily (used for live resize)
 	 * @protected
 	 * @deprecated This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
-	Splitter.prototype.enableAutoResize = function() {
+	Splitter.prototype.enableAutoResize = function(bTemporarily) {
+		// Do not enable autoResize if it was deactivated temporarily and wasn't enabled before
+		if (bTemporarily && !this._autoResize) {
+			return;
+		}
+
+		this._autoResize = true;
+
 		var that = this;
 		sap.ui.getCore().attachInit(function() {
 			that._resizeHandlerId = sap.ui.core.ResizeHandler.register(that, that._resizeCallback);
 		});
-		
+
 		this._delayedResize();
 	};
-	
+
 	/**
 	 * Disables the resize handler for this control, this leads to an automatic resize of
 	 * the contents whenever the control changes its size. The resize handler is enabled
 	 * in every control instance by default.
 	 * For performance reasons this behavior can be disabled by calling disableAutoResize()
 	 * 
+	 * @param {bool} [bTemporarily=false] Only disable autoResize temporarily (used for live resize), so that the previous status can be restored afterwards
 	 * @protected
 	 * @deprecated This method is declared as protected in order to assess the need for this feature. It is declared as deprecated because the API might change in case the need for this is high enough to make it part of the official Splitter interface
 	 */
-	Splitter.prototype.disableAutoResize = function() {
+	Splitter.prototype.disableAutoResize = function(bTemporarily) {
 		sap.ui.core.ResizeHandler.deregister(this._resizeHandlerId);
+
+		if (!bTemporarily) {
+			this._autoResize = false;
+		}
 	};
-	
+
 	/**
 	 * Enables recalculation and resize of the splitter contents while dragging the splitter bar.
 	 * This means that the contents are resized several times per second when moving the splitter bar.
@@ -350,30 +366,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 */
 	Splitter.prototype._onBarMoveStart = function(oJEv, bTouch) {
 		var sId = this.getId();
-		
+
+		// Disable auto resize during bar move
+		this.disableAutoResize(/* temporarily: */ true);
+
 		var iPos = oJEv[this._moveCord];
 		var iBar = parseInt(oJEv.target.id.substr((sId + "-splitbar-").length), 10);
 		var $Bar = jQuery(oJEv.target);
 		var mCalcSizes = this.getCalculatedSizes();
 		var iBarSize = this._bHorizontal ?  $Bar.innerWidth() : $Bar.innerHeight();
-		
+
 		var aContentAreas = this.getContentAreas();
 		var oLd1   = aContentAreas[iBar].getLayoutData();
 		var oLd2   = aContentAreas[iBar + 1].getLayoutData();
-		
+
 		if (!oLd1.getResizable() || !oLd2.getResizable()) {
 			// One of the contentAreas is not resizable, do not resize
 			// Also: disallow text-marking behavior when not moving bar
 			_preventTextSelection(bTouch);
 			return;
 		}
-		
+
 		// Calculate relative starting position of the bar for virtual bar placement
 		var iRelStart = 0 - iBarSize;
 		for (var i = 0; i <= iBar; ++i) {
 			iRelStart += mCalcSizes[i] + iBarSize;
 		}
-		
+
 		this._move = {
 			// Start coordinate
 			start : iPos,
@@ -389,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			c2Size : mCalcSizes[iBar + 1],
 			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize(), 10) : 0
 		};
-		
+
 		// Event handlers use bound handler methods - see init()
 		if (bTouch) {
 			// this._ignoreMouse = true; // Ignore mouse-events until touch is done 
@@ -399,14 +418,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			document.addEventListener("mouseup",   this._boundBarMoveEnd);
 			document.addEventListener("mousemove", this._boundBarMove);
 		}
-		
+
 		this._$SplitterOverlay.css("display", "block"); // Needed because it is set to none in renderer
 		this._$SplitterOverlay.appendTo(this.getDomRef());
 		this._$SplitterOverlayBar.css(this._sizeDirNot, "");
 		this._move["bar"].css("visibility", "hidden");
 		this._onBarMove(oJEv);
 	};
-	
+
 	Splitter.prototype._onBarMove = function(oJEv) {
 		if (oJEv.preventDefault) { oJEv.preventDefault(); } // Do not select text
 		
@@ -455,32 +474,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	Splitter.prototype._onBarMoveEnd = function(oJEv) {
 		this._ignoreMouse = false;
 		this._ignoreTouch = false;
-		
+
 		var oEvent = oJEv;
 		if (oJEv.changedTouches && oJEv.changedTouches[0]) {
 			// Touch me baby!
 			oEvent = oJEv.changedTouches[0];
 		}
-		
+
 		var iPos = oEvent[this._moveCord];
-		
+
 		this._resizeContents(
 			/* left content number:    */ this._move["barNum"],
 			/* number of pixels:       */ 0 - (this._move["start"] - iPos),
 			/* also change layoutData: */ true
 		);
-		
+
 		// Remove resizing overlay
 		this._move["bar"].css("visibility", "");
 		this._$SplitterOverlay.css("display", ""); // Remove?
 		this._$SplitterOverlay.detach();
-	
+
 		// Uses bound handler methods - see init()
 		document.removeEventListener("mouseup",   this._boundBarMoveEnd);
 		document.removeEventListener("mousemove", this._boundBarMove);
 		document.removeEventListener("touchend",  this._boundBarMoveEnd);
 		document.removeEventListener("touchmove", this._boundBarMove);
-		
+
+		// Enable auto resize after bar move if it was enabled before
+		this.disableAutoResize(/* temporarily: */ true);
+
 		jQuery.sap.focus(this._move.bar);
 	};
 	
@@ -896,16 +918,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * Connects the keyboard event listeners so resizing via keyboard will be possible
 	 */
 	Splitter.prototype._enableKeyboardListeners = function() {
-		this.onsapincrease          = this._keyListeners.increase;
-		this.onsapincreasemodifiers = this._keyListeners.increase;
-		this.onsapdecrease          = this._keyListeners.decrease;
-		this.onsapdecreasemodifiers = this._keyListeners.decrease;
-		this.onsappageup            = this._keyListeners.decreaseMore;
-		this.onsappagedown          = this._keyListeners.increaseMore;
-		this.onsapend               = this._keyListeners.max;
-		this.onsapendmodifiers      = this._keyListeners.max;
-		this.onsaphome              = this._keyListeners.min;
-		this.onsaphomemodifiers     = this._keyListeners.min;
+		this.onsapright              = this._keyListeners.increase;
+		this.onsapdown               = this._keyListeners.increase;
+		this.onsapleft               = this._keyListeners.decrease;
+		this.onsapup                 = this._keyListeners.decrease;
+		this.onsappageup             = this._keyListeners.decreaseMore;
+		this.onsappagedown           = this._keyListeners.increaseMore;
+		this.onsapend                = this._keyListeners.max;
+		this.onsaphome               = this._keyListeners.min;
 
 		this._keyboardEnabled = true;
 	};

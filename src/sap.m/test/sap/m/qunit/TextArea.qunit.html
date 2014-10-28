@@ -280,7 +280,7 @@
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new sap.m.TextArea({
-			text : sInitValue
+			value : sInitValue
 		});
 
 		// arrange
@@ -313,6 +313,35 @@
 		
 		// assertion
 		strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
+		
+		// cleanup
+		oTA.destroy();
+	});
+	
+	test("Live change event should be fired in case of value is reverted with escape", function() {
+		// system under test
+		var sInitValue = "Test";
+		var oTA = new sap.m.TextArea({
+			value : sInitValue
+		});
+
+		// arrange
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var oTADomRef = oTA.getFocusDomRef();
+		
+		// act
+		oTADomRef.focus();
+		oTA.updateDomValue("Something that is not initial value");
+		sap.ui.test.qunit.triggerEvent("input", oTADomRef);
+		
+		var fnLiveChangeSpy = this.spy(oTA, "fireLiveChange");
+		sap.ui.test.qunit.triggerKeydown(oTADomRef, "ESCAPE");
+		
+		strictEqual(fnLiveChangeSpy.callCount, 1, "LiveChange event is fired");
+		strictEqual(fnLiveChangeSpy.args[0][0].value, sInitValue, "Event is fired with correct parameter value");
+		strictEqual(fnLiveChangeSpy.args[0][0].newValue, sInitValue, "Event is fired with correct compatible parameter");
+		strictEqual(oTA.getValue(), sInitValue, "Value is reverted to initial");
 		
 		// cleanup
 		oTA.destroy();

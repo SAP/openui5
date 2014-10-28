@@ -9,9 +9,7 @@
 		<TileContainer
 			id="container"
 			tileDelete="handleTileDelete"
-			tiles="{
-				path: '/TileCollection'
-			}">
+			tiles="{/TileCollection}">
 			<StandardTile
 				icon="sap-icon://{icon}"
 				type="{type}"

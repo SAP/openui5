@@ -15,6 +15,7 @@
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 <script type="text/javascript">
 
@@ -224,9 +225,54 @@
 		}, 500);
 	});
 
+	module("Keyboard handling");
 	
+	test("Enter", function() {
+		
+		// Arrange
+		var oObjectAttribute = new sap.m.ObjectAttribute({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+		
+		// System under Test
+		oObjectAttribute.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
+		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+		
+		strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
+		
+		// Clean up
+		sap.m.ObjectAttribute.prototype.firePress.restore();
+		oObjectAttribute.destroy();
+	});
 	
-	
+	test("Space", function() {
+		
+		// Arrange
+		var oObjectAttribute = new sap.m.ObjectAttribute({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+		
+		// System under Test
+		oObjectAttribute.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		var oPressSpy = sinon.spy(sap.m.ObjectAttribute.prototype, "firePress");
+		sap.ui.test.qunit.triggerKeydown(oObjectAttribute.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
+		
+		strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
+		
+		// Clean up
+		sap.m.ObjectAttribute.prototype.firePress.restore();
+		oObjectAttribute.destroy();
+	});	
+		
 </script>
 </head>
 
@@ -234,5 +280,6 @@
 	<div id="qunit"></div>
 	<div id="objectAttributes"></div>
 	<div id="objectAtrributesWrap"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

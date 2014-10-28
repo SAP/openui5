@@ -24,8 +24,9 @@
 
 	// time to wait for server responses
 	var timeout = 3000;
+	var oModel;
 	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 	
 	var bChanged = false, bDataRequested = false, bDataReceived = false;
 	
@@ -50,17 +51,33 @@
 	}
 	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
 
-	function initModel(sURI, bJSON){
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json: bJSON, useBatch:false, loadMetadataAsync: false});
-		oModel.setDefaultCountMode("Request");
-		return oModel;
+	function removeSharedMetadata() {
+		var sServiceURI = sURI.replace(/\/$/, "");
+		if (sap.ui.model.odata.v2.ODataModel.mServiceData
+				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]) {
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+		}
 	}
+
+	function initModel(bJSON) {
+		return new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: bJSON,
+			useBatch: false
+		});
+	}
+
+	module("v2.ODataListBinding", {
+		setup : function() {
+			oModel = initModel(false);
+		},
+		teardown : function() {
+			delete oModel;
+			removeSharedMetadata();
+		}
+	});
 	
 	asyncTest("ListBinding getLength, getContexts", function(){
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
-			oBinding.initialize();
-
 		var handler = function() {
 			equal(oBinding.getPath(), "/Categories", "ListBinding path");
 			ok(oBinding.getModel() == oModel, "ListBinding model");
@@ -74,14 +91,10 @@
 		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
 		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		oBinding.getContexts();
 	});
 
 	asyncTest("ListBinding sort", function(){
-
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
-			oBinding.initialize();
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
 			var aContexts = oEvent.oSource.getContexts();
@@ -112,8 +125,6 @@
 			oBinding.detachChange(handler2);
 			oBinding.sort(null);
 			oBinding.attachChange(handler3);
-			// resume normal testing
-			start();
 		};
 		var handler1 =	function(oEvent){
 			// contexts should be now loaded
@@ -158,17 +169,12 @@
 			// fire first loading
 			oBinding.getContexts();
 		};
-
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler0);
-		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		oBinding.getContexts();
 	});
 
 	asyncTest("ListBinding expand", function(){
-
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
-			oBinding.initialize();
 		var handler = function() { // delay the following test
 			var aContexts = oBinding.getContexts(),
 				oContext = aContexts[0];
@@ -176,9 +182,8 @@
 			ok(jQuery.isArray(oContext.getProperty("Products")), "Products loaded");
 			start(); // resume normal testing
 		};
+		oBinding.attachRefresh(function() {oBinding.getContexts();});
 		oBinding.attachChange(handler);
-		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
-		oBinding.getContexts();
 	});
 	
 	asyncTest("ListBinding filter", function(){		
@@ -289,22 +294,23 @@
 			var aFilteredContexts = oEvent.oSource.getContexts();
 			equal(aFilteredContexts.length, 3, "sap.ui.model.odata.Filter + normal Filter");
 			//equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Condiments", "sap.ui.model.odata.Filter + normal Filter");
-
 			oBinding.detachChange(handler7);
 			start(); 
 		};
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
-			oBinding.initialize();
 		//check EQ
 		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
-		oBinding.filter([oFilter]);
+		
+		var fnFilter = function() {
+			oBinding.detachRefresh(fnFilter);
+			oBinding.attachRefresh(function() {oBinding.getContexts();})
+			oBinding.filter([oFilter]);
+		}
 		oBinding.attachChange(handler);
-		oBinding.getContexts();
+		oBinding.attachRefresh(fnFilter);
 	});
 
 	asyncTest("ListBinding Diff", function(){
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
 		var handler = function(oEvent) {
 			ok(!oBinding.getContexts(0, 2).diff,"No diff if binding was initial")
@@ -341,7 +347,6 @@
 	
 	asyncTest("Event order", function(){
 		expect(4);
-		var oModel = initModel(sURI, false, "Categories");
 		var oList = new sap.ui.commons.ListBox();
 		var oItem = new sap.ui.core.ListItem();
 		oList.bindAggregation("items", {path:"/Categories", template: oItem, events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}})
@@ -477,17 +482,19 @@
 			oBinding.detachChange(handler6);
 			start(); 
 		};
-		var oModel = initModel(sURI, false, "Categories");
 		var oBinding = oModel.bindList("/Categories");
-			oBinding.initialize();
 		//check EQ
 		var oFilter = new sap.ui.model.odata.Filter("CategoryName", [{
 			operator: sap.ui.model.FilterOperator.EQ, 
 			value1: "Beverages"
 		}]);
+		var fnFilter = function() {
+			oBinding.detachRefresh(fnFilter);
+			oBinding.attachRefresh(function() {oBinding.getContexts();})
+			oBinding.filter(oFilter.convert());
+		}
 		oBinding.attachChange(handler);
-		oBinding.filter(oFilter.convert());
-		oBinding.getContexts();
+		oBinding.attachRefresh(fnFilter);
 	});
 	</script>
 

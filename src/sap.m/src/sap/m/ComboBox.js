@@ -381,8 +381,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
 				sValue = this.getValue();
 
-				// deselect the text and move the text cursor at the endmost position (only ie)
-				jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				if (sap.ui.Device.system.desktop) {
+
+					// deselect the text and move the text cursor at the endmost position (only ie)
+					jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				}
 			}
 		};
 
@@ -456,7 +459,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				return;
 			}
 
-			var sValue = this.getFocusDomRef().value;
+			var sValue = this.getValue();
 			this.setValue(sValue);
 
 			// no text selection
@@ -464,6 +467,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			if (this.isOpen()) {
 				this.close();
+
+				// clear the filter to make all items visible
+				this.clearFilter();
 			}
 		};
 
@@ -489,15 +495,22 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oNextSelectableItem,
-				aSelectableItems = this.getSelectableItems();
+				aSelectableItems = this.getSelectableItems(),
+				oDomRef = this.getFocusDomRef(),
+				iSelectionStart = oDomRef.selectionStart;
 
 			oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
 
 			if (oNextSelectableItem) {
 				this.updateDomValue(oNextSelectableItem.getText());
 				this.setSelection(oNextSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				this.fireSelectionChange({ selectedItem: oNextSelectableItem });
+
+				if (!this.isFiltered()) {
+					iSelectionStart = 0;
+				}
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
 			}
 
 			this.scrollToItem(this.getList().getSelectedItem());
@@ -525,15 +538,22 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var oPrevSelectableItem,
-				aSelectableItems = this.getSelectableItems();
+				aSelectableItems = this.getSelectableItems(),
+				oDomRef = this.getFocusDomRef(),
+				iSelectionStart = oDomRef.selectionStart;
 
 			oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
 
 			if (oPrevSelectableItem) {
 				this.updateDomValue(oPrevSelectableItem.getText());
 				this.setSelection(oPrevSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-				this.selectText(0, this.getFocusDomRef().value.length);
+				this.fireSelectionChange({ selectedItem: oPrevSelectableItem });
+
+				if (!this.isFiltered()) {
+					iSelectionStart = 0;
+				}
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
 			}
 
 			this.scrollToItem(this.getList().getSelectedItem());
@@ -566,7 +586,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oFirstSelectableItem && (oFirstSelectableItem !== this.getSelectedItem())) {
 				this.updateDomValue(oFirstSelectableItem.getText());
 				this.setSelection(oFirstSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oFirstSelectableItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -600,7 +620,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oLastSelectableItem && (oLastSelectableItem !== this.getSelectedItem())) {
 				this.updateDomValue(oLastSelectableItem.getText());
 				this.setSelection(oLastSelectableItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oLastSelectableItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -634,7 +654,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var aSelectableItems = this.getSelectableItems(),
-				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 20,
+				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 10,
 				oItem;
 
 			// constrain the index
@@ -644,7 +664,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -678,7 +698,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			oEvent.preventDefault();
 
 			var aSelectableItems = this.getSelectableItems(),
-				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) - 20,
+				iIndex = aSelectableItems.indexOf(this.getSelectedItem()) - 10,
 				oItem;
 
 			// constrain the index
@@ -688,7 +708,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			if (oItem && (oItem !== this.getSelectedItem())) {
 				this.updateDomValue(oItem.getText());
 				this.setSelection(oItem, { suppressInvalidate: true });
-				this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
+				this.fireSelectionChange({ selectedItem: oItem });
 				this.selectText(0, this.getFocusDomRef().value.length);
 			}
 
@@ -711,17 +731,28 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// the value state message can not be opened if click on the open area
 				this.bCanNotOpenMessage = true;
 
-				// force the focus to stay in the input field
-				this.focus();
+				// avoid the text-editing mode pop-up to be open on mobile,
+				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
+				// note: This occurs only in some specific mobile devices
+				if (sap.ui.Device.system.desktop) {
+
+					// force the focus to stay in the input field
+					this.focus();
+				}
 
 			// probably the input field is receiving focus
 			} else {
 
-				jQuery.sap.delayedCall(0, this, function() {
-					if (document.activeElement === this.getFocusDomRef()) {
-						this.selectText(0, this.getValue().length);
-					}
-				});
+				// avoid the text-editing mode pop-up to be open on mobile,
+				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
+				// note: This occurs only in some specific mobile devices
+				if (sap.ui.Device.system.desktop) {
+					jQuery.sap.delayedCall(0, this, function() {
+						if (document.activeElement === this.getFocusDomRef()) {
+							this.selectText(0, this.getValue().length);
+						}
+					});
+				}
 
 				// open the message pop-up
 				if (!this.isOpen() && !this.bCanNotOpenMessage) {
@@ -869,6 +900,19 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			}
 		};
 
+		/*
+		 * Determines whether the list is filtered out from the input field.
+		 *
+		 * @returns {boolean} Whether the list is filtered out.
+		 * @protected
+		 * @since 1.26.0
+		 * @name sap.m.ComboBox#isFiltered
+		 * @function
+		 */
+		ComboBox.prototype.isFiltered = function() {
+			return this.getVisibleItems().length !== this.getItems().length;
+		};
+
 		/**
 		 * Creates a picker.
 		 * To be overwritten by subclasses.
@@ -963,9 +1007,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			// add the active state to the control field
 			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
-
-			// clear the filter to make all items visible before the picker pop-up is opened
-			this.clearFilter();
 
 			// call the hook to add additional content to the List
 			this.addContent();

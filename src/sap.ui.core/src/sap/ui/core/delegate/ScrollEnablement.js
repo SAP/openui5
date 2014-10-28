@@ -67,6 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._scroller = null;
 				this._scrollbarClass = oConfig.scrollbarClass || false;
 				this._bounce = oConfig.bounce;
+				this._scrollCoef = 0.9; // Approximation coefficient used to mimic page down and page up behaviour when [CTRL] + [RIGHT] and [CTRL] + [LEFT] is used
 	
 				initDelegateMembers(this, oConfig);
 	
@@ -233,11 +234,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				if (this._refresh) {
 					this._refresh();
 				}
+			},
+			
+			_useDefaultScroll : function(target) {
+				return target.isContentEditable || this._scroller;
+			},
+			
+			onkeydown : function(oEvent) {
+				if (this._useDefaultScroll(oEvent.target)) {
+					return;
+				}
+				
+				var container = this._$Container[0];
+				
+				if (oEvent.altKey && this.getHorizontal()) {
+					switch (oEvent.keyCode) {
+						case jQuery.sap.KeyCodes.PAGE_UP:
+							// Navigate 1 page left
+							this._customScrollTo(this._scrollX - container.clientWidth, this._scrollY, oEvent);
+							break;
+						case jQuery.sap.KeyCodes.PAGE_DOWN:
+							// Navigate 1 page right
+							this._customScrollTo(this._scrollX + container.clientWidth, this._scrollY, oEvent);
+							break;
+					}
+				}
+				
+				if (oEvent.ctrlKey) {
+					switch (oEvent.keyCode) {
+						case jQuery.sap.KeyCodes.ARROW_UP:
+							// [CTRL]+[UP] - 1 page up
+							if (this.getVertical()) {
+								this._customScrollTo(this._scrollX, this._scrollY - container.clientHeight * this._scrollCoef, oEvent);
+							}
+							break;
+						case jQuery.sap.KeyCodes.ARROW_DOWN:
+							// [CTRL]+[DOWN] - 1 page down
+							if (this.getVertical()) {
+								this._customScrollTo(this._scrollX, this._scrollY + container.clientHeight * this._scrollCoef, oEvent);
+							}
+							break;
+						case jQuery.sap.KeyCodes.ARROW_LEFT:
+							// [CTRL]+[LEFT] - 1 page left
+							if (this.getHorizontal()) {
+								this._customScrollTo(this._scrollX - container.clientWidth, this._scrollY, oEvent);
+							}
+							break;
+						case jQuery.sap.KeyCodes.ARROW_RIGHT:
+							// [CTRL]+[RIGHT] - 1 page right
+							if (this.getHorizontal()) {
+								this._customScrollTo(this._scrollX + container.clientWidth, this._scrollY, oEvent);
+							}
+							break;
+						case jQuery.sap.KeyCodes.HOME:
+							if (this.getHorizontal()) {
+								this._customScrollTo(0, this._scrollY, oEvent);
+							}
+							
+							if (this.getVertical()) {
+								this._customScrollTo(this._scrollX, 0, oEvent);
+							}
+							break;
+						case jQuery.sap.KeyCodes.END:
+
+							var left = container.scrollWidth - container.clientWidth;
+							var top = container.scrollHeight - container.clientHeight;
+							
+							if (!this.getHorizontal()) {
+								top = this._scrollY;
+							}
+							
+							if (!this.getVertical()) {
+								left = this._scrollX;
+							}
+							
+							this._customScrollTo(left, top, oEvent);
+							break;
+					}
+				}
+			},
+			
+			_customScrollTo : function(left, top, oEvent) {
+				oEvent.preventDefault();
+				oEvent.setMarked();
+				
+				this._scrollTo(left, top);
 			}
 	
 		});
-	
-	
+		
 		/* =========================================================== */
 		/* Delegate members for usage of iScroll library               */
 		/* =========================================================== */
@@ -711,7 +796,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 					this._fnScrollEndCallback();
 				}
 			},
-	
+
 			_onStart : function(oEvent){
 				var container = this._$Container[0];
 				if (!container) {
@@ -892,7 +977,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 	
 			onAfterRendering: function() {
-	
 				var $Container = this._$Container = $.sap.byId(this._sContentId).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
 	

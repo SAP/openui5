@@ -12,7 +12,10 @@
 	vertical-align: top;
 }
 
-@sapMBarShadow: inset 0 -0.0625em @sapUiLightBorder;
+.sapMBarShadow(@color) {
+	-webkit-box-shadow: inset 0 -0.0625rem @color;
+	box-shadow: inset 0 -0.0625rem @color;
+}
 
 .sapMBar {
 	height: 3rem;
@@ -22,8 +25,7 @@
 	/* 1px down white shadow with 50% opacity */
 	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50%);
 	/* 1px inside border line at the bottom of a bar */
-	-webkit-box-shadow: @sapMBarShadow;
-	box-shadow: @sapMBarShadow;
+	.sapMBarShadow(@sapUiLightBorder);
 }
 
 .sapMBar:active {

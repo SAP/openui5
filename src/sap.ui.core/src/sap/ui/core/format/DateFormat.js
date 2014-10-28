@@ -971,11 +971,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		function computeRelativeDate(iDiff){
 			var iDate, iToday,
 				oToday = that._now(),
-				iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+				iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()),
+				iDiffMillis = iDiff * (24 * 60 * 60 * 1000);
 			
-			var iDate = iToday + iDiff * (24 * 60 * 60 * 1000);
+			var iDate = iToday + iDiffMillis;
 			if (!bUTC) {
-				iDate += oToday.getTimezoneOffset() * 60 * 1000;
+				var oTarget = new Date(oToday.getTime() + iDiffMillis);
+				iDate += oTarget.getTimezoneOffset() * 60 * 1000;
 			}
 			return new Date(iDate);
 		}

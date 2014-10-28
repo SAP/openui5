@@ -67,8 +67,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 			bIsEnabled = oMenu.checkEnabled(oItem),
 			itemId = oItem.getId();
 		
+		var sClass = "sapUiMnuItm sapUiMnuTfItm";
+		if (oInfo.iItemNo == 1) {
+			sClass += " sapUiMnuItmFirst";
+		} else if (oInfo.iItemNo == oInfo.iTotalItems) {
+			sClass += " sapUiMnuItmLast";
+		}
+		if (!oMenu.checkEnabled(oItem)) {
+			sClass += " sapUiMnuItmDsbl";
+		}
+		if (oItem.getStartsSection()) {
+			sClass += " sapUiMnuItmSepBefore";
+		}
+		
 		rm.write("<li ");
-		rm.writeAttribute("class", "sapUiMnuItm sapUiMnuTfItm" + (oMenu.checkEnabled(oItem) ? "" : " sapUiMnuItmDsbl"));
+		rm.writeAttribute("class", sClass);
 		rm.writeElementData(oItem);
 		
 		// ARIA

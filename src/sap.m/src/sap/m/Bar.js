@@ -96,6 +96,14 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 	};
 	
 	/**
+	 * Called when the control is initialized.
+	 * @private
+	 */
+	Bar.prototype.init = function() {
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+	};
+	
+	/**
 	 * Called when the control is destroyed.
 	 * Clean up resize listeners and destroy flexbox,
 	 * emties cache
@@ -160,7 +168,12 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 		var bContentLeft = !!this.getContentLeft().length,
 			bContentMiddle = !!this.getContentMiddle().length,
 			bContentRight = !!this.getContentRight().length;
-	
+
+		//Invisible bars also do not need resize listeners
+		if (!this.getVisible()) {
+			return;
+		}
+
 		//No content was set yet - no need to listen to resizes
 		if (!bContentLeft && !bContentMiddle && !bContentRight) {
 			return;

@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global',
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
 		 * @name sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
-		 * @param {integer} iTimeout the timeout for loading the iframe in seconds - default is 90
+		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @function
 		 * @public
@@ -137,7 +137,12 @@ sap.ui.define(['jquery.sap.global',
 		 * <li> matchers - a single matcher or an array of matchers @see sap.ui.test.matchers. All of the matchers have to match. Check will not be called if the matchers filtered out all controls before.</li>
 		 * <li> controlType - a string eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored</li>
 		 * <li> searchOpenDialogs - boolean : if true, OPA will only look in open dialogs. All the other values except control type will be ignored</li>
-		 * <li> visible - boolean : default: true - if set to false OPA will also look for not rendered and invisible controls</li>
+		 * <li> visible - boolean : default: true - if set to false OPA will also look for not rendered and invisible controls</li><li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
+		 * <li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
+		 * <li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
+		 * <li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked</li>
+		 * <li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
+		 *
 		 * </ul>
 		 * 
 		 * @name sap.ui.test.Opa5#waitFor

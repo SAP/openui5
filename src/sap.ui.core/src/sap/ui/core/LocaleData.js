@@ -181,14 +181,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
-		 * Get number symbol "decimal", "group", "plusSign", "minusSign"
+		 * Get number symbol "decimal", "group", "plusSign", "minusSign", "percentSign"
 		 *
 		 * @param {string} sType the required type of symbol
 		 * @returns {string} the selected number symbol
 		 * @public
 		 */
 		getNumberSymbol : function(sType) {
-			jQuery.sap.assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign", "sType must be decimal, group, plusSign or minusSign");
+			jQuery.sap.assert(sType == "decimal" || sType == "group" || sType == "plusSign" || sType == "minusSign" || sType == "percentSign", "sType must be decimal, group, plusSign, minusSign or percentSign");
 			return this._get("symbols-latn-" + sType);
 		},
 		
@@ -454,6 +454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"symbols-latn-group":",",
 			"symbols-latn-plusSign":"+",
 			"symbols-latn-minusSign":"-",
+			"symbols-latn-percentSign":"%",
 			"dayPeriods-format-narrow":["AM","PM"],
 			"dayPeriods-format-wide":["AM","PM"],
 			"dayPeriods-format-abbreviated":["AM","PM"],

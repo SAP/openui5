@@ -755,6 +755,27 @@
 			placeholder: "Warning Input"
 		});
 
+		var oValueStateInput3 = new sap.m.Input("vsinput3", {
+			placeholder: "value state changes while you are typing",
+			liveChange: function () {
+				var i = oValueStateInput3.getValue().length;
+				switch( i % 4 ){
+					case 0:
+						oValueStateInput3.setValueState("Success");
+						break;
+					case 1:
+						oValueStateInput3.setValueState("Warning");
+						break;
+					case 2:
+						oValueStateInput3.setValueState("Error");
+						break;
+					case 3:
+						oValueStateInput3.setValueState("None");
+						break;
+				}
+			}
+		});
+
 		//*******************************
 		var app = new sap.m.App("myApp");
 
@@ -828,6 +849,7 @@
 					oSuggestTableInput7,
 					oValueStateInput1,
 					oValueStateInput2,
+					oValueStateInput3,
 					new sap.m.Input({
 						value: "10",
 						description: "PC",

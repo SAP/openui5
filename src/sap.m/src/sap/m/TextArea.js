@@ -112,6 +112,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	TextArea.prototype.onsapenter = function(oEvent) {
 	};
 	
+	// Overwrite input base revert handling for escape 
+	// to fire own liveChange event and property set
+	TextArea.prototype.onValueRevertedByEscape = function(sValue) {
+		this._onInput();
+	};
+	
 	TextArea.prototype._onInput = function(oEvent) {
 		var value = this._$input.val();
 	
@@ -123,6 +129,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	
 		if (value != this.getValue()) {
 			this.setProperty("value", value, true);
+
+			// get the value back maybe there is a formatter
+			value = this.getValue();
+			
 			this.fireLiveChange({
 				value: value,
 	

@@ -250,16 +250,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Dialog.prototype.init = function() {
-	   // do something for initialization...
-	   this.oPopup = new Popup(this, true, true);
-	   var eDock = Popup.Dock;
-	   this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
+		// do something for initialization...
+		this.oPopup = new Popup(this, true, true);
+		var eDock = Popup.Dock;
+		this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
 	
-	   this._minWidth = 64; // the technical minWidth, not the one set via API; will be calculated after rendering
-	   this._minHeight = 48; // the technical minHeight, not the one set via API; will be calculated after rendering
-	   // TODO: re-calculate after theme switch?!!
+		this._minWidth = 64; // the technical minWidth, not the one set via API; will be calculated after rendering
+		this._minHeight = 48; // the technical minHeight, not the one set via API; will be calculated after rendering
+		// TODO: re-calculate after theme switch?!!
 	
-	   this.allowTextSelection(false);
+		this.allowTextSelection(false);
 	};
 	
 	Dialog.prototype.setInitialFocus = function(sId) {
@@ -375,6 +375,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Dialog.prototype._handleOpened = function() {
+		// Make sure the dom content is shown (in the static area)
+		this.$().show();
+
 		var sInitFocus = this.getInitialFocus(),
 		oFocusCtrl;
 		if (sInitFocus && (oFocusCtrl = sap.ui.getCore().getControl(sInitFocus))) { // an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
@@ -425,7 +428,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this._bOpen = false;
 		this._bInitialFocusSet = false;
-		this.oPopup.close(400);
+		if (this.oPopup.isOpen()) {
+			this.oPopup.close(400);
+		}
 	
 		// do this delayed or it possibly won't work because of popup closing animations
 		jQuery.sap.delayedCall(400, this, "restorePreviousFocus");
@@ -442,6 +447,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this.fireClosed(this._oRect);
 		this.close();
+		// Make sure the dom content is not shown any more (in the static area)
+		this.$().hide();
 	};
 	
 	/**
@@ -555,16 +562,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		if (oSourceDomRef.id === sFirstFocusable) {
 			// the FocusHandlingFirstElement was focused and thus the focus should move to the last element.
+			jQuery.sap.log.debug("First dummy focus element was focused", "", "sap.ui.commons.Dialog");
 			if ($FocusablesFoot.length > 0) {
+				jQuery.sap.log.debug("Last footer element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesFoot[$FocusablesFoot.length - 1];
 			} else {
+				jQuery.sap.log.debug("Last content element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesCont[$FocusablesCont.length - 1];
 			}
 		} else if (oSourceDomRef.id === sLastFocusable) {
 			// the FocusHandlingEndElement was focused and thus the focus should move to the first element.
+			jQuery.sap.log.debug("Last dummy focus element was focues", "", "sap.ui.commons.Dialog");
 			if ($FocusablesCont.length > 0) {
+				jQuery.sap.log.debug("First content element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesCont[0];
 			} else {
+				jQuery.sap.log.debug("First footer element will be focused", "", "sap.ui.commons.Dialog");
 				oFocusDomRef = $FocusablesFoot[0];
 			}
 		}
@@ -580,11 +593,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.delayedCall(iDelay, this, function(){
 				// if the element is a control the focus should be called via the control
 				// especially if the control has an individual focus DOM-ref
-				if (sap.ui.getCore().byId(oFocusDomRef.id) instanceof Control) {
-					oFocusDomRef.focus();
+				var oControl = sap.ui.getCore().byId(oFocusDomRef.id);
+				if (oControl instanceof Control) {
+					jQuery.sap.log.debug("Focus will be handled by " + oControl.getMetadata().getName(), "", "sap.ui.commons.Dialog");
 				} else {
-					jQuery.sap.focus(oFocusDomRef);
+					jQuery.sap.log.debug("oFocusDomRef will be focused", "", "sap.ui.commons.Dialog");
 				}
+				jQuery.sap.focus(oControl ? oControl : oFocusDomRef);
 			});
 		}
 	};

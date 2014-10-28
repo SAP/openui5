@@ -120,9 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 		associations : {
 	
 			/**
-			 * 
 			 * The successor control of the Exact Browser. The id of this control is used in the ARIA description of the control.
-			 * Additionally it is possible to directly jump to this control via the F6 key.
 			 */
 			followUpControl : {type : "sap.ui.core.Control", multiple : false}
 		},
@@ -173,6 +171,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 		 */
 		ExactBrowser.prototype.init = function(){
 			var that = this;
+			
+			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	
 			this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 	
@@ -226,23 +226,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 			this._saveDialog = null;
 			this._saveTextField = null;
 			this._rb = null;
-		};
-	
-	
-		/**
-		 * Called when a key is pressed.
-		 * @private
-		 */
-		ExactBrowser.prototype.onkeydown = function(oEvent) {
-			if (oEvent.keyCode != jQuery.sap.KeyCodes.F6 || !this.getFollowUpControl()) {
-				return;
-			}
-	
-			var oFollowUpControl = sap.ui.getCore().byId(this.getFollowUpControl());
-			if (oFollowUpControl) {
-				oEvent.preventDefault();
-				oFollowUpControl.focus();
-			}
 		};
 		
 		

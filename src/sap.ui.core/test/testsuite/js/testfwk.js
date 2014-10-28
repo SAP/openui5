@@ -79,7 +79,7 @@ sap.ui.testfwk.TestFWK.JQUERY_VERSIONS = {
 // the themes supported by each library
 sap.ui.testfwk.TestFWK.LIBRARY_THEMES = {
 	"sap.ui.core" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},
-	"sap.m" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal"]},
+	"sap.m" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_hcb"]},
 	"sap.me" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal"]},
 	"sap.service.visualization" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum"]},
 	"sap.ui.commons" : {"default":"sap_bluecrystal", "supports":["sap_bluecrystal","sap_goldreflection","sap_hcb","sap_platinum","sap_ux","edding"]},

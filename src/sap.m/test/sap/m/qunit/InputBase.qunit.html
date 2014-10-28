@@ -1082,6 +1082,68 @@
 				oWarningInput.destroy();
 			});
 
+			test("Value State Change", function() {
+				var oValueStateInput = new sap.m.Input("vsinput", {
+					placeholder: "value state changes while you are typing",
+					liveChange: function () {
+						var i = oValueStateInput.getValue().length;
+						switch( i % 4 ){
+							case 0:
+								oValueStateInput.setValueState("None");
+								break;
+							case 1:
+								oValueStateInput.setValueState("Warning");
+								break;
+							case 2:
+								oValueStateInput.setValueState("Success");
+								break;
+							case 3:
+								oValueStateInput.setValueState("Error");
+								break;
+						}
+					}
+				});
+				
+				oValueStateInput.onfocusin();
+				oValueStateInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				
+				//warning state
+				oValueStateInput._$input.focus();
+				oValueStateInput.updateDomValue("1");
+				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+				this.clock.tick(1000);
+				strictEqual(oValueStateInput.getValueState(), "Warning");
+				ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
+				strictEqual(jQuery.sap.byId("vsinput-message").text(), "Warning issued");
+
+				//success state
+				oValueStateInput.updateDomValue("12");
+				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+				this.clock.tick(1000);
+				oValueStateInput.getValueState();
+				strictEqual(oValueStateInput.getValueState(), "Success");
+				ok(!jQuery.sap.domById("vsinput-message"), "message popup is closed");
+
+				//error state
+				oValueStateInput.updateDomValue("123");
+				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+				this.clock.tick(1000);
+				oValueStateInput.getValueState();
+				strictEqual(oValueStateInput.getValueState(), "Error");
+				ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
+				strictEqual(jQuery.sap.byId("vsinput-message").text(), "Invalid entry");
+
+				//none state
+				oValueStateInput.updateDomValue("1234");
+				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
+				this.clock.tick(1000);
+				strictEqual(oValueStateInput.getValueState(), "None");
+				ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
+				
+				oValueStateInput.destroy();
+			});
+
 			/* =========================================================== */
 			/* Events module                                               */
 			/* =========================================================== */

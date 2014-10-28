@@ -411,9 +411,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {Array} aOld Old Array
 	 * @param {Array} aNew New Array
 	 * @param {function} [fnCompare] Function to compare list entries
+	 * @param {boolean} [bUniqueEntries] Whether entries are unique, so no duplicate entries exist
 	 * @return {Array} List of changes
 	 */
-	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare){
+	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, bUniqueEntries){
 		fnCompare = fnCompare || function(vValue1, vValue2) {
 			return jQuery.sap.equal(vValue1, vValue2);
 		};
@@ -427,12 +428,19 @@ sap.ui.define(['jquery.sap.global'],
 			var oNewEntry = aNew[i];
 			var iFound = 0;
 			var iTempJ;
-			for (var j = 0; j < aOld.length; j++) {
-				if (fnCompare(aOld[j],oNewEntry)) {
-					iFound++;
-					iTempJ = j;
-					if (iFound > 1) {
-						break;
+			// if entries are unique, first check for whether same index is same entry
+			// and stop searching as soon the first matching entry is found
+			if (bUniqueEntries && fnCompare(aOld[i], oNewEntry)) {
+				iFound = 1;
+				iTempJ = i;
+			} else {
+				for (var j = 0; j < aOld.length; j++) {
+					if (fnCompare(aOld[j], oNewEntry)) {
+						iFound++;
+						iTempJ = j;
+						if (bUniqueEntries || iFound > 1) {
+							break;
+						}
 					}
 				}
 			}

@@ -251,29 +251,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	NavigationBar.prototype._calculatePositions = function() {
 		var oDomRef = this.getDomRef();
-	
-		var oListDomRef = oDomRef.firstChild;
-		var of_back = this.getDomRef("ofb");
-		var of_fw = this.getDomRef("off");
-	
+		
 		// re-initialize display of scroll arrows
 		this._bPreviousScrollForward = false;
 		this._bPreviousScrollBack = false;
-		this._checkOverflow(this.getDomRef().firstChild, this.getDomRef("ofb"), this.getDomRef("off"));
-	
-		// paint selection arrow in the right place
-		var selItem = sap.ui.getCore().byId(this.getSelectedItem());
-		if (selItem) {
-			this._checkOverflow(oListDomRef, of_back, of_fw);
-			var $Arrow = this.$("arrow");
-			var arrowWidth = $Arrow.outerWidth();
-			var targetPos = NavigationBar._getArrowTargetPos(selItem.getId(), arrowWidth, this._bRtl);
-			if (!this._bRtl) {
-				$Arrow[0].style.left = targetPos + "px";
-			} else {
-				$Arrow[0].style.right = targetPos + "px";
-			}
-		}
+		this._checkOverflow(oDomRef.firstChild, this.getDomRef("ofb"), this.getDomRef("off"));
 	};
 	
 	/**
@@ -674,6 +656,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 				this._bPreviousScrollBack = bScrollBack;
 				this.$().toggleClass("sapUiUx3NavBarScrollBack", bScrollBack)
 						.toggleClass("sapUiUx3NavBarScrollForward", bScrollForward);
+			}
+			
+			// paint selection arrow in the right place
+			var selItem = sap.ui.getCore().byId(this.getSelectedItem());
+			if (selItem) {
+				var $Arrow = this.$("arrow");
+				var arrowWidth = $Arrow.outerWidth();
+				var targetPos = NavigationBar._getArrowTargetPos(selItem.getId(), arrowWidth, this._bRtl) + "px";
+				if (!this._bRtl) {
+					if ($Arrow[0].style.left != targetPos) {
+						$Arrow[0].style.left = targetPos;
+					}
+				} else {
+					if ($Arrow[0].style.right != targetPos) {
+						$Arrow[0].style.right = targetPos;
+					}
+				}
 			}
 		}
 	};

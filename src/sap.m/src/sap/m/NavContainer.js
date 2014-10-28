@@ -50,10 +50,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
-			 * The type of the transition/animation to apply when "to()" is called without defining a transition type to use. The default is "slide" on iOS and Android; on Windows Phone the default is "door". Other options are: "fade", "flip" and "show" - and the names of any registered custom transitions.
+			 * The type of the transition/animation to apply when "to()" is called without defining a transition type to use. The default is "slide". Other options are: "fade", "flip" and "show" - and the names of any registered custom transitions.
 			 * @since 1.7.1
 			 */
-			defaultTransitionName : {type : "string", group : "Appearance", defaultValue : null}
+			defaultTransitionName : {type : "string", group : "Appearance", defaultValue : "slide"}
 		},
 		defaultAggregation : "pages",
 		aggregations : {
@@ -558,15 +558,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return null;
 	};
-	
-	NavContainer.prototype.getDefaultTransitionName = function() {
-		var sName = this.getProperty("defaultTransitionName");
-		if (!sName) {
-			sName = sap.ui.Device.os.windows_phone ? "door" : "slide";
-		}
-		return sName;
-	};
-	
 	
 	NavContainer.prototype._ensurePageStackInitialized = function() {
 		if (this._pageStack.length === 0) {

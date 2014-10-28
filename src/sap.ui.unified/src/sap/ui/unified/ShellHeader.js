@@ -157,6 +157,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		};
 		sap.ui.Device.resize.attachHandler(this._handleResizeChange, this);
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	ShellHeader.prototype.exit = function(){

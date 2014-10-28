@@ -1544,10 +1544,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 	
 	Popover.prototype._storeScrollPosition = function(){
-		if (!sap.ui.Device.system.desktop) {
-			return;
-		}
-		
 		var $content = this.$("cont");
 		if ($content.length > 0) {
 			this._oScrollPosDesktop = {x: $content.scrollLeft(), y: $content.scrollTop()};
@@ -1555,7 +1551,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	};
 	
 	Popover.prototype._restoreScrollPosition = function(){
-		if (!sap.ui.Device.system.desktop || !this._oScrollPosDesktop) {
+		if (!this._oScrollPosDesktop) {
 			return;
 		}
 		

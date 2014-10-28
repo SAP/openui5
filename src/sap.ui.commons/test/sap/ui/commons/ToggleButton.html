@@ -198,6 +198,12 @@
 				oButton.setIcon("images/personalize.gif"); 
 				oButton.placeAt("target11"); 
 
+				oButton = new sap.ui.commons.ToggleButton("b11c");
+				oButton.setText("");
+				oButton.setTooltip("This is another button without text but with icon font and a tooltip");
+				oButton.setIcon("sap-icon://lead");
+				oButton.placeAt("target11");
+
 				// special characters / XSS
 				oButton = new sap.ui.commons.ToggleButton("b12");
 				oButton.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");

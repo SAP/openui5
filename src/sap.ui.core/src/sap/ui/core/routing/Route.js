@@ -16,12 +16,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		 * @param {sap.ui.core.routing.Router} oParent The parent route
 		 * @param {object} oConfig configuration object for the route 
 		 * <ul>
-		 *        <li>oConfig.pattern:           the url pattern where it needs to match agains</li>
+		 *        <li>oConfig.pattern:           the url pattern where it needs to match again</li>
 		 *        <li>oConfig.name:              the name of the route</li>
 		 *        <li>oConfig.viewId:            An optional id for the view which is created. No automatic id creation will be used for the view of this route.</li>
 		 *        <li>oConfig.view:              The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once.</li>
 		 *        <li>oConfig.viewType:          The type of the view that is going to be created</li>
-		 *        <li>oConfig.viewPath:          A prefix that will be prependet in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
+		 *        <li>oConfig.viewPath:          A prefix that will be prepended in front of the view eg: view is set to "myView" and viewPath is set to "myApp" - the created view will be "myApp.myView".</li>
 		 *        <li>oConfig.targetParent:      the id of the parent of the targetControl - if targetParent is undefined and the route is a subroute, the targetControl of the parent route is taken.</li>
 		 *        <li>oConfig.targetControl:     Views will be put into a container Control, this might be a Shell control or a NavContainer? if working with mobile, or any other container. The id of this control has to be put in here.</li>
 		 *        <li>oConfig.targetAggregation: The name of an aggregation of the targetControl, that contains views. Eg: a NavigationContainer? has an aggregation Pages , another Example is the Shell it has Content.</li>

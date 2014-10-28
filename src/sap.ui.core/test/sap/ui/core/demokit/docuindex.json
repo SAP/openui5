@@ -47,6 +47,15 @@
 					"sap.ui.core.sample.OpaById",
 					"sap.ui.core.sample.OpaReuse"
 				]
+			},
+			{
+				"id" : "sap.ui.core.theming",
+				"name" : "Theming",
+				"category" : "Theming",
+				"since" : "0",
+				"samples" : [
+					"sap.ui.core.sample.ThemeCustomClasses"
+				]
 			}
 		],
 		"samples" : [
@@ -84,6 +93,11 @@
 				"id": "sap.ui.core.sample.OpaReuse",
 				"name": "How to structure your OPA tests",
 				"description": "If you have complex apps you should build reuse functions to make your OPA tests maintainable."
+			},
+			{
+				"id" : "sap.ui.core.sample.ThemeCustomClasses",
+				"name" : "Theme-dependent CSS-classes",
+				"description" : "'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls" 
 			}
 		]
 	}

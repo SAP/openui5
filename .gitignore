@@ -9,6 +9,10 @@ src/*/target/
 .project
 .externalToolBuilders
 
+# Ignore IntelliJ project and settings files
+.idea
+*.iml
+
 # Ignore temp folders
 grunt/bin
 

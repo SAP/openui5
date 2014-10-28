@@ -153,6 +153,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 	Feed.prototype.init = function(){
 	
 		this.rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	
 		// init sub-controls
 		this.oFeeder = new Feeder( this.getId() + '-Feeder', {

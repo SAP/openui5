@@ -1148,6 +1148,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				}
 			});
+
+			// Setting custom header to the page replaces the internal header completely, therefore the button which shows the master area has to be inserted to the custom header when it's set.
+			oRealPage.setCustomHeader = function(oHeader) {
+				sap.m.Page.prototype.setCustomHeader.apply(this, arguments);
+				if (oHeader && (that._portraitHide() || that._hideMode() || that._portraitPopover()) && (!that._bMasterisOpen || that._bMasterClosing)) {
+					that._setMasterButton(oRealPage);
+				}
+			};
 		}
 	
 		// When the same NavContainer is used for both aggregations, calling "addPage()" will not do anything in case the oPage is already
@@ -1197,11 +1205,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	SplitContainer.prototype.removeDetailPage = function(oPage, bSuppressInvalidate) {
+		var oRealPage = this._getRealPage(oPage);
+		if (oRealPage) {
+			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
+			delete oRealPage.setCustomHeader;
+		}
+
 		return this._removePage(this._aDetailPages, "detailPages", oPage, bSuppressInvalidate);
 	};
 	
 	SplitContainer.prototype.removeAllDetailPages = function(bSuppressInvalidate) {
+		var aPages = this.getDetailPages(),
+				oRealPage;
+
+		// restore the original setCustomHeader function
+		for (var i = 0 ; i < aPages.length ; i++) {
+			oRealPage = this._getRealPage(aPages[i]);
+			if (!oRealPage) {
+				continue;
+			}
+			// Since page is removed from SplitContainer, the patched version setCustomHeader needs to be deleted.
+			delete oRealPage.setCustomHeader;
+		}
+
 		this._aDetailPages = [];
+
 		return this.removeAllAggregation("detailPages", bSuppressInvalidate);
 	};
 	
@@ -1784,7 +1812,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	
 		oPage = this._getRealPage(oPage);
-		var aHeaderContent = oPage._getAnyHeader().getContentLeft();
+
+		var oHeaderAggregation = SplitContainer._getHeaderButtonAggregation(oPage),
+			sHeaderAggregationName = oHeaderAggregation.sAggregationName,
+			aHeaderContent = oHeaderAggregation.aAggregationContent;
+
 		for (var i = 0; i < aHeaderContent.length; i++) {
 			if (aHeaderContent[i] instanceof sap.m.Button && (aHeaderContent[i].getType() == sap.m.ButtonType.Back || (aHeaderContent[i].getType() == sap.m.ButtonType.Up && aHeaderContent[i] !== this._oShowMasterBtn))) {
 				this._bDetailNavButton = true;
@@ -1792,44 +1824,67 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 		this._bDetailNavButton = false;
-	
-		if (oPage /*&& !this._checkCustomHeader(oPage)*/) {
-			var oPageHeader = oPage._getAnyHeader(),
-				oContentLeft = oPageHeader.getContentLeft();
-			var bIsSet = false;
-			if (oContentLeft) {
-				for (var i = 0; i < oContentLeft.length; i++) {
-					if (oContentLeft[i] === this._oShowMasterBtn) {
-						bIsSet = true;
-					}
-				}
+
+		var oPageHeader = oPage._getAnyHeader();
+		var bIsSet = false;
+
+		for (var i = 0; i < aHeaderContent.length; i++) {
+			if (aHeaderContent[i] === this._oShowMasterBtn) {
+				bIsSet = true;
 			}
-			if (!bIsSet) {
-				// showMasterBtn could have already be destroyed by destroying the customHeader of the previous page
-				// When this is the case, showMasterBtn will be instantiated again
-				this._createShowMasterButton();
-	
-				this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
-	
-				if (oPageHeader) {
-					oPageHeader.insertAggregation("contentLeft", this._oShowMasterBtn, 0, bSuppressRerendering);
-				}
-			} else {
-				if (this._isMie9) {
-					this._oShowMasterBtn.$().fadeIn();
-				}
-				this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", false);
-				this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
-				this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", true);
-			}
-	
-			if (fnCallBack) {
-				fnCallBack(oPage);
-			}
-			this.fireMasterButton({show: true});
 		}
+
+		if (!bIsSet) {
+			// showMasterBtn could have already be destroyed by destroying the customHeader of the previous page
+			// When this is the case, showMasterBtn will be instantiated again
+			this._createShowMasterButton();
+
+			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
+
+			if (oPageHeader) {
+				oPageHeader.insertAggregation(sHeaderAggregationName, this._oShowMasterBtn, 0, bSuppressRerendering);
+			}
+		} else {
+			if (this._isMie9) {
+				this._oShowMasterBtn.$().fadeIn();
+			}
+			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", false);
+			this._oShowMasterBtn.removeStyleClass("sapMSplitContainerMasterBtnHidden");
+			this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", true);
+		}
+
+		if (fnCallBack) {
+			fnCallBack(oPage);
+		}
+		this.fireMasterButton({show: true});
+
 	};
-	
+
+		/**
+		 * @private
+		 * @static
+		 * @returns object aggregation with two properties aggregation content and aggregationName
+		 */
+	SplitContainer._getHeaderButtonAggregation = function (oPage) {
+		var oHeader = oPage._getAnyHeader(),
+			aAggregationContent,
+			sAggregationName;
+
+		if (oHeader.getContentLeft) {
+			aAggregationContent = oHeader.getContentLeft();
+			sAggregationName = "contentLeft";
+		}
+		if (oHeader.getContent) {
+			aAggregationContent = oHeader.getContent();
+			sAggregationName = "content";
+		}
+
+		return {
+			aAggregationContent : aAggregationContent,
+			sAggregationName : sAggregationName
+		};
+	};
+
 	SplitContainer.prototype._removeMasterButton = function(oPage, fnCallBack) {
 		if (!oPage) {
 			return;
@@ -1840,10 +1895,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._oShowMasterBtn.$().is(":hidden")) {
 			oPage = this._getRealPage(oPage);
 			oHeader = oPage._getAnyHeader();
-			if (oPage && oHeader /*&& !this._checkCustomHeader(oPage)*/) {
-				var oContentLeft = oHeader.getContentLeft();
-				for (var i = 0; i < oContentLeft.length; i++) {
-					if (oContentLeft[i] === this._oShowMasterBtn) {
+			if (oHeader /*&& !this._checkCustomHeader(oPage)*/) {
+				var aHeaderContent = SplitContainer._getHeaderButtonAggregation(oPage).aAggregationContent;
+				for (var i = 0; i < aHeaderContent.length; i++) {
+					if (aHeaderContent[i] === this._oShowMasterBtn) {
 						if (this._isMie9) {
 							this._oShowMasterBtn.$().fadeOut();
 							if (fnCallBack) {

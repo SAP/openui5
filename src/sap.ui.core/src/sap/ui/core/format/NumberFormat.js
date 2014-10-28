@@ -36,7 +36,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * <li>plusSign: the used plus symbol</li>
 	 * <li>minusSign: the used minus symbol</li>
 	 * <li>showMeasure: Show the measure according to the format in the formatted string</li>
-	 * <li>style either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
+	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
+	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by <code>maxFractionDigits</code></li>.
+	 *  This can be assigned by value in <code>sap.ui.core.format.NumberFormat.RoundingMode</code> or a function which will be used for rounding the number. The function
+	 *  is called with two parameters: the number and how many decimal digits should be reserved.
 	 * </ul>
 	 * For format options which are not specified default values according to the type and locale settings are used.
 	 *
@@ -54,6 +57,84 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	NumberFormat.FLOAT = 1;
 	NumberFormat.CURRENCY = 2;
 	NumberFormat.PERCENT = 3;
+
+	var mRoundingMode = {
+		/**
+		 * Rounding mode to round towards negative infinity
+		 * 
+		 * @name sap.ui.core.format.NumberFormat.RoundingMode.FLOOR
+		 */
+		FLOOR: "floor",
+		/**
+		* Rounding mode to round towards positive infinity
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.CEILING
+		*/
+		CEILING: "ceiling",
+		/**
+		* Rounding mode to round towards zero
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.TOWARDS_ZERO
+		*/
+		TOWARDS_ZERO: "towards_zero",
+		/**
+		* Rounding mode to round away from zero
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.AWAY_FROM_ZERO
+		*/
+		AWAY_FROM_ZERO: "away_from_zero",
+		/**
+		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards negative infinity.
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
+		*/
+		HALF_FLOOR: "half_floor",
+		/**
+		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards positive infinity.
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
+		*/
+		HALF_CEILING: "half_ceiling",
+		/**
+		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards zero.
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
+		*/
+		HALF_TOWARDS_ZERO: "half_towards_zero",
+		/**
+		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round away from zero.
+		* 
+		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		*/
+		HALF_AWAY_FROM_ZERO: "half_away_from_zero"
+	};
+
+	var mRoundingFunction = {};
+	mRoundingFunction[mRoundingMode.FLOOR] = Math.floor;
+	mRoundingFunction[mRoundingMode.CEILING] = Math.ceil;
+	mRoundingFunction[mRoundingMode.TOWARDS_ZERO] = function(nValue) {
+		return nValue > 0 ? Math.floor(nValue) : Math.ceil(nValue);
+	};
+	mRoundingFunction[mRoundingMode.AWAY_FROM_ZERO] = function(nValue) {
+		return nValue > 0 ? Math.ceil(nValue) : Math.floor(nValue);
+	};
+	mRoundingFunction[mRoundingMode.HALF_TOWARDS_ZERO] = function(nValue) {
+		return nValue > 0 ? Math.ceil(nValue - 0.5) : Math.floor(nValue + 0.5);
+	};
+	mRoundingFunction[mRoundingMode.HALF_AWAY_FROM_ZERO] = function(nValue) {
+		return nValue > 0 ? Math.floor(nValue + 0.5) : Math.ceil(nValue - 0.5);
+	};
+	mRoundingFunction[mRoundingMode.HALF_FLOOR] = function(nValue) {
+		return Math.ceil(nValue - 0.5);
+	};
+	mRoundingFunction[mRoundingMode.HALF_CEILING] = Math.round;
+
+	/**
+	 * Enumeration of different rounding modes which define how the least significant digit specified by <code>maxFractionDigits</code> is calculated.
+	 * 
+	 * @name sap.ui.core.format.NumberFormat.RoundingMode
+	 */
+	NumberFormat.RoundingMode = mRoundingMode;
 
 	/*
 	 * Default format options for Integer
@@ -74,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		showMeasure: false,
 		style: "standard"
 	};
-	
+
 	/*
 	 * Default format options for Float
 	 * @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
@@ -92,9 +173,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		isInteger: false,
 		type: NumberFormat.FLOAT,
 		showMeasure: false,
-		style: "standard"
+		style: "standard",
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
-	
+
+	/*
+	* Default format options for Percent
+	* @name sap.ui.core.format.NumberFormat.oDefaultFloatFormat
+	*/
+	NumberFormat.oDefaultPercentFormat = {
+		minIntegerDigits: 1,
+		maxIntegerDigits: 99,
+		minFractionDigits: 0,
+		maxFractionDigits: 99,
+		groupingEnabled: true,
+		groupingSeparator: ",",
+		decimalSeparator: ".",
+		plusSign: "+",
+		minusSign: "-",
+		percentSign: "%",
+		isInteger: false,
+		type: NumberFormat.PERCENT,
+		showMeasure: false,
+		style: "standard",
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+	};
+
 	/*
 	 * Default format options for Currency
 	 * @name sap.ui.core.format.NumberFormat.oDefaultCurrencyFormat
@@ -112,9 +216,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		isInteger: false,
 		type: NumberFormat.CURRENCY,
 		showMeasure: true,
-		style: "standard"
+		style: "standard",
+		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
 	};
-	
+
 	/**
 	 * An alias for {@link #getFloatInstance}.
 	 * 
@@ -180,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	};
 	
 	/**
-	 * Get an currency instance of the NumberFormat, which can be used for formatting.
+	 * Get a currency instance of the NumberFormat, which can be used for formatting.
 	 *
 	 * If no locale is given, the currently configured 
 	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
@@ -198,6 +303,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.CURRENCY);
 
 		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultCurrencyFormat, oLocaleFormatOptions, oFormatOptions);
+		if (oFormatOptions && oFormatOptions.pattern) {
+			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
+		}
+		return oFormat;
+	};
+	
+	/**
+	* Get a percent instance of the NumberFormat, which can be used for formatting.
+	*
+	* If no locale is given, the currently configured 
+	* {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
+	*
+	* @param {object} [oFormatOptions] Object which defines the format options
+	* @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	* @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
+	* @static
+	* @public
+	* @name sap.ui.core.format.NumberFormat.getPercentInstance
+	* @function
+	*/
+	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
+		var oFormat = this.createInstance(oFormatOptions, oLocale),
+			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, NumberFormat.PERCENT);
+
+		oFormat.oFormatOptions = jQuery.extend(false, {}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormatOptions);
 		if (oFormatOptions && oFormatOptions.pattern) {
 			oFormat.oFormatOptions = jQuery.extend(false, oFormat.oFormatOptions, this.parseNumberPattern(oFormatOptions.pattern));
 		}
@@ -249,6 +379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		oLocaleFormatOptions.minusSign = oLocaleData.getNumberSymbol("minusSign");
 		oLocaleFormatOptions.decimalSeparator = oLocaleData.getNumberSymbol("decimal");
 		oLocaleFormatOptions.groupingSeparator = oLocaleData.getNumberSymbol("group");
+		oLocaleFormatOptions.percentSign = oLocaleData.getNumberSymbol("percentSign");
 		oLocaleFormatOptions.pattern = sNumberPattern;
 		
 		return oLocaleFormatOptions;
@@ -310,29 +441,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * @function
 	 */
 	NumberFormat.prototype.format = function(oValue, sMeasure) {
-		var sNumber = this.convertToDecimal(oValue),
-			sIntegerPart = "",
+		// oValue may come with string type, convert it to a number
+		if (typeof oValue === "string") {
+			oValue = parseFloat(oValue);
+		}
+
+		var sIntegerPart = "",
 			sFractionPart = "",
 			sGroupedIntegerPart = "",
 			sResult = "",
+			sNumber = "",
+			sPattern = "",
 			iPosition = 0,
 			iLength = 0,
 			bNegative = oValue < 0,
 			iDotPos = -1,
-			oOptions = this.oFormatOptions;
-	
-		if (sNumber == "NaN") {
-			return sNumber;
-		}
+			oOptions = this.oFormatOptions, aPatternParts;
 
 		var oShortFormat = getShortenedFormat(oValue, this.oFormatOptions.style, this.oLocaleData);
 		if (oShortFormat) {
-			var fShortValue =  oValue / oShortFormat.magnitude;
-			sNumber = this.convertToDecimal(fShortValue);
+			oValue =  oValue / oShortFormat.magnitude;
 			if (oShortFormat.decimals !== undefined) {
-				oOptions.maxFractionDigits = oShortFormat.decimals;
-				oOptions.minFractionDigits = oShortFormat.decimals;
+				oOptions.maxFractionDigits = oOptions.maxFractionDigits || oShortFormat.decimals;
+				oOptions.minFractionDigits = oOptions.minFractionDigits || oShortFormat.decimals;
 			}
+		}
+
+		if (oOptions.type == NumberFormat.PERCENT) {
+			oValue = shiftDecimalPoint(oValue, 2);
 		}
 
 		//handle measure
@@ -342,11 +478,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			oOptions.minFractionDigits = iDigits;
 		}
 
+		// Rounding the value with oOptions.maxFractionDigits and oOptions.roundingMode.
+		//
+		// If the number of fraction digits are equal or less than oOptions.maxFractionDigits, the
+		// number isn't changed. After this operation, the number of fraction digits is
+		// equal or less than oOptions.maxFractionDigits.
+		oValue = rounding(oValue, oOptions);
+		sNumber = this.convertToDecimal(oValue);
+
+		if (sNumber == "NaN") {
+			return sNumber;
+		}
+
 		// if number is negative remove minus
 		if (bNegative) {
 			sNumber = sNumber.substr(1);
 		}
-	
+
 		// if number contains fraction, extract it
 		iDotPos = sNumber.indexOf(".");
 		if (iDotPos > -1) {
@@ -355,7 +503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		} else {
 			sIntegerPart = sNumber;
 		}
-	
+
 		// integer part length
 		if (sIntegerPart.length < oOptions.minIntegerDigits) {
 			sIntegerPart = jQuery.sap.padLeft(sIntegerPart, "0", oOptions.minIntegerDigits);
@@ -363,15 +511,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		else if (sIntegerPart.length > oOptions.maxIntegerDigits) {
 			sIntegerPart = jQuery.sap.padLeft("", "?", oOptions.maxIntegerDigits);
 		}
-	
+
 		// fraction part length
 		if (sFractionPart.length < oOptions.minFractionDigits) {
 			sFractionPart = jQuery.sap.padRight(sFractionPart, "0", oOptions.minFractionDigits);
 		}
-		else if (sFractionPart.length > oOptions.maxFractionDigits) {
-			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
-		}
-	
+
 		// grouping
 		iLength = sIntegerPart.length;
 		if (oOptions.groupingEnabled && iLength > 3) {
@@ -384,7 +529,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			}
 			sIntegerPart = sGroupedIntegerPart;
 		}
-	
+
 		// combine
 		if (bNegative) {
 			sResult = oOptions.minusSign;
@@ -404,15 +549,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 		if (sMeasure && oOptions.showMeasure) {
 			if (oOptions.type == NumberFormat.CURRENCY) {
-				var sPattern = oOptions.pattern;
-				
+				sPattern = oOptions.pattern;
+
+				// The currency pattern is definde in some locale, for example in "ko", as: ¤#,##0.00;(¤#,##0.00)
+				// where the pattern after ';' should be used for negative numbers.
+				// Therefore it's needed to check whether the pattern contains ';' and use the later part for
+				// negative values
+				aPatternParts = sPattern.split(";");
+				if (aPatternParts.length === 2) {
+					sPattern = bNegative ? aPatternParts[1] : aPatternParts[0];
+					if (bNegative) {
+						sResult = sResult.substring(1);
+					}
+				}
+
 				sPattern = sPattern.replace(/\u00a4/, this.oLocaleData.getCurrencySymbol(sMeasure));
+				if (bNegative) {
+					sPattern = sPattern.replace(/-/, oOptions.minusSign);
+				}
 				sPattern = sPattern.replace(/[0#.,]+/, sResult);
-				
+
 				sResult = sPattern;
 			}
 		}
-	
+
+		if (oOptions.type == NumberFormat.PERCENT) {
+			sPattern = this.oLocaleData.getPercentPattern();
+			sResult = sPattern.replace(/[0#.,]+/, sResult);
+			sResult = sResult.replace(/%/, this.oFormatOptions.percentSign);
+		}
+
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
 			sResult = new String(sResult);
 			sResult.originInfo = {
@@ -420,9 +586,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				locale: this.oLocale.toString()
 			};
 		}
-	
+
 		return sResult;
-	
+
 	};
 	
 	/**
@@ -440,8 +606,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 			sRegExpInt = "^\\s*([+-]?[0-9\\" + oOptions.groupingSeparator + "]+)\\s*$",
 			oGroupingRegExp = new RegExp("\\" + oOptions.groupingSeparator, "g"),
 			oDecimalRegExp = new RegExp("\\" + oOptions.decimalSeparator, "g"),
-			oRegExp,
+			sPercentPattern = this.oLocaleData.getPercentPattern(),
+			sPercentSign = this.oLocaleData.getNumberSymbol("percentSign"),
+			oRegExp, bPercent,
 			oResult = 0;
+
+		if (sPercentPattern.charAt(0) === "%") {
+			sRegExpFloat = sRegExpFloat.slice(0, 1) + "%?" + sRegExpFloat.slice(1);
+		} else if (sPercentPattern.charAt(sPercentPattern.length - 1) === "%") {
+			sRegExpFloat = sRegExpFloat.slice(0, sRegExpFloat.length - 1) + "%?" + sRegExpFloat.slice(sRegExpFloat.length - 1);
+		}
 
 		// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
 		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
@@ -463,11 +637,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		// Remove grouping separator and replace locale dependant decimal separator, 
 		// before calling parseInt/parseFloat
 		sValue = sValue.replace(oGroupingRegExp, "");
+
 		if (oOptions.isInteger) {
 			oResult = parseInt(sValue, 10);
 		} else {
 			sValue = sValue.replace(oDecimalRegExp, ".");
+			if (sValue.indexOf(sPercentSign) !== -1) {
+				bPercent = true;
+				sValue = sValue.replace(sPercentSign, "");
+			}
 			oResult = parseFloat(sValue);
+			if (bPercent) {
+				oResult = shiftDecimalPoint(oResult, -2);
+			}
 		}
 
 		if (oShort.factor > 1) {
@@ -639,7 +821,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
 				if (sCldrFormat) {
-					sCldrFormat = sCldrFormat.replace(/\s/g, "");
+					// Note: CLDR uses a non-breaking space in the forma tstring 
+					sCldrFormat = sCldrFormat.replace(/[\s\u00a0]/g, "");
 					var match = sCldrFormat.match(/0+\.*0*/);
 					if (match) {
 						// determine unit -> may be on the beginning e.g. for he
@@ -670,6 +853,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 
 		return {number: sNumber, factor: iFactor};
 
+	}
+
+	function rounding(fValue, oOptions) {
+		if (typeof fValue !== "number") {
+			return NaN;
+		}
+
+		var sRoundingMode = oOptions.roundingMode || NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO;
+
+		if (typeof sRoundingMode === "function") {
+			// Support custom function for rounding the number
+			fValue = sRoundingMode(fValue, oOptions.maxFractionDigits);
+		} else {
+			if (!oOptions.maxFractionDigits) {
+				return mRoundingFunction[sRoundingMode](fValue);
+			}
+			// First move the decimal point towards right by maxFactionDigits
+			// Then using the rounding function to round the first digit after decimal point
+			// In the end, move the decimal point back to the original position
+			//
+			// For example rounding 1.005 by maxFractionDigits 2
+			// 	1. Move the decimal point to right by 2 digits, result 100.5
+			// 	2. Using the round function, for example, Math.round(100.5) = 101
+			// 	3. Move the decimal point back by 2 digits, result 1.01
+			fValue =  shiftDecimalPoint(mRoundingFunction[sRoundingMode](shiftDecimalPoint(fValue, oOptions.maxFractionDigits)), -oOptions.maxFractionDigits);
+		}
+
+		return fValue;
+	}
+	
+	function shiftDecimalPoint(fValue, iStep) {
+		if (typeof fValue !== "number" || typeof iStep !== "number") {
+			return NaN;
+		}
+
+		// Exponential operation is used instead of simply multiply the number by
+		// Math.pow(10, maxFractionDigits) because Exponential operation returns exact float
+		// result but multiply doesn't. For example 1.005*100 = 100.49999999999999.
+		var aExpParts = fValue.toString().split("e");
+		iStep = aExpParts[1] ? (+aExpParts[1] + iStep) : iStep;
+
+		return +(aExpParts[0] + "e" + iStep);
 	}
 
 	return NumberFormat;

@@ -532,13 +532,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Keyboard Handling */
 	ListItemBase.prototype.onsapspace = function(oEvent) {
 		
+		// handle only the events that are coming from ListItemBase
+		if (oEvent.srcControl !== this) {
+			return;
+		}
+		
 		// prevent default not to scroll down
 		oEvent.preventDefault();
 		
 		if (!this._listId ||
 			oEvent.isMarked() ||
 			!this.isSelectable() ||
-			oEvent.srcControl !== this ||
 			this._mode == "Delete" ||
 			this._mode == "None") {
 			return;
@@ -612,11 +616,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	ListItemBase.prototype._switchFocus = function(oEvent) {
+		var oParent = this.getParent();
+		var $Tabbables = this.getTabbables();
+		
 		if (oEvent.srcControl !== this) {
-			this._oLastFocused = oEvent.target;
-			this.getDomRef().focus();
-		} else if (this._oLastFocused) {
-			this._oLastFocused.focus();
+			oParent._iLastFocusPosOfItem = $Tabbables.index(oEvent.target);
+			this.$().focus();
+		} else if ($Tabbables.length) {
+			var iFocusPos = oParent._iLastFocusPosOfItem || 0;
+			iFocusPos = $Tabbables[iFocusPos] ? iFocusPos : -1;
+			$Tabbables.eq(iFocusPos).focus();
 		}
 	};
 	
@@ -639,10 +648,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (oEvent.srcControl !== this) {
 			return;
 		}
+		
+		// F2 should fire detail event
+		if (oEvent.which == mKeyCodes.F2 && this.getType().indexOf("Detail") == 0) {
+			this.fireDetailTap({});
+			this.fireDetailPress({});
+			oEvent.preventDefault();
+			oEvent.setMarked();
+			return;
+		}
 	
-		// Ctrl + A to select all
+		// Ctrl + A to switch select all/none
 		if (oEvent.which == mKeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
-			sap.ui.getCore().byId(this._listId).selectAll(true);
+			var oList = sap.ui.getCore().byId(this._listId);
+			if (oList.isAllSelectableSelected()) {
+				oList.removeSelections(false, true);
+			} else {
+				oList.selectAll(true);
+			}
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}

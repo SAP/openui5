@@ -214,20 +214,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			var iPickerScrollTop = oPickerDomRef.scrollTop,
-				iListItemOffsetTop = oItemDomRef.offsetTop,
-				iPickerHeight = jQuery(oPickerDomRef).height(),
-				iListItemHeight = jQuery(oItemDomRef).height();
+				iItemOffsetTop = oItemDomRef.offsetTop,
+				iPickerHeight = oPickerDomRef.clientHeight,
+				iItemHeight = oItemDomRef.offsetHeight;
 
-			if (iPickerScrollTop > iListItemOffsetTop) {
+			if (iPickerScrollTop > iItemOffsetTop) {
 
 				// scroll up
-				oPickerDomRef.scrollTop = iListItemOffsetTop;
+				oPickerDomRef.scrollTop = iItemOffsetTop;
 
 			// bottom edge of item > bottom edge of viewport
-			} else if ((iListItemOffsetTop + iListItemHeight) > (iPickerScrollTop + iPickerHeight)) {
+			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
 
 				// scroll down, the item is partly below the viewport of the List
-				oPickerDomRef.scrollTop = Math.ceil(iListItemOffsetTop + iListItemHeight - iPickerHeight);
+				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
 			}
 		};
 
@@ -468,25 +468,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			oPopover._setWidth = function(sWidth) {
 				var bAutoAdjustWidth = that.getAutoAdjustWidth(),
 					bIconOnly = that.getType() === "IconOnly",
-					oPickerContentDomRef;
+					oPickerDomRef = this.getDomRef();
 
 				// set the width of the content
 				if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
 
-					oPickerContentDomRef = this.getContent()[0];
-
 					if (bAutoAdjustWidth) {
-						oPickerContentDomRef.setWidth("auto");
-						oPickerContentDomRef.getDomRef().style.minWidth = sWidth;
+						oPickerDomRef.style.width = "auto";
+						oPickerDomRef.style.minWidth = sWidth;
 					} else {
-						oPickerContentDomRef.setWidth(sWidth);
+						oPickerDomRef.style.width = sWidth;
 					}
 				}
 
 				if (!bIconOnly) {
 
 					// set the width of the popover
-					this.getDomRef().style.minWidth = sWidth;
+					oPickerDomRef.style.minWidth = sWidth;
 				}
 			};
 

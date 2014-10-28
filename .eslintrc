@@ -6,6 +6,9 @@
 		"sap": true,
 		"jQuery": true
 	},
+	"plugins": [
+		"eslint-plugin-openui5"
+	],
 	"rules": {
 		"block-scoped-var": 1,
 		"brace-style": [2, "1tbs", { "allowSingleLine": true }],
@@ -21,6 +24,7 @@
 		"space-after-keywords": [2, "always"],
 		"space-unary-word-ops": 2,
 		"wrap-iife": [2, "any"],
+		"openui5/line-endings": 2,
 
 		"camelcase": 1,
 		"consistent-return": 1,

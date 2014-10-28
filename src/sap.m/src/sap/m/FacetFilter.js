@@ -292,8 +292,11 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = null;
 		this._addTarget = null;
 		this._aRows = null; //save item level div
+		this._originalaDomRefs = null;
 	
 		this._bundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		
 		// Button map used to quickly get a button for a given list. This avoids having to iterate through the button aggregation
 		// to find a button for a list.
@@ -380,31 +383,29 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	};
 	
 	/* Keyboard Handling */
-	FacetFilter.prototype._startItemNavigation = function() {
-	
+	sap.m.FacetFilter.prototype._startItemNavigation = function() {
+
 	    //Collect the dom references of the items 
 		var oFocusRef = this.getDomRef(),
 			aRows = oFocusRef.getElementsByClassName("sapMFFHead"),
 			aDomRefs = [];
-	
 		if (aRows.length > 0) {
 			for (var i = 0; i < aRows[0].childNodes.length; i++) {
-				if (aRows[0].childNodes[i].id.indexOf("ff") < 0 && aRows[0].childNodes[i].id.indexOf("icon") < 0) {
+				if (aRows[0].childNodes[i].id.indexOf("ff") < 0 && aRows[0].childNodes[i].id.indexOf("icon") < 0 && aRows[0].childNodes[i].id.indexOf("add") < 0) {
 					aDomRefs.push(aRows[0].childNodes[i]);
 				}
-				if (aRows[0].childNodes[i].id.indexOf("add") > 0) {
+				if (aRows[0].childNodes[i].id.indexOf("add") >= 0) {
 					aDomRefs.push(aRows[0].childNodes[i]);
 				}
-			}
-	
-			if (this._aDomRefs == null) {
-				this._aDomRefs = aDomRefs;
 			}
 		}
-	
+		if (aDomRefs != "") {
+			this._aDomRefs = aDomRefs;
+		}
+
 	    //initialize the delegate add apply it to the control (only once)
 		if ((!this.oItemNavigation) || this._addDelegateFlag == true) {
-			this.oItemNavigation = new ItemNavigation();
+			this.oItemNavigation = new sap.ui.core.delegate.ItemNavigation();
 			this.addDelegate(this.oItemNavigation);
 			this._addDelegateFlag = false;
 		}
@@ -416,43 +417,49 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			}
 		}
 	    // After each rendering the delegate needs to be initialized as well.
-	
+
 	    //set the root dom node that surrounds the items
 		this.oItemNavigation.setRootDomRef(oFocusRef);
-	
+
 	    //set the array of dom nodes representing the items.
 		this.oItemNavigation.setItemDomRefs(aDomRefs);
-	
+
 		//turn off the cycling
 	    this.oItemNavigation.setCycling(false);
-	
+
 	    //set the selected index
 	    //this.oItemNavigation.setSelectedIndex(0);
-	    
 		this.oItemNavigation.setPageSize(this._pageSize);
 		
 	};
-	
-	FacetFilter.prototype.onsapdelete = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapdelete = function(oEvent) {
+	//save original DomRefs before deletion
+		if (this._originalaDomRefs == null) {
+			this._originalaDomRefs = this._aDomRefs;
+		}
+
 	// no deletion on 'Add' button
 		if (oEvent.target.id.indexOf("add") >= 0) {
 			return;
 		}
-	
+
 	//  no deletion - showpersonalization  set to false"
 		if (!this.getShowPersonalization()) {
 			return;
 		}
-	
+
 		var j = -1;
-		for (var i = 0; i < this._aDomRefs.length; i++) {
-			if (oEvent.target.id == this._aDomRefs[i].id) {
+		for (var i = 0; i < this._originalaDomRefs.length; i++) {
+			if (oEvent.target.id == this._originalaDomRefs[i].id) {
 				j = i;
+				break;
 			}
 		}
-	
-		if (j < 0) { return;}
-	
+		if (j < 0) { 
+			return;
+		}
+
 		var oList = this.getLists()[j];
 		
 		// no deletion - showRemoveFacetIcon set to false
@@ -463,15 +470,15 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		oList.setSelectedKeys();
 		oList.setProperty("active", false, true);
 		this.invalidate();
-	
+
 		var $Tabbables = this.$().find(":sapTabbable");
 		jQuery($Tabbables[$Tabbables.length - 1]).focus();
 		var nextFocusIndex = this.oItemNavigation.getFocusedIndex();
-	
+
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex + 1);
 		this.focus();
-	
+
 		if (this.oItemNavigation.getFocusedIndex() == 0) {
 			for ( var k = 0; k < this.$().find(":sapTabbable").length - 1; k++) {
 				if ($Tabbables[k].id.indexOf("add") >= 0) {
@@ -480,14 +487,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			}
 		}
 	};
-	
+
 	//[TAB]
-	FacetFilter.prototype.onsaptabnext = function(oEvent) {
-	
-		if (oEvent.target.parentNode.className != "sapMFFResetDiv" ) {
+	sap.m.FacetFilter.prototype.onsaptabnext = function(oEvent) {
+
+//		if (oEvent.target.parentNode.className != "sapMFFResetDiv" ) {
 			this._previousTarget = oEvent.target;
-		}
-	
+//		}
+
 		if (oEvent.target.parentNode.className == "sapMFFHead" ) { //if focus on category, and then press tab, then focus on reset
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
 				if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
@@ -498,15 +505,15 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				}
 			}
 		}
-	
+
 		this._lastCategoryFocusIndex = this.oItemNavigation.getFocusedIndex();
-	
+
 		if (this._invalidateFlag == true) {
 			this.oItemNavigation.setFocusedIndex(-1);
 			this.focus();
 			this._invalidateFlag = false;
 		}
-	
+
 	//keep entering tab and expect the focus will return to reset or add button instead of list category
 		if ( this._closePopoverFlag == true) {
 			this.oItemNavigation.setFocusedIndex(-1);
@@ -515,50 +522,51 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		}
 			
 	};
-	
+
 	//[SHIFT]+[TAB]
-	FacetFilter.prototype.onsaptabprevious = function(oEvent) {
-	//	without tabnext, and keep entering shift+tab, focus move to the 1st facetfilter list Button
-		if (oEvent.target.parentNode.className == "sapMFFResetDiv" ) {
+	sap.m.FacetFilter.prototype.onsaptabprevious = function(oEvent) {
+//		without tabnext, and keep entering shift+tab, focus move to the 1st facetfilter list Button
+		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget == null) {
 			jQuery(this.$().find(":sapTabbable")[0]).focus();
 			oEvent.preventDefault();
-	//		oEvent.stopPropagation();
 			oEvent.setMarked();
-			this.focus();
 			return;
 		}
-		if (oEvent.target.id.indexOf("add") >= 0) {
-			if (oEvent.isMarked()) {
-				return;
-			}
-			// focus to the next tabbable element after the control
-			if (this._navToTabChain(false)) {
-				oEvent.preventDefault();
-				oEvent.setMarked();
-			}
+		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget != null && this._previousTarget.id != oEvent.target.id) {
+//			this._previousTarget = oEvent.target;
+			jQuery(this._previousTarget).focus();
+			oEvent.preventDefault();
+			oEvent.setMarked();
+			return;
+		}
+		if (oEvent.target.id.indexOf("add") >= 0 || oEvent.target.parentNode.className == "sapMFFHead") {
+			this._previousTarget = oEvent.target;
+			jQuery(this.$().find(":sapTabbable")[0]).focus();
 		}
 	};
-	
-	FacetFilter.prototype.onsapend = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapend = function(oEvent) {
 		if (this._addTarget != null) {
 			jQuery(this._addTarget).focus();
 			oEvent.preventDefault();
-			this.focus();
+			oEvent.setMarked();
 		} else {
 			jQuery(this._aRows[this._aRows.length - 1]).focus();
 			oEvent.preventDefault();
-			this.focus();
+			oEvent.setMarked();
 		}
+		this._previousTarget = oEvent.target;
 	};
-	
-	FacetFilter.prototype.onsaphome = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsaphome = function(oEvent) {
 		jQuery(this._aRows[0]).focus();
 		oEvent.preventDefault();
-		this.focus();
+		oEvent.setMarked();
+		this._previousTarget = oEvent.target;
 	};
-	
+
 	// Handle F6
-	FacetFilter.prototype.onsapskipforward = function(oEvent) {
+	sap.m.FacetFilter.prototype.onsapskipforward = function(oEvent) {
 		// do not handle marked events.
 		for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
 			if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
@@ -568,27 +576,37 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			}
 		}
 	};
-	
+
 	// Handle SHIFT+F6
-	FacetFilter.prototype.onsapskipback = function(oEvent) {
+	sap.m.FacetFilter.prototype.onsapskipback = function(oEvent) {
 	};
-	
-	FacetFilter.prototype.onsapincreasemodifiers = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsappageup = function(oEvent) {
+		this._previousTarget = oEvent.target;
+	};
+
+	sap.m.FacetFilter.prototype.onsappagedown = function(oEvent) {
+		this._previousTarget = oEvent.target;
+	};
+
+	sap.m.FacetFilter.prototype.onsapincreasemodifiers = function(oEvent) {
 	// [CTRL]+[RIGHT] - keycode 39 - page down
 		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_RIGHT) {
+			this._previousTarget = oEvent.target;
 			var currentFocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 			var nextFocusIndex = currentFocusIndex + this._pageSize;
 			jQuery(oEvent.target).blur();
 			this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 			this.focus();
 		}
-	
+
 	};
-	
-	FacetFilter.prototype.onsapdecreasemodifiers = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapdecreasemodifiers = function(oEvent) {
 	// [CTRL]+[LEFT] - keycode 37 - page up
 		var currentFocusIndex = 0;
 		if (oEvent.which == jQuery.sap.KeyCodes.ARROW_LEFT) {
+			this._previousTarget = oEvent.target;
 			currentFocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
 			var nextFocusIndex = currentFocusIndex - this._pageSize;
 			jQuery(oEvent.target).blur();
@@ -596,9 +614,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			this.focus();
 		}
 	};
-	
-	FacetFilter.prototype.onsapdownmodifiers = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapdownmodifiers = function(oEvent) {
 	// [CTRL]+[DOWN] - page down
+		this._previousTarget = oEvent.target;
 		var currentFocusIndex = 0;
 		currentFocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 		var nextFocusIndex = currentFocusIndex + this._pageSize;
@@ -606,9 +625,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};
-	
-	FacetFilter.prototype.onsapupmodifiers = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapupmodifiers = function(oEvent) {
 	// [CTRL]+[UP] - page up
+		this._previousTarget = oEvent.target;
 		var currentFocusIndex = 0;
 		currentFocusIndex = this.oItemNavigation.getFocusedIndex();
 		if (currentFocusIndex != 0) {
@@ -619,47 +639,37 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};
-	
-	FacetFilter.prototype.onsapexpand = function(oEvent) {
-	//	[+] = right/up - keycode 107
+
+	sap.m.FacetFilter.prototype.onsapexpand = function(oEvent) {
+//		[+] = right/up - keycode 107
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() + 1;
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextDocusIndex);
 		this.focus();
 	};
-	
-	FacetFilter.prototype.onsapcollapse = function(oEvent) {
-	//	[-] = left/down - keycode 109
+
+	sap.m.FacetFilter.prototype.onsapcollapse = function(oEvent) {
+//		[-] = left/down - keycode 109
 		this._previousTarget = oEvent.target;
 		var nextDocusIndex = this.oItemNavigation.getFocusedIndex() - 1;
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextDocusIndex);
 		this.focus();
 	};
-	
-	FacetFilter.prototype.onsapdown = function(oEvent) {
-		this._previousTarget = oEvent.target;
-		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
-			jQuery(oEvent.target).focus();
-			oEvent.hover();
-	//	  	oEvent.stopPropagation();
-			oEvent.preventDefault();
-			oEvent.setMarked();
-		}
-	};
-	
-	FacetFilter.prototype.onsapup = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapdown = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
 			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
+			return;
 		}
 	};
-	
-	FacetFilter.prototype.onsapleft = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapup = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -668,7 +678,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			oEvent.setMarked();
 		}
 	};
-	FacetFilter.prototype.onsapright = function(oEvent) {
+
+	sap.m.FacetFilter.prototype.onsapleft = function(oEvent) {
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
@@ -677,49 +688,58 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			oEvent.setMarked();
 		}
 	};
-	
-	FacetFilter.prototype.onsapescape = function(oEvent) {
-	
+	sap.m.FacetFilter.prototype.onsapright = function(oEvent) {
+		this._previousTarget = oEvent.target;
+		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
+			jQuery(oEvent.target).focus();
+			oEvent.hover();
+			oEvent.preventDefault();
+			oEvent.setMarked();
+		}
+	};
+
+	sap.m.FacetFilter.prototype.onsapescape = function(oEvent) {
+
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			return;
 		}
-	
+
 		var nextFocusIndex = this._lastCategoryFocusIndex;
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
 	};
-	
+
 	// move focus to the next/prev tabbable element after or before the list
 	// TODO: This implementation search parent which means we are out of our sandbox!
-	FacetFilter.prototype._navToTabChain = function(bForward) {
+	sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
 		var $Current = this.$();
 		var $Tabbables = $Current.find(":sapTabbable");
 		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
 		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
 		var sTabIndex = $Reference.attr("tabindex");
 		var iStep = bForward ? 1 : -1;
-	
+
 		// make the dummy tabbable
 		$Reference.attr("tabindex", "0");
-	
+
 		// search all dom parents to find next/prev tabbable item
 		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
 			$Tabbables = $Current.find(":sapTabbable");
 			var iLimit = bForward ? $Tabbables.length - 1 : 0;
 			var iIndex = $Tabbables.index($Reference);
-	
+
 			// should have more tabbables element then before or after reference
 			// should keep searching if the $Reference is the first or last one
 			if ($Tabbables.length > 1 && iIndex != iLimit) {
 				break;
 			}
 		}
-	
+
 		// find next/prev tabbable item and reset tabindex
 		iIndex = $Tabbables.index($Reference) + iStep;
 		$Reference.attr("tabindex", sTabIndex);
-	
+
 		// focus and return the found tabbable if possible
 		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
 	};

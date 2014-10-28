@@ -1,6 +1,10 @@
 /*!
- * ${copyright}
+ * @copyright@
  */
+
+// Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
+// All other warnings, errors should be resolved
+/*eslint camelcase:0, valid-jsdoc:0, no-warning-comments:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ChangeReason', 'sap/ui/model/Sorter', 'sap/ui/model/FilterOperator', './odata4analytics'],
@@ -57,11 +61,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 				// attribute members for maintaining loaded data; mapping from groupId to related information
 				this.iTotalSize = -1;
-				this.mKey = {}; // keys of loaded entities belonging to group with given ID
-				this.mFinalLength = {}; // true iff all entities of group with given ID have been loaded (keys in mKey) 
-				this.mLength = {}; // number of currently loaded entities 
+					/* data loaded from OData service */
+				this.mServiceKey = {}; // keys of loaded entities belonging to group with given ID
+				this.mServiceLength = {}; // number of currently loaded entities
+				this.mServiceFinalLength = {}; // true iff all entities of group with given ID have been loaded (keys in mServiceKey) 
+					/* consolidated view on loaded data */
+				this.mKeyIndex = {}; // consumer view: group entries are index positions in mServiceKey
+				this.mFinalLength = this.mServiceFinalLength; // true iff all entities of group with given ID have been loaded (keys in mKey) 
+				this.mLength = {}; // number of currently loaded entities
+					/* locally created multi-currency entities */
+				this.mMultiUnitKey = {}; // keys of multi-currency entities
+				this.aMultiUnitLoadFactor = {}; // compensate discarded multi-unit entities by a load factor per aggregation level to increase number of loaded entities   
 				this.bNeedsUpdate = false;
-				this.mOwnKey = {}; // entity keys of loaded group Id's 
+				    /* entity keys of loaded group Id's */
+				this.mEntityKey = {};  
+				    /* increased load factor due to ratio of non-multi-unit entities versus loaded entities */
+				
 				// attribute members for maintaining structure details requested by the binding consumer
 				this.oAnalyticalQueryResult = this.oModel.getAnalyticalExtensions().findQueryResultByName(this._getEntitySet());
 				this.aAnalyticalInfo = [];
@@ -78,13 +93,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					jQuery.sap.log.warning("default count mode is ignored; OData requests will include $inlinecout options");
 				}
 				
+				// initialize complete list of sorted dimension names as basis for later calculations
+				this.aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
+
 				this.updateAnalyticalInfo(mParameters == undefined ? [] : mParameters.analyticalInfo);
 			}
 
 		});
 
 	/* *******************************
-	 *** Public methods
+	 *** API - Public methods
 	 ********************************/
 
 	// called for initial population and on every subsequent change of grouping structure or filter conditions
@@ -99,11 +117,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (this.bArtificalRootContext
 				&& !this._cleanupGroupingForCompletedRequest(sRootContextGroupMembersRequestId)) {
 // 			this._trace_leave("API", "getRootContexts", "delay until related requests have been completed"); // DISABLED FOR PRODUCTION 			
-			return null;
+			return aRootContext;
+		}
+		aRootContext = this._getContextsForParentContext(null);
+		if (aRootContext.length == 1) {
+// 			this._trace_leave("API", "getRootContexts", "", aRootContext, ["length"]); // DISABLED FOR PRODUCTION 			
+			return aRootContext;
 		}
 		
 		if (iAutoExpandGroupsToLevel <= 1) {
-			aRootContext = this._getContextsForParentContext(null);
 			if (iAutoExpandGroupsToLevel == 1) {
 				this._considerRequestGrouping([ sRootContextGroupMembersRequestId,
 												this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: "/"}) ]);
@@ -116,7 +138,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				});
 			}
 		} else {
-			aRootContext = this._getContextsForParentContext(null);
 			var aRequestId = this._prepareGroupMembersAutoExpansionRequestIds("/", mParameters.numberOfExpandedLevels);
 			aRequestId.push(sRootContextGroupMembersRequestId);
 			this._considerRequestGrouping(aRequestId);
@@ -163,7 +184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	AnalyticalBinding.prototype.ContextsAvailabilityStatus = { ALL: 2, SOME: 1, NONE: 0 };
 	AnalyticalBinding.prototype.hasAvailableNodeContexts = function(oContext, iLevel) {
 		var sGroupId = this._getGroupIdFromContext(oContext, iLevel);
-		if (this.mKey[sGroupId] != undefined) {
+		if (this._getKeys(sGroupId) != undefined) {
 			if (this.mFinalLength[sGroupId] == true) {
 				return AnalyticalBinding.prototype.ContextsAvailabilityStatus.ALL;
 			} else {
@@ -207,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			return false;
 		}
 		// children exist if it is not the rightmost grouped column or there is at least one further level with an ungrouped groupable columns.
-		return this.aMaxAggregationLevel.indexOf(this.aAggregationLevel[iContextLevel - 1]) < this.aMaxAggregationLevel.length - 1;
+		return jQuery.inArray(this.aAggregationLevel[iContextLevel - 1], this.aMaxAggregationLevel) < this.aMaxAggregationLevel.length - 1;
 	};
 	
 	AnalyticalBinding.prototype.hasMeasures = function() {
@@ -359,7 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this.aSorter = aSorter ? aSorter : [];
 
 		this._abortAllPendingRequests();
-		
+		this.resetData();
 		this._fireRefresh({
 			reason : ChangeReason.Sort
 		});
@@ -382,7 +403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oTextProperty = oDimension.getTextProperty();
 		}
 
-		var sTextProperty, sTextPropertyValue, fTextValueFormatter, sTextPropertyValue;
+		var sTextProperty, sTextPropertyValue, fTextValueFormatter;
 		if (oTextProperty) {
 			sTextProperty = oDimension.getTextProperty().name;
 			fTextValueFormatter = this.mAnalyticalInfoByProperty[sTextProperty].formatter;
@@ -442,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					}
 				}
 				if (aColumns[i].grouped == true) {
-					if (this.getSortablePropertyNames().indexOf(oDimension.getName()) == -1) {
+					if (jQuery.inArray(oDimension.getName(), this.getSortablePropertyNames()) == -1) {
 						jQuery.sap.log.fatal("property " + oDimension.getName() + " must be sortable in order to be used as grouped dimension");
 					}
 					oDimensionDetails.grouped = true;
@@ -484,7 +505,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this.mAnalyticalInfoByProperty[aColumns[i].name] = aColumns[i];
 		}
 		// finalize measure information with unit properties also being part of the table
-		var oMeasureDetails;
 		for ( var measureName in this.oMeasureDetailsSet) {
 			var oUnitProperty = this.oAnalyticalQueryResult.findMeasureByName(measureName).getUnitProperty();
 			if (oUnitProperty) {
@@ -507,11 +527,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this.aAnalyticalInfo = aColumns;
 		
 		// reset attributes holding previously loaded data
-		this.mFinalLength = {};
-		this.mLength = {};
-		this.mKey = {};
-		this.mOwnKey = {};
-		this.mContexts = {};
+		this.resetData();
+
 		this.bNeedsUpdate = false;
 	};
 
@@ -533,9 +550,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			aGroupId.push(sGroupId);
 	
 			// clean up existing loaded data for the given group ID
-			delete this.mKey[sGroupId];
-			delete this.mLength[sGroupId];
-			delete this.mFinalLength[sGroupId];
+			this._resetData(sGroupId);
 			
 			var aGroupIdRange = oGroupIdRanges[sGroupId];
 	
@@ -546,9 +561,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						oGroupIdRange.threshold);
 			}
 	
+			// TODO check current code works, but it would be more natural if this _considerRequestGrouping would be outside of this loop
 			var aRequestId = [];
-			for (var i = -1, sGroupId; (sGroupId = aGroupId[++i]) !== undefined; ) {
-				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sGroupId}));
+			for (var j = -1, sGroupId2; (sGroupId2 = aGroupId[++j]) !== undefined; ) {
+				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sGroupId2}));
 			}
 			this._considerRequestGrouping(aRequestId);
 		}
@@ -621,8 +637,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			iLength = this.oModel.iSizeLimit;
 		}
 	
-		if (this.mFinalLength[sParentGroupId] && this.mLength[sParentGroupId] < iLength) {
-			iLength = this.mLength[sParentGroupId];
+		if (this.mFinalLength[sParentGroupId] && this.mLength[sParentGroupId] < iStartIndex + iLength) {
+			iLength = this.mLength[sParentGroupId] - iStartIndex; 
+			if (iLength < 0) {
+				jQuery.sap.log.fatal("invalid start index greater than total group length passed");
+			}
 		}
 	
 		if (!iThreshold) {
@@ -648,7 +667,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 		}
 	
-		var aContext, bLoadContexts, oGroupSection, oGroupExpansionFirstMissingMember, missingMemberCount;
+		var aContext = [], bLoadContexts, oGroupSection, oGroupExpansionFirstMissingMember, missingMemberCount;
+		var iAggregationLevel = sParentGroupId == null ? 0 : this._getGroupIdLevel(sParentGroupId) + 1;
+		if (! this.aMultiUnitLoadFactor[iAggregationLevel]) {
+			this.aMultiUnitLoadFactor[iAggregationLevel] = 1;
+		}
 		
 		var bGroupLevelAutoExpansionIsActive = iNumberOfExpandedLevels > 0 && sParentGroupId != null;
 		if (bGroupLevelAutoExpansionIsActive) {
@@ -663,13 +686,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				// first missing member is in a different lower level sub-tree, e.g. sParentGroupId: /A/B groupId_Missing: /A/C/D
 				|| oGroupExpansionFirstMissingMember.groupId_Missing.substring(0, sParentGroupId.length) != sParentGroupId;
 			if (bDataAvailable) {
-				jQuery.sap.log.debug("auto expand: data available for group ID " + sParentGroupId);
-				
 				aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength);
 			} else {
 				missingMemberCount = iLength + iThreshold;
 			}
 			bLoadContexts = !bDataAvailable;
+			// finally adjust the number of entities to be loaded by the load factor (after(!) all calculations have been made)
+			missingMemberCount = Math.ceil(missingMemberCount * this.aMultiUnitLoadFactor[iAggregationLevel]);
 		} else { // no automatic expansion of group levels
 			aContext = this._getLoadedContextsForGroup(sParentGroupId, iStartIndex, iLength);
 			oGroupSection = this._calculateRequiredGroupSection(sParentGroupId, iStartIndex, iLength, iThreshold, aContext);
@@ -677,6 +700,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			bLoadContexts = (aContext.length != iLength
 							 && !(this.mFinalLength[sParentGroupId] && aContext.length >= this.mLength[sParentGroupId] - iStartIndex))
 							|| bPreloadContexts;
+			// finally adjust the number of entities to be loaded by the load factor (after(!) all calculations have been made)
+			oGroupSection.length = Math.ceil(oGroupSection.length * this.aMultiUnitLoadFactor[iAggregationLevel]);
 		}
 	
 		if (!bLoadContexts) {
@@ -727,8 +752,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					var oMemberRequestDetails;
 					if (bGroupLevelAutoExpansionIsActive) {
 						aMembersRequestId = this._prepareGroupMembersAutoExpansionRequestIds(sParentGroupId, iNumberOfExpandedLevels);
-						for (var i = -1, sRequestId; (sRequestId = aMembersRequestId[++i]) !== undefined; ) {
-							if (this._isRequestPending(sRequestId)) {
+						for (var j = -1, sMemberRequestId; (sMemberRequestId = aMembersRequestId[++j]) !== undefined; ) {
+							if (this._isRequestPending(sMemberRequestId)) {
 								bExecuteRequest = false;
 								break;
 							}
@@ -758,7 +783,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 			}
 		}
-	
 		return aContext;
 	};
 	
@@ -769,19 +793,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 		var aRequestDetails = [];
 		var bFoundFlatListRequest = false;
-
+		var i, oRequestDetails, aRequestQueueEntry;
+		
 		// create request objects: process group member requests first to detect flat list requests 
-		for (var i = -1, aRequestQueueEntry; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
+		for (i = -1; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
 			if (aRequestQueueEntry[0] == AnalyticalBinding._requestType.groupMembersQuery) { // request type is at array index 0
-				var oRequestDetails = AnalyticalBinding.prototype._prepareGroupMembersQueryRequest.apply(this, aRequestQueueEntry);
+				oRequestDetails = AnalyticalBinding.prototype._prepareGroupMembersQueryRequest.apply(this, aRequestQueueEntry);
 				bFoundFlatListRequest = bFoundFlatListRequest || oRequestDetails.bIsFlatListRequest;
 				aRequestDetails.push(oRequestDetails);
 			}
 		}
 
 		// create request objects for all other request types 
-		for (var i = -1, aRequestQueueEntry; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
-			var oRequestDetails = null;
+		for (i = -1; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
+			oRequestDetails = null;
 			switch (aRequestQueueEntry[0]) { // different request types
 			case AnalyticalBinding._requestType.groupMembersQuery:
 				continue; // handled above
@@ -829,7 +854,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		oAnalyticalQueryRequest.setResourcePath(this._getResourcePath());
 		oAnalyticalQueryRequest.getSortExpression().clear();
 
-	
 		// (1) analyze aggregation level of sGroupId
 	
 		// indexes to elements of this.aMaxAggregationLevel marking begin and end of the requested child level
@@ -843,11 +867,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// Ex: Assume aMaxAggregationLevel with (G=grouped,U=ungrouped): [ G1 U1 U2 G2 U3 U4 G3 F5 F6 ... ]
 			// For sGroupId = "G1/G2", initial iChildGroupFromLevel is 2. The following loop will increment it to 4
 			// and consequently point to U3
-			for (var i = 0, iLevel = 0; i < iChildGroupFromLevel; iLevel++) {
+			for (var j = 0, iLevel = 0; j < iChildGroupFromLevel; iLevel++) {
 				if (this.oDimensionDetailsSet[this.aMaxAggregationLevel[iLevel]].grouped == false) {
 					++iUngroupedParentLevelCount;
 				} else {
-					++i;
+					++j;
 				}
 			}
 			// adjust child levels by number of ungrouped parent levels!
@@ -895,8 +919,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 	
 		if (iChildGroupFromLevel >= 1) {
-			for (var i = 0, l = aGroupId.length; i < l; i++) {
-				oFilterExpression.addCondition(this.aAggregationLevel[i], FilterOperator.EQ, aGroupId[i]);
+			for (var k = 0, l = aGroupId.length; k < l; k++) {
+				oFilterExpression.removeConditions(this.aAggregationLevel[k]);
+				oFilterExpression.addCondition(this.aAggregationLevel[k], FilterOperator.EQ, aGroupId[k]);
 			}
 		}
 	
@@ -924,7 +949,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
+						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -933,9 +958,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						bIncludeFormattedValue, bIncludeUnitProperty);
 			}
 			// exclude those unit properties from the selected that are included in the current aggregation level
-			for ( var i in aAggregationLevel) {
+			for (var n in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[i])) != -1) {
+				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[n], aSelectedUnitPropertyName)) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
@@ -943,17 +968,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 		// (6) set sort order
 		var oSorter = oAnalyticalQueryRequest.getSortExpression();
-		for (var i = 0; i < this.aSorter.length; i++) {
-			if (this.aSorter[i]) {
-				oSorter.addSorter(this.aSorter[i].sPath, this.aSorter[i].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
+		for (var m = 0; m < this.aSorter.length; m++) {
+			if (this.aSorter[m]) {
+				oSorter.addSorter(this.aSorter[m].sPath, this.aSorter[m].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
 			}
 		}
-	
+
 		// (7) set result page boundaries
 		if (iLength == 0) {
 			jQuery.sap.log.fatal("unhandled case: load 0 entities of sub group");
 		}
-		oAnalyticalQueryRequest.setResultPageBoundaries(iStartIndex + 1, iStartIndex + iLength);
+		var oKeyIndexMapping = this._getKeyIndexMapping(sGroupId, iStartIndex);
+		oAnalyticalQueryRequest.setResultPageBoundaries(oKeyIndexMapping.iServiceKeyIndex + 1, oKeyIndexMapping.iServiceKeyIndex + iLength);
 	
 		// (8) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, !this.mFinalLength[sGroupId]);
@@ -968,7 +994,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			bIsFlatListRequest : bIsLeafGroupsRequest && iChildGroupFromLevel == 0,
 			bIsLeafGroupsRequest : bIsLeafGroupsRequest,
 			iStartIndex : iStartIndex,
-			iLength : iLength
+			iLength : iLength,
+			oKeyIndexMapping : oKeyIndexMapping
 		};
 	};
 
@@ -1017,6 +1044,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionQueryRequest
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionQueryRequest = function(iRequestType, sGroupId, oGroupExpansionFirstMissingMember, iLength, iNumberOfExpandedLevels) {
+		var that = this;
 
 		// local helper function for creating filter expressions for all group level requests
 		/* 
@@ -1040,6 +1068,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		 *               and P_Y is the property for this grouping level. 
 		 */
 		var prepareLevelFilterExpressions = function(oGroupExpansionFirstMissingMember, iAutoExpandGroupsToLevel) {
+			var aFilterArray = [];
+			
 			if (oGroupExpansionFirstMissingMember.groupId_Missing == null) {
 				jQuery.sap.log.fatal("missing group Id not present");
 				return aFilterArray;
@@ -1063,8 +1093,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// if first missing member start within a partially loaded group, an extra condition will be needed below 
 			var oFirstMissingMemberStartIndexLastKnownFilterCondition = null;
 			if (oGroupExpansionFirstMissingMember.startIndex_Missing > 0) {
-				var oFirstMissingMemberStartIndexLastKnownGroupContextKey =	that.mKey[oGroupExpansionFirstMissingMember.groupId_Missing]
-						[oGroupExpansionFirstMissingMember.startIndex_Missing - 1];
+				var oFirstMissingMemberStartIndexLastKnownGroupContextKey = that._getKey(oGroupExpansionFirstMissingMember.groupId_Missing,
+						oGroupExpansionFirstMissingMember.startIndex_Missing - 1);	
 				var oFirstMissingMemberStartIndexLastKnownObject = that.oModel.getObject("/" + oFirstMissingMemberStartIndexLastKnownGroupContextKey);
 				var sFirstMissingMemberStartIndexAggregationLevel = that.aAggregationLevel[iGroupIdLevel_Missing];
 				var sFirstMissingMemberStartIndexLastKnownValue = oFirstMissingMemberStartIndexLastKnownObject
@@ -1076,8 +1106,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			
 			
 			// now create the filter expressions (filter object arrays) for every group level to be requested
-			var aFilterArray = [];
-			
 			for (var iLevel = 0; iLevel < iAutoExpandGroupsToLevel; iLevel++) {
 				var aLevelFilterCondition = [];
 				var iNumberOfIntermediateLevelConditions = Math.min(iGroupIdLevel_Missing, iLevel + 1);
@@ -1114,9 +1142,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							&& bAddExtraConditionForFirstMissingMemberStartIndexLastKnown) { // rule (R2)
 							// create a copy of the constructed intermediate filter condition 
 							var aStartIndexFilterCondition = [];
-							for (var i = 0; i < aIntermediateLevelFilterCondition.length; i++) {
+							for (var j = 0; j < aIntermediateLevelFilterCondition.length; j++) {
 								var oConditionCopy = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "x");
-								oConditionCopy = jQuery.extend(true, oConditionCopy, aIntermediateLevelFilterCondition[i]);
+								oConditionCopy = jQuery.extend(true, oConditionCopy, aIntermediateLevelFilterCondition[j]);
 								aStartIndexFilterCondition.push(oConditionCopy);
 							}
 							aStartIndexFilterCondition[iGroupIdLevel_Missing - 1].sOperator = sap.ui.model.FilterOperator.EQ; // (R2.1)
@@ -1184,15 +1212,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			var aAggregationLevel = that.aMaxAggregationLevel.slice(0, iChildGroupToLevel + 1);
 			oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
 
-			for (var i = 0; i < aAggregationLevel.length; i++) {
-				var oDimensionDetails = that.oDimensionDetailsSet[aAggregationLevel[i]];
+			for (var l = 0; l < aAggregationLevel.length; l++) {
+				var oDimensionDetails = that.oDimensionDetailsSet[aAggregationLevel[l]];
 				var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
 				oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(oDimensionDetails.name, // bIncludeKey: No, always needed!
 				true, bIncludeText, oDimensionDetails.aAttributeName);
 
 				// define a default sort order in case no sort criteria have been provided externally
 				if (oDimensionDetails.grouped) {
-					oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[i], odata4analytics.SortOrder.Ascending);
+					oAnalyticalQueryRequest.getSortExpression().addSorter(aAggregationLevel[l], odata4analytics.SortOrder.Ascending);
 				}
 			}
 		
@@ -1230,7 +1258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
 					if (bIncludeUnitProperty) {
 						// remember unit property together with using measure raw value property for response analysis in success handler
-						if (aSelectedUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
+						if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
 							aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
 						}
 					}
@@ -1239,18 +1267,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						bIncludeFormattedValue, bIncludeUnitProperty);
 			}
 			// exclude those unit properties from the selected that are included in the current aggregation level
-			for ( var i in aAggregationLevel) {
+			for ( var j in aAggregationLevel) {
 				var iMatchingIndex;
-				if ((iMatchingIndex = aSelectedUnitPropertyName.indexOf(aAggregationLevel[i])) != -1) {
+				if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
 					aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
 				}
 			}
 		
 			// (6) set sort order
 			var oSorter = oAnalyticalQueryRequest.getSortExpression();
-			for (var i = 0; i < that.aSorter.length; i++) {
-				if (that.aSorter[i]) {
-					oSorter.addSorter(that.aSorter[i].sPath, that.aSorter[i].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
+			for (var k = 0; k < that.aSorter.length; k++) {
+				if (that.aSorter[k]) {
+					oSorter.addSorter(that.aSorter[k].sPath, that.aSorter[k].bDescending ? odata4analytics.SortOrder.Descending : odata4analytics.SortOrder.Ascending);
 				}
 			}
 
@@ -1280,7 +1308,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		};
 
 		// function implementation starts here
-		var that = this;
 		var aGroupMembersAutoExpansionRequestDetails = [];
 		var aRequestId = [];
 		
@@ -1289,16 +1316,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			var aGroupIdComponents_Missing = that._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing);
 			var iGroupIdLevel_Missing = aGroupIdComponents_Missing.length;
 			var aFilterArray = prepareLevelFilterExpressions(oGroupExpansionFirstMissingMember, iAutoExpandGroupsToLevel);
+			var sGroupIdAtLevel;
 			
 			for (var iLevel = 1; iLevel <= iAutoExpandGroupsToLevel; iLevel++) {
 				var iStartIndex;
 				// determine start index
 				if (iLevel >= iGroupIdLevel_Missing + 2) {
 					iStartIndex = 0;
+					sGroupIdAtLevel = undefined;
 				} else if (iLevel == iGroupIdLevel_Missing + 1) {
 					iStartIndex = oGroupExpansionFirstMissingMember.startIndex_Missing;
+					sGroupIdAtLevel = oGroupExpansionFirstMissingMember.groupId_Missing;
 				} else if (iGroupIdLevel_Missing > 0) {
-					var sGroupIdAtLevel;
 					if (iLevel == iGroupIdLevel_Missing) {
 						sGroupIdAtLevel = oGroupExpansionFirstMissingMember.groupId_Missing;
 					} else {
@@ -1308,10 +1337,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					if (!sGroupIdAtParentLevel) {
 						jQuery.sap.log.fatal("failed to determine group id at parent level; group ID = " + sGroupId + ", level = " + iLevel);
 					}
-					var iStartIndex = this.mKey[sGroupIdAtParentLevel].indexOf(this.mOwnKey[sGroupIdAtLevel]);
+					iStartIndex = this._findKeyIndex(sGroupIdAtParentLevel, this.mEntityKey[sGroupIdAtLevel]); 
 					if (iStartIndex == -1) {
 						jQuery.sap.log.fatal("failed to determine position of value " + sGroupIdAtLevel + " in group " + sGroupIdAtParentLevel);
 					}
+					sGroupIdAtLevel = sGroupIdAtParentLevel;
 					iStartIndex++; // point to first missing position
 				}
 				// determine other parameters of the request
@@ -1319,42 +1349,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				var aFilter = aFilterArray[iLevel - 1] ? [ aFilterArray[iLevel - 1] ] : [];
 				
 				var oLevelMembersRequestDetails = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel, aFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, b/c it is encoded in the filter condition
+						iLevel, aFilter, iStartIndex, iLengthForLevel, false, false); // rem: bUseStartIndexForSkip==false, because it is encoded in the filter condition
+				oLevelMembersRequestDetails.sGroupId_Missing_AtLevel = sGroupIdAtLevel; // also remember group ID at the current level; needed for processing responses
 				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
 				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel }));
 			}
 		} else { // simple auto expand (i.e. the not accelerated method)
 			var iMinRequiredLevel = this._getGroupIdLevel(sGroupId) + 1;
-			var iAutoExpandGroupsToLevel = iMinRequiredLevel + iNumberOfExpandedLevels;
+			var iAutoExpandGroupsToLevel2 = iMinRequiredLevel + iNumberOfExpandedLevels;
 			
 			// construct filter condition for addressing the selected group
-			var aFilter = [];
+			var aFilter2 = [];
 			var aGroupIdComponent = this._getGroupIdComponents(sGroupId);
 			for (var i = 0; i < aGroupIdComponent.length; i++) {
-				aFilter.push(new sap.ui.model.Filter(this.aAggregationLevel[i], sap.ui.model.FilterOperator.EQ, aGroupIdComponent[i]));
+				aFilter2.push(new sap.ui.model.Filter(this.aAggregationLevel[i], sap.ui.model.FilterOperator.EQ, aGroupIdComponent[i]));
 			}
 			// reflect iStartIndex > 0 (in calling _getContextsForParentContext()) 
-			// by adding one more condition for the first component of the oGroupExpansionFirstMissingMember
+			// by adding one more condition for the aggregation level component that comes directly after all components in sGroupId
+			//  with the value that is provided for this component in oGroupExpansionFirstMissingMember
 			var bAvoidLengthUpdateOnMinLevel = false;
 			if (oGroupExpansionFirstMissingMember) {
 				var sPropertyName = this.aAggregationLevel[aGroupIdComponent.length];
 				var sPropertyValue = this._getGroupIdComponents(oGroupExpansionFirstMissingMember.groupId_Missing)[aGroupIdComponent.length];
 				if (sPropertyValue)	{
 					var sFilterOperator = this._getFilterOperatorMatchingPropertySortOrder(sPropertyName, true);
-					aFilter.push(new sap.ui.model.Filter(sPropertyName, sFilterOperator, sPropertyValue));
+					aFilter2.push(new sap.ui.model.Filter(sPropertyName, sFilterOperator, sPropertyValue));
 					// this extra condition restricts the entities returned for the first minimum level, so we must not update the group length from the result!
 					bAvoidLengthUpdateOnMinLevel = true;
 				}
 			}
 			
-			for (var iLevel = iMinRequiredLevel; iLevel <= iAutoExpandGroupsToLevel; iLevel++) {
-				var iLengthForLevel = iLength > iLevel ? Math.ceil((iLength - iLevel) / (iAutoExpandGroupsToLevel - iLevel + 1)) : iLength;
-				var oLevelMembersRequestDetails = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
-						iLevel, aFilter, 0 /* iStartIndex */, iLengthForLevel,
-						iLevel == iMinRequiredLevel ? bAvoidLengthUpdateOnMinLevel : false,
+			for (var iLevel2 = iMinRequiredLevel; iLevel2 <= iAutoExpandGroupsToLevel2; iLevel2++) {
+				var iLengthForLevel2 = iLength > iLevel2 ? Math.ceil((iLength - iLevel2) / (iAutoExpandGroupsToLevel2 - iLevel2 + 1)) : iLength;
+				var oLevelMembersRequestDetails2 = prepareLevelMembersQueryRequest(AnalyticalBinding._requestType.levelMembersQuery, sGroupId,
+						iLevel2, aFilter2, 0 /* iStartIndex */, iLengthForLevel2,
+						iLevel2 == iMinRequiredLevel ? bAvoidLengthUpdateOnMinLevel : false,
 								true);
-				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails);
-				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel }));
+				aGroupMembersAutoExpansionRequestDetails.push(oLevelMembersRequestDetails2);
+				aRequestId.push(this._getRequestId(AnalyticalBinding._requestType.levelMembersQuery, { groupId: sGroupId, level: iLevel2 }));
 			}
 		}
 		return {
@@ -1396,7 +1428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var sTop = oAnalyticalQueryRequest.getURIQueryOptionValue("$top");
 		var sInlineCount = oAnalyticalQueryRequest.getURIQueryOptionValue("$inlinecount");
 	
-		if (this.mParameters["filter"]) {
+		if (this.mParameters && this.mParameters["filter"]) {
 			sFilter += "and (" + this.mParameters["filter"] + ")";
 		}
 	
@@ -1436,7 +1468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 		var aBatchQueryRequest = [], aExecutedRequestDetails = [];
 
-		function tiggerDataReceived() {
+		function triggerDataReceived() {
 			that.fireDataReceived();
 		}
 
@@ -1449,14 +1481,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 				// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 				sGroupId = null;
-				this.mLength[sGroupId] = 1;
-				this.mFinalLength[sGroupId] = true;
-				this.mKey[sGroupId] = [ AnalyticalBinding._artificialRootContextGroupId ];
+				this.mServiceLength = this.mLength[sGroupId] = 1;
+				this.mServiceFinalLength[sGroupId] = true;
+				this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 				this.bNeedsUpdate = true;
 				// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
-				var that = this;
 				if (aRequestDetails.length == 1) { // since no other request will be issued, send the received event at this point
-					setTimeout(tiggerDataReceived);
+					setTimeout(triggerDataReceived);
 				}
 				this.bArtificalRootContext = true;
 				// return immediately - no need to load data...
@@ -1511,25 +1542,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				return;
 			}
 			
-			for (var j = 0; j < oData.__batchResponses.length; j++) {
-				if (oData.__batchResponses[j].data != undefined) {
-					switch (aExecutedRequestDetails[j].iRequestType) {
+			for (var k = 0; k < oData.__batchResponses.length; k++) {
+				if (oData.__batchResponses[k].data != undefined) {
+					switch (aExecutedRequestDetails[k].iRequestType) {
 						case AnalyticalBinding._requestType.groupMembersQuery:
-							that._processGroupMembersQueryResponse(aExecutedRequestDetails[j], oData.__batchResponses[j].data);
+							that._processGroupMembersQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						case AnalyticalBinding._requestType.totalSizeQuery:
-							that._processTotalSizeQueryResponse(aExecutedRequestDetails[j], oData.__batchResponses[j].data);
+							that._processTotalSizeQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						case AnalyticalBinding._requestType.levelMembersQuery:
-							that._processLevelMembersQueryResponse(aExecutedRequestDetails[j], oData.__batchResponses[j].data);
+							that._processLevelMembersQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						default:
-							jQuery.sap.log.fatal("invalid request type " + aExecutedRequestDetails[j].iRequestType);
+							jQuery.sap.log.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
 							continue;
 					}
 				}
-				that._deregisterCompletedRequest(aExecutedRequestDetails[j].sRequestId);
-				that._cleanupGroupingForCompletedRequest(aExecutedRequestDetails[j].sRequestId);
+				that._deregisterCompletedRequest(aExecutedRequestDetails[k].sRequestId);
+				that._cleanupGroupingForCompletedRequest(aExecutedRequestDetails[k].sRequestId);
 			}
 
 			// determine the logical success status: true iff all operations succeeded
@@ -1588,11 +1619,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	AnalyticalBinding.prototype._executeQueryRequest = function(oRequestDetails) {
 		if (oRequestDetails.iRequestType == AnalyticalBinding._requestType.groupMembersAutoExpansionQuery) {
 			// handle auto-expanding requests that are actually a bundle of multiple requests, one per level  
-			for (var i = -1, oAnalyticalQueryRequest; (oAnalyticalQueryRequest = oRequestDetails.aGroupMembersAutoExpansionRequestDetails[++i]) !== undefined; ) {
-				this._executeQueryRequest(oAnalyticalQueryRequest);
+			for (var i = -1, oAnalyticalQueryRequest2; (oAnalyticalQueryRequest2 = oRequestDetails.aGroupMembersAutoExpansionRequestDetails[++i]) !== undefined; ) {
+				this._executeQueryRequest(oAnalyticalQueryRequest2);
 			}
 			return;
-		}
+		} 
 		
 		var iCurrentAnalyticalInfoVersion = this.iAnalyticalInfoVersionNumber;
 	
@@ -1610,12 +1641,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 			// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 			sGroupId = null;
-			this.mLength[sGroupId] = 1;
-			this.mFinalLength[sGroupId] = true;
-			this.mKey[sGroupId] = [ AnalyticalBinding._artificialRootContextGroupId ];
+			this.mServiceLength = this.mLength[sGroupId] = 1;
+			this.mServiceFinalLength[sGroupId] = true;
+			this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 			this.bNeedsUpdate = true;
 			// simulate the async behavior for the root context in case of having no sums (TODO: reconsider!)
-			var that = this;
 			setTimeout(function() {
 				if (that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId)) {
 					that.fireDataReceived();
@@ -1628,8 +1658,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		this._registerNewRequest(oRequestDetails.sRequestId);
 		// execute the request and use the metadata if available
 		this.fireDataRequested();
-		for (var i = 0; i < aParam.length; i++) {
-			aParam[i] = aParam[i].replace(/\ /g, "%20");
+		for (var j = 0; j < aParam.length; j++) {
+			aParam[j] = aParam[j].replace(/\ /g, "%20");
 		}
 		jQuery.sap.log.debug("AnalyticalBinding: executing query request");
 		
@@ -1656,7 +1686,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					break;
 				default:
 					jQuery.sap.log.fatal("invalid request type " + oRequestDetails.iRequestType);
-						break;
+					break;
 			}
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
 		}
@@ -1705,39 +1735,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name AnalyticalBinding.prototype._processGroupMembersQueryResponse
 	 */
 	AnalyticalBinding.prototype._processGroupMembersQueryResponse = function(oRequestDetails, oData) {
-		var sGroupId = oRequestDetails.sGroupId, aSelectedUnitPropertyName = oRequestDetails.aSelectedUnitPropertyName,
-		aAggregationLevel = oRequestDetails.aAggregationLevel,
-		iStartIndex = oRequestDetails.iStartIndex, iLength = oRequestDetails.iLength,
-		iGroupMembersLevel = sGroupId == null ? 0 : this._getGroupIdLevel(sGroupId) + 1;
-	
-		
-		if (!this.mKey[sGroupId]) {
-			this.mKey[sGroupId] = [];
-		}
-	
-		var aKey = this.mKey[sGroupId];
-		var iKeyIndex = iStartIndex;
+		var sGroupId = oRequestDetails.sGroupId, 
+			aSelectedUnitPropertyName = oRequestDetails.aSelectedUnitPropertyName, 
+			aAggregationLevel = oRequestDetails.aAggregationLevel, 
+			iStartIndex = oRequestDetails.oKeyIndexMapping.iIndex, 
+			iServiceStartIndex = oRequestDetails.oKeyIndexMapping.iServiceKeyIndex, 
+			iLength = oRequestDetails.iLength,
+			oKeyIndexMapping = oRequestDetails.oKeyIndexMapping,
+			iGroupMembersLevel = sGroupId == null ? 0 : this._getGroupIdLevel(sGroupId) + 1;
 		var bUnitCheckRequired = (aSelectedUnitPropertyName.length > 0);
-		var sPreviousEntryDimensionKeyString = null, sDimensionKeyString = null;
-		var iFirstMatchingEntryIndex = -1;
+		var sPreviousEntryDimensionKeyString, sDimensionKeyString;
+		var iFirstMatchingEntryIndex;
 		var iDiscardedEntriesCount = 0;
-		var aAllDimensionSortedByName = null;
-	
-		// Collecting contexts
-		for (var i = 0; i < oData.results.length; i++) {
-			var oEntry = oData.results[i];
+		var bLastServiceKeyWasNew;
+
+// 		this._trace_enter("ReqExec", "_processGroupMembersQueryResponse", "groupId=" + oRequestDetails.sGroupId, { startIndex: iStartIndex, serviceStartIndex: iServiceStartIndex, length: iLength, resultCount: oData.__count, resultLength: oData.results.length }, ["startIndex","serviceStartIndex","length","resultCount","resultLength"]); // DISABLED FOR PRODUCTION 		
+
+		// entry at start position may be a multi-unit entry w.r.t. entry at position before
+		// prepare merging with this preceding entry   
+		var iODataResultsLength = oData.results.length;
+		var aPreviousEntryServiceKey = this._getServiceKeys(sGroupId, oKeyIndexMapping.iIndex - 1);
+		sPreviousEntryDimensionKeyString = undefined;
+		if (aPreviousEntryServiceKey && aPreviousEntryServiceKey.length > 0) { // copy previous service keys to results for homogeneous processing below
+			for (var i = 0, len = aPreviousEntryServiceKey.length; i < len; i++) {
+				oData.results[i - len] = this.oModel.getObject("/" + aPreviousEntryServiceKey[i]);
+			}
+			var oEntry2 = oData.results[-aPreviousEntryServiceKey.length];
+			sPreviousEntryDimensionKeyString = "";
+			for (var j = 0; j < aAggregationLevel.length; j++) {
+				sPreviousEntryDimensionKeyString += oEntry2[aAggregationLevel[j]] + "|";
+			}
+		}
+
+		// special case: previous entry gets merged with the first loaded entry/ies
+		// if there was a single preceding entity that was not yet a multi-unit entry, count it! 
+		// (on the opposite, if there were multiple, hence multi-unit entries, they were counted already when they got loaded)
+		// Therefore, in order to count it, the bLastServiceKeyWasNew flag is set accordingly
+		bLastServiceKeyWasNew = aPreviousEntryServiceKey && aPreviousEntryServiceKey.length == 1;
+		
+		// process loaded data, collect contexts and handle multi-unit occurrences; oKeyIndexMapping points to the current insert positions for key indexes and service keys
+		for (var h = 0; h < iODataResultsLength; h++) {
+			var oEntry = oData.results[h];
 	
 			if (bUnitCheckRequired) {
 				// perform check to detect multiple returned entries for a single group level instance; duplicates are detected by having the same dimension keys  
 				sDimensionKeyString = "";
-				for (var j = 0; j < aAggregationLevel.length; j++) {
-					sDimensionKeyString += oEntry[aAggregationLevel[j]] + "|";
+				for (var g = 0; g < aAggregationLevel.length; g++) {
+					sDimensionKeyString += oEntry[aAggregationLevel[g]] + "|";
 				}
 				if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
-					if (iFirstMatchingEntryIndex == -1) {
-						iFirstMatchingEntryIndex = i - 1;
+					if (iFirstMatchingEntryIndex === undefined) {
+						if (h == 0) { // adjust indexes such that the entry at position before is covered
+							iFirstMatchingEntryIndex = -aPreviousEntryServiceKey.length;
+							oKeyIndexMapping.iServiceKeyIndex -= aPreviousEntryServiceKey.length - 1; // must point to the second entry with the same dimension key
+// 							// this._trace_debug_if(aPreviousEntryServiceKey.length > 1,"one or more loaded entries will get merged with preceding multi-unit entry");
+						} else {
+							iFirstMatchingEntryIndex = h - 1;
+						}
 					}
-					var iDeviatingUnitPropertyNameIndex = -1, oPreviousEntry = oData.results[i - 1];
+					var iDeviatingUnitPropertyNameIndex = -1, oPreviousEntry = oData.results[h - 1];
 					for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
 						if (oPreviousEntry[aSelectedUnitPropertyName[k]] != oEntry[aSelectedUnitPropertyName[k]]) {
 							iDeviatingUnitPropertyNameIndex = k; // aggregating dimensions are all the same, entries only differ in currency
@@ -1745,138 +1801,251 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						}
 					}
 					if (iDeviatingUnitPropertyNameIndex == -1) {
-						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (i - 1) + " and " + i);
+// 						this._trace_debug_if(true, "assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
+						jQuery.sap.log.fatal("assertion failed: no deviating units found for result entries " + (h - 1) + " and " + h);
 					}
 				}
-				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || i == oData.results.length - 1)
-						&& iFirstMatchingEntryIndex != -1) { // after sequence of identical records or if processing the last result entry
-					// pick  first entry with same key combination, create a copy of it and modify that: clear all unit properties that are not part of the aggregation level, and all measures
-					var oMultiUnitEntry = jQuery.extend(true, {}, oData.results[iFirstMatchingEntryIndex]);
-					for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
-						oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
+				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || h == iODataResultsLength - 1) 
+						&& iFirstMatchingEntryIndex !== undefined) { // after sequence of identical entries or if processing the last result entry (the set iFirstMatchingEntryIndex indicates the multi-unit case) 
+// TODO
+/**/	
+/*verification: remember if a multi-unit occurrence is found */
+					this.bFoundMU = true;
+/**/
+// TODO
+					// create a multi-unit repr. (includes a corresponding multi-unit entity) 
+					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, oRequestDetails.bIsFlatListRequest);
+					var aMultiUnitEntry = [];
+					// collect all related result entries for this multi-unit entity and set the keys
+					for (var l = iFirstMatchingEntryIndex; l < h; l++) {
+						aMultiUnitEntry.push(oData.results[l]);
 					}
-					for ( var sMeasureName in this.oMeasureDetailsSet) {
-						var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-						// if (oMeasureDetails.unitPropertyName == undefined) continue;
+					if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
+						aMultiUnitEntry.push(oData.results[h]);
+					}
+					var iNewServiceKeyCount = this._setAdjacentMultiUnitKeys(oKeyIndexMapping, oMultiUnitRepresentative, aMultiUnitEntry);
 
-						if (!oRequestDetails.bIsFlatListRequest && !this.mAnalyticalInfoByProperty[sMeasureName].total) {
-							if (oMeasureDetails.rawValuePropertyName != undefined) {
-								oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = undefined;
-							}
-							if (oMeasureDetails.formattedValuePropertyName != undefined) {
-								oMultiUnitEntry[oMeasureDetails.formattedValuePropertyName] = undefined;
-							}
-						} else {
-							if (oMeasureDetails.rawValuePropertyName != undefined) {
-								oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = null; // cannot be "*" because of type validation!
-							}
-							if (oMeasureDetails.formattedValuePropertyName != undefined) {
-								oMultiUnitEntry[oMeasureDetails.formattedValuePropertyName] = "*";
-							}
-						}
+					// update number of discarded entities
+					var iMultiUnitEntryDiscardedEntriesCount;
+					if (oMultiUnitRepresentative.bIsNewEntry) {
+						iMultiUnitEntryDiscardedEntriesCount = aMultiUnitEntry.length - 1;
+					} else {
+						iMultiUnitEntryDiscardedEntriesCount = iNewServiceKeyCount;
 					}
-					/*
-					 * assign a key to this new entry that allows to import it into the OData model that is guaranteed to be stable when used for multiple
-					 * bindings 1) Take all(!) grouping dimensions in alphabetical order of their names 2) Concatenate the values of these dimenensions in this
-					 * order separated by "," 3) append some indicator such as "-multiunit-not-dereferencable" to mark this special entry
-					 */
-					var sMultiUnitEntryKey = "";
-					if (aAllDimensionSortedByName == null) {
-						// a complete set of sorted dimension names are the basis for stable key values; create array lazily
-						aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
+					if (bLastServiceKeyWasNew) {
+						bLastServiceKeyWasNew = false;
 					}
-	
-					for (var k = 0; k < aAllDimensionSortedByName.length; k++) {
-						var sDimVal = oMultiUnitEntry[aAllDimensionSortedByName[k]];
-						sMultiUnitEntryKey += (sDimVal === undefined ? "" : sDimVal) + ",";
+					if (iMultiUnitEntryDiscardedEntriesCount < 0) {
+// 						this._trace_debug_if(iDiscardedEntriesCount < 0, "assertion failed: iDiscardedEntriesCount must be non-negative");
+						jQuery.sap.log.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
 					}
-					// this modified copy must be imported to the OData model as a new entry with a modified key and OData metadata
-					oMultiUnitEntry.__metadata.uri = sMultiUnitEntryKey + "-multiple-units-not-dereferencable";
-					delete oMultiUnitEntry.__metadata["self"];
-					delete oMultiUnitEntry.__metadata["self_link_extensions"];
-					oMultiUnitEntry["^~volatile"] = true; // mark entry to distinguish it from others contained in the regular OData result
-					this.oModel._importData(oMultiUnitEntry, {});
-					// mark the context for this entry as volatile to facilitate special treatment by consumers
-					var sMultiUnitEntryModelKey = this.oModel._getKey(oMultiUnitEntry);
-					this.oModel.getContext('/' + sMultiUnitEntryModelKey)["_volatile"] = true;
-	
-					// finally, get the entry from the OData model and adjust array aKey to point to the modified key
-					aKey[iKeyIndex - 1] = sMultiUnitEntryModelKey;
-	
-					// calculate how many entries have now been discarded from the result
-					if (i == oData.results.length - 1 && sPreviousEntryDimensionKeyString == sDimensionKeyString) { // last row same as previous
-						iDiscardedEntriesCount += i - iFirstMatchingEntryIndex;
-					} else { // last row is different from second to last
-						iDiscardedEntriesCount += i - iFirstMatchingEntryIndex - 1;
-					}
-					iFirstMatchingEntryIndex = -1;
+					iDiscardedEntriesCount += iMultiUnitEntryDiscardedEntriesCount;
+// TODO
+/**/
+					this.bNewMUKey = oMultiUnitRepresentative.bIsNewEntry;
+/**/
+// TODO				
+					iFirstMatchingEntryIndex = undefined;
 	
 					// add current entry if it has different key combination
 					if (sPreviousEntryDimensionKeyString != sDimensionKeyString) {
-						aKey[iKeyIndex++] = this.oModel._getKey(oEntry);
+						bLastServiceKeyWasNew = this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
 					}
 				} else if (sPreviousEntryDimensionKeyString != sDimensionKeyString) {
-					aKey[iKeyIndex++] = this.oModel._getKey(oEntry);
+					bLastServiceKeyWasNew = this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
 				}
+// TODO
+/**/
+/*verification: remember if differend dimensions are involved - needed for correct index calculation */
+				this.bDiffDims = (sPreviousEntryDimensionKeyString != sDimensionKeyString);
+/**/
+// TODO				
 				sPreviousEntryDimensionKeyString = sDimensionKeyString;
 			} else {
-				aKey[iKeyIndex++] = this.oModel._getKey(oEntry);
+				this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
 			}
 
 			// remember mapping between entry key and group Id
 			if (!oRequestDetails.bIsLeafGroupsRequest) {
-				var entryGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + aKey[iKeyIndex - 1]), iGroupMembersLevel);
+				var sLastEntryKey = this._getKey(sGroupId, oKeyIndexMapping.iIndex - 1),
+					sEntryGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + sLastEntryKey), iGroupMembersLevel);
 /* during development only
-				if (this.mOwnKey[entryGroupId]) {
-					if (this.mOwnKey[entryGroupId] != aKey[iKeyIndex - 1]) 
+				if (this.mEntityKey[sEntryGroupId]) {
+					if (this.mEntityKey[sEntryGroupId] != sLastEntryKey) 
 						// Such errors will occur in case repeated calls for same groups with providers returned unstable entity keys
 						// E.g., HANA/XS does not provide stable keys. As s
 						// As soon as repetitive calls are avoided, such errors will vanish as well
-						jQuery.sap.log.debug("unstable keys detected: group ID " + entryGroupId + " does not have a unique entity key");				
+						jQuery.sap.log.debug("unstable keys detected: group ID " + sEntryGroupId + " does not have a unique entity key");				
 				}
-*/
-				this.mOwnKey[entryGroupId] = aKey[iKeyIndex - 1];
+*/			
+				this.mEntityKey[sEntryGroupId] = sLastEntryKey;
+			}
+// TODO
+/*start verification: collect the cumulated number of discarded entries in a separate member array for analysis --- see below */
+			if (this.aDiscCount === undefined)	{
+				this.aDiscCount = [];
+				this.aCheckDiscCount = [];
+			}
+			if (h == 0) {
+				this.aDiscCount = [];
+				this.aCheckDiscCount = [];
+			}
+			
+			if (this.bFoundMU) {
+				if (this.bDiffDims) {
+					this.aDiscCount[oKeyIndexMapping.iIndex - 2] = iDiscardedEntriesCount;
+					this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
+					this.aCheckDiscCount[oKeyIndexMapping.iIndex - 2] = this.bNewMUKey;
+				} else {
+					this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
+					this.aCheckDiscCount[oKeyIndexMapping.iIndex - 1] = this.bNewMUKey;
+				}				
+				this.bFoundMU = false;
+				this.bDiffDims = false;
+				this.bNewMUKey = false;
+			} else {
+				this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
+			}
+/*end verification*/
+// TODO
+		}
+// TODO
+/* eslint-disable no-debugger, no-unused-vars, no-empty */
+		for (var chkIndex = iStartIndex, iMaxIndex = oKeyIndexMapping.iIndex - 1; chkIndex <= iMaxIndex; chkIndex++) {
+			if (! this.aCheckDiscCount[chkIndex]) {
+				continue;
+			}
+			var iKeyIndex = this.mKeyIndex[sGroupId][chkIndex];
+			var iDiscCountAtChkIndex = this.aDiscCount[chkIndex];
+			var iDiscCountAtBefore = this.aDiscCount[chkIndex - 1] !== undefined ? this.aDiscCount[chkIndex - 1] : 0;
+			if (iKeyIndex >= 0) {
+// 				this._trace_debug_if(iDiscCountAtChkIndex - iDiscCountAtBefore != 0, "assertion failed: disc count == 0 at key index = " + (chkIndex));
+			} else {
+				if (iKeyIndex == "ZERO") {
+					iKeyIndex = 0;
+				}
+				var iNextKeyIndex = this.mKeyIndex[sGroupId][chkIndex + 1];
+				if (iNextKeyIndex !== undefined) {
+					var iDistanceToNextKeyIndex = Math.abs(iNextKeyIndex) - Math.abs(iKeyIndex);
+// 					this._trace_debug_if(iDistanceToNextKeyIndex - 1 != iDiscCountAtChkIndex - iDiscCountAtBefore, "assertion failed: disc count exp = " + (iDistanceToNextKeyIndex - 1) + ", but got " + (iDiscCountAtChkIndex - iDiscCountAtBefore) + " at key index = " + (chkIndex));
+				} else {
+					var cnt = 0, ii = Math.abs(iKeyIndex); 
+					while (this.mServiceKey[sGroupId][ii++] !== undefined) {
+						cnt++;
+					}
+// 					this._trace_debug_if(cnt - 1 != iDiscCountAtChkIndex - iDiscCountAtBefore, "assertion failed: disc count exp = " + (cnt - 1) + ", but got " + (iDiscCountAtChkIndex - iDiscCountAtBefore) + " at key index = " + (chkIndex));
+				}
 			}
 		}
-	
+/* eslint-enable no-debugger */
+/*end verification*/
+// TODO
+		
+		// cleanup results entry array from added previous entry
+		if (aPreviousEntryServiceKey && aPreviousEntryServiceKey.length > 0) {
+			for (var m = 0, len2 = aPreviousEntryServiceKey.length; m < len2; m++) {
+				delete oData.results[m - len2];
+			}
+		}
+		
+		// if unit check is required, then merge loaded data with already available data occuring directly after the new data
+		if (bUnitCheckRequired) {
+			iDiscardedEntriesCount += this._mergeLoadedKeyIndexWithSubsequentIndexes(oKeyIndexMapping, aAggregationLevel, aSelectedUnitPropertyName, oRequestDetails.bIsFlatListRequest);
+		}
+
+// 		this._trace_message("ReqExec", "", { servicelengthBefore: this.mServiceLength[sGroupId], lengthBefore: this.mLength[sGroupId], discardedEntriesCount: iDiscardedEntriesCount}, ["servicelengthBefore", "lengthBefore", "discardedEntriesCount"]);
+		// update group length
 		if (! oRequestDetails.bAvoidLengthUpdate) {
-			// update mLength (only when the inline count is available)
+			var bNewLengthSet = false;
+			
 			if (oData.__count) {
-				this.mLength[sGroupId] = parseInt(oData.__count, 10) - iDiscardedEntriesCount;
+				this.mServiceLength[sGroupId] = parseInt(oData.__count, 10);
+				this.mLength[sGroupId] = this.mServiceLength[sGroupId] - iDiscardedEntriesCount;
 				this.mFinalLength[sGroupId] = true;
 				
 				if (oRequestDetails.bIsFlatListRequest) {
 					this.iTotalSize = oData.__count;
 				}
+				bNewLengthSet = true;
 			}
 		
-			// if we got data and the results + startindex is larger than the
-			// length we just apply this value to the length
-			if (this.mLength[sGroupId] < iStartIndex + oData.results.length) {
-				this.mLength[sGroupId] = iStartIndex + (oData.results.length - iDiscardedEntriesCount);
+			// if we got data and the results + startindex is larger than the length we just apply this value to the length
+			if (this.mServiceLength[sGroupId] < iServiceStartIndex + iODataResultsLength) {
+				this.mServiceLength[sGroupId] = iServiceStartIndex + iODataResultsLength;
+				this.mLength[sGroupId] = iStartIndex + iODataResultsLength - iDiscardedEntriesCount;
 				this.mFinalLength[sGroupId] = false;
 			}
 		
-			// if less entries are returned than have been requested
-			// set length accordingly
-			if ((oData.results.length - iDiscardedEntriesCount) < iLength || iLength === undefined) {
-				this.mLength[sGroupId] = iStartIndex + (oData.results.length - iDiscardedEntriesCount);
+			// if less entries are returned than have been requested set length accordingly
+			if (iODataResultsLength < iLength || iLength === undefined) {
+				this.mServiceLength[sGroupId] = iServiceStartIndex + iODataResultsLength;
+				this.mLength[sGroupId] = iStartIndex + oKeyIndexMapping.iIndex - iStartIndex;
 				this.mFinalLength[sGroupId] = true;
+				bNewLengthSet = true;
 			}
 		
-			// check if there are any results at all...
-			if (oData.results.length == 0) {
-				this.mLength[sGroupId] = 0;
+			// check if there are any results at all
+			if (iODataResultsLength == 0) {
+				this.mLength[sGroupId] = this.mServiceLength[sGroupId] = 0;
 				this.mFinalLength[sGroupId] = true;
+				bNewLengthSet = true;
+			}
+			
+			if (! bNewLengthSet && this.mLength[sGroupId] !== undefined && iDiscardedEntriesCount > 0) {
+				this.mLength[sGroupId] -= iDiscardedEntriesCount;
+			}
+		}	
+// 		this._trace_message("ReqExec", "", { servicelengthAfter: this.mServiceLength[sGroupId], lengthAfter: this.mLength[sGroupId]}, ["servicelengthAfter", "lengthAfter"]);
+
+		this.bNeedsUpdate = true;
+		
+		if (iDiscardedEntriesCount > 0) { // update load factor if entries have been discarded
+			this.aMultiUnitLoadFactor[aAggregationLevel.length] = oData.results.length / (oData.results.length - iDiscardedEntriesCount);
+			if (this.aMultiUnitLoadFactor[aAggregationLevel.length] < 1.5) { // avoid too small factors
+				this.aMultiUnitLoadFactor[aAggregationLevel.length] = 2;
 			}
 		}
-		this.bNeedsUpdate = true;
+// 		this._trace_debug_if(this.iMultiUnitLoadFactor < 1, "load factor cannot be lower than 1!");
+
+// TODO
+/**start verification: check length of loaded data with colected cumulated discarded counts
+ */ 
+		this._checkLength(sGroupId, iStartIndex);
+/*end verification*/
+// TODO
+
+// 		this._trace_leave("ReqExec", "_processGroupMembersQueryResponse", "", { lastLoadedIndex: oKeyIndexMapping.iIndex - 1, lastLoadedServiceIndex: oKeyIndexMapping.iServiceKeyIndex - 1, discardedEntriesCount: iDiscardedEntriesCount, multiUnitLoadFactor: this.aMultiUnitLoadFactor[aAggregationLevel.length] }, ["lastLoadedIndex","lastLoadedServiceIndex","discardedEntriesCount","multiUnitLoadFactor"]); // DISABLED FOR PRODUCTION 		
 	};
 	
+// TODO
+/*start verification: check length of loaded data with colected cumulated discarded counts
+ */
+/* eslint-disable no-debugger */
+	AnalyticalBinding.prototype._checkLength = function(sGroupId, iStartIndex) {
+		var aKeyIndex = this.mKeyIndex[sGroupId];
+		var count = this.mServiceLength[sGroupId];
+		for (var i = iStartIndex, iMaxIndex = this.aDiscCount.length; i < iMaxIndex; i++) {
+			if (! this.aCheckDiscCount[i]) {
+				continue;
+			}
+			if (aKeyIndex[i] < 0 || aKeyIndex[i] == "ZERO") {
+				var aServiceKey = this._getServiceKeys(sGroupId, i);
+// 				this._trace_debug_if(!aServiceKey, "failed: no service keys found!?");
+				var iDiscCountAtChkIndex = this.aDiscCount[i];
+				var iDiscCountAtBefore = this.aDiscCount[i - 1] !== undefined ? this.aDiscCount[i - 1] : 0;
+// 				this._trace_debug_if(iDiscCountAtChkIndex - iDiscCountAtBefore != aServiceKey.length - 1, "mismatch: entry at pos " + (i) + " has " + (aServiceKey.length - 1) + " service keys, but discCount is " + (iDiscCountAtChkIndex - iDiscCountAtBefore));
+				count -= aServiceKey.length - 1; // useless..., because we do not check from 0, but from startIndex
+			}
+		}
+	};
+/* eslint-enable no-debugger */	
+/*end verification*/
+// TODO
+
 	/**
 	 * @private
 	 * @function
-	 * @name AnalyticalBinding.prototype._processGroupMembersQueryResponse
+	 * @name AnalyticalBinding.prototype._processTotalSizeQueryResponse
 	 */
 	AnalyticalBinding.prototype._processTotalSizeQueryResponse = function(oRequestDetails, oData) {
 		if (oData.__count == undefined) {
@@ -1889,11 +2058,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * @private
 	 * @function
-	 * @name AnalyticalBinding.prototype._processGroupMembersQueryResponse
+	 * @name AnalyticalBinding.prototype._processLevelMembersQueryResponse
 	 */
 	AnalyticalBinding.prototype._processLevelMembersQueryResponse = function(oRequestDetails, oData) {
 		// local helper function to transform a block of entries in the level response to a response for a particular parent group 
 		var that = this;
+		var sPreviousParentGroupId, aParentGroupODataResult;
+		
 		var processSingleGroupFromLevelSubset = function (bProcessFirstLoadedGroup, bIncompleteGroupMembersSet) {
 			// transform the subset for processing as group members query response
 			var oGroupMembersRequestDetails = {
@@ -1908,21 +2079,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				iStartIndex : bProcessFirstLoadedGroup ? oRequestDetails.iStartIndex : 0,
 				iLength : oRequestDetails.iLength,
 				bAvoidLengthUpdate : oRequestDetails.bAvoidLengthUpdate
-			};
+			}; // note that the keyIndexMapping is still missing; added later after handling of special cases
 
-			// special handling for the last group contained in this level load if it starts a new group
-			if (bProcessFirstLoadedGroup
-				&& oRequestDetails.iStartIndex > 0
-				&& (that.mKey[oGroupMembersRequestDetails.sGroupId] === undefined || that.mKey[oGroupMembersRequestDetails.sGroupId][oRequestDetails.iStartIndex - 1] === undefined)) {
+			// special handling for the first group contained in this level load if it starts a new group
+			if (bProcessFirstLoadedGroup 
+				&& oRequestDetails.iStartIndex > 0 
+				&& (oRequestDetails.sGroupId_Missing_AtLevel != oGroupMembersRequestDetails.sGroupId
+						|| that._getKeys(oGroupMembersRequestDetails.sGroupId) === undefined)) {
 				// pendant to bIncompleteGroupMembersSet: set the finalLength of the previous group
 				var sParentGroupId = that._getParentGroupId(oGroupMembersRequestDetails.sGroupId);
-				var iPositionInParentGroup = that.mKey[sParentGroupId].indexOf(that.mOwnKey[oGroupMembersRequestDetails.sGroupId]);
+				var iPositionInParentGroup = that._findKeyIndex(sParentGroupId, that.mEntityKey[oGroupMembersRequestDetails.sGroupId]);
 				if (iPositionInParentGroup == -1) {
 					jQuery.sap.log.fatal("assertion failed: failed to determine position of " + oGroupMembersRequestDetails.sGroupId + " in group " + sParentGroupId);
 				}
-				if (iPositionInParentGroup > 0 && that.mKey[sParentGroupId][iPositionInParentGroup - 1] !== undefined) {
-					var sPreviousGroupMemberKey = that.mKey[sParentGroupId][iPositionInParentGroup - 1];
-					var sPreviousGroupId = that._getGroupIdFromContext(that.oModel.getContext('/' + sPreviousGroupMemberKey),
+				if (iPositionInParentGroup > 0 && that._getKey(sParentGroupId, iPositionInParentGroup - 1) !== undefined) {
+					var sPreviousGroupMemberKey = that._getKey(sParentGroupId, iPositionInParentGroup - 1);
+					var sPreviousGroupId = that._getGroupIdFromContext(that.oModel.getContext('/' + sPreviousGroupMemberKey), 
 							that._getGroupIdLevel(oGroupMembersRequestDetails.sGroupId));
 					// only for development - if (that.mFinalLength[sPreviousGroupId]) jQuery.sap.log.fatal("assertion failed that final length of previous group id is false");
 					// the final length of the previous must be set to true
@@ -1934,9 +2106,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			// special handling for the last group contained in this level load
 			if (bIncompleteGroupMembersSet) {
 				// this will force the next call of _processGroupMembersQueryResponse() below to maintain the partial length 
-				oGroupMembersRequestDetails.iLength = 0;
-				that.mLength[oGroupMembersRequestDetails.sGroupId] = 0;
+				oGroupMembersRequestDetails.iLength = aParentGroupODataResult.length;				
 			}
+			oGroupMembersRequestDetails.oKeyIndexMapping = that._getKeyIndexMapping(oGroupMembersRequestDetails.sGroupId, oGroupMembersRequestDetails.iStartIndex);
 			var oParentGroupOData = jQuery.extend(true, {}, oData);
 			oParentGroupOData.results = aParentGroupODataResult;
 			that._processGroupMembersQueryResponse(oGroupMembersRequestDetails, oParentGroupOData);
@@ -1948,9 +2120,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			return;
 		}
 		// Collecting contexts
-		var sPreviousParentGroupId = this._getGroupIdFromContext( // setup for loop
+		sPreviousParentGroupId = this._getGroupIdFromContext( // setup for loop
 				this.oModel.getContext("/" + this.oModel._getKey(oData.results[0])), oRequestDetails.iLevel - 1);
-		var aParentGroupODataResult = [];
+		aParentGroupODataResult = [];
 		var bProcessFirstLoadedGroup = true;
 		for (var i = 0; i < oData.results.length; i++) {
 			// partition the result into several subsets each of which has a common parent group Id
@@ -1972,8 +2144,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 			sPreviousParentGroupId = sParentGroupId;
 		}
-		// process remaining left over (can happen if group ID switches on last entry)
-		if (aParentGroupODataResult.length == 1) {
+		// process remaining left over (can happen if results contains more than one entry and group ID switches on last entry)
+		if (oData.results.length > 1 && aParentGroupODataResult.length == 1) {
 			processSingleGroupFromLevelSubset(bProcessFirstLoadedGroup, oData.results.length == oRequestDetails.iLength);
 		}
 	};
@@ -1986,9 +2158,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name AnalyticalBinding.prototype._getLoadedContextsForGroup
 	 */
 	AnalyticalBinding.prototype._getLoadedContextsForGroup = function(sGroupId, iStartIndex, iLength) {
-		var aContext = [], oContext, aKey = this.mKey[sGroupId], sKey;
+		var aContext = [], oContext, fKey = this._getKeys(sGroupId), sKey;
 	
-		if (!aKey) {
+		if (!fKey) {
 			return aContext;
 		}
 	
@@ -2005,7 +2177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 		//	Loop through known data and check whether we already have all rows loaded
 		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
-			sKey = aKey[i];
+			sKey = fKey(i);
 			if (!sKey) {
 				break;
 			}
@@ -2023,18 +2195,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 */
 	AnalyticalBinding.prototype._calculateRequiredGroupSection = function(sGroupId, iStartIndex, iLength, iThreshold, aContext) {
 		// implementation copied from ODataListBinding; name changed here, because analytical binding comprises more calculations 
-		var iSectionLength, iSectionStartIndex, iPreloadedSubsequentIndex, iPreloadedPreviousIndex, iRemainingEntries, oSection = {}, aKey = this.mKey[sGroupId], sKey;
+		var iSectionLength, iSectionStartIndex, iPreloadedSubsequentIndex, iPreloadedPreviousIndex, iRemainingEntries, oSection = {}, fKey = this._getKeys(sGroupId), sKey;
 	
 		iSectionStartIndex = iStartIndex;
 		iSectionLength = 0;
 	
 		// check which data exists before startindex; If all necessary data is loaded iPreloadedPreviousIndex stays undefined
-		if (!aKey) {
+		if (!fKey) {
 			iPreloadedPreviousIndex = iStartIndex;
 			iPreloadedSubsequentIndex = iStartIndex + iLength;
 		} else {
 			for (var i = iStartIndex - 1; i >= Math.max(iStartIndex - iThreshold, 0); i--) {
-				sKey = aKey[i];
+				sKey = fKey(i);
 				if (!sKey) {
 					iPreloadedPreviousIndex = i + 1;
 					break;
@@ -2042,7 +2214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 			// check which data is already loaded after startindex; If all necessary data is loaded iPreloadedSubsequentIndex stays undefined
 			for (var j = iStartIndex + iLength; j < iStartIndex + iLength + iThreshold; j++) {
-				sKey = aKey[j];
+				sKey = fKey(j);
 				if (!sKey) {
 					iPreloadedSubsequentIndex = j;
 					break;
@@ -2095,6 +2267,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		oSection.startIndex = iSectionStartIndex;
 		oSection.length = iSectionLength;
 	
+		// this._trace(sGroupId, "calculateSection:\tstart = " + iSectionStartIndex + "\tlength = " + iSectionLength); // DISABLED FOR PRODUCTION 
+
 		return oSection;
 	};
 
@@ -2112,6 +2286,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 */
 	AnalyticalBinding.prototype._calculateRequiredGroupExpansion = function(sGroupId, iAutoExpandGroupsToLevel, iStartIndex, iLength) {
 		var oNO_MISSING_MEMBER = { groupId_Missing: null, length_Missing: 0 };
+		var that = this;
+
 		/**
 		 * helper function
 		 * 		Searches for missing members in the sub groups of the given sGroupId
@@ -2130,22 +2306,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			
 				if (aContext.length >= iLength) {
 					return oNO_MISSING_MEMBER;
-				} else {
-					if (that.mFinalLength[sGroupId]) {
-						if (aContext.length >= that.mLength[sGroupId]) {
-							return { groupId_Missing: null, length_Missing: iLength - aContext.length }; // group completely loaded, but some members are still missing
-						} else {
-							return { groupId_Missing: sGroupId, startIndex_Missing: iLastLoadedIndex + 1, length_Missing: iLength - aContext.length }; // loading must start here
-						}
+				} else if (that.mFinalLength[sGroupId]) {
+					if (aContext.length >= that.mLength[sGroupId]) {
+						return { groupId_Missing: null, length_Missing: iLength - aContext.length }; // group completely loaded, but some members are still missing
 					} else {
 						return { groupId_Missing: sGroupId, startIndex_Missing: iLastLoadedIndex + 1, length_Missing: iLength - aContext.length }; // loading must start here
 					}
+				} else {
+					return { groupId_Missing: sGroupId, startIndex_Missing: iLastLoadedIndex + 1, length_Missing: iLength - aContext.length }; // loading must start here
 				}
 			}
 			// deepest expansion level not yet reached, so traverse groups in depth-first order
-			var aContext = that._getLoadedContextsForGroup(sGroupId, iStartIndex, iLength);
-			var iLength_Missing = iLength, iLastLoadedIndex = iStartIndex + aContext.length - 1;
-			for (var i = -1, oContext; (oContext = aContext[++i]) !== undefined; ) {
+			var aContext2 = that._getLoadedContextsForGroup(sGroupId, iStartIndex, iLength);
+			var iLength_Missing = iLength, iLastLoadedIndex2 = iStartIndex + aContext2.length - 1;
+			for (var i = -1, oContext; (oContext = aContext2[++i]) !== undefined; ) {
 				iLength_Missing--; // count the current context			
 				var oGroupExpansionFirstMember = calculateRequiredSubGroupExpansion(that._getGroupIdFromContext(oContext, iLevel + 1), iAutoExpandGroupsToLevel, 0, iLength_Missing);
 				if (oGroupExpansionFirstMember.groupId_Missing == null) {
@@ -2165,12 +2339,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			if (that.mFinalLength[sGroupId] || iLength_Missing == 0) {
 				return { groupId_Missing: null, length_Missing: iLength_Missing }; // group completely loaded; maybe some members are still missing
 			} else {
-				return { groupId_Missing: sGroupId, startIndex_Missing: iLastLoadedIndex + 1, length_Missing: iLength_Missing }; // loading must start here
+				return { groupId_Missing: sGroupId, startIndex_Missing: iLastLoadedIndex2 + 1, length_Missing: iLength_Missing }; // loading must start here
 			}
 		};
 
 		// function implementation starts here
-		var that = this;
 		var iLevel = this._getGroupIdLevel(sGroupId);
 		if (iLevel == iAutoExpandGroupsToLevel + 1) {
 			sGroupId = this._getParentGroupId(sGroupId);
@@ -2197,17 +2370,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						break;
 					}
 					// determine position of sGroupId in members of group w/ ID sParentGroupId
-					var sGroupKey = this.mOwnKey[sGroupId];
+					var sGroupKey = this.mEntityKey[sGroupId];
 					if (! sGroupKey) {
 						jQuery.sap.log.fatal("assertion failed: entitykey for group w/ ID " + sGroupId + " not available");
 						return oNO_MISSING_MEMBER;
 					}
-					var iGroupIndex = this.mKey[sParentGroupId].indexOf(sGroupKey);
+					var iGroupIndex = this._findKeyIndex(sParentGroupId,sGroupKey);
 					if (iGroupIndex == -1) {
 						jQuery.sap.log.fatal("assertion failed: group w/ ID " + sGroupId + " not found in members of parent w/ ID " + sParentGroupId);
 						return oNO_MISSING_MEMBER;
 					}
-					if (iGroupIndex == this.mKey[sParentGroupId].length - 1) {
+					if (iGroupIndex == this._getKeyCount(sParentGroupId) - 1) {
 						if (this.mFinalLength[sParentGroupId]) { // last member in group
 							sGroupId = sParentGroupId;
 							--iLevel;
@@ -2216,7 +2389,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							return { groupId_Missing: sParentGroupId, startIndex_Missing: iGroupIndex + 1, length_Missing: iLength_Missing };
 						}
 					} else { // continue with next sibling in same level
-						sGroupKey = this.mKey[sParentGroupId][iGroupIndex + 1];
+						sGroupKey = this._getKey(sParentGroupId, iGroupIndex + 1);
 						sGroupId = this._getGroupIdFromContext(this.oModel.getContext('/' + sGroupKey), iLevel);
 						bFoundSibling = true;
 					}
@@ -2280,7 +2453,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * get the filter operator that matches the sort order set for the given property 
 	 */
 	AnalyticalBinding.prototype._getFilterOperatorMatchingPropertySortOrder = function(sPropertyName, bWithEqual) {
-		var sFilterOperator = sap.ui.model.FilterOperator.GT; // default if no sort order applied
+		var sFilterOperator;
 		switch (this._getEffectiveSortOrder(sPropertyName)) {
 			case odata4analytics.SortOrder.Ascending:
 				if (bWithEqual) {
@@ -2296,6 +2469,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					sFilterOperator = sap.ui.model.FilterOperator.LT;
 				}
 				break;
+			default: // null
+				 // default if no sort order applied - matches the default ascending order set for grouped dimensions in prepare...QueryRequest()
+				sFilterOperator = sap.ui.model.FilterOperator.GT; 
 		}
 		return sFilterOperator;
 	};
@@ -2425,8 +2601,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				sAncestorGroupId += aGroupId[i] + "/";
 			}
 		}
-		for (var i = iFromLevel; i <= iToLevel; i++) {
-			sAncestorGroupId += aGroupId[i] + "/";
+		for (var j = iFromLevel; j <= iToLevel; j++) {
+			sAncestorGroupId += aGroupId[j] + "/";
 			aAncestorGroupId.push(sAncestorGroupId);
 		}
 		return aAncestorGroupId;
@@ -2513,8 +2689,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	AnalyticalBinding.prototype._abortAllPendingRequestsByHandle = function() {
 // 		this._trace_enter("ReqHandle", "_abortAllPendingRequestsByHandle"); // DISABLED FOR PRODUCTION 		
 		for (var i = 0; i < this.oPendingRequestHandle.length; i++) {
-// 			if (this.oPendingRequestHandle[i]) this._trace_message ("ReqHandle", "abort index " + i);
-			this.oPendingRequestHandle[i] !== undefined && this.oPendingRequestHandle[i].abort();
+			if (this.oPendingRequestHandle[i]) {
+// 				this._trace_message("ReqHandle", "abort index " + i);
+				if (this.oPendingRequestHandle[i] !== undefined) {
+					this.oPendingRequestHandle[i].abort();
+				}
+			}
 		}
 		this.oPendingRequestHandle = [];
 // 		this._trace_leave("ReqHandle", "_abortAllPendingRequestsByHandle"); // DISABLED FOR PRODUCTION 		
@@ -2536,8 +2716,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			if (mParameters.groupId === undefined) {
 				jQuery.sap.log.fatal("missing group ID");
 			}
-			var sGroupId = mParameters.groupId;
-			return AnalyticalBinding._requestType.groupMembersQuery + (sGroupId == null ? "" : sGroupId);
+			return AnalyticalBinding._requestType.groupMembersQuery + (mParameters.groupId == null ? "" : mParameters.groupId);
 		case AnalyticalBinding._requestType.levelMembersQuery:
 			if (mParameters.level === undefined) {
 				jQuery.sap.log.fatal("missing level");
@@ -2645,14 +2824,455 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (bGroupCompleted) {
 			var oRelatedGroup = this.oGroupedRequests[sRequestId];
 			delete this.oGroupedRequests[sRequestId];
-			for ( var sOtherRequestId in oRelatedGroup) {
-				if (sOtherRequestId != sRequestId) {
-					this._cleanupGroupingForCompletedRequest(sOtherRequestId);
+			for ( var sOtherRequestId2 in oRelatedGroup) {
+				if (sOtherRequestId2 != sRequestId) {
+					this._cleanupGroupingForCompletedRequest(sOtherRequestId2);
 				}
 			}
 		}
 		return bGroupCompleted;
 	};
+
+	/********************************************************************************
+	 *** Service data consolidation (for multi-unit entities) 
+	 ********************************************************************************/
+	
+	AnalyticalBinding.prototype._getKeyIndexMapping = function(sGroupId, iStartIndex) {
+		var aKeyIndex = this.mKeyIndex[sGroupId];
+		var aServiceKey = this.mServiceKey[sGroupId];
+		var iServiceKeyIndex = iStartIndex;
+		if (aKeyIndex !== undefined) { // find appropriate service key index for given start index
+			// search for the last occupied key index
+			var iLastOccupiedIndex = iStartIndex;
+			if (iLastOccupiedIndex > 0) {
+				while (--iLastOccupiedIndex > 0) {
+					if (aKeyIndex[iLastOccupiedIndex] !== undefined) {
+						break;
+					}
+				}
+			}
+			var iLastOccupiedServiceKeyIndex;
+			if (iLastOccupiedIndex == 0) {
+				iLastOccupiedServiceKeyIndex = 0;
+			} else {
+				if (aKeyIndex[iLastOccupiedIndex] >= 0) {
+					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex];
+				} else if (aKeyIndex[iLastOccupiedIndex + 1] === undefined) { // iLastOccupiedIndex is the last key index before hole.
+					iLastOccupiedServiceKeyIndex = aKeyIndex[iLastOccupiedIndex] == "ZERO" ? 0 : -aKeyIndex[iLastOccupiedIndex];
+					while (aServiceKey[iLastOccupiedServiceKeyIndex + 1] !== undefined) {
+						++iLastOccupiedServiceKeyIndex;
+					}
+				} else { // iLastOccupiedServiceKeyIndex is the service key index before start of service keys related to next key index.
+					iLastOccupiedServiceKeyIndex = Math.abs(aKeyIndex[iLastOccupiedIndex + 1]) - 1;
+				}
+				if (aServiceKey[iLastOccupiedServiceKeyIndex] === undefined) {
+					jQuery.sap.log.fatal("assertion failed: no service key at iLastOccupiedServiceKeyIndex = " + iLastOccupiedServiceKeyIndex);
+				}
+			}
+			var iDistance = iStartIndex - iLastOccupiedIndex;
+			iServiceKeyIndex = iLastOccupiedServiceKeyIndex + iDistance;
+		}
+		var oKeyIndexMapping = {
+				sGroupId : sGroupId,
+				iIndex : iStartIndex,
+				iServiceKeyIndex : iServiceKeyIndex
+		};
+		return oKeyIndexMapping;
+	};
+	
+	AnalyticalBinding.prototype._moveKeyIndexMapping = function(oKeyIndexMapping, iIndexOffset) {
+		return this._getKeyIndexMapping(oKeyIndexMapping.sGroupId, oKeyIndexMapping.iIndex + iIndexOffset);
+	};
+	
+	// access entry key for a given group ID and index
+	AnalyticalBinding.prototype._getKey = function(sGroupId, iIndex) { // replaces this.mKey[sGroupId][i] in Table.js
+		var iServiceKeyIndex = this.mKeyIndex[sGroupId][iIndex];
+		if (iServiceKeyIndex === undefined) {
+			return undefined;
+		}
+		if (iServiceKeyIndex >= 0) {
+			return this.mServiceKey[sGroupId][iServiceKeyIndex];
+		}
+
+		if (this.mMultiUnitKey[sGroupId] === undefined) {
+			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId);
+// 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId);
+			return null;
+		}
+		var sKey = this.mMultiUnitKey[sGroupId][iIndex];
+		if (sKey === undefined) {
+			jQuery.sap.log.fatal("assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
+// 			this._trace_debug_if(true, "assertion failed: missing expected multi currency key for group with ID " + sGroupId + " at pos " + iIndex);
+			return null;
+		}
+		return sKey;
+	};
+
+	// access entry key array for a given group ID (as function)
+	AnalyticalBinding.prototype._getKeys = function(sGroupId) { // replaces this.mKey[sGroupId][i] in Table.js
+		if (this.mKeyIndex[sGroupId] === undefined) {
+			return undefined;
+		}
+		var that = this;
+		return function (iIndex) {
+			return that._getKey(sGroupId, iIndex);
+		};
+	};
+
+	// access array of service entry keys for a given group ID and index
+	AnalyticalBinding.prototype._getServiceKeys = function(sGroupId, iIndex) {
+		var aKeyIndex = this.mKeyIndex[sGroupId];
+		if (aKeyIndex === undefined) {
+			return undefined;
+		}
+		var aServiceKey = this.mServiceKey[sGroupId],
+			iServiceKeyIndex = aKeyIndex[iIndex];
+		
+		if (iServiceKeyIndex === undefined) {
+			return undefined;
+		}
+		if (iServiceKeyIndex >= 0) {
+			return [ aServiceKey[iServiceKeyIndex] ];
+		}
+		
+		var aGroupIndexServiceKey = [];
+		if (aKeyIndex[iIndex + 1] === undefined) {
+			iServiceKeyIndex = aKeyIndex[iIndex] == "ZERO" ? 0 : -aKeyIndex[iIndex];
+			while (aServiceKey[iServiceKeyIndex] !== undefined) {
+				aGroupIndexServiceKey.push(aServiceKey[iServiceKeyIndex++]);
+			}
+		} else {
+			iServiceKeyIndex = aKeyIndex[iIndex] == "ZERO" ? 0 : -aKeyIndex[iIndex];
+			for (var i = iServiceKeyIndex, iNextEntryIndex = Math.abs(aKeyIndex[iIndex + 1]); i < iNextEntryIndex; i++) {
+				aGroupIndexServiceKey.push(aServiceKey[i]);
+			}
+		}
+		return aGroupIndexServiceKey;
+	};
+	
+	// number of keys in a group
+	AnalyticalBinding.prototype._getKeyCount = function(sGroupId) { // replaces this.mKey[sGroupId].length in Table.js
+		if (this.mKeyIndex[sGroupId] === undefined) {
+			return undefined;
+		}
+		return this.mKeyIndex[sGroupId].length;
+	};
+	
+	// substitute for indexOf in the key array for some group
+	AnalyticalBinding.prototype._findKeyIndex = function(sGroupId, sKey) {
+		// TODO optimize by first looking into mMultiUnitKey; if not found, search in mServiceKey; if not found, return -1
+
+		// naive implementation follows
+		var aKeyIndex = this.mKeyIndex[sGroupId];
+		var aServiceKey = this.mServiceKey[sGroupId];
+		for (var i = 0; i < this.mLength[sGroupId]; i++) {
+			if (aKeyIndex[i] < 0) {
+				if (this.mMultiUnitKey[i] == sKey) {
+					return i;
+				}
+			} else if (aServiceKey[aKeyIndex[i]] == sKey) {
+				return i;
+			}
+		}
+		return -1;
+	};
+	
+	// save the key of a loaded entry at the given indexes 
+	AnalyticalBinding.prototype._setServiceKey = function(oKeyIndexMapping, sServiceKey) {
+		if (!this.mServiceKey[oKeyIndexMapping.sGroupId]) {
+			this.mServiceKey[oKeyIndexMapping.sGroupId] = [];
+		}
+		if (!this.mKeyIndex[oKeyIndexMapping.sGroupId]) {
+			this.mKeyIndex[oKeyIndexMapping.sGroupId] = [];
+		}
+
+		var bNewKey = this.mServiceKey[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iServiceKeyIndex] === undefined;
+		
+		this.mServiceKey[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iServiceKeyIndex++] = sServiceKey;
+		this.mKeyIndex[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iIndex++] = oKeyIndexMapping.iServiceKeyIndex - 1;
+		
+		return bNewKey;
+	};
+	
+	// save the keys of adjacent identical entries only differing in the given units; oKeyIndexMapping points to the position after the first multi-unit entry
+	// returns number of service keys that were not yet available locally
+	AnalyticalBinding.prototype._setAdjacentMultiUnitKeys = function(oKeyIndexMapping, oMultiUnitRepresentative, aMultiUnitEntry) {
+		if (!this.mServiceKey[oKeyIndexMapping.sGroupId]) {
+			this.mServiceKey[oKeyIndexMapping.sGroupId] = [];
+		}
+		if (!this.mKeyIndex[oKeyIndexMapping.sGroupId]) {
+			this.mKeyIndex[oKeyIndexMapping.sGroupId] = [];
+		}
+		if (!this.mMultiUnitKey[oKeyIndexMapping.sGroupId]) {
+			this.mMultiUnitKey[oKeyIndexMapping.sGroupId] = [];
+		}
+		
+		// need to adjust positions to point to the first multi-unit entry
+		// why? because in processGroupMemberQueryResponse(), advancing the mapping halts after(!) when the multi-unit case is detected, which happens with the second entry 
+		--oKeyIndexMapping.iIndex;
+		--oKeyIndexMapping.iServiceKeyIndex;
+
+		this.mMultiUnitKey[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iIndex] = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
+		
+		// the following setting in the key index serves two purposes: indicate the multi-unit situation and remember position of first related service key
+		this.mKeyIndex[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iIndex++] = oKeyIndexMapping.iServiceKeyIndex > 0 ? -oKeyIndexMapping.iServiceKeyIndex : "ZERO";
+
+		// store service keys and consider new keys in the discarded count
+		var iNewServiceKeyIndexCount = 0;
+		for (var i = 0; i < aMultiUnitEntry.length; i++) {
+			if (! this.mServiceKey[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iServiceKeyIndex]) {
+				++iNewServiceKeyIndexCount;
+			}
+			this.mServiceKey[oKeyIndexMapping.sGroupId][oKeyIndexMapping.iServiceKeyIndex++] = this.oModel._getKey(aMultiUnitEntry[i]);
+		}
+		return iNewServiceKeyIndexCount;
+	};
+
+	// combine loaded key index entries with a block of subsequent key index entries starting at the given key index mapping
+	AnalyticalBinding.prototype._mergeLoadedKeyIndexWithSubsequentIndexes = function(oKeyIndexMapping, aAggregationLevel, aSelectedUnitPropertyName, bIsFlatListRequest) {
+		/* 
+		 * Note:
+		 * This is a complex algorithm with an external description. 
+		 * You will need this description in order to understand this implementation.
+		 * The variable names are derived from the names used in the description, underscores in the names indicate indexed names.
+		 */
+		var aKI = this.mKeyIndex[oKeyIndexMapping.sGroupId], // is mKI in description
+			aSK = this.mServiceKey[oKeyIndexMapping.sGroupId], // is mSK in description
+			aMUK = this.mMultiUnitKey[oKeyIndexMapping.sGroupId], // is mMUK in description
+			iDiscardedEntriesCount = 0,
+			n_i = oKeyIndexMapping.iServiceKeyIndex,
+			n_e = oKeyIndexMapping.iIndex;
+		
+		var	oMultiUnitRepresentative, oMultiUnitEntryKey;
+
+		if (aKI === undefined) {
+			return iDiscardedEntriesCount;
+		}
+
+		// step 1: determine if the adjacent service keys denote same dimension key and therefore must be merged
+		var bNeedMultiUnitKeyMerge = false;
+		var sPreviousServiceKey = aSK[n_i - 1],
+			sNextServiceKey = aSK[n_i];
+
+		if (sNextServiceKey === undefined) {
+			return iDiscardedEntriesCount;
+		}
+		if (sPreviousServiceKey === undefined) {
+			jQuery.sap.log.fatal("assertion failed: missing expected entry before given key index");
+			return iDiscardedEntriesCount;			
+		} 
+		var oPreviousEntry = this.oModel.getObject("/" + sPreviousServiceKey);
+		var oNextEntry = this.oModel.getObject("/" + sNextServiceKey);
+		
+		var sPreviousEntryDimensionKeyString = "", 
+			sNextEntryDimensionKeyString = "";
+		for (var i = 0; i < aAggregationLevel.length; i++) {
+			sPreviousEntryDimensionKeyString += oPreviousEntry[aAggregationLevel[i]] + "|";
+			sNextEntryDimensionKeyString += oNextEntry[aAggregationLevel[i]] + "|";
+		}
+		bNeedMultiUnitKeyMerge = sPreviousEntryDimensionKeyString == sNextEntryDimensionKeyString;
+
+		// calculate nPrime_e for next steps
+		var nPrime_e = n_e;
+		if (nPrime_e >= this.mLength[oKeyIndexMapping.sGroupId]) {
+			jQuery.sap.log.fatal("assertion failed: service key exists,but no corresponding key index found");
+// 			this._trace_debug_if(true, "assertion failed: service key exists,but no corresponding key index found");
+			return iDiscardedEntriesCount;
+		}
+		while (aKI[nPrime_e] === undefined || Math.abs(aKI[nPrime_e]) < n_i) {
+			++nPrime_e;
+		}
+
+// 		this._trace_enter("SvcDatCons", "_mergeLoadedKeyIndexWithSubsequentIndexes", "groupId=" + oKeyIndexMapping.sGroupId, { n_e: n_e, nPrime_e: nPrime_e, n_i: n_i }, ["n_e","nPrime_e","n_i"]); // DISABLED FOR PRODUCTION 		
+
+		// step 2: combine loaded key index entries with subsequent key index entries
+		if (bNeedMultiUnitKeyMerge) { // case 1
+			if (Math.abs(aKI[nPrime_e]) == n_i && aKI[nPrime_e] < 0) { // case a) nPrime_e is a multi-unit entry and starts at n_i
+// 				this._trace_debug_if(aKI[nPrime_e] >= 0 || aMUK[nPrime_e] === undefined, "unexpected: no multi-unit entry found");
+				if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
+					if (aKI[n_e - 1] < 0) { // case I: (nPrime_e - 1) is a multi-unit entry 
+// 						this._trace_message("SvcDatCons", "case 1.a.I"); // DISABLED FOR PRODUCTION 		
+						aMUK[nPrime_e] = undefined; // delete its multi-unit entry 
+						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrime_e)
+						aKI.splice(n_e, nPrime_e - n_e + 1);
+						aMUK.splice(n_e, nPrime_e - n_e + 1);
+					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry 
+// 						this._trace_message("SvcDatCons", "case 1.a.II"); // DISABLED FOR PRODUCTION 		
+						aKI[n_e - 1] = -aKI[n_e - 1]; // make n_e - 1 a multi-unit entry
+						aMUK[n_e - 1] = aMUK[nPrime_e]; // reuse aMUK[nPrime_e] for aMUK[n_e - 1]
+						aMUK[nPrime_e] = undefined; // clear aMUK[nPrime_e]
+						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrime_e)
+						aKI.splice(n_e, nPrime_e - n_e + 1);
+						aMUK.splice(n_e, nPrime_e - n_e + 1);
+						iDiscardedEntriesCount = 1;
+					}
+				}
+			} else if (Math.abs(aKI[nPrime_e]) > n_i) { // case b) nPrimePrime_e = nPrime_e - 1 is a multi-unit entry pointing to service keys before n_i
+				var nPrimePrime_e = nPrime_e - 1;
+// 				this._trace_debug_if(n_e == 314, "stop");
+// 				this._trace_debug_if(!(Math.abs(aKI[nPrimePrime_e]) < n_i), "unexpected: this key index must point to a key before n_i");
+				
+				if (aKI[nPrimePrime_e] > 0) { // case I: (nPrimePrime_e) is not a multi-unit entry
+// 					this._trace_message("SvcDatCons", "case 1.b.I"); // DISABLED FOR PRODUCTION 		
+// 					this._trace_debug_if(aKI[nPrimePrime_e] < n_i - 1, "unexpected: this key index must point to the last read service key or before"); // this case would be 1 b) II ii
+					// create a multi-unit entry for nPrimePrime_e
+					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, bIsFlatListRequest);
+					oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
+					// make nPrimePrime_e a multi-unit entry
+					aKI[nPrimePrime_e] = -aKI[nPrimePrime_e];
+					aMUK[nPrimePrime_e] = oMultiUnitEntryKey;
+					if (nPrimePrime_e > n_e) {
+						// delete aKI entries n_e ... nPrimePrime_e - 1
+						aKI.splice(n_e, nPrimePrime_e - n_e);
+						aMUK.splice(n_e, nPrimePrime_e - n_e);
+					}
+// 					this._trace_debug_if(Math.abs(aKI[nPrime_e]) - Math.abs(aKI[nPrimePrime_e]) <= 1, "unexpected: marked as multi-unit key, but only a single service key!?");
+					if (oMultiUnitRepresentative.bIsNewEntry) {
+// 						this._trace_debug_if(Math.abs(aKI[nPrime_e]) - Math.abs(aKI[nPrimePrime_e]) > 2, "unexpected: more than one subsequent service key for this multi-unit entry, but no representative so far!?");
+						// two service keys contributing to this multi-unit entry, and one new multi-unit representative => 1 more service key to discard 
+						iDiscardedEntriesCount = 1;
+					} else {
+// 						this._trace_debug_if(oMultiUnitRepresentative.iIndex != nPrimePrime_e, "the existing multi-unit representative does not have index nPrimePrime_e");
+						// more than two service keys contributing to this multi-unit entry, which were already detected as "multi-unit" and therefore discarded.
+						// since the existing multi-unit representative has index nPrimePrime_e, the service key pointed to by this index was also already covered 
+						// => 0 more service key to discard 
+						iDiscardedEntriesCount = 0;
+					}
+				}
+				else // case II: (nPrimePrime_e) is a multi-unit entry
+					if (aKI[n_e - 1] < 0) { // case i: (n_e - 1) is a multi-unit entry 
+						if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
+// 							this._trace_message("SvcDatCons", "case 1.b.II.i"); // DISABLED FOR PRODUCTION 	
+							aMUK[nPrimePrime_e] = undefined; // delete its multi-unit entry 
+							// delete aKI entries n_e ... nPrimePrime_e - 1 and at nPrimePrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
+							aKI.splice(n_e, nPrimePrime_e - n_e + 1);
+							aMUK.splice(n_e, nPrimePrime_e - n_e + 1);
+						}
+					} else { // case ii: (n_e - 1) is NOT a multi-unit entry 
+// 						this._trace_message("SvcDatCons", "case 1.b.II.ii"); // DISABLED FOR PRODUCTION 
+// 						this._trace_debug_if(aKI[n_e - 1] != Math.abs(aKI[nPrimePrime_e]), "unexpected: n_e - 1 does not point to same entry as nPrimePrime_e");
+// 						this._trace_debug_if(Math.abs(aKI[nPrimePrime_e]) != n_i - 1, "unexpected: nPrimePrime_e should point to n_i - 1");
+						aKI[n_e - 1] = -aKI[n_e - 1]; // make n_e - 1 a multi-unit entry
+						aMUK[n_e - 1] = aMUK[nPrimePrime_e]; // reuse aMUK[nPrimePrime_e] for aMUK[n_e - 1]
+						aMUK[nPrimePrime_e] = undefined; // clear aMUK[nPrimePrime_e]
+						// delete aKI entries n_e ... nPrime_e - 1 and at nPrimePrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
+						aKI.splice(n_e, nPrimePrime_e - n_e + 1);
+						aMUK.splice(n_e, nPrimePrime_e - n_e + 1);
+					}
+			} else if (aKI[nPrime_e] == n_i) { // case c) nPrime_e is NOT a multi-unit entry 
+				if (nPrime_e > n_e) { // relevance check for merging the loaded key index section with subsequent indexes
+					if (aKI[n_e - 1] < 0) { // case I: (nPrime_e - 1) is a multi-unit entry
+// 						this._trace_message("SvcDatCons", "case 1.c.I"); // DISABLED FOR PRODUCTION 		
+						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
+						aKI.splice(n_e, nPrime_e - n_e + 1);
+						aMUK.splice(n_e, nPrime_e - n_e + 1);
+						iDiscardedEntriesCount = 1;
+					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry 
+// 						this._trace_message("SvcDatCons", "case 1.c.II"); // DISABLED FOR PRODUCTION 		
+						// create a multi-unit entry for n_e - 1
+						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, bIsFlatListRequest);
+						oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
+						if (! oMultiUnitRepresentative.bIsNewEntry) {
+							jQuery.sap.log.fatal("assertion failed: multi-unit entry already existed before");
+// 							this._trace_debug_if(! oMultiUnitRepresentative.bIsNewEntry, "assertion failed: multi-unit entry already existed before");
+						}
+						// make n_e - 1 a multi-unit entry
+						aKI[n_e - 1] = -aKI[n_e - 1];
+						aMUK[n_e - 1] = oMultiUnitEntryKey;
+						// delete aKI entries n_e ... nPrime_e - 1 and at nPrime_e (this will remove the redundant second multi-unit entry at nPrimePrime_e)
+						aKI.splice(n_e, nPrime_e - n_e + 1);
+						aMUK.splice(n_e, nPrime_e - n_e + 1);
+						iDiscardedEntriesCount = 1;
+					}
+				}
+			} else {
+				jQuery.sap.log.fatal("assertion failed: uncovered case detected");
+// 				this._trace_debug_if(true, "assertion failed: uncovered case detected");
+				return iDiscardedEntriesCount;
+			}
+		} else  // case 2
+			if (aKI[nPrime_e] > n_i) { // case a)
+// 				this._trace_message("SvcDatCons", "case 2.a"); // DISABLED FOR PRODUCTION 		
+				jQuery.sap.log.fatal("unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
+// 				this._trace_debug_if(true, "unstable query result for group ID " + oKeyIndexMapping.sGroupId + ": entries have been removed or added. Complete reload required");
+			} else  // case b) 
+// 				this._trace_message("SvcDatCons", "case 2.b"); // DISABLED FOR PRODUCTION 	
+				if (nPrime_e - n_e > 0) {
+					// delete aKI entries n_e ... nPrime_e - 1
+					aKI.splice(n_e, nPrime_e - n_e);
+// 					this._trace_debug_if(aMUK === undefined, "unexpected: aMUK is undefined, so no multi-unit keys so far!?");
+					aMUK.splice(n_e, nPrime_e - n_e);
+				}
+			
+		
+
+// 		this._trace_leave("SvcDatCons", "_mergeLoadedKeyIndexWithSubsequentIndexes", "dicardedCount=" + iDiscardedEntriesCount); // DISABLED FOR PRODUCTION 				
+		return iDiscardedEntriesCount;
+	};
+	
+	
+	// create a local multi unit entry by copying the given reference entry, and modifying this new entry: clear all unit properties that are not part of the aggregation level, and all measures
+	// returns { oEntry, bIsNewEntry) the multi-unit representativ entry and a flag whether it already existed before this call 
+	AnalyticalBinding.prototype._createMultiUnitRepresentativeEntry = function(sGroupId, oReferenceEntry, aSelectedUnitPropertyName, bIsFlatListRequest) {
+		// set up properties for measures and units in this new entry
+		var oMultiUnitEntry = jQuery.extend(true, {}, oReferenceEntry);
+		for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
+			oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
+		}
+		for ( var sMeasureName in this.oMeasureDetailsSet) {
+			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
+			if (!bIsFlatListRequest && !this.mAnalyticalInfoByProperty[sMeasureName].total) {
+				if (oMeasureDetails.rawValuePropertyName != undefined) {
+					oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = undefined;
+				}
+				if (oMeasureDetails.formattedValuePropertyName != undefined) {
+					oMultiUnitEntry[oMeasureDetails.formattedValuePropertyName] = undefined;
+				}
+			} else {
+				if (oMeasureDetails.rawValuePropertyName != undefined) {
+					oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = null; // cannot be "*" because of type validation! 
+				}
+				if (oMeasureDetails.formattedValuePropertyName != undefined) {
+					oMultiUnitEntry[oMeasureDetails.formattedValuePropertyName] = "*";
+				}
+			}
+		}
+		/*
+		 * assign a key to this new entry that allows to import it into the OData model that is guaranteed to be stable when used for multiple
+		 * bindings 1) Take all(!) grouping dimensions in alphabetical order of their names 2) Concatenate the values of these dimenensions in this
+		 * order separated by "," 3) append some indicator such as "-multiunit-not-dereferencable" to mark this special entry
+		 */
+		var sMultiUnitEntryKey = "";
+
+		for (var l = 0; l < this.aAllDimensionSortedByName.length; l++) {
+			var sDimVal = oMultiUnitEntry[this.aAllDimensionSortedByName[l]];
+			sMultiUnitEntryKey += (sDimVal === undefined ? "" : sDimVal) + ",";
+		}
+		sMultiUnitEntryKey += "-multiple-units-not-dereferencable";
+		
+		// check if an entry already exists; if so, dont proceed, but return it
+		var iMultiUnitEntryIndex;
+		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = jQuery.inArray(sMultiUnitEntryKey, this.mMultiUnitKey[sGroupId])) != -1) {
+			return { oEntry: this.oModel.getObject("/" + sMultiUnitEntryKey), bIsNewEntry : false, iIndex: iMultiUnitEntryIndex }; // already created
+		}
+		
+		// this modified copy must be imported to the OData model as a new entry with a modified key and OData metadata
+		oMultiUnitEntry.__metadata.uri = sMultiUnitEntryKey;
+		delete oMultiUnitEntry.__metadata["self"]; 
+		delete oMultiUnitEntry.__metadata["self_link_extensions"];
+		oMultiUnitEntry["^~volatile"] = true; // mark entry to distinguish it from others contained in the regular OData result
+		this.oModel._importData(oMultiUnitEntry, {});
+		// mark the context for this entry as volatile to facilitate special treatment by consumers
+		var sMultiUnitEntryModelKey = this.oModel._getKey(oMultiUnitEntry);
+		this.oModel.getContext('/' + sMultiUnitEntryModelKey)["_volatile"] = true;
+		return { oEntry: oMultiUnitEntry, bIsNewEntry : true }; 
+	};
+	
+	
+	
+	/********************************
+	 *** Miscellaneous
+	 ********************************/
 	
 	AnalyticalBinding.prototype._clearAllPendingRequests = function() {
 		this.oPendingRequests = {};
@@ -2666,25 +3286,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @function
 	 */
 	AnalyticalBinding.prototype.resetData = function(oContext) {
-		if (oContext) {
-			//Only reset specific content
-			var sPath = oContext.getPath();
+		var sGroupId = oContext ? oContext.getPath() : undefined;
+		this._resetData(sGroupId);
+	};
 	
-			delete this.mKey[sPath];
-			delete this.mOwnKey[sPath];
-			delete this.mLength[sPath];
-			delete this.mFinalLength[sPath];
+	AnalyticalBinding.prototype._resetData = function(sGroupId) {
+		if (sGroupId) {
+			// reset only specific content
+			delete this.mServiceKey[sGroupId];
+			delete this.mServiceLength[sGroupId];
+			delete this.mServiceFinalLength[sGroupId];
+			
+			delete this.mKeyIndex[sGroupId];
+			delete this.mLength[sGroupId];
+
+			delete this.mMultiUnitKey[sGroupId];
+			delete this.mEntityKey[sGroupId];
 		} else {
-			this.mKey = {};
-			this.mOwnKey = {};
+			this.mServiceKey = {};
+			this.mServiceLength = {};
+			this.mServiceFinalLength = {};
+			this.mFinalLength = this.mServiceFinalLength;
+			
+			this.mKeyIndex = {};
 			this.mLength = {};
-			this.mFinalLength = {};
+
+			this.mMultiUnitKey = {};
+			
+			this.mEntityKey = {};
 		}
 	};
 	
 	/**
-	 * Refreshes the binding, check whether the model data has been changed and fire change event if this is the case. For server side models this should refetch
-	 * the data from the server. To update a control, even if no data has been changed, e.g. to reset a control after failed validation, please use the parameter
+	 * Refreshes the binding, check whether the model data has been changed and fire change event if this is the case. For service side models this should refetch
+	 * the data from the service. To update a control, even if no data has been changed, e.g. to reset a control after failed validation, please use the parameter
 	 * bForceUpdate.
 	 * 
 	 * @public
@@ -2700,14 +3335,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {
-				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				var sResolvedPath = this.oModel.res3olve(this.sPath, this.oContext);
 				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 					bChangeDetected = true;
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.mKey, function(i, aNodeKeys) {
+				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
 					jQuery.each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
@@ -2746,7 +3381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			if (this.bNeedsUpdate || !mChangedEntities) {
 				bChangeDetected = true;
 			} else {
-				jQuery.each(this.mKey, function(i, aNodeKeys) {
+				jQuery.each(this.mServiceKey, function(i, aNodeKeys) {
 					jQuery.each(aNodeKeys, function(i, sKey) {
 						if (sKey in mChangedEntities) {
 							bChangeDetected = true;
@@ -2784,8 +3419,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		for (var oDimensionName in this.oDimensionDetailsSet)
 			aSelectedDimension.push(oDimensionName);
 		oAnalyticalQueryRequest.setAggregationLevel(aSelectedDimension);
-		for (var oDimensionName in this.oDimensionDetailsSet) {
-			var oDimensionDetails = this.oDimensionDetailsSet[oDimensionName];
+		for (var oDimensionName2 in this.oDimensionDetailsSet) {
+			var oDimensionDetails = this.oDimensionDetailsSet[oDimensionName2];
 			var bIncludeText = (oDimensionDetails.textPropertyName != undefined);
 			oAnalyticalQueryRequest.includeDimensionKeyTextAttributes(oDimensionDetails.name, // bIncludeKey: No, always needed!
 					true, bIncludeText, oDimensionDetails.aAttributeName);
@@ -2795,8 +3430,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		for (var sMeasureName in this.oMeasureDetailsSet)
 			aSelectedMeasure.push(sMeasureName);
 		oAnalyticalQueryRequest.setMeasures(aSelectedMeasure);
-		for ( var sMeasureName in this.oMeasureDetailsSet) {
-			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
+		for ( var sMeasureName2 in this.oMeasureDetailsSet) {
+			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName2];
 			var bIncludeRawValue = (oMeasureDetails.rawValuePropertyName != undefined);
 			var bIncludeFormattedValue = (oMeasureDetails.formattedValuePropertyName != undefined);
 			var bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
@@ -2829,17 +3464,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
 		
 		// search and remove the $select
-		for (var i = 0, l = aParam.length; i < l; i++) {
-			if (/^\$select/i.test(aParam[i])) {
-				aParam.splice(i, 1);
+		for (var j = 0, l = aParam.length; j < l; j++) {
+			if (/^\$select/i.test(aParam[j])) {
+				aParam.splice(j, 1);
 				break;
 			}
 		}
 		
 		// add the new $select param which is sorted like the Table
 		var aVisibleCols = [];
-		for (var i = 0, l = this.aAnalyticalInfo.length; i < l; i++) {
-			var oCol = this.aAnalyticalInfo[i];
+		for (var k = 0, m = this.aAnalyticalInfo.length; k < m; k++) {
+			var oCol = this.aAnalyticalInfo[k];
 			if (oCol.visible) {
 				aVisibleCols.push(oCol.name);
 			}
@@ -2860,60 +3495,103 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		
 	};
 	
-	
 	/********************************
 	 *** Tracing execution
 	 ********************************/
 	
-	/** DISABLED FOR PRODUCTION 
-// 	 *    to enable, search using regex for "^// (.*\._trace_.*)", replace by "$1" 
+	/** DISABLED FOR PRODUCTION
+// 	 *    to enable, search using regex for "^// (.*\._trace_.*)", replace by "$1"
 // 	 *    to disable, search using regex for "^(.*\._trace_.*)", replace by "// $1"
 	 *
 // 	AnalyticalBinding.prototype._trace_enter = function(groupid, scope, input_msg, _arguments, arg_components) {
-		if (!this._traceMsgCtr) this._traceMsgCtr = { level: 0, msg: [] };
+		if (!this._traceMsgCtr) {
+			this._traceMsgCtr = { level: 0, msg: [] };
+		}
 		this._traceMsgCtr.msg.push( { group: groupid, level: ++this._traceMsgCtr.level, scope: scope, msg: input_msg, details: _arguments, arg_components: arg_components, enter: true } );
 	};
 	
 // 	AnalyticalBinding.prototype._trace_leave = function (groupid, scope, output_msg, results, arg_components) {
-		if (!this._traceMsgCtr) throw "leave without enter";
+		if (!this._traceMsgCtr) {
+			throw "leave without enter";
+		}
 		this._traceMsgCtr.msg.push( { group: groupid, level: this._traceMsgCtr.level--, scope: scope, msg: output_msg, details: results, arg_components: arg_components, leave: true } );
 	};
 	 
-// 	AnalyticalBinding.prototype._trace_message = function (groupid, message, details) {
-		if (!this._traceMsgCtr) throw "message without enter";
-		this._traceMsgCtr.msg.push( { group: groupid, level: this._traceMsgCtr.level, msg: message, details: details } );
+// 	AnalyticalBinding.prototype._trace_message = function (groupid, input_msg, _arguments, arg_components) {
+		if (!this._traceMsgCtr) {
+			throw "message without enter";
+		}
+		this._traceMsgCtr.msg.push( { group: groupid, level: this._traceMsgCtr.level, msg: input_msg, details: _arguments, arg_components: arg_components } );
 	};
 	
+// 	AnalyticalBinding.prototype._trace_if_message = function (condition, groupid, message, details) {
+		if (condition) {
+// 			this._trace_message(groupid, message, details); 
+		}
+	};
+	
+// 	AnalyticalBinding.prototype._trace_debug_if = function (condition, message, details) {
+// 		if (this._trace_debug_switch === undefined) {
+// 			this._trace_debug_switch = true;
+		}
+// 		if (this._trace_debug_switch && condition) {
+			debugger; 
+		}
+	};
+
+// 	AnalyticalBinding.prototype._trace_debug = function () {
+		debugger; 
+	};
+
+// 	AnalyticalBinding.prototype._trace_debug_switch = function (onoroff) {
+// 		this._trace_debug_switch = onoroff;
+	};
+
 // 	AnalyticalBinding.prototype._trace_dump = function (aGroupId) {
 		var fRenderMessage = function (line) {
 			var s = "[" + line.group + "          ".slice(0,10 - line.group.length) + "]";
-			for (var i = 0; i < line.level; i++) s+= "  ";
-			if (line.enter) s += "->" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
-			else if (line.leave) s += "<-" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
-			else s += "  ";
-			if (line.msg) s += line.msg + ",";
-			if (line.details && line.arg_components)
-				for (var i = 0; i < line.arg_components.length; i++) 
-					s += line.arg_components[i] + "=" + eval("line.details." + line.arg_components[i]) + (i < line.arg_components.length - 1 ? "," : ""); 
+			for (var i = 0; i < line.level; i++) {
+				s += "  ";
+			}
+			if (line.enter) {
+				s += "->" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
+			}
+			else if (line.leave) {
+				s += "<-" + line.scope + (line.msg || line.arg_components ? ":\t" : "");
+			} else {
+				s += "  ";
+			}
+			if (line.msg) {
+				s += line.msg + ",";
+			}
+			if (line.details && line.arg_components) {
+				for (var j = 0; j < line.arg_components.length; j++) {
+					s += line.arg_components[j] + "=" + eval("line.details." + line.arg_components[j]) + (j < line.arg_components.length - 1 ? "," : "");
+				}
+			}
 			s += "\n";
 			return s;
-		}
+		};
 		var fRender = function (aMsg) {
 			var s = "";
 			for (var i = 0; i < aMsg.length; i++) {
-				if (!aGroupId || aGroupId.indexOf (aMsg[i].group) != -1) s += fRenderMessage(aMsg[i]);
+				if (!aGroupId || jQuery.inArray(aMsg[i].group, aGroupId) != -1) {
+					s += fRenderMessage(aMsg[i]);
+				}
 			}
 			return s;
-		} 
-		if (!this._traceMsgCtr) return;
-		return "\n" + fRender (this._traceMsgCtr.msg);
+		};
+		if (!this._traceMsgCtr) {
+			return "";
+		}
+		return "\n" + fRender(this._traceMsgCtr.msg);
 	};
 
 // 	AnalyticalBinding.prototype._trace_reset = function () {
 		delete this._traceMsgCtr;
 	}; 
-	**/
 	
+	**/
 	return AnalyticalBinding;
 
 }, /* bExport= */ true);

@@ -297,7 +297,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			this._oItemNavigation.setSelectedIndex(this.indexOfItem(this.getSelectedItem()));
 
 			// set the page size
-			this._oItemNavigation.setPageSize(20);
+			this._oItemNavigation.setPageSize(10);
 		};
 
 		/**
@@ -654,7 +654,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @function
 		 */
 		SelectList.prototype.getDefaultSelectedItem = function(aItems) {
-			return this.findFirstEnabledItem();
+			return null;
 		};
 
 		/**
@@ -711,8 +711,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * Setter for property <code>selectedItemId</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
-		 * If the provided <code>vItem</code> has a default value,
-		 * the first enabled item will be selected (if any).
 		 *
 		 * @param {string | undefined} vItem New value for property <code>selectedItemId</code>.
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
@@ -745,10 +743,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
-		 * If the provided <code>sKey</code> has a default value,
-		 * the first enabled item will be selected (if any).
-		 * In the case that an item has the default key value, it will be selected instead.
-		 *
 		 * @param {string} sKey New value for property <code>selectedKey</code>.
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
@@ -761,9 +755,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 			if (oItem || (sKey === "")) {
 
-				// If the "sKey" value is an empty string "" or undefined,
-				// the first enabled item will be selected (if any).
-				// In the case that an item has the default key value, it will be selected instead.
 				if (!oItem && sKey === "") {
 					oItem = this.getDefaultSelectedItem();
 				}

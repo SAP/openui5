@@ -123,6 +123,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	/**
+	 * @private
+	 */
+	sap.m.ObjectAttribute.prototype.onsapenter = function(oEvent) {
+		if (!!this.getActive()) {
+			this.firePress({
+				domRef : this.getDomRef()
+			});
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	sap.m.ObjectAttribute.prototype.onsapspace = function(oEvent) {
+		this.onsapenter(oEvent);
+	};
+	
+	/**
 	 * See 'return'.
 	 * 
 	 * @private

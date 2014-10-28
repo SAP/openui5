@@ -1,0 +1,43 @@
+<mvc:View
+  controllerName="sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses"
+  xmlns:l="sap.ui.layout"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+<Table id="idProductsTable"
+    items="{/Styles}">
+    <headerToolbar>
+      <Toolbar>
+        <Label text="These are all CSS-classes that can be used for Theme-dependent styling"></Label>
+      </Toolbar>
+    </headerToolbar>
+      <columns>
+      	<Column
+        	width="22em"
+        	hAlign="Left">
+        	<Text text="Style Class Name" />
+      	</Column>
+      	<Column
+        	demandPopin="true"
+        	hAglin="Center">
+        	<Text text="Sample" />
+      	</Column>
+      	<Column
+      		minScreenWidth="Tablet" 
+      		width="22em"
+      		hAglin="Right">
+      		<Text text="Css String"/>
+      	</Column>
+      </columns>
+	<items>
+		<ColumnListItem>
+		<cells>
+			<Text text="{styleClass}"/>
+			<core:HTML content="&lt;div class=&quot;{styleClass} sampling&quot;&gt; Sample &lt;/div&gt;"></core:HTML>
+			<Text text="{stylingString}" class=""/>
+		</cells>
+		</ColumnListItem>
+	</items>
+
+   </Table>
+</mvc:View>

@@ -659,6 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// determine whether jQuery version is less than 1.8 (height and width behaves different!!)
 		this._bjQueryLess18 = jQuery.sap.Version(jQuery.fn.jquery).compareTo("1.8") < 0;
 	
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	
@@ -881,6 +882,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var $this = this.$();
 		var iColumnCount = this._getVisibleColumnCount();
 		var iTotalColumnCount = iColumnCount;
+		var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
 	
 		// initialization of item navigation for the Column Headers
 		if (!this._oColHdrItemNav) {
@@ -913,10 +915,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// to later determine the position of the first TD in the aItemDomRefs we keep the
 		// count of TDs => aCount - TDs = first TD (add the row headers to the TD count / except the first one!)
 		var iTDCount = aItemDomRefs.length;
+		var iInitialIndex = 0;
 		
 		// add the row header items (if visible)
-		if (this.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
-				this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly) {
+		if (bHasRowHeader) {
 			var aRowHdrDomRefs = $this.find(".sapUiTableRowHdr").get();
 			for (var i = aRowHdrDomRefs.length - 1; i >= 0; i--) {
 				aItemDomRefs.splice(i * iColumnCount, 0, aRowHdrDomRefs[i]);
@@ -927,6 +929,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			iTDCount--;
 			// add the row header to the column count
 			iTotalColumnCount++;
+			iInitialIndex = 1;
 		}
 		
 		// add the column items
@@ -935,9 +938,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 		
 		// add the select all item
-		if (this.getSelectionMode() !== sap.ui.table.SelectionMode.None &&
-				this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly &&
-				this.getColumnHeaderVisible()) {
+		if (bHasRowHeader && this.getColumnHeaderVisible()) {
 			var aRowHdr = $this.find(".sapUiTableColRowHdr").get();
 			for (var i = this._getHeaderRowCount() - 1; i >= 0; i--) {
 				aItemDomRefs.splice(i * iColumnCount, 0, aRowHdr[0]);
@@ -946,10 +947,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		
 		// initialization of item navigation for the Table control
 		if (!this._oItemNavigation) {
+			this._iLastSelectedDataRow = 1;
 			this._oItemNavigation = new ItemNavigation();
 			this._oItemNavigation.setTableMode(true);
 			this._oItemNavigation.attachEvent(ItemNavigation.Events.BeforeFocus, function(oEvent) {
 				this.$("ariadesc").text("");
+			}, this);
+			this._oItemNavigation.attachEvent(ItemNavigation.Events.AfterFocus, function(oEvent) {
+				var iRow = Math.floor(oEvent.getParameter("index") / this._oItemNavigation.iColumns);
+				if (iRow > 0) {
+					this._iLastSelectedDataRow = iRow;
+				}
 			}, this);
 			this.addDelegate(this._oItemNavigation);
 		}
@@ -958,7 +966,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oItemNavigation.setColumns(iTotalColumnCount);
 		this._oItemNavigation.setRootDomRef($this.find(".sapUiTableCnt").get(0));
 		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
-		this._oItemNavigation.setFocusedIndex(aItemDomRefs.length - iTDCount);
+		this._oItemNavigation.setFocusedIndex(iInitialIndex);
 	
 	};
 	
@@ -1364,7 +1372,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oHSb.bind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.bind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.bind($this.find(".sapUiTableRowHdrScr").get(0));
-	
+
+		jQuery("body").bind('webkitTransitionEnd transitionend',
+			jQuery.proxy(function(oEvent) {
+				if (jQuery(oEvent.target).has($this).length > 0) {
+					this._handleResize();
+				}
+			}, this));
 	};
 	
 	
@@ -1391,7 +1405,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._oHSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableCtrlScrFixed").get(0));
 		this._oVSb.unbind($this.find(".sapUiTableRowHdrScr").get(0));
-	
+
+		jQuery("body").unbind('webkitTransitionEnd transitionend');
 	};
 	
 	
@@ -2567,12 +2582,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 	
 	/**
-	 * handles the cell contextmenu eventing of the table
+	 * handles the cell contextmenu eventing of the table, open the menus for cell, group header and column header
 	 * @private
 	 */
 	Table.prototype.oncontextmenu = function(oEvent) {
-		if (this._findAndfireCellEvent(this.fireCellContextmenu, oEvent, this._oncellcontextmenu)) {
+		var $Target = jQuery(oEvent.target);
+		var $Header = $Target.closest('.sapUiTableCol');
+		if ($Header.length > 0) {
+			var iColIndex = parseInt($Header.attr('data-sap-ui-colindex'), 10);
+			var oColumn = this._getVisibleColumns()[iColIndex];
+			oColumn._openMenu();
 			oEvent.preventDefault();
+		} else {
+			if (this._findAndfireCellEvent(this.fireCellContextmenu, oEvent, this._oncellcontextmenu)) {
+				oEvent.preventDefault();
+			}
 		}
 	};
 	
@@ -2764,14 +2788,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	
 		// select all?
 		if (jQuery.sap.containsOrEquals(this.getDomRef("selall"), oEvent.target)) {
-			if (this._getSelectableRowCount() === this.getSelectedIndices().length) {
-				this.clearSelection();
-			} else {
-				this.selectAll();
-			}
-			if (!!sap.ui.Device.browser.internet_explorer) {
-				this.$("selall").focus();
-			}
+			this._toggleSelectAll();
 			return;
 		}
 	
@@ -3779,7 +3796,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 		return iRowIndex === this.getVisibleRowCount() - 1;
 	};
-	
+
 	/**
 	 * enters the action mode. in the action mode the user can navigate through the
 	 * interactive controls of the table by using the TAB & SHIFT-TAB. this table is
@@ -3820,7 +3837,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 //        EDIT AN SCROLL!
 	
 		if (this._bActionMode) {
-	
+
 			// in the navigation mode we use the item navigation
 			this._bActionMode = false;
 			this.addDelegate(this._oItemNavigation);
@@ -3852,6 +3869,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	
 	};
 	
+	/**
+	 * Return the focused row index.
+	 * @return {int} the currently focused row index.
+	 * @private
+	 */
+	Table.prototype._getFocusedRowIndex = function() {
+		var iSelectedRowInColumn = Math.ceil(this._oItemNavigation.iFocusedIndex / this._oItemNavigation.iColumns) + this.getFirstVisibleRow();
+		if (!this.getColumnHeaderVisible()) {
+			iSelectedRowInColumn++;
+		}
+		return iSelectedRowInColumn - 1;
+	};
+	
+	/**
+	 * Checks whether the row of the currently focused cell is selected or not.
+	 * @return {boolean} true or false
+	 * @private
+	 */
+	Table.prototype._isFocusedRowSelected = function() {
+		var iSelectedRowInColumn = Math.ceil(this._oItemNavigation.iFocusedIndex / this._oItemNavigation.iColumns) +  this.getFirstVisibleRow();
+		if (!this.getColumnHeaderVisible()) {
+			iSelectedRowInColumn++;
+		}
+		return this.isIndexSelected(iSelectedRowInColumn - 1);
+	};
 	
 	// =============================================================================
 	// KEYBOARD HANDLING EVENTS
@@ -3860,12 +3902,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	// FYI: two more relevant things are handled in the onclick and onfocusin event
 	
 	/**
-	 * handle the row selection via SPACE or ENTER key
+	 * handle the row selection via SPACE or ENTER key if key is pressed on a group header, the open state is toggled
 	 * @private
 	 */
 	Table.prototype.onsapselectmodifiers =
 	Table.prototype.onsapselect = function(oEvent) {
 		if (oEvent.srcControl !== this && jQuery.inArray(oEvent.srcControl,this.getRows()) === -1 && jQuery.inArray(oEvent.srcControl,this.getColumns()) === -1) {
+			return;
+		}
+		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
+		if ($Parent.length > 0) {
+			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
+			var oBinding = this.getBinding("rows");
+			if (oBinding) {
+				if (oBinding.isExpanded(iRowIndex)) {
+					oBinding.collapse(iRowIndex);
+				} else {
+					oBinding.expand(iRowIndex);
+				}
+			}
+			oEvent.preventDefault();
 			return;
 		}
 		this._bShowMenu = true;
@@ -3923,6 +3979,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					}
 				}
 			}
+		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
+			// CTRL + A handling
+			this._toggleSelectAll();
+			
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation(true);
 		}
 	};
 	
@@ -3937,25 +3999,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/**
 	 * handle the SHIFT-TAB key
 	 * <ul>
-	 *   <li>Navigation Mode: jump to the next focusable control before the table</li>
-	 *   <li>Action Mode: focus previous focusable control (wrap at the beginning)</li>
+	 *   <li>Navigation Mode:
+	 *      <ul>
+	 *          <li>If focus is on header: jump to the next focusable control before the table</li>
+	 *          <li>If focus in on content: jump to header for the current column</li>
+	 *      </ul>
+	 *   <li>Action Mode: switch back to navigation mode</li>
 	 * </ul>
 	 * @private
 	 */
 	Table.prototype.onsaptabprevious = function(oEvent) {
 		var $this = this.$();
 		if (this._bActionMode) {
-			if ($this.find(".sapUiTableCtrlFixed").firstFocusableDomRef() === oEvent.target) {
-				$this.find(".sapUiTableCtrlScroll").lastFocusableDomRef().focus();
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-			}
+			this._leaveActionMode();
+			oEvent.preventDefault();
 		} else {
-			// in case of having the focus in the row or column header we do not need to
-			// place the focus to the div before the table control because there we do
-			// not need to skip the table controls anymore.
-			if (this._oItemNavigation.getFocusedDomRef() === oEvent.target &&
-					jQuery.sap.containsOrEquals($this.find(".sapUiTableCCnt").get(0), oEvent.target)) {
+			var oIN = this._oItemNavigation;
+			if (jQuery.contains($this.find('.sapUiTableCCnt')[0], oEvent.target)) {
+				var iColumn = oIN.getFocusedIndex() % oIN.iColumns;
+				oIN.focusItem(iColumn, oEvent);
+				oEvent.preventDefault();
+			} else if (oIN.getFocusedDomRef() === oEvent.target && jQuery.sap.containsOrEquals($this.find(".sapUiTableCCnt").get(0), oEvent.target)) {
+				// in case of having the focus in the row or column header we do not need to
+				// place the focus to the div before the table control because there we do
+				// not need to skip the table controls anymore.
 				this._bIgnoreFocusIn = true;
 				$this.find(".sapUiTableCtrlBefore").focus();
 				this._bIgnoreFocusIn = false;
@@ -3966,21 +4033,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/**
 	 * handle the TAB key:
 	 * <ul>
-	 *   <li>Navigation Mode: jump to the next focusable control after the table</li>
-	 *   <li>Action Mode: focus next focusable control (wrap at the end)</li>
+	 *   <li>Navigation Mode:
+	 *      <ul>
+	 *          <li>If focus is on header: jump to the first data column of the focused column header</li>
+	 *          <li>If focus in on content: jump to the next focusable control after the table</li>
+	 *      </ul>
+	 *   <li>Action Mode: switch back to navigation mode</li>
 	 * </ul>
 	 * @private
 	 */
 	Table.prototype.onsaptabnext = function(oEvent) {
 		var $this = this.$();
 		if (this._bActionMode) {
-			if ($this.find(".sapUiTableCCnt").lastFocusableDomRef() === oEvent.target) {
-				$this.find(".sapUiTableCCnt").firstFocusableDomRef().focus();
-				oEvent.preventDefault();
-				oEvent.stopPropagation();
-			}
+			this._leaveActionMode();
+			oEvent.preventDefault();
 		} else {
-			if (this._oItemNavigation.getFocusedDomRef() === oEvent.target) {
+			var oIN = this._oItemNavigation;
+			if (jQuery.contains($this.find('.sapUiTableColHdrCnt')[0], oEvent.target)) {
+				oIN.focusItem(oIN.getFocusedIndex() + oIN.iColumns * this._iLastSelectedDataRow, oEvent);
+				oEvent.preventDefault();
+			} else if (oIN.getFocusedDomRef() === oEvent.target) {
 				this._bIgnoreFocusIn = true;
 				$this.find(".sapUiTableCtrlAfter").focus();
 				this._bIgnoreFocusIn = false;
@@ -4007,6 +4079,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	};
 	
 	/**
+	 * Implements selecting/deselecting rows when pressing SHIFT + DOWN
+	 * @private
+	 */
+	Table.prototype.onsapdownmodifiers = function(oEvent) {
+		if (oEvent.shiftKey) {
+			var iFocusedRow = this._getFocusedRowIndex();
+			
+			if (this._isFocusedRowSelected()) {
+				this.addSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
+			} else {
+				this.removeSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
+			}
+			
+
+			if (this._isBottomRow(oEvent)) {
+				this._scrollNext();
+			}
+		}
+	};
+
+	/**
+	 * Implements selecting/deselecting rows when pressing SHIFT + UP
+	 * @private
+	 */
+	Table.prototype.onsapupmodifiers = function(oEvent) {
+		if (oEvent.shiftKey) {
+			var iFocusedRow = this._getFocusedRowIndex();
+
+			if (this._isFocusedRowSelected()) {
+				this.addSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
+			} else {
+				this.removeSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
+			}
+
+			if (this._isTopRow(oEvent)) {
+				// Prevent that focus jumps to header in this case.
+				if (this.getFirstVisibleRow() != 0) {
+					oEvent.stopImmediatePropagation(true);
+				}
+				this._scrollPrevious();
+			}
+		}
+	};
+	
+	/**
 	 * dynamic scrolling when reaching the top row with the ARROW UP key
 	 * @private
 	 */
@@ -4029,10 +4146,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onsappagedown = function(oEvent) {
-		if (!this._bActionMode && this._isBottomRow(oEvent)) {
-			this._scrollPageDown();
+		if (!this._bActionMode) {
+			var $this = this.$();
+			var oIN = this._oItemNavigation;
+
+			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var iHeaderRows = $this.find(".sapUiTableColHdr").length;
+
+			// Check if focus is on header
+			// Special Handling is required here:
+			// - If not in the last header row, jump to the last header row in the same column
+			// - If in the last header row, scroll table to first row and jump to first row, same column
+			if (this.getColumnHeaderVisible() && oIN.iFocusedIndex < (oIN.iColumns * iHeaderRows)) {
+				// focus is on header
+				var iCol = oIN.iFocusedIndex % oIN.iColumns;
+				if ((oIN.iFocusedIndex <= (oIN.iColumns * iHeaderRows) && oIN.iFocusedIndex >= (oIN.iColumns * iHeaderRows) - oIN.iColumns) ||
+					(iCol === 0 && bRowHeader)) {
+					// move focus to first data row, scroll table to top
+					this.setFirstVisibleRow(0);
+					oIN.focusItem(oIN.iColumns * iHeaderRows + iCol, oEvent);
+				} else {
+					// set focus to last header row, same column if possible
+					oIN.focusItem(oIN.iColumns * iHeaderRows - oIN.iColumns + iCol, oEvent);
+				}
+
+				oEvent.stopImmediatePropagation(true);
+			} else {
+				if (this._isBottomRow(oEvent)) {
+					this._scrollPageDown();
+				}
+			}
+			oEvent.preventDefault();
 		}
-		oEvent.preventDefault();
+	};
+	
+	/**
+	 * dynamic scrolling when reaching the top row with the PAGE DOWN key
+	 * @private
+	 */
+	Table.prototype.onsappagedownmodifiers = function(oEvent) {
+		if (!this._bActionMode && oEvent.altKey) {
+			var oIN = this._oItemNavigation;
+			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+
+			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+			var iNewCol;
+			if (iCol == 0 && bRowHeader) {
+				iNewCol = 1;
+			} else {
+				var iVisibleColumns = this._aVisibleColumns.length;
+				var iMaxIndex = this._getVisibleColumns().length;
+				if (!bRowHeader) {
+					iMaxIndex--;
+				}
+				if (iVisibleColumns === 0) {
+					iNewCol = iMaxIndex;
+				} else {
+					iNewCol = Math.min(iMaxIndex, iCol + iVisibleColumns);
+				}
+			}
+			oIN.focusItem(oIN.iFocusedIndex - (iCol - iNewCol), oEvent);
+			oEvent.stopImmediatePropagation(true);
+			oEvent.preventDefault();
+		}
 	};
 	
 	/**
@@ -4041,41 +4217,324 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.onsappageup = function(oEvent) {
 		if (!this._bActionMode) {
+			var $this = this.$();
 			var oIN = this._oItemNavigation;
-			var iIndex = this.getColumnHeaderVisible() ? oIN.iColumns : 0;
-			// we need to make sure to move to the first row before switching into the column header
-			if (oIN.iFocusedIndex >= iIndex && this.getFirstVisibleRow() != 0) {
-				var iCol = oIN.iFocusedIndex % oIN.iColumns;
-				oIN.focusItem(iIndex + iCol, oEvent);
+
+			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+			var iHeaderRows = $this.find(".sapUiTableColHdr").length;
+			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+
+			if (this.getColumnHeaderVisible() && oIN.iFocusedIndex < (oIN.iColumns * iHeaderRows)) {
+				// focus is on header
+				if (oIN.iFocusedIndex > oIN.iColumns) {
+					// focus is not on the first header row, move to first
+					oIN.focusItem(iCol, oEvent);
+				}
+				oEvent.stopImmediatePropagation(true);
+			} else {
+				// focus is on content area
+				if (this.getColumnHeaderVisible() && this.getFirstVisibleRow() == 0 && this._isTopRow(oEvent)) {
+					// focus is on first row, move to last header row, same column
+					if (bRowHeader && iCol === 0) {
+						oIN.focusItem(iCol, oEvent);
+					} else {
+						oIN.focusItem(oIN.iColumns * iHeaderRows - oIN.iColumns + iCol, oEvent);
+					}
+					oEvent.stopImmediatePropagation(true);
+				} else {
+					var iIndex = this.getColumnHeaderVisible() ? oIN.iColumns * iHeaderRows : 0;
+					oIN.focusItem(iIndex + iCol, oEvent);
+					oEvent.stopImmediatePropagation(true);
+
+					if (this._isTopRow(oEvent)) {
+						this._scrollPageUp();
+					}
+				}
+			}
+
+			oEvent.preventDefault();
+		}
+	};
+
+	/**
+	 * dynamic scrolling when reaching the top row with the PAGE UP key
+	 * @private
+	 */
+	Table.prototype.onsappageupmodifiers = function(oEvent) {
+		if (!this._bActionMode && oEvent.altKey) {
+			var oIN = this._oItemNavigation;
+			var bRowHeader = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+
+			var iCol = oIN.iFocusedIndex % oIN.iColumns;
+			if (iCol > 0) {
+				var iNewCol;
+				if (iCol == 1 && bRowHeader) {
+					iNewCol = 0;
+				} else {
+					var iVisibleColumns = this._aVisibleColumns.length;
+					if (iVisibleColumns === 0) {
+						if (bRowHeader) {
+							iNewCol = 1;
+						} else {
+							iNewCol = 0;
+						}
+					} else {
+						var iMin = 1;
+						if (!bRowHeader) {
+							iMin = 0;
+						}
+						iNewCol = Math.max(iMin, iCol - iVisibleColumns);
+					}
+				}
+				oIN.focusItem(oIN.iFocusedIndex - (iCol - iNewCol), oEvent);
+			}
+			oEvent.stopImmediatePropagation(true);
+			oEvent.preventDefault();
+		}
+	};
+
+	/**
+	 * Keyboard Handling regarding HOME key
+	 * 
+	 * @private
+	 */
+	Table.prototype.onsaphome = function(oEvent) {
+		var bIsRowOnly = (this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.RowOnly);
+
+		// If focus is on a group header, do nothing.
+		var bIsGroupCell = jQuery(oEvent.target).parents(".sapUiTableGroupHeader").length > 0;
+		if (bIsGroupCell) {
+			oEvent.stopImmediatePropagation(true);
+			return;
+		}
+
+		var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
+		var iColumns = this._oItemNavigation.iColumns;
+		var iSelectedCellInRow = iFocusedIndex % iColumns;
+
+		var offset = 0;
+		if (!bIsRowOnly) {
+			offset = 1;
+		}
+
+		if (iSelectedCellInRow > this.getFixedColumnCount() + offset) {
+			// If there is a fixed column, stop right of it.
+			oEvent.stopImmediatePropagation(true);
+			this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() + offset, null);
+		} else if (!bIsRowOnly) {
+			if (iSelectedCellInRow > 1) {
+				// if focus is anywhere in the row, move focus to the first column cell.
+				oEvent.stopImmediatePropagation(true);
+				this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + 1, null);
+			} else if (iSelectedCellInRow == 1) {
+				// if focus is on first cell, move focus to row header.
+				oEvent.stopImmediatePropagation(true);
+				this._oItemNavigation.focusItem(iFocusedIndex - 1, null);
+			} else {
+				// If focus is on selection cell, do nothing.
 				oEvent.stopImmediatePropagation(true);
 			}
-			if (this._isTopRow(oEvent)) {
-				this._scrollPageUp();
-			}
 		}
-		oEvent.preventDefault();
 	};
-	
+
+	/**
+	 * Keyboard Handling regarding END key
+	 * 
+	 * @private
+	 */
+	Table.prototype.onsapend = function(oEvent) {
+		// If focus is on a group header, do nothing.
+		var bIsGroupCell = jQuery(oEvent.target).parents(".sapUiTableGroupHeader").length > 0;
+		if (bIsGroupCell) {
+			oEvent.stopImmediatePropagation(true);
+			return;
+		}
+
+		// If focus is on a selection cell, move focus to the first cell of the same row.
+		var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
+		var iColumns = this._oItemNavigation.iColumns;
+		var iSelectedCellInRow = iFocusedIndex % iColumns;
+
+		var bIsRowOnly = (this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly);
+		var offset = 0;
+		if (!bIsRowOnly) {
+			offset = 1;
+		}
+
+		if (iSelectedCellInRow === 0 && bIsRowOnly) {
+			// If focus is in row header, select first cell in same row.
+			oEvent.stopImmediatePropagation(true);
+			this._oItemNavigation.focusItem(iFocusedIndex + 1, null);
+		} else if (iSelectedCellInRow < this.getFixedColumnCount() - offset) {
+			// if their is a fixed column, stop left of it.
+			oEvent.stopImmediatePropagation(true);
+			this._oItemNavigation.focusItem(iFocusedIndex - iSelectedCellInRow + this.getFixedColumnCount() - offset, null);
+		}
+	};
+
 	/**
 	 * dynamic scrolling when using CTRL + HOME key
+	 * 
 	 * @private
 	 */
 	Table.prototype.onsaphomemodifiers = function(oEvent) {
 		if (oEvent.metaKey || oEvent.ctrlKey) {
-			this.setFirstVisibleRow(0);
+			var $this = this.$();
+
+			// Is target a table header cell
+			var oTableHeader = $this.find(".sapUiTableColHdrCnt")[0];
+			var bIsTableHeaderCell = jQuery.contains(oTableHeader, oEvent.target);
+
+			// If focus is on a group header, do nothing.
+			if (bIsTableHeaderCell) {
+				oEvent.stopImmediatePropagation(true);
+				return;
+			}
+
+			var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
+			var iColumns = this._oItemNavigation.iColumns;
+			var iSelectedRowInColumn = Math.ceil(iFocusedIndex / iColumns) - 1;
+			var iSelectedCellInRow = iFocusedIndex % iColumns;
+
+			if (this.getColumnHeaderVisible()) {
+				if (iSelectedRowInColumn == 1) {
+					// if focus is in first row, select corresponding header
+					oEvent.stopImmediatePropagation(true);
+					this._oItemNavigation.focusItem(iSelectedCellInRow, null);
+				} else if (iSelectedRowInColumn > 1) {
+					oEvent.stopImmediatePropagation(true);
+
+					// if focus is in any row, select first cell row
+					this.setFirstVisibleRow(0);
+
+					var iTargetIndex = iSelectedCellInRow + iColumns;
+					this._oItemNavigation.focusItem(iTargetIndex, null);
+				}
+			} else {
+				oEvent.stopImmediatePropagation(true);
+
+				// if focus is in any row, select first cell row
+				this.setFirstVisibleRow(0);
+
+				var iTargetIndex = iFocusedIndex - iSelectedRowInColumn * iColumns;
+				this._oItemNavigation.focusItem(iTargetIndex, null);
+			}
 		}
 	};
-	
+
 	/**
 	 * dynamic scrolling when using CTRL + END key
+	 * 
 	 * @private
 	 */
 	Table.prototype.onsapendmodifiers = function(oEvent) {
 		if (oEvent.metaKey || oEvent.ctrlKey) {
-			this.setFirstVisibleRow(this._getRowCount() - this.getVisibleRowCount());
+			var $this = this.$();
+			
+			// Is target a table header cell
+			var oTableHeader = $this.find(".sapUiTableColHdrCnt")[0];
+			var bIsTableHeaderCell = jQuery.contains(oTableHeader, oEvent.target);
+			
+			var iFocusedIndex = this._oItemNavigation.iFocusedIndex;
+			var iColumns = this._oItemNavigation.iColumns;
+			var iSelectedCellInRow = iFocusedIndex % iColumns;
+			
+			oEvent.stopImmediatePropagation(true);
+			
+			if (bIsTableHeaderCell) {
+				// If focus is on a group header, select first cell row after header.
+				this._oItemNavigation.focusItem(iFocusedIndex + iColumns, null);
+			} else {
+				// if focus is on any cell row, select last cell row.
+				this.setFirstVisibleRow(this._getRowCount() - this.getVisibleRowCount());
+				var iTargetIndex = this._oItemNavigation.aItemDomRefs.length - (iColumns - iSelectedCellInRow);
+				this._oItemNavigation.focusItem(iTargetIndex, null);
+			}
+		}
+	};
+
+	/**
+	 * If on group header, close the group header, else do the default behaviour of item navigation
+	 * @private
+	 */
+	Table.prototype.onsapleft = function(oEvent) {
+		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
+		if ($Parent.length > 0) {
+			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
+			var oBinding = this.getBinding("rows");
+			if (oBinding && oBinding.isExpanded(iRowIndex)) {
+				oBinding.collapse(iRowIndex);
+			}
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
 		}
 	};
 	
+	/**
+	 * On shift+left on column header decrease the width of a column
+	 * @private
+	 */
+	Table.prototype.onsapleftmodifiers = function(oEvent) {
+		var $Target = jQuery(oEvent.target);
+		if ($Target.hasClass('sapUiTableCol')) {
+			var iColIndex = parseInt($Target.attr('data-sap-ui-colindex'), 10);
+			var oColumn = this._getVisibleColumns()[iColIndex];
+			 if (oEvent.shiftKey) {
+				oColumn.setWidth(parseInt(oColumn.getWidth(), 10) - 16 + "px");
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+			} else if (oEvent.ctrlKey || oEvent.metaKey) {
+				if (iColIndex - 1 >= 0) {
+					this.removeColumn(oColumn);
+					this.insertColumn(oColumn, iColIndex - 1);
+				}
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+			}
+		}
+	};
+
+	/**
+	 * If on group header, open the group header, else do the default behaviour of item navigation
+	 * @private
+	 */
+	Table.prototype.onsapright = function(oEvent) {
+		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
+		if ($Parent.length > 0) {
+			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
+			var oBinding = this.getBinding("rows");
+			if (oBinding && !oBinding.isExpanded(iRowIndex)) {
+				oBinding.expand(iRowIndex);
+			}
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		}
+	};
+	
+	/**
+	 * On shift+left on column header decrease the width of a column
+	 * @private
+	 */
+	Table.prototype.onsaprightmodifiers = function(oEvent) {
+		var $Target = jQuery(oEvent.target);
+		if ($Target.hasClass('sapUiTableCol')) {
+			var iColIndex = parseInt($Target.attr('data-sap-ui-colindex'), 10);
+			var aVisibleColumns = this._getVisibleColumns();
+			var oColumn = aVisibleColumns[iColIndex];
+			 if (oEvent.shiftKey) {
+				oColumn.setWidth(parseInt(oColumn.getWidth(), 10) + 16 + "px");
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+			} else if (oEvent.ctrlKey || oEvent.metaKey) {
+				if (iColIndex < aVisibleColumns.length) {
+					this.removeColumn(oColumn);
+					this.insertColumn(oColumn, iColIndex + 1);
+				}
+				oEvent.preventDefault();
+				oEvent.stopImmediatePropagation();
+			}
+		}
+	};
 	
 	// =============================================================================
 	// GROUPING
@@ -4686,13 +5145,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		
 	};
 	
+	/**
+	 * Toggles the selection state of all cells.
+	 * @private
+	 */
+	Table.prototype._toggleSelectAll = function() {
+		if (this._getSelectableRowCount() === this.getSelectedIndices().length) {
+			this.clearSelection();
+		} else {
+			this.selectAll();
+		}
+		if (!!sap.ui.Device.browser.internet_explorer) {
+			this.$("selall").focus();
+		}
+	};
+	
 	Table.prototype._restoreAppDefaultsColumnHeaderSortFilter = function () {
 		var aColumns = this.getColumns();
 		jQuery.each(aColumns, function(iIndex, oColumn){
 			oColumn._restoreAppDefaults();
 		});
 	};
-	
 
 	return Table;
 

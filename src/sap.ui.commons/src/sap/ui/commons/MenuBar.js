@@ -107,6 +107,8 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 	MenuBar.prototype.init = function() {
 		this.oOvrFlwMnu = null;
 		this.sCurrentFocusedItemRefId = null;
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	

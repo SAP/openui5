@@ -52,7 +52,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './MenuItemBase', '.
 		var rm = oRenderManager;
 		var oSubMenu = oItem.getSubmenu();
 		rm.write("<li ");
-		rm.writeAttribute("class", "sapUiMnuItm" + (oMenu.checkEnabled(oItem) ? "" : " sapUiMnuItmDsbl"));
+		
+		var sClass = "sapUiMnuItm";
+		if (oInfo.iItemNo == 1) {
+			sClass += " sapUiMnuItmFirst";
+		} else if (oInfo.iItemNo == oInfo.iTotalItems) {
+			sClass += " sapUiMnuItmLast";
+		}
+		if (!oMenu.checkEnabled(oItem)) {
+			sClass += " sapUiMnuItmDsbl";
+		}
+		if (oItem.getStartsSection()) {
+			sClass += " sapUiMnuItmSepBefore";
+		}
+		
+		rm.writeAttribute("class", sClass);
 		if (oItem.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oItem.getTooltip_AsString());
 		}

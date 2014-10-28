@@ -203,6 +203,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.setProperty("selectedKey", this.oSelectedItem.getKey(), true);
 			}
 		}
+		
+		// Deregister resize event before re-rendering
+		if (this._sResizeListenerNoFlexboxSupportId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
+			this._sResizeListenerNoFlexboxSupportId = null;
+		}
 	};
 	
 	IconTabHeader.prototype.invalidate = function() {
@@ -420,6 +426,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		//listen to resize
 		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(),  jQuery.proxy(this._fnResize, this));
+
+		// Change ITB content height on resize when ITB stretchContentHeight is set to true (IE9 fix)
+		if (!jQuery.support.hasFlexBoxSupport && this.getParent().getStretchContentHeight()) {
+			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(this.getParent().getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
+			this._fnResizeNoFlexboxSupport();
+		}
 	
 	};
 	
@@ -859,6 +871,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype._fnResize = function() {
 		var oHead = this.getDomRef("head");
 		this._checkOverflow(oHead, this.$());
+	};
+
+	/**
+	 * Resize handler for ITB content inside FixFlex layout (IE9 fix)
+	 * Calculate height on the content
+	 * @private
+	 */
+	sap.m.IconTabHeader.prototype._fnResizeNoFlexboxSupport = function() {
+		var $content = this.getParent().$("containerContent"),
+			iDiffOuterInnerHeight = $content.outerHeight(true) - $content.height();
+
+		// calculate and set content div height
+		$content.height(this.getParent().$().height() - $content.position().top - iDiffOuterInnerHeight);
+	};
+
+	sap.m.IconTabHeader.prototype.onExit = function() {
+		// Deregister resize event before re-rendering
+		if (this._sResizeListenerNoFlexboxSupportId) {
+			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerNoFlexboxSupportId);
+			this._sResizeListenerNoFlexboxSupportId = null;
+		}
 	};
 	
 	/** 

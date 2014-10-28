@@ -12,16 +12,27 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
+			var sUrlParameters = "?noglobals=true";
+
+			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+				// In ie8 sinon will introduce globals and less does not work so the execution is without check for globals but with noless
+				sUrlParameters = "?sap-ui-xx-noless=true"
+			}
+
+			function addTestPage(sUrl) {
+				suite.addTestPage(contextPath + sUrl + sUrlParameters);
+			}
+
 			//OPA
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa.qunit.html?noglobals=true");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa5.qunit.html?noglobals=true");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html?sap-ui-xx-noless=true&noglobals=true");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html?noglobals=true");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
 
 			//OPA matchers
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html?noglobals=true");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/matchers/PropertyStrictEquals.qunit.html?noglobals=true");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/matchers/AggregationContainsPropertyEquals.qunit.html?noglobals=true");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationFilled.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/PropertyStrictEquals.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/AggregationContainsPropertyEquals.qunit.html");
 
 			return suite;
 		}

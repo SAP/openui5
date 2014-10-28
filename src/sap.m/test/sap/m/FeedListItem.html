@@ -140,7 +140,7 @@
 		
 		
 		var oFeedListItemTemplate = new sap.m.FeedListItem({
-			type: sap.m.ListType.Active,
+			type: "{type}",
 			icon : "{icon}",
 			activeIcon : "{activeIcon}",
 			text : "{text}",
@@ -181,6 +181,7 @@
 					iconActive: true,
 					timestamp: "March 03, 2013",
 					info: "Approved",
+					type: sap.m.ListType.Active,
 				}, {
 					icon: sURI,
 					text: "This FeedListItem displays an ImagePool image. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
@@ -189,6 +190,7 @@
 					iconActive: true,
 					timestamp: "Dec 04, 2012",
 					info: "Rejected",
+					type: sap.m.ListType.Active,
 				}, {
 					icon: "images/female.jpg",
 					text: "This FeedListItem comes with senderActive = false and iconActive = false. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
@@ -197,6 +199,7 @@
 					iconActive: false,
 					timestamp: "Dec 02, 2012",
 					info: "Waiting for Approval",
+					type: sap.m.ListType.Navigation,
 				}, {
 					text: "This FeedListItem comes without an image and has a very long info text",
 					sender: "Christine Noah",
@@ -204,12 +207,16 @@
 					iconActive: true,
 					timestamp: "Nov 23, 2012",
 					info: "Waiting for Approval and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting and waiting",
+					type: sap.m.ListType.Navigation,
 				}, {
+					icon: "images/male.jpg",
+					activeIcon: "images/female.jpg",
 					text: "This one has no date",
 					sender: "Frank Black",
 					senderActive: true,
 					iconActive: true,
 					info: "New",
+					type: sap.m.ListType.Active,
 				}, {
 					text: "This one shows the default image",
 					sender: "Frank Black",

@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 			}
 	
 			// add parent context as sum context
-			if (oContext && oContextInfo.parent != null && iRealLength > 1 && !this.mParameters.sumOnTop && bHasMeasures) {
+			if (oContext && oContextInfo.parent != null && iRealLength > 1 && !this.mParameters.sumOnTop && bHasMeasures && this.bProvideGrandTotals) {
 				aContexts.push(oContext);
 				aContextInfos.push(this._createContextInfos([oContext], oContext, iPosition, iLevel - 1, iLength, iThreshold, true, iIndexOffset, 0)[0]);
 			}

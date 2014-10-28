@@ -185,8 +185,6 @@ sap.ui.define(['jquery.sap.global'],
 		if (accessibility) {
 	
 			rm.writeAttribute("role", "heading");
-			rm.writeAttribute("aria-labelledby", oControl.getId() + "-lbl");
-			rm.writeAttribute("tabindex", "0");
 	
 			if (oControl.getEnabled()) {
 				rm.writeAttribute("aria-disabled", "false");

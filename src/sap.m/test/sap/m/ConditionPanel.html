@@ -55,7 +55,8 @@
 			
 			oConditionPanel = new sap.m.P13nConditionPanel({
 	 			maxConditions: -1,
-	 			autoReduceKeyFieldItems: true
+	 			autoReduceKeyFieldItems: true,
+	 			showLabel: true
 			});
 			
 			oConditionPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
@@ -81,7 +82,7 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10"}, {key: "CompanyName", text: "Name", type: "text"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxlength: "10", tooltip : "Company Code"}, {key: "CompanyName", text: "Name", type: "text", isDefault: true}, {key: "CompanyDate", text: "Date", type: "date"}]);
  			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.BT, 
 				                     		sap.m.P13nConditionOperation.EQ, 
 		                             		sap.m.P13nConditionOperation.Contains, 
@@ -91,6 +92,12 @@
 		                             		sap.m.P13nConditionOperation.LE, 
 		                             		sap.m.P13nConditionOperation.GT, 
 		                             		sap.m.P13nConditionOperation.GE ]);
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
+ 			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
+ 			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
 			oConditionPanel.setConditions(aConditions);			
 	
 			show(oConditionPanel, "Filter");

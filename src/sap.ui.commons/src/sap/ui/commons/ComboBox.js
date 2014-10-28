@@ -857,6 +857,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		oPopup.setContent(oListBox);
 		oPopup.setAutoClose(true);
 		oPopup.setAutoCloseAreas([this.getDomRef()]);
+		oPopup.setFollowOf(sap.ui.core.Popup.CLOSE_ON_SCROLL);
 		oPopup.setDurations(0, 0); // no animations
 		oPopup.setInitialFocusId(this.getId() + '-input'); // to prevent popup to set focus to the ListBox -> stay in input field
 	

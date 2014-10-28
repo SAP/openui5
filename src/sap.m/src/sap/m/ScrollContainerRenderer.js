@@ -58,6 +58,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		
+		if (oControl.getFocusable()) {
+			oRm.writeAttributeEscaped("tabindex","0");
+		}
+		
 		oRm.write("><div id='" + oControl.getId() + "-scroll' class='sapMScrollContScroll'>");
 	
 		// render child controls

@@ -81,19 +81,12 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	Table.prototype.onAfterRendering = function() {
 		ListBase.prototype.onAfterRendering.call(this);
 	
-		// table root
-		var $table = jQuery(this.getTableDomRef());
-	
 		// if any item has navigation, add required class
-		this._navRenderedBy && $table.addClass("sapMListTblHasNav");
+		if (this._navRenderedBy) {
+			jQuery(this.getTableDomRef()).addClass("sapMListTblHasNav");
+		}
 	
-		// notify columns after rendering
-		this._notifyColumns("ColumnRendered", $table);
-	
-		// update select-all
 		this.updateSelectAllCheckbox();
-	
-		// render the overlay if necessary
 		this._renderOverlay();
 	};
 	
@@ -240,12 +233,23 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	};
 	
 	/*
-	 * Returns DOM References of items for keyboard navigation
+	 * Sets DOM References for keyboard navigation
 	 * @overwrite
 	 */
-	Table.prototype.getNavigationItemDomRefs = function(oItemsContainer) {
-		// popins are not in item navigation
-		return oItemsContainer.querySelectorAll(".sapMLIB");
+	Table.prototype.setNavigationItems = function(oItemNavigation) {
+		var $Header = this.$("tblHeader");
+		var $Footer = this.$("tblFooter");
+		var $Rows = this.$("tblBody").find(".sapMLIB");
+		
+		var oRootDomRef = this.getTableDomRef();
+		var aItemDomRefs = $Header.add($Rows).add($Footer).get();
+		
+		this._oItemNavigation.setRootDomRef(oRootDomRef);
+		this._oItemNavigation.setItemDomRefs(aItemDomRefs);
+		
+		if ($Header[0] && aItemDomRefs.length && oItemNavigation.getFocusedIndex() == -1) {
+			oItemNavigation.setFocusedIndex(1);
+		}
 	};
 	
 	/*
@@ -400,7 +404,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	/*
 	 * Returns colspan for all columns except navigation
 	 * Because we render navigation always even it is empty
-	 *
 	 * @protected
 	 */
 	Table.prototype.getColSpan = function() {
@@ -409,7 +412,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	/*
 	 * Returns the number of total columns
-	 *
 	 * @protected
 	 */
 	Table.prototype.getColCount = function() {
@@ -418,11 +420,37 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	/*
 	 * Returns whether or not the table is in pop-in mode
-	 *
 	 * @protected
 	 */
 	Table.prototype.hasPopin = function() {
 		return !!this._hasPopin;
+	};
+
+	
+	/*
+	 * Returns whether given event is initialized within header row or not
+	 * @protected
+	 */
+	Table.prototype.isHeaderRowEvent = function(oEvent) {
+		var $Header = this.$("tblHeader");
+		return !!jQuery(oEvent.target).closest($Header, this.getTableDomRef()).length;
+	};
+	
+	/*
+	 * Returns whether give event is initialized within footer row or not
+	 * @protected
+	 */
+	Table.prototype.isFooterRowEvent = function(oEvent) {
+		var $Footer = this.$("tblFooter");
+		return !!jQuery(oEvent.target).closest($Footer, this.getTableDomRef()).length;
+	};
+	
+	/*
+	 * Returns whether table has column footer row
+	 * @protected
+	 */
+	Table.prototype.hasFooterRow = function() {
+		return !!this._hasFooter;
 	};
 	
 	// keyboard handling
@@ -452,23 +480,35 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		this._handlePopinEvent(oEvent, true);
 	};
 	
-	// Handle tab key for pop-ins
+	// Handle tab key 
 	Table.prototype.onsaptabnext = function(oEvent) {
-		this._handlePopinEvent(oEvent);
-	};
-	
-	// Handle shift-tab key for pop-ins
-	Table.prototype.onsaptabprevious = function(oEvent) {
-		this._handlePopinEvent(oEvent);
-	};
-	
-	// Handle focus event for pop-ins
-	Table.prototype.onfocusin = function(oEvent) {
-		if (!this._handlePopinEvent(oEvent)) {
-			ListBase.prototype.onfocusin.call(this, oEvent);
+		if (this._handlePopinEvent(oEvent)) {
+			return;
+		}
+		
+		var $Row = jQuery();
+		if (this.isHeaderRowEvent(oEvent)) {
+			$Row = this.$("tblHeader");
+		} else if (this.isFooterRowEvent(oEvent)) {
+			$Row = this.$("tblFooter");
+		}
+		
+		var oLastTabbableDomRef = $Row.find(":sapTabbable").get(-1) || $Row[0];
+		if (oEvent.target === oLastTabbableDomRef) {
+			this.forwardTab(true);
 		}
 	};
 	
+	// Handle shift-tab key 
+	Table.prototype.onsaptabprevious = function(oEvent) {
+		var sTargetId = oEvent.target.id;
+		if (sTargetId == this.getId("tblHeader") || 
+			sTargetId == this.getId("tblFooter")) {
+			this.forwardTab(false);
+		} else {
+			this._handlePopinEvent(oEvent);
+		}
+	};
 
 	return Table;
 

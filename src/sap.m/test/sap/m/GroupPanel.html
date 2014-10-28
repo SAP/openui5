@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>GroupPanel - sap.m</title>
+
+<!-- ********************************************************************** -->
+<!-- SAPUI5 Bootstrap:                                                     -->
+<!-- Extend the "libs" property if you like to import additional libraries  -->
+<!-- ********************************************************************** -->
+<script id="sap-ui-bootstrap" 
+	type="text/javascript"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal"
+	src="../../../resources/sap-ui-core.js"
+	data-sap-ui-compatVersion="edge">
+</script>
+
+<script type="text/javascript">	
+	jQuery.sap.require("sap.m.P13nConditionPanel");
+	jQuery.sap.require("sap.m.P13nGroupItem");
+	jQuery.sap.require("sap.m.P13nGroupPanel");
+	
+	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", grouping: true};
+	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", grouping: true};
+	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", grouping: false};
+	aConditions= [oCondition0, oCondition1, oCondition2];    	
+	var oGroupPanel;
+	var oModel;
+	var iCount= 100;
+	
+	show= function(oPanel, sTitle) {
+		if (theDialogMode.getSelected()) {
+			oPanel.setContainerQuery(true);
+			oPanel.setLayoutMode("Desktop");
+
+			var oDialog = new sap.m.Dialog({title: sTitle, content: [oPanel], contentWidth: "1600px"});
+			if (this.$().closest(".sapUiSizeCompact").length > 0) { // check if the Token field runs in Compact mode
+				oDialog.addStyleClass("sapUiSizeCompact");
+			}			
+			oDialog.setBeginButton(new sap.m.Button({
+				text: "Close",
+				press: function() {
+					oDialog.close();
+				}
+			}));
+			
+			oDialog.open();
+		} else {
+			oPanel.placeAt("contentPanel", "only");
+		}		
+	};	
+	
+	var btnShow = new sap.m.Button({
+		text: "show GroupPanel",
+		press: function() {
+			oGroupPanel = new sap.m.P13nGroupPanel({
+			});
+			
+			oGroupPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
+			
+			oGroupPanel.setConditions(aConditions);			
+	
+			show(oGroupPanel, "Group");
+		}		
+	});
+	
+	
+	var btnShow2 = new sap.m.Button({
+		text: "show bound GroupPanel",
+		press: function() {
+			var oData = {
+				"items" : [ {
+					"key" : null,
+					"text" : "(none)",
+					"tooltip" : "nix"
+				},  {
+					"key" : "c0",
+					"text" : "Name"
+				}, {
+					"key" : "c1",
+					"text" : "Color"
+				}, {
+					"key" : "c2",
+					"text" : "Number"
+				}],
+				"groupItems" : [ {
+					"key" : "g0",
+					"columnKey" : "c1",
+					"operation" : "GroupAscending",
+					"grouping" : true
+				}, {
+					"key" : "g1",
+					"columnKey" : "c0",
+					"operation" : "GroupDescending",
+					"grouping" : false
+				} ]
+			};
+	
+			oModel = new sap.ui.model.json.JSONModel(oData);
+	
+			oGroupPanel = new sap.m.P13nGroupPanel({
+				removeGroupItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oData = oModel.getData();
+					oData.groupItems.forEach(function(oItem, iIndex) {
+						if (oItem.key === params.key) {
+							oData.groupItems.splice(iIndex, 1);
+							oModel.setData(oData, true);
+
+							sap.m.MessageToast.show("removeGroupItem ---> " + params.key + " #" + oModel.getData().groupItems.length);
+							return;
+						}
+					});					
+				},
+				addGroupItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oData = oModel.getData();
+					var oGroupItem = {
+						key : params.key,
+						columnKey : params.newItem.getColumnKey(),
+						operation : params.newItem.getOperation(),
+						grouping : params.newItem.getGrouping()
+					};
+					if (params.index) {
+						oData.groupItems.splice(params.index, 0, oGroupItem);
+					} else {
+						oData.groupItems.push(oGroupItem);
+					}
+					oModel.setData(oData, true);
+
+					sap.m.MessageToast.show("addGroupItem ---> " + params.key + " #" + oModel.getData().groupItems.length);
+				}
+			});
+			oGroupPanel.setModel(oModel);
+			oGroupPanel.bindItems("/items", new sap.m.P13nItem({
+				columnKey : "{key}",
+				text : "{text}",
+				tooltip : "{tooltip}"
+			}));
+			oGroupPanel.bindGroupItems("/groupItems", new sap.m.P13nGroupItem({
+				key : "{key}",
+				operation : "{operation}",
+				columnKey : "{columnKey}",
+				grouping : "{grouping}"
+			}));
+			
+			show(oGroupPanel, "Group");
+			
+			oFieldKey.setModel(oModel);
+			oFieldKey.bindValue("/groupItems/0/key");
+			oFieldKeyField.setModel(oModel);
+			oFieldKeyField.bindValue("/groupItems/0/columnKey");
+			oFieldOperation.setModel(oModel);
+			oFieldOperation.bindValue("/groupItems/0/operation");
+		}
+	});
+	
+	var btnValidate = new sap.m.Button({
+		text: "validate",
+		press: function() {
+			sap.m.MessageToast.show("validate= "+oGroupPanel.validateConditions());
+		}
+	});
+	
+	var btnConditions = new sap.m.Button({
+		text: "get Conditions",
+		press: function() {
+			aConditions = oGroupPanel.getConditions();
+	
+			var sConditions= ""; 
+			for (i = 0; i < aConditions.length; i++) {
+				var oCondition = aConditions[i];
+				sConditions+= "'" + oCondition.text + "' ";
+			}					
+	
+			sap.m.MessageToast.show("Conditions= "+sConditions);
+		}
+	});
+
+	var btnAddCondition = new sap.m.Button({
+		text: "add",
+		press: function() {
+			var oData= oModel.getData();
+			oData.groupItems.push({
+					"key" : "s" + iCount++,
+					"columnKey" : "c0",
+					"operation" : "Ascending",
+					"grouping" : true
+			});
+			oModel.setData(oData, true);
+
+			sap.m.MessageToast.show("add GroupItem into Model" + " #" + oModel.getData().groupItems.length);
+		}
+	});
+
+	var btnInsertCondition = new sap.m.Button({
+		text: "insert",
+		press: function() {
+			var oData= oModel.getData();
+			oData.groupItems.splice(0,0,{
+					"key" : "s" + iCount++,
+					"columnKey" : "c0",
+					"operation" : "Ascending",
+					"grouping" : true
+			});
+			oModel.setData(oData, true);
+
+			sap.m.MessageToast.show("insert GroupItem @0 into Model" + " #" + oModel.getData().groupItems.length);
+		}
+	});
+
+	var btnRemoveCondition = new sap.m.Button({
+		text: "remove",
+		press: function() {
+			var oData= oModel.getData();
+			oData.groupItems.splice(0, 1);
+			oModel.setData(oData, true);
+
+			sap.m.MessageToast.show("remove GroupItem from Model"+ " #" + oModel.getData().groupItems.length);
+		}
+	});
+
+	var oFieldKey = new sap.m.Input({
+		width: "100px"
+	});
+	var oFieldKeyField = new sap.m.Input({
+		width: "100px"
+	});
+	var oFieldOperation = new sap.m.Input({
+		width: "100px"
+	});
+
+	var theCompactMode= new sap.m.CheckBox({
+		selected: true,
+		text: "compactMode",
+		select : function() {
+			$("body").toggleClass("sapUiSizeCompact");
+		}
+	});
+
+	var theDialogMode= new sap.m.CheckBox({
+		selected: false,
+		text: "show on dialog",
+		select : function() {
+		}
+	});
+	
+	
+	btnShow.placeAt("content");
+	btnShow2.placeAt("content2");
+	btnValidate.placeAt("content");
+	btnConditions.placeAt("content");
+	oFieldKey.placeAt("content2");
+	oFieldKeyField.placeAt("content2");
+	oFieldOperation.placeAt("content2");
+	btnAddCondition.placeAt("content2");
+	btnInsertCondition.placeAt("content2");
+	btnRemoveCondition.placeAt("content2");
+	theCompactMode.placeAt("content");
+	theDialogMode.placeAt("content");
+		 	
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCompact" role="application">
+	<h1 id="header">Test Page for <code>sap.m.P13nGroupPanel</code></h1>
+
+	<div id="content" style="display:inline" ></div><br>
+	<div id="content2" style="display:inline" ></div><br>
+	<div id="contentPanel" style="display:inline" ></div><br>
+</body>
+</html>

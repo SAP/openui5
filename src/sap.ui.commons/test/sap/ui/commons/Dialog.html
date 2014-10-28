@@ -147,6 +147,29 @@
 						oDialog6.setTitle(sXss);
 					}
 				}).placeAt("uiArea6");
+				
+				var oListBox = new sap.ui.commons.ListBox({
+					visibleItems : 4
+				});
+				for (var i = 0; i < 100; i++) {
+					var sText = "Item" + i;
+					oListBox.addItem(new sap.ui.core.Item({
+						text : sText
+					}));
+				}
+				var oDialListBox = new sap.ui.commons.Dialog({
+					width : "200px",
+					content : [ oListBox ],
+					buttons : [ new sap.ui.commons.Button({
+						text : "Ok"
+					})]
+				});
+				var oButtonListBox = new sap.ui.commons.Button({
+					text : "Open Dialog with ListBox",
+					press : function(oEvent) {
+						oDialListBox.open();
+					}
+				}).placeAt("uiArea7");
 			}
 
 		</script>
@@ -165,5 +188,7 @@
 		<div id="uiArea5"></div>
 		<br/>
 		<div id="uiArea6"></div>
+		<br/>
+		<div id="uiArea7"></div>
 	</body>
 </html>

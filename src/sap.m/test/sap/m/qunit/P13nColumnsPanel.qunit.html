@@ -500,14 +500,6 @@
 	});
 
 
-	test("Shall check _clearModelStorage", function() {
-		ok(oP13nColumnsPanel._clearModelStorage, "Method does not exist");
-		
-		oP13nColumnsPanel._oModelData4ResetAll = sinon.stub();
-		oP13nColumnsPanel._clearModelStorage();
-		strictEqual(oP13nColumnsPanel._oModelData4ResetAll, null, "Reset of model storage does not work");
-	});
-
 	test("Shall check onAfterRendering", function() {
 		ok(oP13nColumnsPanel.onAfterRendering, "Method does not exist");
 		
@@ -527,7 +519,6 @@
 		oP13nColumnsPanel.onAfterRendering();
 		
 		strictEqual(oP13nColumnsPanel._bOnAfterRenderingFirstTimeExecuted, true, "Marker that onAfterRendering method was called shall be set to true");
-		strictEqual(oP13nColumnsPanel._oModelData4ResetAll, oInitialModel, "Model storage shall be filled with initial model");
 		strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Calculation of move button appearance shall be called");
 		strictEqual(sap.ui.Device.resize.attachHandler.called, true,"Resize handler shall be attached");
 		strictEqual(window.clearTimeout.called, true,"timer shall be cleared");
@@ -538,7 +529,6 @@
 		ok(oP13nColumnsPanel.exit, "Method does not exist");
 		
 		sap.ui.Device.resize.detachHandler = sinon.spy();
-		oP13nColumnsPanel._clearModelStorage = sinon.spy();
 		
 		var fMoveToStartButton = oP13nColumnsPanel._oMoveToStartButton.destroy; 
 		oP13nColumnsPanel._oMoveToStartButton.destroy = oMoveToStartButtonStub = sinon.stub();
@@ -579,7 +569,6 @@
 		strictEqual(oP13nColumnsPanel._oToolbar, null, "Toolbar shall be set to null");
 		strictEqual(oTableStub.called, true, "Destroy of table shall be be called");		
 		strictEqual(oP13nColumnsPanel._oTable, null, "Table shall be set to null");
-		strictEqual(oP13nColumnsPanel._clearModelStorage.called, true, "Clear to model storage shall be called");
 	});
 
 	test("Shall check _scrollToSelectedItem", function() {

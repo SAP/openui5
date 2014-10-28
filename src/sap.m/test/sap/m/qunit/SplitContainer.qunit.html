@@ -297,6 +297,91 @@
 				equal(oSplitContainer._onOrientationChange.callCount, 1, "OrientationChange event should be reacted by the SplitContainer when runs on phone.");
 				oSplitContainer.destroy();
 			});
+
+			test("Should show and hide a masterButton with a toolbar", function() {
+				// Arrange
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					},
+					oToolbar = new sap.m.Toolbar();
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				// System under test
+				var oSplitContainer = new sap.m.SplitContainer({
+					mode : "ShowHideMode",
+					detailPages : new sap.m.Page({
+						customHeader : oToolbar
+					})
+				});
+
+				// Act + Render
+				oSplitContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert Button is shown
+				ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
+
+
+				// Act 2 - change orientation
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+				oSplitContainer._fnResize();
+
+				// Asset Button is removed
+				ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
+
+				oSplitContainer.destroy();
+			});
+
+			test("Set custom header to current detail page after master button is already inserted", function(){
+				var oPortrait = {
+						landscape: false,
+						portrait: true
+					}, oSystem = {
+						desktop: true,
+						phone: false,
+						tablet: false
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oPage = new sap.m.Page({
+					title: "Detail Page"
+				}), oSplitContainer = new sap.m.SplitContainer({
+					detailPages: [
+						oPage
+					]
+				});
+
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(jQuery.contains(oPage.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef()), "Master button is rendered");
+
+				var oHeader = new sap.m.Bar();
+				oPage.setCustomHeader(oHeader);
+				sap.ui.getCore().applyChanges();
+
+				ok(jQuery.contains(oHeader.getDomRef(), oSplitContainer._oShowMasterBtn.getDomRef(), "Master button is inserted into the custom header"));
+
+				oSplitContainer.removeDetailPage(oPage);
+				strictEqual(oPage.setCustomHeader, sap.m.Page.prototype.setCustomHeader, "setCustomHeader function is restored after remove the Page from SplitContainer");
+
+				oPage.destroy();
+				oSplitContainer.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

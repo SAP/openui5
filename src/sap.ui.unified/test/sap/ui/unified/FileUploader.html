@@ -12,7 +12,7 @@
 				src="../../../../resources/sap-ui-core.js"
 				>
 		</script>
-	
+
 		<script type="text/javascript">
 
 			var oFileUploader1 = new sap.ui.unified.FileUploader("upload_1", {
@@ -26,6 +26,7 @@
 				fileType: ["pptx", "txt", "js"],
 				maximumFileSize: 2,
 				uploadOnChange: false,
+				multiple: true,
 				buttonText: "Choose!",
 				additionalData: "abc=123&test=456",
 				uploadProgress: function (oEvent) {
@@ -52,7 +53,7 @@
 				}
 			});
 
-			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the local server: ", labelFor: oFileUploader1});
+			var oLabel = new sap.ui.commons.Label({ text: "Fileuploader to the local server (multiple allowed): ", labelFor: oFileUploader1});
 			oLabel.placeAt("target1");
 			oFileUploader1.placeAt("target1");
 
@@ -205,7 +206,7 @@
 				}
 			});
 			oButton.placeAt("target5");
-			 
+
 			var oButton2 = new sap.ui.commons.Button({
 				text : "Upload Uploader 2",
 				press : function() {
@@ -238,7 +239,7 @@
 				}
 			});
 			oButton5.placeAt("target5");
-			
+
 			var oButton6 = new sap.ui.commons.Button({
 				text: "Toggle Value State of Uploader 4",
 				press: function () {
@@ -265,7 +266,7 @@
 				}
 			});
 			oButton6.placeAt("target6");
-			
+
 			var oButton7 = new sap.ui.commons.Button({
 				text: "Upload",
 				press: function () {
@@ -277,18 +278,71 @@
 				}
 			});
 			oButton7.placeAt("target7");
-			
+
+			var oFileUploader6 = new sap.ui.unified.FileUploader("upload_6", {
+				name: "test6",
+				uploadUrl: "../../../../upload/",
+				value: "",
+				width: "400px",
+				tooltip: "Upload your file to the local server.",
+				placeholder: "Choose a file for uploading...",
+				icon: "images/save_grey.png",
+				iconHovered: "images/save_white.png",
+				iconSelected: "images/save_old.png",
+				uploadComplete: function (oEvent) {
+					alert("File has been uploaded via File Uploader 6!");
+				}
+			});
+
+			var oLabel6 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (with icon): ", labelFor: oFileUploader6});
+			oLabel6.placeAt("target8");
+			oFileUploader6.placeAt("target8");
+
+			var oFileUploader7 = new sap.ui.unified.FileUploader("upload_7", {
+				name: "test7",
+				uploadUrl: "../../../../upload/",
+				value: "",
+				width: "400px",
+				tooltip: "Upload your file to the local server.",
+				placeholder: "Choose a file for uploading...",
+				icon: "sap-icon://lead",
+				iconFirst: false,
+				uploadComplete: function (oEvent) {
+					alert("File has been uploaded via File Uploader 7!");
+				}
+			});
+
+			var oLabel7 = new sap.ui.commons.Label({ text: "Fileuploader to the local server (with icon font): ", labelFor: oFileUploader7});
+			oLabel7.placeAt("target9");
+			oFileUploader7.placeAt("target9");
+
+			var oButton8 = new sap.ui.commons.Button({
+				text : "Upload Uploader 6",
+				press : function() {
+					oFileUploader6.upload();
+				}
+			});
+			oButton8.placeAt("target10");
+
+			var oButton9 = new sap.ui.commons.Button({
+				text : "Upload Uploader 7",
+				press : function() {
+					oFileUploader7.upload();
+				}
+			});
+			oButton9.placeAt("target10");
+
 			var oTVProgress = new sap.ui.commons.TextView({
 				text: "progress messages go here"
 			});
 			oTVProgress.placeAt("progressMsgs");
-			
+
 			var oTVComplete = new sap.ui.commons.TextView({
 				text: "complete messages go here"
 			});
 			oTVComplete.placeAt("completeMsgs");
-			
-			
+
+
 
 			/*
 			 * Testing the FUP from an XML-View.
@@ -395,6 +449,15 @@
 		</p>
 		<p>
 			<div id="target7"></div>
+		</p>
+		<p>
+			<div id="target8"></div>
+		</p>
+		<p>
+			<div id="target9"></div>
+		</p>
+		<p>
+			<div id="target10"></div>
 		</p>
 		<p>
 			<h2>Instantiated from XML-View</h2>

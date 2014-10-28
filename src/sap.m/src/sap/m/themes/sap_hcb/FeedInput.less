@@ -39,13 +39,12 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	border-style: solid;
-	border-color: @sapHCStandardFG;
 	left: 0;
 	overflow: hidden;
 }
 
 .sapMFeedInImage {
-	color: darken(@sapHCStandardBG,20);
+	color: @sapHCReducedAltFG;
 }
 
 .sapMFeedIn .sapMFeedInContainer {
@@ -62,6 +61,12 @@
 	margin: 0;
 	min-height: 4rem;
 }
+
+.sapMFeedInContainer .sapMBtn >.sapMBtnInner {
+	border-width: 0.125rem;
+	border-style: solid;
+}
+
 .sapMFeedIn >.sapMFeedInContainer > .sapMTextArea> .sapMInputBaseInner {
 	border-bottom-style: hidden;
 	border-top-style: hidden;
@@ -75,6 +80,11 @@
 	line-height: 1.4;
 	padding: 0.5rem 0.05rem 0.5rem 0.5rem;
 	min-height: 4rem;
+}
+
+.sapMFeedIn >.sapMFeedInContainer > .sapMInputBaseDisabled {
+	background-color: @sapHCStandardBG;
+	display: none;
 }
 
 .sapMFeedIn .sapMBtn {

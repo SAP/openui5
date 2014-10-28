@@ -501,20 +501,9 @@
 		qutils.triggerKeyboardEvent($focused[0], "END", false, false, false);
 		$focused = jQuery(document.activeElement);
 
-		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col7", "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "HOME", false, false, true);
-		$focused = jQuery(document.activeElement);
-
-		equal($focused.attr('id'), oTable.getId() + "-selall", "The correct cell has the focus");
+		equal($focused.attr('id'), oTable.getId() + "-rows-row0-col0", "The correct cell has the focus");
 
 		equal(oRow.getIndex(), 9, "The correct cell has the focus");
-
-		qutils.triggerKeyboardEvent($focused[0], "END", false, false, true);
-		$focused = jQuery(document.activeElement);
-
-		equal($focused.attr('id'), oTable.getId() + "-rows-row9-col7", "The correct cell has the focus");
-		equal(oRow.getIndex(), 199, "The correct cell has the focus");
 	});
 	
 	/*test("Page keys", function() {

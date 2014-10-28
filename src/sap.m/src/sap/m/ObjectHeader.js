@@ -362,7 +362,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 		}
 	};
-	
+
+	/**
+	 * Handles space or enter key
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
+		var sourceId = oEvent.target.id;
+		if (this.getTitleActive() && sourceId === this.getId() + "-title") {
+			this.fireTitlePress({
+				domRef : this._titleText.getFocusDomRef()
+			});
+		} else if (this.getIntroActive() && sourceId === this.getId() + "-intro") {
+			this.fireIntroPress({
+				domRef : jQuery.sap.domById(sourceId)
+			});
+		} else if (this.getIconActive() && jQuery(oEvent.target).hasClass('sapMOHIcon')){
+			var iconOrImg = jQuery.sap.domById(this.getId() + "-icon");
+			if (!iconOrImg) {
+				iconOrImg = jQuery.sap.domById(this.getId() + "-img");
+			}
+			this.fireIconPress({
+				domRef : iconOrImg
+			});
+		}
+
+		oEvent.preventDefault();
+	};
+
+	/**
+	 * Handles space key
+	 *
+	 * @private
+	*/
+	ObjectHeader.prototype.onsapspace = ObjectHeader.prototype._handleSpaceOrEnter;
+
+	/**
+	 * Handles enter key
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype.onsapenter = ObjectHeader.prototype._handleSpaceOrEnter;
+
 	/**
 	 * Called when the control is destroyed.
 	 * 

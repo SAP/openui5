@@ -59,17 +59,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			Model.apply(this, arguments);
 
 			var sUser, sPassword,
-				mHeaders, bTokenHandling,
-				bWithCredentials, sMaxDataServiceVersion,
-				bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
-				sDefaultCountMode, mMetadataNamespaces, mServiceUrlParams,
-				mMetadataUrlParams, bJSON, that = this;
+			mHeaders, bTokenHandling,
+			bWithCredentials, sMaxDataServiceVersion,
+			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
+			sDefaultCountMode, sDefaultBindingMode, mMetadataNamespaces, mServiceUrlParams,
+			mMetadataUrlParams, bJSON, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
 				sServiceUrl = mParameters.serviceUrl;
 			}
-			
+
 			if (mParameters) {
 				sUser = mParameters.user;
 				sPassword = mParameters.password;
@@ -81,6 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				bRefreshAfterChange = mParameters.refreshAfterChange;
 				sAnnotationURI = mParameters.annotationURI;
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
+				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
 				mMetadataNamespaces = mParameters.metadataNamespaces;
 				mServiceUrlParams = mParameters.serviceUrlParams;
@@ -89,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
-			this.sDefaultBindingMode = mParameters.defaultBindingMode || sap.ui.model.BindingMode.OneWay;
+			this.sDefaultBindingMode = sDefaultBindingMode || sap.ui.model.BindingMode.OneWay;
 
 			this.bJSON = bJSON !== false;
 			this.aPendingRequestHandles = [];
@@ -110,7 +111,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
-
+			this.sRefreshBatchGroupId = undefined;
+			
 			// Load annotations support on demand
 			if (this.sAnnotationURI) {
 				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
@@ -149,7 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object
-				this.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("/$metadata", undefined, mMetadataUrlParams),
+				this.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("/$metadata", undefined, mMetadataUrlParams), 
 						{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
 				this.oServiceData.oMetadata = this.oMetadata;
 			} else {
@@ -208,12 +210,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 		},
 		metadata : {
-			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata",
-							 "hasPendingChanges", "refresh", "resetChanges", "setDefaultCountMode",
-							 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
-							 "setProperty", "refreshSecurityToken", "setHeaders",
-							 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
-							 "setChangeBatchGroups", "getChangeBatchGroups"]
+			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata", 
+			                 "hasPendingChanges", "refresh", "resetChanges", "setDefaultCountMode", 
+			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode", 
+			                 "setProperty", "refreshSecurityToken", "setHeaders", 
+			                 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
+			                 "setChangeBatchGroups", "getChangeBatchGroups"]
 		}
 	});
 
@@ -264,7 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	// on the same OData service
 	ODataModel.mServiceData = {
 	};
-	
+
 	ODataModel.prototype.fireRejectChange = function(mArguments) {
 		this.fireEvent("rejectChange", mArguments);
 		return this;
@@ -297,7 +299,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					that.initialize();
 				}
 				that.fireMetadataLoaded({metadata: that.oMetadata});
-				jQuery.sap.log.debug("ODataModel fired metadataloaded");
+				jQuery.sap.log.debug(that + " - metadataloaded fired");
 			}
 		};
 
@@ -393,7 +395,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.fireAnnotationsFailed = function(mArguments) {
 		this.fireEvent("annotationsFailed", mArguments);
-		jQuery.sap.log.debug("ODataModel fired annotationsfailed");
+		jQuery.sap.log.debug(this + " - annotationsfailed fired");
 		return this;
 	};
 
@@ -666,7 +668,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._restoreReferences = function(oData){
 		var that = this,
-		//oCurrentEntry,
 		aList,
 		aResults = [];
 		if (oData.results) {
@@ -737,6 +738,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * This will check all bindings for updated data and update the controls if data has been changed.
 	 *
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
+	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {boolean} [bRemoveData=false] If set to true then the model data will be removed/cleared. 
 	 * 					Please note that the data might not be there when calling e.g. getProperty too early before the refresh call returned. 
 	 *
@@ -744,34 +746,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @name sap.ui.model.odata.ODataModel#refresh
 	 * @function
 	 */
-	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData) {
+	ODataModel.prototype.refresh = function(bForceUpdate, bRemoveData, sBatchGroupId) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		if (bRemoveData) {
 			this.removeData();
 		}
-		this._refresh(bForceUpdate);
+		this._refresh(bForceUpdate, sBatchGroupId);
 	};
-	
+
 	/**
 	 * @param {boolean} [bForceUpdate=false] Force update of controls
+	 * @param {string} [sBatchGroupId] The batchGroupId
 	 * @param {map} mChangedEntities map of changed entities
 	 * @param {map} mEntityTypes map of changed entityTypes
 	 * @name sap.ui.model.odata.ODataModel#_refresh
 	 * @private
 	 */
-	ODataModel.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
+	ODataModel.prototype._refresh = function(bForceUpdate, sBatchGroupId, mChangedEntities, mEntityTypes) {
 		// Call refresh on all bindings instead of checkUpdate to properly reset cached data in bindings
 		var aBindings = this.aBindings.slice(0);
+		//the refresh calls read synchronous; we use this.sRefreshBatchGroupId in this case
+		this.sRefreshBatchGroupId = sBatchGroupId;
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.refresh(bForceUpdate, mChangedEntities, mEntityTypes);
 		});
+		this.sRefreshBatchGroupId = undefined;
 	};
 
 	/**
 	 * Private method iterating the registered bindings of this model instance and initiating their check for update
 	 *
 	 * @param {boolean} bForceUpdate force update of controls
-	 *
+	 * @param {map} mChangedEntities Map of changed entities
 	 * @private
 	 * @name sap.ui.model.odata.v2.ODataModel#checkUpdate
 	 * @function
@@ -846,9 +852,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
 		var sFullPath = this.resolve(sPath, oContext);
-		
+
 		bReload = !!bReload;
-		
+
 		// optional parameter handling
 		if (typeof oContext == "function") {
 			fnCallBack = oContext;
@@ -993,7 +999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			} else {
 				//only one single Part, e.g. "Orders"
 				//@TODO: why 'undefined'? Old compatibility issue?
-				if (oData[navProp] === undefined || (oData[navProp] && oData[navProp].__deferred)) {
+				if (oData[navProp] === undefined || (oData[navProp] && oData[navProp].__deferred)) { 
 					return true;
 				}
 			}
@@ -1040,11 +1046,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.createCustomParams = function(mParameters) {
 		var aCustomParams = [],
-			mCustomQueryOptions,
-			mSupportedParams = {
+		mCustomQueryOptions,
+		mSupportedParams = {
 				expand: true,
 				select: true
-			};
+		};
 		for (var sName in mParameters) {
 			if (sName in mSupportedParams) {
 				aCustomParams.push("$" + sName + "=" + jQuery.sap.encodeURL(mParameters[sName]));
@@ -1053,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				mCustomQueryOptions = mParameters[sName];
 				for (sName in mCustomQueryOptions) {
 					if (sName.indexOf("$") === 0) {
-						jQuery.sap.log.warning("Trying to set OData parameter " + sName + " as custom query option!");
+						jQuery.sap.log.warning(this + " - Trying to set OData parameter '" + sName + "' as custom query option!");
 					} else {
 						aCustomParams.push(sName + "=" + jQuery.sap.encodeURL(mCustomQueryOptions[sName]));
 					}
@@ -1121,9 +1127,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (oObject instanceof sap.ui.model.Context) {
 			sKey = oObject.getPath().substr(1);
 		} else if (oObject && oObject.__metadata && oObject.__metadata.uri) {
-			sURI = oObject.__metadata.uri;
+			sURI = oObject.__metadata.uri; 
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
-		}
+		} 
 		return sKey;
 	};
 
@@ -1255,7 +1261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				iIndex++;
 				if (this.mChangedEntities[aParts[iIndex]]) {
 					oNode = this.mChangedEntities;
-				} else {
+				} else { 
 					oNode = this.oData;
 				}
 			}
@@ -1269,9 +1275,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						oNode = oNode.__list;
 					}
 					else if (oNode.__deferred) {
-						oNode = null;
+						// set to undefined and not to null because navigation properties can have a null value
+						oNode = undefined;
 					}
-				}
+				}			
 				iIndex++;
 			}
 		}
@@ -1448,7 +1455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (oRequest.requestUri.indexOf("$count") === -1) {
 				that.checkUpdate(false, mGetEntities);
 				if (that._isRefreshNeeded(oRequest, oResponse)){
-					that.refresh(false, mChangeEntities, mEntityTypes);
+					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 				}
 			}
 		};
@@ -1522,13 +1529,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 				}
 				that.checkUpdate(false, mGetEntities);
-				
-				if (that._isRefreshNeeded(oBatchRequest, oBatchResponse)){
-					that.refresh(false, mChangeEntities, mEntityTypes);
-				}
+
+				that._updateChangedEntities(mChangeEntities);
+
 			}
 			if (!fnSuccess) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
+				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
 					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
 			} else {
 				fnSuccess(oData);
@@ -1537,9 +1543,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		var handleError = function(oError) {
 			if (!fnError) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
+				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
 					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
-	
+
 				// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation) 
 				//if (!oRequestHandle || !oRequestHandle.bAborted) {
 				that.fireRequestFailed(oError);
@@ -1569,14 +1575,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var sUrl, oRequest,
 		oChangeHeader = {},
 		oPayload = {};
-		//aChangeRequests = [],
-		//mKeys = {}, mEntityTypes = {};
-
+	
 		oPayload.__batchRequests = aBatchRequests;
 
 		sUrl = this.sServiceUrl	+ "/$batch";
 
-		if (this.aUrlParams) {
+		if (this.aUrlParams.length > 0) {
 			sUrl += "?" + this.aUrlParams.join("&");
 		}
 
@@ -1620,23 +1624,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oRequestGroup = {};
 			oRequestGroup.requests = [];
 			mRequests[sBatchGroupId] = oRequestGroup;
-		}
+		} 
 		if (oRequest.method !== "GET") {
 			if (!oRequestGroup.changes) {
 				oRequestGroup.changes = {};
 			}
-			oChangeGroup = oRequestGroup.changes[sChangeSetId];
-			if (!oChangeGroup) {
-				oChangeGroup = [];
-				oRequestGroup.changes[sChangeSetId] = oChangeGroup;
+			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
+				if (oRequest.method === "POST") {
+					//failed create Entry createEntry
+					oRequestGroup.map[oRequest.key].method = "POST";
+				}
+				oRequestGroup.map[oRequest.key].data = oRequest.data;
+			} else {
+				oChangeGroup = oRequestGroup.changes[sChangeSetId];
+				if (!oChangeGroup) {
+					oChangeGroup = [];
+					oRequestGroup.changes[sChangeSetId] = oChangeGroup;
+				}
+				oRequest._changeSetId = sChangeSetId;
+				oChangeGroup.push({
+					request:	oRequest,
+					fnSuccess:	fnSuccess,
+					fnError:	fnError,
+					changeSetId: sChangeSetId
+				});
+				if (oRequest.key) {
+					if (!oRequestGroup.map) {
+						oRequestGroup.map = {};
+					}
+					oRequestGroup.map[oRequest.key] = oRequest;
+				}
 			}
-			oRequest._changeSetId = sChangeSetId;
-			oChangeGroup.push({
-				request:	oRequest,
-				fnSuccess:	fnSuccess,
-				fnError:	fnError,
-				changeSetId: sChangeSetId
-			});
 		} else {
 			oRequestGroup.requests.push({
 				request:	oRequest,
@@ -1645,7 +1663,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			});
 		}
 	};
+	
+	/**
+	 * Request queue processing
+	 * 
+	 * @param {object} oGroup The batchGroup
+	 * @param {map} mChangedEntities A map containing the changed entities of the bacthGroup
+	 * @param {map} mEntityTypes Aa map containing the changed EntityTypes
+	 * 
+	 * @private
+	 * @name sap.ui.model.odata.v2.ODataModel#_processRequestQueue
+	 * @function
+	 */
+	ODataModel.prototype._collectChangedEntities = function(oGroup, mChangedEntities, mEntityTypes) {
+		var that = this;
 
+		if (oGroup.changes) {
+			jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
+				for (var i = 0; i < aChangeSet.length; i++) {
+					var oRequest = aChangeSet[i].request;
+					if (oRequest.method === "POST") {
+						var oEntityMetadata = that.oMetadata._getEntityTypeByPath("/" + oRequest.requestUri);
+						if (oEntityMetadata) {
+							mEntityTypes[oEntityMetadata.entityType] = true;
+						}
+					} else {
+						mChangedEntities[oRequest.requestUri] = true;
+					}
+				}
+			});
+		}
+	};
+	
 	/**
 	 * Request queue processing
 	 * 
@@ -1660,7 +1709,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sBatchGroupId, fnSuccess, fnError){
 		var that = this,
-		oRequestHandle;
+			oRequestHandle;
 
 		if (this.oRequestTimer) {
 			jQuery.sap.clearDelayedCall(this.oRequestTimer);
@@ -1668,6 +1717,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 		if (this.bUseBatch) {
 			oRequestHandle = [];
+			//auto refresh for batch / for single requests we refresh after the request was successful
+			if (that.bRefreshAfterChange) {
+				jQuery.each(mRequests, function(sGroupId, oGroup) {
+					if (sGroupId === sBatchGroupId || !sBatchGroupId) {
+						var mChangedEntities = {}, 
+							mEntityTypes = {};
+						that._collectChangedEntities(oGroup, mChangedEntities, mEntityTypes);
+						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
+					}
+				});
+			}
 			jQuery.each(mRequests, function(sGroupId, oGroup) {
 				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
 					var aReadRequests = [], aBatchGroup = [], /* aChangeRequests, */ oChangeSet;
@@ -1676,6 +1736,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							oChangeSet = {__changeRequests:[]};
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//clear metadata.create
+								if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
+									delete aChangeSet[i].request.data.__metadata.created;
+								}
 								oChangeSet.__changeRequests.push(aChangeSet[i].request);
 							}
 							aReadRequests.push(oChangeSet);
@@ -1683,7 +1747,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						});
 					}
 					if (oGroup.requests) {
-						var aRequests = oGroup.requests;
+						var aRequests = oGroup.requests; 
 						for (var i = 0; i < aRequests.length; i++) {
 							aReadRequests.push(aRequests[i].request);
 							aBatchGroup.push(aRequests[i]);
@@ -1691,14 +1755,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 					var oBatchRequest = that._createBatchRequest(aReadRequests, true);
 					delete mRequests[sGroupId];
-					oRequestHandle.push(that._submitBatchRequest(oBatchRequest, aBatchGroup));
+					oRequestHandle.push(that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError));
 				}
 			});
 		} else  {
 			jQuery.each(mRequests, function(sGroupId, oGroup) {
 				if (sGroupId === sBatchGroupId || !sBatchGroupId) {
 					//var aReadRequests = [], aBatchGroup = [], aChangeRequests, oChangeSet;
-					
+
 					if (oGroup.changes) {
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
@@ -1708,7 +1772,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						});
 					}
 					if (oGroup.requests) {
-						var aRequests = oGroup.requests;
+						var aRequests = oGroup.requests; 
 						for (var i = 0; i < aRequests.length; i++) {
 							// store last request Handle. If no batch there will be only 1 and we cpould return it?
 							oRequestHandle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
@@ -1720,7 +1784,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 		return oRequestHandle;
 	};
-	
+
 	/**
 	 * process request response for successful requests 
 	 * 
@@ -1737,15 +1801,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * 
 	 */
 	ODataModel.prototype._processResponse = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
-		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
+		var oResultData = oResponse.data, bContent, sUri, sPath, aParts, 
 		oEntityMetadata, that = this;
 
-		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
+		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204'); 
 
 		// no data available
 		if (bContent && !oResultData && oResponse) {
-			jQuery.sap.log.fatal("The following problem occurred: No data was retrieved by service: " + oResponse.requestUri);
-			that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async,
+			jQuery.sap.log.fatal(this + " - No data was retrieved by service: '" + oResponse.requestUri + +"'");
+			that.fireRequestCompleted({url : oResponse.requestUri, type : "GET", async : oResponse.async, 
 				info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]},  success: false});
 			return false;
 		}
@@ -1786,54 +1850,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			// for createEntry entities change context path to new one
 			if (oRequest.context) {
-				oRequest.context.sPath = '/' + this._getKey(oResultData);
+				var sKey = this._getKey(oResultData);
+				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
+				delete this.oData[oRequest.context.sPath.substr(1)];
+				oRequest.context.sPath = '/' + sKey;
 			}
 		}
 
 		this._updateETag(oRequest, oResponse);
-
-		//TODO: check wether changeKey will survive refactoring
-		//this._updateRequestQueue(oResponse)
 
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
 		return true;
 	};
-	
+
 	/**
 	 * process a 'TwoWay' change 
 	 * 
 	 * @param {string} sKey Key of the entity to change
 	 * @param {object} oData The entry data
-	 * @param {object} oGroupInfo The BatchGroup info
 	 * @param {boolean} [bMerge] Sets MERGE/PUT method
-	 * @returns {boolean} bSuccess Successfully processed
+	 * @returns {object} oRequest The request object
 	 * @private
 	 * @name sap.ui.model.odata.v2.ODataModel#_processChange
 	 * @function
 	 * 
 	 */
-	ODataModel.prototype._processChange = function(sKey, oData, oGroupInfo, bMerge) {
-		var mRequests, oPayload, oEntityType, sETag, sMethod, sUrl, oRequest, sType;
+	ODataModel.prototype._processChange = function(sKey, oData, bMerge) {
+		var oPayload, oEntityType, sETag, sMethod, sUrl, oRequest, sType;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
 
-		mRequests = this.mRequests;
-		if (oGroupInfo.batchGroupId in this.mDeferredBatchGroups) {
-			mRequests = this.mDeferredRequests;
-		}
-
 		//default to true
 		bMerge = bMerge !== false;
 
-		if (bMerge){
+		if (oData.__metadata && oData.__metadata.created){
+			sMethod = "POST";
+			sKey = oData.__metadata.created.key;
+		} else if (bMerge) {
 			sMethod = "MERGE";
 		} else {
 			sMethod = "PUT";
 		}
-
+		
 		// do a copy of the payload or the changes will be deleted in the model as well (reference)
 		oPayload = jQuery.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
@@ -1876,8 +1937,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			oRequest.requestUri = oRequest.requestUri.replace(this.sServiceUrl + '/','');
 		}
 
-		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
-		return false;
+		return oRequest;
 	};
 
 	/**
@@ -1898,7 +1958,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (this.mChangeBatchGroups[oEntityType.name]) {
 			oChangeGroup = this.mChangeBatchGroups[oEntityType.name];
 			sBatchGroupId = oChangeGroup.batchGroupId;
-			sChangeSetId = oChangeGroup.single ? jQuery.sap.uid() : oChangeGroup.changeSetId;
+			sChangeSetId = oChangeGroup.single ? jQuery.sap.uid() : oChangeGroup.changeSetId; 
 		} else if (this.mChangeBatchGroups['*']) {
 			oChangeGroup = this.mChangeBatchGroups['*'];
 			sBatchGroupId = oChangeGroup.batchGroupId;
@@ -1999,7 +2059,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			return OData.atomHandler;
 		}
 	};
-	
+
 	/**
 	 * returns an ETag: either the passed sETag or tries to retrieve the ETag from the metadata of oPayload or sPath
 	 *
@@ -2028,7 +2088,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		return sETag;
 	};
-	
+
 	/**
 	 * creation of a request object
 	 *
@@ -2047,9 +2107,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var oHeader = this._getHeaders(mHeaders);
 
 		sETag = sETag || this._getETag(sUrl, oData);
-		
+
 		bAsync = bAsync !== false;
-		
+
 		if (sETag && sMethod !== "GET") {
 			oHeader["If-Match"] = sETag;
 		}
@@ -2088,7 +2148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (this.bWithCredentials) {
 			oRequest.withCredentials = this.bWithCredentials;
 		}
-		
+
 		return oRequest;
 	};
 
@@ -2105,50 +2165,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._isRefreshNeeded = function(oRequest, oResponse) {
 		var bRefreshNeeded = false;
-		/* sErrorCode,
-		aErrorResponses = [],
-		that = this; */
-
-		if (!this.bRefreshAfterChange) {
-			return bRefreshNeeded;
+		
+		if (this.bRefreshAfterChange) {
+			bRefreshNeeded = true;
 		}
-		// if this is a batch request, loop through the batch operations, find change requests
-		// and check every change request individually
-		/*if (oRequest.data && jQuery.isArray(oRequest.data.__batchRequests)) {
-			if(oResponse) {
-				aErrorResponses = that._getBatchErrors(oResponse.data);
-				jQuery.each(aErrorResponses, function(iIndex, oErrorResponse){
-					if (oErrorResponse.response && oErrorResponse.response.statusCode == "412"){
-						sErrorCode = oErrorResponse.response.statusCode;
-						return false;
-					}
-				});
-				if (!!sErrorCode){
-					return false;
-				}
-			}
-			jQuery.each(oRequest.data.__batchRequests, function(iIndex, oBatchRequest) {
-				if (jQuery.isArray(oBatchRequest.__changeRequests)) {
-					jQuery.each(oBatchRequest.__changeRequests, function(iIndex, oChangeRequest) {
-						bRefreshNeeded = bRefreshNeeded || that._isRefreshNeeded(oChangeRequest);
-						return !bRefreshNeeded; //break
-					});
-				}
-				return !bRefreshNeeded; //break
-			});
-		} else { 
-			if (oRequest.method === "GET" ) {
-				return false;
-			} else { 
-				if(oResponse && oResponse.statusCode == "412"){
-					bRefreshNeeded = false;
-				}
-				else{
-					bRefreshNeeded = true;
-				}
-			}
-		//}*/
-		return true;
+		return bRefreshNeeded;
 	};
 
 	/**
@@ -2183,8 +2204,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	ODataModel.prototype.update = function(sPath, oData, mParameters) {
 		var fnSuccess, fnError, bMerge, oRequest, sUrl, oContext, sETag, oRequestHandle,
-			/* oBatchRequest, */ oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
-			mUrlParams, mHeaders, sMethod, /* that = this, */ mRequests;
+			oStoredEntry, sKey, aUrlParams, sBatchGroupId, sChangeSetId,
+			mUrlParams, mHeaders, sMethod, mRequests;
 
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
@@ -2194,7 +2215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			fnError   = mParameters.error;
 			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
-			bMerge    = mParameters.merge !== false;
+			bMerge    = mParameters.merge !== false; 
 			mUrlParams = mParameters.urlParameters;
 		}
 
@@ -2202,7 +2223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		sUrl = this._createRequestUrl(sPath, oContext, aUrlParams, this.bUseBatch);
 
-		sMethod = bMerge ? "MERGE" : "PUT";
+		sMethod = bMerge ? "MERGE" : "PUT"; 
 
 		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oData, sETag);
 
@@ -2264,7 +2285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.create = function(sPath, oData, mParameters) {
 		var oRequest, /* oBatchRequest, */ sUrl, oRequestHandle, oEntityMetadata,
 		oContext, fnSuccess, fnError, /* bAsync = true, changeSetId, batchGroupId, */ mUrlParams, mRequests,
-		mHeaders, aUrlParams, sEtag, sBatchGroupId, sMethod, sChangeSetId;
+		mHeaders, aUrlParams, sEtag, sBatchGroupId, sMethod, sChangeSetId; 
 		//that = this;
 
 		// The object parameter syntax has been used.
@@ -2339,7 +2360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.remove = function(sPath, mParameters) {
 		var oContext, sEntry, /* oStoredEntry, */ fnSuccess, fnError, oRequest, sUrl, sBatchGroupId,
-		sChangeSetId, sETag, /* sKey, */ handleSuccess, /* oBatchRequest, */ oRequestHandle,
+		sChangeSetId, sETag, /* sKey, */ handleSuccess, /* oBatchRequest, */ oRequestHandle, 
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
 		that = this;
 
@@ -2360,7 +2381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sEntry = sUrl.substr(sUrl.lastIndexOf('/') + 1);
 			//remove query params if any
 			if (sEntry.indexOf('?') !== -1) {
-				sEntry = sEntry.substr(0, sEntry.indexOf('?'));
+				sEntry = sEntry.substr(0, sEntry.indexOf('?')); 
 			}
 			delete that.oData[sEntry];
 			delete that.mContexts["/" + sEntry]; // contexts are stored starting with /
@@ -2392,7 +2413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (!this.oRequestTimer) {
 				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
 			}
-		} else {
+		} else {		
 			oRequestHandle = this._processRequestQueue(this.mRequests);
 		}
 		return oRequestHandle;
@@ -2407,45 +2428,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {map} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {string} [mParameters.method] A string containing the type of method to call this function with
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved.
 	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
 	 * @param {string} [mParameters.sChangeSetId] changeSetId for this request
-	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
+	 * 
+	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
 	 * @name sap.ui.model.odata.v2.ODataModel#callFunction
 	 * @function
 	 */
 	ODataModel.prototype.callFunction = function (sFunctionName, mParameters) {
-		var oRequest, /* oBatchRequest, */ sUrl, oRequestHandle,
-		oFunctionMetadata,
-		mRequests,
-		mUrlParameters, aUrlParams, oContext, fnSuccess, fnError,
-		sMethod = "GET",
-		//mUrlParams = {},
-		sBatchGroupId,
-		sChangeSetId,
-		mHeaders;
-		//that = this;
-
+		var oRequest, sUrl, oRequestHandle,
+			oFunctionMetadata,
+			mRequests,
+			mUrlParameters, fnSuccess, fnError,
+			sMethod = "GET",
+			aUrlParams = [],
+			sBatchGroupId,
+			sChangeSetId,
+			mHeaders;
+		
 		if (mParameters) {
 			sBatchGroupId 	= mParameters.batchGroupId;
 			sChangeSetId 	= mParameters.changeSetId;
 			sMethod			= mParameters.method ? mParameters.method : sMethod;
 			mUrlParameters	= mParameters.urlParameters;
-			oContext		= mParameters.context;
 			fnSuccess		= mParameters.success;
 			fnError			= mParameters.error;
 			mHeaders		= mParameters.headers;
 		}
-
+		
+		if (!jQuery.sap.startsWith(sFunctionName, "/")) {
+			jQuery.sap.log.fatal(this + " callFunction: path '" + sFunctionName + "' must be absolute!");
+			return;
+		}
+			
 		oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
-		jQuery.sap.assert(oFunctionMetadata, "Function " + sFunctionName + " not found in the metadata !");
-
+		
 		if (oFunctionMetadata) {
 			if (oFunctionMetadata.parameter != null) {
 				jQuery.each(mUrlParameters, function (sParameterName, oParameterValue) {
@@ -2456,12 +2479,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						var matchingParameter = matchingParameters[0];
 						aUrlParams.push(sParameterName + "=" + ODataUtils.formatValue(oParameterValue, matchingParameter.type));
 					} else {
-						jQuery.sap.log.warning("Parameter " + sParameterName + " is not defined for function call " + sFunctionName + "!");
+						jQuery.sap.log.warning(this + " - Parameter '" + sParameterName + "' is not defined for function call '" + sFunctionName + "'!");
 					}
 				});
 			}
-
-			sUrl = this._createRequestUrl(sFunctionName, oContext, aUrlParams, this.bUseBatch);
+			
+			sUrl = this._createRequestUrl(sFunctionName, null, aUrlParams, this.bUseBatch);
 
 			oRequest = this._createRequest(sUrl, sMethod, mHeaders, undefined);
 
@@ -2480,7 +2503,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				if (!this.oRequestTimer) {
 					this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
 				}
-			} else {
+			} else {		
 				oRequestHandle = this._processRequestQueue(this.mRequests);
 			}
 		}
@@ -2534,7 +2557,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sBatchGroupId = mParameters.batchGroupId;
 			mHeaders = mParameters.headers;
 		}
-
+		//if the read is triggered via a refresh we should use the refreshBatchGroupId instead
+		if (this.sRefreshBatchGroupId) {
+			sBatchGroupId = this.sRefreshBatchGroupId;
+		}
+		
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 		// Add filter/sorter to URL parameters
@@ -2545,12 +2572,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (sPath.indexOf("$count") === -1){
 			if (aFilters && !this.oMetadata) {
-				jQuery.sap.log.fatal("Tried to use filters in read method before metadata is available.");
+				jQuery.sap.log.fatal(this + " - Tried to use filters in read method before metadata is available.");
 			} else {
 				sNormalizedPath = this._normalizePath(sPath, oContext);
 				oEntityType = this.oMetadata && this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 				sFilterParams = ODataUtils.createFilterParams(aFilters, this.oMetadata, oEntityType);
-				if (sFilterParams) {
+				if (sFilterParams) { 
 					aUrlParams.push(sFilterParams);
 				}
 			}
@@ -2625,9 +2652,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} [mParameters.batchGroupId] defines the batchGroup that should be submitted. If not specified all deferred groups will be submitted
 	 * @param {function} [mParameters.success] a callback function which is called when the data has
 	 *            					 been successfully updated. The handler can have the
-	 *            	                 following parameters: oData and response.
+	 *            	                 following parameters: oData
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed. The handler can have the parameter: oError which contains
 	 * additional error information
+	 * 
+	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
+	 *  
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry.
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -2636,51 +2666,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @function
 	 */
 	ODataModel.prototype.submitChanges = function(mParameters) {
-		var bMerge = true, //sMethod, oRequest, sUrl, oRequestHandle,	oBatchRequest, oStoredEntry, sKey,
-			/* oPayload, */ sBatchGroupId, /* sChangeSetId, sPath, sETag, sType, */ oGroupInfo,
-			/* sMetadataETag, */ that = this;
-			//fnSuccess, fnError;
+		var bMerge = true, oRequest, mRequests, sBatchGroupId, oGroupInfo, fnSuccess, fnError,
+			that = this;
 
 		if (mParameters) {
 			sBatchGroupId = mParameters.batchGroupId;
-			//fnSuccess =	mParameters.success;
-			//fnError   = mParameters.error;
-			//sETag     = mParameters.eTag;
+			fnSuccess =	mParameters.success;
+			fnError   = mParameters.error;
 			sBatchGroupId = mParameters.batchGroupId;
-			bMerge    = mParameters.merge !== false;
+			bMerge    = mParameters.merge !== false; 
 		}
 
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
 			oGroupInfo = that._resolveGroup(sKey);
 			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
-				that._processChange(sKey, oData, oGroupInfo, bMerge);
+				oRequest = that._processChange(sKey, oData, oGroupInfo, bMerge);
+				oRequest.key = sKey;
+				mRequests = that.mRequests;
+				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
+					mRequests = that.mDeferredRequests;
+				}
+				that._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 			}
 		});
-		
-		return this._processRequestQueue(this.mDeferredRequests, sBatchGroupId);
+
+		return this._processRequestQueue(this.mDeferredRequests, sBatchGroupId, fnSuccess, fnError);
 	};
 
 
 	/*
-	 * updateRequestQueue
+	 * updateChangedEntities
 	 * @private
-	 * @name sap.ui.model.odata.v2.ODataModel#_updateRequestQueue
+	 * @name sap.ui.model.odata.v2.ODataModel#_updateChangedEntities
+	 * @param {map} mChangedEntities Map of changedEntities
 	 * @function
 	 */
-	ODataModel.prototype._updateRequestQueue = function(oResponse) {
-		//var aBatchRequests,
-		//aChangeRequests,
-		//oChangeRequest,
+	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
 		var that = this;
 
-		jQuery.each(this.oRequestQueue, function(sKey,oCurrentRequest) {
-			if (oCurrentRequest.requestUri === oResponse.requestUri && sKey !== that.sChangeKey) {
-				delete that.oRequestQueue[sKey];
-				delete that.oData[sKey];
-				delete that.mContexts["/" + sKey];
-			} else if (that.sChangeKey && sKey === that.sChangeKey) {
-				delete that.oRequestQueue[sKey];
-				that.sChangeKey = null;
+		jQuery.each(mChangedEntities, function(sKey, bChanged) {
+			if (sKey in that.mChangedEntities) {
+				var oChangedEntry = that._getObject('/' + sKey);
+				delete that.mChangedEntities[sKey];
+				var oEntry = that._getObject('/' + sKey);
+				jQuery.extend(true, oEntry, oChangedEntry);
+				
 			}
 		});
 	};
@@ -2731,14 +2761,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.setProperty = function(sPath, oValue, oContext) {
 
-		var sProperty, oEntry = { }, oData = { },
+		var sProperty, mRequests, oRequest, oEntry = { }, oData = { },
 		sResolvedPath = this.resolve(sPath, oContext),
-		aParts,	sKey, /* bDeferred, */ oGroupInfo,
+		aParts,	sKey, oGroupInfo,
 		mChangedEntities = {};
 
 		// check if path / context is valid
 		if (!sResolvedPath) {
-			jQuery.log.warning("TwoWay binding: path " + sPath + " not resolvable!");
+			jQuery.log.warning(this + " - TwoWay binding: path '" + sPath + "' not resolvable!");
 			return false;
 		}
 
@@ -2755,7 +2785,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		//check all path segments to find the entity; The last segment can also point to a complex type (ignore property segment)
-		//aPathSegments = sObjectPath.split("/");
 		for (var i = aParts.length - 1; i >= 0; i--) {
 			oEntry = this._getObject(aParts.join("/"));
 			if (oEntry) {
@@ -2766,17 +2795,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			aParts.splice(i,1);
 		}
-		if (!oEntry.__metadata.created) {
+		
+		if (!this.mChangedEntities[sKey]) {
 			oEntry = jQuery.extend(true,{},oEntry);
-			this.mChangedEntities[sKey] = oEntry;
 		}
-
+		this.mChangedEntities[sKey] = oEntry;
+		
 		oEntry[sProperty] = oValue;
 
 		oGroupInfo = this._resolveGroup(sKey);
-		if (!(oGroupInfo.batchGroupId in this.mDeferredBatchGroups)) {
-			this._processChange(sKey, oEntry, oGroupInfo);
+
+		mRequests = this.mRequests;
+
+		if (oGroupInfo.batchGroupId in this.mDeferredBatchGroups) {
+			mRequests = this.mDeferredRequests;
+			oRequest = this._processChange(sKey, {});
+			oRequest.key = sKey;
+		} else {
+			oRequest = this._processChange(sKey, oEntry);
 		}
+		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 
 		if (this.bUseBatch) {
 			if (!this.oRequestTimer) {
@@ -2785,10 +2823,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		} else {
 			this._processRequestQueue(this.mRequests);
 		}
-		//if (bDeferred) {
+
 		mChangedEntities[sKey] = true;
 		this.checkUpdate(false, mChangedEntities);
-		//}
 		return true;
 	};
 
@@ -2830,7 +2867,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
 				// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 				if (that._isHeaderPrivate(sHeaderName)){
-					jQuery.sap.log.warning("Not allowed to modify private header: " + sHeaderName);
+					jQuery.sap.log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
 				} else {
 					mCheckedHeaders[sHeaderName] = sHeaderValue;
 				}
@@ -2846,7 +2883,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			jQuery.each(mHeaders, function(sHeaderName, sHeaderValue){
 				// case sensitive check needed to make sure private headers cannot be overridden by difference in the upper/lower case (e.g. accept and Accept).
 				if (that._isHeaderPrivate(sHeaderName)){
-					jQuery.sap.log.warning("Not allowed to modify private header: " + sHeaderName);
+					jQuery.sap.log.warning(this + " - modifying private header: '" + sHeaderName + "' not allowed!");
 				} else {
 					mCheckedHeaders[sHeaderName] = sHeaderValue;
 				}
@@ -2960,6 +2997,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				sPath = sPath.substr(1);
 			}
 			delete this.oRequestQueue[sPath];
+			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 
 		}
@@ -3006,9 +3044,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
-			/* oBatchRequest, */ sKey, aUrlParams, sBatchGroupId, sChangeSetId, //handleSuccess,
-			mUrlParams, mHeaders, vProperties, oEntity = {},
-			sMethod = "POST"; //, that = this;
+			sKey, aUrlParams, sBatchGroupId, sChangeSetId,
+			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},	
+			sMethod = "POST";
 
 		if (mParameters) {
 			vProperties = mParameters.properties;
@@ -3056,7 +3094,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		this.oData[sKey] = oEntity;
 
-		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: true};
+		oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: this.sServiceUrl + '/' + sKey, created: {key: sKey}};
 
 		sUrl = this._createRequestUrl(sPath, oContext, aUrlParams, this.bUseBatch);
 
@@ -3064,9 +3102,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		oContext =  this.getContext("/" + sKey); // context wants a path
 		oRequest.context = oContext;
-
-		this._pushToRequestQueue(this.mDeferredRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
+		oRequest.key = sKey;
+		
+		mRequests = this.mRequests;
+		if (sBatchGroupId in this.mDeferredBatchGroups) {
+			mRequests = this.mDeferredRequests;
+		}
+		
+		this._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
+		
+		if (this.bUseBatch) {
+			if (!this.oRequestTimer) {
+				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
+			}
+		} else {
+			this._processRequestQueue(this.mRequests);
+		}
+		
 		return oContext;
 	};
 
@@ -3125,11 +3177,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			sPath = sPath.substr(0, sPath.indexOf('?'));
 		}
 		if (!oContext && !jQuery.sap.startsWith(sPath,"/")) {
-			jQuery.sap.log.fatal("sPath must be absolute if no Context is set");
+			jQuery.sap.log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
 		return this.resolve(sPath, oContext);
 	};
-	
+
 	/**
 	 * Enable/Disable automatic updates of all Bindings after change operations
 	 * @param {boolean} bRefreshAfterChange Refresh after change
@@ -3171,7 +3223,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @function
 	 */
 	ODataModel.prototype._request = function(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
-
+		var oRequestHandle;
+		
 		if (this.bDestroyed) {
 			return {
 				abort: function() {}
@@ -3196,7 +3249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		// create request with wrapped handlers
-		var oRequestHandle = OData.request(
+		oRequestHandle = OData.request(
 				oRequest,
 				wrapHandler(fnSuccess || OData.defaultSuccess),
 				wrapHandler(fnError || OData.defaultError),
@@ -3252,7 +3305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		Model.prototype.destroy.apply(this, arguments);
 	};
-	
+
 	/**
 	 * Setting batch groups as deferred. Requests that belongs to a deferred batch group will be sent manually
 	 * via a submitChanges call.
@@ -3269,7 +3322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			that.mDeferredBatchGroups[sBatchGroupId] = sBatchGroupId;
 		});
 	};
-	
+
 	/**
 	 * Returns the array of batchGroupIds that are set as deferred
 	 * 
@@ -3309,7 +3362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
 		this.mChangeBatchGroups = mGroups;
 	};
-	
+
 	/**
 	 * Returns the definition of batchGroups per EntityType for TwoWay changes
 	 * @returns {map} mChangeBatchGroups Definition of bactchGRoups for "TwoWay" changes

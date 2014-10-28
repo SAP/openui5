@@ -134,28 +134,25 @@
 	test("Should not match the undefined pattern",
 			function() {
 				//Arrange
-				var parseSpy,
-				callCount = 0,
-				matched = function(oEvent) {
-					if (oEvent.getParameter("name") === "child") {
-						callCount++;
-					}
-					if (oEvent.getParameter("name") === "parent") {
-						ok(false, "did hit the parent route");
-					}
-				},
-				//System under Test
-				router = new sap.ui.core.routing.Router({
-					"parent" : {
-						subroutes : {
-							"child" : {
-								pattern : "foo"
-							}
-						}
-					}
-				});
-
-				parseSpy = this.spy(router, "parse");
+				var callCount = 0,
+                    matched = function(oEvent) {
+                        if (oEvent.getParameter("name") === "child") {
+                            callCount++;
+                        }
+                        if (oEvent.getParameter("name") === "parent") {
+                            ok(false, "did hit the parent route");
+                        }
+                    },
+                    //System under Test
+                    router = new sap.ui.core.routing.Router({
+                        "parent" : {
+                            subroutes : {
+                                "child" : {
+                                    pattern : "foo"
+                                }
+                            }
+                        }
+                    });
 
 				router.attachRoutePatternMatched(matched);
 				hasher.setHash("");
@@ -411,7 +408,7 @@
 		router.destroy();
 	});
 
-	module("hrefGeneration")
+	module("hrefGeneration");
 
 	test("Should create an URL for a route", function() {
 		//Arrange

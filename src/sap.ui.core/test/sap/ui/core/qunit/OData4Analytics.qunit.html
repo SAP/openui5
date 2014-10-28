@@ -1,0 +1,740 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons">
+
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<!-- Fake Service Implementaton -->
+<script src="analytics/o4aFakeService.js"></script>
+<!-- Fake Service Content -->
+<script src="analytics/o4aMetadata.js"></script>
+
+<!-- Test functions -->
+<script type="text/javascript">
+
+	jQuery.sap.require("sap.ui.model.analytics.odata4analytics");
+	var odata4analytics = sap.ui.model.analytics.odata4analytics;
+	
+	//start the fake service
+	var sCompleteServiceURI = "http://o4aFakeService:8080/";
+	o4aFakeService.fake({
+		baseURI: sCompleteServiceURI
+	});
+	
+	function getModelInstance(sServiceURI) {
+		// TODO removeShared MetaData?
+		sServiceURI = sServiceURI || sCompleteServiceURI;
+		
+		//set base URI for the fake service if necessray
+		o4aFakeService.setBaseURI(sServiceURI);
+		
+		return new odata4analytics.Model({
+			oModel: new sap.ui.model.odata.ODataModel(sServiceURI)
+		});
+	}
+
+	function getQueryResultRequest() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
+
+		oParamRequest.setParameterValue("P_ControllingArea", "US01");
+		oParamRequest.setParameterValue("P_CostCenter", "");
+		oParamRequest.setParameterValue("P_CostCenterTo", "");
+
+		var oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+		oQueryResultRequest.setParameterizationRequest(oParamRequest);
+		return oQueryResultRequest;
+	}
+
+	module("Instantiation");
+
+	test("Create Model-Instance", function() {
+		var oModel = getModelInstance();
+		// check if model could be wrapped
+		ok(oModel, "OData Model should be wrapped.");
+	});
+
+	module("Results");
+
+	test("Get names of all query results offered by the service", function() {
+		var oModel = getModelInstance(),
+		aQueryResultNames = oModel.getAllQueryResultNames();
+
+		strictEqual(aQueryResultNames[0], "ActualPlannedCostsResults", "First Query Result Name is 'ActualPlannedCostsResults'.");
+		strictEqual(aQueryResultNames.length, 1, "Number of interpreted Query Results is correct.")
+	});
+
+	test("Get all query results", function() {
+		var oModel = getModelInstance(),
+		mQueryResults = oModel.getAllQueryResults();
+
+		ok(mQueryResults, "Query results object could be loaded.");
+		ok(mQueryResults["ActualPlannedCostsResults"], "Expected query results were loaded.");
+		ok(mQueryResults["ActualPlannedCostsResults"] instanceof odata4analytics.QueryResult, "Query Result 'ActualPlannedCosts' is an instance of odata4analytics.QueryResult.");
+	});
+
+	test("Find query result by name", function() {
+		var oModel = getModelInstance(), mQueryResults = oModel.getAllQueryResults(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
+
+		ok(oQueryResult, "Query result 'ActualPlannedCostsResults' could be found.");
+		deepEqual(oQueryResult, mQueryResults["ActualPlannedCostsResults"], "Query Result 'ActualPlannedCostsResults' was fetched by name.");
+	});
+
+	module("Introspection");
+
+	test("Get all parameter names", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oParameterization = oQueryResult.getParameterization(),
+		aParameterNames = oParameterization.getAllParameterNames();
+
+		ok(jQuery.isArray(aParameterNames), "Parameter names were loaded.");
+		strictEqual(aParameterNames.length, 3, "Number of Parameters should be 3.");
+	});
+
+	test("Try to fetch parameters from the parameterization", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oParameterization = oQueryResult.getParameterization(),
+		oParameter = oParameterization.findParameterByName("P_CostCenter");
+
+		ok(oParameter instanceof odata4analytics.Parameter, "Parameter could be fetched by name.");
+		strictEqual(oParameter.getProperty().type, "Edm.String", "Parameter should be of type 'Edm.String'.");
+	});
+
+	test("Fetch peer boundary of an interval boundary parameter", function() {
+		var oModel = getModelInstance();
+		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
+
+		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
+		ok(oParameter.isIntervalBoundary(), "Parameter "+oParameter.getName()+" is correctly marked as interval boundary.");
+
+		var oPeerBoundaryIntervalParameter = oParameter.getPeerIntervalBoundaryParameter();
+		ok(oPeerBoundaryIntervalParameter, "Parameter "+oParameter.getName()+" has expected peer parameter "+oPeerBoundaryIntervalParameter.getName()+".");
+	});
+
+	test("Get all dimension names", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		aDimensionNames = oQueryResult.getAllDimensionNames();
+
+		ok(jQuery.isArray(aDimensionNames), "getAllDimensionNames returned an Array.");
+		strictEqual(aDimensionNames.length, 9, "Number of Dimensions should be '9'.");
+		strictEqual(aDimensionNames[0], "ControllingArea", "Access to the dimension array returns the expected values (1/2).");
+		strictEqual(aDimensionNames[8], "Currency", "Access to the dimension array returns the expected values (2/2).");
+	});
+
+	test("Try to fetch specific dimensions from the query result", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oDimensionByName = oQueryResult.findDimensionByName("Currency"),
+		oDimensionByAccess = oQueryResult.getAllDimensions()["Currency"];
+
+		ok(oDimensionByName instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
+		ok(oDimensionByAccess instanceof odata4analytics.Dimension, "Check if Dimension object was retrieved.");
+
+		strictEqual(oDimensionByAccess.getName(), "Currency", "Introspection check on dimensionByAccess.");
+		strictEqual(oDimensionByName.getKeyProperty().name, "Currency", "Introspection check on dimensionByAccess.");
+
+		deepEqual(oDimensionByName, oDimensionByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+	});
+
+	test("Getting attribute names from Dimensions", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oDimensionByName = oQueryResult.findDimensionByName("ControllingArea"),
+		aDimensionAttributeNames = oDimensionByName.getAllAttributeNames();
+
+		ok(jQuery.isArray(aDimensionAttributeNames), "Attribute names Array could be retrieved.");
+
+		strictEqual(aDimensionAttributeNames[0], "ControllingAreaText", "Attribute ControllingAreaText found for ControllingArea.");
+
+		// edge cases, should be undefined
+		strictEqual(oDimensionByName.findAttributeByName(), undefined, "Calling findAttributeByName with no parameters should return 'undefined'.");
+		strictEqual(oDimensionByName.findAttributeByName("nonexisting-attribute"), undefined, "Calling findAttributeByName with invalid attribute name should return 'undefined'.");
+		strictEqual(oDimensionByName.findAttributeByName(null), undefined, "Calling findAttributeByName with 'null' should return 'undefined'.");
+	});
+
+	test("Get all measure names", function() {
+		var oModel = getModelInstance(), oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		aMeasureNames = oQueryResult.getAllMeasureNames();
+
+		ok(jQuery.isArray(aMeasureNames), "getAllMeasureNames returned an Array.");
+		strictEqual(aMeasureNames.length, 4, "Number of Measures should be '4'.");
+		strictEqual(aMeasureNames[0], "ActualCosts", "Access to the dimension array returns the expected values (1/2).");
+		strictEqual(aMeasureNames[3], "ActualPlannedCostsPercentage", "Access to the dimension array returns the expected values (2/2).");
+	});
+
+	test("Try to fetch specific measures from the query result", function() {
+		var oModel = getModelInstance(),
+		oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"),
+		oMeasureByName = oQueryResult.findMeasureByName("ActualCosts"),
+		oMeasureByAccess = oQueryResult.getAllMeasures()["ActualCosts"];
+
+		ok(oMeasureByName instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
+		ok(oMeasureByAccess instanceof odata4analytics.Measure, "Check if Measure object was retrieved.");
+
+		strictEqual(oMeasureByAccess.getName(), "ActualCosts", "Introspection check on measureByAccess.");
+		strictEqual(oMeasureByName.getUnitProperty().name, "Currency", "Introspection check on measureByAccess.");
+
+		deepEqual(oMeasureByName, oMeasureByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+	});
+
+	test("Get all attribute names", function() {
+		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
+		var oDimension = oQueryResult.findDimensionByName("ControllingArea");
+		var aAttributeNames = oDimension.getAllAttributeNames();
+
+		ok(jQuery.isArray(aAttributeNames), "getAllAttributeNames returned an Array.");
+		strictEqual(aAttributeNames.length, 1, "Number of Attributes should be '3'.");
+		strictEqual(aAttributeNames[0], "ControllingAreaText", "Access to the dimension array returns the expected values.");
+	});
+
+	test("Try to fetch specific attributes", function() {
+
+		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
+		var oDimension = oQueryResult.findDimensionByName("ControllingArea");
+		var oAttributeByName = oDimension.findAttributeByName("ControllingAreaText");
+		var oAttributeByAccess = oDimension.getAllAttributes()["ControllingAreaText"];
+
+		ok(oAttributeByName instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
+		ok(oAttributeByAccess instanceof odata4analytics.DimensionAttribute, "Check if Attribute object was retrieved.");
+
+		strictEqual(oAttributeByAccess.getName(), "ControllingAreaText", "Introspection check on attributeByAccess.");
+		strictEqual(oAttributeByName.getName(), "ControllingAreaText", "Introspection check on attributeByName.");
+
+		deepEqual(oAttributeByName, oAttributeByAccess, "Retrieving dimensions by 'Name' and through 'Access' should be deliver the same result.");
+	});
+
+	test("Determine which properties of a query result are updatable", function() {
+		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
+
+		var oUpdatablePropertyNames = oQueryResult.getEntitySet().getUpdatablePropertyNameSet();
+		var iPropertyCount = 0;
+		var iDimensionCount = 0;
+		var iMeasureCount = 0;
+		var iUpdatablePropertyCount = 0;
+		for ( var sPropName in oUpdatablePropertyNames) {
+			iUpdatablePropertyCount++;
+			if ((oUpdatable = oQueryResult.findMeasureByName(sPropName))) {
+				// is a measure
+				if (oUpdatable.isUpdatable) {
+					ok(oUpdatable.isUpdatable, sPropName + " is an updatable measure.");
+					iMeasureCount++;
+				}
+			} else if ((oUpdatable = oQueryResult.findDimensionByName(sPropName))) {
+				// is a dimension
+				ok(oUpdatable, sPropName + " is an updatable dimension.");
+				iDimensionCount++;
+			} else {
+				// is only a property
+				ok(sPropName, sPropName + " is an updatable property.");
+				iPropertyCount++;
+			}
+		}
+		var iCount = iPropertyCount + iDimensionCount + iMeasureCount;
+		equal(iUpdatablePropertyCount, iCount, "getUpdatablePropertyNameSet() delivered correct a count.")
+	});
+
+
+	test("Access query with hierarchy from entity type", function() {
+		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
+		var sHierarchyDimensionName = "CostCenter";
+
+		var aHierPropNames = oQueryResult.getEntityType().getAllHierarchyPropertyNames();
+		ok(jQuery.isArray(aHierPropNames) &&  typeof aHierPropNames[0] === "string", "Hierarchy property names correctly fetched.");
+		var oHierarchy = oQueryResult.getEntityType().getHierarchy("ControllingArea");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+
+	});
+
+	test("Access hierarchy from dimension", function() {
+		var oQueryResult = getModelInstance().findQueryResultByName("ActualPlannedCostsResults");
+
+		var sHierarchyDimensionName = "CostCenter";
+		var sOtherDimensionName = "ControllingArea";
+
+		var oDimension = oQueryResult.findDimensionByName(sHierarchyDimensionName);
+		ok(!!oDimension, "Dimension correctly fetched.");
+		var oHierarchy = oDimension.getHierarchy("CostCenter");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+
+		var oDimension = oQueryResult.findDimensionByName(sOtherDimensionName); // negative
+		// test
+		ok(!!oDimension, "Dimension correctly fetched.");
+		var oHierarchy = oDimension.getHierarchy("ControllingArea");
+		ok(!!oHierarchy, "Hierarchy correctly fetched.");
+
+	});
+
+	module("Parametrization");
+
+	test("Create request for query parameterization", function() {
+		var oModel = getModelInstance(), oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults"), oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
+
+		var sURIToParamEntitySetRelative = oParamRequest.getURIToParameterizationEntitySet(), sURIToParamEntitySetAbsolute = oParamRequest.getURIToParameterizationEntitySet(sCompleteServiceURI);
+
+		strictEqual(sURIToParamEntitySetRelative, "/ActualPlannedCosts", "Relative URI to Parameterization Entity Set is correct.");
+		strictEqual(sURIToParamEntitySetAbsolute, sCompleteServiceURI + "/ActualPlannedCosts", "Absolute URI to Parameterization Entity Set is correct.");
+
+		assert.throws(function() {
+			oParamRequest.setParameterValue("blub", "a");
+		}, "Setting an invalid Parameter throws an Exception.");
+
+		assert.throws(function() {
+			oParamRequest.getURIToParameterizationEntry();
+		}, "Getting the parameterization URI for incomplete parameter assignments throws an Exception.");
+	});
+
+	test("Create request with parameters, no aggregation level and no measueres selected", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+
+		var sRefURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results";
+		var sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefURI, "URI correctly constructed. ");
+
+		var aDimNames = oQueryResultRequest.getAggregationLevel();
+		ok(jQuery.isEmptyObject(aDimNames), "No aggregation level set.");
+
+		var aMeasNames = oQueryResultRequest.getMeasureNames();
+		ok(jQuery.isEmptyObject(aMeasNames), "No measues selected.");
+	});
+
+	module("Requesting")
+
+	test("Create request for query results", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+
+		oQueryResultRequest.setAggregationLevel([
+			"ControllingArea"
+		]);
+		oQueryResultRequest.addToAggregationLevel([
+			"CostCenter"
+		]);
+		var exception = "ID is not a valid dimension name";
+		assert.throws(function() {
+			oQueryResultRequest.addToAggregationLevel([
+				"ID"
+			]);
+		}, "Adding wrong dimension throws exception. ");
+
+		oQueryResultRequest.includeDimensionKeyTextAttributes(null, true, true);
+		oQueryResultRequest.includeDimensionKeyTextAttributes("ControllingArea", true, false);
+
+		oQueryResultRequest.setMeasures(); // all measures!
+		oQueryResultRequest.includeMeasureRawFormattedValueUnit(null, false, true);
+		oQueryResultRequest.includeMeasureRawFormattedValueUnit("ActualPlannedCostsDifference", true, false);
+		var sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results";
+		var sSetURI = oQueryResultRequest.getURIToQueryResultEntitySet();
+		strictEqual(sSetURI, sRefSetURI, "QueryResultEntitySet URI correctly constructed.");
+
+		var sRefEntriesURI = sRefSetURI + "?$select=ControllingArea,CostCenter,CostCenterText,ActualPlannedCostsDifference,id";
+		oQueryResultRequest.setRequestOptions(true);
+		var sEntriesURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sEntriesURI, sRefEntriesURI, "QueryResultEntries URI correctly constructed.");
+
+		var aRefDimNames = [
+			"ControllingArea", "CostCenter"
+		];
+		var aDimNames = oQueryResultRequest.getAggregationLevel();
+		deepEqual(aDimNames, aRefDimNames, "Aggregation levels correctly set.");
+
+		var aRefMeasNames = [
+			"ActualCosts", "PlannedCosts", "ActualPlannedCostsDifference", "ActualPlannedCostsPercentage"
+		];
+		var aMeasNames = oQueryResultRequest.getMeasureNames();
+		deepEqual(aMeasNames, aRefMeasNames, "Measures correctly set.");
+	});
+
+	test("Create filter expressions on the query result", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000");
+		oFilterExpression.addSetCondition("Currency", [
+			"EUR", "USD", "GBP"
+		]);
+		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000", "200-3000");
+
+		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or (CostCenter ge %27100-1000%27 and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq %27USD%27 or Currency eq %27GBP%27)";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sSetURI, sRefSetURI, "FilterExpression URI correctly constructed.");
+		ok(sFilterOptionString.match(/CostCenter eq %27100-1000%27/g).length == 1, "Repeated input of equal filter expression is ignored.");
+
+		var sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results";
+		var sSetURI = oQueryResultRequest.getURIToQueryResultEntitySet();
+		strictEqual(sSetURI, sRefSetURI, "QueryResultEntitySet URI correctly constructed.");
+
+		var sRefEntriesURI = sRefSetURI + "?$filter=(CostCenter eq %27100-1000%27 or (CostCenter ge %27100-1000%27 and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq %27USD%27 or Currency eq %27GBP%27)";
+		var sEntriesURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sEntriesURI, sRefEntriesURI, "QueryResultEntries URI correctly constructed.");
+	});
+
+	test("Fetch value help for some parameters with filter", function() {
+		var oModel = getModelInstance();
+		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
+
+		var oParameter = oQueryResult.getParameterization().findParameterByName("P_CostCenter");
+		ok(oParameter, "Parameter was found.");
+		//TODO fails with current metadata
+// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+
+		// 1. plain list
+		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
+		oParamValueSetRequest.includeParameterText(true);
+		var sRefParameterValueSetURI = "/ActualPlannedCosts?$select=P_CostCenter";
+		var sParameterValueSetURI = oParamValueSetRequest.getURIToParameterValueSetEntries();
+		strictEqual(sParameterValueSetURI, sRefParameterValueSetURI, "ParamValueSet URI correctly constructed.");
+
+		// 2. filtered list
+		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
+		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");
+
+		var oFilterExpression = oParamValueSetRequest.getFilterExpression();
+		ok(oFilterExpression, "Filter expression found.");
+		oFilterExpression.addCondition(oBaseParameter.getName(), sap.ui.model.FilterOperator.EQ, "US01");
+		var sRefFilterOptionString = "(P_ControllingArea eq %27US01%27)";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterExpression URI correctly constructed.");
+
+		var sURIToPVS = oParamValueSetRequest.getURIToParameterValueSetEntries();
+		var sRefURIToPVS = "/ActualPlannedCosts?$select=P_CostCenter&$filter=(P_ControllingArea eq %27US01%27)";
+		strictEqual(sURIToPVS, sRefURIToPVS, "URI to param value set correctly constructed.");
+	});
+
+	test("Fetch value help for some query result dimension", function() {
+		var oModel = getModelInstance();
+		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
+		var oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
+
+		oParamRequest.setParameterValue("P_ControllingArea", "US01");
+		oParamRequest.setParameterValue("P_CostCenter", "");
+		oParamRequest.setParameterValue("P_CostCenterTo", "");
+
+		var oDimension = oQueryResult.findDimensionByName("CostCenter");
+
+		// 1. plain list
+		var oDimMemberSetRequest = new odata4analytics.DimensionMemberSetRequest(oDimension, oParamRequest, false);
+		oDimMemberSetRequest.includeDimensionTextAttributes(true);
+		var sRefURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$select=CostCenter,CostCenterText";
+		var sURI = oDimMemberSetRequest.getURIToDimensionMemberEntries();
+		strictEqual(sURI, sRefURI, "Dimension members were found.");
+
+		// 2. filtered list
+		var oBaseDim = oQueryResult.findDimensionByName("ControllingArea");
+		var oFilterExpression = oDimMemberSetRequest.getFilterExpression();
+		oFilterExpression.addCondition(oBaseDim.getName(), sap.ui.model.FilterOperator.EQ, "US01");
+		sRefURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$select=CostCenter,CostCenterText&$filter=(ControllingArea eq %27US01%27)";
+		sURI = oDimMemberSetRequest.getURIToDimensionMemberEntries();
+		strictEqual(sURI, sRefURI, "Dimension members were found filtered.");
+	});
+
+	test("Create sorting expressions on the query result", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		ok(oFilterExpression instanceof odata4analytics.FilterExpression, "FilterExpression instance created.");
+		var oSortExpression = oQueryResultRequest.getSortExpression();
+		ok(oSortExpression instanceof odata4analytics.SortExpression, "SortExpression instance created.");
+
+		oQueryResultRequest.setAggregationLevel([
+			"ControllingArea", "CostCenter"
+		]);
+		oQueryResultRequest.setMeasures();
+
+		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Ascending);
+
+		oFilterExpression.addSetCondition("Currency", [
+			"EUR", "USD", "GBP"
+		]);
+		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000", "200-3000");
+
+		var sRefBaseURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$select=ControllingArea,CostCenter,ActualCosts,PlannedCosts,ActualPlannedCostsDifference,ActualPlannedCostsPercentage&$filter=";
+
+		var sRefFilterOptionString = "((CostCenter ge %27100-1000%27 and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq %27USD%27 or Currency eq %27GBP%27)";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+
+		sRefBaseURI += sRefFilterOptionString;
+
+		var sSorterString = "&$orderby=CostCenter asc";
+		var sEntriesURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sEntriesURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed.");
+
+		oSortExpression.addSorter("ControllingArea", odata4analytics.SortOrder.Descending);
+		sSorterString = "&$orderby=CostCenter asc,ControllingArea desc";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed with 2 sorters.");
+
+		oSortExpression.removeSorter("ControllingArea");
+		sSorterString = "&$orderby=CostCenter asc";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed with 1 sorter.");
+
+		oSortExpression.clear();
+		sSorterString = "";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed without sorters.");
+	});
+
+	test("Fetch value help for some parameter with sorting", function() {
+		var oModel = getModelInstance();
+		var oQueryResult = oModel.findQueryResultByName("ActualPlannedCostsResults");
+		oParamRequest = new odata4analytics.ParameterizationRequest(oQueryResult.getParameterization());
+
+		var oQueryResultRequest = new odata4analytics.QueryResultRequest(oQueryResult);
+		oQueryResultRequest.setParameterizationRequest(oParamRequest);
+
+		var oParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
+		ok(oParameter, "Parameter was found.");
+		//TODO fails with current metadata
+// 		ok(oParameter.isValueSetAvailable(), "ValueSet for parameter is available.");
+		
+		// 1. plain list
+		var oParamValueSetRequest = new odata4analytics.ParameterValueSetRequest(oParameter);
+		oParamValueSetRequest.includeParameterText(true);
+		var sRefParameterValueSetURI = "/ActualPlannedCosts?$select=P_ControllingArea";
+		var sParameterValueSetURI = oParamValueSetRequest.getURIToParameterValueSetEntries();
+		strictEqual(sParameterValueSetURI, sRefParameterValueSetURI, "ParamValueSet URI correctly constructed.");
+
+		// 2. sorted list
+		var oBaseParameter = oQueryResult.getParameterization().findParameterByName("P_ControllingArea");
+		ok(oBaseParameter, "Succeeded to look up object for parameter ControllingArea");		
+		//TODO make this work
+// 		var oSortExpression = oQueryResultRequest.getSortExpression();
+// 		oSortExpression.addSorter("P_ControllingArea", odata4analytics.SortOrder.Ascending);
+// 		var sURIToPVS = oParamValueSetRequest.getURIToParameterValueSetEntries();
+// 		var sRefURIToPVS = "";
+// 		strictEqual(sURIToPVS, sRefURIToPVS, "URI to param value set correctly constructed.");
+
+	});
+
+	test("Add paging and a count to the query result", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oSortExpression = oQueryResultRequest.getSortExpression();
+
+		oQueryResultRequest.setAggregationLevel([
+			"ControllingArea", "CostCenter"
+		]);
+		oQueryResultRequest.setMeasures();
+
+		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Ascending);
+		oSortExpression.addSorter("ControllingArea", odata4analytics.SortOrder.Descending);
+		oFilterExpression.addSetCondition("Currency", [
+			"EUR", "USD", "GBP"
+		]);
+		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000", "200-3000");
+
+		var sRefBaseURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$select=ControllingArea,CostCenter,ActualCosts,PlannedCosts,ActualPlannedCostsDifference,ActualPlannedCostsPercentage&$filter=";
+
+		var sRefFilterOptionString = "((CostCenter ge %27100-1000%27 and CostCenter le %27200-3000%27)) and (Currency eq %27EUR%27 or Currency eq %27USD%27 or Currency eq %27GBP%27)";
+		oQueryResultRequest.setResultPageBoundaries(1, 10);
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+
+		sRefBaseURI += sRefFilterOptionString;
+		var sRefCountURI = "&$orderby=CostCenter asc,ControllingArea desc&$top=10&$inlinecount=allpages";
+		oQueryResultRequest.setRequestOptions(null, true);
+		var sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed with PageBoundaries from 1 to 10.");
+
+		oQueryResultRequest.setResultPageBoundaries(null, 500);
+		sRefCountURI = "&$orderby=CostCenter asc,ControllingArea desc&$top=500&$inlinecount=allpages";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed with PageBoundaries up to 500.");
+
+		oQueryResultRequest.setResultPageBoundaries(500, null);
+		sRefCountURI = "&$orderby=CostCenter asc,ControllingArea desc&$skip=499&$inlinecount=allpages";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed with PageBoundaries from 500");
+
+		oQueryResultRequest.setResultPageBoundaries(500, 500);
+		sRefCountURI = "&$orderby=CostCenter asc,ControllingArea desc&$top=1&$skip=499&$inlinecount=allpages";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed with PageBoundaries from 500 to 500.");
+
+		oQueryResultRequest.setResultPageBoundaries(null, null);
+		sRefCountURI = "&$orderby=CostCenter asc,ControllingArea desc&$inlinecount=allpages";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefBaseURI + sRefCountURI, "QueryResultEntries URI correctly constructed without PageBoundaries.");
+	});
+
+	module("UI5 Multi Filters")
+
+	test("Combining with some simple condition", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP");
+		var oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD");
+		var oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR");
+		var oMultiFilter = new sap.ui.model.Filter(aFilters = [
+			oFilter1, oFilter2, oFilter3
+		], bAnd = false);
+		oFilterExpression.addUI5FilterConditions([
+			oMultiFilter
+		]);
+		oFilterExpression.addSetCondition("CostCenter", [
+			"100-1000", "100-1100"
+		]);
+
+		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
+		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+
+		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+	});
+
+	test("Combining with other UI5 filters on same sPath", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP");
+		var oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD");
+		var oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR");
+
+		var oMultiFilter = new sap.ui.model.Filter(aFilters = [
+			oFilter1, oFilter2, oFilter3
+		], bAnd = false);
+		oFilterExpression.addUI5FilterConditions([
+			oMultiFilter
+		]);
+		oFilterExpression.addUI5FilterConditions([
+			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"), new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100")
+		]);
+
+		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
+		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+
+		var sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+
+		sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$filter=(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefSetURI, "QueryResultEntries URI correctly constructed.");
+	});
+
+	test("Combining with other UI5 filters on different sPaths", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP");
+		var oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD");
+		var oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR");
+
+		var oMultiFilter = new sap.ui.model.Filter(aFilters = [
+			oFilter1, oFilter2, oFilter3
+		], bAnd = false);
+		oFilterExpression.addUI5FilterConditions([
+			oMultiFilter
+		]);
+		oFilterExpression.addUI5FilterConditions([
+			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"), new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+		]);
+
+		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
+		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+
+		var sRefFilterOptionString = "(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+
+		sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$filter=(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefSetURI, "QueryResultEntries URI correctly constructed.");
+	});
+
+	test("Tests 1-3 together", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP");
+		var oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD");
+		var oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR");
+
+		var oMultiFilter = new sap.ui.model.Filter(aFilters = [
+			oFilter1, oFilter2, oFilter3
+		], bAnd = false);
+		oFilterExpression.addUI5FilterConditions([
+			oMultiFilter
+		]);
+		oFilterExpression.addUI5FilterConditions([
+			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"), new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100"), new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+		]);
+		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
+
+		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+
+		var sRefFilterOptionString = "(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+
+		var oRefProps = oFilterExpression.getReferencedProperties();
+
+		sRefSetURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results?$filter=(ControllingArea eq %27US01%27) and (CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		strictEqual(sSetURI, sRefSetURI, "QueryResultEntries URI correctly constructed.");
+	});
+
+	test(" Multiple UI5 filter arrays are combined with AND", function() {
+		var oQueryResultRequest = getQueryResultRequest();
+		var oFilterExpression = oQueryResultRequest.getFilterExpression();
+		var oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP");
+		var oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD");
+		var oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR");
+
+		var oMultiFilter = new sap.ui.model.Filter(aFilters = [
+			oFilter1, oFilter2, oFilter3
+		], bAnd = false);
+		oFilterExpression.addUI5FilterConditions([
+			oMultiFilter
+		]);
+		oFilterExpression.addUI5FilterConditions([
+			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100"), new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+		]);
+		oFilterExpression.addUI5FilterConditions([
+			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"), new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US02")
+		]);
+
+		var aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
+		ok((aUI5FilterArray instanceof Array && aUI5FilterArray[0] instanceof sap.ui.model.Filter), "UI5 filter array correctly constructed.");
+
+		var sRefFilterOptionString = "(ControllingArea eq %27US01%27 or ControllingArea eq %27US02%27) and (CostCenter eq %27100-1100%27 or CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
+		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
+		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
+	});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: Data binding odata4analytics.js</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="target1"></div>
+	<div id="target2"></div>
+</body>
+</html>

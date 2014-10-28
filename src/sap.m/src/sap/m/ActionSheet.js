@@ -340,11 +340,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							var iTop = iWindowHeight - $this.outerHeight(),
 								//calculation for the end point of the animation
 								sEndTransform = genTransformCSS(iTop);
-							$this.css({
-								"-webkit-transform": sEndTransform,
-								"-moz-transform": sEndTransform,
-								"transform": sEndTransform
-							}).addClass("sapMDialogSliding").removeClass("sapMDialogHidden");
+							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
+								 .removeClass("sapMDialogHidden")
+								 .css({
+									"-webkit-transform": sEndTransform,
+									"-moz-transform": sEndTransform,
+									"transform": sEndTransform
+								 });
 						}, 0);
 					};
 					
@@ -356,11 +358,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							$this.removeClass("sapMDialogSliding");
 							fnClosed();
 						});
-						$this.css({
-							"-webkit-transform": sTransform,
-							"-moz-transform": sTransform,
-							"transform": sTransform
-						}).addClass("sapMDialogSliding");
+						$this.addClass("sapMDialogSliding")  // Windows Phone: class should be added before CSS, otherwise no animation
+							 .css({
+								"-webkit-transform": sTransform,
+								"-moz-transform": sTransform,
+								"transform": sTransform
+							 });
 					};
 					
 					//set the animation to the interal oPopup instance on Dialog

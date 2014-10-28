@@ -116,6 +116,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			}
 	
 		};
+		
+		Form.prototype.onBeforeFastNavigationFocus = function(oEvent){
+			var oLayout = this.getLayout();
+			if (oLayout && oLayout.onBeforeFastNavigationFocus) {
+				oLayout.onBeforeFastNavigationFocus(oEvent);
+			}
+		};
 	
 		Form.prototype.setEditable = function(bEditable) {
 	

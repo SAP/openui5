@@ -247,6 +247,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		oEvent.preventDefault();
 	};
 
+	/**
+	 * Function is called on keyboard space, select/deselect token
+	 * @private
+	 * @param {jQuery.event}
+	 *          oEvent
+	 */
+	Token.prototype.onsapspace = function(oEvent) {
+		
+		var bSelected = this.getSelected();
+		this.setSelected(!bSelected);
+		// stop browsers default behavior
+		if (oEvent) {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
+	};
+	
+	/**
+	 * Handle the key down event for Ctrl+ space
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Token.prototype.onkeydown = function(oEvent) {
+		
+		if ((oEvent.ctrlKey) && oEvent.which === jQuery.sap.KeyCodes.SPACE) { //metaKey for MAC command		
+			this.onsapspace(oEvent);
+			oEvent.preventDefault();
+		}
+
+	};
+	
 	return Token;
 
 }, /* bExport= */ true);

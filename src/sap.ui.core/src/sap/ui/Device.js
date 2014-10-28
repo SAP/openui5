@@ -564,6 +564,7 @@ if (typeof window.sap.ui !== "object") {
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
 		if ( b.mozilla ) {
+			oExpMobile = /Mobile/;
 			if ( _ua.match(/Firefox\/(\d+\.\d+)/) ) {
 				var version = parseFloat(RegExp.$1);
 				return {
@@ -571,7 +572,7 @@ if (typeof window.sap.ui !== "object") {
 					versionStr: "" + version,
 					version: version,
 					mozilla: true,
-					mobile: false
+					mobile: oExpMobile.test(_ua)
 				};
 			} else {
 				// unknown mozilla browser
@@ -609,16 +610,18 @@ if (typeof window.sap.ui !== "object") {
 					webkitVersion: webkitVersion
 				};
 			} else { // Safari might have an issue with _ua.match(...); thus changing
-				var oExp = /Version\/(\d+\.\d+).*Safari/;
+				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
 				if (oExp.test(_ua)) {
-					var version = parseFloat(oExp.exec(_ua)[1]);
+					var aParts = oExp.exec(_ua);
+					var version = parseFloat(aParts[2]);
 					return {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
-						webkitVersion: webkitVersion
+						webkitVersion: webkitVersion,
+						phantomJS: aParts[1] === "PhantomJS"
 					};
 				} else {
 					// unknown webkit browser

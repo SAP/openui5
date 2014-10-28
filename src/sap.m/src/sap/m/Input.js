@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	
 			// resize suggestion popup to minimum size of the input field
 			setTimeout(function() {
-				if (that._oSuggestionPopup.isOpen() && that._oSuggestionPopup.$().outerWidth() < that.$().outerWidth()) {
+				if (that._oSuggestionPopup && that._oSuggestionPopup.isOpen() && that._oSuggestionPopup.$().outerWidth() < that.$().outerWidth()) {
 					that._oSuggestionPopup.setContentWidth((that.$().outerWidth()) + "px");
 				}
 			}, 0);
@@ -1154,7 +1154,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			}
 	
 			if (oInput._oSuggestionPopup) {
-				oInput._oSuggestionPopup.addContent(oInput._oList);
+				if (sap.ui.Device.system.phone) {
+					// oInput._oList needs to be manually rendered otherwise it triggers a rerendering of the whole
+					// dialog and may close the opened on screen keyboard
+					oInput._oSuggestionPopup.addAggregation("content", oInput._oList, true);
+					var oRenderTarget = oInput._oSuggestionPopup.$("scrollCont")[0];
+					if (oRenderTarget) {
+						var rm = sap.ui.getCore().createRenderManager();
+						rm.renderControl(oInput._oList);
+						rm.flush(oRenderTarget);
+						rm.destroy();
+					}
+				} else {
+					oInput._oSuggestionPopup.addContent(oInput._oList);
+				}
 			}
 		}
 	

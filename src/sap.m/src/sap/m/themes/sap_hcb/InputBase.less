@@ -1,0 +1,291 @@
+/* ========================================================= */
+/* CSS for control sap.m/InputBase.control High Contrast Black theme */
+/* ========================================================= */
+
+.sapMInputBase {
+	background-color:	   transparent;
+	border:                none;
+	position:              relative;
+	display:			   inline-block;
+	padding: 			   0.25rem 0;
+	height: 			   3rem;
+	vertical-align:        top;
+}
+
+.sapMInputBaseInner {
+	color: 				   @sapHCStandardFG;
+	background-color:	   @sapHCStandardBG;
+	border:		           0.0625rem solid @sapHCStandardFG;
+	margin:                0;
+	font-size: 			   @sapMFontMediumSize;
+	font-family: 		   @sapUiFontFamily;
+	line-height:		   normal;
+	height: 			   2.5rem;
+	vertical-align:		   top;
+	padding:               0 0.75rem;
+	-moz-appearance:       textfield;
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+	color:				   @sapHCReducedAltFG;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   normal;
+}
+
+.sapMInputBaseInner::-moz-placeholder {
+	color:				   @sapHCReducedAltFG;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   normal;
+}
+
+.sapMInputBaseInner:-ms-input-placeholder {
+	color:				   @sapHCReducedAltFG;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   normal;
+}
+
+.sapMInputBasePlaceholder {
+	color:				   @sapHCReducedAltFG;
+	font-size: 			   @sapMFontMediumSize;
+	font-style:			   normal;
+	position:			   absolute;
+	text-overflow:		   ellipsis;
+	white-space:           nowrap;
+	overflow:			   hidden;
+	line-height:		   2.5rem;
+	padding:               0 0.75rem;
+}
+
+.sapMInputBaseInner:focus {
+	outline:               none;
+	outline-width:         0;
+}
+
+.sapMInputBaseStateInner {
+	border-width: 		   0.0625rem;
+	padding: 			   0 0.6875rem;
+}
+
+.sapMInputBaseWarningInner {
+	border-style: 		   dashed;
+}
+
+.sapMInputBaseErrorInner {
+	background-color: 	   @sapHCHighlightBG;
+}
+
+.sapMInputBaseSuccessInner {
+	border-color: @sapHCStandardFG;
+}
+
+.sapMInputBaseInner.sapMInputBaseReadonlyInner {
+	border-color: @sapHCReducedAltFG;
+	background-color: @sapHCReducedBG;
+}
+
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):focus,
+.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):hover {
+	border-color: @sapHCStandardFG;
+}
+
+.sapMILI-CTX .sapMInputBase {
+	display: block;
+}
+
+.sapMILI-CTX .sapMInputBaseInner {
+	text-align:	right;
+	background-color: transparent;
+}
+
+html[dir=rtl] .sapMILI-CTX .sapMInputBaseInner,
+html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
+	text-align: left;
+}
+
+.sapMILI-CTX .sapMInputBasePlaceholder {
+	text-align: right;
+}
+
+.sapMILI-CTX :not(.sapMInputVH) .sapMInputBaseInner:not(.sapMInputBaseStateInner){
+	border: none;
+}
+
+.sapMLIBActive .sapMInputBaseInner {
+	color: @sapHCStandardFG;
+	background: transparent;
+}
+
+.sapMLIBActive .sapMInputBaseInner::-webkit-input-placeholder {
+	color: @sapHCStandardFG;
+}
+
+.sapMInputBaseMessage {
+	color: 				   @sapHCStandardFG;
+	font-size:             @sapMFontSmallSize;
+	font-family:           @sapUiFontFamily;
+	padding:               0.3rem 0.625rem;
+}
+
+.sapMInputBaseMessageError,
+.sapMInputBaseMessageWarning {
+	background: 		   @sapHCStandardBG;
+	border: 			   0.125rem solid @sapHCStandardFG;
+}
+
+/* Compact size */
+.sapUiSizeCompact{
+
+	.sapMInputBase {
+		height: 		   2rem;
+		padding: 		   0.1875rem 0;
+	}
+
+	.sapMInputBaseInner {
+		height: 		   1.625rem;
+		padding:           0 0.5rem;
+	}
+
+	.sapMInputBasePlaceholder {
+		line-height:	   1.625rem;
+		padding:           0 0.5rem;
+	}
+
+}
+
+/* Condensed size */
+.sapUiSizeCondensed{
+	.sapMInputBase {
+		height: 		   1.5rem;
+		padding: 		   0;
+	}
+
+	.sapMInputBaseInner{
+		border-color: sapHCStandardFG;
+	}
+
+	.sapMInputBaseInner {
+		height: 		   1.5rem;
+	}
+
+	.sapMInputBasePlaceholder {
+		line-height:	   1.5rem;
+	}
+}
+
+/* HCB-specific changes */
+
+.sapMInputBaseInner {
+     font-style:            normal;
+}
+
+.sapMInputBaseInner::-webkit-input-placeholder {
+    font-weight:           normal;
+}
+ 
+.sapMInputBaseInner::-moz-placeholder {
+    font-weight:           normal;
+    opacity:               1;
+}
+ 
+.sapMInputBaseInner:-ms-input-placeholder {
+    font-weight:           normal;
+}
+ 
+.sapMInputBasePlaceholder,
+.sapMInputBaseWarningInner,
+.sapMInputBaseDisabled .sapMInputBaseInner {
+    font-weight:           normal;
+}
+
+.sapMInputBaseWarning > .sapMInputBasePlaceholder {
+	color: 				   @sapHCReducedAltFG;
+	font-style: 		   italic;
+}
+
+.sapMInputBaseError > .sapMInputBasePlaceholder {
+	color: 				   @sapHCReducedAltFG;
+	font-style: 		   italic;
+	font-weight: 		   bold;
+}
+
+.sapMInputBaseWarningInner::-webkit-input-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   normal;
+}
+
+.sapMInputBaseWarningInner::-moz-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   normal;
+	opacity: 			   1;
+}
+
+.sapMInputBaseWarningInner:-ms-input-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   normal;
+}
+
+.sapMInputBaseErrorInner::-webkit-input-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   bold;
+}
+
+.sapMInputBaseErrorInner::-moz-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   bold;
+	opacity: 1;
+}
+
+.sapMInputBaseErrorInner:-ms-input-placeholder {
+	color: 				   @sapHCStandardFG;
+	font-style: 		   italic;
+	font-weight: 		   bold;
+}
+
+.sapMInputBaseWarningInner {
+	font-style: 		   italic;
+}
+
+.sapMInputBaseErrorInner {
+	border-style: 		   dashed;
+	font-style: 		   italic;
+	font-weight: 		   bold;
+}
+
+.sapMInputBaseDisabled {
+	opacity: 1;
+}
+
+.sapMInputBaseDisabled .sapMInputBaseInner {
+	background-color: 	   @sapHCReducedBG;
+	border-color: 		   @sapHCReducedAltFG;
+	color: 				   @sapHCReducedFG;
+	-webkit-text-fill-color: @sapHCReducedFG;
+}
+
+.sapMInputBaseMessageError,
+.sapMInputBaseMessageWarning {
+	color:                 @sapHCStandardFG;
+}
+
+.sapMInputBaseMessageTop {
+	border-top-left-radius:		0.25rem;
+	border-top-right-radius:	0.25rem;
+	margin-bottom:				-0.125rem;
+}
+
+.sapMInputBaseMessageBottom {
+	border-bottom-left-radius:	0.25rem;
+	border-bottom-right-radius:	0.25rem;
+	margin-top:					-0.125rem;
+}
+
+.sapUiSizeCondensed{
+	.sapMInputDescription>span {
+        line-height: 1.5rem;
+    }
+}

@@ -1,0 +1,39 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m">
+	<IconTabBar
+		class="iconTabBarPaddingTop"
+		id="idIconTabBarStretchContent"
+		stretchContentHeight="true"
+		backgroundDesign="Transparent"
+		applyContentPadding="false"
+		expanded="{device>/isNoPhone}">
+		<items>
+			<IconTabFilter
+				text="Info">
+				<Carousel>
+					<pages>
+						<l:VerticalLayout>
+							<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg" />
+						</l:VerticalLayout>
+						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1073.jpg" />
+						<Image src="test-resources/sap/ui/demokit/explored/img/large_HT-1112.jpg" />
+					</pages>
+				</Carousel>
+			</IconTabFilter>
+			<IconTabFilter
+				text="Attachments">
+				<Text text="Attachments go here ..." />
+			</IconTabFilter>
+			<IconTabFilter
+				text="Notes">
+				<Text text="Notes go here ..." />
+			</IconTabFilter>
+			<IconTabFilter
+				text="People">
+				<Text text="People content goes here ..." />
+			</IconTabFilter>
+		</items>
+	</IconTabBar>
+</mvc:View>

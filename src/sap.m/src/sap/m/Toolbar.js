@@ -3,12 +3,13 @@
  */
 
 // Provides control sap.m.Toolbar.
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarDesign', './ToolbarLayoutData', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, BarInPageEnabler, ToolbarDesign, ToolbarLayoutData, ToolbarSpacer, library, Control, EnabledPropagator, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
+	function(jQuery, BarInPageEnabler, ToolbarLayoutData, ToolbarSpacer, library, Control, EnabledPropagator, ResizeHandler) {
 	"use strict";
 
 
-	
+	var ToolbarDesign = sap.m.ToolbarDesign;
+
 	/**
 	 * Constructor for a new Toolbar.
 	 *
@@ -374,6 +375,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarDesign', './
 		this._oContentDelegate = {
 			onAfterRendering: this._onAfterContentRendering
 		};
+		
+		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 	
 	Toolbar.prototype.onBeforeRendering = function() {
