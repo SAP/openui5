@@ -99,7 +99,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 		oFormat.oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", oLocale.toString());
 		
 		oFormat.bBinary = !!oFormatOptions.binaryFilesize;
-		oFormat.bRounding = false; //!!oFormatOptions.rounding; //TODO Rounding not yet implemented in NumberFormat -> Rethink this check when this feature is available
 		
 		return oFormat;
 	};
@@ -114,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 	 * @function
 	 */
 	FileSizeFormat.prototype.format = function(oValue) {
-		var fValue = null;
+		var fValue = null, fOriginValue;
 		if (typeof oValue == "string") {
 			try {
 				if (/^\s*[\+-]?0[xX]/.test(oValue)) {
@@ -133,15 +132,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/forma
 			return "NaN";
 		}
 		
+		fOriginValue = fValue;
+		
 		var oUnit = _getUnit(fValue, this.bBinary),
 			sValue = this.oNumberFormat.format(fValue / oUnit.factor);
 		
 		// Rounding may induce a change of scale. -> Second pass required
-		if (this.bRounding && !oUnit.noSecondRounding) {
+		if (!oUnit.noSecondRounding) {
 			fValue = this.oNumberFormat.parse(sValue);
 			if ((this.bBinary && Math.abs(fValue) >= 1024) || (!this.bBinary && Math.abs(fValue) >= 1000)) {
-				oUnit = _getUnit(fValue * (this.bBinary ? oUnit.binaryFactor : oUnit.decimalFactor), this.bBinary);
-				sValue = this.oNumberFormat.format(fValue / oUnit.factor);
+				oUnit = _getUnit(fValue * oUnit.factor, this.bBinary);
+				sValue = this.oNumberFormat.format(fOriginValue / oUnit.factor);
 			}
 		}
 		

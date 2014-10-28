@@ -32,8 +32,8 @@
 <script language="javascript">
 
 	jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
-	var oFormatBinary = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: true}, new sap.ui.core.Locale("en"));
-	var oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false}, new sap.ui.core.Locale("en"));
+	var oFormatBinary = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: true, maxFractionDigits: 2}, new sap.ui.core.Locale("en"));
+	var oFormatDecimal = sap.ui.core.format.FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 2}, new sap.ui.core.Locale("en"));
 	var oFormatDefault = sap.ui.core.format.FileSizeFormat.getInstance({}, new sap.ui.core.Locale("en"));
 	
 	var aBinaryUnits = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
@@ -115,6 +115,7 @@
 		checkFormat("binary", 1, "1 Byte");
 		checkFormat("binary", "1", "1 Byte");
 		checkFormat("binary", "0x1", "1 Byte");
+		checkFormat("binary", 1048575, "1 MiB");
 	});
 	
 	test("format decimal", function(){
@@ -130,6 +131,7 @@
 		checkFormat("decimal", 1, "1 Byte");
 		checkFormat("decimal", "1", "1 Byte");
 		checkFormat("decimal", "0x1", "1 Byte");
+		checkFormat("decimal", 999999, "1 MB");
 	});
 	
 	test("format default", function(){
