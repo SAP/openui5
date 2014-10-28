@@ -1,658 +1,652 @@
 <!DOCTYPE HTML>
 <html>
-
-<!-- 
-           Tested classes: sap.ui.core.navigation.History
-         -->
-
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>qUnit Page for sap.m.routing.RouteMatchedHandler</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.commons">
-	
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.m">
 </script>
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
 <script>
-	//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals 
-	var original = module;
-	module = undefined;
-	jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
-	jQuery.sap.require("sap.m.NavContainer");
-	jQuery.sap.require("sap.m.SplitContainer");
-	
-	module = original;
+	(function () {
+		"use strict";
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		}
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-	sap.ui.core.routing.HashChanger.getInstance().init();
-	
-	module("initialization");
+		//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
+		var original = module;
+		module = undefined;
 
-	function createViewAndController(sName) {
-		sap.ui.controller(sName, {});
-		sap.ui.jsview(sName, {
-			createContent : function() {
-				return;
-			},
-			getController : function() {
-				return sap.ui.controller(sName);
-			}
-		});
-		
-		return sap.ui.jsview(sName);
-	}
+		jQuery.sap.require("sap.m.routing.RouteMatchedHandler");
+		jQuery.sap.require("sap.m.NavContainer");
+		jQuery.sap.require("sap.m.SplitContainer");
 
-	test("Should destroy correctly", function() {
-		//Arrange
-		var oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
-			oRoutePatternMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
-			oRouter = new sap.ui.core.routing.Router(),
+		module = original;
+
+		sap.ui.core.routing.HashChanger.getInstance().init();
+
+		module("initialization");
+
+		function createViewAndController(sName) {
+			sap.ui.controller(sName, {});
+			sap.ui.jsview(sName, {
+				createContent : function() {
+				},
+				getController : function() {
+					return sap.ui.controller(sName);
+				}
+			});
+
+			return sap.ui.jsview(sName);
+		}
+
+		test("Should destroy correctly", function() {
+			//Arrange
+			var oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
+					oRoutePatternMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
+					oRouter = new sap.ui.core.routing.Router(),
 			//System under Test
-			sut = new sap.m.routing.RouteMatchedHandler(oRouter, false);
+					sut = new sap.m.routing.RouteMatchedHandler(oRouter, false);
 
 
-		//Fire once to make sure we registered
-		oRouter.fireRouteMatched({config : {}});
-		oRouter.fireRoutePatternMatched({config : {}});
+			//Fire once to make sure we registered
+			oRouter.fireRouteMatched({config : {}});
+			oRouter.fireRoutePatternMatched({config : {}});
 
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
-		strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did fire the pattern matched event");
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
+			strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did fire the pattern matched event");
 
-		//Act
-		sut.destroy();
+			//Act
+			sut.destroy();
 
-		//Fire the events again
-		oRouter.fireRouteMatched({config : {}});
-		oRouter.fireRoutePatternMatched({config : {}});
+			//Fire the events again
+			oRouter.fireRouteMatched({config : {}});
+			oRouter.fireRoutePatternMatched({config : {}});
 
-		//Assert
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did not fire the event again");
-		strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did not fire the pattern matched event again");
+			//Assert
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did not fire the event again");
+			strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did not fire the pattern matched event again");
 
-		strictEqual(sut.getCloseDialogs(), false, "close dialogs was set to false");
-	});
+			strictEqual(sut.getCloseDialogs(), false, "close dialogs was set to false");
+		});
 
-	test("Should have a default for close dialogs", function() {
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(new sap.ui.core.routing.Router());
+		test("Should have a default for close dialogs", function() {
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(new sap.ui.core.routing.Router());
 
-		//Act + Assert
-		strictEqual(sut.getCloseDialogs(), true, "Default is true");
-		sut.setCloseDialogs(false);
-		strictEqual(sut.getCloseDialogs(), false, "was set to false");
-	});
+			//Act + Assert
+			strictEqual(sut.getCloseDialogs(), true, "Default is true");
+			sut.setCloseDialogs(false);
+			strictEqual(sut.getCloseDialogs(), false, "was set to false");
+		});
 
-	module("Transition Directions")
+		module("Transition Directions");
 
-	function viewLevelTestCase (iFirstViewLevel, iSecondViewLevel, bExpectedBackwards) {
-		//Arrange
-		var view = createViewAndController("dummy"),
-			oRouter = new sap.ui.core.routing.Router(),
-			oNavContainer = new sap.m.NavContainer(),
-			oEvent = {
-				config : {
-					viewLevel : iFirstViewLevel
-				},
-				view : "foo",
-				targetControl : oNavContainer
-			},
-			oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched");
+		function viewLevelTestCase (iFirstViewLevel, iSecondViewLevel, bExpectedBackwards) {
+			//Arrange
+			var view = createViewAndController("dummy"),
+					oRouter = new sap.ui.core.routing.Router(),
+					oNavContainer = new sap.m.NavContainer(),
+					oEvent = {
+						config : {
+							viewLevel : iFirstViewLevel
+						},
+						view : "foo",
+						targetControl : oNavContainer
+					},
+					oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched");
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
 
-		//create a previous navigation
-		oRouter.fireRoutePatternMatched(oEvent);
+			//create a previous navigation
+			oRouter.fireRoutePatternMatched(oEvent);
 
-		oEvent.config.viewLevel = iSecondViewLevel;
+			oEvent.config.viewLevel = iSecondViewLevel;
 
-		//make sure handleRouteMatchedIsCalled
-		oRouter.fireRouteMatched(oEvent);
+			//make sure handleRouteMatchedIsCalled
+			oRouter.fireRouteMatched(oEvent);
 
-		//Act
-		oRouter.fireRoutePatternMatched(oEvent);
+			//Act
+			oRouter.fireRoutePatternMatched(oEvent);
 
-		//Assert
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did call routeMatched");
-		var bBack = oRouteMatchedSpy.firstCall.args[1];
+			//Assert
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did call routeMatched");
+			var bBack = oRouteMatchedSpy.firstCall.args[1];
 
-		strictEqual(bExpectedBackwards, bBack, "did have the correct direction (true means backwards)");
-	}
+			strictEqual(bExpectedBackwards, bBack, "did have the correct direction (true means backwards)");
+		}
 
-	test("Should force a forward direction with the viewLevel", function () {
-		var oHistorySpy = this.spy(sap.ui.core.routing.History.prototype, "getDirection");
+		test("Should force a forward direction with the viewLevel", function () {
+			var oHistorySpy = this.spy(sap.ui.core.routing.History.prototype, "getDirection");
 
-		viewLevelTestCase.call(this, 0, 1, false);
+			viewLevelTestCase.call(this, 0, 1, false);
 
-		strictEqual(oHistorySpy.callCount, 1, "did not ask the history only for the first pattern matched");
-	});
+			strictEqual(oHistorySpy.callCount, 1, "did not ask the history only for the first pattern matched");
+		});
 
-	test("Should force a backwards direction with the viewLevel", function () {
-		var oHistorySpy = this.spy(sap.ui.core.routing.History.prototype, "getDirection");
+		test("Should force a backwards direction with the viewLevel", function () {
+			var oHistorySpy = this.spy(sap.ui.core.routing.History.prototype, "getDirection");
 
-		viewLevelTestCase.call(this, 1, 0, true);
+			viewLevelTestCase.call(this, 1, 0, true);
 
-		strictEqual(oHistorySpy.callCount, 1, "did not ask the history only for the first pattern matched");
-	});
+			strictEqual(oHistorySpy.callCount, 1, "did not ask the history only for the first pattern matched");
+		});
 
-	test("Should ask the history for undefined as first parameter", function () {
-		var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Backwards"; });
+		test("Should ask the history for undefined as first parameter", function () {
+			var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Backwards"; });
 
-		viewLevelTestCase.call(this, undefined, 1, true);
+			viewLevelTestCase.call(this, undefined, 1, true);
 
-		strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
-	});
+			strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
+		});
 
-	test("Should ask the history for undefined as second parameter", function () {
-		var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Backwards"; });
+		test("Should ask the history for undefined as second parameter", function () {
+			var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Backwards"; });
 
-		viewLevelTestCase.call(this, 0, undefined, true);
+			viewLevelTestCase.call(this, 0, undefined, true);
 
-		strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
-	});
+			strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
+		});
 
-	test("Should ask the history for same view level", function () {
-		var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Forwards"; });
+		test("Should ask the history for same view level", function () {
+			var oHistoryStub = this.stub(sap.ui.core.routing.History.prototype, "getDirection", function () { return "Forwards"; });
 
-		viewLevelTestCase.call(this, 1, 1, false);
+			viewLevelTestCase.call(this, 1, 1, false);
 
-		strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
-	});
+			strictEqual(oHistoryStub.callCount, 2, "did ask the history twice");
+		});
 
-	module("Managing Containers")
+		module("Managing Containers");
 
-	test("Should do a forward navigation", function () {
-		//Arrange
-		var view = createViewAndController("dummy"),
-			oRouter = new sap.ui.core.routing.Router(),
-			oNavContainer = new sap.m.NavContainer({
-				pages : [ createViewAndController("initial"), view]
-			}),
-			oEvent = {
-				targetControl : oNavContainer,
-				arguments : { foo : "bar" },
-				config : {
-					transition : "flip",
-					transitionParameters : { testie : "test"}
-				},
-				view : view
-			},
-			oToSpy = this.spy(sap.m.NavContainer.prototype, "to");
+		test("Should do a forward navigation", function () {
+			//Arrange
+			var view = createViewAndController("dummy"),
+					oRouter = new sap.ui.core.routing.Router(),
+					oNavContainer = new sap.m.NavContainer({
+						pages : [ createViewAndController("initial"), view]
+					}),
+					oEvent = {
+						targetControl : oNavContainer,
+						arguments : { foo : "bar" },
+						config : {
+							transition : "flip",
+							transitionParameters : { testie : "test"}
+						},
+						view : view
+					},
+					oToSpy = this.spy(sap.m.NavContainer.prototype, "to");
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
 
-		//Act
-		oRouter.fireRouteMatched(oEvent);
-		oRouter.fireRoutePatternMatched(oEvent);
-		
-		//Assert
-		strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
-		var oFirstCall = oToSpy.firstCall;
+			//Act
+			oRouter.fireRouteMatched(oEvent);
+			oRouter.fireRoutePatternMatched(oEvent);
 
-		strictEqual(oFirstCall.args[0], oEvent.view.getId(), "did navigate to the correct view");
-		strictEqual(oFirstCall.args[1], oEvent.config.transition, "did show the correct transition");
-		strictEqual(oFirstCall.args[2], oEvent.arguments, "did pass the correct arguments");
-		strictEqual(oFirstCall.args[3], oEvent.config.transitionParameters, "did pass the transition parameters");
-	});
+			//Assert
+			strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+			var oFirstCall = oToSpy.firstCall;
 
-	test("Should do a backwards navigation", function () {
-		//Arrange
-		var view = createViewAndController("dummy"),
-			oRouter = new sap.ui.core.routing.Router(),
-			oSplitContainer = new sap.m.SplitContainer({
-				masterPages : [ createViewAndController("initial"), view]
-			}),
-			oEvent = {
-				targetControl : oSplitContainer,
-				arguments : { foo : "bar" },
-				config : {
-					transition : "flip",
-					transitionParameters : { testie : "test"}
-				},
-				view : view
-			},
-			oInsertPreviousPageSpy = this.spy(sap.m.NavContainer.prototype, "insertPreviousPage"),
-			oBackToPageSpy = this.spy(sap.m.NavContainer.prototype, "backToPage");
+			strictEqual(oFirstCall.args[0], oEvent.view.getId(), "did navigate to the correct view");
+			strictEqual(oFirstCall.args[1], oEvent.config.transition, "did show the correct transition");
+			strictEqual(oFirstCall.args[2], oEvent.arguments, "did pass the correct arguments");
+			strictEqual(oFirstCall.args[3], oEvent.config.transitionParameters, "did pass the transition parameters");
+		});
 
-		//simulate backwards navigation
-		this.stub(sap.ui.core.routing.History.prototype, "getDirection", function() { return "Backwards"; });
+		test("Should do a backwards navigation", function () {
+			//Arrange
+			var view = createViewAndController("dummy"),
+					oRouter = new sap.ui.core.routing.Router(),
+					oSplitContainer = new sap.m.SplitContainer({
+						masterPages : [ createViewAndController("initial"), view]
+					}),
+					oEvent = {
+						targetControl : oSplitContainer,
+						arguments : { foo : "bar" },
+						config : {
+							transition : "flip",
+							transitionParameters : { testie : "test"}
+						},
+						view : view
+					},
+					oInsertPreviousPageSpy = this.spy(sap.m.NavContainer.prototype, "insertPreviousPage"),
+					oBackToPageSpy = this.spy(sap.m.NavContainer.prototype, "backToPage");
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			//simulate backwards navigation
+			this.stub(sap.ui.core.routing.History.prototype, "getDirection", function() { return "Backwards"; });
 
-		//Act
-		oRouter.fireRouteMatched(oEvent);
-		oRouter.fireRoutePatternMatched(oEvent);
-		
-		//Assert
-		strictEqual(oInsertPreviousPageSpy.callCount, 1, "did insert the page in the navigation stack");
-		strictEqual(oBackToPageSpy.callCount, 1, "did a backwards navigation to the page");
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
 
-		var oInsertCall = oInsertPreviousPageSpy.firstCall;
-		var oBackCall = oBackToPageSpy.firstCall;
+			//Act
+			oRouter.fireRouteMatched(oEvent);
+			oRouter.fireRoutePatternMatched(oEvent);
 
-		strictEqual(oInsertCall.args[0], oEvent.view.getId(), "did insert the correct view");
-		strictEqual(oInsertCall.args[1], oEvent.config.transition, "did show the correct transition");
-		strictEqual(oInsertCall.args[2], oEvent.arguments, "did pass the correct arguments");
+			//Assert
+			strictEqual(oInsertPreviousPageSpy.callCount, 1, "did insert the page in the navigation stack");
+			strictEqual(oBackToPageSpy.callCount, 1, "did a backwards navigation to the page");
 
-		strictEqual(oBackCall.args[0], oEvent.view.getId(), "did a back to the correct view");
-		strictEqual(oBackCall.args[1], oEvent.arguments, "did pass the correct arguments");
-		strictEqual(oBackCall.args[2], oEvent.config.transitionParameters, "did pass the transition parameters");
-	});
+			var oInsertCall = oInsertPreviousPageSpy.firstCall;
+			var oBackCall = oBackToPageSpy.firstCall;
 
-	test("Should not navigate if the currentPage is already displayed", function () {
-		//Arrange
-		var view = createViewAndController("dummy"),
-			oRouter = new sap.ui.core.routing.Router(),
-			oNavContainer = new sap.m.NavContainer({
-				pages : [ view]
-			}),
-			oEvent = {
-				targetControl : oNavContainer,
+			strictEqual(oInsertCall.args[0], oEvent.view.getId(), "did insert the correct view");
+			strictEqual(oInsertCall.args[1], oEvent.config.transition, "did show the correct transition");
+			strictEqual(oInsertCall.args[2], oEvent.arguments, "did pass the correct arguments");
+
+			strictEqual(oBackCall.args[0], oEvent.view.getId(), "did a back to the correct view");
+			strictEqual(oBackCall.args[1], oEvent.arguments, "did pass the correct arguments");
+			strictEqual(oBackCall.args[2], oEvent.config.transitionParameters, "did pass the transition parameters");
+		});
+
+		test("Should not navigate if the currentPage is already displayed", function () {
+			//Arrange
+			var view = createViewAndController("dummy"),
+					oRouter = new sap.ui.core.routing.Router(),
+					oNavContainer = new sap.m.NavContainer({
+						pages : [ view]
+					}),
+					oEvent = {
+						targetControl : oNavContainer,
+						config : {},
+						view : view
+					},
+					oToSpy = this.spy(sap.m.NavContainer.prototype, "to"),
+					oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched");
+
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			oRouter.fireRouteMatched(oEvent);
+			oRouter.fireRoutePatternMatched(oEvent);
+
+			//Assert
+			strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did call _handleRouteMatched");
+		})
+
+		module("Dialog closing");
+
+		test("Should close all dialogs", function() {
+			//Arrange
+			var hasInstances = function () {
+						return true;
+					},
+					oCloseAllPopoversSpy = this.spy(sap.m.InstanceManager, "closeAllPopovers"),
+					oCloseAllDialogsSpy = this.spy(sap.m.InstanceManager, "closeAllDialogs"),
+					oRouter = new sap.ui.core.routing.Router(),
+			//System under Test
+					sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			this.stub(sap.m.InstanceManager, "hasOpenPopover", hasInstances);
+			this.stub(sap.m.InstanceManager, "hasOpenDialog", hasInstances);
+
+			//Act
+			oRouter.fireRoutePatternMatched({config : {}});
+
+			//Assert
+			strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
+			strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
+		});
+
+		module("Determine which container has to navigate");
+
+		//test function for test cases
+		function oneNavigationTest(fnContainer) {
+			//Arrange
+			var oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
+					oRouter = new sap.ui.core.routing.Router(),
+					oContainer = new fnContainer(),
+			//System under Test
+					sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			oRouter.fireRouteMatched({
 				config : {},
-				view : view
-			},
-			oToSpy = this.spy(sap.m.NavContainer.prototype, "to"),
-			oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched");
+				view : createViewAndController("Foo"),
+				targetControl : oContainer
+			});
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			oRouter.fireRouteMatched({
+				config : {},
+				view : createViewAndController("Bar"),
+				targetControl : oContainer
+			});
 
-		//Act
-		oRouter.fireRouteMatched(oEvent);
-		oRouter.fireRoutePatternMatched(oEvent);
-		
-		//Assert
-		strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did call _handleRouteMatched");
-	})
+			oRouter.fireRoutePatternMatched({
+				config : {},
+				targetControl : oContainer
+			});
 
-	module("Dialog closing")
+			//Assert
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched");
+			var oCall = oRouteMatchedSpy.getCall(0);
 
-	test("Should close all dialogs", function() {
-		//Arrange
-		var hasInstances = function () {
-				return true;
-			},
-			oCloseAllPopoversSpy = this.spy(sap.m.InstanceManager, "closeAllPopovers"),
-			oCloseAllDialogsSpy = this.spy(sap.m.InstanceManager, "closeAllDialogs"),
-			oRouter = new sap.ui.core.routing.Router(),
+			strictEqual(oCall.args[0].oView.getViewName(), "Bar", "did invoke it with the second view");
+
+			sut.destroy();
+		}
+
+		test("Should create one Navigation for a navContainer", function() {
+			oneNavigationTest.call(this, sap.m.NavContainer);
+		});
+
+		test("Should create one Navigation for a splitContainer in phone mode", function() {
+			this.stub(sap.ui.Device.system, "phone", true);
+			oneNavigationTest.call(this, sap.m.SplitContainer);
+		});
+
+		//this tests a bug that a queue was not emptied before
+		test("Should empty previous navigations", function() {
+			//Arrange
+			var oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
+					oNavContainer = new sap.m.NavContainer(),
+					oRouter = new sap.ui.core.routing.Router(),
 			//System under Test
-			sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+					sut = new sap.m.routing.RouteMatchedHandler(oRouter);
 
-		this.stub(sap.m.InstanceManager, "hasOpenPopover", hasInstances);
-		this.stub(sap.m.InstanceManager, "hasOpenDialog", hasInstances);
+			oRouter.fireRouteMatched({
+				config : {},
+				view : createViewAndController("Foo"),
+				targetControl : oNavContainer
+			});
 
-		//Act
-		oRouter.fireRoutePatternMatched({config : {}});
+			oRouter.fireRoutePatternMatched({
+				config : {},
+				targetControl : oNavContainer
+			});
 
-		//Assert
-		strictEqual(oCloseAllPopoversSpy.callCount, 1, "did close the popups");
-		strictEqual(oCloseAllDialogsSpy.callCount, 1, "did close the dialogs");
-	});
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched");
 
-	module("Determine which container has to navigate");
+			//Act - fire the event again
+			oRouter.fireRoutePatternMatched({
+				config : {},
+				targetControl : oNavContainer
+			});
 
-	//test function for test cases
-	function oneNavigationTest(fnContainer) {
-		//Arrange
-		var oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
-			oRouter = new sap.ui.core.routing.Router(),
-			oContainer = new fnContainer(),
-			//System under Test
-			sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			//Assert
+			strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched only once");
+			var oCall = oRouteMatchedSpy.getCall(0);
 
-		//Act
-		oRouter.fireRouteMatched({
-			config : {},
-			view : createViewAndController("Foo"),
-			targetControl : oContainer
+			strictEqual(oCall.args[0].oView.getViewName(), "Foo", "did invoke it with the first view");
+
+			sut.destroy();
 		});
 
-		oRouter.fireRouteMatched({
-			config : {},
-			view : createViewAndController("Bar"),
-			targetControl : oContainer
-		});
-
-		oRouter.fireRoutePatternMatched({
-			config : {},
-			targetControl : oContainer
-		});
-
-		//Assert
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched");
-		var oCall = oRouteMatchedSpy.getCall(0);
-
-		strictEqual(oCall.args[0].oView.getViewName(), "Bar", "did invoke it with the second view");
-
-		sut.destroy();
-	};
-
-	test("Should create one Navigation for a navContainer", function() {
-		oneNavigationTest.call(this, sap.m.NavContainer);
-	});
-
-	test("Should create one Navigation for a splitContainer in phone mode", function() {
-		this.stub(sap.ui.Device.system, "phone", true);
-		oneNavigationTest.call(this, sap.m.SplitContainer);
-	});
-
-	//this tests a bug that a queue was not emptied before
-	test("Should empty previous navigations", function() {
-		//Arrange
-		var oRouteMatchedSpy = this.stub(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
-			oNavContainer = new sap.m.NavContainer(),
-			oRouter = new sap.ui.core.routing.Router(),
-			//System under Test
-			sut = new sap.m.routing.RouteMatchedHandler(oRouter);
-
-		oRouter.fireRouteMatched({
-			config : {},
-			view : createViewAndController("Foo"),
-			targetControl : oNavContainer
-		});
-
-		oRouter.fireRoutePatternMatched({
-			config : {},
-			targetControl : oNavContainer
-		});
-
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched");
-
-		//Act - fire the event again
-		oRouter.fireRoutePatternMatched({
-			config : {},
-			targetControl : oNavContainer
-		});
-
-		//Assert
-		strictEqual(oRouteMatchedSpy.callCount, 1, "did invoke handleRouteMatched only once");
-		var oCall = oRouteMatchedSpy.getCall(0);
-
-		strictEqual(oCall.args[0].oView.getViewName(), "Foo", "did invoke it with the first view");
-
-		sut.destroy();
-	});
-
-	///////////////////////////////////////////////////////
-	/// Integation test
-	///////////////////////////////////////////////////////
-	test("Should add one Navigation per detail and master aggregation for splitt app in desktop", function() {
-		//Arrange
-		var oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
-			oSplitContainer = new sap.m.SplitContainer(),
-			oRouter = new sap.ui.core.routing.Router({
-				"dummyMaster" : {
-					targetControl : oSplitContainer.getId(),
-					view : "MasterDummy",
-					viewType: "JS",
-					targetAggregation: "masterPages",
-					subroutes : {
-						"dummyDetail" : {
-							targetAggregation: "detailPages",
-							view : "DetailDummy",
+		///////////////////////////////////////////////////////
+		/// Integation test
+		///////////////////////////////////////////////////////
+		test("Should add one Navigation per detail and master aggregation for splitt app in desktop", function() {
+			//Arrange
+			var oRouteMatchedSpy = this.spy(sap.m.routing.RouteMatchedHandler.prototype, "_handleRouteMatched"),
+					oSplitContainer = new sap.m.SplitContainer(),
+					oRouter = new sap.ui.core.routing.Router({
+						"dummyMaster" : {
+							targetControl : oSplitContainer.getId(),
+							view : "MasterDummy",
 							viewType: "JS",
-							subroutes : {
-								"master" : {
-									targetAggregation: "masterPages",
-									view : "Master",
-									viewType: "JS",
-									subroutes : {
-										"detail" : {
-											pattern : "pattern",
-											view : "Detail",
-											viewType: "JS",
-											targetAggregation: "detailPages",
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			});
-
-		this.stub(sap.ui.Device.system, "phone", false);
-
-		//views
-		createViewAndController("Detail");
-		createViewAndController("DetailDummy");
-		createViewAndController("Master");
-		createViewAndController("MasterDummy");
-
-
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
-
-		//Act
-		oRouter.parse("pattern");
-
-		//Assert
-		strictEqual(oRouteMatchedSpy.callCount, 2, "did invoke handleRouteMatched twice");
-
-		var firstCall = oRouteMatchedSpy.getCall(0);
-		var secondCall = oRouteMatchedSpy.getCall(1);
-
-		strictEqual(firstCall.args[0].oView.getViewName(), "Master", "did invoke it with the master view");
-		strictEqual(firstCall.args[1], false, "did pass backwards")
-		strictEqual(secondCall.args[0].oView.getViewName(), "Detail", "did invoke it with the detail view");
-		strictEqual(secondCall.args[1], false, "did pass backwards");
-		
-		strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
-
-		sut.destroy();
-	});
-
-	test("Should preserve the view that is currently in the master or detail if configured (splitapp desktop)", function() {
-		//Arrange
-		var oSplitContainer = new sap.m.SplitContainer(),
-			oRouter = new sap.ui.core.routing.Router({
-				"firstMaster" : {
-					targetControl : oSplitContainer.getId(),
-					view : "FirstMaster",
-					viewType: "JS",
-					targetAggregation: "masterPages",
-					preservePageInSplitContainer : true,
-					subroutes : {
-						"detail" : {
-							pattern : "detailPattern",
-							targetAggregation: "detailPages",
-							view : "Detail",
-							viewType: "JS"
-						}
-					}
-				},
-				"secondMaster" : {
-					targetControl : oSplitContainer.getId(),
-					pattern : "secondMasterPattern",
-					view : "SecondMaster",
-					viewType: "JS",
-					targetAggregation: "masterPages"
-				}
-			});
-
-		this.stub(sap.ui.Device.system, "phone", false);
-
-		//views
-		createViewAndController("Detail");
-		createViewAndController("FirstMaster");
-		createViewAndController("SecondMaster");
-
-
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
-
-		//Act
-		oRouter.parse("secondMasterPattern");
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
-		oRouter.parse("detailPattern");
-
-		//Assert
-		strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
-
-		sut.destroy();
-	});
-
-	test("Should not preserve the view that is currently in the master or detail if it is matching the pattern", function() {
-		//Arrange
-		var oSplitContainer = new sap.m.SplitContainer(),
-			oRouter = new sap.ui.core.routing.Router({
-				"firstMaster" : {
-					targetControl : oSplitContainer.getId(),
-					pattern : "firstMasterPattern",
-					view : "FirstMaster",
-					viewType: "JS",
-					targetAggregation: "masterPages",
-					preservePageInSplitContainer : true
-				},
-				"secondMaster" : {
-					targetControl : oSplitContainer.getId(),
-					pattern : "secondMasterPattern",
-					view : "SecondMaster",
-					viewType: "JS",
-					targetAggregation: "masterPages"
-				}
-			});
-
-		//views
-		createViewAndController("FirstMaster");
-		createViewAndController("SecondMaster");
-
-
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
-
-		//Act
-		oRouter.parse("secondMasterPattern");
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
-		oRouter.parse("firstMasterPattern");
-
-		//Assert
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "FirstMaster", "did switch the masterview");
-
-		sut.destroy();
-	});
-
-	test("Should preserve the view that is currently in the master with multiple Masters", function() {
-		//Arrange
-		var oSplitContainer = new sap.m.SplitContainer(),
-			oRouter = new sap.ui.core.routing.Router({
-				"firstMaster" : {
-					targetControl : oSplitContainer.getId(),
-					view : "FirstMaster",
-					targetAggregation: "masterPages",
-					subroutes : {
-						"secondMaster" : {
-							view : "SecondMaster",
 							targetAggregation: "masterPages",
 							subroutes : {
-								"thirdMaster" : {
-									view : "ThirdMaster",
-									targetAggregation: "masterPages",
-									preservePageInSplitContainer : true,
+								"dummyDetail" : {
+									targetAggregation: "detailPages",
+									view : "DetailDummy",
+									viewType: "JS",
 									subroutes : {
-										"detail" : {
-											pattern : "detailPattern",
-											targetAggregation: "detailPages",
-											view : "Detail"
+										"master" : {
+											targetAggregation: "masterPages",
+											view : "Master",
+											viewType: "JS",
+											subroutes : {
+												"detail" : {
+													pattern : "pattern",
+													view : "Detail",
+													viewType: "JS",
+													targetAggregation: "detailPages"
+												}
+											}
 										}
 									}
 								}
 							}
 						}
-					}
-				}
-			}, {
-				viewType: "JS"
-			});
+					});
 
-		this.stub(sap.ui.Device.system, "phone", false);
+			this.stub(sap.ui.Device.system, "phone", false);
 
-		//views
-		createViewAndController("Detail");
-		createViewAndController("FirstMaster");
-		createViewAndController("SecondMaster");
-		createViewAndController("ThirdMaster");
+			//views
+			createViewAndController("Detail");
+			createViewAndController("DetailDummy");
+			createViewAndController("Master");
+			createViewAndController("MasterDummy");
 
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
 
-		//Act
-		strictEqual(oSplitContainer.getCurrentMasterPage(), undefined, "did not load a master yet");
-		oRouter.parse("detailPattern");
+			//Act
+			oRouter.parse("pattern");
 
-		//Assert
-		strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-		strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
+			//Assert
+			strictEqual(oRouteMatchedSpy.callCount, 2, "did invoke handleRouteMatched twice");
 
-		sut.destroy();
-	});
+			var firstCall = oRouteMatchedSpy.getCall(0);
+			var secondCall = oRouteMatchedSpy.getCall(1);
 
-	test("Should pass some data to the navContainer", function() {
-		//Arrange
-		var oSplitContainer = new sap.m.SplitContainer({
-				masterPages : [createViewAndController("InitialMaster")]
-			}),
-			oRouter = new sap.ui.core.routing.Router({
-				"Master" : {
-					targetControl : oSplitContainer.getId(),
-					pattern : "{id}",
-					view : "Master",
-					viewType: "JS",
-					targetAggregation: "masterPages"
-				}
-			}),
-			data = null;
+			strictEqual(firstCall.args[0].oView.getViewName(), "Master", "did invoke it with the master view");
+			strictEqual(firstCall.args[1], false, "did pass backwards");
+			strictEqual(secondCall.args[0].oView.getViewName(), "Detail", "did invoke it with the detail view");
+			strictEqual(secondCall.args[1], false, "did pass backwards");
 
-		this.stub(sap.ui.Device.system, "phone", false);
+			strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
 
-		//views
-		createViewAndController("Master");
-
-		oRouter.getView("Master", "JS").addEventDelegate({
-			onBeforeShow : function (oEvent) {
-				data = oEvent.data.id;
-			}
+			sut.destroy();
 		});
 
-		//System under Test
-		var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+		test("Should preserve the view that is currently in the master or detail if configured (splitapp desktop)", function() {
+			//Arrange
+			var oSplitContainer = new sap.m.SplitContainer(),
+					oRouter = new sap.ui.core.routing.Router({
+						"firstMaster" : {
+							targetControl : oSplitContainer.getId(),
+							view : "FirstMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages",
+							preservePageInSplitContainer : true,
+							subroutes : {
+								"detail" : {
+									pattern : "detailPattern",
+									targetAggregation: "detailPages",
+									view : "Detail",
+									viewType: "JS"
+								}
+							}
+						},
+						"secondMaster" : {
+							targetControl : oSplitContainer.getId(),
+							pattern : "secondMasterPattern",
+							view : "SecondMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages"
+						}
+					});
 
-		//Act
-		oRouter.parse("5");
+			this.stub(sap.ui.Device.system, "phone", false);
 
-		//Assert
-		strictEqual(data, "5", "should pass 5 to the page");
-		oRouter.parse("detailPattern");
+			//views
+			createViewAndController("Detail");
+			createViewAndController("FirstMaster");
+			createViewAndController("SecondMaster");
 
-		sut.destroy();
-	});
 
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			oRouter.parse("secondMasterPattern");
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
+			oRouter.parse("detailPattern");
+
+			//Assert
+			strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
+
+			sut.destroy();
+		});
+
+		test("Should not preserve the view that is currently in the master or detail if it is matching the pattern", function() {
+			//Arrange
+			var oSplitContainer = new sap.m.SplitContainer(),
+					oRouter = new sap.ui.core.routing.Router({
+						"firstMaster" : {
+							targetControl : oSplitContainer.getId(),
+							pattern : "firstMasterPattern",
+							view : "FirstMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages",
+							preservePageInSplitContainer : true
+						},
+						"secondMaster" : {
+							targetControl : oSplitContainer.getId(),
+							pattern : "secondMasterPattern",
+							view : "SecondMaster",
+							viewType: "JS",
+							targetAggregation: "masterPages"
+						}
+					});
+
+			//views
+			createViewAndController("FirstMaster");
+			createViewAndController("SecondMaster");
+
+
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			oRouter.parse("secondMasterPattern");
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did load the secondMaster");
+			oRouter.parse("firstMasterPattern");
+
+			//Assert
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "FirstMaster", "did switch the masterview");
+
+			sut.destroy();
+		});
+
+		test("Should preserve the view that is currently in the master with multiple Masters", function() {
+			//Arrange
+			var oSplitContainer = new sap.m.SplitContainer(),
+					oRouter = new sap.ui.core.routing.Router({
+						"firstMaster" : {
+							targetControl : oSplitContainer.getId(),
+							view : "FirstMaster",
+							targetAggregation: "masterPages",
+							subroutes : {
+								"secondMaster" : {
+									view : "SecondMaster",
+									targetAggregation: "masterPages",
+									subroutes : {
+										"thirdMaster" : {
+											view : "ThirdMaster",
+											targetAggregation: "masterPages",
+											preservePageInSplitContainer : true,
+											subroutes : {
+												"detail" : {
+													pattern : "detailPattern",
+													targetAggregation: "detailPages",
+													view : "Detail"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}, {
+						viewType: "JS"
+					});
+
+			this.stub(sap.ui.Device.system, "phone", false);
+
+			//views
+			createViewAndController("Detail");
+			createViewAndController("FirstMaster");
+			createViewAndController("SecondMaster");
+			createViewAndController("ThirdMaster");
+
+
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			strictEqual(oSplitContainer.getCurrentMasterPage(), undefined, "did not load a master yet");
+			oRouter.parse("detailPattern");
+
+			//Assert
+			strictEqual(oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+			strictEqual(oSplitContainer.getCurrentMasterPage().getViewName(), "SecondMaster", "did not switch the masterview");
+
+			sut.destroy();
+		});
+
+		test("Should pass some data to the navContainer", function() {
+			//Arrange
+			var oSplitContainer = new sap.m.SplitContainer({
+						masterPages : [createViewAndController("InitialMaster")]
+					}),
+					oRouter = new sap.ui.core.routing.Router({
+						"Master" : {
+							targetControl : oSplitContainer.getId(),
+							pattern : "{id}",
+							view : "Master",
+							viewType: "JS",
+							targetAggregation: "masterPages"
+						}
+					}),
+					data = null;
+
+			this.stub(sap.ui.Device.system, "phone", false);
+
+			//views
+			createViewAndController("Master");
+
+			oRouter.getView("Master", "JS").addEventDelegate({
+				onBeforeShow : function (oEvent) {
+					data = oEvent.data.id;
+				}
+			});
+
+			//System under Test
+			var sut = new sap.m.routing.RouteMatchedHandler(oRouter);
+
+			//Act
+			oRouter.parse("5");
+
+			//Assert
+			strictEqual(data, "5", "should pass 5 to the page");
+			oRouter.parse("detailPattern");
+
+			sut.destroy();
+		});
+	})();
 </script>
 </head>
 <body>
 	<h1 id="qunit-header">qUnit Page for sap.m.routing.RouteMatchedHandler</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 
 </body>
