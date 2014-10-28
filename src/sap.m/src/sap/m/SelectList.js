@@ -44,22 +44,22 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
+				width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "auto"},
 
 				/**
 				 * Defines the maximum width of the control. This value can be provided in all CSS units.
 				 */
-				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+				maxWidth : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 */
-				selectedKey : {type : "string", group : "Data", defaultValue : null},
+				selectedKey : {type : "string", group : "Data", defaultValue : ""},
 
 				/**
 				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
 				 */
-				selectedItemId : {type : "string", group : "Misc", defaultValue : null}
+				selectedItemId : {type : "string", group : "Misc", defaultValue : ""}
 			},
 			defaultAggregation : "items",
 			aggregations : {
