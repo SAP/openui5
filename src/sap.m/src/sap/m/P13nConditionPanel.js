@@ -384,6 +384,7 @@ sap.ui
 						this._aKeyFields = aKeyFields;
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -398,6 +399,7 @@ sap.ui
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
 						this._enableConditions();
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -1240,6 +1242,13 @@ sap.ui
 						}
 					};
 
+					P13nConditionPanel.prototype._updateKeyFields = function() {
+						var aConditionGrids = this._oConditionsGrid.getContent();
+						aConditionGrids.forEach(function(oConditionGrid) {
+							this._triggerChangeKeyfield(this, this._oConditionsGrid, oConditionGrid);
+						}, this);
+					};
+
 					P13nConditionPanel.prototype._updateOperations = function() {
 						var aConditionGrids = this._oConditionsGrid.getContent();
 						aConditionGrids.forEach(function(oConditionGrid) {
@@ -1443,10 +1452,14 @@ sap.ui
 					 */
 					P13nConditionPanel.prototype._changeField = function(oThat, oConditionGrid) {
 						var sKeyField = oConditionGrid.keyField.getSelectedKey();
-						oConditionGrid.keyField.setTooltip(oConditionGrid.keyField.getSelectedItem().getTooltip() || oConditionGrid.keyField.getSelectedItem().getText());
+						if (oConditionGrid.keyField.getSelectedItem()) {
+							oConditionGrid.keyField.setTooltip(oConditionGrid.keyField.getSelectedItem().getTooltip() || oConditionGrid.keyField.getSelectedItem().getText());
+						}
 						
 						var sOperation = oConditionGrid.operation.getSelectedKey();
-						oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
+						if (oConditionGrid.operation.getSelectedItem()) {
+							oConditionGrid.operation.setTooltip(oConditionGrid.operation.getSelectedItem().getTooltip() || oConditionGrid.operation.getSelectedItem().getText());
+						}
 						
 						var sValue1 = oConditionGrid.value1.getValue();
 						var oValue1 = sValue1;
