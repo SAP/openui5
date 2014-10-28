@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 			if (this.bTableMode) {
 				var iCol = iIndex % this.iColumns;
-				
+				var iOldIndex = iIndex;
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
 						iIndex += 1;
@@ -518,7 +518,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						iIndex -= 1;
 					}
 				}
-				this.focusItem(iIndex, oEvent);
+				if (iIndex != iOldIndex) {
+					this.focusItem(iIndex, oEvent);
+				}
 			}
 			return;
 		}
