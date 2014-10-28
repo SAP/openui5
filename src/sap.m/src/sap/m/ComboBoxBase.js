@@ -733,30 +733,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @name sap.m.ComboBoxBase#scrollToItem
 		 * @function
 		 */
-		ComboBoxBase.prototype.scrollToItem = function(oListItem) {
+		ComboBoxBase.prototype.scrollToItem = function(oItem) {
 			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.$().children(".sapMPopoverCont")[0],
-				oListItemDomRef = oListItem && oListItem.getDomRef();
+				oPickerDomRef = oPicker.getDomRef("cont"),
+				oItemDomRef = oItem && oItem.getDomRef();
 
-			if (!oPicker || !oPickerDomRef || !oListItemDomRef) {
+			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
 				return;
 			}
 
 			var iPickerScrollTop = oPickerDomRef.scrollTop,
-				iListItemOffsetTop = oListItemDomRef.offsetTop,
-				iPickerHeight = jQuery(oPickerDomRef).height(),
-				iListItemHeight = jQuery(oListItemDomRef).height();
+				iItemOffsetTop = oItemDomRef.offsetTop,
+				iPickerHeight = oPickerDomRef.clientHeight,
+				iItemHeight = oItemDomRef.offsetHeight;
 
-			if (iPickerScrollTop > iListItemOffsetTop) {
+			if (iPickerScrollTop > iItemOffsetTop) {
 
 				// scroll up
-				oPickerDomRef.scrollTop = iListItemOffsetTop;
+				oPickerDomRef.scrollTop = iItemOffsetTop;
 
 			// bottom edge of item > bottom edge of viewport
-			} else if ((iListItemOffsetTop + iListItemHeight) > (iPickerScrollTop + iPickerHeight)) {
+			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
 
 				// scroll down, the item is partly below the viewport of the List
-				oPickerDomRef.scrollTop = Math.ceil(iListItemOffsetTop + iListItemHeight - iPickerHeight);
+				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
 			}
 		};
 
