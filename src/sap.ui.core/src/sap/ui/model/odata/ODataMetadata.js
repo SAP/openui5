@@ -692,7 +692,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 			return !oObject;
 		});
-		jQuery.sap.log.fatal(this + " - FunctionImport for name '" + sFunctionName + "' and method '" + sMethod + "' not found!");
 		return oObject;
 	};
 	
