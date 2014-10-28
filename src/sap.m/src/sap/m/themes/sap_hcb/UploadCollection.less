@@ -1,0 +1,78 @@
+/* ===================================================================================== */
+/* CSS for control sap.m/UploadCollection.control                                        */
+/*                                                                                       */
+/* HCB Theme                                                                             */
+/* ===================================================================================== */
+
+
+/* ************************************************************************************* */
+/* Common Styles                                                                         */
+/* ************************************************************************************* */
+/* List Header */
+.sapMTB.sapMUCListHeader {
+	background-color:		@sapHCStandardBG;
+	border-bottom-width: 	0.1875rem;
+	border-bottom-color:	@sapHCStandardFG;
+	font-size:				@sapMFontHeader4Size;
+	font-weight:			@sapUiFontHeaderWeight;
+	color:					@sapHCStandardFG;
+	text-shadow:			none;
+}
+
+.sapMLIB.sapMUCListSingleItem,
+.sapMLIB.sapMUCListFirstItem,
+.sapMLIB.sapMUCListLastItem,
+.sapMLIB.sapMUCListItem {
+	border-bottom-color:	@sapHCStandardFG;
+}
+
+/* Item Icon */
+span[id*="ia_iconHL"] {
+	color:					@sapHCStandardFG;
+}
+
+/* Buttons */
+.sapMBtn.sapMUCEditBtn,
+.sapMBtn.sapMUCDeleteBtn,
+.sapMBtn.sapMUCCancelBtn,
+.sapMBtn.sapMUCOkBtn {
+	margin-left:		0.25rem;
+}
+
+.sapMUCDeleteBtn>.sapMBtnTransparent>.sapMBtnIcon {
+	color:					@sapHCNegative;
+}
+
+/* Text: Filename */
+.sapMUCFileName.sapMLnk {
+	font-size:			@sapMFontLargeSize;
+}
+
+/* Text: Description (/Progress) */
+.sapMUCDescriptionHL .sapMLabel{
+	font-size:				@sapMFontMediumSize;
+	color:					@sapHCStandardFG;
+}
+
+/* ************************************************************************************* */
+/* Compact Mode                                                                          */
+/* ************************************************************************************* */
+.sapUiSizeCompact {
+	.sapMLIB.sapMUCListSingleItem,
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		border-bottom-style:	none;
+	}
+
+	.sapMUCFileName.sapMLnk {
+		font-size:			@sapMFontMediumSize;
+	}
+
+	/* ----------------------------------*/
+	/* Last List Item in Compact Mode    */
+	/* ----------------------------------*/
+	.sapMLIB.sapMUCListLastItem {
+		padding-bottom:		1rem;
+	}
+}
