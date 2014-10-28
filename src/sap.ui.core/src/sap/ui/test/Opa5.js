@@ -353,19 +353,30 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Validates the matchers and makes sure to return them in an array or undefined
+		 * Validates the matchers and makes sure to return them in an array
 		 * @private
 		 */
 		fnOpa5.prototype._checkMatchers = function (vMatchers) {
 			var aMatchers = [];
 
-			if (vMatchers instanceof fnOpa5.matchers.Matcher) {
-				aMatchers = [vMatchers];
-			} else if ($.isArray(vMatchers)) {
+			if ($.isArray(vMatchers)) {
 				aMatchers = vMatchers;
 			} else if (vMatchers) {
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				aMatchers = [vMatchers];
 			}
+
+			aMatchers = aMatchers.map(function(vMatcher) {
+				if (vMatcher instanceof fnOpa5.matchers.Matcher) {
+					return vMatcher;
+				} else if (typeof vMatcher == "function") {
+					return {isMatching : vMatcher};
+				}
+				
+				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				return undefined;
+			}).filter(function(oMatcher) {
+				return !!oMatcher;
+			});
 
 			return aMatchers;
 		};
