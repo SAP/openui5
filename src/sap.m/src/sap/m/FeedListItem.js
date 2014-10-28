@@ -269,6 +269,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		var nLastSpace = sShortText.lastIndexOf(" ");
 		if (nLastSpace > 0) {
 			this._sShortText = sShortText.substr(0, nLastSpace);
+		} else {
+			this._sShortText = sShortText;
 		}
 		return this._sShortText;
 	};
