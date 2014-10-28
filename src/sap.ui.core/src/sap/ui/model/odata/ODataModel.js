@@ -2455,7 +2455,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				oRequest.keys[sKey] = true;
 			}
 		} else if (sMethod == "POST") {
-			oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
+			// remove URL params
+			if (sPath.indexOf('?') != -1 ) {
+				var sNormalizedPath = sPath.substr(0, sPath.indexOf('?'));
+			}
+			oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (oEntityType) {
 				oRequest.entityTypes = {};
 				oRequest.entityTypes[oEntityType.entityType] = true;
