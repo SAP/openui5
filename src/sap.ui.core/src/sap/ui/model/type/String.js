@@ -22,19 +22,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
-	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid  
-	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have  
-	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with  
-	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case  
-	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with  
-	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case  
-	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value  
-	 * @param {string} [oConstraints.equals] only value that is allowed  
-	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match  
+	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
+	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have
+	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with
+	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case
+	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with
+	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case
+	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value
+	 * @param {string} [oConstraints.equals] only value that is allowed
+	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match
 	 * @name sap.ui.model.type.String
 	 */
 	var StringType = SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "String";
@@ -42,18 +42,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				this.oConstraints.search = new RegExp(this.oConstraints.search);
 			}
 		}
-	
+
 	});
-	
+
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.String with name <code>sClassName</code> 
+	 * Creates a new subclass of class sap.ui.model.type.String with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+	 *
+	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
 	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
+	 *
 	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
+	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
 	 * @return {function} the created class / constructor function
 	 * @public
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @name sap.ui.model.type.String.extend
 	 * @function
 	 */
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 * @name sap.ui.model.type.String#formatValue
@@ -73,6 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		switch (sInternalType) {
 			case "string":
+			case "any":
 				return sValue;
 			case "int":
 				var iResult = parseInt(sValue, 10);
@@ -98,7 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Don't know how to format String to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 * @name sap.ui.model.type.String#parseValue
@@ -116,7 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.ParseException("Don't know how to parse String from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 * @name sap.ui.model.type.String#validateValue
@@ -179,8 +180,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			}
 		}
 	};
-	
-	
+
+
 
 	return StringType;
 

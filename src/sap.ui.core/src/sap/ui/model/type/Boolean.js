@@ -26,23 +26,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @name sap.ui.model.type.Boolean
 	 */
 	var BooleanType = SimpleType.extend("sap.ui.model.type.Boolean", /** @lends sap.ui.model.type.Boolean.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Boolean";
 		}
-	
+
 	});
-	
+
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.Boolean with name <code>sClassName</code> 
+	 * Creates a new subclass of class sap.ui.model.type.Boolean with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+	 *
+	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
 	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
+	 *
 	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
+	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
 	 * @return {function} the created class / constructor function
 	 * @public
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @name sap.ui.model.type.Boolean.extend
 	 * @function
 	 */
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 * @name sap.ui.model.type.Boolean#formatValue
@@ -62,6 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		}
 		switch (sInternalType) {
 			case "boolean":
+			case "any":
 				return bValue;
 			case "string":
 				return bValue.toString();
@@ -71,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.FormatException("Don't know how to format Boolean to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 * @name sap.ui.model.type.Boolean#parseValue
@@ -95,17 +96,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.ParseException("Don't know how to parse Boolean from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 * @name sap.ui.model.type.Boolean#validateValue
 	 * @function
 	 */
 	BooleanType.prototype.validateValue = function(sValue) {
-	
+
 	};
-	
-	
+
+
 
 	return BooleanType;
 

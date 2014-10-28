@@ -22,29 +22,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Supports the same options as {@link sap.ui.core.format.NumberFormat.getIntegerInstance NumberFormat.getIntegerInstance}
-	 * @param {object} [oConstraints] value constraints. 
-	 * @param {int} [oConstraints.minimum] smallest value allowed for this type  
-	 * @param {int} [oConstraints.maximum] largest value allowed for this type  
+	 * @param {object} [oConstraints] value constraints.
+	 * @param {int} [oConstraints.minimum] smallest value allowed for this type
+	 * @param {int} [oConstraints.maximum] largest value allowed for this type
 	 * @name sap.ui.model.type.Integer
 	 */
 	var Integer = SimpleType.extend("sap.ui.model.type.Integer", /** @lends sap.ui.model.type.Integer.prototype */ {
-		
+
 		constructor : function () {
 			SimpleType.apply(this, arguments);
 			this.sName = "Integer";
 		}
-	
+
 	});
-	
+
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.Integer with name <code>sClassName</code> 
+	 * Creates a new subclass of class sap.ui.model.type.Integer with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
+	 *
+	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
 	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
+	 *
 	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
+	 * @param {object} [oClassInfo] object literal with informations about the class
 	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
 	 * @return {function} the created class / constructor function
 	 * @public
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @name sap.ui.model.type.Integer.extend
 	 * @function
 	 */
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
 	 * @name sap.ui.model.type.Integer#formatValue
@@ -67,12 +67,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				return this.oFormat.format(iValue);
 			case "int":
 			case "float":
+			case "any":
 				return iValue;
 			default:
 				throw new sap.ui.model.FormatException("Don't know how to format Integer to " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
 	 * @name sap.ui.model.type.Integer#parseValue
@@ -94,7 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 				throw new sap.ui.model.ParseException("Don't know how to parse Integer from " + sInternalType);
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 * @name sap.ui.model.type.Integer#validateValue
@@ -121,7 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 			}
 		}
 	};
-	
+
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
 	 * @name sap.ui.model.type.Integer#setFormatOptions
@@ -131,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		this.oFormatOptions = oFormatOptions;
 		this._handleLocalizationChange();
 	};
-	
+
 	/**
 	 * Called by the framework when any localization setting changed
 	 * @private
@@ -141,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	Integer.prototype._handleLocalizationChange = function() {
 		this.oFormat = NumberFormat.getIntegerInstance(this.oFormatOptions);
 	};
-	
+
 
 	return Integer;
 
