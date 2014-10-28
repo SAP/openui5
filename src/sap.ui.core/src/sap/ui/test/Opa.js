@@ -64,6 +64,13 @@
 		internalWait(queueElement.callback, queueElement.options, deferred);
 	}
 
+	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength){
+		var iNewWaitForsCount = queue.length - iPreviousQueueLength;
+		if (iNewWaitForsCount) {
+			var aNewWaitFors = queue.splice(iPreviousQueueLength, iNewWaitForsCount);
+			queue = aNewWaitFors.concat(queue);
+		}
+	}
 	///////////////////////////////
 	/// Public
 	///////////////////////////////
@@ -115,7 +122,7 @@
 		 * 	<li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
 		 * 	<li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
 		 * 	<li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
-		 * 	<li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked</li>
+		 * 	<li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements</li>
 		 * 	<li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
 		 * </ul>
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
@@ -131,7 +138,7 @@
 			queue.push({
 				callback : jQuery.proxy(function () {
 					var bResult = true;
-
+					
 					//no check - all ok
 					if (options.check) {
 						bResult = options.check.apply(this, arguments);
@@ -140,8 +147,10 @@
 					if (bResult) {
 						if (options.success) {
 							try {
+								var iCurrentQueueLength = queue.length;
 								options.success.apply(this, arguments);
 							} finally {
+								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength);
 								deferred.resolve();
 							}
 						} else {
