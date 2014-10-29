@@ -274,6 +274,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oDialog = this._getFacetDialog();
 		var oNavContainer = this._getFacetDialogNavContainer();
 		oDialog.addContent(oNavContainer);
+		//keoboard acc - focus on 1st item of 1st page
+		oDialog.setInitialFocus(oNavContainer.getPages()[0].getContent()[0].getItems()[0]);
 		oDialog.open();
 		return this;
 	};
@@ -762,6 +764,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						this.setSubHeader(that._createSelectAllCheckboxBar(that._displayedList));
 					}
 				},
+				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
+/*				afterOpen: function(oEvent) {
+					if (this.getInitialFocus() == null) {
+						jQuery.sap.delayedCall(700, this, function() {
+							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
+						});
+					}
+				},*/
 				afterClose: function(oEvent) {
 				
 					that._addDelegateFlag = true;
@@ -843,7 +853,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	              jQuery.sap.assert(oList, "The facet filter button should be associated with a list.");
 	              
 	              this._moveListToDisplayContainer(oList, oPopover);
-	                                         
+	              //keyboard acc - focus on 1st item of 1st page
+	              oPopover.setInitialFocus(oList.getItems()[0]);                                         
 	              oList.fireListOpen({});
 	              oPopover.openBy(oControl);
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true   
@@ -1041,6 +1052,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			// a slight visual change in the filter items page just prior to navigation.
 			var oToPage = oEvent.getParameters()["to"];
 			var oFromPage = oEvent.getParameters()['from'];
+			//keyboard acc - focus on 1st item of 2nd page
+			if (oFromPage === oFacetPage) {
+				jQuery.sap.focus(oToPage.getContent(0)[1].getItemNavigation().getItemDomRefs()[0]);
+			}
 			if (oToPage === oFacetPage) {
 				// Destroy the search field bar
 				oFromPage.destroySubHeader();
@@ -1051,6 +1066,12 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				// TODO: Find out why the counter is not updated without forcing rendering of the facet list item
 				// App may have set a new allCount from a listClose event handler, so we need to update the counter on the facet list item.
 				that._selectedFacetItem.invalidate();
+				//keyboard acc - focus on the original 1st page item									
+				this.getPages()[0].invalidate();
+/*				var focusIndex = this.getPages()[0].getContent()[0].aDelegates[0].oDelegate.getFocusedIndex();
+				jQuery.sap.delayedCall(100, this, function() {
+					jQuery.sap.focus(this.getPages()[0].getContent()[0].getItems()[focusIndex]);
+				});*/
 				that._selectedFacetItem = null;
 			}
 		});
@@ -1222,6 +1243,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			});
 	
 			oDialog.addStyleClass("sapMFFDialog");
+			//keyboard acc - [SHIFT]+[ENTER] triggers the “Back” button of the dialog 
+			oDialog.onsapentermodifiers = function (oEvent) {
+				if (oEvent.shiftKey && !oEvent.ctrlKey && !oEvent.altKey ) {
+					var oNavContainerx = this.getContent()[0];
+					that._navFromFilterItemsPage(oNavContainerx);
+				}
+			};
 			this.setAggregation("dialog", oDialog, true);
 		}
 		return oDialog;
