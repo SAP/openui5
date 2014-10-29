@@ -45,6 +45,7 @@ input.sapMComboBoxBaseInputInner {
 
 .sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
 	background: @sapHCHighlightBG;
+	border-left: 1px solid @sapHCStandardFG;
 }
 
 /* pressed */
@@ -52,6 +53,7 @@ input.sapMComboBoxBaseInputInner {
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
 .sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
 	background: @sapHCHighlightAltBG;
+	border-left: 1px solid @sapHCStandardFG;
 }
 
  /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
@@ -59,13 +61,15 @@ input.sapMComboBoxBaseInputInner {
 	color: @sapHCStandardFG;
 }
 
+/* Disabled */
+.sapMComboBoxBaseDisabled .sapMComboBoxBaseArrow,
+.sapMComboBoxBaseDisabled .sapMComboBoxBaseBar::before {
+	color: @sapHCReducedFG;
+}
+
 /* ------------------------------ */
 /* ComboBox's List                */
 /* ------------------------------ */
-
-.sapMComboBoxBaseList {
-	border: none;
-}
 
 .sapMComboBoxBaseItemDisabled {
 	opacity: 0.5;
@@ -121,6 +125,15 @@ div.sapMComboBoxBasePicker {
 	min-width: 0; /* override the default min-width of the popover */
 }
 
+/* This is used to make border of the combobox's list not scrollable */
+.sapMComboBoxBasePicker > div {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border: solid @sapHCStandardFG;
+	border-width: 1px 2px 2px;
+}
+
 /* remove the Popover's arrow */
 
 .sapMComboBoxBasePicker .sapMPopoverArr {
@@ -130,11 +143,6 @@ div.sapMComboBoxBasePicker {
 /* ------------------------------ */
 /* ComboBox's Dialog              */
 /* ------------------------------ */
-
-.sapMComboBoxBaseBar {
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
@@ -195,28 +203,4 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 
 .sapUiSizeCompact li.sapMComboBoxBaseItem {
 	height: 2rem;
-}
-
-
-/* ===================================================================== */
-/* HCB Additional Styles                                                 */
-/* ===================================================================== */
-.sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
-.sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover,
-.sap-desktop .sapMComboBoxBaseArrow:not(.sapMComboBoxBasePressed):hover {
-	border-left: 0.0625rem solid @sapHCStandardFG;
-}
-
-.sapMComboBoxBaseDisabled .sapMComboBoxBaseArrow,
-.sapMComboBoxBaseDisabled .sapMComboBoxBaseBar::before {
-	color: @sapHCReducedFG;
-}
-
-/* This is used to make border of the combobox's list not scrollable */
-.sapMComboBoxBasePicker > div {
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-	border: solid @sapHCStandardFG;
-	border-width: .0625rem .125rem .125rem;
 }
