@@ -1482,7 +1482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @name sap.ui.model.odata.ODataModel#getSecurityToken
 	 * @function
 	 */
-	ODataModel.prototype.getSecurityToken = function(fnSuccess, fnError) {
+	ODataModel.prototype.getSecurityToken = function() {
 		var sToken = this.oServiceData.securityToken;
 		if (!sToken) {
 			this.refreshSecurityToken();
