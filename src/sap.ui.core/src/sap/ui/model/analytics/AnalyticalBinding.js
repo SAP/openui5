@@ -3326,7 +3326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {
-				var sResolvedPath = this.oModel.res3olve(this.sPath, this.oContext);
+				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 					bChangeDetected = true;
