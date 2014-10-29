@@ -8,6 +8,7 @@
  * @version @version@
  */
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.scenario.Component");
+jQuery.sap.require("sap.ui.core.util.ODataHelper");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 	metadata: "json", //TODO Use component metadata from manifest file
@@ -57,26 +58,3 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 		return oLayout;
 	}
 });
-
-
-//TODO Remove and use helpers from framework once available in the template view
-/**
- * A very simple formatter helping to interpret the annotations when pre-processing the view.
- *
- * @param {object} oRawValue
- *    the value in the annotations
- * @returns {string}
- *    the value to write into the processed XML
- */
-sap.ui.core.sample.ViewTemplate.scenario.Component.help = function (oRawValue) {
-	var sType;
-
-	if (!oRawValue) {
-		return oRawValue;
-	}
-	sType = oRawValue["@odata.type"];
-	if (sType === "Edm.Path") {
-		return "{" + oRawValue.value + "}";
-	}
-	return oRawValue;
-};
