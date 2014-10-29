@@ -16,12 +16,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * @param {object}
 	 *          [mSettings] initial settings for the new control
 	 * 
-	 * @class The dialog for personalization
+	 * @class The P13nDialog provides you a dialog that contains one or more panels. On each of the panels some changes in
+	 *        regards to a table can be proceed. E.g. a panel to set a column as invisible, change the order of it or maybe a
+	 *        panel to get table sorted or filtered.
 	 * @extends sap.m.Dialog
+	 * @author SAP SE
 	 * @version ${version}
 	 * 
 	 * @constructor
 	 * @public
+	 * @since 1.26
 	 * @name sap.m.P13nDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -45,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			aggregations : {
 
 				/**
-				 * The dialog items displayed on the dialog.
+				 * The dialog panels displayed on the dialog.
 				 */
 				panels : {
 					type : "sap.m.P13nPanel",
@@ -57,13 +61,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			events : {
 
 				/**
-				 * Event is fired when the personalization dialog is closed
+				 * Event is fired when the P13nDialog is closed by 'Ok' or 'Cancel' button.
 				 */
 				close : {
 					parameters : {
 
 						/**
-						 * Descripes how the dialog was closed. It can be closed via clicking on 'Ok' or 'Cancel' button.
+						 * Describes how the dialog was closed. It can be closed via clicking on 'Ok' or 'Cancel' button.
 						 */
 						type : {
 							type : "string"
@@ -71,7 +75,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 					}
 				},
 				/**
-				 * Event is fired when button 'reset' on personalization dialog is clicked
+				 * Event is fired when button 'reset' on P13nDialog is clicked.
 				 */
 				reset : {}
 			}
@@ -235,10 +239,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			return null;
 		}
 
-		var sType = oPanel.getType();
 		var oButton = new sap.m.Button({
 			type : sap.m.ButtonType.Default,
-			text : "{/transientData/" + sType + "/title}"
+			text : oPanel.getBindingPath("title") ? "{" + oPanel.getBindingPath("title") + "}" : oPanel.getTitle()
 		});
 
 		oButton.setModel(oPanel.getModel());

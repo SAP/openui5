@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 */
 			type : {type : "sap.m.P13nPanelType", group : "Misc", defaultValue : null}
 		},
+		defaultAggregation : "items",
 		aggregations : {
 	
 			/**
