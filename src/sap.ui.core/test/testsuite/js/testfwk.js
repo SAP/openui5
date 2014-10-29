@@ -45,7 +45,7 @@ if ( !sap.ui.testfwk ) {
 }
 
 sap.ui.testfwk.TestFWK = {
-	sLanguage : navigator.language || navigator.userLanguage,
+	sLanguage : (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage,
 	sTheme : "sap_bluecrystal",
 	bRTL : false,
 	bAccessibilityMode: true,
