@@ -82,6 +82,69 @@
 	color: @sapUiPositiveText;
 }
 
+.sapMOHTitleArrow > .sapUiIcon {
+  outline-offset: -1px;
+}
+
+.sapMOHIntro.sapMOHIntroActive > *:focus {
+  outline: 1px dotted @sapUiFocus;
+  outline-offset: -1px;
+}
+
+.sapMOHTitleIcon > .sapMOHIcon:focus,
+.sapMOHTitleArrow .sapUiIcon:focus {
+  outline: 1px dotted @sapUiFocus;
+}
+
+.sapMOHTitle.sapMOHTitleActive:focus {
+  outline: 1px dotted @sapUiFocus;
+  outline-offset: -1px;
+}
+
+/* Fix firefox title icon outline  */
+html[data-sap-ui-browser^="ff"] {
+  .sapMOH {
+    .sapMOHTitleArrow .sapUiIcon {
+      border: 1px solid transparent;
+      &:active,
+      &:focus {
+        border: 1px dotted @sapUiFocus;
+        outline: none;
+      }
+    }
+  }
+}
+
+html[data-sap-ui-browser^="ie"] {
+  .sapMOH {
+    .sapMOHTitleArrow .sapUiIcon,
+    .sapMOHTitleActive {
+      border: 1px solid transparent;
+      margin-top: 0.125rem;
+      padding-top: 0.125rem;
+      padding-left: 0.125rem;
+    }
+
+    .sapMOHTitleArrow .sapUiIcon:focus,
+    .sapMOHTitleActive:focus {
+      outline: none;
+      border: 1px dotted @sapUiFocus;
+    }
+
+    .sapMObjectAttributeActive,
+    .sapMOHIntroActive {
+      padding: 0.125rem;
+      span {
+        margin: 0.125rem;
+      }
+    }
+
+    .sapMObjStatusMarker .sapUiIcon:focus {
+      outline: none;
+    }
+  }
+}
+
 /*** styles for responsive object header ***/
 
 .sapMOHR .sapMObjectNumberText {
