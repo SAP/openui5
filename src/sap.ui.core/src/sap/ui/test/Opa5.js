@@ -53,19 +53,14 @@ sap.ui.define(['jquery.sap.global',
 			//invalidate the cache
 			$Frame = $("#OpaFrame");
 
+			// include styles
+			var sIframeStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
+			jQuery.sap.includeStyleSheet(sIframeStyleLocation);
+
 			if (!$Frame.length) {
 				//invalidate other caches
 
-				$Frame = $('<iframe id="OpaFrame" src="' + sSource + '"></iframe>');
-
-				$Frame.css({
-					width: "60%",
-					height: "60%",
-					position: "absolute",
-					opacity: "0.7",
-					top: "5%",
-					right: "5%"
-				});
+				$Frame = $('<iframe id="OpaFrame" class="opaFrame" src="' + sSource + '"></iframe>');
 
 				$("body").append($Frame);
 
@@ -118,7 +113,7 @@ sap.ui.define(['jquery.sap.global',
 			});
 
 		};
-	
+
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
 		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
@@ -144,7 +139,7 @@ sap.ui.define(['jquery.sap.global',
 		 * <li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
 		 *
 		 * </ul>
-		 * 
+		 *
 		 * @name sap.ui.test.Opa5#waitFor
 		 * @param {object} oOptions
 		 * @function
@@ -517,6 +512,6 @@ sap.ui.define(['jquery.sap.global',
 			$("body").height("100%");
 			$("html").height("100%");
 		});
-	
+
 		return fnOpa5;
 }, /* bExport= */ true);
