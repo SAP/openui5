@@ -159,7 +159,7 @@
 								<languages>${sap.ui5.translationLanguages}</languages>
 								<!-- only consider the sources -->
 								<translationResources>
-									<translationResource>${basedir}/src</translationResource>
+									<translationResource>src</translationResource>
 								</translationResources>
 							</configuration>
 						</plugin>
