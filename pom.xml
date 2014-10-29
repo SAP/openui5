@@ -130,6 +130,7 @@
 			<properties>
 				<sap.ui5.translationArea>027001</sap.ui5.translationArea>
 				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
+				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
 				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
 				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
 			</properties>
@@ -151,6 +152,10 @@
 							<artifactId>translation-plugin</artifactId>
 							<version>0.19.1</version>
 							<configuration>
+								<translationArea>${sap.ui5.translationArea}</translationArea>
+								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
+								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
+								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
 								<languages>${sap.ui5.translationLanguages}</languages>
 							</configuration>
 						</plugin>
