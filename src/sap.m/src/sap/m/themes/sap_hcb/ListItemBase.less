@@ -225,6 +225,14 @@
 	background : @sapHCHighlightBG;
 }
 
+/* HCB Additional Styles */
+/* active state is always stronger than the selected state
+* List item hover : does not apply to column list item
+*adding color white to hovered warning messages*/
+.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover div {
+	color : @sapHCStandardFG;
+}
+
 .sapMLIBActive.sapMLIB,
 .sapMLIBActive.sapMLIB > td {
 	color: @sapHCStandardFG;
@@ -250,11 +258,3 @@
 	margin-left: -0.5rem;
 }
 
-/* HCB Additional Styles */
-
-/* active state is always stronger than the selected state
-* List item hover : does not apply to column list item
-adding color white to hovered warning messages*/
-.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover div {
-	color : @sapHCStandardFG;
-}
