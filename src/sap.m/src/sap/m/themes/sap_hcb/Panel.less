@@ -6,7 +6,7 @@
 }
 
 /* if Panel is expandable, we do not wish toolbar to come with own border */
-.sapMPanelWrappingDivTb>.sapMPanelHdrExpandable.sapMTB {
+.sapMPanelWrappingDivTb > .sapMPanelHdrExpandable.sapMTB {
 	border-width: 0;
 }
 
@@ -28,7 +28,6 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	font: @sapUiFontHeaderWeight @sapMFontHeader5Size @sapUiFontFamily;
-	text-shadow: none;
 	color: @sapHCStandardFG;
 	height: 3rem;
 	line-height: 3rem;
@@ -42,16 +41,16 @@
 }
 
 /* panel placed directly in a body of a Fiori page */
-.sap-tablet .sapUiFioriObjectPage > section > div > .sapMPanel, .sap-desktop .sapUiFioriObjectPage > section > div > .sapMPanel
-{
+.sap-tablet .sapUiFioriObjectPage > section > div > .sapMPanel,
+.sap-desktop .sapUiFioriObjectPage > section > div > .sapMPanel {
 	padding: 0 1rem;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-.sapMPanelHdrExpandable.sapMPanelHdr, .sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB
-{
+.sapMPanelHdrExpandable.sapMPanelHdr,
+.sapMPanelHdrExpandable.sapMTB-Transparent-CTX.sapMTB {
 	padding-left: 0;
 }
 
