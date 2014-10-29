@@ -12,8 +12,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 * <template:with> control holding the models and the bindings. Also used as substitute
 			 * for any control during template processing in order to resolve property bindings.
 			 * Supports nesting of template instructions.
-			 *
-			 * @private
 			 */
 			With = ManagedObject.extend("sap.ui.core.util._with", {
 				metadata: {
@@ -28,8 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			/**
 			 * <template:repeat> control extending the "with" control by an aggregation which is
 			 * used to get the list binding.
-			 *
-			 * @private
 			 */
 			Repeat = With.extend("sap.ui.core.util._repeat", {
 				metadata: {
@@ -46,33 +42,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		/**
 		 * Gets the value of the control's "any" property via the given binding info.
+		 *
 		 * @param {sap.ui.core.util._with} oWithControl the "with" control
 		 * @param {object} oBindingInfo the binding info
 		 * @returns {any} the property value
 		 * @throws Error
 		 */
 		function getAny(oWithControl, oBindingInfo) {
-			var vValue;
-
-			oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
-			oWithControl.bindProperty("any", oBindingInfo);
-			vValue = oWithControl.getAny();
-			oWithControl.unbindProperty("any", true);
-			return vValue;
+			try {
+				oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
+				oWithControl.bindProperty("any", oBindingInfo);
+				return oWithControl.getAny();
+			} finally {
+				oWithControl.unbindProperty("any", true);
+			}
 		}
 
 		/**
-		 * Returns the index of the next child element in the parent node after the given
+		 * Returns the index of the next child element in the given parent element after the given
 		 * index (not a text or comment node).
-		 * @param {Node} oParentNode
+		 *
+		 * @param {Element} oParent
 		 *   The parent DOM node
 		 * @param {int} i
 		 *   The child node index to start search
 		 * @returns {int}
 		 *   The index of the next DOM Element or -1 if not found
 		 */
-		function getNextChildElementIndex(oParentNode, i) {
-			var oNodeList = oParentNode.childNodes;
+		function getNextChildElementIndex(oParent, i) {
+			var oNodeList = oParent.childNodes;
 
 			while (i < oNodeList.length) {
 				if (oNodeList.item(i).nodeType === 1 /*ELEMENT_NODE*/) {
@@ -86,6 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		/**
 		 * Returns <code>true</code> if the given element has the template namespace and the
 		 * given local name.
+		 *
 		 * @param {Element} oElement the DOM element
 		 * @param {string} sLocalName the local name
 		 * @returns {boolean} if the element has the given name
@@ -97,9 +96,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		/**
 		 * Returns the local name of the given DOM node, taking care of IE8.
+		 *
 		 * @param {Node} oNode any DOM node
 		 * @returns {string} the local name
-		 * @private
 		 */
 		function localName(oNode) {
 			return oNode.localName || oNode.baseName; // IE8
@@ -108,6 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		/**
 		 * Creates a binding info object with the given path.
 		 * See BindingParser.js
+		 *
 		 * @param {string} sPath the path
 		 * @returns {object} with model and path property
 		 */
@@ -124,7 +124,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		 * @param {Attribute} oAttribute
 		 *   any attribute of any control (a DOM Attribute)
 		 * @param {sap.ui.core.util._with} oWithControl the "with" control
-		 * @private
 		 */
 		function resolveAttributeBinding(oAttribute, oWithControl) {
 			var oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
@@ -167,24 +166,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 * @param {Element} oRootElement
 			 *   the DOM element to process
 			 * @param {object} mSettings
-			 * 	 map/JSON-object with initial property values, etc.
+			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
 			 * @param {object} mSettings.models
 			 * @param {string} [mSettings.viewName]
+			 *
+			 * @name sap.ui.core.util.XMLPreprocessor#process
 			 * @private
 			 */
 			process: function(oRootElement, mSettings) {
 				/**
 				 * Get the XML element for given <template:if> element which has to be part of the
 				 * output.
+				 *
 				 * @param {Element} oIfElement
 				 *   <template:if> element
 				 * @param {boolean} bCondition
 				 *   the evaluated condition of the <template:if>
 				 * @returns {Element}
-				 *   the DOM element which has to be part of the output
+				 *   the DOM element whose children will be part of the output, or
+				 *   <code>undefined</code> in case there is no such element (i.e. <template:else>
+				 *   is missing)
 				 * @throws Error if the syntax of <template:if> element is not valid.
-				 * @private
 				 */
 				function getThenOrElse(oIfElement, bCondition) {
 					var oChildNodeList = oIfElement.childNodes,
@@ -211,37 +214,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 									unexpectedTag(oChildNodeList.item(iElementIndex));
 								}
 							}
-						} else if (isTemplateElement(oElement, "else")) {
-							// TODO remove this test then when visiting all nodes
-							unexpectedTag(oElement);
 						}
 					}
 					return bCondition ? oThenElement : oElseElement;
 				}
 
 				/**
-				 * Visits the child nodes of the given node. Lifts them up by inserting them before
-				 * the target node.
-				 * @param {Node} oNode the DOM node
+				 * Visits the child nodes of the given parent element. Lifts them up by inserting
+				 * them before the target element.
+				 *
+				 * @param {Element} oParent the DOM element
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
-				 * @param {Node} [oTargetNode=oNode] the target DOM node
+				 * @param {Element} [oTarget=oParent] the target DOM element
 				 */
-				function liftChildNodes(oNode, oWithControl, oTargetNode) {
-					oTargetNode = oTargetNode || oNode;
-					visitChildNodes(oNode, oWithControl);
-					while (oNode.firstChild) {
-						oTargetNode.parentNode.insertBefore(oNode.firstChild, oTargetNode);
+				function liftChildNodes(oParent, oWithControl, oTarget) {
+					oTarget = oTarget || oParent;
+					visitChildNodes(oParent, oWithControl);
+					while (oParent.firstChild) {
+						oTarget.parentNode.insertBefore(oParent.firstChild, oTarget);
 					}
 				}
 
 				/**
-				 * Processes a <template:if> node.
-				 * @param {Node} oNode
-				 *   the <template:if> node
+				 * Processes a <template:if> instruction.
+				 *
+				 * @param {Element} oElement
+				 *   the <template:if> element
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
-				function templateIf(oNode, oWithControl) {
-					var vTest = oNode.getAttribute("test"),
+				function templateIf(oElement, oWithControl) {
+					var vTest = oElement.getAttribute("test"),
 						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest),
 						oChild;
 
@@ -250,37 +252,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							vTest = getAny(oWithControl, oBindingInfo);
 						} catch (ex) {
 							jQuery.sap.log.warning(
-								'Error in formatter of ' + serializeSingleElement(oNode)
+								'Error in formatter of ' + serializeSingleElement(oElement)
 									+ ' in view ' + mSettings.viewName,
 								ex, "sap.ui.core.mvc.XMLView");
 							vTest = false;
 						}
 					}
-					oChild = getThenOrElse(oNode, vTest && vTest !== "false");
+					oChild = getThenOrElse(oElement, vTest && vTest !== "false");
 					if (oChild) {
-						liftChildNodes(oChild, oWithControl, oNode);
+						liftChildNodes(oChild, oWithControl, oElement);
 					}
-					oNode.parentNode.removeChild(oNode);
+					oElement.parentNode.removeChild(oElement);
 				}
 
 				/**
-				 * Processes a <template:repeat> node.
-				 * @param {Node} oNode
-				 *   the <template:repeat> node
+				 * Processes a <template:repeat> instruction.
+				 *
+				 * @param {Element} oElement
+				 *   the <template:repeat> element
 				 * @param {sap.ui.core.template._with} oWithControl
 				 *   the parent's "with" control
 				 */
-				function templateRepeat(oNode, oWithControl) {
-					var sList = oNode.getAttribute("list") || "",
+				function templateRepeat(oElement, oWithControl) {
+					var sList = oElement.getAttribute("list") || "",
 						oBindingInfo = sap.ui.base.BindingParser.complexParser(sList),
 						aContexts,
 						oListBinding,
 						sModelName,
 						oNewWithControl,
-						sVar = oNode.getAttribute("var");
+						sVar = oElement.getAttribute("var");
 
 					if (!oBindingInfo) {
-						throw new Error('Missing binding for ' + serializeSingleElement(oNode)
+						throw new Error('Missing binding for ' + serializeSingleElement(oElement)
 							+ ' in view ' + mSettings.viewName);
 					}
 
@@ -295,8 +298,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					oNewWithControl.unbindAggregation("list", true);
 					sModelName = oBindingInfo.model; // added by bindAggregation
 					if (!oListBinding) {
-						throw new Error('Missing model "' + sModelName + '" in '
-							+ serializeSingleElement(oNode) + ' in view ' + mSettings.viewName);
+						throw new Error("Missing model '" + sModelName + "' in "
+							+ serializeSingleElement(oElement) + " in view " + mSettings.viewName);
 					}
 					aContexts = oListBinding.getContexts();
 
@@ -307,31 +310,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					// the actual loop
 					jQuery.each(aContexts, function (i, oContext) {
 						var oSourceNode = (i === aContexts.length - 1) ?
-							oNode : oNode.cloneNode(true);
+							oElement : oElement.cloneNode(true);
 						// Note: because sVar and sModelName refer to the same model instance, it
 						// is OK to use sModelName's context for sVar as well (the name is not part
 						// of the context!)
 						oNewWithControl.setBindingContext(oContext, sVar);
-						liftChildNodes(oSourceNode, oNewWithControl, oNode);
+						liftChildNodes(oSourceNode, oNewWithControl, oElement);
 					});
 
-					oNode.parentNode.removeChild(oNode);
+					oElement.parentNode.removeChild(oElement);
 				}
 
 				/**
-				 * Processes a <template:with> node.
-				 * @param {Node} oNode
-				 *   the <template:with> node
+				 * Processes a <template:with> instruction.
+				 *
+				 * @param {Element} oElement
+				 *   the <template:with> element
 				 * @param {sap.ui.core.util._with} oWithControl
 				 *   the parent's "with" control
 				 */
-				function templateWith(oNode, oWithControl) {
+				function templateWith(oElement, oWithControl) {
 					var oBindingInfo,
 						oModel,
 						oNewWithControl,
-						sPath = oNode.getAttribute("path"),
+						sPath = oElement.getAttribute("path"),
 						sResolvedPath,
-						sVar = oNode.getAttribute("var");
+						sVar = oElement.getAttribute("var");
 
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
@@ -342,7 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							throw new Error("Missing model '" + oBindingInfo.model + "' in "
-								+ serializeSingleElement(oNode) + " in view "
+								+ serializeSingleElement(oElement) + " in view "
 								+ mSettings.viewName);
 						}
 						//TODO any trick to avoid explicit resolution of relative paths here?
@@ -350,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
 							throw new Error(
-								'Cannot resolve path for ' + serializeSingleElement(oNode)
+								'Cannot resolve path for ' + serializeSingleElement(oElement)
 								+ ' in view ' + mSettings.viewName
 							);
 						}
@@ -363,24 +367,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						oNewWithControl.bindObject(sPath);
 					}
 
-					liftChildNodes(oNode, oNewWithControl);
-					oNode.parentNode.removeChild(oNode);
+					liftChildNodes(oElement, oNewWithControl);
+					oElement.parentNode.removeChild(oElement);
 				}
 
 				/**
 				 * Throws an error that the element represents an unexpected tag.
+				 *
 				 * @param {Element} oElement the DOM element
 				 */
 				function unexpectedTag(oElement) {
-					//TODO should be parentElement, but in IE8-10 this is often undefined although
-					// the parent _is_ an element
 					throw new Error("Unexpected tag " + serializeSingleElement(oElement)
-						+ " in " + serializeSingleElement(oElement.parentNode) + " in view "
-						+ mSettings.viewName);
+						+ " in view " + mSettings.viewName);
 				}
 
 				/**
 				 * Visits the attributes of the given node.
+				 *
 				 * @param {Node} oNode the DOM Node
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
@@ -396,6 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 				/**
 				 * Visits the child nodes of the given node.
+				 *
 				 * @param {Node} oNode the DOM Node
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
@@ -411,6 +415,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 				/**
 				 * Visits the given node.
+				 *
 				 * @param {Node} oNode the DOM Node
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
@@ -430,7 +435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							return;
 
 						default:
-							//TODO Error?
+							unexpectedTag(oNode);
 						}
 					}
 
@@ -441,7 +446,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				if (oRootElement.getAttribute("isTemplate") !== "true") {
 					return;
 				}
-				mSettings = mSettings || {};
 				visitNode(oRootElement, new With({
 					models: mSettings.models,
 					bindingContexts: mSettings.bindingContexts

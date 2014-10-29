@@ -4,12 +4,12 @@
 	xmlns:core="sap.ui.core"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:template="sap.ui.core.template"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	isTemplate="true">
 	<layout:VerticalLayout>
 		<layout:content>
 			<template:with path="meta>/CB_SALES_ORDER_SRV.Customer">
-	 			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
+				<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
 					<template:if test="{meta>ImageUrl}">
 						<template:then>
 							<Image src="{path: 'meta>ImageUrl', formatter: 'sap.ui.core.sample.ViewTemplate.if_sample.Component.help'}" />
