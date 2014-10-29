@@ -105,8 +105,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 			} // else does not happen, already checked
 
 			//TODO/FIX4MASTER replace once final solution is available
-			jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
-			sap.ui.core.util.XMLPreprocessor.process(this._xContent, mSettings);
+			if (this._xContent.getAttribute("isTemplate") === "true") {
+				jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
+				sap.ui.core.util.XMLPreprocessor.process(this._xContent, {
+					bindingContexts: mSettings.bindingContexts,
+					models: mSettings.models,
+					//TODO viewName is not necessarily available, do not use it for error messages
+					viewName: mSettings.viewName
+				});
+			}
 
 			this._oContainingView = mSettings.containingView || this;
 	

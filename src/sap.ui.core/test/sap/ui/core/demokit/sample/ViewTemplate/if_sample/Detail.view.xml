@@ -4,36 +4,28 @@
 	xmlns:core="sap.ui.core"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:template="sap.ui.core.template">
+	xmlns:template="sap.ui.core.template"
+	isTemplate="true">
 	<layout:VerticalLayout>
 		<layout:content>
-			<Label text="{CustomerName/#@sap:label}" />
-			<Text text="{CustomerName}" />
-			<Label text="{CityName/#@sap:label}" />
-			<Text text="{CityName}" />
-			<template:if test="{RegionName}">
-				<template:then>
-					<Label text="{RegionName/#@sap:label}" />
-					<layout:HorizontalLayout>
-						<layout:content>
-							<core:Icon src="sap-icon://world"/>
-							<Text text="{RegionName}" />
-						</layout:content>
-					</layout:HorizontalLayout>
-				</template:then>
-				<template:else>
-					<Label text="No Region" />
-				</template:else>
-			</template:if>
-			<template:if test="{MobilePhoneNumber}">
-				<Label text="{MobilePhoneNumber/#@sap:label}" />
-				<layout:HorizontalLayout>
-					<layout:content>
-						<core:Icon src="sap-icon://phone"/>
-						<Text text="{MobilePhoneNumber}" />
-					</layout:content>
-				</layout:HorizontalLayout>
-			</template:if>
+			<template:with path="meta>/CB_SALES_ORDER_SRV.Customer">
+	 			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
+					<template:if test="{meta>ImageUrl}">
+						<template:then>
+							<Image src="{path: 'meta>ImageUrl', formatter: 'sap.ui.core.sample.ViewTemplate.if_sample.Component.help'}" />
+						</template:then>
+						<template:else>
+							<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.sample.ViewTemplate.if_sample.Component.help'}" />
+						</template:else>
+					</template:if>
+				</template:with>
+				<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
+					<template:if test="{meta>Label}">
+						<Label text="{path: 'meta>Label', formatter: 'sap.ui.core.sample.ViewTemplate.if_sample.Component.help'}" />
+						<Text text="{path: 'meta>Value', formatter: 'sap.ui.core.sample.ViewTemplate.if_sample.Component.help'}" />
+					</template:if>
+				</template:repeat>
+			</template:with>
 		</layout:content>
 	</layout:VerticalLayout>
 </mvc:View>

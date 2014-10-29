@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 
 <!--
-	Tested class: sap.ui.core.mvc.XMLView & Templating
+	Tested class: sap.ui.core.util.XMLPreprocessor
 -->
 
 <html>
@@ -24,11 +24,9 @@
 	<script>
 	/*global asyncTest, deepEqual, equal, expect, module, notDeepEqual,
 	notEqual, notStrictEqual, ok, raises, sinon, start, strictEqual, stop, test,
-	sinon */
+	sinon, window */
 
 	jQuery.sap.require("jquery.sap.xml");
-	jQuery.sap.require("sap.ui.core.mvc.XMLView");
-	jQuery.sap.require("sap.ui.core.XMLTemplateProcessor");
 	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 
 	// default error handler
@@ -46,14 +44,27 @@
 			.replace(/ xmlns.*?=\".+?\"/g,"").replace(/ \/>/g,'/>');
 	}
 
-	// checks if document is equal to the concatenation of a subset of given strings.
-	function checkXml(oDocument, aStrings, aIndices) {
+	/**
+	 * Checks if document is equal to the concatenation of a subset of given strings (with
+     * isTemplate adjusted accordingly).
+	 * @param {number[]} [aIndices]
+	 *   indicates which subset of the given strings; default is all
+	 * @param {boolean} [bIsTemplate=false]
+	 *	 the expected value for isTemplate
+	 */
+	function checkXml(oDocument, aStrings, aIndices, bIsTemplate) {
 		var sActual = normalizeXml(jQuery.sap.serializeXML(oDocument.documentElement)),
 			sExpected = "";
-		jQuery.each(aIndices, function (i, iIndex) {
-			sExpected += aStrings[iIndex];
-		});
-		sExpected = normalizeXml(sExpected);
+		if (aIndices) {
+			jQuery.each(aIndices, function (i, iIndex) {
+				sExpected += aStrings[iIndex];
+			});
+		} else {
+			sExpected = aStrings.join("");
+		}
+		bIsTemplate = !!bIsTemplate; // make it a real boolean
+		sExpected = normalizeXml(sExpected)
+			.replace(/isTemplate="true"/, 'isTemplate="' + bIsTemplate + '"');
 		strictEqual(sActual, sExpected, "XML looks as expected: " + sExpected);
 	}
 
@@ -63,33 +74,61 @@
 	//*********************************************************************************************
 	module("sap.ui.core.util.XmlPreprocessor", {
 		teardown: function () {
+			if (jQuery.sap.log.warning.restore) {
+				jQuery.sap.log.warning.restore();
+			}
+			if (sap.ui.base.ManagedObject.prototype.bindAggregation.restore) {
+				sap.ui.base.ManagedObject.prototype.bindAggregation.restore();
+			}
+			if (sap.ui.base.ManagedObject.prototype.unbindAggregation.restore) {
+				sap.ui.base.ManagedObject.prototype.unbindAggregation.restore();
+			}
+			if (sap.ui.base.ManagedObject.prototype.bindProperty.restore) {
+				sap.ui.base.ManagedObject.prototype.bindProperty.restore();
+			}
+			if (sap.ui.base.ManagedObject.prototype.unbindProperty.restore) {
+				sap.ui.base.ManagedObject.prototype.unbindProperty.restore();
+			}
+			try {
+				delete window.foo;
+			} catch (e) {
+				// IE 8 doesn't like this: "Object doesn't support this action"
+			}
 		}
 	});
 
 	//*********************************************************************************************
-	test("XML w/o template is unchanged", function () {
-		var aViewContent = [
-				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">',
-				'<Icon/>',
-				'<\/mvc:View>'
-			],
-			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+	jQuery.each(['', ' isTemplate="foo"'],
+		function (i, sTemplateSpec) {
+			test("XML w/o isTemplate is unchanged (" + i + ")", function () {
+				var aViewContent = [
+		   				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+							+ ' xmlns:template="sap.ui.core.template"'
+							+ sTemplateSpec + '>',
+						'<Icon visibility="{/uistate/visibility}"/>',
+						'<template:if test="false">',
+						'<Icon/>',
+						'<\/template:if>',
+						'<\/mvc:View>'
+					],
+					oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
 
-		strictEqual(oViewContent.parseError.errorCode, 0);
+				strictEqual(oViewContent.parseError.errorCode, 0);
 
-		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {});
 
-		checkXml(oViewContent, aViewContent, [0, 1, 2]);
-	});
+				checkXml(oViewContent, aViewContent, undefined, true);
+			});
+		});
 
 	//*********************************************************************************************
 	test("XML with template:if test='false'", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
-				'<template:if test="false">',
+					+ ' xmlns:t="sap.ui.core.template" isTemplate="true">',
+				'<t:if test="false">',
 				'<Icon/>',
-				'<\/template:if>',
+				'<\/t:if>',
 				'<\/mvc:View>'
 			],
 			// Note: in XML DOM, "\n" is represented as text nodes!
@@ -97,7 +136,9 @@
 
 		strictEqual(oViewContent.parseError.errorCode, 0);
 
-		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {});
+		// Note: no mSettings!
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement);
+
 		checkXml(oViewContent, aViewContent, [0, 4]);
 	});
 
@@ -105,7 +146,7 @@
 	test("XML with template:if test='true'", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="true">',
 				'<Icon id="first"/>',
 				'<Icon id="true"/>',
@@ -126,7 +167,7 @@
 	test("XML with multiple template:if", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="true">',
 				'<Icon id="true"/>',
 				'<\/template:if>',
@@ -145,10 +186,10 @@
 	});
 
 	//*********************************************************************************************
-	test("XML with nested template:if", function () {
+	test("XML with nested template:if (as last child)", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="true">',
 				'<Icon id="true"/>',
 				'<template:if test="false">',
@@ -165,6 +206,33 @@
 
 		checkXml(oViewContent, aViewContent, [0, 2, 7]);
 	});
+
+	//*********************************************************************************************
+	test("XML with nested template:if (as inner child)", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:if test="true">',
+				'<Icon id="true"/>',
+				'<template:if test="false">',
+				'<Icon id="false"/>',
+				'<\/template:if>',
+				'<template:if test="false">', // this must also be processed, of course!
+				'<\/template:if>',
+				'<\/template:if>',
+				'<\/mvc:View>'
+			],
+			// no newlines in this example, to make sure the 2nd falsy if is a sibling of the 1st!
+			oViewContent = jQuery.sap.parseXML(aViewContent.join(""));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {});
+
+		checkXml(oViewContent, aViewContent, [0, 2, 9]);
+	});
+	//TODO make newlines more explicit?! join("\n") is sometimes good and sometimes bad
+	// --> maybe comments are the right way to go?
 
 	//*********************************************************************************************
 	// Note: "X" is really nothing special
@@ -173,20 +241,36 @@
 			function () {
 				var aViewContent = [
 						'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-							+ ' xmlns:template="sap.ui.core.template">',
+							+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+						// TODO test with types
+//					'<template:if test="{path: \'/flag\', type: \'sap.ui.model.type.Boolean\'}">',
 						'<template:if test="{/flag}">',
 						'<Icon/>',
 						'<\/template:if>',
 						'<\/mvc:View>'
 					],
 					oModel = new sap.ui.model.json.JSONModel({flag: oFlag}),
-					oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+					oViewContent = jQuery.sap.parseXML(aViewContent.join("\n")),
+					fnBindProperty = sap.ui.base.ManagedObject.prototype.bindProperty;
 
 				strictEqual(oViewContent.parseError.errorCode, 0);
+				sinon.stub(sap.ui.base.ManagedObject.prototype, "bindProperty",
+					function (sName, oBindingInfo) {
+						strictEqual(sName, "any");
+						strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
+						fnBindProperty.apply(this, arguments);
+					});
+				sinon.spy(sap.ui.base.ManagedObject.prototype, "unbindProperty");
 
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{models: oModel});
 
 				checkXml(oViewContent, aViewContent, [0, 2, 4]);
+				strictEqual(sap.ui.base.ManagedObject.prototype.unbindProperty.callCount,
+					sap.ui.base.ManagedObject.prototype.bindProperty.callCount,
+					"balance of bind and unbind");
+				ok(sap.ui.base.ManagedObject.prototype.unbindProperty
+					.alwaysCalledWith("any", true));
 			});
 	});
 
@@ -197,9 +281,9 @@
 			function () {
 				var aViewContent = [
 						'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-							+ ' xmlns:template="sap.ui.core.template">',
+							+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 						'<template:if test="{/flag}">',
-						'<Icon/>',
+						'<Icon id="flag"/>',
 						'<\/template:if>',
 						'<\/mvc:View>'
 					],
@@ -208,7 +292,8 @@
 
 				strictEqual(oViewContent.parseError.errorCode, 0);
 
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{models: oModel});
 
 				checkXml(oViewContent, aViewContent, [0, 4]);
 			});
@@ -220,7 +305,7 @@
 			function () {
 				var aViewContent = [
 						'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-							+ ' xmlns:template="sap.ui.core.template">',
+							+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 						'<template:if test="{flag}">',
 						'<Icon/>',
 						'<\/template:if>',
@@ -243,31 +328,93 @@
 	});
 
 	//*********************************************************************************************
+	test("XML with template:if test='{formatter:...}'", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:if test="{formatter: \'foo.Helper.not\', path:\'/flag\'}">',
+				'<Icon id="flag"/>',
+				'<\/template:if>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({flag: false}),
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+		window.foo = {
+			Helper: {
+				not: function (oRawValue) {
+					return !oRawValue;
+				}
+			}
+		};
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+
+		checkXml(oViewContent, aViewContent, [0, 2, 4]);
+	});
+
+	//*********************************************************************************************
+	test("template:if test='{formatter:...}', exception in formatter", function () {
+		var oError = new Error("deliberate failure"),
+			sTest = "{formatter: 'foo.Helper.fail', path:'/flag'}",
+			aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:if test="' + sTest + '">',
+				'<Icon id="flag"/>',
+				'<\/template:if>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({flag: true}),
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		sinon.spy(jQuery.sap.log, "warning");
+		strictEqual(oViewContent.parseError.errorCode, 0);
+		window.foo = {
+			Helper: {
+				fail: function (oRawValue) {
+					throw oError;
+				}
+			}
+		};
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: oModel, viewName: "foo"});
+
+		//TODO catch with warning vs. an error thrown?
+		ok(jQuery.sap.log.warning.calledWith(
+			'Error in formatter of sap.ui.core.template:if test="' + sTest + '" in view foo',
+			oError, "sap.ui.core.mvc.XMLView"));
+		checkXml(oViewContent, aViewContent, [0, 4]);
+	});
+
+	//*********************************************************************************************
 	test("Do not process nested template:ifs if not necessary", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="false">',
 				'<Icon id="false"/>',
-				'<template:if test="{/anyPath}">',
-				'<Icon id="ignored"/>',
+				'<template:if test="{formatter: \'foo.Helper.forbidden\', path:\'/flag\'}">',
+				'<Icon id="forbidden"/>',
 				'<\/template:if>',
 				'<\/template:if>',
 				'<\/mvc:View>'
 			],
+			oModel = new sap.ui.model.json.JSONModel({flag: true}),
 			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
 
-		// Since we do not use the globals, this way of testing is impossible. However the test is
-		// rewritten in the next change anyway.
-//		sinon.spy(sap.ui.core.util, "_if");
-
 		strictEqual(oViewContent.parseError.errorCode, 0);
+		window.foo = {
+				Helper: {
+					forbidden: function (oRawValue) {
+						ok(false, "formatter MUST not be called!");
+					}
+				}
+			};
 
-		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {});
-
-//		strictEqual(sap.ui.core.util._if.callCount, 1, "Only one instance created");
-//		ok(sap.ui.core.util._if.calledWith({models: undefined, bindingContexts: undefined,
-//			test: "false"}), "Proper instance");
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
 
 		checkXml(oViewContent, aViewContent, [0, 7]);
 	});
@@ -276,7 +423,7 @@
 	test("XML with template:if test='false' and template:then", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="false">',
 				'<template:then>',
 				'<Icon/>',
@@ -297,7 +444,7 @@
 	test("XML with template:if test='true' and template:then", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="true">',
 				'<template:then>',
 				'<Icon/>',
@@ -318,7 +465,7 @@
 	test("XML with nested template:if test='true' and template:then", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				// it is essential for the test that there is not tag between the if's
 				'<template:if test="true">',
 				'<template:if test="true">',
@@ -342,7 +489,7 @@
 	test("XML with template:if test='true' and template:then/else", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="true">',
 				'<template:then>',
 				'<Icon id="true"/>',
@@ -366,7 +513,7 @@
 	test("XML with template:if test='false' and template:then/else", function () {
 		var aViewContent = [
 				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-					+ ' xmlns:template="sap.ui.core.template">',
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 				'<template:if test="false">',
 				'<template:then>',
 				'<Icon id="true"/>',
@@ -391,7 +538,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<Icon id="icon1"/>',
 					'<template:if test="false">',
@@ -420,7 +567,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<\!-- Comment 0 -->',
 					'<template:if test="true">',
 					'<\!-- Comment 1 -->',
@@ -455,7 +602,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:else>',
 					'<Icon id="icon3"/>',
@@ -471,7 +618,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core.template:else "
@@ -485,7 +633,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<Icon id="icon0"/>',
 					'<template:then>',
@@ -513,7 +661,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -530,7 +678,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core:Icon in " +
@@ -544,7 +693,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -561,7 +710,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core:Icon in" +
@@ -575,7 +725,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -590,7 +740,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core:Icon in" +
@@ -604,7 +755,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -620,7 +771,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core.template:then in" +
@@ -634,7 +786,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -653,7 +805,8 @@
 			strictEqual(oViewContent.parseError.errorCode, 0);
 
 			try {
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {viewName: "foo"});
+				sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+					{viewName: "foo"});
 				ok(false);
 			} catch (e) {
 				strictEqual(e.message, "Unexpected tag sap.ui.core.template:else in" +
@@ -667,7 +820,7 @@
 		function () {
 			var aViewContent = [
 					'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-						+ ' xmlns:template="sap.ui.core.template">',
+						+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
 					'<template:if test="true">',
 					'<template:then>',
 					'<Icon id="icon2"/>',
@@ -695,6 +848,533 @@
 			}
 		}
 	);
+
+	//*********************************************************************************************
+	test("binding resolution", function () {
+		var oModel = new sap.ui.model.json.JSONModel({
+				"com.sap.vocabularies.UI.v1.HeaderInfo": {
+					"TypeImageUrl" : {
+						"String" : "/coco/apps/main/img/Icons/product_48.png"
+					},
+					"Title": {
+						"Label": {
+							"String": "Customer"
+						},
+						"Value": {
+							"Path": "CustomerName"
+						}
+					}
+				}
+			}),
+			aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:html="http://www.w3.org/1999/xhtml"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:foo>',
+				'<Label text="{formatter: \'foo.Helper.help\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+				'<Text text="{formatter: \'foo.Helper.help\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+				'<html:img src="{formatter: \'foo.Helper.help\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
+				'<\/template:foo>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<template:foo>', // must remain so that standard error handling complains
+				'<Label text="Customer"/>',
+				'<Text text="{CustomerName}"/>',
+				// TODO is this the expected behaviour? And what about text nodes?
+				'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>',
+				'<\/template:foo>',
+				'<\/mvc:View>'
+			],
+			oTemplateContent = jQuery.sap.parseXML(aTemplateContent.join("\n")),
+			fnBindProperty = sap.ui.base.ManagedObject.prototype.bindProperty;
+
+		strictEqual(oTemplateContent.parseError.errorCode, 0);
+		window.foo = {
+			Helper: {
+				help: function (oRawValue) {
+					if (oRawValue.String) {
+						return oRawValue.String;
+					}
+					if (oRawValue.Path) {
+						return "{" + oRawValue.Path + "}";
+					}
+					return oRawValue;
+				}
+			}
+		};
+		sinon.stub(sap.ui.base.ManagedObject.prototype, "bindProperty",
+			function (sName, oBindingInfo) {
+				strictEqual(sName, "any", "arg name");
+				strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime, "binding mode");
+				fnBindProperty.apply(this, arguments);
+			});
+		sinon.spy(sap.ui.base.ManagedObject.prototype, "unbindProperty");
+
+		sap.ui.core.util.XMLPreprocessor.process(oTemplateContent.documentElement, {
+			models: oModel
+		});
+
+		checkXml(oTemplateContent, aExpectedViewContent);
+		strictEqual(sap.ui.base.ManagedObject.prototype.unbindProperty.callCount,
+				sap.ui.base.ManagedObject.prototype.bindProperty.callCount,
+				"balance of bind and unbind");
+		ok(sap.ui.base.ManagedObject.prototype.unbindProperty.alwaysCalledWith("any", true));
+	});
+
+	//*********************************************************************************************
+	test("binding resolution, exception in formatter", function () {
+		var oModel = new sap.ui.model.json.JSONModel({
+				"com.sap.vocabularies.UI.v1.HeaderInfo": {
+					"Title": {
+						"Label": {
+							"String": "Customer"
+						},
+						"Value": {
+							"Path": "CustomerName"
+						}
+					}
+				}
+			}),
+			aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:foo>',
+				'<Label text="{formatter: \'foo.Helper.fail\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+				'<Text text="{formatter: \'foo.Helper.fail\','
+					+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+				'<\/template:foo>',
+				'<\/mvc:View>'
+			],
+			oTemplateContent = jQuery.sap.parseXML(aTemplateContent.join("\n"));
+
+		strictEqual(oTemplateContent.parseError.errorCode, 0);
+		window.foo = {
+			Helper: {
+				fail: function (oRawValue) {
+					throw new Error("deliberate failure");
+				}
+			}
+		};
+
+		sap.ui.core.util.XMLPreprocessor.process(oTemplateContent.documentElement,
+			{models: oModel});
+
+		// Note: if template time binding resolution fails, the expression is left "as is"
+		checkXml(oTemplateContent, aTemplateContent);
+	});
+
+	//*********************************************************************************************
+	test("template:with", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:with path="/some/random/path">',
+				'<template:if test="{flag}">',
+				'<Icon id="flag"/>',
+				'<\/template:if>',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				some: {
+					random: {
+						path: {
+							flag: true
+						}
+					}
+				}
+			}),
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+
+		checkXml(oViewContent, aViewContent, [0, 3, 6]);
+	});
+
+	//*********************************************************************************************
+	test("template:with and 'named context'", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:with path="/some" var="some">',
+				'<template:with path="some>random/path" var="path">',
+				'<template:if test="{path>flag}">',
+				'<Icon id="flag"/>',
+				'<\/template:if>',
+				'<\/template:with>',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				some: {
+					random: {
+						path: {
+							flag: true
+						}
+					}
+				}
+			}),
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+
+		checkXml(oViewContent, aViewContent, [0, 4, 8]);
+	});
+
+	//*********************************************************************************************
+	test("template:with and 'named context', missing model", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:with path="some>random/path" var="path">', // "some" not defined here!
+				'<\/template:with>',
+				'<\/mvc:View>'
+			],
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		try {
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+				{viewName: "foo"});
+			ok(false);
+		} catch (ex) {
+			strictEqual(ex.message,
+				"Missing model 'some' in sap.ui.core.template:with in view foo");
+		}
+	});
+
+	//*********************************************************************************************
+	test("template:with and 'named context', missing context", function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:with path="some/random/place" var="place">',
+				'<\/template:with>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel(), // content does not matter
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		try {
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+				{models: oModel, viewName: "foo"});
+			ok(false);
+		} catch (ex) {
+			strictEqual(ex.message,
+				'Cannot resolve path for sap.ui.core.template:with var="place" in view foo');
+		}
+	});
+
+	//*********************************************************************************************
+	test("template:repeat w/o named models", function () {
+		var aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{/items}">',
+				'<Icon src="{src}"/>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<Icon src="A"/>',
+				'<Icon src="B"/>',
+				'<Icon src="C"/>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}]
+			}),
+			oViewContent = jQuery.sap.parseXML(aTemplateContent.join("\n")),
+			fnBindAggregation = sap.ui.base.ManagedObject.prototype.bindAggregation;
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+		sinon.stub(sap.ui.base.ManagedObject.prototype, "bindAggregation",
+			function (sName, oBindingInfo) {
+				strictEqual(sName, "list");
+				strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
+				fnBindAggregation.apply(this, arguments);
+			});
+		sinon.spy(sap.ui.base.ManagedObject.prototype, "unbindAggregation");
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement, {models: oModel});
+
+		checkXml(oViewContent, aExpectedViewContent);
+		strictEqual(sap.ui.base.ManagedObject.prototype.unbindAggregation.callCount,
+			sap.ui.base.ManagedObject.prototype.bindAggregation.callCount,
+			"balance of bind and unbind");
+		ok(sap.ui.base.ManagedObject.prototype.unbindAggregation.alwaysCalledWith("list", true));
+	});
+
+	//*********************************************************************************************
+	test("template:repeat with named models", function () {
+		var aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{modelName>/items}">',
+				'<Icon src="{modelName>src}"/>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<Icon src="A"/>',
+				'<Icon src="B"/>',
+				'<Icon src="C"/>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}]
+			}),
+			oViewContent = jQuery.sap.parseXML(aTemplateContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: {modelName: oModel}});
+
+		checkXml(oViewContent, aExpectedViewContent);
+	});
+
+	//*********************************************************************************************
+	test('template:repeat w/o list', function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		try {
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+				{viewName: "foo"});
+			ok(false);
+		} catch (ex) {
+			// TODO shouldn't report list="", but the next change will improve this
+			strictEqual(ex.message,
+				'Missing binding for sap.ui.core.template:repeat list="" in view foo');
+		}
+	});
+
+	//*********************************************************************************************
+	test('template:repeat list="no binding"', function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="no binding">',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		try {
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+				{viewName: "foo"});
+			ok(false);
+		} catch (ex) {
+			strictEqual(ex.message,
+				'Missing binding for sap.ui.core.template:repeat list="no binding" in view foo');
+		}
+	});
+
+	//*********************************************************************************************
+	test('template:repeat list="{unknown>foo}"', function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{unknown>foo}">',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		try {
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+				{viewName: "foo"});
+			ok(false);
+		} catch (ex) {
+			strictEqual(ex.message,
+				'Missing model "unknown" in sap.ui.core.template:repeat in view foo');
+		}
+	});
+
+	//*********************************************************************************************
+	test('template:repeat list="{/unsupported/path}"', function () {
+		var aViewContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{/unsupported/path}">',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel(), // content does not matter
+			oViewContent = jQuery.sap.parseXML(aViewContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: oModel, viewName: "foo"});
+
+		//TODO is this the expected behavior? the loop has no iterations and that's it?
+		// Note: the same happens with a relative path if there is no binding context for the model
+		checkXml(oViewContent, aViewContent, [0, 3]);
+	});
+
+	//*********************************************************************************************
+	test("template:repeat w/ complex binding and model", function () {
+		var aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				// Note: foo: 'bar' just serves as placeholder for any parameter (complex syntax)
+				'<template:repeat list="{foo: \'bar\', path:\'modelName>/items\'}">',
+				'<Icon src="{modelName>src}"/>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<Icon src="A"/>',
+				'<Icon src="B"/>',
+				'<Icon src="C"/>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}]
+			}),
+			oViewContent = jQuery.sap.parseXML(aTemplateContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: {modelName: oModel}});
+
+		checkXml(oViewContent, aExpectedViewContent);
+	});
+
+	//*********************************************************************************************
+	test("template:repeat nested", function () {
+		var aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{customer>/orders}">',
+				'<Icon src="{customer>id}"/>',
+				'<template:repeat list="{customer>items}">',
+				'<Icon src="{customer>no}"/>',
+				'<\/template:repeat>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<Icon src="A"/>',
+				'<Icon src="A1"/>',
+				'<Icon src="A2"/>',
+				'<Icon src="B"/>',
+				'<Icon src="B1"/>',
+				'<Icon src="B2"/>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				orders: [{
+					id: "A",
+					items: [{
+						no: "A1"
+					}, {
+						no: "A2"
+					}]
+				}, {
+					id: "B",
+					items: [{
+						no: "B1"
+					}, {
+						no: "B2"
+					}]
+				}]
+			}),
+			oViewContent = jQuery.sap.parseXML(aTemplateContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: {customer: oModel}});
+
+		checkXml(oViewContent, aExpectedViewContent);
+	});
+
+	//*********************************************************************************************
+	test("template:repeat with loop variable", function () {
+		var aTemplateContent = [
+				'<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
+					+ ' xmlns:template="sap.ui.core.template" isTemplate="true">',
+				'<template:repeat list="{modelName>/items}" var="item">',
+				'<Icon src="{item>src}"/>',
+				'<\/template:repeat>',
+				'<\/mvc:View>'
+			],
+			aExpectedViewContent = [
+				aTemplateContent[0],
+				'<Icon src="A"/>',
+				'<Icon src="B"/>',
+				'<Icon src="C"/>',
+				'<\/mvc:View>'
+			],
+			oModel = new sap.ui.model.json.JSONModel({
+				items: [{
+					src: "A"
+				}, {
+					src: "B"
+				}, {
+					src: "C"
+				}]
+			}),
+			oViewContent = jQuery.sap.parseXML(aTemplateContent.join("\n"));
+
+		strictEqual(oViewContent.parseError.errorCode, 0);
+
+		sap.ui.core.util.XMLPreprocessor.process(oViewContent.documentElement,
+			{models: {modelName: oModel}});
+
+		checkXml(oViewContent, aExpectedViewContent);
+	});
 	</script>
 
 	</head>
