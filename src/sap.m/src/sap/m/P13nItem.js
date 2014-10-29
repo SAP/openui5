@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 				/**
 				 * tbd
 				 */
-				maxlength : {
+				maxLength : {
 					type : "string",
 					group : "Misc",
 					defaultValue : null

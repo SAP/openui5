@@ -354,7 +354,7 @@ sap.ui
 							key : oItem.getColumnKey(),
 							text : oItem.getText(),
 							tooltip : oItem.getTooltip(),
-							maxlength : oItem.getMaxlength(),
+							maxLength : oItem.getMaxLength(),
 							type : oItem.getType()
 						};
 
