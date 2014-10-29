@@ -1464,9 +1464,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._submitSingleRequest = function(oRequest, fnSuccess, fnError) {
 		var that = this,
-		mChangeEntities = {},
-		mGetEntities = {},
-		mEntityTypes = {};
+			oRequestHandle,
+			mChangeEntities = {},
+			mGetEntities = {},
+			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
 			that._processResponse(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
@@ -1476,8 +1477,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 				}
 			}
+			
+			that._updateChangedEntities(mChangeEntities);
+			
+			that.fireRequestCompleted({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
+			
 		};
-		return this._submitRequest(oRequest, handleSuccess, fnError);
+		var handleError = function(oError) {
+			if (fnError) {
+				fnError(oError);
+			}
+			that.fireRequestCompleted({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
+
+			that.fireRequestFailed(oError);
+		};
+		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
+		
+		that.fireRequestSent({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async,
+			info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]}});
+		
+		return oRequestHandle;
 	};
 
 	/**
@@ -1551,32 +1572,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				that._updateChangedEntities(mChangeEntities);
 
 			}
-			if (!fnSuccess) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
-			} else {
+			if (fnSuccess) {
 				fnSuccess(oData);
 			}
+			
+			that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
+			
 		};
 
 		var handleError = function(oError) {
-			if (!fnError) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
-
-				// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
-				//if (!oRequestHandle || !oRequestHandle.bAborted) {
-				that.fireRequestFailed(oError);
-			} else {
+			if (fnError) {
 				fnError(oError);
 			}
+			that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
+
+			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation) 
+			//if (!oRequestHandle || !oRequestHandle.bAborted) {
+			that.fireRequestFailed(oError);
 		};
 
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-		if (!fnSuccess) {
-			that.fireRequestSent({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}});
-		}
+		
+		that.fireRequestSent({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
+			info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}});
+		
 		return oRequestHandle;
 	};
 
@@ -1729,7 +1750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var that = this,
 			oRequestHandle;
 
-		if (this.oRequestTimer) {
+		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
 			jQuery.sap.clearDelayedCall(this.oRequestTimer);
 			this.oRequestTimer = undefined;
 		}
