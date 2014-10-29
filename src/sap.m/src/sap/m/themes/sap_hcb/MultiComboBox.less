@@ -15,7 +15,7 @@
 	border-color: @sapHCStandardFG;
 }
 
-.sapMMultiComboBox>.sapMMultiComboBoxBorder {
+.sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	background: @sapHCStandardBG;
 	border: .0625rem solid @sapHCStandardFG;
 	padding-left: 0.75rem;
@@ -28,11 +28,11 @@
 }
 
 // on the desktop we hide the overflow
-.sap-desktop .sapMMultiComboBox>.sapMMultiComboBoxBorder {
+.sap-desktop .sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	overflow: hidden;
 }
 
-.sapUiSizeCompact .sapMMultiComboBox>.sapMMultiComboBoxBorder {
+.sapUiSizeCompact .sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	padding-left: 0.1875rem;
 	height: 1.5rem;
 }
@@ -46,7 +46,7 @@
 /* InputDiv and ShadowDiv         */
 /* ------------------------------ */
 .sapMMultiComboBoxInputContainer {
-	overflow:hidden;
+	overflow: hidden;
 	display: inline;
 }
 
@@ -102,23 +102,13 @@
 .sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder,
 .sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder,
 .sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-	border-width: .125rem;
+	border: 1px dashed @sapHCStandardFG;
 	padding: 0 0.6875rem;
+	height: 2.375rem;
 }
 
 .sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder {
-	border-color: @sapHCStandardFG;
-	height: 2.375rem;
-}
-
-.sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder {
-	border-color: @sapHCStandardFG;
-	height: 2.375rem;
-}
-
-.sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-	border-color: @sapHCStandardFG;
-	height: 2.375rem;
+	background-color: @sapHCHighlightBG;
 }
 
 .sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxInputInner,
@@ -141,14 +131,8 @@
 		padding-left: 0.1875rem;
 		height: 1.375rem;
 	}
-	.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder {
-		border-color: @sapHCStandardFG;
-	}
-
-	.sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder {
-		border-color: @sapHCStandardFG;
-	}
-
+	.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder,
+	.sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder,
 	.sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
 		border-color: @sapHCStandardFG;
 	}
@@ -183,15 +167,6 @@
 
 /* focus to allow go down via keyboard navigation into list */
 .sap-desktop .sapMMultiComboBoxList li.sapMComboBoxBaseItem:focus {
-	outline: none;
-}
-
-.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
-	background-color : @sapHCHighlightAltBG;
-}
-
-/* HCB Additional Styles */
-.sap-desktop .sapMMultiComboBoxList .sapMComboBoxBaseItem:focus {
 	position: relative;
 }
 
@@ -205,17 +180,11 @@
 	left: 0;
 }
 
-.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder,
-.sapMMultiComboBox.sapMInputBaseWarning .sapMMultiComboBoxBorder ,
-.sapMMultiComboBox.sapMInputBaseSuccess .sapMMultiComboBoxBorder {
-	border-style: dashed;
-	border-width: .0625rem;
+.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
+	background-color : @sapHCHighlightAltBG;
 }
 
-.sapMMultiComboBox.sapMInputBaseError .sapMMultiComboBoxBorder {
-	background-color: @sapHCHighlightBG;
-}
-
+/* HCB Additional Styles */
 .sapMComboBoxBaseDisabled .sapMToken,
 .sapMComboBoxBaseDisabled .sapMTokenIcon,
 .sapMComboBoxBaseDisabled .sapMMultiComboBoxBorder,
