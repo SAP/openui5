@@ -157,6 +157,10 @@
 								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
 								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
 								<languages>${sap.ui5.translationLanguages}</languages>
+								<!-- only consider the sources -->
+								<translationResources>
+									<translationResource>${basedir}/src</translationResource>
+								</translationResources>
 							</configuration>
 						</plugin>
 
