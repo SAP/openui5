@@ -277,6 +277,43 @@
 		equals(multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 	});
 	
+	test("keyboard - ctrl + A with no text", function() {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		multiInput1.setTokens([token1, token2, token3]);	
+		
+		sap.ui.test.qunit.triggerKeydown(multiInput1, jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
+		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
+		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
+	});
+	
+	test("keyboard - ctrl + A with text", function() {
+		var token1 = new sap.m.Token();
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token();
+		multiInput1.setTokens([token1, token2, token3]);
+		
+		multiInput1.updateDomValue("123");
+		sap.ui.test.qunit.triggerEvent("input", multiInput1.getFocusDomRef());
+		
+		multiInput1.selectText(0, multiInput1.getValue().length);
+		equals(multiInput1._$input.getSelectedText(), "123", "only texts are selected");
+		
+		sap.ui.test.qunit.triggerKeydown(multiInput1, jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		equals(token1.getSelected(), true, "Token1 is selected");
+		equals(token2.getSelected(), true, "Token2 is selected");
+		equals(token3.getSelected(), true, "Token3 is selected");
+		
+		multiInput1.ontap();
+		this.clock.tick(1);
+		equals(token1.getSelected(), false, "Token1 is unselected");
+		equals(token2.getSelected(), false, "Token2 is unselected");
+		equals(token3.getSelected(), false, "Token3 is unselected");
+		
+	});
+	
 	test("test exit", function() {	
 		
 		multiInput1._sResizeHandlerId = "ID0123";		
@@ -289,7 +326,7 @@
 
 </head>
 <body>
-	<h1 id="qunit-header">QUnit page for sap.ui.m.Input</h1>
+	<h1 id="qunit-header">QUnit page for sap.m.MultiInput</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>

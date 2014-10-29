@@ -347,26 +347,34 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.onkeydown = function(oEvent) {
 		
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+
+			if (document.activeElement === this._$input[0]) {
 				
-			if ( this._tokenizer){
+				// if focus is on text
+				if (this._$input.getSelectedText() !== this.getValue()){
+					
+					// if text are not selected, then selected all text
+					this.selectText(0, this.getValue().length);
+				} else if (this._tokenizer){
+					
+					// if text are selected, then selected all tokens
+					this._tokenizer.selectAllTokens(true);
+				}
+			} else if (document.activeElement === this._tokenizer.$()[0]) {
 				
-				if (this._$input.getSelectedText() === this.getValue()) {
-					
-					// if all text are selected, select the complete content of the input field
-					this._tokenizer.selectAllTokens();
-						
-				} else if ( this._tokenizer.getTokens().length !== 0 && this._tokenizer.getSelectedTokens().length === this._tokenizer.getTokens().length){
-					
-					// if all tokens are selected, select the complete content of the input field
-					if (!this._tokenizer.bSelectAllToken){
-							
-						this.selectText(0, this.getValue().length);
-					}
-						
-				} 
+				// if the tokens were not selected before select all in tokenizer was called, then let tokenizer select all tokens.
+				if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
+
+					// if tokens are all selected, then select all tokens
+					this.selectText(0, this.getValue().length);
+				}
+			}
+			 
+			oEvent.preventDefault();
 			}
 			
-		}
+
+			
 		
 	};
 	
@@ -485,6 +493,23 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				&& oEvent.relatedControlId !== this._tokenizer.getId() && !bNewFocusIsInTokenizer) { // leaving control, validate latest text		
 				this._validateCurrentText(true);
 		}
+		
+		sap.m.Tokenizer.prototype.onsapfocusleave.apply(this._tokenizer, arguments);
+	};
+	
+	/**
+	 * when tap on text field, deselect all tokens
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.ontap = function(oEvent) {
+		Input.prototype.ontap.apply(this, arguments);
+		
+		//deselect tokens when focus is on text field
+		if (document.activeElement === this._$input[0]) {
+			this._tokenizer.selectAllTokens(false);
+		}
+		
 	};
 	
 	/**

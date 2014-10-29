@@ -136,6 +136,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this._doScrollToEnd();
 	};
 	
+	
+	Tokenizer.prototype.setWidth = function(sWidth) {
+		this.setProperty("width", sWidth, true);
+		this.$().css("width", this.getWidth());
+		return this;
+	};
+	
 	/**
 	 * Function sets the tokenizer's width in pixels
 	 * 
@@ -295,6 +302,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	/**
+	 * Handle the focus leave event, deselects token
+	 *
+	 * @param {jQuery.Event}
+	 *            oEvent - the occuring event
+	 * @private
+	 */
+	Tokenizer.prototype.onsapfocusleave = function(oEvent) {
+		var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+		
+		//when focus goes to token, keep the select status, otherwise deselect all tokens
+		if (!oRelatedControl || oRelatedControl.getParent() !== this){
+			this.selectAllTokens(false);
+		}
+	};
+	
+	/**
 	 * Handle the tab key event, deselects token
 	 *
 	 * @param {jQuery.Event}
@@ -303,6 +326,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Tokenizer.prototype.saptabnext = function(oEvent) {
 		this.selectAllTokens(false);
+	};
+	
+	/**
+	 * check if all tokens in the tokenizer are selected.
+	 *
+	 * @private
+	 * @name sap.m.Tokenizer#isAllTokenSelected
+	 * @function
+	 */
+	Tokenizer.prototype.isAllTokenSelected = function() {
+		if (this.getTokens().length === this.getSelectedTokens().length) {
+			
+			return true;
+		}
+		return false;
+	
 	};
 	
 	/**
@@ -320,16 +359,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) { //metaKey for MAC command
 			
-			// flag used for ctrl + a in MultiInput check
-			this.bSelectAllToken = false;
+			//to check how many tokens are selected before Ctrl + A in MultiInput
+			this._iSelectedToken = this.getSelectedTokens().length;
 			
-			if (this.getTokens().length !== this.getSelectedTokens().length){
+			if (!this.isAllTokenSelected()) {
 				this.focus();
 				this.selectAllTokens(true);
 				oEvent.preventDefault();
-				this.bSelectAllToken = true;
 			}
-			
 			
 		}
 
@@ -854,12 +891,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		return this;
 
-	};
-	
-	Tokenizer.prototype.setWidth = function(sWidth) {
-		this.setProperty("width", sWidth, true);
-		this.$().css("width", this.getWidth());
-		return this;
 	};
 	
 	/**

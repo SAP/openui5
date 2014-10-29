@@ -124,6 +124,37 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 	
+	Token.prototype.setSelected = function(bSelected, bMultiSelect) {
+
+		if (bSelected && !bMultiSelect) {
+			this.focus();
+		}
+	
+		var $this = this.$();
+		
+		if ($this) {
+			if (bSelected) {
+				$this.addClass("sapMTokenSelected");
+			} else {
+				$this.removeClass("sapMTokenSelected");
+			}
+		} else {
+			if (bSelected) {
+				this.addStyleClass("sapMTokenSelected");
+			} else {
+				this.removeStyleClass("sapMTokenSelected");
+			}
+	
+		}
+	
+		this.setProperty("selected", bSelected, true);
+	
+		if (bSelected) {
+			this.fireSelect();
+		}
+	
+	};
+	
 	/**
 	 * Event handler called when control touch ends, triggers possible click events / selects token
 	 *
@@ -180,37 +211,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Token.prototype.onsapfocusleave = function(oEvent) {
 		this.setSelected(false);
-	};
-	
-	Token.prototype.setSelected = function(bSelected, bMultiSelect) {
-	
-		var $this = this.$();
-	
-		if ($this) {
-			if (bSelected) {
-				$this.addClass("sapMTokenSelected");
-			} else {
-				$this.removeClass("sapMTokenSelected");
-			}
-		} else {
-			if (bSelected) {
-				this.addStyleClass("sapMTokenSelected");
-			} else {
-				this.removeStyleClass("sapMTokenSelected");
-			}
-	
-		}
-	
-		this.setProperty("selected", bSelected, true);
-	
-		if (bSelected && !bMultiSelect) {
-			this.focus();
-		}
-	
-		if (bSelected) {
-			this.fireSelect();
-		}
-	
 	};
 	
 	/**
