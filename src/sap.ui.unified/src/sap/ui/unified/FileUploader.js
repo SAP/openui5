@@ -398,9 +398,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this.oBrowse.setParent(this);
 
 		this.oFileUpload = null;
-		
+
 		// check if sap.m library is used
-		this.bMobileLib = this.oBrowse instanceof sap.m.Button;
+		this.bMobileLib = this.oBrowse.getMetadata().getName() == "sap.m.Button";
 
 		//retrieving the default browse button text from the resource bundle
 		if (!this.getIconOnly()) {
@@ -734,7 +734,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	};
 
 	FileUploader.prototype.onmouseup = function(oEvent) {
-		if (!this.bMobileLib) { 
+		if (!this.bMobileLib) {
 			this.oBrowse.onmouseup(oEvent);
 		}
 	};
@@ -753,7 +753,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		}
 	};
 
-	FileUploader.prototype.onfocusin = function () {		
+	FileUploader.prototype.onfocusin = function () {
 		if (!this.bMobileLib) {
 			jQuery(this.oBrowse.getDomRef()).addClass('sapUiBtnStdFocus').attr("tabindex", "-1");
 			jQuery(this.oFilePath.getDomRef()).removeClass('sapUiTfFoc');
