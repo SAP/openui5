@@ -158,6 +158,7 @@
 								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
 								<languages>${sap.ui5.translationLanguages}</languages>
 								<!-- only consider the sources -->
+								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
 								<translationResources>
 									<translationResource>src</translationResource>
 								</translationResources>
