@@ -287,8 +287,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 			} else {
 				if (!!this.sFocusId) {
+					//set focus on line item after status = Edit
 					sap.m.UploadCollection.prototype._setFocus2LineItem(this.sFocusId);
 					this.sFocusId = null;
+				} else if (!!this.sDeletedItemId) {
+					//set focus on line item after an item was deleted
+					sap.m.UploadCollection.prototype._setFocusAfterDeletion(this.sDeletedItemId, that);
+					this.sDeletedItemId = null;
 				}
 			}
 		}
@@ -499,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					decorative : false,
 					press : function(oEvent) {
 						sap.m.UploadCollection.prototype._triggerLink(oEvent, that);
-					}	
+					}
 				}).setSize('2.5rem').addStyleClass("sapMUCItemIcon");
 			}
 		}
@@ -615,6 +620,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var aItems = oContext.getModel().oData.items;
 		var sItemId = oParams.id.split("-deleteButton")[0];
 		var index = sItemId.split("-").pop();
+		oContext.sDeletedItemId = sItemId;
 		var bCompact = false;
 
 		// popup delete file
@@ -675,10 +681,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var sValue = oEditbox.value;
 		// get new/changed file name
 			sValue = sValue.trimLeft();
-			
+
 		if (!oContext.sFocusId) {
 			oContext.sFocusId = oContext.editModeItem + "-ta_HL";
-		}	
+		}
 
 		if (sValue.length > 0) {
 			var iSourceLine = sSourceId.split("-").pop();
@@ -777,7 +783,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._getFileUploader = function() {
 	var that = this;
 		if (!this._oFileUploader) {
-			this._oFileUploader = new sap.ui.unified.FileUploader({
+			this._oFileUploader = new sap.ui.unified.FileUploader(this.getId() + "-uploader",{
 				buttonOnly : true,
 				buttonText : " ",
 				enabled : this.getUploadEnabled(),
@@ -914,6 +920,29 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	// ================================================================================
 	// helpers
 	// ================================================================================
+	UploadCollection.prototype._setFocusAfterDeletion = function(DeletedItemId, oContext) {
+		if (!DeletedItemId) {
+			return;
+		}
+		var iLength = oContext.aItems.length;
+		var sLineId = null;
+
+		if (iLength == 0){
+			var oFileUploader = jQuery.sap.byId(oContext._oFileUploader.sId);
+			var oFocusObj = oFileUploader.find(":button");
+			jQuery.sap.focus(oFocusObj);
+		} else {
+			var iLineNumber = DeletedItemId.split("-").pop();
+			//Deleted item is not the last one of the list
+			if ((iLength - 1) >= iLineNumber) {
+				sLineId = DeletedItemId + "-ta_HL";
+			} else {
+				sLineId = oContext.aItems.pop().sId + "-ta_HL";
+			}
+			sap.m.UploadCollection.prototype._setFocus2LineItem(sLineId);
+		}
+	};
+
 	UploadCollection.prototype._setFocus2LineItem = function(sFocusId) {
 
 		if (!sFocusId) {
@@ -921,7 +950,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		var oObj = jQuery.sap.byId(sFocusId);
 		var oListObj = oObj.parentsUntil("ul");
-		var oFocusObj = oListObj.filter("li");				
+		var oFocusObj = oListObj.filter("li");
 		oFocusObj.attr("tabIndex", -1);
 
 		jQuery.sap.focus(oFocusObj);
@@ -929,7 +958,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * handle of keyboard activity ENTER.
-	 * @param {Object} ListItem 
+	 * @param {Object} ListItem
 	 * @param {Object} Context
 	 * @private
 	 */
