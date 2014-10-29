@@ -384,6 +384,7 @@ sap.ui
 						this._aKeyFields = aKeyFields;
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -398,6 +399,7 @@ sap.ui
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
 						this._enableConditions();
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -1209,6 +1211,39 @@ sap.ui
 						oThat._updateOperation(oThat, oTargetGrid, oConditionGrid);
 
 						// update the value fields for the KeyField
+						oThat._updateValueFields(oThat, oTargetGrid, oConditionGrid);
+
+						oThat._changeOperation(oThat, oTargetGrid, oConditionGrid);
+
+						oThat._changeField(oThat, oConditionGrid);
+
+						if (oThat.getAutoReduceKeyFieldItems()) {
+							oThat._updateKeyFieldItems(oThat, oTargetGrid, false);
+						}
+					};
+
+					P13nConditionPanel.prototype._updateKeyFields = function() {
+						var aConditionGrids = this._oConditionsGrid.getContent();
+						aConditionGrids.forEach(function(oConditionGrid) {
+							this._updateValueFields(this, this._oConditionsGrid, oConditionGrid);
+							this._changeOperation(this, this._oConditionsGrid, oConditionGrid);
+						}, this);
+					};
+
+					/**
+					 * creates the Value1/2 fields based on the KeyField Type
+					 * 
+					 * @private
+					 * @param {object}
+					 *            oThat is the P13nConditionPanel
+					 * @param {grid}
+					 *            oTargetGrid the main grid
+					 * @param {grid}
+					 *            oConditionGrid Grid which contains the KeyField control which has been changed
+					 */
+					P13nConditionPanel.prototype._updateValueFields = function(oThat, oTargetGrid, oConditionGrid) {
+
+						// update the value fields for the KeyField
 						var oCurrentKeyField = this._getCurrentKeyField(oConditionGrid.keyField);
 
 						// update Value1 field control
@@ -1230,14 +1265,6 @@ sap.ui
 						oNewValue2.setValue(sOldValue2);
 						oConditionGrid[fieldInfo["ID"]] = oNewValue2;
 						oConditionGrid.insertContent(oNewValue2, 6);
-
-						oThat._changeOperation(oThat, oTargetGrid, oConditionGrid);
-
-						oThat._changeField(oThat, oConditionGrid);
-
-						if (oThat.getAutoReduceKeyFieldItems()) {
-							oThat._updateKeyFieldItems(oThat, oTargetGrid, false);
-						}
 					};
 
 					P13nConditionPanel.prototype._updateOperations = function() {
