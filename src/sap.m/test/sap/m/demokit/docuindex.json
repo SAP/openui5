@@ -541,6 +541,13 @@
 				"samples" : [ "sap.m.sample.MultiComboBox" ]
 			},
 			{
+				"id" : "sap.m.P13nDialog",
+				"name" : "Personalization Dialog",
+				"category" : "Popup",
+				"since" : "1.26",
+				"samples" : [ "sap.m.sample.P13nDialog" ]
+			},
+			{
 				"id" : "sap.m.MultiInput",
 				"name" : "Multi Input",
 				"category" : "User Input",
@@ -1069,6 +1076,11 @@
 				"id": "sap.m.sample.MultiComboBox",
 				"name": "MultiComboBox", 
 				"description": "Choose one or more out of multiple options with the MultiComboBox control."
+			},
+			{
+				"id": "sap.m.sample.P13nDialog",
+				"name": "Personalization Dialog", 
+				"description": "Dialog for personalization of column order and its visibility, sorting and filter conditions of columns."
 			},
 			{
 				"id": "sap.m.sample.MultiInput",
