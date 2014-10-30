@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class GitClient {
 
   private String gitcmd = "git.cmd";
-  File repository = new File(".");
+  private File repository = new File(".");
   boolean useHTTPS = false;
   String sshUser = System.getProperty("user.name", "sapui5").toLowerCase();
   String user = System.getProperty("user.name", "sapui5").toLowerCase();
@@ -33,7 +33,7 @@ public class GitClient {
   boolean noCheckout = false;
   private int lastExitValue;
   private List<String> lastOutput;
-  Map<String,GitClient.Commit> lastCommits;
+  private Map<String,GitClient.Commit> lastCommits;
 
   GitClient(){
 
@@ -45,7 +45,7 @@ public class GitClient {
 
   boolean executeWithInput(String input, String ... cmds) throws IOException {
     ProcessBuilder pb = new ProcessBuilder();
-    pb.directory(repository);
+    pb.directory(getRepository());
     List<String> args = pb.command();
     args.add(gitcmd);
     for(String cmd : cmds) {
@@ -53,7 +53,7 @@ public class GitClient {
     }
     pb.redirectErrorStream(true);
     if ( verbose ) {
-      Log.printf("%s > %s", repository, pb.command());
+      Log.printf("%s > %s", getRepository(), pb.command());
     }
     long t0 = System.currentTimeMillis();
     Process process = pb.start();
@@ -189,7 +189,7 @@ public class GitClient {
       Matcher m = COMMIT_LINE.matcher(line);
       if ( m.matches() ) {
         GitClient.Commit commit = new Commit();
-        commit.repository = repository;
+        commit.repository = getRepository();
         commit.ids = m.group(1).trim().split("\\s");
         commits.put(commit.getId(), commit);
         while( i<lastOutput.size() && (m = TOKEN_LINE.matcher(line = lastOutput.get(i++))).matches() ) {
@@ -208,7 +208,7 @@ public class GitClient {
     }
 
     lastCommits = commits;
-    Log.println("found " + lastCommits.size() + " commits");
+    Log.println("found " + getLastCommits().size() + " commits");
   }
 
   public boolean log(String range) throws IOException {
@@ -216,9 +216,7 @@ public class GitClient {
   }
   
   public boolean log(String range, boolean oneline, String ... paths) throws IOException {
-    String[] args = new String[] { 
-      "log", "--no-color", oneline ? "--format=commit %H%n" : "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents", range
-    };
+    String[] args = new String[] {range};
     if ( paths != null && paths.length > 0 ) {
       String[] tmp = new String[args.length + 1 + paths.length];
       System.arraycopy(args, 0, tmp, 0, args.length);
@@ -226,13 +224,25 @@ public class GitClient {
       System.arraycopy(paths, 0, tmp, args.length+1, paths.length);
       args = tmp;
     }
-    if ( execute(args) ) {
-      evalCommitLog();
-      return true;
-    }
-    return false;
+    return log(oneline, args);
   }
 
+  public boolean log(boolean oneline, String ... args) throws IOException {
+    String[] commonArgs = new String[] { 
+        "log", "--no-color", oneline ? "--format=commit %H%n" : "--format=fuller", "--date=raw", "--no-abbrev-commit", "--parents"};
+      if ( args != null && args.length > 0 ) {
+        String[] tmp = new String[commonArgs.length + args.length];
+        System.arraycopy(commonArgs, 0, tmp, 0, commonArgs.length);
+        System.arraycopy(args, 0, tmp, commonArgs.length, args.length);
+        commonArgs = tmp;
+      }
+      if ( execute(commonArgs) ) {
+        evalCommitLog();
+        return true;
+      }
+      return false;
+  }
+  
   public boolean log(int n) throws IOException {
     if ( execute("log", "--no-color", "--max-count", String.valueOf(n)) ) {
       evalCommitLog();
@@ -243,7 +253,7 @@ public class GitClient {
 
   public boolean clone(String gitUrl) throws IOException {
   	// we always fetch via SSH
-    return execute("clone", createGitBaseUrl(false) + gitUrl, repository.getAbsolutePath());
+    return execute("clone", createGitBaseUrl(false) + gitUrl, getRepository().getAbsolutePath());
   }
 
   public boolean fetch() throws IOException {
@@ -269,7 +279,7 @@ public class GitClient {
     		execute("config", "--local", "--add", "user.email", email);
     	}
       // ensure that the changeId commit hook exists
-      File commitMsgHook = new File(repository, ".git/hooks/commit-msg");
+      File commitMsgHook = new File(getRepository(), ".git/hooks/commit-msg");
       if ( !commitMsgHook.exists() ) {
         URL url = new URL("https://git.wdf.sap.corp:8080/tools/hooks/commit-msg");
         IOUtils.copy(url.openConnection().getInputStream(), new FileOutputStream(commitMsgHook), /* close= */ true);
@@ -331,5 +341,17 @@ public class GitClient {
   	}
   	return baseUrl.toString();
   }
-  
+
+  public File getRepository() {
+    return this.repository;
+  }
+
+  public void setRepository(File repository) {
+    this.repository = repository;
+  }
+
+  public Map<String,GitClient.Commit> getLastCommits() {
+    return this.lastCommits;
+  }
+
 }

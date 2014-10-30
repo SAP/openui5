@@ -321,12 +321,11 @@ public class MyReleaseButton {
     scan(root, "");
 
     int diffdiffs = -1; // UNKNOWN
-    Properties prop = new Properties();
-    File lastVersionToolResultsFile = new File(root, ".version-tool.xml");
-    if ( lastVersionToolResultsFile.canRead() ) {
+    LastRunInfo lastRunInfo = new LastRunInfo(root);
+    Properties prop = lastRunInfo.getDiffs();
+    if ( !prop.isEmpty() ) {
       System.out.println("Comparing diff summary against results from last run");
       diffdiffs = 0;
-      prop.loadFromXML(new FileInputStream(lastVersionToolResultsFile));
       // now compare with current results
       for(Map.Entry<String,Integer> entry : diffs.entrySet()) {
         String oldDiffs = prop.getProperty(entry.getKey());
@@ -356,7 +355,7 @@ public class MyReleaseButton {
     for(Map.Entry<String,Integer> entry : diffs.entrySet()) {
       prop.setProperty(entry.getKey(), entry.getValue().toString());
     }
-    prop.storeToXML(new FileOutputStream(lastVersionToolResultsFile), "Last Version-Tool Changes");
+    lastRunInfo.save();
     System.out.println("Diff summary saved");
 
     return diffdiffs;

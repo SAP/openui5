@@ -180,7 +180,10 @@ class CommitHistoryOptimizer {
       track(commit.ids[which]);
       mergeIn(commit, commit.ids[3-which]);
     } else {
-      track(commit.ids[1]);
+      //could be 1 id if it is the initial commit 
+      if (commit.ids.length > 1){
+        track(commit.ids[1]);
+      }
     }
 
   }

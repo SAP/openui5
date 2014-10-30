@@ -18,7 +18,7 @@ class CommitMsgAnalyzer {
   private static final Pattern CSS_ID_MONOLITHIC = Pattern.compile("([0-9]{10})([0-9]{10})([0-9]{4})");
   private static final Pattern CSS_ID_SEPARATED = Pattern.compile("(?:([0-9]{1,10})\\s+)?([0-9]{1,10})(?:\\s+([0-9]{4}))?");
   private static final Pattern INTERNAL = Pattern.compile("\\[\\s*INTERNAL\\s*\\]", Pattern.CASE_INSENSITIVE);
-
+  private static final Pattern TYPE_TEXT = Pattern.compile(".*\\[(.+)\\][ ]*(.+)[\"]*");
   public static class CSS {
     
     public final String csinsta;
@@ -69,6 +69,8 @@ class CommitMsgAnalyzer {
   private List<String> publicBody;
   private Map<String,Set<String>> footers = new HashMap<String,Set<String>>();
   private List<CSS> csses = new ArrayList<CSS>();
+  private String type;
+  private String text;
   
   CommitMsgAnalyzer(Commit commit) {
     _analyzeMessage(commit.getMessageLines());
@@ -99,6 +101,12 @@ class CommitMsgAnalyzer {
     }
     summary = m.reset().replaceAll("");
 
+    m = TYPE_TEXT.matcher(summary);
+    if(m.find()){
+      type = m.group(1).toUpperCase();
+      text = m.group(2);
+    }
+    
     // skip an empty line (separator between summary and body) 
     if ( i<l && lines.get(i).trim().isEmpty() ) {
       i++;
@@ -107,6 +115,14 @@ class CommitMsgAnalyzer {
     if ( i<l ) {
       body = lines.subList(i, l);
     }
+  }
+  
+  public String getType() {
+    return this.type;
+  }
+  
+  public String getText() {
+    return this.text;
   }
   
   public String getSummary() {

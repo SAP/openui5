@@ -273,7 +273,7 @@ public class Git2P4 {
 
 
   private void init(Mapping repoMapping) {
-    git.repository = repoMapping.gitRepository;
+    git.setRepository(repoMapping.gitRepository);
     setFilter(repoMapping.targetIncludes, repoMapping.targetExcludes);
     existingFiles.clear();
     touchedFiles.clear();
@@ -351,7 +351,7 @@ public class Git2P4 {
     }
 
     // walk over new files and copy them
-    syncTree(git.repository, p4change, localPath, "");
+    syncTree(git.getRepository(), p4change, localPath, "");
 
     // revert all unchanged files (let p4 compare old and new)
     p4.revertUnchanged(p4change);
@@ -481,7 +481,7 @@ public class Git2P4 {
     }
 
     // walk over new files and copy them
-    syncTree(git.repository, p4change, localPath, "");
+    syncTree(git.getRepository(), p4change, localPath, "");
 
     // revert all unchanged files (let p4 compare old and new)
     // p4.revertUnchanged(p4change);

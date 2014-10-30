@@ -23,10 +23,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.sap.ui5.tools.infra.git2p4.commands.relnotes.ReleaseNotes;
+import com.sap.ui5.tools.maven.LastRunInfo;
 import com.sap.ui5.tools.maven.MyReleaseButton;
 
 public class Git2P4Main {
 
+  private static final String RELEASE_NOTES = "release-notes";
   private static final String TOOLS_VERSION_HELPER_POM = "tools/_version_helper/pom";
   static final GitClient git = new GitClient();
   static final P4Client p4 = new P4Client();
@@ -61,15 +63,17 @@ public class Git2P4Main {
     public String branch = null;
     public boolean preview = false;
     public boolean noFetch = false;
+    public List<Mapping> mappings = null;
+    public Version version;
     public String findVersion(String branch) throws IOException {
       return Git2P4Main.findVersion(branch);
     }
     public Set<String> getCommits(String...paths) throws IOException {
       Set<String> filter = new HashSet<String>();
       for(Mapping repo : mappings) {
-        git.repository = repo.gitRepository;
-        git.log(range, false, paths);
-        filter.addAll(git.lastCommits.keySet());
+        git.setRepository(repo.gitRepository);
+        git.log(repo.range, false, paths);
+        filter.addAll(git.getLastCommits().keySet());
       }
       return filter;
     }
@@ -78,9 +82,9 @@ public class Git2P4Main {
   static Context context = new Context();
   
   static void updateRepository(Mapping repo) throws IOException {
-    git.repository = repo.gitRepository;
-    if ( !git.repository.isDirectory() || !(new File(git.repository, ".git").isDirectory()) && repo.giturl != null ) {
-      git.repository.mkdirs();
+    git.setRepository(repo.gitRepository);
+    if ( !git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null ) {
+      git.getRepository().mkdirs();
       git.clone(repo.giturl);
     }
     if ( !context.noFetch ) {
@@ -88,17 +92,34 @@ public class Git2P4Main {
     }
   }
 
-  static void collect(Mapping repo, String range) throws IOException {
-    git.repository = repo.gitRepository;
-    if ( !git.repository.isDirectory() || !(new File(git.repository, ".git").isDirectory()) && repo.giturl != null ) {
-      git.repository.mkdirs();
+  static void collect(Mapping repo, Boolean useLastCommit) throws IOException {
+    git.setRepository(repo.gitRepository);
+    if ( !git.getRepository().isDirectory() || !(new File(git.getRepository(), ".git").isDirectory()) && repo.giturl != null ) {
+      git.getRepository().mkdirs();
       git.clone(repo.giturl);
     }
     if ( !context.noFetch ) {
       git.fetch();
     }
-    git.log(range);
-    List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.lastCommits).run();
+    repo.range = context.range;
+    //special case for initial openui5 version 
+    if ("openui5".equals(repo.getRepositoryName()) && context.range.contains("1.24.0")){
+      repo.range = "";
+    } 
+    LastRunInfo lastRunInfo = new LastRunInfo(repo.getRepository());
+    if (useLastCommit){
+      String lastCommitId = lastRunInfo.getLastCommitId();
+      if (lastCommitId != null){
+        repo.range = lastCommitId + "..";
+      }
+    }
+    Log.println("Range for repository " + repo.getRepositoryName() + " - " + repo.range);
+    git.log(repo.range);
+    if (!git.getLastCommits().isEmpty()) {
+      lastRunInfo.setLastCommitId(git.getLastCommits().keySet().iterator().next());
+      lastRunInfo.save();
+    }
+    List<GitClient.Commit> commits = new CommitHistoryOptimizer(git.getLastCommits()).run();
     for(GitClient.Commit commit : commits) {
       commit.data = repo;
     }
@@ -112,7 +133,7 @@ public class Git2P4Main {
     String version = null;
 
     for(Mapping repo : mappings) {
-      git.repository = repo.gitRepository;
+      git.setRepository(repo.gitRepository);
 
       git.checkout("origin/" + branch);
       
@@ -200,7 +221,7 @@ public class Git2P4Main {
     Map<String,Map<String,String[]>> suspiciousRepositories = new LinkedHashMap<String,Map<String,String[]>>(); 
     
     for(Mapping repo : mappings) {
-      git.repository = repo.gitRepository;
+      git.setRepository(repo.gitRepository);
 
       git.checkout("origin/" + branch);
 
@@ -302,7 +323,7 @@ public class Git2P4Main {
     }
     
     for(Mapping repo : mappings) {
-      git.repository = repo.gitRepository;
+      git.setRepository(repo.gitRepository);
       git.checkout("origin/" + branch);
       
       // retrieve GAV coordinates from root pom.xml
@@ -350,12 +371,15 @@ public class Git2P4Main {
     
   }
 
-  static class Mapping {
-    String giturl;
+  public static class Mapping {
+    public String giturl;
     File gitRepository;
     String p4path;
     String targetIncludes;
     String targetExcludes;
+    Map<String, String> resourcesMap = new HashMap<String, String>();
+    public String addToRelNotesPath = "";
+    public String range;
     
     Mapping(String giturl, File gitRepository, String p4path, String includes, String excludes) {
       this.giturl = giturl;
@@ -367,6 +391,10 @@ public class Git2P4Main {
     
     public String getRepositoryName() {
       return gitRepository.getName();
+    }
+    
+    public File getRepository() {
+      return gitRepository;
     }
     
     public Map<String,String> getRootPOMInfo() {
@@ -399,19 +427,27 @@ public class Git2P4Main {
       
       return new POMAnalyzer().info;
     }
+    
+    public Map<String, String> getResourcesMap() {
+      return this.resourcesMap;
+    }
   }
 
   private static List<Mapping> mappings = new ArrayList<Mapping>();
 
   private static void createUI5Mappings(File repositoryRoot, String p4depotPrefix, String branch) {
     mappings.clear();
-    mappings.add(new Mapping(
+    Mapping sapui5Runtime = new Mapping(
         "/sapui5/sapui5.runtime.git",
         new File(repositoryRoot, "sapui5.runtime"),
         p4depotPrefix,
         "pom.xml,src/,test/",
         "src/dist/_osgi/,src/dist/_osgi_tools/,src/dist/_osgi_gwt,src/platforms/,test/_selenium_tests_lsf/"
-        ));
+        );
+    sapui5Runtime.resourcesMap.put("/test-resources/", "/src/test/uilib/");
+    sapui5Runtime.resourcesMap.put("/resources/", "/src/main/uilib/");
+    sapui5Runtime.addToRelNotesPath = "../../";
+    mappings.add(sapui5Runtime);
     mappings.add(new Mapping(
         "/sapui5/sapui5.platforms.gwt.git",
         new File(repositoryRoot, "sapui5.platforms.gwt"),
@@ -419,13 +455,18 @@ public class Git2P4Main {
         null,
         null
         ));
-    mappings.add(new Mapping(
-        "/sapui5/openui5.git",
-        new File(repositoryRoot, "openui5"),
-        null,
-        null,
-        null
-        ));
+    if (getMinorVersion(branch) > 24) {
+      Mapping openui5 = new Mapping(
+          "/openui5.git",
+          new File(repositoryRoot, "openui5"),
+          null,
+          null,
+          null
+          );
+      openui5.resourcesMap.put("/resources/", "/src/");
+      openui5.resourcesMap.put("/test-resources/", "/test/");
+      mappings.add(openui5);
+    }
     /*
 
     mappings.add(new Mapping(
@@ -458,6 +499,15 @@ public class Git2P4Main {
           null
           ));
     }
+  }
+
+  private static int getMinorVersion(String branch) {
+    int minor = 99;
+    Matcher m = Pattern.compile("rel-([1-9])\\.([0-9]+)").matcher(branch);
+    if (m.find()) {
+      minor = Integer.parseInt(m.group(2));
+    }
+    return minor;
   }
     
   private static void createUI5DistMappings(File repositoryRoot, String p4depotPrefix, String branch) {
@@ -506,6 +556,7 @@ public class Git2P4Main {
     System.out.println(" --git-email            Email used for the commit message (if not present the local .gitconfig is used)");
     System.out.println(" --git-password         Password used for clone or push operations");
     System.out.println(" --git-no-fetch         suppress fetch operations (use local repository only)");
+    System.out.println(" --git-no-checkout      suppress checkout operations (use local repository only)");
     System.out.println(" --git-dir              Git repository root");
     System.out.println(" --ui5-git-root         Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
     System.out.println(" --ui5-dist-git-root    Git repository root for multiple (hardcoded) UI5 repositories, defaults to current directory");
@@ -534,7 +585,9 @@ public class Git2P4Main {
     System.out.println(" -v, --verbose              be more verbose");
     System.out.println(" -l, --log-file             file path to write the log to");
     System.out.println(" -lt, --log-file-template   file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
-    System.out.println(" --preview                  file name template, results in a separate log file per transferred commit ('#' will be replaced by commit id)");
+    System.out.println(" --preview                  do not push to gerrit");
+    System.out.println(" --do-not-use-last-commit   use range instead of last commit written in .version-tool.xml file");
+    
     System.out.println();
 
     if ( errormsg != null ) {
@@ -553,6 +606,7 @@ public class Git2P4Main {
     File gitDir = new File(".");
     String gitRepository = null;
     ReleaseOperation op = null;
+    boolean useLastCommit = true;
     
     String[] argsForTrace = new String[args.length];
     System.arraycopy(args, 0, argsForTrace, 0, args.length);
@@ -640,8 +694,8 @@ public class Git2P4Main {
         context.htmlOutput = true;
       } else if ( "--split-logs".equals(args[i]) ) {
         command = "splitLogs";
-      } else if ( "release-notes".equals(args[i]) ) {
-        command = "release-notes";
+      } else if ( RELEASE_NOTES.equals(args[i]) ) {
+        command = RELEASE_NOTES;
         autoResume = false;
       } else if ( "list".equals(args[i]) || "--list".equals(args[i]) ) {
         command = "list";
@@ -676,6 +730,8 @@ public class Git2P4Main {
         toVersion = args[++i];
       } else if ( "--branch".equals(args[i]) ) {
         branch = args[++i];
+      } else if ( "--do-not-use-last-commit".equals(args[i]) ) {
+        useLastCommit = false;
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
       } else if ( args[i].startsWith("-") ) {
@@ -725,7 +781,7 @@ public class Git2P4Main {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
 
-    
+    context.mappings = mappings;
     // clone & fetch repositories
     for(Mapping repoMapping : mappings) {
       updateRepository(repoMapping);
@@ -741,9 +797,9 @@ public class Git2P4Main {
       return;
     }
     
-    if ( "release-notes".equals(command) && context.range == null ) {
-      Version current = new Version(findVersion(branch));
-      context.range = "tags/" + current.major + "." + current.minor + "." + (current.patch <= 0 ? 0 : current.patch-1) + "..origin/" + branch;
+    if ( RELEASE_NOTES.equals(command) && context.range == null ) {
+      Version version = context.version = new Version(findVersion(branch));
+      context.range = "tags/" + version.major + "." + (version.minor % 2 == 1 ? version.minor - 1 : version.minor) + "." + (version.patch <= 0 ? 0 : version.patch-1) + "..origin/" + branch;
     }
     
     if ( context.range == null || context.range.isEmpty() || !context.range.contains("..") ) {
@@ -752,7 +808,7 @@ public class Git2P4Main {
 
     // collect commits across repositories
     for(Mapping repoMapping : mappings) {
-      collect(repoMapping, context.range);
+      collect(repoMapping, RELEASE_NOTES.equals(command) && useLastCommit);
     }
     int index=0;
     for(GitClient.Commit commit : allCommits) {
@@ -787,7 +843,7 @@ public class Git2P4Main {
       return;
     }
 
-    if ( "release-notes".equals(command) ) {
+    if ( RELEASE_NOTES.equals(command) ) {
       context.branch = branch;
       new ReleaseNotes().execute(context);
       return;
