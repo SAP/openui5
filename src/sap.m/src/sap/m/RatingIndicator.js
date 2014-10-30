@@ -224,6 +224,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RatingIndicator.prototype.setIconSelected = function (sURI) {
 		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			this.setProperty("iconSelected", sURI, true);
 			return;
 		}
 
@@ -241,6 +242,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Handler for theme changing
+	 *
+	 * @param oEvent {jQuery.Event} oEvent The event object passed to the event handler.
+	 */
+	RatingIndicator.prototype.onThemeChanged = function (oEvent){
+		this.invalidate(); // triggers a re-rendering
+	};
+
+	/**
 	 * Sets the unselected icon without rerendering the control.
 	 *
 	 * @param {sap.ui.core.URI} sURI
@@ -250,6 +260,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RatingIndicator.prototype.setIconUnselected = function (sURI) {
 		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			this.setProperty("iconUnselected", sURI, true);
 			return;
 		}
 
@@ -276,6 +287,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RatingIndicator.prototype.setIconHovered = function (sURI) {
 		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+			this.setProperty("iconHovered", sURI, true);
 			return;
 		}
 

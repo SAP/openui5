@@ -14,7 +14,6 @@
 
 		<style>
 		.TestPageRatingWithWhiteBackground {
-			background-color: #ffffff;
 			padding: 1rem;
 			margin-bottom: 1rem;
 			margin: 1rem 2rem 0 2rem;
@@ -23,7 +22,7 @@
 		.sapMVBox {
 			margin: 0.5rem 2rem 0rem 2rem;
 		}
-		
+
 		.sapMList {
 			padding-bottom: 0;
 		}
@@ -39,7 +38,7 @@
 			vertical-align: sub;
 			line-height: 1.375rem;
 		}
-		
+
 		.changeEvent {
 			color: green;
 			font-weight: bold;
@@ -179,7 +178,7 @@
 			var oRatingTableTemplate = new sap.m.ColumnListItem({
 				type: "Active",
 				unread: false,
-				cells: [ 
+				cells: [
 					new sap.m.Label({
 						text : "{name}"
 					}),
@@ -199,7 +198,7 @@
 			oRatingTable.setModel(oModel);
 			oRatingTable.bindAggregation("items", "/items", oRatingTableTemplate);
 
-			// rating list			
+			// rating list
 			var oRatingList = new sap.m.List({
 				inset: true,
 				headerText : "Rating List",
@@ -299,7 +298,7 @@
 
 			var oMaxValueLabel = new sap.m.Label({text: 'Rating items'});
 			var oMaxValueInput = new sap.m.Input({
-				type: sap.m.InputType.Number, 
+				type: sap.m.InputType.Number,
 				value: 5,
 				placeholder: '5'
 			});
