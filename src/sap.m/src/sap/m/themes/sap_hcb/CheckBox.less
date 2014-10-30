@@ -13,13 +13,13 @@
 	padding: 0 0 0 3rem;
 }
 
-.sapMCb>label {
+.sapMCb > label {
 	vertical-align: top;
 	overflow: hidden;
-	text-overflow:ellipsis;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 	/* If you put a CB in a form the with has to be 100% in rtl for text align */
-	width : 100%;
+	width: 100%;
 }
 
 /* check box itself */
@@ -55,11 +55,11 @@
 	color: @sapHCStandardFG;
 }
 
-.sapMCbBg > input{
+.sapMCbBg > input {
 	position: absolute;
 	/* in FF the input needs to be positioned exactly behind the visible checkbox for the focus outline */
 	left: 0;
-	-webkit-appearance:none;
+	-webkit-appearance: none;
 	visibility: hidden;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .sapMCbBgDis > .sapMCbBg.sapMCbMarkChecked:before {
-	color:  @sapHCReducedAltFG;
+	color: @sapHCReducedAltFG;
 }
 
 .sapMCbBgDis > .sapMCbBg:focus {
@@ -91,13 +91,13 @@
 
 /* this needed for ie9 in multi select list */
 .sapMLIBSelectM > .sapMCb {
-	width : 3rem;
+	width: 3rem;
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 
-	.sapMCb{
+	.sapMCb {
 		height: 2rem;
 		line-height: 2rem;
 		padding-left: 2rem;
@@ -114,20 +114,20 @@
 	}
 
 	.sapMLIBSelectM > .sapMCb {
-		width : 2rem;
+		width: 2rem;
 	}
 }
 
 /* Condensed size */
-.sapUiSizeCondensed{
+.sapUiSizeCondensed {
 
-	.sapMCb{
+	.sapMCb {
 		height: 1.5rem;
 		line-height: 1.5rem;
 		padding-left: 1.5rem;
 	}
 
-	.sapUiTableCell>.sapMCb{
+	.sapUiTableCell > .sapMCb {
 		margin-left: 0.25rem;
 		padding-left: 1.75rem;
 	}
