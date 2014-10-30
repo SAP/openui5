@@ -1,14 +1,15 @@
 /* ============================================= */
 /* CSS for control sap.m/Link.control            */
-/* High Contrast Black theme                      */
+/* High Contrast Black theme                     */
 /* ============================================= */
 
 .sapMLnk {
+	font-size: @sapMFontMediumSize;
 	color: @sapHCStandardFG;
 	text-decoration: underline;
 }
 
-.sapMLnk.sapMLnkDsbl {
+.sapMLnkDsbl {
 	outline: none;
 	cursor: default;
 	color: @sapHCReducedFG;
@@ -17,26 +18,16 @@
 
 /* Hover Decoration only for desktop clients*/
 .sap-desktop .sapMLnk:focus:not(.sapMLnkDsbl) {
-	outline: 0.125rem dotted @sapHCStandardFG;
-	color: @sapHCStandardFG;
 	text-decoration: none;
+	outline: 0.125rem dotted @sapHCStandardFG;
 }
+
 .sap-desktop .sapMLnk:hover:not(.sapMLnkDsbl) {
-	color: @sapHCStandardFG;
 	text-decoration: none;
 }
 
 .sapMLnk:hover.sapMLnkDsbl, .sapMLnk:focus.sapMLnkDsbl {
 	outline: none;
-}
-	
-.sapMLIBActive .sapMLnk {
-	color: @sapHCStandardFG;
-	text-decoration: underline;
-}
-
-.sapMLnk:active {
-	background-color: transparent;
 }
 
 .sapUiFormEdit .sapMLnk {
@@ -50,4 +41,9 @@
 /* Compact size */
 .sapUiSizeCompact .sapUiFormEdit .sapMLnk {
 	line-height: 2rem;
+}
+
+/* Condensed size */
+.sapUiSizeCondensed .sapUiTableCell>.sapMLnk {
+	.sapUiCondensedTableCellContent; /* see shared.css */
 }
