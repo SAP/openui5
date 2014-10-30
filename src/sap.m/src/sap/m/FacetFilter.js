@@ -567,14 +567,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	// Handle F6
 	sap.m.FacetFilter.prototype.onsapskipforward = function(oEvent) {
-		// do not handle marked events.
-		for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
-			if (this.$().find(":sapTabbable")[i].parentNode.className == "sapMFFResetDiv") {
-				jQuery(this.$().find(":sapTabbable")[i]).focus();
-				oEvent.preventDefault();
-				oEvent.setMarked();
-			}
-		}
 	};
 
 	// Handle SHIFT+F6
