@@ -1,0 +1,8 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<HBox id="detail"/>
+</mvc:View>

@@ -1,0 +1,2493 @@
+{
+  "$schema": "http://odata.org/schemas/v4.0/edm.json#",
+  "definitions": {
+    "GWSAMPLE_BASIC.BusinessPartner": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "BusinessPartnerID": "BusinessPartnerID"
+      },
+      "properties": {
+        "Address": {
+          "$ref": "#/definitions/GWSAMPLE_BASIC.CT_Address"
+        },
+        "BusinessPartnerID": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "CompanyName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "WebAddress": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "EmailAddress": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "PhoneNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 30
+        },
+        "FaxNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 30
+        },
+        "LegalForm": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "CurrencyCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5
+        },
+        "BusinessPartnerRole": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "CreatedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ChangedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ToSalesOrders": {
+          "kind": "navigation",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrder"
+          },
+          "partner": "ToBusinessPartner"
+        },
+        "ToContacts": {
+          "kind": "navigation",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GWSAMPLE_BASIC.Contact"
+          },
+          "partner": "ToBusinessPartner"
+        },
+        "ToProducts": {
+          "kind": "navigation",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GWSAMPLE_BASIC.Product"
+          },
+          "partner": "ToSupplier"
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.Product": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "ProductID": "ProductID"
+      },
+      "properties": {
+        "ProductID": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "TypeCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2
+        },
+        "Category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "Name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "NameLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "Description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "DescriptionLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "SupplierID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "SupplierName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "TaxTarifCode": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.Byte"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "MeasureUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "WeightMeasure": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "13",
+            "scale": "3"
+          }
+        },
+        "WeightUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "CurrencyCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5
+        },
+        "Price": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "Width": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "13",
+            "scale": "3"
+          }
+        },
+        "Depth": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "13",
+            "scale": "3"
+          }
+        },
+        "Height": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "13",
+            "scale": "3"
+          }
+        },
+        "DimUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "CreatedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ChangedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ToSalesOrderLineItems": {
+          "kind": "navigation",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrderLineItem"
+          },
+          "partner": "ToProduct"
+        },
+        "ToSupplier": {
+          "kind": "navigation",
+          "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
+          "nullable": false,
+          "partner": "ToProducts",
+          "referentialConstraints": {
+            "SupplierID": {
+              "referencedProperty": "BusinessPartnerID"
+            }
+          }
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.SalesOrder": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "SalesOrderID": "SalesOrderID"
+      },
+      "properties": {
+        "SalesOrderID": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "Note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "NoteLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "CustomerID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "CustomerName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 80
+        },
+        "CurrencyCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5
+        },
+        "GrossAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "NetAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "TaxAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "LifecycleStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "LifecycleStatusDescription": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
+        "BillingStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "BillingStatusDescription": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
+        "DeliveryStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "DeliveryStatusDescription": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
+        "CreatedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ChangedAt": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ToBusinessPartner": {
+          "kind": "navigation",
+          "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
+          "nullable": false,
+          "partner": "ToSalesOrders",
+          "referentialConstraints": {
+            "CustomerID": {
+              "referencedProperty": "BusinessPartnerID"
+            }
+          }
+        },
+        "ToLineItems": {
+          "kind": "navigation",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrderLineItem"
+          },
+          "partner": "ToHeader"
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.SalesOrderLineItem": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "SalesOrderID": "SalesOrderID",
+        "ItemPosition": "ItemPosition"
+      },
+      "properties": {
+        "SalesOrderID": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "ItemPosition": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "ProductID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "Note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "NoteLanguage": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "CurrencyCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5
+        },
+        "GrossAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "NetAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "TaxAmount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "16",
+            "scale": "3"
+          }
+        },
+        "DeliveryDate": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "Quantity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "odata": {
+            "precision": "13",
+            "scale": "3"
+          }
+        },
+        "QuantityUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "ToHeader": {
+          "kind": "navigation",
+          "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrder",
+          "nullable": false,
+          "partner": "ToLineItems",
+          "referentialConstraints": {
+            "SalesOrderID": {
+              "referencedProperty": "SalesOrderID"
+            }
+          }
+        },
+        "ToProduct": {
+          "kind": "navigation",
+          "$ref": "#/definitions/GWSAMPLE_BASIC.Product",
+          "nullable": false,
+          "partner": "ToSalesOrderLineItems",
+          "referentialConstraints": {
+            "ProductID": {
+              "referencedProperty": "ProductID"
+            }
+          }
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.Contact": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "ContactGuid": "ContactGuid"
+      },
+      "properties": {
+        "Address": {
+          "$ref": "#/definitions/GWSAMPLE_BASIC.CT_Address"
+        },
+        "ContactGuid": {
+          "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.Guid"
+        },
+        "BusinessPartnerID": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "Title": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "FirstName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "MiddleName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "LastName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "Nickname": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "Initials": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "Sex": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "PhoneNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 30
+        },
+        "FaxNumber": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 30
+        },
+        "EmailAddress": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 255
+        },
+        "Language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1
+        },
+        "DateOfBirth": {
+          "anyOf": [
+            {
+              "$ref": "http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "odata": {
+            "precision": "7"
+          }
+        },
+        "ToBusinessPartner": {
+          "kind": "navigation",
+          "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
+          "nullable": false,
+          "partner": "ToContacts",
+          "referentialConstraints": {
+            "BusinessPartnerID": {
+              "referencedProperty": "BusinessPartnerID"
+            }
+          }
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_Sex": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Sex": "Sex"
+      },
+      "properties": {
+        "Sex": {
+          "type": "string",
+          "maxLength": 1
+        },
+        "Shorttext": {
+          "type": "string",
+          "maxLength": 60
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_Country": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Land1": "Land1"
+      },
+      "properties": {
+        "Land1": {
+          "type": "string",
+          "maxLength": 3
+        },
+        "Landx": {
+          "type": "string",
+          "maxLength": 15
+        },
+        "Natio": {
+          "type": "string",
+          "maxLength": 15
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_AddressType": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "AddressType": "AddressType"
+      },
+      "properties": {
+        "AddressType": {
+          "type": "string",
+          "maxLength": 2
+        },
+        "Shorttext": {
+          "type": "string",
+          "maxLength": 60
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_Category": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Category": "Category"
+      },
+      "properties": {
+        "Category": {
+          "type": "string",
+          "maxLength": 40
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_Currency": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Waers": "Waers"
+      },
+      "properties": {
+        "Waers": {
+          "type": "string",
+          "maxLength": 5
+        },
+        "Ltext": {
+          "type": "string",
+          "maxLength": 40
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_UnitQuantity": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Msehi": "Msehi"
+      },
+      "properties": {
+        "Msehi": {
+          "type": "string",
+          "maxLength": 3
+        },
+        "Msehl": {
+          "type": "string",
+          "maxLength": 30
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_UnitWeight": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Msehi": "Msehi"
+      },
+      "properties": {
+        "Msehi": {
+          "type": "string",
+          "maxLength": 3
+        },
+        "Msehl": {
+          "type": "string",
+          "maxLength": 30
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_UnitLength": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Msehi": "Msehi"
+      },
+      "properties": {
+        "Msehi": {
+          "type": "string",
+          "maxLength": 3
+        },
+        "Msehl": {
+          "type": "string",
+          "maxLength": 30
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_ProductTypeCode": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "TypeCode": "TypeCode"
+      },
+      "properties": {
+        "TypeCode": {
+          "type": "string",
+          "maxLength": 2
+        },
+        "Shorttext": {
+          "type": "string",
+          "maxLength": 60
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_BPRole": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "BpRole": "BpRole"
+      },
+      "properties": {
+        "BpRole": {
+          "type": "string",
+          "maxLength": 3
+        },
+        "Shorttext": {
+          "type": "string",
+          "maxLength": 60
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.VH_Language": {
+      "kind": "EntityType",
+      "content-version": "1",
+      "keys": {
+        "Spras": "Spras"
+      },
+      "properties": {
+        "Spras": {
+          "type": "string",
+          "maxLength": 1
+        },
+        "Sptxt": {
+          "type": "string",
+          "maxLength": 16
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.CT_Address": {
+      "kind": "ComplexType",
+      "properties": {
+        "City": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 40
+        },
+        "PostalCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "Street": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 60
+        },
+        "Building": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 10
+        },
+        "Country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 3
+        },
+        "AddressType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 2
+        }
+      }
+    },
+    "GWSAMPLE_BASIC.CT_String": {
+      "kind": "ComplexType",
+      "properties": {
+        "String": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "schemas": {
+    "GWSAMPLE_BASIC": {
+      "alias": null,
+      "functions": [
+        {
+          "name": "RegenerateAllData",
+          "parameters": {
+            "NoOfSalesOrders": {
+              "type": "Edm.Int32",
+              "mode": "In"
+            }
+          },
+          "returnType": {
+            "type": "GWSAMPLE_BASIC.CT_String"
+          }
+        },
+        {
+          "name": "SalesOrder_Confirm",
+          "parameters": {
+            "SalesOrderID": {
+              "type": "Edm.String",
+              "mode": "In",
+              "maxLength": "10"
+            }
+          },
+          "returnType": {
+            "type": "GWSAMPLE_BASIC.SalesOrder"
+          }
+        },
+        {
+          "name": "SalesOrder_Cancel",
+          "parameters": {
+            "SalesOrderID": {
+              "type": "Edm.String",
+              "mode": "In",
+              "maxLength": "10"
+            }
+          },
+          "returnType": {
+            "type": "GWSAMPLE_BASIC.SalesOrder"
+          }
+        },
+        {
+          "name": "SalesOrder_InvoiceCreated",
+          "parameters": {
+            "SalesOrderID": {
+              "type": "Edm.String",
+              "mode": "In",
+              "maxLength": "10"
+            }
+          },
+          "returnType": {
+            "type": "GWSAMPLE_BASIC.SalesOrder"
+          }
+        },
+        {
+          "name": "SalesOrder_GoodsIssueCreated",
+          "parameters": {
+            "SalesOrderID": {
+              "type": "Edm.String",
+              "mode": "In",
+              "maxLength": "10"
+            }
+          },
+          "returnType": {
+            "type": "GWSAMPLE_BASIC.SalesOrder"
+          }
+        }
+      ],
+      "entityContainer": {
+        "name": "GWSAMPLE_BASIC_Entities",
+        "entitySets": {
+          "BusinessPartnerSet": {
+            "entityType": "GWSAMPLE_BASIC.BusinessPartner",
+            "navigationPropertyBindings": {
+              "ToProducts": {
+                "target": "ProductSet"
+              },
+              "ToSalesOrders": {
+                "target": "SalesOrderSet"
+              },
+              "ToContacts": {
+                "target": "ContactSet"
+              }
+            }
+          },
+          "ProductSet": {
+            "entityType": "GWSAMPLE_BASIC.Product",
+            "navigationPropertyBindings": {
+              "ToSalesOrderLineItems": {
+                "target": "SalesOrderLineItemSet"
+              },
+              "ToSupplier": {
+                "target": "BusinessPartnerSet"
+              }
+            }
+          },
+          "SalesOrderSet": {
+            "entityType": "GWSAMPLE_BASIC.SalesOrder",
+            "navigationPropertyBindings": {
+              "ToLineItems": {
+                "target": "SalesOrderLineItemSet"
+              },
+              "ToBusinessPartner": {
+                "target": "BusinessPartnerSet"
+              }
+            }
+          },
+          "SalesOrderLineItemSet": {
+            "entityType": "GWSAMPLE_BASIC.SalesOrderLineItem",
+            "navigationPropertyBindings": {
+              "ToProduct": {
+                "target": "ProductSet"
+              },
+              "ToHeader": {
+                "target": "SalesOrderSet"
+              }
+            }
+          },
+          "ContactSet": {
+            "entityType": "GWSAMPLE_BASIC.Contact",
+            "navigationPropertyBindings": {
+              "ToBusinessPartner": {
+                "target": "BusinessPartnerSet"
+              }
+            }
+          },
+          "VH_SexSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_Sex"
+          },
+          "VH_CountrySet": {
+            "entityType": "GWSAMPLE_BASIC.VH_Country"
+          },
+          "VH_AddressTypeSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_AddressType"
+          },
+          "VH_CategorySet": {
+            "entityType": "GWSAMPLE_BASIC.VH_Category"
+          },
+          "VH_CurrencySet": {
+            "entityType": "GWSAMPLE_BASIC.VH_Currency"
+          },
+          "VH_UnitQuantitySet": {
+            "entityType": "GWSAMPLE_BASIC.VH_UnitQuantity"
+          },
+          "VH_UnitWeightSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_UnitWeight"
+          },
+          "VH_UnitLengthSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_UnitLength"
+          },
+          "VH_ProductTypeCodeSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_ProductTypeCode"
+          },
+          "VH_BPRoleSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_BPRole"
+          },
+          "VH_LanguageSet": {
+            "entityType": "GWSAMPLE_BASIC.VH_Language"
+          }
+        },
+        "functionImports": {
+          "RegenerateAllData": {
+            "function": "GWSAMPLE_BASIC.RegenerateAllData"
+          },
+          "SalesOrder_Confirm": {
+            "entitySet": "SalesOrderSet",
+            "function": "GWSAMPLE_BASIC.SalesOrder_Confirm"
+          },
+          "SalesOrder_Cancel": {
+            "entitySet": "SalesOrderSet",
+            "function": "GWSAMPLE_BASIC.SalesOrder_Cancel"
+          },
+          "SalesOrder_InvoiceCreated": {
+            "entitySet": "SalesOrderSet",
+            "function": "GWSAMPLE_BASIC.SalesOrder_InvoiceCreated"
+          },
+          "SalesOrder_GoodsIssueCreated": {
+            "entitySet": "SalesOrderSet",
+            "function": "GWSAMPLE_BASIC.SalesOrder_GoodsIssueCreated"
+          }
+        }
+      },
+      "annotations": [
+        {
+          "target": "GWSAMPLE_BASIC.Product/WeightMeasure",
+          "@Org.OData.Measures.V1.Unit": {
+            "@odata.type": "Edm.Path",
+            "value": "WeightUnit"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product/Width",
+          "@Org.OData.Measures.V1.Unit": {
+            "@odata.type": "Edm.Path",
+            "value": "DimUnit"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product/Depth",
+          "@Org.OData.Measures.V1.Unit": {
+            "@odata.type": "Edm.Path",
+            "value": "DimUnit"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product/Height",
+          "@Org.OData.Measures.V1.Unit": {
+            "@odata.type": "Edm.Path",
+            "value": "DimUnit"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product/Price",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product/Category",
+          "@com.sap.vocabularies.Common.v1.ValueList": {
+            "@odata.type": "com.sap.vocabularies.Common.v1.ValueListType",
+            "CollectionPath": "VH_CategorySet",
+            "Parameters": [
+              {
+                "@odata.type": "com.sap.vocabularies.Common.v1.ValueListParameterInOut",
+                "LocalDataProperty": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Category"
+                },
+                "ValueListProperty": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Category"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Product",
+          "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
+            "TypeName": "Product",
+            "TypeNamePlural": "Products",
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nName",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Name"
+              }
+            },
+            "Description": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nDescription",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Description"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Badge": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.BadgeType",
+            "HeadLine": {
+              "@odata.type": "Edm.Path",
+              "value": "ProductID"
+            },
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nName",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Name"
+              }
+            },
+            "MainInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Price",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Price"
+              }
+            },
+            "SecondaryInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Dimensions",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "Width"
+                  },
+                  "\n/",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "Depth"
+                  },
+                  "\n/",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "Height"
+                  }
+                ]
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.DataPoint": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.DataPointType",
+            "Title": "Weight",
+            "Description": {
+              "@odata.type": "Edm.Path",
+              "value": "Name"
+            },
+            "Value": {
+              "@odata.type": "Edm.Path",
+              "value": "WeightMeasure"
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Identification": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ProductID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Category",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Category"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Supplier",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "SupplierName"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Weight",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "WeightMeasure"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Unit\nPrice",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Price"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.LineItem": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ProductID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Category",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Category"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nName",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Name"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Supplier",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "SupplierName"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Unit\nPrice",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Price"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Weight",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "WeightMeasure"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Width",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Width"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Depth",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Depth"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Height",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Height"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.FieldGroupType",
+            "Label": "Dimensions",
+            "Data": [
+              {
+                "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+                "Label": "Width",
+                "Value": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Width"
+                }
+              },
+              {
+                "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+                "Label": "Depth",
+                "Value": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Depth"
+                }
+              },
+              {
+                "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+                "Label": "Height",
+                "Value": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Height"
+                }
+              }
+            ]
+          },
+          "@com.sap.vocabularies.UI.v1.Facets": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.CollectionFacet",
+              "Label": "Supplier",
+              "Facets": [
+                {
+                  "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+                  "Label": "Address",
+                  "Target": {
+                    "@odata.type": "Edm.AnnotationPath",
+                    "value": "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"
+                  }
+                },
+                {
+                  "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+                  "Label": "Contact\nData",
+                  "Target": {
+                    "@odata.type": "Edm.AnnotationPath",
+                    "value": "ToSupplier/@com.sap.vocabularies.UI.v1.Badge"
+                  }
+                }
+              ]
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Dimensions",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"
+              }
+            }
+          ]
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/GrossAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/NetAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/TaxAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/LifecycleStatus",
+          "@com.sap.vocabularies.Common.v1.Text": {
+            "@odata.type": "Edm.Path",
+            "value": "LifecycleStatusDescription"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/BillingStatus",
+          "@com.sap.vocabularies.Common.v1.Text": {
+            "@odata.type": "Edm.Path",
+            "value": "BillingStatusDescription"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder/DeliveryStatus",
+          "@com.sap.vocabularies.Common.v1.Text": {
+            "@odata.type": "Edm.Path",
+            "value": "DeliveryStatusDescription"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrder",
+          "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
+            "TypeName": "Sales\nOrder",
+            "TypeNamePlural": "Sales\nOrders",
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Order\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "SalesOrderID"
+              }
+            },
+            "Description": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Customer",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CustomerName"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Badge": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.BadgeType",
+            "HeadLine": {
+              "@odata.type": "Edm.Path",
+              "value": "SalesOrderID"
+            },
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Customer",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CustomerName"
+              }
+            },
+            "MainInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmount",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            },
+            "SecondaryInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Status",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "LifecycleStatus"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.DataPoint#Status": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.DataPointType",
+            "Title": "Status",
+            "Value": {
+              "@odata.type": "Edm.Path",
+              "value": "LifecycleStatusDescription"
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.DataPoint#Amount": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.DataPointType",
+            "Title": "Gross\nAmount",
+            "Value": {
+              "@odata.type": "Edm.Path",
+              "value": "GrossAmount"
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Identification": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Customer\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CustomerID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmount",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Status",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "LifecycleStatus"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Created\nat",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CreatedAt"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Changed\nat",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ChangedAt"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.LineItem": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Order\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "SalesOrderID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Customer",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CustomerName"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmt.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Net\nAmt.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "NetAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Status",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "LifecycleStatus"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Created\nat",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CreatedAt"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Changed\nat",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ChangedAt"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.StatusInfo": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Overall\nStatus",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "LifecycleStatus"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Billing\nStatus",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "BillingStatus"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Delivery\nStatus",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "DeliveryStatus"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.FieldGroup#Note": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.FieldGroupType",
+            "Label": "Order\nNote",
+            "Data": [
+              {
+                "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+                "Label": "Text",
+                "Value": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Note"
+                }
+              }
+            ]
+          },
+          "@com.sap.vocabularies.UI.v1.Facets": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Items",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "ToLineItems/@com.sap.vocabularies.UI.v1.LineItem"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Status\nInformation",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.UI.v1.StatusInfo"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Note",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.UI.v1.FieldGroup#Note"
+              }
+            }
+          ]
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrderLineItem/NetAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrderLineItem/TaxAmount",
+          "@Org.OData.Measures.V1.ISOCurrency": {
+            "@odata.type": "Edm.Path",
+            "value": "CurrencyCode"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrderLineItem/Quantity",
+          "@Org.OData.Measures.V1.Unit": {
+            "@odata.type": "Edm.Path",
+            "value": "QunatityUnit"
+          }
+        },
+        {
+          "target": "GWSAMPLE_BASIC.SalesOrderLineItem",
+          "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
+            "TypeName": "Sales\nOrder\nItem",
+            "TypeNamePlural": "Sales\nOrder\nItems",
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ProductID"
+              }
+            },
+            "Description": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Quantity",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Quantity"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Badge": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.BadgeType",
+            "HeadLine": {
+              "@odata.type": "Edm.Apply",
+              "function": "odata.concat",
+              "value": [
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "SalesOrderID"
+                },
+                "\n/",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "ItemPosition"
+                }
+              ]
+            },
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ProductID"
+              }
+            },
+            "MainInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Quantity",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Quantity"
+              }
+            },
+            "SecondaryInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmount",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Identification": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Item",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ItemPosition"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmount",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Delivery",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "DeliveryDate"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.LineItem": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Item",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "SalesOrderID"
+                  },
+                  "\n/",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "ItemPosition"
+                  }
+                ]
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Product\nID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ProductID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Quantity",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "Quantity"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Net\nAmt.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "NetAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Gross\nAmt.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "GrossAmount"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Time\nStamp",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "DeliveryDate"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.FieldGroup#Note": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.FieldGroupType",
+            "Label": "Order\nNote",
+            "Data": [
+              {
+                "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+                "Label": "Text",
+                "Value": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Note"
+                }
+              }
+            ]
+          },
+          "@com.sap.vocabularies.UI.v1.Facets": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Note",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.UI.v1.FieldGroup#Note"
+              }
+            }
+          ]
+        },
+        {
+          "target": "GWSAMPLE_BASIC.BusinessPartner",
+          "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
+            "TypeName": "Business\nPartner",
+            "TypeNamePlural": "Business\nPartners",
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Name",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "CompanyName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LegalForm"
+                  }
+                ]
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Badge": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.BadgeType",
+            "HeadLine": {
+              "@odata.type": "Edm.Path",
+              "value": "BusinessPartnerID"
+            },
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Name",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "CompanyName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LegalForm"
+                  }
+                ]
+              }
+            },
+            "MainInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Phone",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "PhoneNumber"
+              }
+            },
+            "SecondaryInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Web",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "WebAddress"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Identification": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "ID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "BusinessPartnerID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataFieldForAnnotation",
+              "Label": "Address",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.Communication.v1.Address"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.LineItem": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "ID",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "BusinessPartnerID"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Company\nName",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "CompanyName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LegalForm"
+                  }
+                ]
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Phone\nNo.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "PhoneNumber"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Currency",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "CurrencyCode"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Role",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "BusinessPartnerRole"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.Communication.v1.Address": {
+            "@odata.type": "com.sap.vocabularies.Communication.v1.AddressType",
+            "street": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/Street"
+            },
+            "locality": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/City"
+            },
+            "code": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/PostalCode"
+            },
+            "country": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/Country"
+            },
+            "ext": {
+              "@odata.type": "Edm.Apply",
+              "function": "odata.concat",
+              "value": [
+                "Building",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/Building"
+                }
+              ]
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Facets": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Contacts",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "ToContacts/@com.sap.vocabularies.UI.v1.Badge"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
+              "Label": "Products",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "ToProducts/@com.sap.vocabularies.UI.v1.LineItem"
+              }
+            }
+          ]
+        },
+        {
+          "target": "GWSAMPLE_BASIC.Contact",
+          "@com.sap.vocabularies.UI.v1.HeaderInfo": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
+            "TypeName": "Contact",
+            "TypeNamePlural": "Contacts",
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Name",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "FirstName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LastName"
+                  }
+                ]
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Badge": {
+            "@odata.type": "com.sap.vocabularies.UI.v1.BadgeType",
+            "HeadLine": {
+              "@odata.type": "Edm.Path",
+              "value": "ToBusinessPartner/CompanyName"
+            },
+            "Title": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Name",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "FirstName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LastName"
+                  }
+                ]
+              }
+            },
+            "MainInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Phone",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "PhoneNumber"
+              }
+            },
+            "SecondaryInfo": {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Email",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "EmailAddress"
+              }
+            }
+          },
+          "@com.sap.vocabularies.UI.v1.Identification": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataFieldForAnnotation",
+              "Label": "Address",
+              "Target": {
+                "@odata.type": "Edm.AnnotationPath",
+                "value": "@com.sap.vocabularies.Communication.v1.Address"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Company\nName",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ToBusinessPartner/CompanyName"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Phone",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "PhoneNumber"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Email",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "EmailAddress"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.UI.v1.LineItem": [
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Name",
+              "Value": {
+                "@odata.type": "Edm.Apply",
+                "function": "odata.concat",
+                "value": [
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "FirstName"
+                  },
+                  "",
+                  {
+                    "@odata.type": "Edm.Path",
+                    "value": "LastName"
+                  }
+                ]
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Company\nName",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "ToBusinessPartner/CompanyName"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Phone\nNo.",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "PhoneNumber"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "Fax\nNumber",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "FaxNumber"
+              }
+            },
+            {
+              "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
+              "Label": "E-Mail\nAddress",
+              "Value": {
+                "@odata.type": "Edm.Path",
+                "value": "EmailAddress"
+              }
+            }
+          ],
+          "@com.sap.vocabularies.Communication.v1.Address": {
+            "@odata.type": "com.sap.vocabularies.Communication.v1.AddressType",
+            "street": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/Street"
+            },
+            "locality": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/City"
+            },
+            "code": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/PostalCode"
+            },
+            "country": {
+              "@odata.type": "Edm.Path",
+              "value": "Address/Country"
+            },
+            "ext": {
+              "@odata.type": "Edm.Apply",
+              "function": "odata.concat",
+              "value": [
+                "Building",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/Building"
+                }
+              ]
+            }
+          },
+          "@com.sap.vocabularies.Communication.v1.Contact": {
+            "@odata.type": "com.sap.vocabularies.Communication.v1.ContactType",
+            "fn": {
+              "@odata.type": "Edm.Apply",
+              "function": "odata.concat",
+              "value": [
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "Title"
+                },
+                "",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "FirstName"
+                },
+                "",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "MiddleName"
+                },
+                "",
+                {
+                  "@odata.type": "Edm.Path",
+                  "value": "LastName"
+                }
+              ]
+            },
+            "n": {
+              "@odata.type": "com.sap.vocabularies.Communication.v1.NameType",
+              "surname": "LastName",
+              "given": "FirstName",
+              "additional": "MiddleName",
+              "prefix": "Title"
+            },
+            "nickname": {
+              "@odata.type": "Edm.Path",
+              "value": "Nickname"
+            },
+            "bday": {
+              "@odata.type": "Edm.Path",
+              "value": "DateOfBirth"
+            },
+            "gender": {
+              "@odata.type": "Edm.Path",
+              "value": "Sex"
+            },
+            "tel": [
+              {
+                "@odata.type": "com.sap.vocabularies.Communication.v1.PhoneNumberType",
+                "uri": {
+                  "@odata.type": "Edm.Path",
+                  "value": "PhoneNumber"
+                },
+                "type": {
+                  "@odata.type": "com.sap.vocabularies.Communication.v1.ContactInformationType",
+                  "value": "voice"
+                }
+              }
+            ],
+            "email": [
+              {
+                "@odata.type": "com.sap.vocabularies.Communication.v1.EmailAddressType",
+                "address": {
+                  "@odata.type": "Edm.Path",
+                  "value": "EmailAddress"
+                },
+                "type": {
+                  "@odata.type": "com.sap.vocabularies.Communication.v1.ContactInformationType",
+                  "value": "work"
+                }
+              }
+            ],
+            "adr": [
+              {
+                "@odata.type": "com.sap.vocabularies.Communication.v1.AddressType",
+                "street": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/Street"
+                },
+                "locality": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/City"
+                },
+                "code": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/PostalCode"
+                },
+                "country": {
+                  "@odata.type": "Edm.Path",
+                  "value": "Address/Country"
+                },
+                "ext": {
+                  "@odata.type": "Edm.Apply",
+                  "function": "odata.concat",
+                  "value": [
+                    "Building",
+                    {
+                      "@odata.type": "Edm.Path",
+                      "value": "Address/Building"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "references": {
+    "http://tinyurl.com/Org-OData-Core": {
+      "includes": {
+        "Org.OData.Core.V1": {
+          "alias": "Core"
+        }
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "Org.OData.Capabilities.V1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "Org.OData.Core.V1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "com.sap.vocabularies.Common.v1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "com.sap.vocabularies.Communication.v1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "Org.OData.Measures.V1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value": {
+      "includes": {
+        "com.sap.vocabularies.UI.v1": {}
+      }
+    },
+    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWBEP/GWSAMPLE_BASIC": {
+      "includes": {
+        "GWSAMPLE_BASIC": {}
+      }
+    }
+  }
+}

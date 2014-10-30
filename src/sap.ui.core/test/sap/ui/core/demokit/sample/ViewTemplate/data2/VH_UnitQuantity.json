@@ -1,0 +1,257 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('LE')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('LE')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "LE",
+					"Msehl" : "Activity unit"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('BAG')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('BAG')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "BAG",
+					"Msehl" : "Bag"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('BOT')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('BOT')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "BOT",
+					"Msehl" : "Bottle"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KAN')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KAN')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "KAN",
+					"Msehl" : "Canister"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KAR')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KAR')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "KAR",
+					"Msehl" : "Carton"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KI')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KI')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "KI",
+					"Msehl" : "Crate"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('CS')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('CS')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "CS",
+					"Msehl" : "Case"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DEG')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DEG')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "DEG",
+					"Msehl" : "Degree"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DR')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DR')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "DR",
+					"Msehl" : "Drum"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DZ')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('DZ')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "DZ",
+					"Msehl" : "Dozen"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EA')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EA')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "EA",
+					"Msehl" : "each"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EML')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EML')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "EML",
+					"Msehl" : "Enzyme Units / Milliliter"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EE')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('EE')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "EE",
+					"Msehl" : "Enzyme Units"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('G%2FL')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('G%2FL')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "G/L",
+					"Msehl" : "gram act.ingrd / liter"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GW')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GW')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "GW",
+					"Msehl" : "Gram act. ingrd."
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GAU')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GAU')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "GAU",
+					"Msehl" : "Gram Gold"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GRO')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('GRO')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "GRO",
+					"Msehl" : "Gross"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KGW')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KGW')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "KGW",
+					"Msehl" : "Kilogram act. ingrd."
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KWK')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('KWK')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "KWK",
+					"Msehl" : "kg act.ingrd. / kg"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('MLW')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('MLW')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "MLW",
+					"Msehl" : "Milliliter act. ingr."
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAA')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAA')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "PAA",
+					"Msehl" : "Pair"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAK')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAK')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "PAK",
+					"Msehl" : "Pack"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAL')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PAL')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "PAL",
+					"Msehl" : "Pallet"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('ST')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('ST')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "ST",
+					"Msehl" : "Piece"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PRS')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('PRS')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "PRS",
+					"Msehl" : "Number of Persons"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('ROL')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('ROL')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "ROL",
+					"Msehl" : "Role"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('TH')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('TH')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "TH",
+					"Msehl" : "Thousands"
+				},
+				{
+					"__metadata" : {
+						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('VAL')",
+						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitQuantitySet('VAL')",
+						"type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+					},
+					"Msehi" : "VAL",
+					"Msehl" : "Value-only material"
+				}]
+	}
+}

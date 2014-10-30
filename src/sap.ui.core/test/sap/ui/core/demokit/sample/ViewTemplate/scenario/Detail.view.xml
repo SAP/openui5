@@ -1,0 +1,17 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	isTemplate="true">
+	<VBox>
+		<template:with path="meta>@com.sap.vocabularies.UI.v1.HeaderInfo">
+			<Label text="Entity" />
+			<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+			<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+			<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+			<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+			<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+		</template:with>
+	</VBox>
+</mvc:View>

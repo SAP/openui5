@@ -1,0 +1,1886 @@
+{
+	"d" : {
+		"results" : [
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ADP",
+		            "Ltext" : "Andorran Peseta --> (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AED",
+		            "Ltext" : "United Arab Emirates Dirham"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AFA",
+		            "Ltext" : "Afghani (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AFN",
+		            "Ltext" : "Afghani"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ALL",
+		            "Ltext" : "Albanian Lek"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AMD",
+		            "Ltext" : "Armenian Dram"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ANG",
+		            "Ltext" : "West Indian Guilder"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AOA",
+		            "Ltext" : "Angolanische Kwanza"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AON",
+		            "Ltext" : "Angolan New Kwanza (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AOR",
+		            "Ltext" : "Angolan Kwanza Reajustado (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ARS",
+		            "Ltext" : "Argentine Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ATS",
+		            "Ltext" : "Austrian Schilling (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AUD",
+		            "Ltext" : "Australian Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AWG",
+		            "Ltext" : "Aruban Florin"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AZM",
+		            "Ltext" : "Azerbaijan Manat (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "AZN",
+		            "Ltext" : "Azerbaijan Manat"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BAM",
+		            "Ltext" : "Bosnia and Herzegovina Convertible Mark"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BBD",
+		            "Ltext" : "Barbados Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BDT",
+		            "Ltext" : "Bangladesh Taka"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BEF",
+		            "Ltext" : "Belgian Franc (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BGN",
+		            "Ltext" : "Bulgarian Lev"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BHD",
+		            "Ltext" : "Bahrain Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BIF",
+		            "Ltext" : "Burundi Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BMD",
+		            "Ltext" : "Bermudan Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BND",
+		            "Ltext" : "Brunei Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BOB",
+		            "Ltext" : "Boliviano"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BRL",
+		            "Ltext" : "Brazilian Real"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BSD",
+		            "Ltext" : "Bahaman Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BTN",
+		            "Ltext" : "Bhutan Ngultrum"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BWP",
+		            "Ltext" : "Botswana Pula"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BYB",
+		            "Ltext" : "Belorussian Ruble (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BYR",
+		            "Ltext" : "Belorussian Ruble"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "BZD",
+		            "Ltext" : "Belize Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CAD",
+		            "Ltext" : "Canadian Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CDF",
+		            "Ltext" : "Congolese Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CFP",
+		            "Ltext" : "French Franc (Pacific Islands)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CHF",
+		            "Ltext" : "Swiss Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CLP",
+		            "Ltext" : "Chilean Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CNY",
+		            "Ltext" : "Chinese Renminbi"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "COP",
+		            "Ltext" : "Colombian Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CRC",
+		            "Ltext" : "Costa Rica Colon"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CSD",
+		            "Ltext" : "Serbian Dinar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CUC",
+		            "Ltext" : "Peso Convertible"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CUP",
+		            "Ltext" : "Cuban Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CVE",
+		            "Ltext" : "Cape Verde Escudo"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CYP",
+		            "Ltext" : "Cyprus Pound  (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "CZK",
+		            "Ltext" : "Czech Krona"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DEM",
+		            "Ltext" : "German Mark    (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DEM3",
+		            "Ltext" : "(Internal) German Mark (3 dec.places)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DJF",
+		            "Ltext" : "Djibouti Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DKK",
+		            "Ltext" : "Danish Krone"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DOP",
+		            "Ltext" : "Dominican Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "DZD",
+		            "Ltext" : "Algerian Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ECS",
+		            "Ltext" : "Ecuadorian Sucre (Old --> USD)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "EEK",
+		            "Ltext" : "Estonian Krone (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "EGP",
+		            "Ltext" : "Egyptian Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ERN",
+		            "Ltext" : "Eritrean Nafka"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ESP",
+		            "Ltext" : "Spanish Peseta (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ETB",
+		            "Ltext" : "Ethiopian Birr"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "EUR",
+		            "Ltext" : "European Euro"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "FIM",
+		            "Ltext" : "Finnish Markka (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "FJD",
+		            "Ltext" : "Fiji Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "FKP",
+		            "Ltext" : "Falkland Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "FRF",
+		            "Ltext" : "French Franc (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GBP",
+		            "Ltext" : "British Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GEL",
+		            "Ltext" : "Georgian Lari"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GHC",
+		            "Ltext" : "Ghanaian Cedi (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GHS",
+		            "Ltext" : "Ghanian Cedi"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GIP",
+		            "Ltext" : "Gibraltar Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GMD",
+		            "Ltext" : "Gambian Dalasi"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GNF",
+		            "Ltext" : "Guinean Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GRD",
+		            "Ltext" : "Greek Drachma (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GTQ",
+		            "Ltext" : "Guatemalan Quetzal"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GWP",
+		            "Ltext" : "Guinea Peso (Old --> SHP)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "GYD",
+		            "Ltext" : "Guyana Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "HKD",
+		            "Ltext" : "Hong Kong Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "HNL",
+		            "Ltext" : "Honduran Lempira"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "HRK",
+		            "Ltext" : "Croatian Kuna"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "HTG",
+		            "Ltext" : "Haitian Gourde"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "HUF",
+		            "Ltext" : "Hungarian Forint"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "IDR",
+		            "Ltext" : "Indonesian Rupiah"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "IEP",
+		            "Ltext" : "Irish Punt (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ILS",
+		            "Ltext" : "Israeli Scheckel"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "INR",
+		            "Ltext" : "Indian Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "IQD",
+		            "Ltext" : "Iraqui Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "IRR",
+		            "Ltext" : "Iranian Rial"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ISK",
+		            "Ltext" : "Iceland Krona"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ITL",
+		            "Ltext" : "Italian Lira (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "JMD",
+		            "Ltext" : "Jamaican Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "JOD",
+		            "Ltext" : "Jordanian Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "JPY",
+		            "Ltext" : "Japanese Yen"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KES",
+		            "Ltext" : "Kenyan Shilling"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KGS",
+		            "Ltext" : "Kyrgyzstan Som"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KHR",
+		            "Ltext" : "Cambodian Riel"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KMF",
+		            "Ltext" : "Comoros Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KPW",
+		            "Ltext" : "North Korean Won"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KRW",
+		            "Ltext" : "South Korean Won"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KWD",
+		            "Ltext" : "Kuwaiti Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KYD",
+		            "Ltext" : "Cayman Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "KZT",
+		            "Ltext" : "Kazakstanian Tenge"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LAK",
+		            "Ltext" : "Laotian Kip"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LBP",
+		            "Ltext" : "Lebanese Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LKR",
+		            "Ltext" : "Sri Lankan Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LRD",
+		            "Ltext" : "Liberian Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LSL",
+		            "Ltext" : "Lesotho Loti"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LTL",
+		            "Ltext" : "Lithuanian Lita"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LUF",
+		            "Ltext" : "Luxembourg Franc (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LVL",
+		            "Ltext" : "Latvian Lat"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "LYD",
+		            "Ltext" : "Libyan Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MAD",
+		            "Ltext" : "Moroccan Dirham"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MDL",
+		            "Ltext" : "Moldavian Leu"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MGA",
+		            "Ltext" : "Madagascan Ariary"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MGF",
+		            "Ltext" : "Madagascan Franc (Old"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MKD",
+		            "Ltext" : "Macedonian Denar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MMK",
+		            "Ltext" : "Myanmar Kyat"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MNT",
+		            "Ltext" : "Mongolian Tugrik"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MOP",
+		            "Ltext" : "Macao Pataca"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MRO",
+		            "Ltext" : "Mauritanian Ouguiya"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MTL",
+		            "Ltext" : "Maltese Lira (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MUR",
+		            "Ltext" : "Mauritian Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MVR",
+		            "Ltext" : "Maldive Rufiyaa"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MWK",
+		            "Ltext" : "Malawi Kwacha"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MXN",
+		            "Ltext" : "Mexican Pesos"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MYR",
+		            "Ltext" : "Malaysian Ringgit"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MZM",
+		            "Ltext" : "Mozambique Metical (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "MZN",
+		            "Ltext" : "Mozambique Metical"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NAD",
+		            "Ltext" : "Namibian Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NGN",
+		            "Ltext" : "Nigerian Naira"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NIO",
+		            "Ltext" : "Nicaraguan Cordoba Oro"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NLG",
+		            "Ltext" : "Dutch Guilder (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NOK",
+		            "Ltext" : "Norwegian Krone"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NPR",
+		            "Ltext" : "Nepalese Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "NZD",
+		            "Ltext" : "New Zealand Dollars"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "OMR",
+		            "Ltext" : "Omani Rial"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PAB",
+		            "Ltext" : "Panamanian Balboa"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PEN",
+		            "Ltext" : "Peruvian New Sol"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PGK",
+		            "Ltext" : "Papua New Guinea Kina"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PHP",
+		            "Ltext" : "Philippine Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PKR",
+		            "Ltext" : "Pakistani Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PLN",
+		            "Ltext" : "Polish Zloty (new)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PTE",
+		            "Ltext" : "Portuguese Escudo (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "PYG",
+		            "Ltext" : "Paraguayan Guarani"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "QAR",
+		            "Ltext" : "Qatar Rial"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "RMB",
+		            "Ltext" : "Chinese Yuan Renminbi"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ROL",
+		            "Ltext" : "Romanian Leu (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "RON",
+		            "Ltext" : "Romanian Leu"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "RSD",
+		            "Ltext" : "Serbian Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "RUB",
+		            "Ltext" : "Russian Ruble"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "RWF",
+		            "Ltext" : "Rwandan Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SAR",
+		            "Ltext" : "Saudi Riyal"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SBD",
+		            "Ltext" : "Solomon Islands Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SCR",
+		            "Ltext" : "Seychelles Rupee"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SDD",
+		            "Ltext" : "Sudanese Dinar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SDG",
+		            "Ltext" : "Sudanese Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SDP",
+		            "Ltext" : "Sudanese Pound (until 1992)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SEK",
+		            "Ltext" : "Swedish Krona"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SGD",
+		            "Ltext" : "Singapore Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SHP",
+		            "Ltext" : "St.Helena Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SIT",
+		            "Ltext" : "Slovenian Tolar (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SKK",
+		            "Ltext" : "Slovakian Krona (Old --> EUR)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SLL",
+		            "Ltext" : "Sierra Leone Leone"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SOS",
+		            "Ltext" : "Somalian Shilling"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SRD",
+		            "Ltext" : "Surinam Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SRG",
+		            "Ltext" : "Surinam Guilder (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SSP",
+		            "Ltext" : "South Sudanese Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "STD",
+		            "Ltext" : "Sao Tome / Principe Dobra"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SVC",
+		            "Ltext" : "El Salvador Colon"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SYP",
+		            "Ltext" : "Syrian Pound"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "SZL",
+		            "Ltext" : "Swaziland Lilangeni"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "THB",
+		            "Ltext" : "Thailand Baht"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TJR",
+		            "Ltext" : "Tajikistani Ruble (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TJS",
+		            "Ltext" : "Tajikistani Somoni"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TMM",
+		            "Ltext" : "Turkmenistani Manat (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TMT",
+		            "Ltext" : "Turkmenistani Manat"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TND",
+		            "Ltext" : "Tunisian Dinar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TOP",
+		            "Ltext" : "Tongan Pa'anga"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TPE",
+		            "Ltext" : "Timor Escudo --> USD"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TRL",
+		            "Ltext" : "Turkish Lira (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TRY",
+		            "Ltext" : "Turkish Lira"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TTD",
+		            "Ltext" : "Trinidad and Tobago Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TWD",
+		            "Ltext" : "New Taiwan Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "TZS",
+		            "Ltext" : "Tanzanian Shilling"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "UAH",
+		            "Ltext" : "Ukraine Hryvnia"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "UGX",
+		            "Ltext" : "Ugandan Shilling"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "USD",
+		            "Ltext" : "United States Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "USDN",
+		            "Ltext" : "(Internal) United States Dollar (5 Dec.)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "UYU",
+		            "Ltext" : "Uruguayan Peso"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "UZS",
+		            "Ltext" : "Uzbekistan Som"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "VEB",
+		            "Ltext" : "Venezuelan Bolivar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "VEF",
+		            "Ltext" : "Venezuelan Bolivar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "VND",
+		            "Ltext" : "Vietnamese Dong"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "VUV",
+		            "Ltext" : "Vanuatu Vatu"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "WST",
+		            "Ltext" : "Samoan Tala"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XAF",
+		            "Ltext" : "Gabon CFA Franc BEAC"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XCD",
+		            "Ltext" : "East Carribean Dollar"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XDS",
+		            "Ltext" : "St. Christopher Dollar --> XCD"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XEU",
+		            "Ltext" : "European Currency Unit (E.C.U.)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XOF",
+		            "Ltext" : "Benin CFA Franc BCEAO"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "XPF",
+		            "Ltext" : "CFP Franc"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "YER",
+		            "Ltext" : "Yemeni Ryal"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "YUM",
+		            "Ltext" : "New Yugoslavian Dinar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZAR",
+		            "Ltext" : "South African Rand"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZMK",
+		            "Ltext" : "Zambian Kwacha (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZMW",
+		            "Ltext" : "Zambian Kwacha (New)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZRN",
+		            "Ltext" : "Zaire (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZWD",
+		            "Ltext" : "Zimbabwean Dollar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZWL",
+		            "Ltext" : "Zimbabwean Dollar (New)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZWN",
+		            "Ltext" : "Zimbabwean Dollar (Old)"
+		        },
+		        {
+		            "__metadata" : {
+		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
+		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
+		                "type" : "GWSAMPLE_BASIC.VH_Currency"
+		            },
+		            "Waers" : "ZWR",
+		            "Ltext" : "Zimbabwean Dollar (Old)"
+		        }]
+	}
+}

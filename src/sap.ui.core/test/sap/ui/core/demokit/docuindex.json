@@ -35,7 +35,10 @@
 				"name" : "XMLView",
 				"category" : "Display",
 				"since" : "1.26",
-				"samples" : [ "sap.ui.core.sample.ViewTemplate.if_sample" ]
+				"samples" : [
+					"sap.ui.core.sample.ViewTemplate.if_sample",
+					"sap.ui.core.sample.ViewTemplate.scenario"
+				]
 			},
 			{
 				"id" : "sap.ui.test.Opa5",
@@ -78,6 +81,11 @@
 				"id": "sap.ui.core.sample.ViewTemplate.if_sample",
 				"name": "XMLView Templating: if",
 				"description": "Simple example for XML View Templating with the if/then/else templating instruction"
+			},
+			{
+				"id": "sap.ui.core.sample.ViewTemplate.scenario",
+				"name": "XMLView Templating: demo scenario",
+				"description": "Complete demo scenario for XML View Templating based on OData V4 annotations"
 			},
 			{
 				"id": "sap.ui.core.sample.OpaMatchers",
