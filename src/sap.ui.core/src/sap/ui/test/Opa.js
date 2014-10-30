@@ -16,6 +16,12 @@
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {
+		
+		// Increase the wait timeout in debug mode, to allow debugging the waitFor without getting timeouts
+		if (window["sap-ui-debug"]){
+			oOptions.timeout = 300; 
+		}
+
 		var startTime = new Date(),
 			sId = setInterval(function () {
 
@@ -236,7 +242,7 @@
 	 * All of the global values can be overwritten in an individual waitFor call.
 	 * defaults are :
 	 * <ul>
-	 * 		<li>timeout : 15 seconds</li>
+	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingIntervall: 400 milliseconds</li>
 	 * </ul>
 	 * @name sap.ui.test.Opa#config
