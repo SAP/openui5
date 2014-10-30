@@ -1035,6 +1035,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 		};
 
+		/**
+		 * Handle the focusin event.
+		 * IE FIX: the browser does not focus on sap.m.Select but on its inner span (select icon).
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @name sap.m.Select#onfocusin
+		 * @function
+		 */
+		Select.prototype.onfocusin = function(oEvent) {
+			if (sap.ui.Device.browser.internet_explorer) {
+				var oSelectIcon = this.$().children(".sapMSltIcon");
+				if (oSelectIcon.is(":focus")) {
+					this.focus();
+				}
+			}
+		};
+
 		/* =========================================================== */
 		/* API methods                                                 */
 		/* =========================================================== */
