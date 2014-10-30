@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*global URI*/
 
 sap.ui.define(['jquery.sap.global',
 			'./Opa',
@@ -10,7 +11,8 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
-			'./everyPolyfill'],
+			'./everyPolyfill',
+			'sap/ui/thirdparty/URI'],
 	function($, Opa, OpaPlugin, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var fnOpa5,
 			oPlugin = new OpaPlugin(),
@@ -411,14 +413,26 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		function setFrameVariables() {
 			oFrameJQuery = oFrameWindow.jQuery;
+			//All Opa related resources in the iframe should be the same version
+			//that is running in the test and not the (evtl. not available) version of Opa of the running App.
+			registerAbsoluteModulePathInIframe("sap.ui.test");
 			oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 			oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin();
+			
+			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-			oFrameUtils = oFrameWindow.sap.ui.test.qunit;
+			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
+			
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
 		}
-
+		
+		function registerAbsoluteModulePathInIframe(sModule) {
+			var sOpaLocation = jQuery.sap.getModulePath(sModule);
+			var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
+			oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
+		}
+		
 		function handleFrameLoad () {
 			oFrameWindow = $Frame[0].contentWindow;
 			bFrameLoaded = true;
