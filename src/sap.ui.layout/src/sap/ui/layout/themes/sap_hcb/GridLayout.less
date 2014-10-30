@@ -3,60 +3,100 @@
 /* HCB                                                   */
 /* ===================================================== */
 
-/*
-.sapUiGrid{
-
-}
-*/
-
 .sapUiGrid{
 	font-size: @sapUiDesktopFontSize;
 }
 
-.sapUiGrid td{
-	padding: 2px 1px 1px 2px;
+.sapUiGrid > tbody > tr > td:first-child{
+	padding-left: 16px;
 }
 
-.sapUiGrid td:first-child{
-	padding-left: 1px;
+.sapUiGrid > tbody > tr:first-child > td, /* if no title */
+.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td{
+	padding-top: 16px;
+}
+
+.sapUiGrid > tbody > tr > td:last-child{
+	padding-right: 16px;
+}
+
+.sapUiGrid > tbody > tr:last-child > td{
+	padding-bottom: 16px;
+}
+
+.sapUiGrid > tbody > tr > td{
+	padding: 4px 0 4px 8px;
+}
+
+.sapUiFormM > .sapUiGrid > tbody > tr > td{
+	padding: 0 0 0 8px;
+}
+
+.sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-right: 4px;
+}
+
+.sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
+	padding-bottom: 2px;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 16px;
+}
+
+html[data-sap-ui-browser^="ff"] .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 15px;
+}
+
+.sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 8px;
+}
+
+html[data-sap-ui-browser^="ff"].sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel,
+html[data-sap-ui-browser^="ff"] .sapUiSizeCompact .sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabel{
+	padding-top: 7px;
+}
+
+.sapUiFormEdit.sapUiFormM > .sapUiGrid > tbody > tr > td.sapUiGridLabelFull{
+	padding-top: 0;
 }
 
 .sapUiGrid .sapUiGridHeader{
 	padding: 0;
 }
 
-.sapUiGrid th > h4,
-.sapUiGrid td > h4{
-	font-size: @sapUiFontHeader2Size; /*as long as the global header sizes are not adopted to godreflection ones*/
+.sapUiGrid th > .sapUiFormTitle{
+	height: 48px;
+	line-height: 48px;
+	-moz-box-sizing: padding-box;
+	box-sizing: border-box;
+	padding: 0 16px 0 16px;
 }
 
-.sapUiGrid th > h5,
-.sapUiGrid td > h5{
-	font-size: @sapUiFontHeader3Size; /*as long as the global header sizes are not adopted to godreflection ones*/
+.sapUiGrid > tbody > tr > td > .sapUiFormTitle{
+	border: none;
+	margin-bottom: 16px;
+	margin-top: 32px;
 }
 
-.sapUiGrid th > .sapUiFormTitle,
-.sapUiGrid td > .sapUiFormTitle{
-	text-transform: uppercase;
-	margin-bottom: 2px;
-	margin-top: 20px;
-	padding-bottom: 5px;
+.sapUiGrid > tbody > tr:first-child > td > .sapUiFormTitle, /* if no title */
+.sapUiForm[aria-describedby] > .sapUiGrid > tbody > tr:nth-child(2) > td > .sapUiFormTitle{
+	margin-top: 0;
 }
 
 .sapUiGridSpace{
-	width: 30px;
-}
-
-.sapUiGridHeader > .sapUiFormTitle > .sapUiBtn.sapUiBtnLite{
-	text-decoration: none;
-	font-size: 14px;
-	font-weight: bold;
-	width: 19px;
-	height: 19px;
-	border: 1px solid @sapUiDarkBorder;
+	width: 32px;
 }
 
 .sapUiGrid .sapUiFormTitle > img,
 .sapUiGrid .sapUiFormTitle > span{
-	margin-right: 3px;
+	margin-right: 4px;
+}
+
+.sapUiGridHeader > .sapUiFormTitle > button{
+	right: 3px;
+}
+
+.sapUiGridHeader > .sapUiFormTitle > .sapUiBtnS.sapUiBtnLite{
+	bottom: 2px;
 }
