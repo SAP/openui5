@@ -370,7 +370,7 @@ public class MyReleaseButton {
     for (Object artifactKey : contributorsVersions.keySet()) {
       String[] artifact = artifactKey.toString().split(":");
       if("com.sap.ui5:core".equals(artifactKey)){
-        contributorsPatterns.put(Pattern.compile("(?<=<version>).*(?=</version><!--SAPUI5CoreVersion-->)"), contributorsVersions.getProperty(artifactKey.toString()));
+        contributorsPatterns.put(Pattern.compile("(?<=version>).*(?=</.*version><!--SAPUI5CoreVersion-->)"), contributorsVersions.getProperty(artifactKey.toString()));
         continue;
       }
       // artifact[0] - groupId, artifact[1] - artifactId

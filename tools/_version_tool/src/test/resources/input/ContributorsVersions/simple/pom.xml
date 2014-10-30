@@ -7,6 +7,9 @@
     <version>1.22.8-SNAPSHOT</version><!--SAPUI5CoreVersion-->
     <relativePath>../pom.xml</relativePath>
   </parent>
+  <properties>
+    <sapui5.core.version>1.22.8-SNAPSHOT</sapui5.core.version><!--SAPUI5CoreVersion-->
+  </properties>
   <artifactId>simple-artifact</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
