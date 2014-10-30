@@ -399,36 +399,45 @@
 	});
 
 	//*********************************************************************************************
-	test("template:if test='{formatter:...}', exception in formatter", sinon.test(function () {
-		var aViewContent = [
-				mvcView(),
-				'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
-				'<Out/>',
-				'<\/template:if>',
-				'<!-- prevent empty tag -->',
-				'<\/mvc:View>'
-			],
-			oError = new Error("deliberate failure");
+	jQuery.each([false, true], function (i, bIsLoggable) {
+		test("template:if test='{formatter:...}', exception in formatter, warn = " + bIsLoggable,
+			sinon.test(function () {
+				var aViewContent = [
+						mvcView(),
+						'<template:if test="' + "{formatter: 'foo.Helper.fail', path:'/flag'}" + '">',
+						'<Out/>',
+						'<\/template:if>',
+						'<!-- prevent empty tag -->',
+						'<\/mvc:View>'
+					],
+					oError = new Error("deliberate failure"),
+					oLogMock = this.mock(jQuery.sap.log);
 
-		this.spy(jQuery.sap.log, "warning"); // Note: this spy is part of a sandbox!
-		window.foo = {
-			Helper: {
-				fail: function (oRawValue) {
-					throw oError;
-				}
-			}
-		};
+				// Note: mocks inside sinon.test() are verified and restored automatically
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+					.calledWith(
+						'Error in formatter of ' + aViewContent[1] + ' in view foo',
+						oError, "sap.ui.core.util.XMLPreprocessor");
 
-		check(aViewContent, {
-			models: new sap.ui.model.json.JSONModel({flag: true}),
-			viewName: "foo"
-		});
+				window.foo = {
+					Helper: {
+						fail: function (oRawValue) {
+							throw oError;
+						}
+					}
+				};
 
-		//TODO catch with warning vs. an error thrown?
-		ok(jQuery.sap.log.warning.calledWith(
-			'Error in formatter of ' + aViewContent[1] + ' in view foo',
-			oError, "sap.ui.core.mvc.XMLView"));
-	}));
+				check(aViewContent, {
+					models: new sap.ui.model.json.JSONModel({flag: true}),
+					viewName: "foo"
+				});
+			})
+		);
+	});
 
 	//*********************************************************************************************
 	test("Do not process nested template:ifs if not necessary", function () {
@@ -673,36 +682,53 @@
 	});
 
 	//*********************************************************************************************
-	test("binding resolution, exception in formatter", function () {
-		window.foo = {
-				Helper: {
-					fail: function (oRawValue) {
-						throw new Error("deliberate failure");
-					}
-				}
-			};
+	jQuery.each([false, true], function (i, bIsLoggable) {
+		test("binding resolution, exception in formatter, debug = " + bIsLoggable,
+			sinon.test(function () {
+				var oError = new Error("deliberate failure"),
+					oLogMock = this.mock(jQuery.sap.log);
 
-		check([
-			mvcView(),
-			'<In text="{formatter: \'foo.Helper.fail\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
-			'<In text="{formatter: \'foo.Helper.fail\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
-			'<\/mvc:View>'
-		], {
-			models: new sap.ui.model.json.JSONModel({
-				"com.sap.vocabularies.UI.v1.HeaderInfo": {
-					"Title": {
-						"Label": {
-							"String": "Customer"
-						},
-						"Value": {
-							"Path": "CustomerName"
+				// Note: mocks inside sinon.test() are verified and restored automatically
+				oLogMock.expects("isLoggable")
+					.twice() // Note: default is once()
+					.withExactArgs(jQuery.sap.log.Level.DEBUG)
+					.returns(bIsLoggable);
+				oLogMock.expects("debug")
+					.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
+					.calledWith(
+						sinon.match(/Error in formatter of <In text=".*"\/> in view undefined/),
+						oError, "sap.ui.core.util.XMLPreprocessor");
+				window.foo = {
+						Helper: {
+							fail: function (oRawValue) {
+								throw oError;
+							}
 						}
-					}
-				}
+					};
+
+				check([
+					mvcView(),
+					'<In text="{formatter: \'foo.Helper.fail\','
+						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+					'<In text="{formatter: \'foo.Helper.fail\','
+						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+					'<\/mvc:View>'
+				], {
+					models: new sap.ui.model.json.JSONModel({
+						"com.sap.vocabularies.UI.v1.HeaderInfo": {
+							"Title": {
+								"Label": {
+									"String": "Customer"
+								},
+								"Value": {
+									"Path": "CustomerName"
+								}
+							}
+						}
+					})
+				});
 			})
-		});
+		);
 	});
 
 	//*********************************************************************************************
