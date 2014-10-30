@@ -7,7 +7,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	function(jQuery, ManagedObject) {
 		'use strict';
 
-		var sNAMESPACE = "sap.ui.core.template",
+		var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
 			/**
 			 * <template:with> control holding the models and the bindings. Also used as substitute
 			 * for any control during template processing in order to resolve property bindings.
@@ -139,6 +139,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		}
 
 		/**
+		 * Serializes the element with its attributes.
+		 * <p>
+		 * BEWARE: makes no attempt at encoding, DO NOT use in a security critical manner!
+		 *
+		 * @param {Element} oElement a DOM element
+		 * @returns {string} the serialization
+		 */
+		function serializeSingleElement(oElement) {
+			var sText = "<" + oElement.nodeName;
+			jQuery.each(oElement.attributes, function (i, oAttribute) {
+				sText += " " + oAttribute.name + '="' + oAttribute.value + '"';
+			});
+			return sText + (oElement.childNodes.length ? ">" : "/>");
+		}
+
+		/**
 		 * The XML pre-processor for template instructions in XML views.
 		 *
 		 * @name sap.ui.core.util.XMLPreprocessor
@@ -234,8 +250,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							vTest = getAny(oWithControl, oBindingInfo);
 						} catch (ex) {
 							jQuery.sap.log.warning(
-								'Error in formatter of sap.ui.core.template:if test="' + vTest
-									+ '" in view ' + mSettings.viewName,
+								'Error in formatter of ' + serializeSingleElement(oNode)
+									+ ' in view ' + mSettings.viewName,
 								ex, "sap.ui.core.mvc.XMLView");
 							vTest = false;
 						}
@@ -264,8 +280,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						sVar = oNode.getAttribute("var");
 
 					if (!oBindingInfo) {
-						throw new Error('Missing binding for sap.ui.core.template:repeat list="'
-							+ sList + '" in view ' + mSettings.viewName);
+						throw new Error('Missing binding for ' + serializeSingleElement(oNode)
+							+ ' in view ' + mSettings.viewName);
 					}
 
 					// set up a scope for the loop variable, so to say
@@ -279,8 +295,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					oNewWithControl.unbindAggregation("list", true);
 					sModelName = oBindingInfo.model; // added by bindAggregation
 					if (!oListBinding) {
-						throw new Error('Missing model "' + sModelName
-							+ '" in sap.ui.core.template:repeat in view ' + mSettings.viewName);
+						throw new Error('Missing model "' + sModelName + '" in '
+							+ serializeSingleElement(oNode) + ' in view ' + mSettings.viewName);
 					}
 					aContexts = oListBinding.getContexts();
 
@@ -325,16 +341,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						oBindingInfo = makeSimpleBindingInfo(sPath);
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
-							throw new Error("Missing model '" + oBindingInfo.model
-								+ "' in sap.ui.core.template:with in view " + mSettings.viewName);
+							throw new Error("Missing model '" + oBindingInfo.model + "' in "
+								+ serializeSingleElement(oNode) + " in view "
+								+ mSettings.viewName);
 						}
 						//TODO any trick to avoid explicit resolution of relative paths here?
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
 							throw new Error(
-								'Cannot resolve path for sap.ui.core.template:with var="'
-								+ sVar + '" in view ' + mSettings.viewName
+								'Cannot resolve path for ' + serializeSingleElement(oNode)
+								+ ' in view ' + mSettings.viewName
 							);
 						}
 						oNewWithControl.setModel(oModel, sVar);
@@ -355,9 +372,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				 * @param {Element} oElement the DOM element
 				 */
 				function unexpectedTag(oElement) {
-					throw new Error("Unexpected tag " + oElement.namespaceURI + ":"
-						+ localName(oElement)
-						+ " in sap.ui.core.template:if in view " + mSettings.viewName);
+					//TODO should be parentElement, but in IE8-10 this is often undefined although
+					// the parent _is_ an element
+					throw new Error("Unexpected tag " + serializeSingleElement(oElement)
+						+ " in " + serializeSingleElement(oElement.parentNode) + " in view "
+						+ mSettings.viewName);
 				}
 
 				/**
