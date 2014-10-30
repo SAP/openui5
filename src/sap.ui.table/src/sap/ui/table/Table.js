@@ -4896,7 +4896,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._calculateRowsToDisplay = function(iHeight) {
 		var $this = this.$();
 		var iControlHeight = this.$().outerHeight();
-		var iHeaderHeight = $this.find('.sapUiTableColHdrCnt').outerHeight();
 		var iContentHeight = $this.find('.sapUiTableCCnt').outerHeight();
 		var iMinRowCount = this.getMinAutoRowCount() || 5;
 	
@@ -4909,9 +4908,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 			iRowHeight = parseInt(Parameters.get(sRowHeightParamName), 10);
 		}
-		var iAvailableSpace = iHeight - (iControlHeight - iHeaderHeight - iContentHeight) - iHeaderHeight;
+		var iAvailableSpace = iHeight - (iControlHeight - iContentHeight);
 	
-		return Math.max(iMinRowCount, Math.floor(iAvailableSpace / iRowHeight));
+		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
+		return Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight));
 	};
 	
 	Table.prototype.setShowNoData = function(bShowNoData) {
