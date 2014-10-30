@@ -765,13 +765,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					}
 				},
 				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
-/*				afterOpen: function(oEvent) {
-					if (this.getInitialFocus() == null) {
-						jQuery.sap.delayedCall(700, this, function() {
+				afterOpen: function(oEvent) {
+					if (this.getInitialFocus() == null && that._displayedList.getItems().length > 0) {
+						jQuery.sap.delayedCall(1000, this, function() {
 							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
 						});
 					}
-				},*/
+				},
 				afterClose: function(oEvent) {
 				
 					that._addDelegateFlag = true;
@@ -1066,12 +1066,16 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				// TODO: Find out why the counter is not updated without forcing rendering of the facet list item
 				// App may have set a new allCount from a listClose event handler, so we need to update the counter on the facet list item.
 				that._selectedFacetItem.invalidate();
-				//keyboard acc - focus on the original 1st page item									
-				this.getPages()[0].invalidate();
-/*				var focusIndex = this.getPages()[0].getContent()[0].aDelegates[0].oDelegate.getFocusedIndex();
-				jQuery.sap.delayedCall(100, this, function() {
-					jQuery.sap.focus(this.getPages()[0].getContent()[0].getItems()[focusIndex]);
-				});*/
+				//keyboard acc - focus on the original 1st page item	
+				oToPage.invalidate();
+				if (this.getPages().length >= 1 && focusIndex >= 0) {
+					var focusIndex = this.getPages()[0].getContent()[0].aDelegates[0].oDelegate.getFocusedIndex();
+					if (focusIndex >= 0) {
+						jQuery.sap.delayedCall(100, this, function() {
+							jQuery.sap.focus(this.getPages()[0].getContent()[0].getItems()[focusIndex]);
+						});					
+					}	
+				}			
 				that._selectedFacetItem = null;
 			}
 		});
