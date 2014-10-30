@@ -263,6 +263,41 @@
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts();
 	});
+	
+	asyncTest("Has Children", function(){
+		createTreeBinding("/Employees(2)", null, [], {
+			navigation: {
+				Employees: "Employees1",
+				Employees1: "Employees1"
+			},
+			displayRootNode: true,
+			numberOfExpandedLevels: 2
+		});
+
+		var oContext;
+		var handler1 = function(oEvent) {
+
+			oBinding.detachChange(handler1);
+			// contexts should be now loaded
+			var aContexts = oBinding.getRootContexts();
+			var aSubContexts;
+
+			ok(oBinding.hasChildren(aContexts[0]), " root context should have children");
+			
+			//Level 0.0
+			aContexts = oBinding.getNodeContexts(aContexts[0]);
+			ok(!oBinding.hasChildren(aContexts[0]), " node context should not have children");
+			ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
+			
+			aSubContexts = oBinding.getNodeContexts(aContexts[3]);
+			ok(oBinding.hasChildren(aContexts[3]), " node context should have children");
+
+			start();
+		};
+
+		oBinding.attachChange(handler1);
+		oBinding.getRootContexts();
+	});
 
 	asyncTest("Bind an aggregation", function(){
 		createTreeBinding("/Employees", null, [], {

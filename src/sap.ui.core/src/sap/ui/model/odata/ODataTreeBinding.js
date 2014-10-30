@@ -190,14 +190,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @public
 	 */
 	ODataTreeBinding.prototype.hasChildren = function(oContext) {
+		if (!oContext) {
+			return false;
+		}
 		if (this.bHasTreeAnnotations) {
-			if (!oContext) {
-				return false;
-			}
 			var sDrilldownState = oContext.getProperty(this.oTreeProperties["hierarchy-drill-state-for"]);
 			return sDrilldownState === "expanded" || sDrilldownState === "collapsed";
-		} else {
-			return oContext && this.oLengths[oContext.getPath()] > 0;
+		} else {			
+			var sNavPath = this._getNavPath(oContext.getPath());
+			var sPathToChildren = oContext.getPath() + "/" + sNavPath;
+			return sNavPath && this.oLengths[sPathToChildren] > 0;
 		}
 	};
 	
