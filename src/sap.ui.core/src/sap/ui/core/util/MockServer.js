@@ -765,6 +765,8 @@ sap.ui
 								var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 								if (!aNavEntry || !!aNavEntry.__deferred) {
 									aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp));
+								} else if (!jQuery.isArray( aNavEntry )) {
+									aNavEntry = [aNavEntry];
 								}
 
 								if (!!aNavEntry && aNavProps.length > 1) {
