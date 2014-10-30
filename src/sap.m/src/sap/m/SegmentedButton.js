@@ -216,7 +216,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var bAllIcons = true;
 		var that = this;
 		for (var i = 0; i < aButtons.length; i++) {
-			if (aButtons[i].getIcon() == "") {
+			if (aButtons[i].getIcon() === "") {
 				bAllIcons = false;
 			}
 		}
@@ -369,10 +369,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		
 		if (sURI === null && sText !== null) {
 			oButton.setText(sText);
-		} else if (sURI !== null && sText === null) {
+		}
+		if (sURI !== null && sText === null) {
 			oButton.setIcon(sURI);
-		} else {
-			throw new Error("in control: " + this.toString() + ": method createButton() just accepts text or icon");
 		}
 		if (bEnabled || bEnabled === undefined) {
 			oButton.setEnabled(true);

@@ -6,87 +6,84 @@ sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
-
 	/**
 	 * @class Segmented renderer. 
 	 * @static
 	 */
 	var SegmentedButtonRenderer = {
 	};
-	
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	SegmentedButtonRenderer.render = function(rm, oControl){
+	SegmentedButtonRenderer.render = function(oRM, oControl){
 		var aButtons = oControl.getButtons(),
 			sSelectedButton = oControl.getSelectedButton(),
-			oItem,
+			oButton,
 			sTooltip,
 			sButtonWidth,
+			sTooltip,
 			i = 0;
-	
-		
+
 		// return immediately if control is invisible
 		if (!oControl.getVisible()) {
 			return;
 		}
-	
-	
+
 		// write the HTML into the render manager
-		rm.write("<ul");
-		rm.addClass("sapMSegB");
-		rm.addClass("sapMSegBHide");
-	
-		rm.writeClasses();
+		oRM.write("<ul");
+		oRM.addClass("sapMSegB");
+		oRM.addClass("sapMSegBHide");
+		oRM.writeClasses();
 		if (oControl.getWidth() && oControl.getWidth() !== '') {
-			rm.addStyle('width', oControl.getWidth());
+			oRM.addStyle('width', oControl.getWidth());
 		}
-		rm.writeStyles();
-		rm.writeControlData(oControl);
-		var sTooltip = oControl.getTooltip_AsString();
+		oRM.writeStyles();
+		oRM.writeControlData(oControl);
+		sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			oRM.writeAttributeEscaped("title", sTooltip);
 		}
-		rm.write(">");
-	
+		oRM.write(">");
+
 		for (; i < aButtons.length; i++) {
-			oItem = aButtons[i];
-	
+			oButton = aButtons[i];
+
 			// instead of the button API we render a li element but with the id of the button
-			rm.write("<li");
-			rm.writeControlData(oItem);
-			rm.addClass("sapMSegBBtn");
-			if (sSelectedButton === oItem.getId()) {
-				rm.addClass("sapMSegBBtnSel");
+			// only the button properties enabled, width, icon, text, and tooltip are evaluated here 
+			oRM.write("<li");
+			oRM.writeControlData(oButton);
+			oRM.addClass("sapMSegBBtn");
+			if (oButton.getEnabled()) {
+				oRM.addClass("sapMSegBBtnFocusable");
+			} else {
+				oRM.addClass("sapMSegBBtnDis");
 			}
-			if (!oItem.getEnabled()) {
-				rm.addClass("sapMSegBBtnDis");
+			if (sSelectedButton === oButton.getId()) {
+				oRM.addClass("sapMSegBBtnSel");
 			}
-			
-			if (oItem.getEnabled()) {
-				rm.addClass("sapMSegBBtnFocusable");
+			if (oButton.getIcon() && oButton.getText() !== '') {
+				oRM.addClass("sapMSegBBtnMixed");
 			}
-			
-			sTooltip = oItem.getTooltip_AsString();
-			if (sTooltip) {
-				rm.writeAttributeEscaped("title", sTooltip);
-			}
-			rm.writeAttribute("tabindex", oItem.getEnabled() ? "0" : "-1");
-			rm.writeClasses();
-			var sButtonWidth = oItem.getWidth();
+			oRM.writeClasses();
+			sButtonWidth = oButton.getWidth();
 			if (sButtonWidth) {
-				rm.addStyle('width', sButtonWidth);
-				rm.writeStyles();
+				oRM.addStyle('width', sButtonWidth);
+				oRM.writeStyles();
 			}
-			rm.write('>');
-			if (oItem.getIcon() === '' && oItem.getText() !== '') {
-				rm.writeEscaped(oItem.getText(), false);
-			} else if (oItem.getIcon() !== '' && oItem.getText() === '') {
-				var oImage = oItem._getImage((oItem.getId() + "-img"), oItem.getIcon());
+			sTooltip = oButton.getTooltip_AsString();
+			if (sTooltip) {
+				oRM.writeAttributeEscaped("title", sTooltip);
+			}
+			oRM.writeAttribute("tabindex", oButton.getEnabled() ? "0" : "-1");
+			oRM.write('>');
+
+			// render icon
+			if (oButton.getIcon()) {
+				var oImage = oButton._getImage((oButton.getId() + "-img"), oButton.getIcon());
 				if (oImage instanceof sap.m.Image) {
 					// image does not have an onload event but we need to recalculate the button sizes after the image is loaded
 					// we override the onload method once and call the calulation method after the original method is called
@@ -98,21 +95,21 @@ sap.ui.define(['jquery.sap.global'],
 							}
 							window.setTimeout(function() {
 								oControl._fCalcBtnWidth();
-							},20);
+							}, 20);
 						};
 						/*eslint-enable no-loop-func*/
 					}
 				}
-				rm.renderControl(oImage);
-	
-			} else if (oItem.getIcon() !== '' && oItem.getText() !== '' ) {
-				jQuery.sap.log.error("SEGMENTED: " + oItem.getId() + ": Icon and Label is not allowed");
+				oRM.renderControl(oImage);
 			}
-			rm.write("</li>");
+			// render text
+			if (oButton.getText() !== '') {
+				oRM.writeEscaped(oButton.getText(), false);
+			}
+			oRM.write("</li>");
 		}
-		rm.write("</ul>");
+		oRM.write("</ul>");
 	};
-	
 
 	return SegmentedButtonRenderer;
 
