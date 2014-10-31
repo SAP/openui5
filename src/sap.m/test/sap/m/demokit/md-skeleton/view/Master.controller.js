@@ -16,7 +16,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 			return;
 		}
 
-		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
+		this.getRouter().getRoute("main").attachPatternMatched(this.onRouteMatched, this);
 
 		var oEventBus = this.getEventBus();
 		oEventBus.subscribe("Detail", "Changed", this.onDetailChanged, this);
@@ -24,12 +24,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Maste
 	},
 
 	onRouteMatched : function(oEvent) {
-		var sName = oEvent.getParameter("name");
-
-		if (sName !== "main") {
-			return;
-		}
-
 		//Load the detail view in desktop
 		this.getRouter().myNavToWithoutHash({ 
 			currentView : this.getView(),

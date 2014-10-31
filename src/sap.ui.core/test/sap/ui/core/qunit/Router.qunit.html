@@ -295,6 +295,26 @@
 			router.destroy();
 		});
 
+		test("Should attach to a route using getRoute", function() {
+			//Arrange
+			var spy = this.spy(),
+			//System under Test
+					oRouter = new sap.ui.core.routing.Router([ {
+						name : "name",
+						pattern : ""
+					} ]);
+
+			//Act
+			oRouter.getRoute("name").attachMatched(spy);
+			oRouter.initialize();
+
+			//Assert
+			strictEqual(spy.callCount, 1, "Did call the callback function once");
+
+			//Cleanup
+			oRouter.destroy();
+		});
+
 		test("Should go to a route", function() {
 			//Arrange
 			var callCount = 0,

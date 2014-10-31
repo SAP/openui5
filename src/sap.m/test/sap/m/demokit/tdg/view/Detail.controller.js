@@ -15,7 +15,7 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Detail", {
 			this.getEventBus().subscribe("Master", "FirstItemSelected", this.onFirstItemSelected, this);
 		}
 
-		this.getRouter().attachRouteMatched(this.onRouteMatched, this);
+		this.getRouter().getRoute("product").attachMatched(this.onRouteMatched, this);
 
 	},
 
@@ -37,11 +37,6 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Detail", {
 
 		jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 			var oView = this.getView();
-
-			// when detail navigation occurs, update the binding context
-			if (oParameters.name !== "product") { 
-				return;
-			}
 
 			this._sProductId = oParameters.arguments.productId;
 			var sProductPath = "/Products(" + this._sProductId + ")";

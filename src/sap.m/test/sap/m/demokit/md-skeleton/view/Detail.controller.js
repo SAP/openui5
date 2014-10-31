@@ -13,7 +13,7 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 			this.getEventBus().subscribe("Master", "InitialLoadFinished", this.onMasterLoaded, this);
 		}
 
-		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
+		this.getRouter().getRoute("product").attachPatternMatched(this.onRouteMatched, this);
 
 	},
 
@@ -28,10 +28,6 @@ sap.ui.demo.mdskeleton.util.Controller.extend("sap.ui.demo.mdskeleton.view.Detai
 
 		jQuery.when(this.oInitialLoadFinishedDeferred).then(jQuery.proxy(function () {
 			// when detail navigation occurs, update the binding context
-			if (oParameters.name !== "product") { 
-				return;
-			}
-
 			var sProductPath = "/" + oParameters.arguments.product;
 			this.bindView(sProductPath);
 		}, this));

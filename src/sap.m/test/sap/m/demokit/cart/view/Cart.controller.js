@@ -5,7 +5,7 @@ sap.ui.controller("view.Cart", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);
-		this._router.attachRoutePatternMatched(this._routePatternMatched, this);
+		this._router.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
 
 		// set initial ui configuration model
 		oCfgModel = new sap.ui.model.json.JSONModel({});
@@ -23,11 +23,9 @@ sap.ui.controller("view.Cart", {
 	},
 	
 	_routePatternMatched : function(oEvent) {
-		if (oEvent.getParameter("name") === "cart") {
-			//set selection of list back
-			var oEntryList = this.getView().byId("entryList");
-			oEntryList.removeSelections();
-		}
+		//set selection of list back
+		var oEntryList = this.getView().byId("entryList");
+		oEntryList.removeSelections();
 	},
 
 	handleEditOrDoneButtonPress : function (oEvent) {

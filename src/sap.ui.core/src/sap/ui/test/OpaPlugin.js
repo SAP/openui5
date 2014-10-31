@@ -6,6 +6,7 @@
 
 //wrapper for loading signals and hasher if module is defined
 (function (global) {
+	"use strict";
 	var original;
 	if (global.module) {
 
@@ -49,7 +50,7 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Gets all the controls of a certain type that are currently instantiated.
 			 * 
-			 * @param fnConstructorType the control type, e.g: sap.m.CheckBox
+			 * @param {Function} fnConstructorType the control type, e.g: sap.m.CheckBox
 			 * @returns {Array} an array of the found controls (can be empty)
 			 * @protected
 			 */
@@ -84,7 +85,7 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Returns the view with a specific name
 			 * 
-			 * @param sViewName
+			 * @param {string} sViewName - the name of the view
 			 * @returns {sap.ui.core.mvc.View} or undefined
 			 * @protected
 			 */
