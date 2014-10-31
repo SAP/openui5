@@ -8,9 +8,27 @@
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript" 
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.core"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
+
+        <style>
+            #vboxStates {
+                padding: 2rem;
+            }
+
+            #vboxStates .sapMVBox {
+                padding-right: 2rem;
+            }
+            
+            #hBoxStatesSecondLine {
+                padding-top: 2rem;
+            }
+            
+            #flexbox2 {
+                padding: 0 2rem;
+            }
+        </style>
 
 		<script type="text/javascript">
 			jQuery.sap.initMobile();
@@ -80,6 +98,94 @@
 				]
 			});
 			oFBox2.setDirection('Column');
+
+            // States
+            var hBoxStatesFirstLine = new sap.m.HBox({
+                items:[
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Regular'}),
+                            new sap.m.RadioButton({groupName:'v01', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v02', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'For Hover'}),
+                            new sap.m.RadioButton({groupName:'v03', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v04', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Read Only'}),
+                            new sap.m.RadioButton({groupName:'v05', selected: true, editable: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v06', selected: false, editable: false, text: 'Not Selected'})
+                        ]
+                    }),
+
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Invalid/Error'}),
+                            new sap.m.RadioButton({groupName:'v07', selected: true, valueState: sap.ui.core.ValueState.Error, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v08', selected: false, valueState: sap.ui.core.ValueState.Error, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Warning'}),
+                            new sap.m.RadioButton({groupName:'v09', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v10', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected'})
+                        ]
+                    })
+                ]
+            });
+
+            var hBoxStatesSecondLine = new sap.m.HBox('hBoxStatesSecondLine', {
+                items: [
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Disabled'}),
+                            new sap.m.RadioButton({groupName:'v11', selected: true, enabled: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v12', selected: false, enabled: false, text: 'Not Selected'}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'For Focus'}),
+                            new sap.m.RadioButton({groupName:'v13', selected: true, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v14', selected: false, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Display-Mode?'}),
+                            new sap.m.RadioButton({groupName:'v15', selected: true, enabled: false, editable: false, text: 'Selected'}),
+                            new sap.m.RadioButton({groupName:'v16', selected: false, enabled: false, editable: false, text: 'Not Selected'})
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Invalid Read Only'}),
+                            new sap.m.RadioButton({groupName:'v17', selected: true, valueState: sap.ui.core.ValueState.Error, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName:'v18', selected: false, valueState: sap.ui.core.ValueState.Error, text: 'Not Selected', editable: false}),
+                        ]
+                    }),
+                    new sap.m.VBox({
+                        items: [
+                            new sap.m.Label({text: 'Warning Read Only'}),
+                            new sap.m.RadioButton({groupName:'v19', selected: true, valueState: sap.ui.core.ValueState.Warning, text: 'Selected', editable: false}),
+                            new sap.m.RadioButton({groupName:'v20', selected: false, valueState: sap.ui.core.ValueState.Warning, text: 'Not Selected', editable: false}),
+                        ]
+                    })
+                ]
+            });
+
+            var vboxStates = new sap.m.VBox("vboxStates", {
+                items: [hBoxStatesFirstLine, hBoxStatesSecondLine]
+            });
 
 			jQuery.sap.require("sap.ui.model.json.JSONModel");
 			// JSON sample data
@@ -160,6 +266,7 @@
 			});
 
 			bindListData(data, oItemTemplate, oList2);
+            radioBtnPage.addContent(vboxStates);
 			radioBtnPage.addContent(oFBox2);
 			radioBtnPage.addContent(oList2);
 			radioBtnPage.addContent(toolbar);
@@ -170,6 +277,7 @@
 					toolbar.setEnabled(bToolbarAEnabled);
 				}
 			}));
+
 			radioBtnPage.placeAt('body');
 		</script>
 
