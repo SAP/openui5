@@ -17,8 +17,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 *          [mSettings] initial settings for the new control
 	 * 
 	 * @class The P13nDialog provides you a dialog that contains one or more panels. On each of the panels some changes in
-	 *        regards to a table can be proceed. E.g. a panel to set a column as invisible, change the order of it or
-	 *        maybe a panel to get table sorted or filtered.
+	 *        regards to a table can be proceed. E.g. a panel to set a column as invisible, change the order of it or maybe a
+	 *        panel to get table sorted or filtered.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
 	 * @version ${version}
@@ -59,6 +59,21 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				}
 			},
 			events : {
+
+				/**
+				 * Event is fired when the P13nDialog is closed by 'Ok' or 'Cancel' button.
+				 */
+				close : {
+					parameters : {
+
+						/**
+						 * Describes how the dialog was closed. It can be closed via clicking on 'Ok' or 'Cancel' button.
+						 */
+						type : {
+							type : "string"
+						}
+					}
+				},
 				/**
 				 * Event is fired when button 'reset' on P13nDialog is clicked.
 				 */
@@ -69,10 +84,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 
 	EnabledPropagator.apply(P13nDialog.prototype, [true]);
 
-	// P13nDialog.ButtonType = {
-	// Ok : "ok",
-	// Cancel : "cancel"
-	// };
+	P13nDialog.ButtonType = {
+		Ok : "ok",
+		Cancel : "cancel"
+	};
 
 	P13nDialog.prototype.init = function(oEvent) {
 		this.addStyleClass("sapMP13nDialog");
@@ -95,23 +110,24 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			})]
 		}));
 		this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
-
-		this._oOKButton = new sap.m.Button({
+		this.addButton(new sap.m.Button({
 			text : this._oResourceBundle.getText("P13NDIALOG_OK"),
 			press : function() {
+				that.fireClose({
+					type : P13nDialog.ButtonType.Ok
+				});
 				that.close();
 			}
-		});
-		this.addButton(this._oOKButton);
-
-		this._oCancelButton = new sap.m.Button({
+		}));
+		this.addButton(new sap.m.Button({
 			text : this._oResourceBundle.getText("P13NDIALOG_CANCEL"),
 			press : function() {
+				that.fireClose({
+					type : P13nDialog.ButtonType.Cancel
+				});
 				that.close();
 			}
-		});
-		this.addButton(this._oCancelButton);
-
+		}));
 		this._oResetButton = new sap.m.Button({
 			text : this._oResourceBundle.getText("P13NDIALOG_RESET"),
 			visible : this.getShowReset(),
@@ -124,13 +140,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 
 	P13nDialog.prototype.setShowReset = function(bShow) {
 		this._oResetButton.setVisible(bShow);
-	};
-
-	P13nDialog.prototype.getOKButton = function() {
-		return this._oOKButton;
-	};
-	P13nDialog.prototype.getCancelButton = function() {
-		return this._oCancelButton;
 	};
 
 	/*
