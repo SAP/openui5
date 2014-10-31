@@ -112,16 +112,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._isMie = true;
 		}
 		this._aButtonWidth = [];
-		this._oGhostButton;
-		
+		this._oGhostButton = null;
+
 		//create the ghost button which is used to get the actual width of each button
 		this._createGhostButton();
-		
+
 		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
 		this._oItemNavigation = new ItemNavigation();
 		this._oItemNavigation.setCycling(false);
 		this.addDelegate(this._oItemNavigation);
-		
+
 		//Make sure when a button gets removed to reset the selected button
 		this.removeButton = function (sButton) {
 			SegmentedButton.prototype.removeButton.call(this, sButton);
@@ -142,14 +142,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._oGhostButton = jQuery("#segMtBtn_calc");
 		}
 	};
-	
+
 	SegmentedButton.prototype._setGhostButtonText = function (oButton) {
 		var sText = oButton.getText(),
+			iGhostButtonWidth = 0,
 			ghostButton = jQuery("#segMtBtn_calc"); //refresh the dom pointer
 	
-		if (oButton.getIcon().length == 0 && oButton.getWidth().length == 0) {
+		if (oButton.getIcon().length === 0 && oButton.getWidth().length === 0) {
 			ghostButton.find("span").text(sText);
-			this._aButtonWidth.push(ghostButton.width());
+			// CSN# 772017/2014: in arrabian languages the jQuery size calculation is wrong (sub-pixel rounding issue)
+			if (sap.ui.getCore().getConfiguration().getLanguage() === "ar") {
+				// we manually add 1px as a workaround to not run into text truncation
+				iGhostButtonWidth = 1;
+			}
+			iGhostButtonWidth += ghostButton.width();
+			this._aButtonWidth.push(iGhostButtonWidth);
 		} else {
 			this._aButtonWidth.push(0);
 		}
