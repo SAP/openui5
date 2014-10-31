@@ -1,9 +1,9 @@
 /* =============================================== */
 /* CSS for control sap.m/BusyIndicator.control     */
-/* BlueCrystal theme                               */
+/* HCB theme                               */
 /* =============================================== */
 
-.sapMIBar-CTX >div > .BusyBar{
+.sapMIBar-CTX > div > .BusyBar {
 	margin: 0;
 	vertical-align: top;
 	min-width: 3rem;
@@ -11,25 +11,20 @@
 }
 
 svg.sapMBusySvg,
-canvas.sapMSpinCanvas{
+canvas.sapMSpinCanvas {
 	width: 2rem;
 	height: 2rem;
 	vertical-align: middle;
 }
 
-.sapMBusyIndicator[style^="visibility: hidden"] > .sapMBusySvg{
+.sapMBusyIndicator[style^="visibility: hidden"] > .sapMBusySvg {
 	display: none;
 }
 
-canvas.sapMSpinCanvas{
+canvas.sapMSpinCanvas {
 	color: @sapHCStandardFG;
 }
-svg.sapMBusySvg{
-	stroke: @sapHCStandardFG;
-}
-.sapMBusyIndicatorLight>canvas.sapMSpinCanvas{
-	color: @sapHCStandardFG;
-}
-.sapMBusyIndicatorLight>svg.sapMBusySvg{
+
+svg.sapMBusySvg {
 	stroke: @sapHCStandardFG;
 }
