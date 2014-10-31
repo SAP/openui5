@@ -658,7 +658,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
-		oEvent.setMarked();		
 
 		if (oEvent.target.id.lastIndexOf("editButton") > 0) {
 			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId);
@@ -748,7 +747,29 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* Handle FileUploader events                                  */
 	/* =========================================================== */
 	UploadCollection.prototype._onUploadChange = function(oEvent) {
+		var that = this;
+		this._oFileUploader.removeAllHeaderParameters();
+		this._oFileUploader.removeParameters();
+		
 		this.fireChange(oEvent);
+//headerParameters
+		var aHeaderParametersAfter = this.getAggregation("headerParameters");		
+		jQuery.each(aHeaderParametersAfter, function (iIndex, headerParameter) {
+			var oHeaderParameter = new sap.ui.unified.FileUploaderParameter({
+				name : headerParameter.getProperty("name"),
+				value: headerParameter.getProperty("value")
+			});
+			that._oFileUploader.addHeaderParameter(oHeaderParameter);
+		});
+//parameters
+		var aParametersAfter = this.getAggregation("parameters");		
+		jQuery.each(aParametersAfter, function (iIndex, parameter) {
+			var oParameter = new sap.ui.unified.FileUploaderParameter({
+				name : parameter.getProperty("name"),
+				value: parameter.getProperty("value")
+			});
+			that._oFileUploader.addParameter(oParameter);
+		});
 	};
 	UploadCollection.prototype._onUploadFileAllowed = function(oEvent) {
 		// TODO not implemented
@@ -799,6 +820,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				uploadOnChange : true,
 				uploadUrl : this.getUploadUrl(),
 				sendXHR : true, // TODO check browser version (set true for all browser except IE8, IE9)
+				useMultipart : false,
 				change : function(oEvent) {
 					UploadCollection.prototype._onUploadChange.apply(that, [oEvent]);
 				},
