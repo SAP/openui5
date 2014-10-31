@@ -401,6 +401,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	SearchField.prototype.setValue = function(value){
+		value = value || "";
 		if (this._inputElement) {
 	
 			if (this._inputElement.value !== value) {
