@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta charset="UTF-8" />
-<title>ObjectNumber - sap.m</title>
+<title>ObjectIdentifier - sap.m</title>
 
 <link rel="stylesheet"
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -505,6 +505,135 @@
 
 		//Cleanup
 		oObjectIdentifier.destroy();
+	});
+	
+	module("Databinding");
+	
+	test("Model sets titleActive = true", function() {
+		
+		//Arrange
+		var oModel = new sap.ui.model.json.JSONModel({
+ 			"text": "Title Active",
+			"titleActive" : true
+		});
+		
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "{/text}",
+			text : "Model sets true",
+			titleActive : "{/titleActive}"
+		});
+		
+		//System under test
+		oObjectIdentifier.setModel(oModel);
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+		oModel.destroy()
+		
+	});
+	
+	test("Model sets titleActive = false", function() {
+		
+		//Arrange
+		var oModel = new sap.ui.model.json.JSONModel({
+ 			"text": "Title Not Active",
+			"titleActive" : false
+		});
+		
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "{/text}",
+			text : "Model sets false",
+			titleActive : "{/titleActive}"
+		});
+		
+		//System under test
+		oObjectIdentifier.setModel(oModel);
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+		oModel.destroy()
+	});
+	
+	test("Formatter sets titleActive = true", function() {
+		
+		//Arrange
+		var oModel = new sap.ui.model.json.JSONModel({
+ 			"text": "Title Active",
+			"formatterString" : "active"
+		});
+		
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "{/text}",
+			text : "Model sets true",
+			titleActive : {
+				path: "/formatterString",
+				formatter: function(e) {
+					return (e == "active") ? true : false;
+				}
+			}
+		});
+		
+		//System under test
+		oObjectIdentifier.setModel(oModel);
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
+		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
+		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+		oModel.destroy()
+	});
+	
+	test("Formatter sets titleActive = false", function() {
+		
+		//Arrange
+		var oModel = new sap.ui.model.json.JSONModel({
+ 			"text": "Title Active",
+			"formatterString" : "notActive"
+		});
+		
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "{/text}",
+			text : "Model sets true",
+			titleActive : {
+				path: "/formatterString",
+				formatter: function(e) {
+					return (e == "active") ? true : false;
+				}
+			}
+		});
+		
+		//System under test
+		oObjectIdentifier.setModel(oModel);
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		//Assert
+		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
+		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
+		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
+		
+		//Cleanup
+		oObjectIdentifier.destroy();
+		oModel.destroy()
 	});
 
 </script>

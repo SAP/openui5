@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.renderControl(oOI.getAggregation("_textControl"));
+		oRm.renderControl(oOI._getTextControl());
 		oRm.write("</div>"); // Text ends
 	
 		oRm.write("</div>"); // Identifier ends
