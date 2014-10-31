@@ -6,8 +6,6 @@
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
 	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
 	"use strict";
-
-
 	
 	/**
 	 * Constructor for a new Button.
@@ -79,6 +77,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			iconDensityAware : {type : "boolean", group : "Misc", defaultValue : true}
 		},
+		associations : {
+	
+			/**
+			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
+	
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 	
 			/**
@@ -103,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	Button.prototype.exit = function(oEvent) {
+	Button.prototype.exit = function() {
 	
 		// destroy image controls if initialized
 		if (this._image) {
@@ -118,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function is called when touchstart occurs on button .
-	 *
+	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontouchstart = function(oEvent) {
@@ -141,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function is called when touchend occurs on button .
-	 *
+	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
@@ -153,7 +163,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function is called when touchcancel occurs .
-	 *
+	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontouchcancel = function(oEvent) {
@@ -165,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function is called when tap occurs on button.
-	 *
+	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontap = function(oEvent) {
@@ -246,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Ensure that the active button state is removed by focus loss.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent - the focus event
 	 * @private
 	 */
 	Button.prototype.onfocusout = function(oEvent) {
@@ -296,7 +306,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function to determine if the button is hoverable
-	 *
+     *
+	 * @return {sap.m.Button} this to allow method chaining
 	 * @private
 	 */
 	Button.prototype._isHoverable = function() {
@@ -306,7 +317,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/**
 	 * Function is called when image control needs to be loaded.
-	 *
+	 * 
+	 * @param {string} sImgId - id to be used for the image
+     * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
+     * @param {sap.ui.core.URI} sActiveSrc - URI indicating the image to use as active image source
+     * @param {boolean} bIconDensityAware - value for DensityAware attribute of images
+	 * @return {sap.m.Button} this to allow method chaining
 	 * @private
 	 */
 	Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc, bIconDensityAware) {
@@ -369,6 +385,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Function is called when internal image control needs to be loaded.
 	 *
+	 * @param {string} sImgId - id to be used for the image
+     * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
+	 * @return {sap.m.Button} this to allow method chaining
 	 * @private
 	 */
 	Button.prototype._getInternalIconBtn = function(sImgId, sSrc) {
@@ -395,6 +414,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Function is called to determine if the button is.unstyled
 	 *
+	 * @returns {sap.m.Button} this to allow method chaining
 	 * @private
 	 */
 	Button.prototype._isUnstyled = function() {
@@ -409,10 +429,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	// Overwrite of generated function
-	/** Property setter for the text
+	/** 
+     * Property setter for the text
 	 *
-	 * @param {string} sText
-	 * @return {sap.m.Button}
+	 * @param {string} sText - new value of the Text attribute
+	 * @return {sap.m.Button} this to allow method chaining
 	 * @public
 	 */
 	Button.prototype.setText = function(sText) {
@@ -462,10 +483,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	// Overwrite of generated function
-	/** Property setter for the icon
+	/** 
+     * Property setter for the icon
 	 *
-	 * @param {sap.ui.core.URI} sIcon
-	 * @return {sap.m.Button}
+	 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
+	 * @return {sap.m.Button} this to allow method chaining
 	 * @public
 	 */
 	Button.prototype.setIcon = function(sIcon) {
@@ -504,10 +526,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	// Overwrite of generated function
-	/** Property setter for the icon first
+	/** 
+     * Property setter for the icon first
 	 *
-	 * @param {boolean} bIconFirst
-	 * @return {sap.m.Button}
+	 * @param {boolean} bIconFirst - true IFF the icon goes before the text
+	 * @returns {sap.m.Button} this to allow method chaining
 	 * @public
 	 */
 	Button.prototype.setIconFirst = function(bIconFirst) {
@@ -609,6 +632,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Function is called to add the padding classes for the text
 	 *
+     * @param {boolean} bIconFirst - true IFF the icon goes before the text
 	 * @private
 	 */
 	Button.prototype._addTextPadding = function( bIconFirst) {
@@ -617,10 +641,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Add text padding classes
 		if (bIconFirst) {
 			this.$("inner").addClass("sapMBtnPaddingRight");
-		} else {
-			if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
-				this.$("inner").addClass("sapMBtnPaddingLeft");
-			}
+		} else if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
+			this.$("inner").addClass("sapMBtnPaddingLeft");
 		}
 	
 		// Add text padding classes between icon and text
@@ -638,10 +660,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 					this.$("content").addClass("sapMBtnContentLeft");
 				}
-			} else {
-				if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-					this.$("content").addClass("sapMBtnContentRight");
-				}
+			} else if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
+				this.$("content").addClass("sapMBtnContentRight");
 			}
 		}
 	};
