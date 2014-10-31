@@ -78,7 +78,10 @@
 		<buildtime>${maven.build.timestamp}</buildtime>
 		<lastchange></lastchange><!-- TODO: fill via build parameter -->
 
-	</properties>
+		<!-- JSLint/ESLint report path -->
+		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
+
+ 	</properties>
 
 
 	<!--**************************************************************************
