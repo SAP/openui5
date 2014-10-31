@@ -472,9 +472,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	
 		if (iMaxHeight > 0) {
 			$This.css("max-height", iMaxHeight + "px");
-		}
-		if ((iMaxHeight > 0) || bTooHigh) {
-			$This.css("max-height", iMaxHeight + "px");
 	
 			var $Title = this.$("title");
 			var $TitleSep = this.$("title-separator");
