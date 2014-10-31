@@ -117,27 +117,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		}
 
 		/**
-		 * Visit the given DOM attribute which represents any attribute of any control (other than
-		 * template instructions). If the attribute value represents a binding expression, we try
-		 * to resolve it using the "with" control instance.
-		 *
-		 * @param {Attribute} oAttribute
-		 *   any attribute of any control (a DOM Attribute)
-		 * @param {sap.ui.core.util._with} oWithControl the "with" control
-		 */
-		function resolveAttributeBinding(oAttribute, oWithControl) {
-			var oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
-
-			if (oBindingInfo) {
-				try {
-					oAttribute.value = getAny(oWithControl, oBindingInfo);
-				} catch (ex) {
-					// just don't replace XML attribute value
-				}
-			}
-		}
-
-		/**
 		 * Serializes the element with its attributes.
 		 * <p>
 		 * BEWARE: makes no attempt at encoding, DO NOT use in a security critical manner!
@@ -236,6 +215,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				}
 
 				/**
+				 * Visit the given DOM attribute which represents any attribute of any control
+				 * (other than template instructions). If the attribute value represents a binding
+				 * expression, we try to resolve it using the "with" control instance.
+				 *
+				 * @param {Element} oElement
+				 *   the owning element
+				 * @param {Attribute} oAttribute
+				 *   any attribute of any control (a DOM Attribute)
+				 * @param {sap.ui.core.util._with} oWithControl the "with" control
+				 */
+				function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
+					var oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
+
+					if (oBindingInfo) {
+						try {
+							oAttribute.value = getAny(oWithControl, oBindingInfo);
+						} catch (ex) {
+							// just don't replace XML attribute value
+							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
+								jQuery.sap.log.debug(
+									'Error in formatter of ' + serializeSingleElement(oElement)
+										+ ' in view ' + mSettings.viewName,
+									ex, "sap.ui.core.util.XMLPreprocessor");
+							}
+						}
+					}
+				}
+
+				/**
 				 * Processes a <template:if> instruction.
 				 *
 				 * @param {Element} oElement
@@ -251,10 +259,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						try {
 							vTest = getAny(oWithControl, oBindingInfo);
 						} catch (ex) {
-							jQuery.sap.log.warning(
-								'Error in formatter of ' + serializeSingleElement(oElement)
-									+ ' in view ' + mSettings.viewName,
-								ex, "sap.ui.core.mvc.XMLView");
+							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+								jQuery.sap.log.warning(
+									'Error in formatter of ' + serializeSingleElement(oElement)
+										+ ' in view ' + mSettings.viewName,
+									ex, "sap.ui.core.util.XMLPreprocessor");
+							}
 							vTest = false;
 						}
 					}
@@ -392,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 					if (oNode.attributes) {
 						for (i = 0; i < oNode.attributes.length; i += 1) {
-							resolveAttributeBinding(oNode.attributes.item(i), oWithControl);
+							resolveAttributeBinding(oNode, oNode.attributes.item(i), oWithControl);
 						}
 					}
 				}
