@@ -65,7 +65,7 @@
 					<content>
 						<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 							<t:toolbar>
-								<Toolbar design="Transparent" height="3rem">
+								<Toolbar design="Transparent">
 									<var:VariantManagement>
 									  <var:items>
 										<c:Item text="My Better Variant" key="MBV"/>
