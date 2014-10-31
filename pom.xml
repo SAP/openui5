@@ -23,8 +23,8 @@
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>${project.artifactId}</name>
-	<description>OpenUI5 Reactor</description>
+	<name>OpenUI5</name>
+	<description>OpenUI5 - Reactor POM</description>
 
 
 	<!--**************************************************************************
@@ -231,6 +231,11 @@
 							<plugins>
 								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
 							</plugins>
+							<formatters>
+								<formatter implementation="com.sap.eslint.java.formatters.JSLintFormatter">
+									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
+								</formatter>
+							</formatters>
 						</configuration>
 					</plugin>
 				</plugins>
