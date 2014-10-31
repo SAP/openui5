@@ -607,8 +607,8 @@
 			var filesizeType = new sap.ui.model.type.FileSize();
 			
 			equal(filesizeType.formatValue(null, "string"), null, "format test: null-string");
-			equal(filesizeType.formatValue(1000, "string"), "1 kB", "format test: 1000-string");
-			equal(filesizeType.formatValue(1000.5, "string"), "1.0005 kB", "format test: 1000.5-string");
+			equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string");
+			equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string");
 			raises(function(){filesizeType.formatValue("Hello", "string")}, sap.ui.model.FormatException, "format test: Hello-string");
 			raises(function(){filesizeType.formatValue("1 kB", "string")}, sap.ui.model.FormatException, "format test: 1 kB-string");
 			
@@ -633,10 +633,10 @@
 			filesizeType.setFormatOptions({source: {}});
 			
 			equal(filesizeType.formatValue(null, "string"), null, "format test: null-string-inputformat");
-			equal(filesizeType.formatValue(1000, "string"), "1 kB", "format test: 1000-string-inputformat");
-			equal(filesizeType.formatValue(1000.5, "string"), "1.0005 kB", "format test: 1000.5-string-inputformat");
+			equal(filesizeType.formatValue(1000, "string").toUpperCase(), "1 KB", "format test: 1000-string-inputformat");
+			equal(filesizeType.formatValue(1000.5, "string").toUpperCase(), "1.0005 KB", "format test: 1000.5-string-inputformat");
 			raises(function(){filesizeType.formatValue("Hello", "string")}, sap.ui.model.FormatException, "format test: Hello-string-inputformat");
-			equal(filesizeType.formatValue("1 kB", "string"), "1 kB", "format test: 1kB-string-inputformat");
+			equal(filesizeType.formatValue("1 kB", "string").toUpperCase(), "1 KB", "format test: 1kB-string-inputformat");
 			
 			equal(filesizeType.formatValue(null, "int"), null, "format test: null-int-inputformat");
 			equal(filesizeType.formatValue(1000, "int"), 1000, "format test: 1000-int-inputformat");
@@ -684,16 +684,16 @@
 			
 			equal(filesizeType.parseValue(null, "string"), null, "parse test: null-string-inputformat");
 			raises(function(){filesizeType.parseValue("Hello", "string")}, sap.ui.model.ParseException, "parse test: Hello-string-inputformat");
-			equal(filesizeType.parseValue("1 kB", "string"), "1 kB", "parse test: 1 kB-string-inputformat");
-			equal(filesizeType.parseValue("1.0005 kB", "string"), "1.0005 kB", "parse test: 1.0005 kB-string-inputformat");
+			equal(filesizeType.parseValue("1 kB", "string").toUpperCase(), "1 KB", "parse test: 1 kB-string-inputformat");
+			equal(filesizeType.parseValue("1.0005 kB", "string").toUpperCase(), "1.0005 KB", "parse test: 1.0005 kB-string-inputformat");
 			
 			equal(filesizeType.parseValue(null, "int"), null, "parse test: null-int-inputformat");
-			equal(filesizeType.parseValue(1000, "int"), "1 kB", "parse test: 1000-int-inputformat");
-			equal(filesizeType.parseValue(1000.5, "int"), "1.0005 kB", "parse test: 1000.5 kB-int-inputformat");
+			equal(filesizeType.parseValue(1000, "int").toUpperCase(), "1 KB", "parse test: 1000-int-inputformat");
+			equal(filesizeType.parseValue(1000.5, "int").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-int-inputformat");
 			
 			equal(filesizeType.parseValue(null, "float"), null, "parse test: null-float-inputformat");
-			equal(filesizeType.parseValue(1000, "float"), "1 kB", "parse test: 1000-float-inputformat");
-			equal(filesizeType.parseValue(1000.5, "float"), "1.0005 kB", "parse test: 1000.5 kB-float-inputformat");
+			equal(filesizeType.parseValue(1000, "float").toUpperCase(), "1 KB", "parse test: 1000-float-inputformat");
+			equal(filesizeType.parseValue(1000.5, "float").toUpperCase(), "1.0005 KB", "parse test: 1000.5 kB-float-inputformat");
 			
 			equal(filesizeType.parseValue(null, "untype"), null, "parse test: null-untype");
 			raises(function(){filesizeType.parseValue("Hello", "untype")}, sap.ui.model.ParseException, "parse test: Hello-untype-inputformat");
