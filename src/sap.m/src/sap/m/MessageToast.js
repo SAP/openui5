@@ -384,8 +384,8 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			if (!this._bBoundedEvents) {
 
 				// bind to the resize event to handle orientation change and resize events
-				jQuery(window).on("resize." + MessageToast._CSSCLASS, jQuery.proxy(this._handleResizeEvent, this));
-				jQuery(document).on("mousedown." + MessageToast._CSSCLASS, jQuery.proxy(this._handleMouseDownEvent, this));
+				jQuery(window).on("resize." + MessageToast._CSSCLASS, this._handleResizeEvent.bind(this));
+				jQuery(document).on("mousedown." + MessageToast._CSSCLASS, this._handleMouseDownEvent.bind(this));
 
 				this._bBoundedEvents = true;
 			}
