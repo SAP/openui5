@@ -1068,14 +1068,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				that._selectedFacetItem.invalidate();
 				//keyboard acc - focus on the original 1st page item	
 				oToPage.invalidate();
-/*				if (this.getPages().length >= 1) {
-					var focusIndex = this.getPages()[0].getContent()[0].aDelegates[0].oDelegate.getFocusedIndex();
-					if (focusIndex >= 0) {
-						jQuery.sap.delayedCall(100, this, function() {
-							jQuery.sap.focus(this.getPages()[0].getContent()[0].getItems()[focusIndex]);
-						});					
-					}	
-				}	*/		
+				jQuery.sap.focus(that._selectedFacetItem);
 				that._selectedFacetItem = null;
 			}
 		});
