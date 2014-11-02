@@ -32,12 +32,6 @@ sap.ui.define(['jquery.sap.global', './PositionContainer', 'sap/ui/commons/libra
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
 			/**
 			 * The overall width of the control. When not set, 100% is automatically set.
 			 */
