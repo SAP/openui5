@@ -44,11 +44,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 	
 			/**
-			 * Invisible images are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * When the empty value is kept, the original size is not changed. It is also possible to make settings for width or height only, the overall size is maintained then, considering the aspect ratio.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
