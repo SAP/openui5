@@ -24,12 +24,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.commons.CheckBox} oCheckBox The CheckBox control that should be rendered.
 	 */
 	CheckBoxRenderer.render = function(rm, oCheckBox) {
-	
-		// Return immediately if control is invisible
-		if (!oCheckBox.getVisible()) {
-			return;
-		}
-	
 		rm.addClass("sapUiCb");
 	
 		// Open the containing <span> tag
