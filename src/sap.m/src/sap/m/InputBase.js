@@ -49,11 +49,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Determines whether the input is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
