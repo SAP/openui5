@@ -29,12 +29,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible dividers are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Defines the width of the divider.
 			 */

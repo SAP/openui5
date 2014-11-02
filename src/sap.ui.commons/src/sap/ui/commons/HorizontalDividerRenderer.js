@@ -24,12 +24,6 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	HorizontalDividerRenderer.render = function(oRenderManager, oControl){
 		var rm = oRenderManager;
-	
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		rm.write("<hr");
 		rm.writeControlData(oControl);
 		rm.writeAttribute("role", "separator"); //ARIA
