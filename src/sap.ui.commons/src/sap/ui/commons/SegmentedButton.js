@@ -37,12 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * enabled
 			 */
-			enabled : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
-			 * hide/show all Buttons: An invisible SegmentedButton is not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			enabled : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		aggregations : {
 	
