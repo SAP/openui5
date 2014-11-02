@@ -33,12 +33,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		],
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * If true the FacetFilter will not be displayed.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * If true and the FacetFilter type is Simple, then the add facet icon will be displayed and each facet button will also have a facet remove icon displayed beside it allowing the user to deactivate the facet.
 			 */
