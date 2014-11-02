@@ -22,10 +22,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *            oControl an object representation of the control that should be rendered
 	 */
 	P13nColumnsPanelRenderer.render = function(oRm, oControl) {
-		// write the HTML into the render manager
-		if (!oControl.getVisible()) {
-			return;
-		}
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMP13nColumnsPanel");
