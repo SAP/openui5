@@ -59,11 +59,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * Depending on theme the TextField is shown as required.
 			 */
 			required : {type : "boolean", group : "Appearance", defaultValue : false},
