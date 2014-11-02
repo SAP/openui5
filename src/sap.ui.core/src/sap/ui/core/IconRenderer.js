@@ -21,12 +21,6 @@ sap.ui.define(["jquery.sap.global"],
 	 * @function
 	 */
 	IconRenderer.render = function(oRm, oControl) {
-
-		// An invisible icon is not rendered
-		if (!oControl.getVisible()) {
-			return;
-		}
-
 		// write the HTML into the render manager
 		var oIconInfo = sap.ui.core.IconPool.getIconInfo(oControl.getSrc()),
 			sWidth = oControl.getWidth(),
