@@ -88,7 +88,7 @@
 				
 		});
 
-		test("selectText(): The input element's type 'number' does not support selection", function() {
+		test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function() {
 
 			// arrange
 			var $DomRef = jQuery("<input>", {
@@ -100,10 +100,10 @@
 
 			// act
 			var oReturnValue = $DomRef.selectText(0 , 6);
+			$DomRef.getSelectedText();
 
 			// assertions
 			strictEqual(oReturnValue, $DomRef, "No exception is thrown");
-			strictEqual($DomRef.getSelectedText(), "", "No exception is thrown");
 
 			// cleanup
 			$DomRef.remove();
