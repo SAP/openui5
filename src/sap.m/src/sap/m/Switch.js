@@ -52,11 +52,6 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				customTextOff : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
-				 * Invisible switches are not rendered.
-				 */
-				visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-				/**
 				 * Whether the switch is enabled.
 				 */
 				enabled : {type : "boolean", group : "Data", defaultValue : true},
