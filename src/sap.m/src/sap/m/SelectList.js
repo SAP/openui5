@@ -35,12 +35,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				 * Determines whether the user can change the selection.
 				 */
 				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
-				 * Determines whether this control is visible when its parent is visible.
-				 */
-				visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
 				/**
 				 * Defines the width of the control. This value can be provided in all CSS units.
 				 */
