@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			// gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
 			bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;
 	
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		if (iSelectedWidth < 0) { //width should not be negative
 			iSelectedWidth = 0;
 		}
