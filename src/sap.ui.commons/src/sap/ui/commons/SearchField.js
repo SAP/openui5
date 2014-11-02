@@ -83,11 +83,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './ComboBoxRenderer', './ListB
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * Control width in CSS-size
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
