@@ -31,11 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		var rm = oRenderManager;
 		var r = LabelRenderer;
 	
-		// Return immediately if control is invisible
-		if (!oLabel.getVisible()) {
-			return;
-		}
-	
 		rm.write("<label");
 		rm.writeControlData(oLabel);
 	
