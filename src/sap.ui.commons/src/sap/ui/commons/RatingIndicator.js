@@ -32,12 +32,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * If set to invisible, the control is not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * Value 'true' is required for changes on the rating symbols.
 			 */
