@@ -22,11 +22,6 @@
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	LinkRenderer.render = function(rm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// Link is rendered as a "<a>" element
 		rm.write("<a");
 		rm.writeControlData(oControl);
