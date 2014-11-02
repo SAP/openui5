@@ -36,12 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			/**
 			 * Specifies whether the content inside the Layout shall be line-wrapped in the case that there is less horizontal space available than required.
 			 */
-			allowWrapping : {type : "boolean", group : "Misc", defaultValue : false},
-	
-			/**
-			 * Whether this HorizontalLayout is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			allowWrapping : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		defaultAggregation : "content",
 		aggregations : {
