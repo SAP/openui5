@@ -21,11 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
 	TextRenderer.render = function(oRm, oText) {
-		// return immediately if control is invisible
-		if (!oText.getVisible()) {
-			return;
-		}
-	
 		// get control values
 		var sWidth = oText.getWidth(),
 			sText = oText.getText(true),
