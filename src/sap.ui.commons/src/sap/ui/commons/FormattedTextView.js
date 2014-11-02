@@ -30,12 +30,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Flag to suppress rendering of the FormattedTextView control
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * The ARIA role for the control.
 			 */

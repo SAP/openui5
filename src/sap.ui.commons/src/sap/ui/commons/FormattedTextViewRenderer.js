@@ -21,10 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * object representation of the control that should be rendered
 	 */
 	FormattedTextViewRenderer.render = function(oRm, oControl) {
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// pattern for placeholders:
 		var rPlaceHolderPattern = /<embed\s+data-index="([0-9]+)"\s*\/?>/gim;
 		var sHtml = oControl.getHtmlText();
