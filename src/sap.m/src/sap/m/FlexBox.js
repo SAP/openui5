@@ -36,11 +36,6 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		properties : {
 	
 			/**
-			 * Is the control visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
 			 * @since 1.9.1
 			 */
