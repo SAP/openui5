@@ -34,13 +34,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Set to false to remove PullToRefresh from the scroll container.
-			 * @since 1.16.0
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Optional description. May be used to inform a user, for example, when the list has been updated last time.
 			 */
