@@ -43,11 +43,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			text : {type : "string", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
 			 * Using this property, the control could be disabled, if required.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
