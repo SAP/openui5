@@ -23,12 +23,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	NavigationBarRenderer.render = function(oRenderManager, oControl) {
-	
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// convenience variable
 		var rm = oRenderManager;
 		var sId = oControl.getId();
