@@ -25,12 +25,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 * @param {sap.ui.commons.RadioButton} oRadioButton The RadioButton control that should be rendered.
 	 */
 	RadioButtonRenderer.render = function(rm, oRadioButton) {
-	
-		// Return immediately if control is invisible
-		if (!oRadioButton.getVisible()) {
-			return;
-		}
-	
 		var sId = oRadioButton.getId();
 		var tooltip = oRadioButton.getTooltip_AsString();
 	
