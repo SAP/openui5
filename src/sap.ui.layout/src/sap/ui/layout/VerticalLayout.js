@@ -42,12 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			 * 
 			 * If not enabled all controls inside are not enabled automatically.
 			 */
-			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
-			 * Whether this VerticalLayout is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			enabled : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		defaultAggregation : "content",
 		aggregations : {
