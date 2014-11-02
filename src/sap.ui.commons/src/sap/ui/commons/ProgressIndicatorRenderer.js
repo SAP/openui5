@@ -29,12 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var widthBar = oProgressIndicator.getPercentValue();
 		var widthBorder;
 		oProgressIndicator.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
-	
-		// return immediately if control is invisible
-		if (!oProgressIndicator.getVisible()) {
-			return;
-		}
-	
+
 		if (widthBar > 100) {
 			widthBorder = (10000 / widthBar) + '%';
 		} else {
