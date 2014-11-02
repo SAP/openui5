@@ -28,11 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		oControl.doBeforeRendering();
-	
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiLayoutAbs");
