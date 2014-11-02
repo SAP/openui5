@@ -45,11 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 			headerTitle : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Invisible ExactBrowsers are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
-			/**
 			 * The order how the sublists of the top level list should be displayed.
 			 * @since 1.7.1
 			 */
