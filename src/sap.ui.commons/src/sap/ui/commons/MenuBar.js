@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', './Menu', './MenuItem', './MenuItemBase', '.
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Specifies the width of the MenuBar
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
