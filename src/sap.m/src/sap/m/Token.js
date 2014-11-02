@@ -50,12 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * if true, token displays delete icon and fires events accordingly
 			 */
-			editable : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
-			 * Determines whether the token is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			editable : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		aggregations : {
 	
