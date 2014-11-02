@@ -50,14 +50,6 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * 
-			 * Determines whether the matrix layout, including all its content, is
-			 * visible. An invisible control will not be rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * CSS width of the matrix layout.
 			 * If the LayoutFixed = true a adequate width should be provided.
