@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 */
 	HTML.prototype.getDomRef = function(sSuffix) {
 		var sId = sSuffix ? this.getId() + "-" + sSuffix : this.getId();
-		return jQuery.sap.domById("sap-ui-dummy-" + sId) || jQuery.sap.domById(sId);
+		return jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + sId) || jQuery.sap.domById(sId);
 	};
 	
 	HTML.prototype.setContent = function(sContent) {
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 */
 	HTML.prototype.onAfterRendering = function() {
 	
-		var $placeholder = jQuery(jQuery.sap.domById("sap-ui-dummy-" + this.getId()));
+		var $placeholder = jQuery(jQuery.sap.domById(sap.ui.core.RenderPrefixes.Dummy + this.getId()));
 		var $oldContent = sap.ui.core.RenderManager.findPreservedContent(this.getId());
 		var $newContent;
 		var isPreservedDOM = false;

@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 					rm.renderControl(fragment);
 					// when the child control did not render anything (e.g. visible=false), we add a placeholder to know where to render the child later 
 					if ( !fragment.bOutput ) {
-						rm.write('<div id="sap-ui-dummy-' + fragment.getId() + '" class="sapUiHidden"/>');
+						rm.write('<div id="' + sap.ui.core.RenderPrefixes.Dummy + fragment.getId() + '" class="sapUiHidden"/>');
 					}
 				}
 			}
@@ -70,12 +70,12 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 			
 			// jQuery.sap.log.debug("rendering placeholder instead of " + oControl + " (preserved dom)");
 			// preserve mode: render only root tag and child controls
-			rm.write('<div id="sap-ui-dummy-' + oControl.getId() + '" class="sapUiHidden">');
+			rm.write('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden">');
 			for (var i = 0; i < oControl._aParsedContent.length; i++) {
 				var fragment = oControl._aParsedContent[i];
 				if ( typeof (fragment) !== "string") {
 					// jQuery.sap.log.debug("replacing preserved DOM for child " + fragment + " with a placeholder");
-					jQuery.sap.byId(fragment.getId(), $oldContent).replaceWith('<div id="sap-ui-dummy-' + fragment.getId() + '" class="sapUiHidden"/>');
+					jQuery.sap.byId(fragment.getId(), $oldContent).replaceWith('<div id="' + sap.ui.core.RenderPrefixes.Dummy + fragment.getId() + '" class="sapUiHidden"/>');
 					rm.renderControl(fragment);
 				}
 			}

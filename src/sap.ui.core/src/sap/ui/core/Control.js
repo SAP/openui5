@@ -56,7 +56,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				/**
 				 * The delay in milliseconds, after which the busy indicator will show up for this control.
 				 */
-				"busyIndicatorDelay" : {type: "int", defaultValue: 1000}
+				"busyIndicatorDelay" : {type: "int", defaultValue: 1000},
+
+				/**
+				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control
+				 */
+				"visible" : { type: "boolean", group : "Appearance", defaultValue: true }
 			}
 		},
 	
