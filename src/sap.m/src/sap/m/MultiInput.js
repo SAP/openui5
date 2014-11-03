@@ -533,6 +533,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	
 	/**
 	 * when tap on text field, deselect all tokens
+	 * @name sap.m.MultiInput#ontap
 	 * @public
 	 * @param {jQuery.Event} oEvent
 	 */
@@ -545,6 +546,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		
 	};
+	
+	/**
+	 * when press ESC, deselect all tokens and all texts
+	 * @name sap.m.MultiInput#onsapescape
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.onsapescape = function(oEvent) {
+		
+		//deselect everything
+		this._tokenizer.selectAllTokens(false);
+		this.selectText(0, 0);
+		
+		Input.prototype.onsapescape.apply(this, arguments);
+	};
+	
 	
 	/**
 	 * Function tries to turn current text into a token
