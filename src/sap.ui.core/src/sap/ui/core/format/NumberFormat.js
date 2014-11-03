@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * <li>showMeasure: Show the measure according to the format in the formatted string</li>
 	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
 	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by <code>maxFractionDigits</code></li>.
-	 *  This can be assigned by value in <code>sap.ui.core.format.NumberFormat.RoundingMode</code> or a function which will be used for rounding the number. The function
+	 *  This can be assigned by value in [RoundingMode]{@link sap.ui.core.format.NumberFormat.RoundingMode} or a function which will be used for rounding the number. The function
 	 *  is called with two parameters: the number and how many decimal digits should be reserved.
 	 * </ul>
 	 * For format options which are not specified default values according to the type and locale settings are used.
@@ -58,6 +58,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	NumberFormat.CURRENCY = 2;
 	NumberFormat.PERCENT = 3;
 
+	/**
+	 * Specifies a rounding behavior for numerical operations capable of discarding precision. Each rounding mode in this object indicates how the least
+	 * significant returned digits of rounded result is to be calculated.
+	 *
+	 * @public
+	 * @namespace
+	 * @name sap.ui.core.format.NumberFormat.RoundingMode
+	 */
 	var mRoundingMode = {
 		/**
 		 * Rounding mode to round towards negative infinity
