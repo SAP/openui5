@@ -2,7 +2,15 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Main"
 	xmlns="sap.m"
+	xmlns:commons="sap.ui.commons"
+	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	>
-	<HBox id="detail"/>
+	<VBox>
+		<Select change="onChangeType" items="{ui>/types}" selectedKey="{ui>/selectedKey}">
+			<core:ListItem text="{ui>key}" key="{ui>key}"/>
+		</Select>
+		<commons:HorizontalDivider/>
+		<HBox id="detail"/>
+	</VBox>
 </mvc:View>

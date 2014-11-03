@@ -7,11 +7,17 @@
 	<VBox>
 		<template:with path="meta>@com.sap.vocabularies.UI.v1.HeaderInfo">
 			<Label text="Entity" />
-			<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-			<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-			<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-			<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-			<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+			<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+			<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+			<template:if test="{meta>Description}"> <!-- HeaderInfo Description is Nullable -->
+				<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+				<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+			</template:if>
 		</template:with>
+		<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}">
+			<Label text="{path: 'meta>Label', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+			<Text text="{path: 'meta>Value', formatter: 'sap.ui.core.util.ODataHelper.format'}"/>
+		</template:repeat>
 	</VBox>
 </mvc:View>

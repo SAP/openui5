@@ -97,28 +97,34 @@
           }
         },
         "ToSalesOrders": {
-          "kind": "navigation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrder"
           },
-          "partner": "ToBusinessPartner"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToBusinessPartner"
+          }
         },
         "ToContacts": {
-          "kind": "navigation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/GWSAMPLE_BASIC.Contact"
           },
-          "partner": "ToBusinessPartner"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToBusinessPartner"
+          }
         },
         "ToProducts": {
-          "kind": "navigation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/GWSAMPLE_BASIC.Product"
           },
-          "partner": "ToSupplier"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToSupplier"
+          }
         }
       }
     },
@@ -304,21 +310,24 @@
           }
         },
         "ToSalesOrderLineItems": {
-          "kind": "navigation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrderLineItem"
           },
-          "partner": "ToProduct"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToProduct"
+          }
         },
         "ToSupplier": {
-          "kind": "navigation",
           "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
-          "nullable": false,
-          "partner": "ToProducts",
-          "referentialConstraints": {
-            "SupplierID": {
-              "referencedProperty": "BusinessPartnerID"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToProducts",
+            "referentialConstraints": {
+              "SupplierID": {
+                "referencedProperty": "BusinessPartnerID"
+              }
             }
           }
         }
@@ -469,23 +478,26 @@
           }
         },
         "ToBusinessPartner": {
-          "kind": "navigation",
           "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
-          "nullable": false,
-          "partner": "ToSalesOrders",
-          "referentialConstraints": {
-            "CustomerID": {
-              "referencedProperty": "BusinessPartnerID"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToSalesOrders",
+            "referentialConstraints": {
+              "CustomerID": {
+                "referencedProperty": "BusinessPartnerID"
+              }
             }
           }
         },
         "ToLineItems": {
-          "kind": "navigation",
           "type": "array",
           "items": {
             "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrderLineItem"
           },
-          "partner": "ToHeader"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToHeader"
+          }
         }
       }
     },
@@ -594,24 +606,26 @@
           "maxLength": 3
         },
         "ToHeader": {
-          "kind": "navigation",
           "$ref": "#/definitions/GWSAMPLE_BASIC.SalesOrder",
-          "nullable": false,
-          "partner": "ToLineItems",
-          "referentialConstraints": {
-            "SalesOrderID": {
-              "referencedProperty": "SalesOrderID"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToLineItems",
+            "referentialConstraints": {
+              "SalesOrderID": {
+                "referencedProperty": "SalesOrderID"
+              }
             }
           }
         },
         "ToProduct": {
-          "kind": "navigation",
           "$ref": "#/definitions/GWSAMPLE_BASIC.Product",
-          "nullable": false,
-          "partner": "ToSalesOrderLineItems",
-          "referentialConstraints": {
-            "ProductID": {
-              "referencedProperty": "ProductID"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToSalesOrderLineItems",
+            "referentialConstraints": {
+              "ProductID": {
+                "referencedProperty": "ProductID"
+              }
             }
           }
         }
@@ -725,13 +739,14 @@
           }
         },
         "ToBusinessPartner": {
-          "kind": "navigation",
           "$ref": "#/definitions/GWSAMPLE_BASIC.BusinessPartner",
-          "nullable": false,
-          "partner": "ToContacts",
-          "referentialConstraints": {
-            "BusinessPartnerID": {
-              "referencedProperty": "BusinessPartnerID"
+          "odata": {
+            "kind": "navigation",
+            "partner": "ToContacts",
+            "referentialConstraints": {
+              "BusinessPartnerID": {
+                "referencedProperty": "BusinessPartnerID"
+              }
             }
           }
         }
@@ -1227,7 +1242,7 @@
             "TypeNamePlural": "Products",
             "Title": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nName",
+              "Label": "Product Name",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Name"
@@ -1235,7 +1250,7 @@
             },
             "Description": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nDescription",
+              "Label": "Product Description",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Description"
@@ -1250,7 +1265,7 @@
             },
             "Title": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nName",
+              "Label": "Product Name",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Name"
@@ -1275,12 +1290,12 @@
                     "@odata.type": "Edm.Path",
                     "value": "Width"
                   },
-                  "\n/",
+                  " /",
                   {
                     "@odata.type": "Edm.Path",
                     "value": "Depth"
                   },
-                  "\n/",
+                  " /",
                   {
                     "@odata.type": "Edm.Path",
                     "value": "Height"
@@ -1304,7 +1319,7 @@
           "@com.sap.vocabularies.UI.v1.Identification": [
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nID",
+              "Label": "Product ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ProductID"
@@ -1336,7 +1351,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Unit\nPrice",
+              "Label": "Unit Price",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Price"
@@ -1346,7 +1361,7 @@
           "@com.sap.vocabularies.UI.v1.LineItem": [
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nID",
+              "Label": "Product ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ProductID"
@@ -1362,7 +1377,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nName",
+              "Label": "Product Name",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Name"
@@ -1378,7 +1393,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Unit\nPrice",
+              "Label": "Unit Price",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "Price"
@@ -1462,7 +1477,7 @@
                 },
                 {
                   "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
-                  "Label": "Contact\nData",
+                  "Label": "Contact Data",
                   "Target": {
                     "@odata.type": "Edm.AnnotationPath",
                     "value": "ToSupplier/@com.sap.vocabularies.UI.v1.Badge"
@@ -1526,11 +1541,11 @@
           "target": "GWSAMPLE_BASIC.SalesOrder",
           "@com.sap.vocabularies.UI.v1.HeaderInfo": {
             "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
-            "TypeName": "Sales\nOrder",
-            "TypeNamePlural": "Sales\nOrders",
+            "TypeName": "Sales Order",
+            "TypeNamePlural": "Sales Orders",
             "Title": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Order\nID",
+              "Label": "Order ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "SalesOrderID"
@@ -1561,7 +1576,7 @@
             },
             "MainInfo": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmount",
+              "Label": "Gross Amount",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1586,7 +1601,7 @@
           },
           "@com.sap.vocabularies.UI.v1.DataPoint#Amount": {
             "@odata.type": "com.sap.vocabularies.UI.v1.DataPointType",
-            "Title": "Gross\nAmount",
+            "Title": "Gross Amount",
             "Value": {
               "@odata.type": "Edm.Path",
               "value": "GrossAmount"
@@ -1595,7 +1610,7 @@
           "@com.sap.vocabularies.UI.v1.Identification": [
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Customer\nID",
+              "Label": "Customer ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "CustomerID"
@@ -1603,7 +1618,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmount",
+              "Label": "Gross Amount",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1619,7 +1634,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Created\nat",
+              "Label": "Created at",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "CreatedAt"
@@ -1627,7 +1642,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Changed\nat",
+              "Label": "Changed at",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ChangedAt"
@@ -1637,7 +1652,7 @@
           "@com.sap.vocabularies.UI.v1.LineItem": [
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Order\nID",
+              "Label": "Order ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "SalesOrderID"
@@ -1653,7 +1668,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmt.",
+              "Label": "Gross Amt.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1661,7 +1676,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Net\nAmt.",
+              "Label": "Net Amt.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "NetAmount"
@@ -1677,7 +1692,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Created\nat",
+              "Label": "Created at",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "CreatedAt"
@@ -1685,7 +1700,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Changed\nat",
+              "Label": "Changed at",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ChangedAt"
@@ -1695,7 +1710,7 @@
           "@com.sap.vocabularies.UI.v1.StatusInfo": [
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Overall\nStatus",
+              "Label": "Overall Status",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "LifecycleStatus"
@@ -1703,7 +1718,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Billing\nStatus",
+              "Label": "Billing Status",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "BillingStatus"
@@ -1711,7 +1726,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Delivery\nStatus",
+              "Label": "Delivery Status",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "DeliveryStatus"
@@ -1720,7 +1735,7 @@
           ],
           "@com.sap.vocabularies.UI.v1.FieldGroup#Note": {
             "@odata.type": "com.sap.vocabularies.UI.v1.FieldGroupType",
-            "Label": "Order\nNote",
+            "Label": "Order Note",
             "Data": [
               {
                 "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
@@ -1743,7 +1758,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.ReferenceFacet",
-              "Label": "Status\nInformation",
+              "Label": "Status Information",
               "Target": {
                 "@odata.type": "Edm.AnnotationPath",
                 "value": "@com.sap.vocabularies.UI.v1.StatusInfo"
@@ -1791,8 +1806,8 @@
           "target": "GWSAMPLE_BASIC.SalesOrderLineItem",
           "@com.sap.vocabularies.UI.v1.HeaderInfo": {
             "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
-            "TypeName": "Sales\nOrder\nItem",
-            "TypeNamePlural": "Sales\nOrder\nItems",
+            "TypeName": "Sales Order Item",
+            "TypeNamePlural": "Sales Order Items",
             "Title": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
               "Label": "Product",
@@ -1820,7 +1835,7 @@
                   "@odata.type": "Edm.Path",
                   "value": "SalesOrderID"
                 },
-                "\n/",
+                " /",
                 {
                   "@odata.type": "Edm.Path",
                   "value": "ItemPosition"
@@ -1845,7 +1860,7 @@
             },
             "SecondaryInfo": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmount",
+              "Label": "Gross Amount",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1863,7 +1878,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmount",
+              "Label": "Gross Amount",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1890,7 +1905,7 @@
                     "@odata.type": "Edm.Path",
                     "value": "SalesOrderID"
                   },
-                  "\n/",
+                  " /",
                   {
                     "@odata.type": "Edm.Path",
                     "value": "ItemPosition"
@@ -1900,7 +1915,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Product\nID",
+              "Label": "Product ID",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ProductID"
@@ -1916,7 +1931,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Net\nAmt.",
+              "Label": "Net Amt.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "NetAmount"
@@ -1924,7 +1939,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Gross\nAmt.",
+              "Label": "Gross Amt.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "GrossAmount"
@@ -1932,7 +1947,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Time\nStamp",
+              "Label": "Time Stamp",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "DeliveryDate"
@@ -1941,7 +1956,7 @@
           ],
           "@com.sap.vocabularies.UI.v1.FieldGroup#Note": {
             "@odata.type": "com.sap.vocabularies.UI.v1.FieldGroupType",
-            "Label": "Order\nNote",
+            "Label": "Order Note",
             "Data": [
               {
                 "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
@@ -1968,8 +1983,8 @@
           "target": "GWSAMPLE_BASIC.BusinessPartner",
           "@com.sap.vocabularies.UI.v1.HeaderInfo": {
             "@odata.type": "com.sap.vocabularies.UI.v1.HeaderInfoType",
-            "TypeName": "Business\nPartner",
-            "TypeNamePlural": "Business\nPartners",
+            "TypeName": "Business Partner",
+            "TypeNamePlural": "Business Partners",
             "Title": {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
               "Label": "Name",
@@ -2061,7 +2076,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Company\nName",
+              "Label": "Company Name",
               "Value": {
                 "@odata.type": "Edm.Apply",
                 "function": "odata.concat",
@@ -2080,7 +2095,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Phone\nNo.",
+              "Label": "Phone No.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "PhoneNumber"
@@ -2231,7 +2246,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Company\nName",
+              "Label": "Company Name",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ToBusinessPartner/CompanyName"
@@ -2276,7 +2291,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Company\nName",
+              "Label": "Company Name",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "ToBusinessPartner/CompanyName"
@@ -2284,7 +2299,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Phone\nNo.",
+              "Label": "Phone No.",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "PhoneNumber"
@@ -2292,7 +2307,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "Fax\nNumber",
+              "Label": "Fax Number",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "FaxNumber"
@@ -2300,7 +2315,7 @@
             },
             {
               "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-              "Label": "E-Mail\nAddress",
+              "Label": "E-Mail Address",
               "Value": {
                 "@odata.type": "Edm.Path",
                 "value": "EmailAddress"
@@ -2366,19 +2381,28 @@
             },
             "n": {
               "@odata.type": "com.sap.vocabularies.Communication.v1.NameType",
-              "surname": "LastName",
-              "given": "FirstName",
-              "additional": "MiddleName",
-              "prefix": "Title"
+              "surname": {
+                "@odata.type": "Edm.Path",
+                "value": "LastName"
+              },
+              "given": {
+                "@odata.type": "Edm.Path",
+                "value": "FirstName"
+              },
+              "additional": {
+                "@odata.type": "Edm.Path",
+                "value": "MiddleName"
+              },
+              "prefix": {
+                "@odata.type": "Edm.Path",
+                "value": "Title"
+              }
             },
             "nickname": {
               "@odata.type": "Edm.Path",
               "value": "Nickname"
             },
-            "bday": {
-              "@odata.type": "Edm.Path",
-              "value": "DateOfBirth"
-            },
+            "bday": 15,
             "gender": {
               "@odata.type": "Edm.Path",
               "value": "Sex"
