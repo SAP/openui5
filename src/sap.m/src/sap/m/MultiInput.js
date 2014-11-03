@@ -770,6 +770,25 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		return this._tokenizer.getTokens();
 	};
 	
+	/**
+	 * Function overwrites clone function to add tokens to MultiInput
+	 * 
+	 * @name sap.m.MultiInput#clone
+	 * @public
+	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 */
+	MultiInput.prototype.clone = function() {
+        var oClone = Input.prototype.clone.apply(this, arguments);
+        
+        var aTokens = this.getTokens();
+        var i;
+        for (i = 0; i < aTokens.length; i++){
+              var newToken = aTokens[i].clone();
+              oClone.addToken(newToken);
+        }
+        
+        return oClone;
+  };
 	
 	/**
 	 * Function returns domref which acts as reference point for the opening suggestion menu
