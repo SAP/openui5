@@ -182,7 +182,7 @@
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
 		sap.ui.getCore().setModel(oModel);	
-		
+
 	module("Edit tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -206,26 +206,112 @@
 		equal(this.oUploadCollection.aItems[1].status, "Edit", "'Edit'-status as expected in Line 2")
 		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct")
 		
-		var sInputField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName");
-		sInputField.setProperty("value", "NewDocument");
+		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
+		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
 
+		//check cancel
 		var oObj = {};
 		oObj.target = {};
-		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-ta_HL";
+		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-cancelButton";
+		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
+		equal(this.oUploadCollection.aItems[1].status, "Display", "'Display'-status after 'cancel' as expected in Line 2");
 		
-		equal(this.oUploadCollection.aItems[1].status, "Display", "'Display'-status as expected in Line 2")
-		
-//		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
-//		equal("NewDocument", sFileNameField, "Changee filename is correct saved");
-		
+		//check file name after cancel
+		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
+
+		//check save
+		sap.ui.getCore().byId(sEditButtonId).firePress();
+		sap.ui.getCore().applyChanges();
+		var oInputField2 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
+		oInputField2[0].value = "NewDocument";
+		sap.ui.getCore().applyChanges();
+		oData.items[1].fileName = "NewDocument.txt";
+		oObj.target.id =  this.oUploadCollection.aItems[1].sId + "-ta_HL";
+		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
+		oModel.setData(oData);
+		sap.ui.getCore().applyChanges();
+		equal(this.oUploadCollection.aItems[1].status, "Display", "'Display'-status after 'ok' as expected in Line 2");
+
+		//check chnaged file name after save
+		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
+
+		//check sameFileNameAllowed == false!
+		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
+		sap.ui.getCore().byId(sEditButtonId2).firePress();
+		sap.ui.getCore().applyChanges();
+		equal(this.oUploadCollection.aItems[2].status, "Edit", "'Edit'-status as expected in Line 2");
+		equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
+
+		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
+		oInputField3[0].value = "NewDocument";
+		oData.items[2].fileName = "NewDocument.txt";
+		sap.ui.getCore().applyChanges();
+		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-ta_HL";
+		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
+		sap.ui.getCore().applyChanges();
+		var bShowValueStateMessage = sap.ui.getCore().byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getProperty("showValueStateMessage");
+		equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exist");
+		equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
+
+		var oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		equal(oEditButton0.getEnabled(), false, "Edit button is NOT enabled");
+		equal(oEditButton1.getEnabled(), false, "Edit button is NOT enabled");
+		equal(oDeleteButton0.getEnabled(), false, "Delete button is NOT enabled");
+		equal(oDeleteButton1.getEnabled(), false, "Delete button is NOT enabled");
+
+		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-cancelButton";
+		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
+		sap.ui.getCore().applyChanges();
+		equal(this.oUploadCollection.aItems[2].status, "Display", "'Display'-status after 'cancel' as expected in Line 3");
+
+		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		oDeleteButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		oDeleteButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		equal(oEditButton0.getEnabled(), true, "Edit button is enabled");
+		equal(oEditButton1.getEnabled(), true, "Edit button is enabled");
+		equal(oDeleteButton0.getEnabled(), true, "Delete button is enabled");
+		equal(oDeleteButton1.getEnabled(), true, "Delete button is enabled");
 	});
-	
-	
-	
-	
+
+	module("Display tests", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				},
+			});
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+	test("Display", function() {
+		//check status = "Display"
+		var iLength = this.oUploadCollection.aItems.length;
+		for (var i = 0; i < iLength; i++) {
+			equal( this.oUploadCollection.aItems[i].status, "Display", "Status of line " + i + " is correct");
+		}
+
+		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
+		var oEditButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		equal(oEditButton.getEnabled(), true, "Edit button is enabled");
+		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
+		equal(oFileName.getEnabled(), true, "File name is enabled");
+	});
+
 </script>
 
 </head>
