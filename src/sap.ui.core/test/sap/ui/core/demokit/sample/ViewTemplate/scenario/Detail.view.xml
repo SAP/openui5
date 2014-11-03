@@ -7,11 +7,11 @@
 	<VBox>
 		<template:with path="meta>@com.sap.vocabularies.UI.v1.HeaderInfo">
 			<Label text="Entity" />
-			<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
-			<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
-			<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
-			<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
-			<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.core.sample.ViewTemplate.scenario.Component.help'}" />
+			<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			<Text text="{path: 'meta>Title/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			<Label text="{path: 'meta>Description/Label', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			<Text text="{path: 'meta>Description/Value', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 		</template:with>
 	</VBox>
 </mvc:View>
