@@ -91,6 +91,7 @@ Status of open issues:
  * unconfirmed: this report needs confirmation whether it is really a bug (no label; this is the default status)
  * approved: this issue is confirmed to be a bug
  * author action: the author is required to provide information
+ * contribution welcome: this fix/enhancement is approved and you are invited to contribute it
 
 Status/resolution of closed issues:
  * fixed: a fix for the issue was provided
