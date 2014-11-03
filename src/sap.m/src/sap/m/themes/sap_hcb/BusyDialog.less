@@ -10,18 +10,30 @@
 .sapMBusyDialog {
 	background: @sapHCStandardBG;
 	border: 0.125rem solid @sapHCStandardFG;
+
+	&:not(.sapMBusyDialogSimple) {
+		border-radius: 0.25rem;
+		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+	}
 }
 .sapMBusyDialogSimple {
 	background: transparent;
 	border: none;
+
+	.sapMBusyIndicator {
+		padding: 1rem;
+		background: @sapHCStandardBG;
+		border: 0.125rem solid @sapHCStandardFG;
+		border-radius: 0.25rem;
+		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
+	}
 }
-.sapMBusyDialog .sapMDialogTitle{
+.sapMBusyDialog .sapMDialogTitle {
 	height: 3rem;
 	line-height: 3rem;
 	background: none;
 	color: @sapHCStandardFG;
-	text-shadow: none;
-	box-shadow: none;
+	border-bottom: 1px solid @sapHCStandardFG;
 }
 .sapMBusyDialog .sapMBusyIndicator {
 	margin: 1rem;
@@ -30,13 +42,12 @@
 .sapMBusyDialogLabel {
 	margin-top: 1rem;
 }
-footer.sapMBusyDialogFooter {
+.sapMBusyDialog footer {
 	height: 3rem;
 	color: @sapHCStandardFG;
-	background-color: transparent;
-	background-image: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
+	border-top: 1px solid @sapHCStandardFG;
+	border-bottom-left-radius: 0.125rem;
+	border-bottom-right-radius: 0.125rem;
 }
 
 .sapMBusyDialog .sapMDialogBtnPhone {
@@ -51,8 +62,8 @@ footer.sapMBusyDialogFooter {
 }
 
 /* Compact size */
-.sapUiSizeCompact.sapMBusyDialog{
-	.sapMDialogTitle{
+.sapUiSizeCompact.sapMBusyDialog {
+	.sapMDialogTitle {
 		height: 1.625rem;
 		line-height: 1.625rem;
 		padding: 0.1875rem 0.5rem;
@@ -72,27 +83,4 @@ footer.sapMBusyDialogFooter {
 		line-height: 1.625rem;
 		border: none;
 	}
-}
-
-/* HCB Additional Styles */
-.sapMBusyDialog:not(.sapMBusyDialogSimple) {
-	border-radius: 0.25rem;
-	box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-}
-
-.sapMBusyDialogSimple .sapMBusyIndicator {
-	padding: 1rem;
-	background: @sapHCStandardBG;
-	border: 0.125rem solid @sapHCStandardFG;
-	border-radius: 0.25rem;
-	box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
-}
-
-.sapMBusyDialog .sapMDialogTitle {
-	border-bottom: 1px solid @sapHCStandardFG;
-}
-
-.sapMBusyDialog footer,
-footer.sapMBusyDialogFooter {
-	border-top: 1px solid @sapHCStandardFG;
 }
