@@ -31,6 +31,10 @@ span[id*="ia_iconHL"] {
 	color:					@sapHCStandardFG;
 }
 
+.sapMUC .sapUiVlt {
+	overflow:				visible;
+}
+
 /* Buttons */
 .sapMBtn.sapMUCEditBtn,
 .sapMBtn.sapMUCDeleteBtn,
@@ -75,4 +79,14 @@ span[id*="ia_iconHL"] {
 	.sapMLIB.sapMUCListLastItem {
 		padding-bottom:		1rem;
 	}
+}
+
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls
+/* ************************************************************************************* */
+.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon:focus,
+.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage:focus {
+	outline-style:			dotted;
+	outline-width:			0.125rem;
 }
