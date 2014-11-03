@@ -1568,9 +1568,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					}
 				}
 				that.checkUpdate(false, mGetEntities);
-
-				that._updateChangedEntities(mChangeEntities);
-
 			}
 			if (fnSuccess) {
 				fnSuccess(oData);
@@ -1874,6 +1871,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			aParts = sPath.split("/");
 			if (aParts[1]) {
 				mChangeEntities[aParts[1]] = true;
+				//cleanup of this.mChangedEntities; use only the actual response key
+				var oMap = {};
+				oMap[aParts[1]] = true;
+				this._updateChangedEntities(oMap);
 			}
 			//for delete requests delete data in model
 			if (oRequest.method === "DELETE") {
