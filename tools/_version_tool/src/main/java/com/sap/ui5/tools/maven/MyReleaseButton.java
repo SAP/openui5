@@ -178,6 +178,8 @@ public class MyReleaseButton {
     } else if ("deploy.properties".equals(file.getName())) { // pwt-webbundle-archetype
       processingTypes.add(ProcessingTypes.VersionWithSnapshot);
       processingTypes.add(ProcessingTypes.RepositoryPaths);
+    } else if ("package.json".equals(file.getName())) { 
+      processingTypes.add(ProcessingTypes.VersionWithSnapshot);
     }
     
 

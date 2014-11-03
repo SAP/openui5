@@ -422,7 +422,15 @@ public class Git2P4Main {
         null,
         null
         ));
+    mappings.add(new Mapping(
+        "/sapui5/openui5.git",
+        new File(repositoryRoot, "openui5"),
+        null,
+        null,
+        null
+        ));
     /*
+
     mappings.add(new Mapping(
         new File(repositoryRoot, "sapui5.platforms.qtp-addin"),
         p4depotPrefix + "/src/platforms/qtp-addin",
