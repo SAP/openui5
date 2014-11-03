@@ -287,20 +287,6 @@
 		}
 	});
 	
-	var oKeyDownDelegate = {
-		onkeydown : function(oEvent) {
-			var mKeyCodes = jQuery.sap.KeyCodes;
-			var bControlKey = oEvent.metaKey || oEvent.ctrlKey;
-			
-			if (bControlKey && oEvent.which === mKeyCodes.DOT) {
-				openViewSettingsDialog();
-			} else if (bControlKey && oEvent.which === mKeyCodes.COMMA) {
-				openPersonalizationDialog();
-			}
-			
-		}
-	};
-	
 	var oTable = new sap.m.Table({
 		growingThreshold: 5,
 		growingScrollToLoad : false,
@@ -335,7 +321,6 @@
 	
 	oTable.setModel(oModel);
 	oTable.bindItems("/modelData", oTemplate);
-	oTable.addEventDelegate(oKeyDownDelegate);
 	
 	var oPage = new sap.m.Page({
 		title : "Table Test Page",
