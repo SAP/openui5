@@ -13,7 +13,6 @@ sap.ui.define(['jquery.sap.global'],
 	var ObjectAttributeRenderer = {
 	};
 	
-	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -21,9 +20,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ObjectAttributeRenderer.render = function(oRm, oOA) {
-	
+		
 		// return immediately if control is invisible
 		if (oOA.getVisible() && !oOA._isEmpty()) {
+			var oParent = oOA.getParent();
 			oRm.write("<div");
 			oRm.writeControlData(oOA);
 			oRm.addClass("sapMObjectAttributeDiv");
@@ -38,11 +38,33 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 			oRm.write(">");
-			oRm.renderControl(oOA._getUpdatedTextControl());
+			if (oParent && (oParent instanceof sap.m.ObjectHeader && oParent.getResponsive())) {
+				if (oOA.getProperty("title")) {
+					oRm.write("<span id=\"" + oOA.getId() + "-title\"");
+					oRm.addClass("sapMObjectAttributeTitle");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.writeEscaped(oOA.getProperty("title"));
+					oRm.write("</span>");
+					oRm.write("<span id=\"" + oOA.getId() + "-colon\"");
+					oRm.addClass("sapMObjectAttributeColon");
+					oRm.writeClasses();
+					oRm.write(">");
+					oRm.write(":&nbsp;");
+					oRm.write("</span>");
+				}
+				oRm.write("<span id=\"" + oOA.getId() + "-text\"");
+				oRm.addClass("sapMObjectAttributeText");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(oOA.getProperty("text"));
+				oRm.write("</span>");
+			} else {
+				oRm.renderControl(oOA._getUpdatedTextControl());
+			}
 			oRm.write("</div>");
 		}
 	};
-	
 
 	return ObjectAttributeRenderer;
 

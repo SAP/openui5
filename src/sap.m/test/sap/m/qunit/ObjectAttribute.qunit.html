@@ -132,10 +132,14 @@
 		}, 500);
 	});
 	
-	asyncTest("Attributes Wrapping in Responsive ObjectHeader", function() {
+	test("Attributes Wrapping in Responsive ObjectHeader", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA2", {text:"Responsive ObjectHeader wrapping test"});
+		var oAttr = new sap.m.ObjectAttribute("oOA2", {
+			title: "Test",
+			text:"Responsive ObjectHeader wrapping"
+		});
+		
 		var oObjectHeader = new sap.m.ObjectHeader("oOH2", {
 			attributes : [oAttr],
 			responsive : true
@@ -145,16 +149,12 @@
 		sap.ui.getCore().applyChanges()
 		
 		// assertions
-		ok(oAttr.mAggregations._textControl.$().hasClass("sapMTextNoWrap"), "sapMTextNoWrap class is present.");
-		if(!sap.ui.Device.browser.internet_explorer) {
-			equal(oAttr.mAggregations._textControl.getMaxLines(),1,"Max lines should be 1");
-		}
+		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span is rendered.");
+		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span is rendered.");
+		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span is rendered.");
+		
 		//Cleanup
 		oObjectHeader.destroy(); 
-		
-		setTimeout( function() {
-			start();
-		}, 500);
 	});
 	
 	asyncTest("Attributes Wrapping in ObjectListItem", function() {

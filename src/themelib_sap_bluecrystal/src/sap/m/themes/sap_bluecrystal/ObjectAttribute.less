@@ -15,7 +15,69 @@
 	outline: none;
 }
 
-.sap-desktop .sapMObjectAttributeActive:focus > span {
+.sap-desktop .sapMObjectAttributeActive:focus > sapMText {
 	outline: 1px dotted @sapUiFocus;
 	outline-offset: -1px;
+}
+
+/*=========================================== */
+/* Custom design for Responsive Object Header */
+/*=========================================== */
+
+.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle,
+.sapMOHR .sapMOHAttr .sapMObjectAttributeText {
+	display: inline-block;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	float: left;
+	max-width: 50%;
+}
+
+.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle {
+	padding-right: 0.5rem;
+	max-width: 50%;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.sapMOHR .sapMOHAttr .sapMObjectAttributeColon {
+	display: inline-block;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
+	float: left;
+	white-space: nowrap;
+	max-width: 0.5rem;
+	margin-left: -0.5rem;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
+	color: @sapUiLink;
+	cursor: pointer;
+}
+
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	text-decoration: underline;
+}
+
+.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: -1px;
+}
+
+.sapMOHR .sapMOHAttr .sapMObjectAttributeDiv {
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.5rem;
+	max-height: 1.5rem;
 }
