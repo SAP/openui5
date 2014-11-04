@@ -3,9 +3,12 @@
  */
 
 // Provides object sap.ui.core.util.ODataHelper
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser'],
+	function(jQuery, BindingParser) {
 		'use strict';
+
+		var fnEscape = BindingParser.complexParser.escape;
+
 		/**
 		 * The OData helper which can act as a formatter in XML template views.
 		 *
@@ -25,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 			format: function (oRawValue) {
 				// string constant
 				if (typeof oRawValue === "string") {
-					return sap.ui.base.BindingParser.complexParser.escape(oRawValue);
+					return fnEscape(oRawValue);
 				}
 
 				// Edm.Path
@@ -40,12 +43,12 @@ sap.ui.define(['jquery.sap.global'],
 				// anything else: convert to string, prefer JSON
 				if (typeof oRawValue === "object") {
 					try {
-						return JSON.stringify(oRawValue);
+						return fnEscape(JSON.stringify(oRawValue));
 					} catch (ex) {
 						// "Converting circular structure to JSON" --> fall back to default below
 					}
 				}
-				return String(oRawValue);
+				return fnEscape(String(oRawValue));
 			}
 		};
 	}, /* bExport= */ true);
