@@ -1481,7 +1481,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 				// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 				sGroupId = null;
-				this.mServiceLength = this.mLength[sGroupId] = 1;
+				this.mServiceLength[sGroupId] = this.mLength[sGroupId] = 1;
 				this.mServiceFinalLength[sGroupId] = true;
 				this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 				this.bNeedsUpdate = true;
@@ -1807,12 +1807,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 				if ((sPreviousEntryDimensionKeyString != sDimensionKeyString || h == iODataResultsLength - 1) 
 						&& iFirstMatchingEntryIndex !== undefined) { // after sequence of identical entries or if processing the last result entry (the set iFirstMatchingEntryIndex indicates the multi-unit case) 
-// TODO
-/**/	
-/*verification: remember if a multi-unit occurrence is found */
+/* multi-unit verification: remember if a multi-unit occurrence is found */
+/*start code block*	
 					this.bFoundMU = true;
-/**/
-// TODO
+*end code block*/
+
 					// create a multi-unit repr. (includes a corresponding multi-unit entity) 
 					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, oRequestDetails.bIsFlatListRequest);
 					var aMultiUnitEntry = [];
@@ -1840,11 +1839,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 						jQuery.sap.log.fatal("assertion failed: iDiscardedEntriesCount must be non-negative");
 					}
 					iDiscardedEntriesCount += iMultiUnitEntryDiscardedEntriesCount;
-// TODO
-/**/
+/* multi-unit verification: remember multi-unit key */
+/*start code block*	
 					this.bNewMUKey = oMultiUnitRepresentative.bIsNewEntry;
-/**/
-// TODO				
+*end code block*/
 					iFirstMatchingEntryIndex = undefined;
 	
 					// add current entry if it has different key combination
@@ -1854,12 +1852,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				} else if (sPreviousEntryDimensionKeyString != sDimensionKeyString) {
 					bLastServiceKeyWasNew = this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
 				}
-// TODO
-/**/
-/*verification: remember if differend dimensions are involved - needed for correct index calculation */
+/* multi-unit verification: remember if differend dimensions are involved - needed for correct index calculation */
+/*start code block*	
 				this.bDiffDims = (sPreviousEntryDimensionKeyString != sDimensionKeyString);
-/**/
-// TODO				
+*end code block*/
 				sPreviousEntryDimensionKeyString = sDimensionKeyString;
 			} else {
 				this._setServiceKey(oKeyIndexMapping, this.oModel._getKey(oEntry));
@@ -1880,8 +1876,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 */			
 				this.mEntityKey[sEntryGroupId] = sLastEntryKey;
 			}
-// TODO
-/*start verification: collect the cumulated number of discarded entries in a separate member array for analysis --- see below */
+/* multi-unit verification: collect the cumulated number of discarded entries in a separate member array for analysis --- see below */
+/*start code block*	
 			if (this.aDiscCount === undefined)	{
 				this.aDiscCount = [];
 				this.aCheckDiscCount = [];
@@ -1906,11 +1902,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			} else {
 				this.aDiscCount[oKeyIndexMapping.iIndex - 1] = iDiscardedEntriesCount;
 			}
-/*end verification*/
-// TODO
+*end code block*/
 		}
-// TODO
-/* eslint-disable no-debugger, no-unused-vars, no-empty */
+/* multi-unit verification: perform check between created service indexes and count of discarded service entities */
+/*start code block*	
+* eslint-disable no-debugger, no-unused-vars, no-empty *
 		for (var chkIndex = iStartIndex, iMaxIndex = oKeyIndexMapping.iIndex - 1; chkIndex <= iMaxIndex; chkIndex++) {
 			if (! this.aCheckDiscCount[chkIndex]) {
 				continue;
@@ -1937,9 +1933,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				}
 			}
 		}
-/* eslint-enable no-debugger */
-/*end verification*/
-// TODO
+* eslint-enable no-debugger *
+*end code block*/
 		
 		// cleanup results entry array from added previous entry
 		if (aPreviousEntryServiceKey && aPreviousEntryServiceKey.length > 0) {
@@ -2007,20 +2002,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 // 		this._trace_debug_if(this.iMultiUnitLoadFactor < 1, "load factor cannot be lower than 1!");
 
-// TODO
-/**start verification: check length of loaded data with colected cumulated discarded counts
- */ 
+/* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
+/*start code block*	
 		this._checkLength(sGroupId, iStartIndex);
-/*end verification*/
-// TODO
+*end code block*/
 
 // 		this._trace_leave("ReqExec", "_processGroupMembersQueryResponse", "", { lastLoadedIndex: oKeyIndexMapping.iIndex - 1, lastLoadedServiceIndex: oKeyIndexMapping.iServiceKeyIndex - 1, discardedEntriesCount: iDiscardedEntriesCount, multiUnitLoadFactor: this.aMultiUnitLoadFactor[aAggregationLevel.length] }, ["lastLoadedIndex","lastLoadedServiceIndex","discardedEntriesCount","multiUnitLoadFactor"]); // DISABLED FOR PRODUCTION 		
 	};
 	
-// TODO
-/*start verification: check length of loaded data with colected cumulated discarded counts
- */
-/* eslint-disable no-debugger */
+/* multi-unit verification: check length of loaded data with colected cumulated discarded counts */
+/*start code block*	
+* eslint-disable no-debugger *
 	AnalyticalBinding.prototype._checkLength = function(sGroupId, iStartIndex) {
 		var aKeyIndex = this.mKeyIndex[sGroupId];
 		var count = this.mServiceLength[sGroupId];
@@ -2038,9 +2030,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 		}
 	};
-/* eslint-enable no-debugger */	
-/*end verification*/
-// TODO
+* eslint-enable no-debugger *	
+*end code block*/
 
 	/**
 	 * @private
@@ -3335,7 +3326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {
-				var sResolvedPath = this.oModel.res3olve(this.sPath, this.oContext);
+				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 					bChangeDetected = true;

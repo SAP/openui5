@@ -1,6 +1,6 @@
 {
   "name": "openui5",
-  "version": "1.25.0-SNAPSHOT",
+  "version": "1.25.1-SNAPSHOT",
   "description": "OpenUI5 Core & Runtime",
   "private": true,
   "scripts": {
@@ -31,7 +31,7 @@
     "grunt-contrib-connect": "^0.8.0",
     "grunt-contrib-copy": "^0.5.0",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-eslint": "^1.0.0",
+    "grunt-eslint": "^2.0.0",
     "grunt-mocha-test": "^0.12.1",
     "grunt-openui5": "0.2.0",
     "grunt-text-replace": "^0.3.12",
@@ -39,8 +39,10 @@
     "load-grunt-config": "^0.13.2",
     "log-symbols": "^1.0.0",
     "mocha": "^1.21.5",
+    "moment": "^2.8.3",
     "multiline": "^1.0.0",
     "pretty-ms": "^1.0.0",
-    "selenium-webdriver": "2.43.5"
+    "selenium-webdriver": "2.43.5",
+    "semver": "^4.1.0"
   }
 }

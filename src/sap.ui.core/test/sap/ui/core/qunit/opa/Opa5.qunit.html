@@ -116,7 +116,26 @@
 		});
 		
 	}
+	asyncTest("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function() {
+		// System under Test
+		var oOpa5 = new Opa5();
+		var oPluginWithoutIframe = Opa5.getPlugin();
+		// Act
+		oOpa5.iStartMyAppInAFrame("../testdata/noOPA.html").done(function() {
+			// Act + Assert
+			var oOpaPlugin = Opa5.getPlugin();
 	
+			ok(oOpaPlugin, "could load Opa Plugin, even if not available in app");
+			notDeepEqual(oOpaPlugin,oPluginWithoutIframe, "Opa Plugin should come from the IFrame now");
+			
+		});
+
+		oOpa5.iTeardownMyAppFrame();
+
+		oOpa5.emptyQueue().done(function () {
+			start();
+		});
+	});
 	asyncTest("Should Navigate in an Iframe", function() {
 		// System under Test
 		var oOpa5 = new Opa5();
@@ -399,6 +418,55 @@
 		strictEqual(oControl.sId, "myButton", "did pass the correct button");
 
 		// Cleanup
+		oButton.destroy();
+	});
+
+	test("Should call a matcher which is an inline function", function() {
+		// Arrange
+		var oButton = new sap.ui.commons.Button("myButton3");
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// System under Test
+		var oOpa5 = new Opa5();
+		oOpa5.extendConfig({pollingInterval : 200 /*millisecond*/});
+
+		var fnMatcher = this.spy(function(oControl) {
+			return !!oControl;
+		});
+
+		// Act
+		var fnCheckSpy1 = this.spy(function(){
+				return true;
+		});
+		var fnCheckSpy2 = this.spy(function(){
+				return true;
+		});
+		oOpa5.waitFor({
+			id : "myButton3",
+			matchers : fnMatcher,
+			check : fnCheckSpy1,
+			timeout : 1, //second
+		});
+		oOpa5.waitFor({
+			id : "myButton3",
+			matchers : [ fnMatcher ],
+			check : fnCheckSpy2,
+			timeout : 1, //second
+		});
+		oOpa5.emptyQueue();
+
+		strictEqual(fnMatcher.callCount, 0, "did not call the matcher yet");
+		this.clock.tick(400);
+		strictEqual(fnMatcher.callCount, 2, "did call the matcher twice");
+
+		// Assert
+		ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
+		strictEqual(fnCheckSpy1.callCount, 1, "did call first check");
+		strictEqual(fnCheckSpy2.callCount, 1, "did call last check");
+
+		// Cleanup
+		this.clock.tick(1000);
 		oButton.destroy();
 	});
 })();

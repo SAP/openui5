@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*global URI*/
 
 sap.ui.define(['jquery.sap.global',
 			'./Opa',
@@ -10,7 +11,8 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
-			'./everyPolyfill'],
+			'./everyPolyfill',
+			'sap/ui/thirdparty/URI'],
 	function($, Opa, OpaPlugin, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var fnOpa5,
 			oPlugin = new OpaPlugin(),
@@ -53,19 +55,14 @@ sap.ui.define(['jquery.sap.global',
 			//invalidate the cache
 			$Frame = $("#OpaFrame");
 
+			// include styles
+			var sIframeStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
+			jQuery.sap.includeStyleSheet(sIframeStyleLocation);
+
 			if (!$Frame.length) {
 				//invalidate other caches
 
-				$Frame = $('<iframe id="OpaFrame" src="' + sSource + '"></iframe>');
-
-				$Frame.css({
-					width: "60%",
-					height: "60%",
-					position: "absolute",
-					opacity: "0.7",
-					top: "5%",
-					right: "5%"
-				});
+				$Frame = $('<iframe id="OpaFrame" class="opaFrame" src="' + sSource + '"></iframe>');
 
 				$("body").append($Frame);
 
@@ -118,7 +115,7 @@ sap.ui.define(['jquery.sap.global',
 			});
 
 		};
-	
+
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
 		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
@@ -144,7 +141,7 @@ sap.ui.define(['jquery.sap.global',
 		 * <li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
 		 *
 		 * </ul>
-		 * 
+		 *
 		 * @name sap.ui.test.Opa5#waitFor
 		 * @param {object} oOptions
 		 * @function
@@ -358,19 +355,30 @@ sap.ui.define(['jquery.sap.global',
 		};
 
 		/**
-		 * Validates the matchers and makes sure to return them in an array or undefined
+		 * Validates the matchers and makes sure to return them in an array
 		 * @private
 		 */
 		fnOpa5.prototype._checkMatchers = function (vMatchers) {
 			var aMatchers = [];
 
-			if (vMatchers instanceof fnOpa5.matchers.Matcher) {
-				aMatchers = [vMatchers];
-			} else if ($.isArray(vMatchers)) {
+			if ($.isArray(vMatchers)) {
 				aMatchers = vMatchers;
 			} else if (vMatchers) {
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				aMatchers = [vMatchers];
 			}
+
+			aMatchers = aMatchers.map(function(vMatcher) {
+				if (vMatcher instanceof fnOpa5.matchers.Matcher) {
+					return vMatcher;
+				} else if (typeof vMatcher == "function") {
+					return {isMatching : vMatcher};
+				}
+				
+				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
+				return undefined;
+			}).filter(function(oMatcher) {
+				return !!oMatcher;
+			});
 
 			return aMatchers;
 		};
@@ -405,14 +413,26 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		function setFrameVariables() {
 			oFrameJQuery = oFrameWindow.jQuery;
+			//All Opa related resources in the iframe should be the same version
+			//that is running in the test and not the (evtl. not available) version of Opa of the running App.
+			registerAbsoluteModulePathInIframe("sap.ui.test");
 			oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 			oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin();
+			
+			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
-			oFrameUtils = oFrameWindow.sap.ui.test.qunit;
+			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
+			
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
 		}
-
+		
+		function registerAbsoluteModulePathInIframe(sModule) {
+			var sOpaLocation = jQuery.sap.getModulePath(sModule);
+			var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
+			oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
+		}
+		
 		function handleFrameLoad () {
 			oFrameWindow = $Frame[0].contentWindow;
 			bFrameLoaded = true;
@@ -517,6 +537,6 @@ sap.ui.define(['jquery.sap.global',
 			$("body").height("100%");
 			$("html").height("100%");
 		});
-	
+
 		return fnOpa5;
 }, /* bExport= */ true);

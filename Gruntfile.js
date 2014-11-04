@@ -1,13 +1,11 @@
 /*
- * grunt-selenium-qunit
- *
- *
  * Copyright (c) 2014 SAP SE
  */
 
 'use strict';
 
 var path = require('path');
+var moment = require('moment');
 
 module.exports = function(grunt) {
 
@@ -17,7 +15,7 @@ module.exports = function(grunt) {
 		color: 'cyan'
 	});
 
-	// Load all custom tasks from grunt/tasks dir 
+	// Load all custom tasks from grunt/tasks dir
 	grunt.loadTasks(path.join(process.cwd(), 'grunt/tasks'));
 
 	// set default options
@@ -37,6 +35,10 @@ module.exports = function(grunt) {
 	// we distinguish here between a testsuite which is an application
 	// and the libraries which are the re-use modules
 	var gruntData = {
+
+		buildtime: moment().utc().format('YYYYMMDDHHmmss'),
+		lastchange: '',
+
 		testsuite: {
 			name: 'testsuite',
 			path: 'src/testsuite'
@@ -93,9 +95,11 @@ module.exports = function(grunt) {
 			},
 			{
 					name: 'sap.ui.demokit',
-					path: 'src/sap.ui.demokit'
+					path: 'src/sap.ui.demokit',
+					bower: false // exclude from bower publish
 			}
 		]
+
 	};
 
 	// determine set of libraries to use (specified by --libs option)
@@ -105,7 +109,7 @@ module.exports = function(grunt) {
 
 	// Load all grunt config files (in grunt subfolder) and all tasks installed via npm
 	require('load-grunt-config')(grunt, {
-	
+
 		configPath: path.join(process.cwd(), 'grunt/config'),
 
 		// loads grunt plugins just-in-time (faster than using load-grunt-tasks)

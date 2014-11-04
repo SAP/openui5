@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		if (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 			if (this.bTableMode) {
 				var iCol = iIndex % this.iColumns;
-				
+				var iOldIndex = iIndex;
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_RIGHT) {
 					if (iCol < this.iColumns - 1) {
 						iIndex += 1;
@@ -518,7 +518,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						iIndex -= 1;
 					}
 				}
-				this.focusItem(iIndex, oEvent);
+				if (iIndex != iOldIndex) {
+					this.focusItem(iIndex, oEvent);
+				}
 			}
 			return;
 		}
@@ -934,8 +936,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					}
 
 				// if item is not visible or a dummy item go to the next one
-				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css("visibility") === "hidden"
-					|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
+				// !jQuery(this.aItemDomRefs[iIndex]).is(":visible") and jQuery(this.aItemDomRefs[iIndex]).css("visibility") === "hidden"
+				// - is not needed as .is(":sapFocusable") do these checks already	
+				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 			}
 
 			this.focusItem(iIndex, oEvent);
@@ -1079,9 +1082,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						}
 					}
 
-				// if item is not visible or a dummy item go to the next one
-				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css("visibility") === "hidden"
-					|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
+				// if item is not visible or a dummy item go to the next one	
+				} while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable"));
 			}
 
 			this.focusItem(iIndex, oEvent);
@@ -1286,8 +1288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				var iRow = Math.floor(this.iFocusedIndex / this.iColumns);
 				iIndex = iRow * this.iColumns;
 			} else {
-				while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css("visibility") === "hidden"
-					|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
+				while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 					iIndex++;
 
 					if (iIndex == this.aItemDomRefs.length) {
@@ -1368,8 +1369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					iIndex = this.aItemDomRefs.length - 1;
 				}
 			} else {
-				while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":visible") || jQuery(this.aItemDomRefs[iIndex]).css("visibility") == "hidden"
-					|| !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
+				while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
 					iIndex--;
 
 					if (iIndex < 0) {

@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				/**
 				 * The name property to be used in the HTML code for the slider (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : null},
+				name : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
 				 * The minimum value of the slider.
@@ -480,7 +480,8 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			var fMin = this.getMin(),
 				oTouch = oEvent.targetTouches[0],
 				oNearestHandleDomRef,
-				fNewValue;
+				fNewValue,
+				sEventNamespace = "." + SliderRenderer.CSS_CLASS;
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -498,8 +499,8 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			}
 
 			// registers event listeners
-			jQuery(document).on("touchend touchcancel mouseup", jQuery.proxy(this._ontouchend, this))
-							.on(oEvent.originalEvent.type === "touchstart" ? "touchmove" : "touchmove mousemove", jQuery.proxy(this._ontouchmove, this));
+			jQuery(document).on("touchend" + sEventNamespace + " touchcancel" + sEventNamespace + " mouseup" + sEventNamespace, this._ontouchend.bind(this))
+							.on(oEvent.originalEvent.type === "touchstart" ? "touchmove" + sEventNamespace : "touchmove" + sEventNamespace + " mousemove" + sEventNamespace, this._ontouchmove.bind(this));
 
 			oNearestHandleDomRef = this._getClosestHandle()[0];
 
@@ -598,6 +599,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @private
 		 */
 		Slider.prototype._ontouchend = function(oEvent) {
+			var sEventNamespace = "." + SliderRenderer.CSS_CLASS;
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -615,8 +617,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			}
 
 			// removes the registered event listeners
-			jQuery(document).off("touchend touchcancel mouseup", this._ontouchend)
-							.off("touchmove mousemove", this._ontouchmove);
+			jQuery(document).off(sEventNamespace);
 
 			var fValue = this.getValue();
 

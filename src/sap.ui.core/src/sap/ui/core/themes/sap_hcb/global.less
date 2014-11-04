@@ -132,7 +132,7 @@
 @sapMFontHeader3Size: 1.250rem; // 20px
 @sapMFontHeader4Size: 1.125rem; // 18px
 @sapMFontHeader5Size: 1rem; // 16px
-@sapMFontHeader6Size: 0.875em; // 14px
+@sapMFontHeader6Size: 0.875rem; // 14px
 
 @sapMFontSmallSize: 0.75rem; // 12px
 @sapMFontMediumSize: 0.875rem; // 14px
@@ -171,6 +171,42 @@
 // SOME important control-specific parameters...
 
 /* Derived Chart Colors */
+
+@sapUiChartLabelHoverColor: @sapHCHighlightBG;             // #7a5100
+@sapUiChartLabelPressedColor: @sapHCHighlightBG;           // #7a5100
+@sapUiChartCategoryAxisLabelFontColor: @sapHCStandardFG;   // #ffffff
+@sapUiChartValueAxisLabelFontColor: @sapHCStandardFG;      // #ffffff
+@sapUiChartCategoryAxisLabelFontSize: @sapMFontSmallSize;  // 12px
+@sapUiChartValueAxisLabelFontSize: @sapMFontSmallSize;     // 12px
+@sapUiChartCategoryAxisLineColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartValueAxisLineColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartCategoryAxisTickColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartValueAxisTickColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartBackgroundColor: @sapHCStandardFG;              // #000000
+@sapUiChartLabelFontWeight: normal;
+@sapUiChartLegendLabelFontColor: @sapHCStandardFG;         // #ffffff
+@sapUiChartLegendTitleFontColor: @sapHCStandardFG;         // #ffffff
+@sapUiChartLegendTitleFontSize: @sapMFontMediumSize;       // 14px
+@sapUiChartLegendLabelFontSize: @sapMFontSmallSize;        // 12px
+@sapUiChartPaletteUndefinedColor: @sapHCReducedAltBG;      // #a2a39f
+@sapUiChartGridlineColor: @sapHCReducedAltFG;              // #a2a39f
+@sapUiChartReferenceLineColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartDataLabelFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartReferenceLineLabelColor: @sapHCStandardFG;      // #ffffff
+@sapUiChartDataLabelFontSize: @sapMFontSmallSize;          // 12px
+@sapUiChartPopoverDataItemFontColor: @sapHCStandardFG;     // #ffffff
+@sapUiChartPopoverGroupFontColor: @sapHCStandardFG;        // #ffffff
+@sapUiChartPopoverDataItemFontSize: @sapMFontMediumSize;   // 14px
+@sapUiChartPopoverGroupFontSize: @sapMFontMediumSize;      // 14px
+@sapUiChartPopoverGroupFontWeight: bold;
+@sapUiChartScrollBarThumbColor: @sapHCReducedAltFG;        // #999999
+@sapUiChartScrollBarTrackColor: @sapHCStandardBG;          // #000000
+@sapUiChartScrollBarThumbHoverColor: @sapHCStandardFG;     // #ffffff
+@sapUiChartMainTitleFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartAxisTitleFontColor: @sapHCStandardFG;           // #ffffff
+@sapUiChartMainTitleFontSize: @sapMFontLargeSize;          // 16px
+@sapUiChartAxisTitleFontSize: @sapMFontMediumSize;         // 14px
+@sapUiChartTitleFontWeight: bold;
 
 // qualitative palette
 
@@ -265,6 +301,9 @@
 @sapUiLinkActive: @sapUiLink;
 @sapUiLinkHover: @sapUiLink;
 
+/* RatingIndicator */
+@sapUiRIIconPadding: 0.25rem;
+
 /* ToolPopup */
 @sapUiUx3ToolPopupInverted: ~"false";
 @sapUiUx3ToolPopupArrowRightMarginCorrection: 11px;
@@ -278,6 +317,18 @@
 
 @sapUiDatePickerTableBackground: lighten(desaturate(spin(@sapUiHighlightColor,165),18),8);
 @sapUiDatePickerTableBorderColor: @sapUiDatePickerTableBackground;
+
+/* DateTimeInput Custom Picker JavaScript	  */
+@sapUiDTICustomRows: 5;
+@sapUiDTICustomPhoneRows: 3;
+@sapUiDTICustomWidth: 64;
+@sapUiDTICustomHeight: 48;
+@sapUiDTICustomShowLabel: false;
+@sapUiDTICustomHeaderText: true;
+@sapUiDTICustomMode: scroller;			/* mixed, scroller, clickpick */
+@sapUiDTICustomDesktopMode: mixed;		/* mixed, scroller, clickpick */
+@sapUiDTICustomDisplay: bubble;			/* modal, bubble, bottom, top */
+@sapUiDTICustomPhoneDisplay: modal;		/* modal, bubble, bottom, top */
 
 /* Toolbar Separator */
 @sapUiToolbarSeparatorBG: @sapHCStandardFG;

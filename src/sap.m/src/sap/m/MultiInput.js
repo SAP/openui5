@@ -47,7 +47,41 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			/**
 			 * fired when the tokens aggregation changed (add / remove token)
 			 */
-			tokenChange : {}
+			tokenChange : {
+				parameters : {
+					
+					/**
+					 * type of tokenChange event. 
+					 * There are four TokenChange types: "added", "removed", "removedAll", "tokensChanged".
+					 * Use Tokenizer.TokenChangeType.Added for "added",	Tokenizer.TokenChangeType.Removed for "removed", Tokenizer.TokenChangeType.RemovedAll for "removedAll" and Tokenizer.TokenChangeType.TokensChanged for "tokensChanged".
+					 */
+					type: { type : "string"},
+					
+					/**
+					 * the added token or removed token. 
+					 * This parameter is used when tokenChange type is "added" or "removed".
+					 */
+					token: { type: "sap.m.Token"},
+					
+					/**
+					 * the array of removed tokens. 
+					 * This parameter is used when tokenChange type is "removedAll".
+					 */
+					tokens: { type: "sap.m.Token[]"},
+					
+					/**
+					 * the array of tokens that are added.
+					 * This parameter is used when tokenChange type is "tokenChange".
+					 */
+					addedTokens :  { type: "sap.m.Token[]"},
+					
+					/**
+					 * the array of tokens that are removed.
+					 * This parameter is used when tokenChange type is "tokenChange".
+					 */
+					removedTokens :  { type: "sap.m.Token[]"}
+				}
+			}
 		}
 	}});
 	
@@ -347,26 +381,34 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	MultiInput.prototype.onkeydown = function(oEvent) {
 		
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === jQuery.sap.KeyCodes.A) {
+
+			if (document.activeElement === this._$input[0]) {
 				
-			if ( this._tokenizer){
+				// if focus is on text
+				if (this._$input.getSelectedText() !== this.getValue()){
+					
+					// if text are not selected, then selected all text
+					this.selectText(0, this.getValue().length);
+				} else if (this._tokenizer){
+					
+					// if text are selected, then selected all tokens
+					this._tokenizer.selectAllTokens(true);
+				}
+			} else if (document.activeElement === this._tokenizer.$()[0]) {
 				
-				if (this._$input.getSelectedText() === this.getValue()) {
-					
-					// if all text are selected, select the complete content of the input field
-					this._tokenizer.selectAllTokens();
-						
-				} else if ( this._tokenizer.getTokens().length !== 0 && this._tokenizer.getSelectedTokens().length === this._tokenizer.getTokens().length){
-					
-					// if all tokens are selected, select the complete content of the input field
-					if (!this._tokenizer.bSelectAllToken){
-							
-						this.selectText(0, this.getValue().length);
-					}
-						
-				} 
+				// if the tokens were not selected before select all in tokenizer was called, then let tokenizer select all tokens.
+				if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
+
+					// if tokens are all selected, then select all tokens
+					this.selectText(0, this.getValue().length);
+				}
+			}
+			 
+			oEvent.preventDefault();
 			}
 			
-		}
+
+			
 		
 	};
 	
@@ -485,7 +527,41 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				&& oEvent.relatedControlId !== this._tokenizer.getId() && !bNewFocusIsInTokenizer) { // leaving control, validate latest text		
 				this._validateCurrentText(true);
 		}
+		
+		sap.m.Tokenizer.prototype.onsapfocusleave.apply(this._tokenizer, arguments);
 	};
+	
+	/**
+	 * when tap on text field, deselect all tokens
+	 * @name sap.m.MultiInput#ontap
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.ontap = function(oEvent) {
+		Input.prototype.ontap.apply(this, arguments);
+		
+		//deselect tokens when focus is on text field
+		if (document.activeElement === this._$input[0]) {
+			this._tokenizer.selectAllTokens(false);
+		}
+		
+	};
+	
+	/**
+	 * when press ESC, deselect all tokens and all texts
+	 * @name sap.m.MultiInput#onsapescape
+	 * @public
+	 * @param {jQuery.Event} oEvent
+	 */
+	MultiInput.prototype.onsapescape = function(oEvent) {
+		
+		//deselect everything
+		this._tokenizer.selectAllTokens(false);
+		this.selectText(0, 0);
+		
+		Input.prototype.onsapescape.apply(this, arguments);
+	};
+	
 	
 	/**
 	 * Function tries to turn current text into a token
@@ -711,6 +787,25 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		return this._tokenizer.getTokens();
 	};
 	
+	/**
+	 * Function overwrites clone function to add tokens to MultiInput
+	 * 
+	 * @name sap.m.MultiInput#clone
+	 * @public
+	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 */
+	MultiInput.prototype.clone = function() {
+        var oClone = Input.prototype.clone.apply(this, arguments);
+        
+        var aTokens = this.getTokens();
+        var i;
+        for (i = 0; i < aTokens.length; i++){
+              var newToken = aTokens[i].clone();
+              oClone.addToken(newToken);
+        }
+        
+        return oClone;
+  };
 	
 	/**
 	 * Function returns domref which acts as reference point for the opening suggestion menu

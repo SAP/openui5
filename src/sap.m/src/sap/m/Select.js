@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				/**
 				 * The name to be used in the HTML code (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name: { type : "string", group : "Misc", defaultValue : null },
+				name: { type : "string", group : "Misc", defaultValue : "" },
 
 				/**
 				 * Determines whether the control is visible or not.
@@ -49,30 +49,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				 * Defines the width of the select input. The default width of a select control depends on the width of the widest option/item in the list. This value can be provided in %, em, px… and all CSS units.
 				 * Note: The width will be ignored if the "autoAdjustWidth" property is set to true.
 				 */
-				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: 'auto' },
+				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
 				 * Defines the maximum width. This value can be provided in %, em, px… and all CSS units
 				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: '100%' },
+				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
 				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
 				 * @since 1.11
 				 */
-				selectedKey: { type: "string", group: "Data", defaultValue: null },
+				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
 				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
 				 * @since 1.12
 				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: null },
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
 				 * The URI to the icon that will be displayed only when using the “IconOnly” type.
 				 * @since 1.16
 				 */
-				icon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: null },
+				icon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
 
 				/**
 				 * Type of a select. Possibles values "Default", "IconOnly".
@@ -1032,6 +1032,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 				// force the focus to stay in the input field
 				this.focus();
+			}
+		};
+
+		/**
+		 * Handle the focusin event.
+		 * IE FIX: the browser does not focus on sap.m.Select but on its inner span (select icon).
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @name sap.m.Select#onfocusin
+		 * @function
+		 */
+		Select.prototype.onfocusin = function(oEvent) {
+			if (sap.ui.Device.browser.internet_explorer) {
+				var oSelectIcon = this.$().children(".sapMSltIcon");
+				if (oSelectIcon.is(":focus")) {
+					this.focus();
+				}
 			}
 		};
 

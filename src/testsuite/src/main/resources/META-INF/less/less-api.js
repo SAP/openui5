@@ -1,3 +1,7 @@
+(function(less, context) {
+"use strict";
+/* eslint-disable no-unused-vars */
+
 /*****************************************************************************
 * Less Patches:
 * This function contains patches to the original LESS code
@@ -6,41 +10,41 @@
 // Return "transparent" from the less engine during toCSS call in case rgba(0,0,0,0) is the value
 var fnToCSS = window.less.tree.Color.prototype.toCSS;
 window.less.tree.Color.prototype.toCSS = function(){
-	if(this.alpha == 0 && this.rgb[0] == 0 && this.rgb[1] == 0 && this.rgb[2] == 0){
+	if (this.alpha == 0 && this.rgb[0] == 0 && this.rgb[1] == 0 && this.rgb[2] == 0){
 		return "transparent";
 	}
 	return fnToCSS.apply(this, arguments);
 };
 
 // Save original function
-__less_tree_rule_eval = window.less.tree.Rule.prototype.eval;
+var __lessTreeRuleEval = window.less.tree.Rule.prototype.eval;
 
 /*****************************************************************************
 * Less API:
 * Wrapper to use the LessParser and access some additional infos!
 *****************************************************************************/
 
-var __env = {};
+var __env = context.__env = {};
 
 /**
  * Convenience function to parse string 
  */
-function parse(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
-	var oResult = {};
+var parse = context.parse = function(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
+	var oResult = {},
 		oParser = null,
 		mVariables = {},
 		oImportError = null;
 
 	// Override Rule.eval to collect all variable values on-the-fly
 	window.less.tree.Rule.prototype.eval = function(env) {
-		if (this.variable && typeof(this.name) === "string" && this.name.indexOf("@_PRIVATE_") !== 0) {
+		if (this.variable && (typeof this.name  === "string") && this.name.indexOf("@_PRIVATE_") !== 0) {
 			try {
 				mVariables[this.name.substr(1)] = this.value.eval(env).toCSS(env);
 			} catch (ex) {
 				// causes an exception when variable is not defined. ignore it here, less will take care of it
 			}
 		}
-		return __less_tree_rule_eval.apply(this, arguments);
+		return __lessTreeRuleEval.apply(this, arguments);
 	};
 
 	oParser = new window.less.Parser({
@@ -82,9 +86,10 @@ function parse(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
 	};
 
 	oParser.parse(sData, function(ex, root) {
+		var sMsg;
 
 		if (ex) { // why was there a check: ex instanceof Object?
-			var sMsg = "Error parsing LESS format. Reason: \n";
+			sMsg = "Error parsing LESS format. Reason: \n";
 			sMsg += createErrorMessage(ex);
 			throw sMsg;
 		}
@@ -94,17 +99,17 @@ function parse(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
 			oResult.css = root.toCSS({
 				compress: !!bCompress
 			});
-		} catch (ex) {
-			var sMsg = "Error generating CSS. Reason: \n";
-			sMsg += createErrorMessage(ex);
+		} catch (e) {
+			sMsg = "Error generating CSS. Reason: \n";
+			sMsg += createErrorMessage(e);
 			throw sMsg;
 		}
 
 		try {
 			oResult.json = JSON.stringify(mVariables, null, 4);
-		} catch (ex) {
-			var sMsg = "Error generating JSON parameters. Reason: \n";
-			sMsg += createErrorMessage(ex);
+		} catch (e) {
+			sMsg = "Error generating JSON parameters. Reason: \n";
+			sMsg += createErrorMessage(e);
 			throw sMsg;
 		}
 
@@ -113,9 +118,9 @@ function parse(sData, sPath, bCompress, bCompressJSON, sLibraryName) {
 				compress: !!bCompress,
 				plugins: [ new window.LessRtlPlugin() ]
 			});
-		} catch (ex) {
-			var sMsg = "Error generating RTL CSS. Reason: \n";
-			sMsg += createErrorMessage(ex);
+		} catch (e) {
+			sMsg = "Error generating RTL CSS. Reason: \n";
+			sMsg += createErrorMessage(e);
 			throw sMsg;
 		}
 
@@ -168,11 +173,14 @@ function createErrorMessage(ex) {
 		}, null, 4);
 	}
 	return ex;
-};
+}
 
 /**
  * Returns the base path of the given path (without filename)
  */
 function getBasePath(sPath) {
 	return (sPath) ? sPath.replace(/^(.*[\/\\])[^\/\\]*$/, '$1') : '';
-};
+}
+
+/* eslint-enable no-unused-vars */
+})(window.less, this);

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.NavContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/PopupSupport'],
+	function(jQuery, library, Control, PopupSupport) {
 	"use strict";
 
 
@@ -499,10 +499,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			var pageId = pageToRenderFirst.getId();
 	
 			// set focus to first focusable object
-			var focusObject = jQuery('#' + pageId).firstFocusableDomRef();
-			if (focusObject) {
-				jQuery.sap.focus(focusObject);
-				this._mFocusObject[pageId] = focusObject;
+			// when NavContainer is inside a popup, the focus is managed by the popup and shouldn't be set here
+			if (!this.$().closest('[data-sap-ui-area="sap-ui-static"]').length) {
+				var focusObject = jQuery.sap.byId(pageId).firstFocusableDomRef();
+				if (focusObject) {
+					jQuery.sap.focus(focusObject);
+					this._mFocusObject[pageId] = focusObject;
+				}
 			}
 	
 			var oNavInfo = {

@@ -1,0 +1,359 @@
+/* ===================================================================================== */
+/* CSS for control sap.m/UploadCollection.control                                        */
+/*                                                                                       */
+/* Base Theme                                                                            */
+/* ===================================================================================== */
+
+
+/* ************************************************************************************* */
+/* Common Styles                                                                         */
+/* ************************************************************************************* */
+/* List Header */
+.sapMTB.sapMUCListHeader {
+	width:				100%;
+	height:				3rem;
+	padding-left:		1rem;
+	padding-right:		1rem;
+//	background-color:	fade(@sapUiLightestBG,0%);
+	border-bottom-width: 0.0625rem;
+	border-bottom-style: solid;
+//	border-bottom-color: @sapUiMediumBorder;
+	font-family:		@sapUiFontFamily;
+//	font-size:			@sapMFontHeader4Size;
+//	font-weight:		@sapUiFontHeaderWeight;
+//	color: 				@sapUiHeaderText;
+	white-space:		nowrap;
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+//	text-shadow:		0.0625rem 0rem @sapUiLightShadowTint;
+	vertical-align:		middle;
+}
+
+.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
+	padding-left:		0rem;
+}
+
+.sapMLIB.sapMUCListSingleItem,
+.sapMLIB.sapMUCListFirstItem,
+.sapMLIB.sapMUCListLastItem,
+.sapMLIB.sapMUCListItem {
+	height: 				5rem;
+	padding-top:			1rem;
+	padding-bottom: 		0.9375rem;	// border-bottom: 0.0625
+	border-bottom-width: 	0.0625rem;
+	border-bottom-style: 	solid;
+//	border-bottom-color: 	@sapUiMediumBorder;
+}
+
+.sapMUCItemHL {
+	height:				5rem;
+	width:				100%;
+	padding-left:		1rem;
+	padding-right:		1rem;
+	box-sizing:			border-box;
+	flex: 				auto;
+}
+
+/* Item Icon */
+span[id*="ia_iconHL"] {
+	font-family:		SAP-icons;
+	font-size:			2.5rem;
+//	color: 				@sapUiElement;
+}
+
+
+.sapMImg.sapMUCItemImage{
+	height:				3rem;
+}
+
+div[id*="ta_textVL"] {
+	margin:				1rem 0rem 1rem 0rem;
+}
+
+
+/* Button Horizontal Layout  */
+.sapMUCBtnHL {
+	position:			absolute;
+	right:				0rem;
+	padding:			1rem 1rem 1rem 0rem;
+	display:			flex;
+}
+
+/* Buttons */
+.sapMBtn.sapMUCEditBtn,
+.sapMBtn.sapMUCDeleteBtn,
+.sapMBtn.sapMUCCancelBtn,
+.sapMBtn.sapMUCOkBtn {
+	margin-left:		0.125rem;
+}
+
+/* Text: Filename */
+.sapMUCFileName.sapMLnk {
+	padding-top:		0.125rem;
+
+	font-family:		@sapUiFontFamily;
+//	font-size:			@sapMFontLargeSize;
+	font-weight:		normal;
+	white-space:		nowrap;
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+	vertical-align:		top;
+}
+
+/* Text: Description (/Progress) */
+.sapMUCDescriptionHL .sapMLabel{
+	height:				1rem;
+	padding-top:		0.625rem;
+	padding-bottom:		0.125rem;
+
+	font-family: 		@sapUiFontFamily;
+//	font-size:			@sapMFontMediumSize;
+	font-weight:		normal;
+//	color:				@sapUiLightText;
+	white-space:		nowrap;
+	overflow:			hidden;
+	text-overflow:		ellipsis;
+	vertical-align:		bottom;
+}
+
+div[id*="ta_textVL"] {
+	height:				3rem;
+}
+
+
+.sapMUCItemHL > .sapUiHLayoutChildWrapper {
+	height:				3rem;
+	vertical-align: 	middle;
+}
+
+.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+	height:				3rem;
+	width:				3rem;
+	padding-left:		0rem;
+	margin-right:		0.75rem;
+	margin-top:			1rem;
+	margin-bottom:		1rem;
+	vertical-align:		middle;
+}
+
+.sapMUCEditHL {
+	position:			absolute;
+	width:				50%;
+}
+
+/* Text: File Extension */
+.sapMUCEditHL .sapMUCExtension {
+	padding-left:		0.5rem;
+	line-height:		3rem;
+	white-space: 		nowrap;
+}
+
+/* Busy Indicator */
+.sapMBusyIndicator.sapMUCloadingIcon {
+	padding-top:		1.25rem;
+	padding-bottom:		1.25rem;
+	padding-right:		1rem;
+	padding-left:		0rem;
+}
+
+.sapMBusyIndicator.sapMUCloadingIcon .sapMBusySvg {
+	height:				2.5rem;
+	width:				2.5rem;
+}
+
+
+/* ************************************************************************************* */
+/* Compact Mode                                                                          */
+/* ************************************************************************************* */
+.sapUiSizeCompact {
+	.sapMLIB.sapMUCListSingleItem,
+	.sapMLIB.sapMUCListFirstItem,
+	.sapMLIB.sapMUCListLastItem,
+	.sapMLIB.sapMUCListItem {
+		padding-top:		0.5rem;
+		padding-bottom: 	0.5rem;
+	}
+
+	.sapMUCEditHL {
+		margin-top:			0.5rem;
+	}
+
+	.sapMUCBtnHL {
+		margin-top:			1rem;
+	}
+
+	.sapMUCEditMode .sapMUCBtnHL {
+		margin:				0rem;
+	}
+
+	.sapMUCExtension {
+		line-height:		2rem;
+	}
+
+//	.sapMUCFileName.sapMLnk {
+//		font-size:			@sapMFontMediumSize;
+//	}
+
+	.sapMUCDescriptionHL .sapMLabel{
+		padding-top:		0.75rem;
+	}
+
+	.sapMBusyIndicator.sapMUCloadingIcon {
+		padding-top:		0.75rem;
+		padding-bottom:		0.75rem;
+	}
+
+/* ----------------------------------*/
+/* Single List Item in Compact Mode  */
+/* ----------------------------------*/
+	.sapMLIB.sapMUCListSingleItem {
+		height:					5rem;
+		padding-top:			1rem;
+		padding-bottom:			0.9375rem;	// border-bottom: 0.0625
+
+		.sapMUCItemHL {
+			height:				5rem;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			padding-top:		0rem;
+			padding-bottom:		0rem;
+		}
+
+		.sapMUCBtnHL {
+			padding:			1rem 1rem 1rem 0rem;
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			margin-top:			0.5rem;
+			padding:			1rem 1rem 1rem 0rem;
+		}
+
+		.sapMBusyIndicator.sapMUCloadingIcon {
+			margin-top:			0.5rem;
+			margin-bottom:		0.5rem;
+		}
+	}
+
+	/* ----------------------------------*/
+	/* First List Item in Compact Mode   */
+	/* ----------------------------------*/
+	.sapMLIB.sapMUCListFirstItem {
+		height:				4.5rem;
+		padding-top:		1rem;
+		padding-bottom:		0.5rem;
+		border-bottom:		none;
+
+		>.sapMLIBContent.sapMLIBContentMargin {
+			margin-top:			-0.5rem;	// no idea why this is needed to align
+		}
+
+		.sapMUCItemHL {
+			height:				4.5rem;
+		}
+
+		.sapMUCBtnHL {
+			padding:			1rem 1rem 0.5rem 0rem;
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			margin-top:			.5625rem;
+			padding:			1rem 1rem 1rem 0rem;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper {
+			height:				3rem;
+			vertical-align: 	middle;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			1rem;
+			margin-bottom:		0.5rem
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			margin-top:			1rem;
+			margin-bottom:		0.5rem;
+			padding:			0.5rem 1rem 0.5rem 0rem;
+		}
+
+		div[id*="ta_textVL"] {
+			margin:				1rem 0rem 0.5rem 0rem;
+		}
+
+		.sapMBusyIndicator.sapMUCloadingIcon {
+			margin-top:			0.5rem;
+		}
+	}
+
+	/* ----------------------------------*/
+	/* Last List Item in Compact Mode    */
+	/* ----------------------------------*/
+	.sapMLIB.sapMUCListLastItem {
+		height:				4.5rem;
+		padding-top:		0.5rem;
+		padding-bottom:		0.9375rem;  // border-bottom: 0.0625
+
+		>.sapMLIBContent.sapMLIBContentMargin {
+			margin-top:			0.5rem;	//	no idea why this is needed to align
+		}
+
+		.sapMUCItemHL {
+			height:				4.5rem;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0.5rem;
+			margin-bottom:		1rem;
+		}
+
+		div[id*="ta_textVL"] {
+			margin: 			0.5rem 0rem 1rem 0rem;
+		}
+
+		.sapMUCBtnHL {
+			margin-bottom:		0.5rem;
+			padding:			0.5rem 1rem 0.5rem 0rem;
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			padding:			1rem 1rem 1rem 0rem;
+		}
+	}
+
+	/* ----------------------------------*/
+	/* General List Item in Compact Mode */
+	/* ----------------------------------*/
+	.sapMLIB.sapMUCListItem {
+		height:					4rem;
+		padding-top:			0.5rem;
+		padding-bottom:			0.5rem;
+		border-bottom:			none;
+
+		.sapMUCItemHL {
+			height:				4rem;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0.5rem;
+			margin-bottom:		0.5rem;
+		}
+
+		div[id*="ta_textVL"] {
+			margin:				0.5rem 0rem 0.5rem 0rem;
+		}
+
+		.sapMUCBtnHL {
+			padding:			0.5rem 1rem 0.5rem 0rem;
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			padding:			1rem 1rem 1rem 0rem;
+		}
+	}
+}

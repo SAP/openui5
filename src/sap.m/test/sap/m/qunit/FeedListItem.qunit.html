@@ -261,6 +261,11 @@
 						showIcon: false,
 						senderActive: true,
 						timestamp: "Aug 06, 2014",
+					}, {
+						sender: "Mrs Smith",
+						text: "Thisisaerynnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongvvaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylong",
+						timestamp:"Jul 02, 2014",
+						maxCharacters: 20,
 					}]
 				};
 
@@ -347,6 +352,7 @@
 				ok(oFeedList.getItems()[8].$("realtext").text() === oFeedList.getItems()[8]._sShortText, "the collapsed text displayed ");
 				ok(oFeedList.getItems()[0].getMaxCharacters() === 5000, "maxCharacters should be changeable");
 				ok(!oFeedList.getItems()[0]._oLinkExpandCollapse, "expand/collapse Link should not be rendered");
+				ok(oFeedList.getItems()[10]._sShortText.length === 20, "the length of collapsed text without spaces equals to the property maxCharacters ");
 			});
 
 			module("Events", {

@@ -41,7 +41,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "ON" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOn : {type : "string", group : "Misc", defaultValue : null},
+				customTextOn : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
 				 * Custom text for the "OFF" state.
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				 * "OFF" translated to the current language is the default value.
 				 * Beware that the given text will be cut off after three characters.
 				 */
-				customTextOff : {type : "string", group : "Misc", defaultValue : null},
+				customTextOff : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
 				 * Invisible switches are not rendered.
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				/**
 				 * The name to be used in the HTML code for the switch (e.g. for HTML forms that send data to the server via submit).
 				 */
-				name : {type : "string", group : "Misc", defaultValue : null},
+				name : {type : "string", group : "Misc", defaultValue : ""},
 
 				/**
 				 * Type of a Switch. Possibles values "Default", "AcceptReject".

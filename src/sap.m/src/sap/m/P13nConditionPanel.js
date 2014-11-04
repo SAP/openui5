@@ -384,6 +384,7 @@ sap.ui
 						this._aKeyFields = aKeyFields;
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -398,6 +399,7 @@ sap.ui
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
 						this._enableConditions();
+						this._updateKeyFields();					
 					};
 
 					/**
@@ -1079,7 +1081,7 @@ sap.ui
 					 * @private
 					 * @param {object}
 					 *            oCurrentKeyField object of the current selected KeyField which contains type of the
-					 *            column ("string" (default) "date" or "numeric") and a maxlength information
+					 *            column ("string" (default) "date" or "numeric") and a maxLength information
 					 * @param {object}
 					 *            oFieldInfo
 					 * @param {P13nConditionPanel}
@@ -1119,13 +1121,13 @@ sap.ui
 								oControl = new sap.m.Input(params);
 						}
 
-						if (oCurrentKeyField && oCurrentKeyField.maxlength && oControl.setMaxLength) {
+						if (oCurrentKeyField && oCurrentKeyField.maxLength && oControl.setMaxLength) {
 							var l = -1;
-							if (typeof oCurrentKeyField.maxlength === "string") {
-								l = parseInt(oCurrentKeyField.maxlength, 10);
+							if (typeof oCurrentKeyField.maxLength === "string") {
+								l = parseInt(oCurrentKeyField.maxLength, 10);
 							}
-							if (typeof oCurrentKeyField.maxlength === "number") {
-								l = oCurrentKeyField.maxlength;
+							if (typeof oCurrentKeyField.maxLength === "number") {
+								l = oCurrentKeyField.maxLength;
 							}
 							if (l > 0) {
 								oControl.setMaxLength(l);
@@ -1209,6 +1211,39 @@ sap.ui
 						oThat._updateOperation(oThat, oTargetGrid, oConditionGrid);
 
 						// update the value fields for the KeyField
+						oThat._updateValueFields(oThat, oTargetGrid, oConditionGrid);
+
+						oThat._changeOperation(oThat, oTargetGrid, oConditionGrid);
+
+						oThat._changeField(oThat, oConditionGrid);
+
+						if (oThat.getAutoReduceKeyFieldItems()) {
+							oThat._updateKeyFieldItems(oThat, oTargetGrid, false);
+						}
+					};
+
+					P13nConditionPanel.prototype._updateKeyFields = function() {
+						var aConditionGrids = this._oConditionsGrid.getContent();
+						aConditionGrids.forEach(function(oConditionGrid) {
+							this._updateValueFields(this, this._oConditionsGrid, oConditionGrid);
+							this._changeOperation(this, this._oConditionsGrid, oConditionGrid);
+						}, this);
+					};
+
+					/**
+					 * creates the Value1/2 fields based on the KeyField Type
+					 * 
+					 * @private
+					 * @param {object}
+					 *            oThat is the P13nConditionPanel
+					 * @param {grid}
+					 *            oTargetGrid the main grid
+					 * @param {grid}
+					 *            oConditionGrid Grid which contains the KeyField control which has been changed
+					 */
+					P13nConditionPanel.prototype._updateValueFields = function(oThat, oTargetGrid, oConditionGrid) {
+
+						// update the value fields for the KeyField
 						var oCurrentKeyField = this._getCurrentKeyField(oConditionGrid.keyField);
 
 						// update Value1 field control
@@ -1230,14 +1265,6 @@ sap.ui
 						oNewValue2.setValue(sOldValue2);
 						oConditionGrid[fieldInfo["ID"]] = oNewValue2;
 						oConditionGrid.insertContent(oNewValue2, 6);
-
-						oThat._changeOperation(oThat, oTargetGrid, oConditionGrid);
-
-						oThat._changeField(oThat, oConditionGrid);
-
-						if (oThat.getAutoReduceKeyFieldItems()) {
-							oThat._updateKeyFieldItems(oThat, oTargetGrid, false);
-						}
 					};
 
 					P13nConditionPanel.prototype._updateOperations = function() {
@@ -1603,11 +1630,17 @@ sap.ui
 					 */
 					P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
 						var iMax = parseInt(this.getMaxConditions(), 10);
-
+						
 						var n = oTargetGrid.getContent().length;
+						
+//						if (n >= this._aKeyFields.length-1 && this.getAutoReduceKeyFieldItems()) {
+//							// if the number of condition_rows-1 is the same as the KeyFields we hide the Add icon on all condition rows.
+//							iMax = 0;
+//						}
+						
 						for (var i = 0; i < n; i++) {
 							var oAddBtn = oTargetGrid.getContent()[i].add;
-							if (this.getAlwaysShowAddIcon() || (i === n - 1 && (iMax === -1 || i < iMax - 1))) {
+							if ((this.getAlwaysShowAddIcon() && (iMax !== 0)) || (i === n - 1 && (iMax === -1 || i < iMax - 1))) {
 								// show the Add only for the last condition row and if the Max value is not reached
 								oAddBtn.removeStyleClass("displayNone");
 							} else {

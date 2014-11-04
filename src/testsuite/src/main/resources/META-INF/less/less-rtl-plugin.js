@@ -1,34 +1,13 @@
-(function(undefined) {
+window.LessRtlPlugin = (function(less) {
 	'use strict';
 
-	var less;
-	if (typeof window !== 'undefined' && window.less) {
-		less = window.less; // browser
-	} else {
-		less = require('less'); // node
-	}
+	var cssSizePattern = /(-?[\.0-9]+)([a-z]*)/;
+	var percentagePattern = /^\s*(-?[\.0-9]+)%\s*$/;
 
-	var LessRtlPlugin = function() {
-		this.oVisitor = new less.tree.visitor(this);
-	};
+	var urlPattern = /('?"?([^\)]*\/)?)img\/([^\)]*)/;
+	var urlReplacement = '$1img-RTL/$3';
 
-	LessRtlPlugin.prototype = {
-		isReplacing: true,
-		isPreEvalVisitor: false,
-		run: function (root) {
-			return this.oVisitor.visit(root);
-		},
-		visitRule: function(ruleNode, visitArgs) {
-			for (var converter in converterMapping) {
-				var mappingValue = converterMapping[converter][ruleNode.name];
-				if (mappingValue) {
-					converterFunctions[converter].call(this, ruleNode, mappingValue);
-				}
-			}
-
-			return ruleNode;
-		}
-	};
+	var swapLeftRightPattern = /(\bright\b|\bleft\b)/g;
 
 	var converterFunctions = {
 		modifyAttributeName: function(ruleNode, replacement) {
@@ -38,10 +17,11 @@
 		},
 		shuffle4Values: function(ruleNode) {
 			ruleNode.value.value.forEach(function(valueObject) {
+				var newParts;
 				if (valueObject.type === 'Anonymous') {
 					var parts = splitBySpace(valueObject.value);
 					if (parts.length === 4) {
-						var newParts = parts.slice(0);
+						newParts = parts.slice(0);
 						newParts[1] = parts[3];
 						newParts[3] = parts[1];
 						valueObject.value = newParts.join(' ');
@@ -65,7 +45,7 @@
 					}
 
 					if (rightValueIndex !== null && leftValueIndex !== null) {
-						var newParts = valueObject.value.slice(0);
+						newParts = valueObject.value.slice(0);
 						newParts[rightValueIndex] = valueObject.value[leftValueIndex];
 						newParts[leftValueIndex] = valueObject.value[rightValueIndex];
 						valueObject.value = newParts;
@@ -128,7 +108,7 @@
 							break;
 						}
 
-					};
+					}
 				}
 			});
 		},
@@ -151,7 +131,7 @@
 						if (match) {
 							var parsedValue = (match[0].indexOf('.') > -1)
 								? parseFloat(match[0])
-								: parseInt(match[0]);
+								: parseInt(match[0], 10);
 							valueParts[0] = (100 - parsedValue) + '%';
 							return valueParts.join(' ');
 						} else {
@@ -175,7 +155,7 @@
 					var valueParts = splitBySpace(valueObject.value);
 					var match = valueParts[0].match(percentagePattern);
 					if (match) {
-						valueParts[0] = (100 - parseInt(match[0])) + '%';
+						valueParts[0] = (100 - parseInt(match[0], 10)) + '%';
 						valueObject.value = valueParts.join(' ');
 					}
 				}
@@ -277,7 +257,7 @@
 
 		shuffle4Values: {
 			'border-style': true,
-			'border-color': true, // TODO: 'color-fix' needed? (see Java class)
+			'border-color': true,
 			'border-width': true,
 			'margin': true,
 			'padding': true,
@@ -342,7 +322,7 @@
 			'page-break-before': true,
 			'perspective-origin': true,
 			'ruby-align': true,
-			// "text-align" is not mirrored because "start" and "end" are available to support RTL!  IE does not support those and shall receive special CSS rules 
+			// "text-align" is not mirrored because "start" and "end" are available to support RTL!  IE does not support those and shall receive special CSS rules
 			'transform-origin': true,
 			'-moz-transform-origin': true,
 			'-ms-transform-origin': true,
@@ -399,16 +379,6 @@
 		'nesw-resize': 'nwse-resize',
 		'nwse-resize': 'nesw-resize'
 	};
-
-	var cssSizePattern = /(-?[\.0-9]+)([a-z]*)/;
-	var percentagePattern = /^\s*(-?[\.0-9]+)%\s*$/;
-
-	var urlPattern = /('?"?([^\)]*\/)?)img\/([^\)]*)/;
-	var urlReplacement = '$1img-RTL/$3';
-
-	var linearGradientPattern = /linear-gradient\(([^\)]+)\)/;
-
-	var swapLeftRightPattern = /(\bright\b|\bleft\b)/g;
 
 	function swapLeftRight(valueObject) {
 		if (valueObject.type === 'Anonymous' || valueObject.type === 'Keyword') {
@@ -487,42 +457,6 @@
 		return result;
 	}
 
-	function mirrorBackgroundLayer(bgLayer) {
-		var pos = bgLayer.indexOf('%');
-		if (pos > -1) {
-			var parts = splitBySpace(bgLayer.substring(0, pos + 1));
-
-			var potentialHit = parts[parts.length - 1];
-			var previousPart = (parts.length > 1) ? parts[parts.length - 2] : null;
-			// check whether the previous token was the first part of a position
-			if (previousPart &&
-				(previousPart === 'left' ||
-					previousPart === 'right' ||
-					previousPart === 'center' ||
-					cssSizePattern.test(previousPart))) {
-				// the percentage is second part of a position, so no mirroring
-				return bgLayer;
-			} else {
-				var firstPart = bgLayer.substring(0, pos);
-				var lastSlashPos = firstPart.lastIndexOf('/');
-				var lastClosingPos = firstPart.lastIndexOf(')');
-
-				// check whether there is a slash (outside a URL) before the candidate
-				if (lastSlashPos > lastClosingPos) {
-					// candidate is background size
-					return bgLayer;
-				} else if (firstPart.indexOf('gradient') > -1) {
-					// do not mirror gradient positions
-					return bgLayer;
-				} else {
-					// let's mirror!
-				}
-			}
-		}
-
-		return bgLayer;
-	}
-
 	function negate(node) {
 		if (node.type === 'Dimension') {
 			modifyOnce(node, 'negate', function(node) {
@@ -539,7 +473,7 @@
 		var name = node.name;
 		if (transformMapping.negateFirst[name]) {
 			negate(node.args[0]);
-		} else if(transformMapping.negateTwo[name]) {
+		} else if (transformMapping.negateTwo[name]) {
 			negate(node.args[0]);
 			if (node.args.length > 1) {
 				negate(node.args[1]);
@@ -560,7 +494,7 @@
 			if (offsetXValue.indexOf('.') > -1) {
 				negated = - parseFloat(offsetXValue);
 			} else {
-				negated = - parseInt(offsetXValue);
+				negated = - parseInt(offsetXValue, 10);
 			}
 			parts[offsetXIndex] = negated + match[2];
 		}
@@ -659,10 +593,30 @@
 		}
 	}
 
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = LessRtlPlugin;
-	} else if (typeof window !== 'undefined') {
-		window.LessRtlPlugin = LessRtlPlugin;
-	}
+	var LessRtlPlugin = function() {
+		/*eslint-disable new-cap */
+		this.oVisitor = new less.tree.visitor(this);
+		/*eslint-enable new-cap */
+	};
 
-})();
+	LessRtlPlugin.prototype = {
+		isReplacing: true,
+		isPreEvalVisitor: false,
+		run: function (root) {
+			return this.oVisitor.visit(root);
+		},
+		visitRule: function(ruleNode, visitArgs) {
+			for (var converter in converterMapping) {
+				var mappingValue = converterMapping[converter][ruleNode.name];
+				if (mappingValue) {
+					converterFunctions[converter].call(this, ruleNode, mappingValue);
+				}
+			}
+
+			return ruleNode;
+		}
+	};
+
+	return LessRtlPlugin;
+
+})(window.less);

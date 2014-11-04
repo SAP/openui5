@@ -49,6 +49,11 @@
 		"eqeqeq": 0,
 		"no-trailing-spaces": 0,
 		"no-underscore-dangle": 0,
-		"quotes": 0
+		"quotes": 0,
+		"key-spacing": 0,
+		"comma-spacing": 0,
+		"no-multi-spaces": 0,
+		"no-shadow": 0,
+		"no-irregular-whitespace": 0
 	}
 }

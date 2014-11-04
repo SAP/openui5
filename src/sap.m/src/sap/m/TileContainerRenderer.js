@@ -51,8 +51,8 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</div>");
 		rm.write("<div id=\"" + id + "-leftedge\" class=\"sapMTCEdgeLeft\"></div>");
 		rm.write("<div id=\"" + id + "-rightedge\" class=\"sapMTCEdgeRight\"></div>");
-		rm.write("<div id=\"" + id + "-leftscroller\" class=\"sapMTCScroller sapMTCLeft\"><div class=\"sapMTCInner\"></div></div>");
-		rm.write("<div id=\"" + id + "-rightscroller\" class=\"sapMTCScroller sapMTCRight\"><div class=\"sapMTCInner\"></div></div>");
+		rm.write("<div id=\"" + id + "-leftscroller\" class=\"sapMTCScroller sapMTCLeft\" tabindex=\"-1\"><div class=\"sapMTCInner\" ></div></div>");
+		rm.write("<div id=\"" + id + "-rightscroller\" class=\"sapMTCScroller sapMTCRight\" tabindex=\"-1\"><div class=\"sapMTCInner\" ></div></div>");
 		rm.write("</div>");
 	};
 

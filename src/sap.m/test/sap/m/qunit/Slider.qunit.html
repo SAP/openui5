@@ -900,6 +900,18 @@
 						length: 1
 					};
 
+					var fnHasEventListeners = function(oDomRef, sEventType) {
+						var aEventListeners = jQuery._data(oDomRef, "events")[sEventType] || [];
+
+						if (!aEventListeners.length) {
+							return false;
+						}
+
+						return aEventListeners.some(function(oEventListener) {
+							return oEventListener.namespace === sap.m.SliderRenderer.CSS_CLASS;
+						});
+					};
+
 					// act
 					sap.ui.test.qunit.triggerTouchEvent("touchstart", oSlider.getDomRef(), {
 						targetTouches: oTouches
@@ -912,6 +924,9 @@
 					// assertions
 					strictEqual(oSlider.getValue(), iPageX);
 					ok(!oSlider.$("inner").hasClass(sap.m.SliderRenderer.CSS_CLASS + "Pressed"), 'On touchend the slider muss not have the CSS class “' + sap.m.SliderRenderer.CSS_CLASS + 'Pressed”');
+					strictEqual(fnHasEventListeners(document, "touchend"), false);
+					strictEqual(fnHasEventListeners(document, "touchcancel"), false);
+					strictEqual(fnHasEventListeners(document, "mouseup"), false);
 
 					// cleanup
 					oSlider.destroy();

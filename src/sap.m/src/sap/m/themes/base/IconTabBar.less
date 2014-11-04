@@ -68,3 +68,8 @@
 .sapMITBBackgroundDesignTransparent > .sapMITBContainerContent > .sapMITBContent {
 	background-color: transparent;
 }
+
+/* fix rendering issue in BlackBerry - CSN: 0120061532 0001463943 2014 */
+.sap-bb .sapMITBContainerContent {
+	overflow : hidden;
+}

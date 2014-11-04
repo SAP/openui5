@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>reactor</artifactId>
-	<version>1.25.0-SNAPSHOT</version>
+	<version>1.25.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -23,8 +23,8 @@
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>${project.artifactId}</name>
-	<description>OpenUI5 Reactor</description>
+	<name>OpenUI5</name>
+	<description>OpenUI5 - Reactor POM</description>
 
 
 	<!--**************************************************************************
@@ -78,7 +78,10 @@
 		<buildtime>${maven.build.timestamp}</buildtime>
 		<lastchange></lastchange><!-- TODO: fill via build parameter -->
 
-	</properties>
+		<!-- JSLint/ESLint report path -->
+		<sonar.javascript.jslint.reportPath>target/jslint/jslint.xml</sonar.javascript.jslint.reportPath>
+
+ 	</properties>
 
 
 	<!--**************************************************************************
@@ -130,6 +133,7 @@
 			<properties>
 				<sap.ui5.translationArea>027001</sap.ui5.translationArea>
 				<sap.ui5.translationDomain>BC</sap.ui5.translationDomain>
+				<sap.ui5.translationDeveloper></sap.ui5.translationDeveloper>
 				<sap.ui5.translationCollection>SAPUI5 UI library</sap.ui5.translationCollection>
 				<sap.ui5.translationLanguages></sap.ui5.translationLanguages>
 			</properties>
@@ -142,7 +146,7 @@
 						<plugin>
 							<groupId>com.sap.ui5.tools.build</groupId>
 							<artifactId>ui5builder-maven-plugin</artifactId>
-							<version>1.25.0-SNAPSHOT</version>
+							<version>1.25.1-SNAPSHOT</version>
 						</plugin>
 
 						<!-- translation support (for internal use) -->
@@ -151,7 +155,16 @@
 							<artifactId>translation-plugin</artifactId>
 							<version>0.19.1</version>
 							<configuration>
+								<translationArea>${sap.ui5.translationArea}</translationArea>
+								<translationDomain>${sap.ui5.translationDomain}</translationDomain>
+								<translationDeveloper>${sap.ui5.translationDeveloper}</translationDeveloper>
+								<translationCollection>${sap.ui5.translationCollection}</translationCollection>
 								<languages>${sap.ui5.translationLanguages}</languages>
+								<!-- only consider the sources -->
+								<useDefaultTranslationResourceDirs>false</useDefaultTranslationResourceDirs>
+								<translationResources>
+									<translationResource>src</translationResource>
+								</translationResources>
 							</configuration>
 						</plugin>
 
@@ -221,6 +234,11 @@
 							<plugins>
 								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>
 							</plugins>
+							<formatters>
+								<formatter implementation="com.sap.eslint.java.formatters.JSLintFormatter">
+									<outputFile>${project.build.directory}/jslint/jslint.xml</outputFile>
+								</formatter>
+							</formatters>
 						</configuration>
 					</plugin>
 				</plugins>

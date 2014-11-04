@@ -219,8 +219,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		metadata : {
 
 			publicMethods : ["create", "remove", "update", "submitChanges", "getServiceMetadata", "read", "hasPendingChanges", "refresh", "resetChanges",
-							 "isCountSupported", "setCountSupported", "setDefaultCountMode", "getDefaultCountMode", "forceNoCache", "setProperty", "refreshSecurityToken", "setHeaders", "getHeaders",
-							 "setUseBatch"]
+							 "isCountSupported", "setCountSupported", "setDefaultCountMode", "getDefaultCountMode", "forceNoCache", "setProperty",
+							 "getSecurityToken", "refreshSecurityToken", "setHeaders", "getHeaders", "setUseBatch"]
 		}
 	});
 
@@ -1484,6 +1484,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
+	 * Returns the current security token. If the token has not been requested from the server it will be requested first.
+	 *
+	 * @returns {string} the CSRF security token
+	 *
+	 * @public
+	 * @name sap.ui.model.odata.ODataModel#getSecurityToken
+	 * @function
+	 */
+	ODataModel.prototype.getSecurityToken = function() {
+		var sToken = this.oServiceData.securityToken;
+		if (!sToken) {
+			this.refreshSecurityToken();
+			sToken = this.oServiceData.securityToken;
+		}
+		return sToken;
+	};
+
+	/**
 	 * refresh XSRF token by performing a GET request against the service root URL.
 	 *
 	 * @param {function} [fnSuccess] a callback function which is called when the data has
@@ -2465,7 +2483,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				oRequest.keys[sKey] = true;
 			}
 		} else if (sMethod == "POST") {
-			oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
+			// remove URL params
+			if (sPath.indexOf('?') != -1 ) {
+				var sNormalizedPath = sPath.substr(0, sPath.indexOf('?'));
+			}
+			oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (oEntityType) {
 				oRequest.entityTypes = {};
 				oRequest.entityTypes[oEntityType.entityType] = true;

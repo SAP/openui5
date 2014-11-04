@@ -688,13 +688,67 @@
 	});
 	
 	oComboBox.setSelectedKeys(["GB", "UG","DE", "TR", "DK"]);
-		//******************************************************************************************************
+	
+	//*******data binding example***************************************************************
+		
+			
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+	
+		// JSON sample data
+		var data = {
+			modelData:[
+				{lastName:"Doe",gender:"Male"},
+				{lastName:"Ali",gender:"Female"}			
+			]};
+	
+		// create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+	
+		// set the data for the model
+		oModel.setData(data);
+	
+		// set the model to the core
+		sap.ui.getCore().setModel(oModel);
+	
+		// define the template
+		var oItemTemplate = new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({
+					text: "{lastName}"
+				}),
+				new sap.m.MultiInput({
+					tokens:[
+						new sap.m.Token({text:"{lastName}", key:"{lastName}"}),
+					    new sap.m.Token({text:"{gender}", key:"{gender}"})
+					]
+				})
+			]
+		});
+		
+		var aColumns = [
+       		new sap.m.Column({
+       			header : new sap.m.Label({
+       				text : "LastName"
+       			}),
+   				width: "100px"
+       		}),
+       		new sap.m.Column({
+       			header : new sap.m.Label({
+       				text : "LastName + Gender"
+       			})
+       		})
+		    ];
+		
+	    var oTable = new sap.m.Table({ columns : aColumns});
+	    oTable.bindItems("/modelData", oItemTemplate);
+	    
+	   //******************************************
 		
 		var app = new sap.m.App("myApp");		
 		
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
-			content : [		
+			content : [
 					new sap.m.Label({ text : "MultiInput.allowTextInput = true", width:"100%"}),
 					oMultiInput1,	compareInput,					
 					oMultiInputCustomValidator,					
@@ -710,9 +764,10 @@
 					oMultiInput4,
 					new sap.m.Label({text: "Compact Mode"}), 
 			        theCompactMode,
+					new sap.m.Label({ text : "token databinding in MultiInput"}),
+					oTable,
 					new sap.m.Label({ text : "Token events:"}),
 					oEventList
-					
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }

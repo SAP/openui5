@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata",
 			                 "hasPendingChanges", "refresh", "resetChanges", "setDefaultCountMode",
 			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
-			                 "setProperty", "refreshSecurityToken", "setHeaders",
+			                 "setProperty", "getSecurityToken", "refreshSecurityToken", "setHeaders",
 			                 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
 			                 "setChangeBatchGroups", "getChangeBatchGroups"]
 		}
@@ -1327,6 +1327,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
+	 * Returns the current security token. If the token has not been requested from the server it will be requested first.
+	 *
+	 * @returns {string} the CSRF security token
+	 *
+	 * @public
+	 * @name sap.ui.model.odata.v2.ODataModel#getSecurityToken
+	 * @function
+	 */
+	ODataModel.prototype.getSecurityToken = function() {
+		var sToken = this.oServiceData.securityToken;
+		if (!sToken) {
+			this.refreshSecurityToken();
+			sToken = this.oServiceData.securityToken;
+		}
+		return sToken;
+	};
+
+	/**
 	 * refresh XSRF token by performing a GET request against the service root URL.
 	 *
 	 * @param {function} [fnSuccess] a callback function which is called when the data has
@@ -1457,9 +1475,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._submitSingleRequest = function(oRequest, fnSuccess, fnError) {
 		var that = this,
-		mChangeEntities = {},
-		mGetEntities = {},
-		mEntityTypes = {};
+			oRequestHandle,
+			mChangeEntities = {},
+			mGetEntities = {},
+			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
 			that._processResponse(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
@@ -1469,8 +1488,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 				}
 			}
+			
+			that._updateChangedEntities(mChangeEntities);
+			
+			that.fireRequestCompleted({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
+			
 		};
-		return this._submitRequest(oRequest, handleSuccess, fnError);
+		var handleError = function(oError) {
+			if (fnError) {
+				fnError(oError);
+			}
+			that.fireRequestCompleted({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
+
+			that.fireRequestFailed(oError);
+		};
+		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
+		
+		that.fireRequestSent({url : oRequest.requestUri, type : oRequest.method, async : oRequest.async,
+			info: "Accept headers:" + this.oHeaders["Accept"], infoObject : {acceptHeaders: this.oHeaders["Accept"]}});
+		
+		return oRequestHandle;
 	};
 
 	/**
@@ -1544,32 +1583,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				that._updateChangedEntities(mChangeEntities);
 
 			}
-			if (!fnSuccess) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
-			} else {
+			if (fnSuccess) {
 				fnSuccess(oData);
 			}
+			
+			that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: true});
+			
 		};
 
 		var handleError = function(oError) {
-			if (!fnError) {
-				that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-					info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
-
-				// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
-				//if (!oRequestHandle || !oRequestHandle.bAborted) {
-				that.fireRequestFailed(oError);
-			} else {
+			if (fnError) {
 				fnError(oError);
 			}
+			that.fireRequestCompleted({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async, 
+				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}, success: false, errorobject: oError});
+
+			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation) 
+			//if (!oRequestHandle || !oRequestHandle.bAborted) {
+			that.fireRequestFailed(oError);
 		};
 
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-		if (!fnSuccess) {
-			that.fireRequestSent({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
-				info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}});
-		}
+		
+		that.fireRequestSent({url : oBatchRequest.requestUri, type : "GET", async : oBatchRequest.async,
+			info: "Accept headers:" + that.oHeaders["Accept"], infoObject : {acceptHeaders: that.oHeaders["Accept"]}});
+		
 		return oRequestHandle;
 	};
 
@@ -1722,7 +1761,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		var that = this,
 			oRequestHandle;
 
-		if (this.oRequestTimer) {
+		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
 			jQuery.sap.clearDelayedCall(this.oRequestTimer);
 			this.oRequestTimer = undefined;
 		}
@@ -2479,6 +2518,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 
 		oFunctionMetadata = this.oMetadata._getFunctionImportMetadata(sFunctionName, sMethod);
+		jQuery.sap.assert(oFunctionMetadata, this + ": Function " + sFunctionName + " not found in the metadata !");
 
 		if (oFunctionMetadata) {
 			if (oFunctionMetadata.parameter != null) {

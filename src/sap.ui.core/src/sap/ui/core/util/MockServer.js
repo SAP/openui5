@@ -765,6 +765,8 @@ sap.ui
 								var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 								if (!aNavEntry || !!aNavEntry.__deferred) {
 									aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp));
+								} else if (!jQuery.isArray( aNavEntry )) {
+									aNavEntry = [aNavEntry];
 								}
 
 								if (!!aNavEntry && aNavProps.length > 1) {
@@ -1340,7 +1342,7 @@ sap.ui
 											oEntity[sKey]  = this._getJsonDate(oKeys[sKey]);
 											break;
 										case "Edm.Guid":
-											oEntity[sKey]  = oKeys[sKey].substring(5, oKeys[sKey].length - 2);
+											oEntity[sKey]  = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
 											break;
 										default:
 											oEntity[sKey] = oKeys[sKey];

@@ -48,7 +48,8 @@
 				"samples" : [ 
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
-					"sap.ui.core.sample.OpaReuse"
+					"sap.ui.core.sample.OpaReuse",
+					"sap.ui.core.sample.OpaDynamicWait"
 				]
 			},
 			{
@@ -101,6 +102,11 @@
 				"id": "sap.ui.core.sample.OpaReuse",
 				"name": "How to structure your OPA tests",
 				"description": "If you have complex apps you should build reuse functions to make your OPA tests maintainable."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaDynamicWait",
+				"name": "How to write nested actions",
+				"description": "If you have complex control structures you are able to add actions based on the result of previous actions."
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",

@@ -5,12 +5,13 @@
 .sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:hover,
 .sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:focus {
 	background-color: @sapHCHighlightBG;
+	border-left: 1px solid @sapHCStandardFG;
 }
 
 .sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelp > .sapMInputValHelpInner:active {
 	background-color: @sapHCHighlightAltBG;
+	border-left: 1px solid @sapHCStandardFG;
 	color: @sapHCStandardFG;
-	outline: none;
 }
 
 .sapMMultiInputNotEditable .sapMMultiInputBorder {
@@ -48,19 +49,17 @@
 .sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
 .sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder,
 .sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
+	border-color: @sapHCStandardFG;
 	border-width: 1px;
 }
 
-.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder {
-	border-color: @sapHCStandardFG;
+.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
+.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
+	border-style: dashed;
 }
 
 .sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
-	border-color: @sapHCStandardFG;
-}
-
-.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
-	border-color: @sapHCStandardFG;
+	background-color: @sapHCHighlightBG;
 }
 
 .sapMMultiInputInputContainer > input, .sapMMultiInputShadowDiv {
@@ -85,20 +84,4 @@
 .sapUiSizeCompact  .sapMMultiInput .sapMInputBaseInner {
 	padding-left: 0.0rem;
 	padding-right: 0.1rem;
-}
-
-
-/* HCB Additional Styles */
-.sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelpInner:hover,
-.sapMMultiInput:not(.sapMMultiInputNotEditable) .sapMInputValHelpInner:active {
-	border-left: 1px solid @sapHCStandardFG;
-}
-
-.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
-.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
-	border-style: dashed;
-}
-
-.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder {
-	background-color: @sapHCHighlightBG;
 }

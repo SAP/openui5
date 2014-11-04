@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 					}
 					// okay, we couldn't find a language setting. It might be better to fallback to 'en' instead of having no language 
 				}
-				return navigator.language || navigator.userLanguage || navigator.browserLanguage;
+				return (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage || navigator.browserLanguage;
 			}
 
 			// definition of supported settings

@@ -1,0 +1,45 @@
+/* ======================================== */
+/* CSS for control sap.m/DatePicker.control */
+/* High Contrast Black theme                */
+/* ======================================== */
+
+.sapMDP > .sapUiIcon {
+	speak: none;
+	color: @sapHCStandardFG;
+	position: absolute;
+	top: 0.3125rem;
+	right: 0.0625rem;
+	height: 2.375rem;
+	width: 2.375rem;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	border-left: 1px solid transparent;
+	border-left: 0.0625rem solid transparent;
+}
+
+.sap-desktop .sapMDP > .sapUiIcon:hover {
+	border-left: 1px solid @sapHCStandardFG;
+	border-left: 0.0625rem solid @sapHCStandardFG;
+}
+
+.sap-desktop .sapMDP > .sapUiIcon:focus,
+.sap-desktop .sapMDP > .sapUiIcon:hover {
+	background-color: @sapHCHighlightBG;
+}
+
+.sap-desktop .sapMDP > .sapUiIcon:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.125rem;
+}
+
+.sapMDP > .sapUiIcon:active,
+.sap-desktop .sapMDP > .sapUiIcon:active {
+	background-color: @sapHCHighlightBG;
+	color: @sapHCStandardFG;
+	outline: none;
+}
+
+.sapUiCal {
+	box-shadow: 0 0 2.5rem 0.125rem fade(@sapHCStandardFG, 80%);
+}
