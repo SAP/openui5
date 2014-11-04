@@ -1081,7 +1081,7 @@ sap.ui
 					 * @private
 					 * @param {object}
 					 *            oCurrentKeyField object of the current selected KeyField which contains type of the
-					 *            column ("string" (default) "date" or "numeric") and a maxlength information
+					 *            column ("string" (default) "date" or "numeric") and a maxLength information
 					 * @param {object}
 					 *            oFieldInfo
 					 * @param {P13nConditionPanel}
@@ -1121,13 +1121,13 @@ sap.ui
 								oControl = new sap.m.Input(params);
 						}
 
-						if (oCurrentKeyField && oCurrentKeyField.maxlength && oControl.setMaxLength) {
+						if (oCurrentKeyField && oCurrentKeyField.maxLength && oControl.setMaxLength) {
 							var l = -1;
-							if (typeof oCurrentKeyField.maxlength === "string") {
-								l = parseInt(oCurrentKeyField.maxlength, 10);
+							if (typeof oCurrentKeyField.maxLength === "string") {
+								l = parseInt(oCurrentKeyField.maxLength, 10);
 							}
-							if (typeof oCurrentKeyField.maxlength === "number") {
-								l = oCurrentKeyField.maxlength;
+							if (typeof oCurrentKeyField.maxLength === "number") {
+								l = oCurrentKeyField.maxLength;
 							}
 							if (l > 0) {
 								oControl.setMaxLength(l);
@@ -1630,11 +1630,17 @@ sap.ui
 					 */
 					P13nConditionPanel.prototype._updateConditionButtons = function(oTargetGrid) {
 						var iMax = parseInt(this.getMaxConditions(), 10);
-
+						
 						var n = oTargetGrid.getContent().length;
+						
+//						if (n >= this._aKeyFields.length-1 && this.getAutoReduceKeyFieldItems()) {
+//							// if the number of condition_rows-1 is the same as the KeyFields we hide the Add icon on all condition rows.
+//							iMax = 0;
+//						}
+						
 						for (var i = 0; i < n; i++) {
 							var oAddBtn = oTargetGrid.getContent()[i].add;
-							if (this.getAlwaysShowAddIcon() || (i === n - 1 && (iMax === -1 || i < iMax - 1))) {
+							if ((this.getAlwaysShowAddIcon() && (iMax !== 0)) || (i === n - 1 && (iMax === -1 || i < iMax - 1))) {
 								// show the Add only for the last condition row and if the Max value is not reached
 								oAddBtn.removeStyleClass("displayNone");
 							} else {
