@@ -12,9 +12,38 @@
 	background-color: @sapUiBtnBGStandardHover;
 }
 
+.sapUiFup:active .sapMBtnInner {
+	background-image: none;
+	background-color: @sapUiBtnBGStandardDown;
+	border-color:     @sapUiBtnBGStandardDown;
+	color:            @sapUiBtnTextActive;
+	text-shadow:      none;
+}
+
+.sapUiFup:hover .sapUiBtnS.sapUiBtnStdFocus {
+	background-color: @sapUiBtnBGStandardHover;
+}
+
+.sapUiFup:active .sapMBtnInner .sapMBtnIcon {
+	color:            @sapUiBtnTextActive;
+}
+
+.sapUiFup:active .sapUiBtnS {
+	background-color: @sapUiButtonActiveBackground;
+}
+
+.sapUiFup:active .sapUiBtnS.sapUiBtnNorm {
+	border-color: @sapUiButtonActiveBorderColor;
+}
+
 .sapUiFup:hover .sapMBtnHoverable.sapMBtnAccept:not(.sapMBtnActive) {
 	background-color: @sapUiBtnBGPositiveHover;
 	border-color:     @sapUiBtnBGPositiveHover;
+}
+
+.sapUiFup:active .sapMBtnHoverable.sapMBtnAccept:not(.sapMBtnActive) {
+	background-color: @sapUiBtnBGPositiveDown;
+	border-color:     @sapUiBtnBGPositiveDown;
 }
 
 .sapUiFup:hover .sapMBtnHoverable.sapMBtnReject:not(.sapMBtnActive) {
@@ -22,7 +51,18 @@
 	border-color:     @sapUiBtnBGNegativeHover;
 }
 
+.sapUiFup:active .sapMBtnHoverable.sapMBtnReject:not(.sapMBtnActive) {
+	background-color: @sapUiBtnBGNegativeDown;
+	border-color:     @sapUiBtnBGNegativeDown;
+}
+
 .sapUiFup:hover .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
 	background-color: @sapUiBtnBGEmphasizedHover;
 	border-color:     @sapUiBtnBGEmphasizedHover;
+}
+
+.sapUiFup:active .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
+	background-color: @sapUiBtnBGEmphasizedDown;
+	border-color:     @sapUiBtnBGEmphasizedDown;
+	text-shadow:      none;
 }
