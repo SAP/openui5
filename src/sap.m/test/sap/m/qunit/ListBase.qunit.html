@@ -1135,7 +1135,7 @@
 		
 		test("Test Tab/ShiftTab/F6/ShiftF6 handling", function() {
 			var fnSpy = this.spy();
-			var oVBox = new sap.m.VBox();
+			var oPage = new sap.m.Page();
 			var oBeforeList = new sap.m.Input();
 			var oAfterList = new sap.m.Input();
 			var oInput = new sap.m.Input();
@@ -1149,10 +1149,10 @@
 				items : [oListItem]
 			});
 			
-			oVBox.addItem(oBeforeList);
-			oVBox.addItem(oList);
-			oVBox.addItem(oAfterList);
-			oVBox.placeAt("content");
+			oPage.addContent(oBeforeList);
+			oPage.addContent(oList);
+			oPage.addContent(oAfterList);
+			oPage.placeAt("content");
  			sap.ui.getCore().applyChanges();
  			oList.forwardTab = fnSpy;
 			
@@ -1179,7 +1179,7 @@
 			strictEqual(document.activeElement.id, oAfterList.getFocusDomRef().id, "Focus is moved correctly after F6");
 			
 			// cleanup
-			oVBox.destroy();
+			oPage.destroy();
 		});
 		
 		test("Focusing an item in the ListItemBase should change the focus index of item navigation", function() {
