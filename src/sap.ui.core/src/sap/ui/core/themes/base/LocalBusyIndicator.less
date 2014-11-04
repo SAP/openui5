@@ -1,4 +1,4 @@
-@sapUiLocalBusyIndicatorBG: fade(@sapUiExtraLightBG, 72%); 
+@sapUiLocalBusyIndicatorBG: fade(@sapUiExtraLightBG, 72%);
 @sapUiLocalBusyIndicatorBG_IE: @sapUiExtraLightBG;
 @sapUiLocalBusyIndicatorBoxSize: 8px;
 
@@ -16,6 +16,7 @@
 }
 HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
 	background-color: @sapUiLocalBusyIndicatorBG_IE;
+	filter: alpha(opacity=72);
 }
 
 .sapUiLocalBusyIndicatorAnimation {
@@ -33,19 +34,19 @@ HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
 	float: left;
 	display: block;
 	margin-left: @sapUiLocalBusyIndicatorBoxSize;
-	
+
 	-moz-border-radius: 1px;
 	-webkit-border-radius: 1px;
 	border-radius: 1px;
-	
+
 	-moz-transition-property: background-color;
 	-moz-transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
 	-moz-transition-timing-function: ease-in;
-	
+
 	-webkit-transition-property: background-color;
 	-webkit-transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
 	-webkit-transition-timing-function: ease-in;
-	
+
 	transition-property: background-color;
 	transition-duration: @sapUiLocalBusyIndicatorBoxTransitionDuration;
 	transition-timing-function: ease-in;
@@ -56,5 +57,5 @@ HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
 }
 
 .sapUiLocalBusyIndicatorBox:first-child {
-	margin-left: 0; 
+	margin-left: 0;
 }
