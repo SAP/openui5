@@ -28,6 +28,25 @@ grunt serve[:<mode>] [--port=<port>] [--watch]
 #  grunt serve:target --port=80          # mode=target, port=80, watch=false
 ```
 
+## lint ##
+
+Argument | Description                                                                                       | Default
+-------- | ------------------------------------------------------------------------------------------------- | -------------
+libs     | Library name(s) to build (comma-separated)                                                        | All libraries
+path     | Path(s) that should be linted (relative to root). If specified, the `libs` option will be ignored | none
+
+Runs static code checks using [ESLint](http://eslint.org).  
+You can find the complete list of rules and settings [here](eslint.md).
+
+```
+grunt lint[:<path-1>:<path-n>] [--libs=<library-1>,<library-n>]
+
+# examples
+#  grunt lint                                    # lint all libraries
+#  grunt lint --libs=sap.ui.core,sap.m           # lint sap.ui.core and sap.m only
+#  grunt lint:src/sap.ui.core/src/sap/ui/model   # lint the given path only
+```
+
 ## build ##
 
 Argument               | Description                                  | Default

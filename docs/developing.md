@@ -95,16 +95,12 @@ Testing UI5
 
 ### Running the static code checks (ESLint)
 
-All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/). ESLint can be installed from the command line with:
+All UI5 code must conform to a certain ruleset which is checked with ESLint (http://eslint.org/).  
+To run an ESLint check, navigate to the root directory of the repository and execute:
 ```
-npm i -g eslint
+grunt lint
 ```
-
-To run an ESLint check, navigate to the directory you want to check and execute:
-```
-eslint .
-```
-
+Optionally, only a selected library can be checked or just a single file or directory, see [the documentation](tools.md) for details.
 
 ### Running the Unit Tests
 
