@@ -16,9 +16,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * @param {object}
 	 *          [mSettings] initial settings for the new control
 	 * 
-	 * @class The P13nDialog provides you a dialog that contains one or more panels. On each of the panels some changes in
-	 *        regards to a table can be proceed. E.g. a panel to set a column as invisible, change the order of it or maybe a
-	 *        panel to get table sorted or filtered.
+	 * @class The P13nDialog control provides dialog that contains one or more panels. On each of the panels, one or more changes with
+	 *        regards to a table can be processed. For example, a panel to set a column to invisible, change the order of the columns or a
+	 *        panel to sort or filter tables.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
 	 * @version ${version}
@@ -36,9 +36,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			library : "sap.m",
 			properties : {
 				/**
-				 * This property decides whether the 'Reset' button is shown inside the dialog. If this property is set to true,
-				 * clicking on the 'Reset' button the 'reset' event will be raised in order to notify that model data should be
-				 * reseted.
+				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to true,
+				 * clicking the 'Reset' button will trigger the 'reset' event sending a notification that model data must be reset.
 				 */
 				showReset : {
 					type : "boolean",
@@ -49,7 +48,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			aggregations : {
 
 				/**
-				 * The dialog panels displayed on the dialog.
+				 * The dialog panels displayed in the dialog.
 				 */
 				panels : {
 					type : "sap.m.P13nPanel",
@@ -61,7 +60,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			events : {
 
 				/**
-				 * Event is fired when the P13nDialog is closed by 'Ok' or 'Cancel' button.
+				 * Event fired if the P13nDialog is closed by 'Ok' or 'Cancel' button.
 				 */
 				close : {
 					parameters : {
@@ -75,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 					}
 				},
 				/**
-				 * Event is fired when button 'reset' on P13nDialog is clicked.
+				 * Event fired if the 'reset' button in P13nDialog is clicked.
 				 */
 				reset : {}
 			}
