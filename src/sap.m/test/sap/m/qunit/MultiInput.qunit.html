@@ -338,6 +338,71 @@
 		equals(multiInput1._sResizeHandlerId, undefined, "Resizehandler got deleted");		
 	});	
 	
+	test("token data binding", function() {
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		
+		// JSON sample data
+		var data = {
+			modelData:[
+				{lastName:"Doe",gender:"Male"},
+				{lastName:"Ali",gender:"Female"}			
+			]};
+	
+		// create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+	
+		// set the data for the model
+		oModel.setData(data);
+	
+		// set the model to the core
+		sap.ui.getCore().setModel(oModel);
+	
+		// define the template
+		var oItemTemplate = new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({
+					text: "{lastName}"
+				}),
+				new sap.m.MultiInput({
+					tokens:[
+						new sap.m.Token({text:"{lastName}", key:"{lastName}"}),
+					    new sap.m.Token({text:"{gender}", key:"{gender}"})
+					]
+				})
+			]
+		});
+		
+		var aColumns = [
+       		new sap.m.Column({
+       			header : new sap.m.Label({
+       				text : "LastName"
+       			}),
+   				width: "100px"
+       		}),
+       		new sap.m.Column({
+       			header : new sap.m.Label({
+       				text : "LastName + Gender"
+       			})
+       		})
+		    ];
+		
+	    var oTable = new sap.m.Table({ columns : aColumns});
+	    oTable.bindItems("/modelData", oItemTemplate);
+	    oTable.placeAt("qunit-fixture");
+		
+		sap.ui.getCore().applyChanges();
+
+	    var oMultiInput1 = oTable.getItems()[0].getCells()[1];
+	    equals(oMultiInput1.getTokens()[0].$().text(), "Doe", "text of token is correct");
+	    equals(oMultiInput1.getTokens()[1].$().text(), "Male", "text of token is correct");
+	    
+	    var oMultiInput2 = oTable.getItems()[1].getCells()[1];
+	    equals(oMultiInput2.getTokens()[0].$().text(), "Ali", "text of token is correct");
+	    equals(oMultiInput2.getTokens()[1].$().text(), "Female", "text of token is correct");
+	    
+	    oTable.destroy();
+	});
+	
 </script>
 
 </head>
