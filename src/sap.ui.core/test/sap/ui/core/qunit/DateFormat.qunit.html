@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested sap.ui.core.format.DateFormat
   Author: d040216
 -->
@@ -75,7 +75,7 @@
 			};
 
 		// Overwrite getTimezoneOffset to get reproducible results independent of the
-		// timezone where the test is run in, add additional information which 
+		// timezone where the test is run in, add additional information which
 		// is not provided by the standard JS Date object
 		oDate.getTimezoneOffset = function() { return -420 };
 		oDate.getTimezoneShort = function() { return "PDT" };
@@ -94,7 +94,7 @@
 			oCustomDate;
 
 		// Overwrite getTimezoneOffset to get reproducible results independent of the
-		// timezone where the test is run in, add additional information which 
+		// timezone where the test is run in, add additional information which
 		// is not provided by the standard JS Date object
 		oDate.getTimezoneOffset = function() { return 0 };
 		oDate.getTimezoneShort = function() { return "UTC" };
@@ -105,21 +105,21 @@
 		oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX"});
 		equal(oCustomDate.format(oDate, true), "2001-07-04T12:08:56.235Z", "yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	});
-	
-	
+
+
 	function getExpectedRelativeDate(iDiff, iTarget, oFormatOptions, sLocale){
 		oFormatOptions = jQuery.extend({}, oFormatOptions);
 		oFormatOptions.relative = false;
-		
+
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
 			sTargetDate = oFormat.format(new Date(iTarget))+"",
 			iDays = Math.abs(iDiff),
 			aRange = oFormatOptions.relativeRange || [-6, 6];
-		
+
 		if (iDiff < aRange[0] || iDiff > aRange[1]) {
 			return [sTargetDate, sTargetDate];
 		}
-		
+
 		switch(iDiff){
 			case 0:
 				return [sLocale == "en" ? "today" : "Heute", sTargetDate];
@@ -135,14 +135,14 @@
 				}
 		}
 	}
-	
+
 	function doTestRelative(bFormat, oFormatOptions, sLocale, sTestInfo){
 		var oFormat1 = sap.ui.core.format.DateFormat.getDateInstance(jQuery.extend({relative: bFormat ? true : false}, oFormatOptions), new sap.ui.core.Locale(sLocale)),
 			oFormat2 = sap.ui.core.format.DateFormat.getDateInstance(oFormatOptions, new sap.ui.core.Locale(sLocale)),
 			oToday = new Date(),
 			iToday = oToday.getTime(),
 			iTarget, aExpected;
-		
+
 		for(var i=-10; i<=10; i++){
 			iTarget = iToday + i * (24 * 60 * 60 * 1000);
 			var aExpected = getExpectedRelativeDate(i, iTarget, oFormatOptions, sLocale);
@@ -151,11 +151,11 @@
 			}else{
 				equal(oFormat2.format(oFormat1.parse(aExpected[0]))+"", aExpected[1], sTestInfo+" ----------- "+aExpected[0]+" -> Today"+(i>=0 ? " + ":" ")+i+" -> "+aExpected[1]);
 			}
-			
+
 		}
 	}
-	
-	
+
+
 	test("format date relative", function(){
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(true, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
@@ -164,7 +164,7 @@
 		doTestRelative(true, {style: "long", relativeRange: [1, 5]}, "en", "style long, range [1, 5], en");
 		doTestRelative(true, {style: "long", relativeRange: [1, 5]}, "de", "style long, range [1, 5], de");
 	});
-	
+
 	test("parse date relative", function(){
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "en", "yyyy-MM-dd, default range, en");
 		doTestRelative(false, {pattern: "yyyy-MM-dd"}, "de", "yyyy-MM-dd, default range, de");
@@ -238,7 +238,8 @@
 			"EEE, d MMM yyyy HH:mm:ss": ["Wed, 4 Jul 2001 12:08:56", inclTimezoneOffset(994248536000)],
 			"yyMMddHHmms": ["010704120856", inclTimezoneOffset(994248536000)],
 			"yyyy-MM-dd'T'HH:mm:ss.SSS": ["2001-07-04T12:08:56.235", inclTimezoneOffset(994248536235)],
-			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235]
+			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2001-07-04T12:08:56.235Z", 994248536235],
+			"yyyy-MM-dd'T'HH:mm:ss.SSSX": ["2000-01-01T16:00:00.000-09:00", 946774800000]
 		};
 
 		for (sCustomPattern in oCustomDatePatterns) {

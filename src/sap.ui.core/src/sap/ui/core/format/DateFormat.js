@@ -52,10 +52,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			style: "medium"
 		},
 		aFallbackFormatOptions: [
-					{style: "short"},
-				{style: "medium"},
-				{pattern: "yyyy-MM-dd'T'hh:mm:ss"},
-				{pattern: "yyyyMMdd hhmmss"}
+			{style: "short"},
+			{style: "medium"},
+			{pattern: "yyyy-MM-dd'T'HH:mm:ss"},
+			{pattern: "yyyyMMdd HHmmss"}
 		],
 		getPattern: function(oLocaleData, sStyle) {
 			var sDateTimePattern = oLocaleData.getDateTimePattern(sStyle),
@@ -75,10 +75,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			style: "medium"
 		},
 		aFallbackFormatOptions: [
-					{style: "short"},
-				{style: "medium"},
-				{pattern: "hh:mm:ss"},
-				{pattern: "hhmmss"}
+			{style: "short"},
+			{style: "medium"},
+			{pattern: "HH:mm:ss"},
+			{pattern: "HHmmss"}
 		],
 		getPattern: function(oLocaleData, sStyle) {
 			return oLocaleData.getTimePattern(sStyle);
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		if (bUTC === undefined) {
 			bUTC = this.oFormatOptions.UTC;
 		}
-		
+
 		//Relative formatting only active we supported (Date) and configured
 		if (this.bSupportRelative && this.oFormatOptions.relative) {
 			var sRes = this.formatRelative(oDate, bUTC, this.oFormatOptions.relativeRange || [-6, 6]);
@@ -291,7 +291,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 				return sRes;
 			}
 		}
-		
+
 		var aBuffer = [],
 			oPart,
 			iDay = bUTC ? oDate.getUTCDay() : oDate.getDay(),
@@ -554,7 +554,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		}
 
 		oValue = jQuery.trim(oValue);
-		
+
 		//Relative parsing only active we supported (Date)
 		if (this.bSupportRelative) {
 			var oDate = this.parseRelative(oValue, bUTC);
@@ -714,7 +714,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					iHours = parseInt(sPart, 10);
 					if (iHours == 12) {
 						iHours = 0;
-						// 12:00 defaults to 12:00 PM 
+						// 12:00 defaults to 12:00 PM
 						bPM = true;
 					}
 					if (bStrict && iHours > 11) {
@@ -800,21 +800,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		}
 
 		if (bValid) {
-			if (iTZDiff != null) {
-				oDate = new Date(0);
-				oDate.setUTCFullYear(iYear || 1970);
-				oDate.setUTCMonth(iMonth || 0);
-				oDate.setUTCDate(iDay || 1);
-				oDate.setUTCHours(iHours || 0);
-				oDate.setUTCMinutes((iMinutes || 0) + iTZDiff);
-				oDate.setUTCSeconds(iSeconds || 0);
-				oDate.setUTCMilliseconds(iMilliseconds || 0);
-				if (bStrict && (iDay || 1) !== oDate.getUTCDate()) {
-					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
-					bValid = false;
-					oDate = undefined;
-				}
-			} else if (bUTC) {
+			if (bUTC || iTZDiff != null) {
 				oDate = new Date(0);
 				oDate.setUTCFullYear(iYear || 1970);
 				oDate.setUTCMonth(iMonth || 0);
@@ -827,6 +813,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
 					bValid = false;
 					oDate = undefined;
+				} else if (iTZDiff) {
+					// Set TZDiff after checking for valid day, as it may switch the day as well
+					oDate.setUTCMinutes((iMinutes || 0) + iTZDiff);
 				}
 			} else {
 				oDate = new Date(1970, 0, 1, 0, 0, 0);
@@ -945,11 +934,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		}
 		return aFormatArray;
 	};
-	
+
 	DateFormat.prototype._now = function() {
 		return new Date();
 	};
-	
+
 	/**
 	 * Parse a date string relative to the current date.
 	 *
@@ -965,15 +954,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		if (!sValue) {
 			return null;
 		}
-		
+
 		var that = this;
-		
+
 		function computeRelativeDate(iDiff){
 			var iDate, iToday,
 				oToday = that._now(),
 				iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()),
 				iDiffMillis = iDiff * (24 * 60 * 60 * 1000);
-			
+
 			var iDate = iToday + iDiffMillis;
 			if (!bUTC) {
 				var oTarget = new Date(oToday.getTime() + iDiffMillis);
@@ -981,9 +970,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 			}
 			return new Date(iDate);
 		}
-		
+
 		var sPattern, _oPattern, _sValue, i, iSign;
-		
+
 		try {
 			for (i = -2; i <= 2; i++) {
 				sPattern = this.oLocaleData.getRelativeDay(i);
@@ -1015,11 +1004,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 		}catch(e){
 			jQuery.sap.log.warning("Relative Date parsing not possible: " + e);
 		}
-		
+
 		return null;
-		
+
 	};
-	
+
 	/**
 	 * Format a date relative to the current date.
 	 *
@@ -1031,34 +1020,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'jquery.sap.string
 	 * @function
 	 */
 	DateFormat.prototype.formatRelative = function(oDate, bUTC, aRange) {
-		
+
 		var oToday = this._now(),
 			iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()),
 			iDate, iDiffDays, sPattern;
-		
+
 		if (bUTC) {
 			iDate = Date.UTC(oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate());
 		} else {
 			iDate = Date.UTC(oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
 		}
-		
+
 		iDiffDays = Math.floor((iDate - iToday) / (24 * 60 * 60 * 1000));
-		
+
 		if (iDiffDays < aRange[0] || iDiffDays > aRange[1]) { //Relative parsing only in range +/- x days
 			return null;
 		}
-		
+
 		sPattern = this.oLocaleData.getRelativeDay(iDiffDays);
 		return jQuery.sap.formatMessage(sPattern, [Math.abs(iDiffDays)]);
-		
+
 	};
 
 	DateFormat.prototype.getAllowedCharacters = function(aFormatArray) {
-		
+
 		if (this.bSupportRelative && this.oFormatOptions.relative) {
 			return ""; //Allow all
 		}
-		
+
 		var sAllowedCharacters = "";
 		var bNumbers = false;
 		var bAll = false;
