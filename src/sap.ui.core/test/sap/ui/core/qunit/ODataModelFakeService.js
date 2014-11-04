@@ -263,6 +263,19 @@ xhr.onCreate = function(request) {
 				request.respond(200, oJSONHeaders, "4");
 			}, responseDelay); 
 		}
+		
+		// Multi-Origin Fault Tolerance
+		// Fake filter on ShipCity in Orders collection
+		if (request.url === baseURL + "Orders?$skip=0&$top=2&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages") {
+			_setTimeout(function() {
+				request.respond(200, oXMLHeaders, sFaultTolerance1);
+			}, responseDelay);
+		}
+		if (request.url === baseURL + "Orders?$skip=2&$top=1&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages") {
+			_setTimeout(function() {
+				request.respond(200, oXMLHeaders, sFaultTolerance2);
+			}, responseDelay);
+		}
 	}
 };
 
@@ -5346,3 +5359,83 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 		"}\n" + 
 		"}";
 		
+		var sFaultTolerance1 = "<feed xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\" xmlns=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" + 
+				"<m:count>3</m:count>\n" + 
+				"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Orders</id>\n" + 
+				"<title type=\"text\">Orders</title>\n" + 
+				"<updated>2014-11-06T10:17:18Z</updated>\n" + 
+				"<link rel=\"self\" title=\"Orders\" href=\"Orders\"/>\n" + 
+				"<entry>\n" + 
+				"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Orders(10248)</id>\n" + 
+				"<category term=\"NorthwindModel.Order\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+				"<link rel=\"edit\" title=\"Order\" href=\"Orders(10248)\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Customer\" type=\"application/atom+xml;type=entry\" title=\"Customer\" href=\"Orders(10248)/Customer\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Employee\" type=\"application/atom+xml;type=entry\" title=\"Employee\" href=\"Orders(10248)/Employee\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Orders(10248)/Order_Details\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Shipper\" type=\"application/atom+xml;type=entry\" title=\"Shipper\" href=\"Orders(10248)/Shipper\"/>\n" + 
+				"<title/>\n" + 
+				"<updated>2014-11-06T10:17:18Z</updated>\n" + 
+				"<author>\n" + 
+				"<name/>\n" + 
+				"</author>\n" + 
+				"<content type=\"application/xml\">\n" + 
+				"<m:properties>\n" + 
+				"<d:OrderID m:type=\"Edm.Int32\">10248</d:OrderID>\n" + 
+				"<d:CustomerID>VINET</d:CustomerID>\n" + 
+				"<d:EmployeeID m:type=\"Edm.Int32\">5</d:EmployeeID>\n" + 
+				"<d:OrderDate m:type=\"Edm.DateTime\">1996-07-04T00:00:00</d:OrderDate>\n" + 
+				"<d:RequiredDate m:type=\"Edm.DateTime\">1996-08-01T00:00:00</d:RequiredDate>\n" + 
+				"<d:ShippedDate m:type=\"Edm.DateTime\">1996-07-16T00:00:00</d:ShippedDate>\n" + 
+				"<d:ShipVia m:type=\"Edm.Int32\">3</d:ShipVia>\n" + 
+				"<d:Freight m:type=\"Edm.Decimal\">32.3800</d:Freight>\n" + 
+				"<d:ShipName>Vins et alcools Chevalier</d:ShipName>\n" + 
+				"<d:ShipAddress>59 rue de l\'Abbaye</d:ShipAddress>\n" + 
+				"<d:ShipCity>TEST_FAULT_TOLERANCE</d:ShipCity>\n" + 
+				"<d:ShipRegion m:null=\"true\"/>\n" + 
+				"<d:ShipPostalCode>51100</d:ShipPostalCode>\n" + 
+				"<d:ShipCountry>France</d:ShipCountry>\n" + 
+				"</m:properties>\n" + 
+				"</content>\n" + 
+				"</entry>\n" + 
+				"<entry>\n" + 
+				"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Orders(10249)</id>\n" + 
+				"<category term=\"NorthwindModel.Order\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+				"<link rel=\"edit\" title=\"Order\" href=\"Orders(10249)\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Customer\" type=\"application/atom+xml;type=entry\" title=\"Customer\" href=\"Orders(10249)/Customer\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Employee\" type=\"application/atom+xml;type=entry\" title=\"Employee\" href=\"Orders(10249)/Employee\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Orders(10249)/Order_Details\"/>\n" + 
+				"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Shipper\" type=\"application/atom+xml;type=entry\" title=\"Shipper\" href=\"Orders(10249)/Shipper\"/>\n" + 
+				"<title/>\n" + 
+				"<updated>2014-11-06T10:17:18Z</updated>\n" + 
+				"<author>\n" + 
+				"<name/>\n" + 
+				"</author>\n" + 
+				"<content type=\"application/xml\">\n" + 
+				"<m:properties>\n" + 
+				"<d:OrderID m:type=\"Edm.Int32\">10249</d:OrderID>\n" + 
+				"<d:CustomerID>TOMSP</d:CustomerID>\n" + 
+				"<d:EmployeeID m:type=\"Edm.Int32\">6</d:EmployeeID>\n" + 
+				"<d:OrderDate m:type=\"Edm.DateTime\">1996-07-05T00:00:00</d:OrderDate>\n" + 
+				"<d:RequiredDate m:type=\"Edm.DateTime\">1996-08-16T00:00:00</d:RequiredDate>\n" + 
+				"<d:ShippedDate m:type=\"Edm.DateTime\">1996-07-10T00:00:00</d:ShippedDate>\n" + 
+				"<d:ShipVia m:type=\"Edm.Int32\">1</d:ShipVia>\n" + 
+				"<d:Freight m:type=\"Edm.Decimal\">11.6100</d:Freight>\n" + 
+				"<d:ShipName>Toms Spezialitäten</d:ShipName>\n" + 
+				"<d:ShipAddress>Luisenstr. 48</d:ShipAddress>\n" + 
+				"<d:ShipCity>TEST_FAULT_TOLERANCE</d:ShipCity>\n" + 
+				"<d:ShipRegion m:null=\"true\"/>\n" + 
+				"<d:ShipPostalCode>44087</d:ShipPostalCode>\n" + 
+				"<d:ShipCountry>Germany</d:ShipCountry>\n" + 
+				"</m:properties>\n" + 
+				"</content>\n" + 
+				"</entry>\n" + 
+				"</feed>";
+		
+		var sFaultTolerance2 = "<feed xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\" xmlns=\"http://www.w3.org/2005/Atom\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\">\n" + 
+				"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Orders</id>\n" + 
+				"<title type=\"text\">Orders</title>\n" + 
+				"<updated>2014-11-06T09:34:54Z</updated>\n" +  
+				"<link href=\"Orders\" rel=\"self\" title=\"Orders\"/>\n" + 
+				"<m:count>3</m:count>\n" + 
+				"<link rel=\"next\" href=\"Orders?$top=1&amp;$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&amp;$inlinecount=allpages&amp;$skiptoken=MISSING_DATA_FROM__1\"/>\n" + 
+				"</feed>";
