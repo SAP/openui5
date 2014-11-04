@@ -148,6 +148,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 						contentType: "text/plain",
 						data: sContent.join("\n"),
 						success: function(data) {
+							// notify that the content has been loaded
+							sap.ui.core.AppCacheBuster.onIndexLoaded(sUrl, data);
 							// add the index file to the index map
 							jQuery.extend(mIndex, data);
 						},
@@ -184,6 +186,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 						async: !bSync && !!oSyncPoint,
 						dataType: "json",
 						success: function(data) {
+							// notify that the content has been loaded
+							sap.ui.core.AppCacheBuster.onIndexLoaded(sUrl, data);
 							// add the index file to the index map
 							mIndex[sAbsoluteBaseUrl] = data;
 						},
@@ -199,27 +203,38 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		// only request in case of having a correct request object!
 		if (oRequest) {
 			
-			// use the syncpoint only during boot => otherwise the syncpoint
-			// is not given because during runtime the registration needs to
-			// be done synchrously.
-			if (oRequest.async) {
-				var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
-				var fnSuccess = oRequest.success, fnError = oRequest.error;
-				jQuery.extend(oRequest, {
-					success: function(data) {
-						fnSuccess.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint);
-					},
-					error: function() {
-						fnError.apply(this, arguments);
-						oSyncPoint.finishTask(iSyncPoint, false);
-					}
-				});
-			}
+			// hook to onIndexLoad to allow to inject the index file manually
+			var mIndexInfo = sap.ui.core.AppCacheBuster.onIndexLoad(oRequest.url);
+			// if anything else than undefined or null is returned we will use this
+			// content as data for the cache buster index
+			if (mIndexInfo != null) {
+				jQuery.sap.log.info("AppCacheBuster index file injected for: \"" + sUrl + "\".");
+				oRequest.success(mIndexInfo);
+			} else {
+				
+				// use the syncpoint only during boot => otherwise the syncpoint
+				// is not given because during runtime the registration needs to
+				// be done synchrously.
+				if (oRequest.async) {
+					var iSyncPoint = oSyncPoint.startTask("load " + sUrl);
+					var fnSuccess = oRequest.success, fnError = oRequest.error;
+					jQuery.extend(oRequest, {
+						success: function(data) {
+							fnSuccess.apply(this, arguments);
+							oSyncPoint.finishTask(iSyncPoint);
+						},
+						error: function() {
+							fnError.apply(this, arguments);
+							oSyncPoint.finishTask(iSyncPoint, false);
+						}
+					});
+				}
 
-			// load it
-			jQuery.sap.log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
-			jQuery.ajax(oRequest);
+				// load it
+				jQuery.sap.log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
+				jQuery.ajax(oRequest);
+				
+			}
 			
 		}
 		
@@ -495,6 +510,34 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				// API function to be overridden by apps 
 				// to exclude URLs from being manipulated
 				return true;
+			},
+			
+			/**
+			 * Hook to intercept the load of the cache buster info. Returns either the 
+			 * JSON object with the cache buster info or null/undefined if the URL should
+			 * be handled.
+			 * <p>
+			 * The cache buster info object is a map which contains the relative
+			 * paths for the resources as key and a timestamp/etag as string as
+			 * value for the entry. The value is used to be added as part of the
+			 * URL to create a new URL if the resource has been changed.
+			 * @param {string} sUrl URL from where to load the cachebuster info
+			 * @return {object} cache buster info object or null/undefined
+			 * @private
+			 */
+			onIndexLoad: function(sUrl) {
+				return null;
+			},
+			 
+			/**
+			 * Hook to intercept the result of the cache buster info request. It will pass
+			 * the loaded cache buster info object to this function to do something with that
+			 * information.
+			 * @param {string} sUrl URL from where to load the cachebuster info
+			 * @param {object} mIndexInfo cache buster info object
+			 * @private
+			 */
+			onIndexLoaded: function(sUrl, mIndexInfo) {
 			}
 			
 	};
