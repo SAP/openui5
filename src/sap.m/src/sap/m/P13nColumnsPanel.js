@@ -601,6 +601,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 		var iLiveChangeTimer = 0;
 		var that = this;
 		this._bOnAfterRenderingFirstTimeExecuted = false;
+		this.setVerticalScrolling(false);
 
 		// Call-back for handling of resizing
 		// TODO: make sure we optimize calculation and respect margins and borders, use e.g. jQuery.outerHeight(true)
@@ -734,13 +735,13 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nColumnItem', './P
 
 			// Register call-back function for re-sizing
 			sap.ui.Device.resize.attachHandler(this._fnHandleResize);
-
-			// Re-size visible part of scroll container
-			window.clearTimeout(iLiveChangeTimer);
-			iLiveChangeTimer = window.setTimeout(function() {
-				that._fnHandleResize();
-			}, 0);
 		}
+		
+		// Re-size visible part of scroll container - we have always to recalculate the scrollContainerHeight
+		window.clearTimeout(iLiveChangeTimer);
+		iLiveChangeTimer = window.setTimeout(function() {
+			that._fnHandleResize();
+		}, 0);
 
 		this._updateSelectAllDescription();
 	};

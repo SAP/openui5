@@ -159,6 +159,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				bVisible = true;
 			}
 			oPanel.setVisible(bVisible);
+			if (bVisible) {
+				this.setVerticalScrolling( oPanel.getVerticalScrolling());
+			}
 			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible);
 		}
 		return this;
@@ -184,6 +187,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				bVisible = true;
 			}
 			oPanel.setVisible(bVisible);
+			if (bVisible) {
+				this.setVerticalScrolling( oPanel.getVerticalScrolling());
+			}
 		}
 		return this;
 	};
@@ -260,6 +266,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 */
 	P13nDialog.prototype._switchPanel = function(oButton) {
 		var oPanel = this._getPanelByButton(oButton);
+		this.setVerticalScrolling( oPanel.getVerticalScrolling());
 		this.getContent().forEach(function(oPanel_) {
 			if (oPanel_ === oPanel) {
 				oPanel_.setVisible(true);

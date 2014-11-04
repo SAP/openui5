@@ -43,7 +43,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * tbd
 			 */
-			type : {type : "sap.m.P13nPanelType", group : "Misc", defaultValue : null}
+			type : {type : "sap.m.P13nPanelType", group : "Misc", defaultValue : null},
+
+			/**
+			 * makes the vertical Scrolling on the P13nDialog enabled when the panel is shown 
+			 */
+			verticalScrolling : {type : "boolean", group : "Misc", defaultValue : true}
 		},
 		defaultAggregation : "items",
 		aggregations : {
