@@ -381,6 +381,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this.$().toggleClass("sapMFocus", true);
 	
+		// clear tooltip of the refresh button
+		if (this.getShowRefreshButton()) {
+			this.$("search").removeAttr("title");
+		} 
 		// Some applications do re-render during the liveSearch event.
 		// The input is focused and most browsers select the input text for copy.
 		// Any following key press deletes the whole selection.
@@ -397,7 +401,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SearchField.prototype.onBlur = function(oEvent) {
+		var tooltip;
+		
 		this.$().toggleClass("sapMFocus", false);
+		
+		// restore toltip of the refresh button
+		if (this.getShowRefreshButton()) {
+			tooltip = this.getRefreshButtonTooltip();
+			if (tooltip) {
+				this.$("search").attr("title", tooltip);
+			}
+		} 
 	};
 	
 	SearchField.prototype.setValue = function(value){
