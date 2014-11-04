@@ -677,9 +677,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId) {
 		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
-		var sValue = oEditbox.value;
 		// get new/changed file name
-			sValue = sValue.trimLeft();
+		var sValue = sap.m.UploadCollection.prototype._leftTrim(oEditbox.value);
 
 		if (!oContext.sFocusId) {
 			oContext.sFocusId = oContext.editModeItem + "-ta_HL";
@@ -749,27 +748,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype._onUploadChange = function(oEvent) {
 		var that = this;
 		this._oFileUploader.removeAllHeaderParameters();
-		this._oFileUploader.removeParameters();
+		this._oFileUploader.removeAllParameters();
 		
 		this.fireChange(oEvent);
 //headerParameters
-		var aHeaderParametersAfter = this.getAggregation("headerParameters");		
-		jQuery.each(aHeaderParametersAfter, function (iIndex, headerParameter) {
-			var oHeaderParameter = new sap.ui.unified.FileUploaderParameter({
-				name : headerParameter.getProperty("name"),
-				value: headerParameter.getProperty("value")
+		var aHeaderParametersAfter = this.getAggregation("headerParameters");
+		if (aHeaderParametersAfter) {
+			jQuery.each(aHeaderParametersAfter, function (iIndex, headerParameter) {
+				var oHeaderParameter = new sap.ui.unified.FileUploaderParameter({
+					name : headerParameter.getProperty("name"),
+					value: headerParameter.getProperty("value")
+				});
+				that._oFileUploader.addHeaderParameter(oHeaderParameter);
 			});
-			that._oFileUploader.addHeaderParameter(oHeaderParameter);
-		});
+		}
 //parameters
-		var aParametersAfter = this.getAggregation("parameters");		
-		jQuery.each(aParametersAfter, function (iIndex, parameter) {
-			var oParameter = new sap.ui.unified.FileUploaderParameter({
-				name : parameter.getProperty("name"),
-				value: parameter.getProperty("value")
+		var aParametersAfter = this.getAggregation("parameters");
+		if (aParametersAfter) {
+			jQuery.each(aParametersAfter, function (iIndex, parameter) {
+				var oParameter = new sap.ui.unified.FileUploaderParameter({
+					name : parameter.getProperty("name"),
+					value: parameter.getProperty("value")
+				});
+				that._oFileUploader.addParameter(oParameter);
 			});
-			that._oFileUploader.addParameter(oParameter);
-		});
+		}
 	};
 	UploadCollection.prototype._onUploadFileAllowed = function(oEvent) {
 		// TODO not implemented
@@ -965,6 +968,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 	};
 
+	/**
+	 * Set the focus to the list item.
+	 * @param {Object} ListItem of UC
+	 * @param {Object} Context of UC
+	 * @returns 
+	 * @private
+	 */
 	UploadCollection.prototype._setFocus2LineItem = function(sFocusId) {
 
 		if (!sFocusId) {
@@ -980,8 +990,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * handle of keyboard activity ENTER.
-	 * @param {Object} ListItem
-	 * @param {Object} Context
+	 * @param {Object} ListItem of UC
+	 * @param {Object} Context of UC
+	 * @returns 
 	 * @private
 	 */
 	UploadCollection.prototype._handleENTER = function (oEvent, oContext) {
@@ -1002,8 +1013,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * handle of keyboard activity DEL.
-	 * @param {Object} ListItem 
-	 * @param {Object} Context
+	 * @param {Object} ListItem of UC
+	 * @param {Object} Context of UC
 	 * @private
 	 */
 	UploadCollection.prototype._handleDEL = function(oEvent, oContext) {
@@ -1093,6 +1104,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * Determines extension from the file name.
+	 * @param {string} file name
+	 * @return {string} extension of the file name
 	 */
 	UploadCollection.prototype._getExtensionFromFilename = function(sFilename) {
 		var aSplit = sFilename.split(".");
@@ -1121,6 +1134,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return false;
 	};
+
+	/**
+	 * Removs leading spaces.
+	 * @return {string} String without leading spaces
+	 * @private
+	 */
+	UploadCollection.prototype._leftTrim = function(sFilename) {
+		return sFilename.replace(/^\s+/,"");
+	};
+
 
 	return UploadCollection;
 
