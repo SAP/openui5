@@ -283,7 +283,7 @@
 		var token3 = new sap.m.Token();
 		multiInput1.setTokens([token1, token2, token3]);	
 		
-		sap.ui.test.qunit.triggerKeydown(multiInput1, jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
 		equals(token1.getSelected(), true, "Token1 got selected using ctrl+a");
 		equals(token2.getSelected(), true, "Token2 got selected using ctrl+a");
 		equals(token3.getSelected(), true, "Token3 got selected using ctrl+a");
@@ -301,7 +301,7 @@
 		multiInput1.selectText(0, multiInput1.getValue().length);
 		equals(multiInput1._$input.getSelectedText(), "123", "only texts are selected");
 		
-		sap.ui.test.qunit.triggerKeydown(multiInput1, jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
+		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.A, false, false, true); // trigger Control key + A
 		equals(token1.getSelected(), true, "Token1 is selected");
 		equals(token2.getSelected(), true, "Token2 is selected");
 		equals(token3.getSelected(), true, "Token3 is selected");
@@ -312,6 +312,22 @@
 		equals(token2.getSelected(), false, "Token2 is unselected");
 		equals(token3.getSelected(), false, "Token3 is unselected");
 		
+	});
+	
+	test("esc key", function() {
+
+		multiInput1.setValue("123");
+		multiInput1.selectText(0, multiInput1.getValue().length);
+		var token1 = new sap.m.Token({selected:true});
+		var token2 = new sap.m.Token({selected:true});
+		var token3 = new sap.m.Token({selected:true});
+		multiInput1.setTokens([token1, token2, token3]);
+		
+		sap.ui.test.qunit.triggerKeydown(multiInput1.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		equals(token1.getSelected(), false, "Token1 is unselected");
+		equals(token2.getSelected(), false, "Token2 is unselected");
+		equals(token3.getSelected(), false, "Token3 is unselected");
+		equals(multiInput1._$input.getSelectedText(), "", "texts get unselected");
 	});
 	
 	test("test exit", function() {	
