@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	var MultiInput = Input.extend("sap.m.MultiInput", /** @lends sap.m.MultiInput.prototype */ { metadata : {
 	
 		library : "sap.m",
+		publicMethods : [ "addValidator", "removeValidator", "removeAllValidators", "setTokens" ],
 		aggregations : {
 	
 			/**
