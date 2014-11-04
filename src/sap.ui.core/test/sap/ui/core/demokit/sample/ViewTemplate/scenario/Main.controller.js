@@ -1,36 +1,40 @@
 /*!
  * ${copyright}
  */
+jQuery.sap.require("sap.ui.model.odata.ODataUtils");
 
 sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 	onInit: function () {
 		var oEntityTypes = {
-				selectedKey: "Product",
+				selectedType: "Product",
 				types: [
 					{
-						key: "BusinessPartner",
+						type: "BusinessPartner",
+						itemKey: "BusinessPartnerID",
+						itemKeyType: "Edm.String",
+						set: "/BusinessPartnerSet",
 						target: "GWSAMPLE_BASIC.BusinessPartner",
-						instance: "/BusinessPartnerSet('0100000001')"
 					},
 					{
-						key: "Contact",
+						type: "Contact",
+						itemKey: "ContactGuid",
+						itemKeyType: "Edm.Guid",
+						set: "/ContactSet",
 						target: "GWSAMPLE_BASIC.Contact",
-						instance: "/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')"
 					},
 					{
-						key: "Product",
+						type: "Product",
+						itemKey: "ProductID",
+						itemKeyType: "Edm.String",
+						set: "/ProductSet",
 						target: "GWSAMPLE_BASIC.Product",
-						instance: "/ProductSet('HT-1000')"
 					},
 					{
-						key: "SalesOrder",
+						type: "SalesOrder",
+						itemKey: "SalesOrderID",
+						itemKeyType: "Edm.String",
+						set: "/SalesOrderSet",
 						target: "GWSAMPLE_BASIC.SalesOrder",
-						instance: "/SalesOrderSet('0500000000')"
-					},
-					{
-						key: "SalesOrderLineItem",
-						target: "GWSAMPLE_BASIC.SalesOrderLineItem",
-						instance: "/SalesOrderSet('0500000000')"
 					}
 				]
 			};
@@ -40,14 +44,55 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 
 	//TODO clarify with UI5 Core: why can view models not be accessed in onInit?
 	onBeforeRendering: function () {
-		this._showDetails();
+		this._bindSelectInstance();
 	},
 
 	onChangeType: function (oEvent) {
-		this._showDetails();
+		this._bindSelectInstance();
 	},
 
-	_showDetails: function () {
+	onChangeInstance: function (oEvent) {
+		var sInstanceKey = this.getView().getModel("ui").getProperty("/selectedInstance"),
+			oType = this._getSelectedType();
+
+		this._showDetails(oType.set + "("
+			+ sap.ui.model.odata.ODataUtils.formatValue(sInstanceKey, oType.itemKeyType)
+			+ ")");
+	},
+
+	_bindSelectInstance: function() {
+		var oBinding,
+			oType = this._getSelectedType(),
+			oControl = this.getView().byId("selectInstance");
+
+		oControl.bindAggregation("items", {
+			path: oType.set,
+			template: new sap.ui.core.ListItem({
+				text: "{" + oType.itemKey + "}",
+				key: "{" + oType.itemKey + "}"
+			})
+		});
+
+		oBinding = oControl.getBinding("items");
+		oBinding.attachDataReceived(
+			function () { //select first instance
+				this._showDetails(oBinding.getContexts()[0].getPath());
+			},
+			this);
+	},
+
+	_getSelectedType: function () {
+		var oView = this.getView(),
+			aTypes = oView.getModel("ui").getProperty("/types");
+
+		for (i = 0; i < aTypes.length; i += 1) {
+			if (aTypes[i].type === oView.getModel("ui").getProperty("/selectedType")) {
+				return aTypes[i];
+			}
+		}
+	},
+
+	_showDetails: function (sPath) {
 		var sANNO_PATH = "/schemas/GWSAMPLE_BASIC/annotations",
 			oDetailView,
 			oView = this.getView(),
@@ -55,18 +100,10 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 			oMetaModel = oView.getModel("meta"),
 			aAnnotations = oMetaModel.getObject(sANNO_PATH),
 			oModel = oView.getModel(),
-			aTypes = oView.getModel("ui").getProperty("/types"),
-			oType,
 			i;
 
-		for (i = 0; i < aTypes.length; i += 1) {
-			if (aTypes[i].key === oView.getModel("ui").getProperty("/selectedKey")) {
-				oType = aTypes[i];
-				break;
-			}
-		}
 		for (i = 0; i < aAnnotations.length; i += 1) {
-			if (aAnnotations[i].target === oType.target) {
+			if (aAnnotations[i].target === this._getSelectedType().target) {
 				oMetaContext = oMetaModel.createBindingContext(sANNO_PATH + "/" + i);
 				break;
 			}
@@ -77,7 +114,8 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 			bindingContexts: {meta: oMetaContext},
 			models: {meta: oMetaModel}
 		});
-		oDetailView.bindElement(oType.instance, {models: oModel});
+
+		oDetailView.bindElement(sPath, {models: oModel});
 		oView.byId("detail").destroyItems().addItem(oDetailView);
 	}
 });
