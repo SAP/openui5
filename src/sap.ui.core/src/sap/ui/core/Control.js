@@ -492,7 +492,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 			}
 	
 			if (!oContainer) {
-				return;
+				return this;
 			}
 	
 			if (!bIsUIArea) {
@@ -510,7 +510,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 				}
 				if (!bContainerSupportsPlaceAt) {
 					jQuery.sap.log.warning("placeAt cannot be processed because container " + oContainer + " does not have an aggregation 'content'.");
-					return;
+					return this;
 				}
 			}
 	
