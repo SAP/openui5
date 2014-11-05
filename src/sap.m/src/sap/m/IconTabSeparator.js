@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			sap.ui.core.Item.prototype.exit.call(this, oEvent);
 		}
 	};
-
+	
 	return IconTabSeparator;
 
 }, /* bExport= */ true);
