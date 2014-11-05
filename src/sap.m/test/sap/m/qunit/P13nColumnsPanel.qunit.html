@@ -22,16 +22,13 @@
 <script type="text/javascript">
 (function() {
 	jQuery.sap.require("sap.m.P13nColumnsPanel");
-	jQuery.sap.require("sap.m.P13nColumnItem");
-	var _handleMoveItemStub = sinon.stub();	
+	jQuery.sap.require("sap.m.ColumnListItem");
+	jQuery.sap.require("sap.m.P13nItem");
 	var oP13nColumnsPanel = null;
 	
 	module("Properties", {
 		setup: function() {
 			oP13nColumnsPanel = new sap.m.P13nColumnsPanel({
-				moveItem: function(oEvent) {
-					_handleMoveItemStub(oEvent);
-				}
 			}); 
 		},
 		teardown: function() {
@@ -45,31 +42,33 @@
 	});
 	
 	
-	test("Shall check _ItemMoveToStart", function() {
-		ok(oP13nColumnsPanel._ItemMoveToStart, "Method does not exist");
-		
-		var getItemIndexByItemKeySpy = sinon.stub();
+	test("Shall check _ItemMoveToTop", function() {
+		ok(oP13nColumnsPanel._ItemMoveToTop, "Method does not exist");
+
+		var getArrayIndexByItemKeySpy = sinon.stub();
 		var moveItemSpy = sinon.stub();
-		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
 		oP13nColumnsPanel._moveItem = moveItemSpy;
 		
 		//CUT -> check that the method is not executed as this._oSelectedItem is empty
 		oP13nColumnsPanel._oSelectedItem = null;
-		oP13nColumnsPanel._ItemMoveToStart();
+		oP13nColumnsPanel._ItemMoveToTop();
 
-		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
 		
 		//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
-		getItemIndexByItemKeySpy.returns(0);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
-		oP13nColumnsPanel._ItemMoveToStart();
+		getArrayIndexByItemKeySpy.returns(0);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
+		oP13nColumnsPanel._ItemMoveToTop();
 
 		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
 		
 		//CUT -> check that the method _is executed with old and new Indexes
-		getItemIndexByItemKeySpy.returns(5);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
-		oP13nColumnsPanel._ItemMoveToStart();
+		getArrayIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
+		oP13nColumnsPanel._ItemMoveToTop();
 
 		strictEqual(moveItemSpy.calledWith(5,0), true, "Item move was done with wrong parameter");		
 	});
@@ -77,27 +76,29 @@
 	test("Shall check _ItemMoveUp", function() {
 		ok(oP13nColumnsPanel._ItemMoveUp, "Method does not exist");
 		
-		var getItemIndexByItemKeySpy = sinon.stub();
+		var getArrayIndexByItemKeySpy = sinon.stub();
 		var moveItemSpy = sinon.stub();
-		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
 		oP13nColumnsPanel._moveItem = moveItemSpy;
 		
 		//CUT -> check that the method is not executed as this._oSelectedItem is empty
 		oP13nColumnsPanel._oSelectedItem = null;
 		oP13nColumnsPanel._ItemMoveUp();
 
-		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
 		
 		//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
-		getItemIndexByItemKeySpy.returns(0);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		getArrayIndexByItemKeySpy.returns(0);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._ItemMoveUp();
 
 		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
 		
-		//CUT -> check that the method _is executed with old and new Indexes
-		getItemIndexByItemKeySpy.returns(5);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		//CUT -> check that the method is executed with old and new Indexes
+		getArrayIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._ItemMoveUp();
 
 		strictEqual(moveItemSpy.calledWith(5,4), true, "Item move was done with wrong parameter");		
@@ -106,9 +107,9 @@
 	test("Shall check _ItemMoveDown", function() {
 		ok(oP13nColumnsPanel._ItemMoveDown, "Method does not exist");
 		
-		var getItemIndexByItemKeySpy = sinon.stub();
+		var getArrayIndexByItemKeySpy = sinon.stub();
 		var moveItemSpy = sinon.stub();
-		oP13nColumnsPanel._getItemIndexByItemKey = getItemIndexByItemKeySpy;
+		oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
 		oP13nColumnsPanel._moveItem = moveItemSpy;
 		
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
@@ -117,36 +118,41 @@
 		oP13nColumnsPanel._oSelectedItem = null;
 		oP13nColumnsPanel._ItemMoveDown();
 
-		strictEqual(getItemIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
+		strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
 		
 		//CUT -> check that the method is executed, BUT item will not be moved as maximum boundary is reached
-		getItemIndexByItemKeySpy.returns(5);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		getArrayIndexByItemKeySpy.returns(5);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._ItemMoveDown();
 
 		strictEqual(moveItemSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");		
 		
 		//CUT -> check that the method _is executed with old and new Indexes
-		getItemIndexByItemKeySpy.returns(4);
-		oP13nColumnsPanel._oSelectedItem = sinon.spy();
+		getArrayIndexByItemKeySpy.returns(4);
+		oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
+		oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._ItemMoveDown();
 
 		strictEqual(moveItemSpy.calledWith(4,5), true, "Item move was done with wrong parameter");
 	});
 	
 	test("Shall check _moveItem", function() {
+		var _handleMoveItemStub = sinon.stub();
+		oP13nColumnsPanel._handleMoveItem = _handleMoveItemStub; 
+		
 		ok(oP13nColumnsPanel._moveItem, "Method does not exist");
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 	
 		//CUT -> check that the method is not executed as this._oSelectedItem is empty
 		oP13nColumnsPanel._moveItem(0, -1);
-		strictEqual(_handleMoveItemStub.called, false, "Event check did fail -> moveItem event shall not be fired as table boundary is violated");
+		strictEqual(_handleMoveItemStub.called, false, "Move item did fail -> moveItem shall not be called as table boundary is violated");
 		oP13nColumnsPanel._moveItem(-1, 0);
-		strictEqual(_handleMoveItemStub.called, false, "Event check did fail -> moveItem event shall not be fired as table boundary is violated");
+		strictEqual(_handleMoveItemStub.called, false, "Move item did fail -> moveItem shall not be called as table boundary is violated");
 		oP13nColumnsPanel._moveItem(0, 0);
-		strictEqual(_handleMoveItemStub.called, false, "Event check did fail -> moveItem event shall not be fired as indexs are not different");
+		strictEqual(_handleMoveItemStub.called, false, "Move item did fail -> moveItem shall not be called as indexs are not different");
 		oP13nColumnsPanel._moveItem(0, 1);
-		strictEqual(_handleMoveItemStub.called, true, "Event check did fail -> moveItem event shall be fired");
+		strictEqual(_handleMoveItemStub.called, true, "Move item did fail -> moveItem shall be called");
 	});
 	
 	test("Shall check swopShowSelectedButton", function() {
@@ -354,76 +360,82 @@
 		oP13nColumnsPanel._oSelectedItem = null;
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), false, "To Start button shall be disabled if no item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if no item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if no item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if no item is selected");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), false, "To End button shall be disabled if no item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall be disabled if no item is selected");
 	
 		//CUT (selected table item is the first item in the list)
-		var oItem = {"id": "tempItemAtStartIndex"};
+		var oItem = new sap.m.ColumnListItem({"id": "tempItemAtTopIndex"});
+		oItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._oSelectedItem = oItem;
-		oP13nColumnsPanel._getItemIndexByItemKey = sinon.stub().returns(0);
+				
+		oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(0);
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 		
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), false, "To Start button shall be disabled if first item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if first item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if first item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if the first item is selected");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), true, "To End button shall be enabled if the first item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if the first item is selected");
 	
 		
 		//CUT (selected table item is the last item in the list)
-		var oItem = {"id": "tempItemAtEndIndex"};
+		var oItem = new sap.m.ColumnListItem({"id": "tempItemAtBottomIndex"});
+		oItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._oSelectedItem = oItem;
-		oP13nColumnsPanel._getItemIndexByItemKey = sinon.stub().returns(5);
+		oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(5);
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 		
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), true, "To Start button shall be enabled if last item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if last item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if last item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the last item is selected");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), false, "To End button shall be disabled if the last item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To bottom button shall be disabled if the last item is selected");
 	
 		//CUT (selected table item is one in the middle)
-		var oItem = {"id": "tempItemWithinTheMiddle"};
+		var oItem = new sap.m.ColumnListItem({"id": "tempItemWithinTheMiddle1"});
+		oItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._oSelectedItem = oItem;
-		oP13nColumnsPanel._getItemIndexByItemKey = sinon.stub().returns(3);
+		oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(3);
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 		
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), true, "To Start button shall be enabled if any middle item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if any middle item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if any middle item is selected");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if any middle item is selected");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), true, "To End button shall be enabled if any middle item is selected");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if any middle item is selected");
 		
 		//CUT (selected table item does return with an index that is higher as the max the table length)
-		var oItem = {"id": "tempItemWithinTheMiddle"};
+		var oItem = new sap.m.ColumnListItem({"id": "tempItemWithinTheMiddle2"});
+		oItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._oSelectedItem = oItem;
-		oP13nColumnsPanel._getItemIndexByItemKey = sinon.stub().returns(6);
+		oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(6);
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 		
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), false, "To Start button shall be disabled if the selected item does return an index that is out of the table boundaries");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), false, "To End button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
 	
 		//CUT (selected table item does return with an index that is lower the 0, which is the lowest table index)
-		var oItem = {"id": "tempItemWithinTheMiddle"};
+		var oItem = new sap.m.ColumnListItem({"id": "tempItemWithinTheMiddle3"});
+		oItem.data('P13nColumnKey', '4711');
 		oP13nColumnsPanel._oSelectedItem = oItem;
-		oP13nColumnsPanel._getItemIndexByItemKey = sinon.stub().returns(-1);
+		oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(-1);
 		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{},{},{},{},{},{}]);
 		
 		oP13nColumnsPanel._calculateMoveButtonAppearance();
 		
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton.getEnabled(), false, "To Start button shall be disabled if the selected item does return an index that is out of the table boundaries");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
 		strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton.getEnabled(), false, "To End button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
 	});
 
 
@@ -474,28 +486,46 @@
 	});
 
 
-	test("Shall check _getItemIndexByItemKey", function() {
-		ok(oP13nColumnsPanel._getItemIndexByItemKey, "Method does not exist");
+	test("Shall check _getArrayIndexByItemKey", function() {
+		ok(oP13nColumnsPanel._getArrayIndexByItemKey, "Method does not exist");
+		
+		var oItem = null
+		var oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5, oTableItem6;
 		
 		//CUT (no valid item is passed into the method)
-		var oItem = null, iItemIndex = null;
-		iItemIndex = oP13nColumnsPanel._getItemIndexByItemKey(oItem);
+		oItem = null, iItemIndex = null;
+		iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey("4711", []);
 		strictEqual(iItemIndex, -1, "Wrong return value if no valid item is passed");
 		
 		//CUT (Valid item with key 4711 that exist in the list)
-		var oItem = {}, iItemIndex = null;
-		oItem.getKey = sinon.stub().returns("4711");
-		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{"getKey":function(){return "4712";}},{"getKey":function(){return "4714";}},{"getKey":function(){return "4713";}},{"getKey":function(){return "4711";}},{"getKey":function(){return "4715";}},{"getKey":function(){return "4716";}}]);
+		oTableItem1 = new sap.m.ColumnListItem();
+		oTableItem1.data('P13nColumnKey', '4711');
+		oTableItem2 = new sap.m.ColumnListItem();
+		oTableItem2.data('P13nColumnKey', '4712');
+		oTableItem3 = new sap.m.ColumnListItem();
+		oTableItem3.data('P13nColumnKey', '4713');
+		oTableItem4 = new sap.m.ColumnListItem();
+		oTableItem4.data('P13nColumnKey', '4714');
+		oTableItem5 = new sap.m.ColumnListItem();
+		oTableItem5.data('P13nColumnKey', '4715');
+		oTableItem6 = new sap.m.ColumnListItem();
+		oTableItem6.data('P13nColumnKey', '4716');		
 		
-		iItemIndex = oP13nColumnsPanel._getItemIndexByItemKey(oItem);
+		var aTableItems = [oTableItem2, oTableItem3, oTableItem4, oTableItem1, oTableItem5, oTableItem6];
+		iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey("4711", aTableItems);
 		strictEqual(iItemIndex, 3, "Wrong index return for a valid item");
 		
 		//CUT (Valid item with key 4717 that does not exist in the list)
-		var oItem = {}, iItemIndex = null;
-		oItem.getKey = sinon.stub().returns("4717");
-		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([{"getKey":function(){return "4712";}},{"getKey":function(){return "4714";}}]);
+		oItem = new sap.m.P13nItem(), iItemIndex = null;
+		oItem.data('P13nColumnKey', '4717');	
 		
-		iItemIndex = oP13nColumnsPanel._getItemIndexByItemKey(oItem);
+		oTableItem1 = new sap.m.ColumnListItem();
+		oTableItem1.data('P13nColumnKey', '4712');
+		oTableItem2 = new sap.m.ColumnListItem();
+		oTableItem2.data('P13nColumnKey', '4714');
+		oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([oTableItem1, oTableItem2]);
+		
+		iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey(oItem);
 		strictEqual(iItemIndex, -1, "Wrong index return -> item is valid but it shall not exist in that list of items");
 	});
 
@@ -530,8 +560,8 @@
 		
 		sap.ui.Device.resize.detachHandler = sinon.spy();
 		
-		var fMoveToStartButton = oP13nColumnsPanel._oMoveToStartButton.destroy; 
-		oP13nColumnsPanel._oMoveToStartButton.destroy = oMoveToStartButtonStub = sinon.stub();
+		var fMoveToTopButton = oP13nColumnsPanel._oMoveToTopButton.destroy; 
+		oP13nColumnsPanel._oMoveToTopButton.destroy = oMoveToTopButtonStub = sinon.stub();
 	
 		var fMoveUpButton = oP13nColumnsPanel._oMoveUpButton.destroy;
 		oP13nColumnsPanel._oMoveUpButton.destroy = oMoveUpButtonStub = sinon.stub();
@@ -539,8 +569,8 @@
 		var fMoveDownpButton = oP13nColumnsPanel._oMoveDownButton.destroy;
 		oP13nColumnsPanel._oMoveDownButton.destroy = oMoveDownButtonStub = sinon.stub();
 		
-		var fMoveToEndButton = oP13nColumnsPanel._oMoveToEndButton.destroy;
-		oP13nColumnsPanel._oMoveToEndButton.destroy = oMoveToEndButtonStub = sinon.stub();
+		var fMoveToBottomButton = oP13nColumnsPanel._oMoveToBottomButton.destroy;
+		oP13nColumnsPanel._oMoveToBottomButton.destroy = oMoveToBottomButtonStub = sinon.stub();
 		
 		var fSearchField = oP13nColumnsPanel._oSearchField.destroy;
 		oP13nColumnsPanel._oSearchField.destroy = oSearchFieldStub = sinon.stub();
@@ -555,14 +585,14 @@
 		oP13nColumnsPanel.exit();
 	
 		strictEqual(sap.ui.Device.resize.detachHandler.called, true, "Detach of resize handler shall be called");
-		strictEqual(oMoveToStartButtonStub.called, true, "Destroy of move to Start button shall be be called");
-		strictEqual(oP13nColumnsPanel._oMoveToStartButton, null, "Move to Start button shall be set to null");
+		strictEqual(oMoveToTopButtonStub.called, true, "Destroy of move to Top button shall be be called");
+		strictEqual(oP13nColumnsPanel._oMoveToTopButton, null, "Move to Top button shall be set to null");
 		strictEqual(oMoveUpButtonStub.called, true, "Destroy of move Up button shall be be called");		
 		strictEqual(oP13nColumnsPanel._oMoveUpButton, null, "Move Up button shall be set to null");
 		strictEqual(oMoveDownButtonStub.called, true, "Destroy of move Down button shall be be called");
 		strictEqual(oP13nColumnsPanel._oMoveDownButton, null, "Move Down button shall be set to null");
-		strictEqual(oMoveToEndButtonStub.called, true, "Destroy of move to end button shall be be called");		
-		strictEqual(oP13nColumnsPanel._oMoveToEndButton, null, "Move to End button shall be set to null");
+		strictEqual(oMoveToBottomButtonStub.called, true, "Destroy of move to Bottom button shall be be called");		
+		strictEqual(oP13nColumnsPanel._oMoveToBottomButton, null, "Move to Bottom button shall be set to null");
 		strictEqual(oSearchFieldStub.called, true, "Destroy of search field shall be be called");
 		strictEqual(oP13nColumnsPanel._oSearchField, null, "Serach field shall be set to null");
 		strictEqual(oToolbarStub.called, true, "Destroy of toolbar shall be be called");
@@ -574,14 +604,11 @@
 	test("Shall check _scrollToSelectedItem", function() {
 		ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
 		
-		var oColumnItemTemplate = new sap.m.P13nColumnItem({
-			key: "{key}",
-			cells: [ new sap.m.Text({
-				text: '{text}'
-			}) ],
-			visible: true,
-			selected: '{visible}',
-			type: sap.m.ListType.Active
+		var oColumnItemTemplate = new sap.m.P13nItem({
+			columnKey: "{key}",
+			text: '{text}',
+			visible: '{visible}',
+			tooltip: '{tooltip}'
 		});
 
 		oP13nColumnsPanel = new sap.m.P13nColumnsPanel({
