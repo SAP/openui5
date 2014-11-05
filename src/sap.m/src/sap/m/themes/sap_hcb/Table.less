@@ -1,20 +1,8 @@
 /* table */
-.sapMListBGTransparent .sapMListTblHeader,
-.sapMListBGTransparent .sapMListTblFooter,
-.sapMListBGTransparent .sapMLIB.sapMListTblRow{
-	background-color: @sapHCStandardBG;
-}
-
-.sapMListBGTranslucent .sapMListTblHeader,
-.sapMListBGTranslucent .sapMListTblFooter,
-.sapMListBGTranslucent .sapMLIB.sapMListTblRow{
-	background-color: @sapHCStandardBG;
-}
-
-.sapMListBGSolid .sapMListTblHeader,
-.sapMListBGSolid .sapMListTblFooter,
-.sapMListBGSolid .sapMLIB.sapMListTblRow{
-	background-color: @sapHCStandardBG;
+.sapMListTblHeader,
+.sapMListTblFooter,
+.sapMLIB.sapMListTblRow {
+	background: @sapHCStandardBG;
 }
 
 .sapMListTblNavCol,
@@ -23,7 +11,7 @@
 	padding: 0;
 }
 
-.sapMListTblNavCol > .sapMLIBImgNav{
+.sapMListTblNavCol > .sapMLIBImgNav {
 	display: block;
 }
 
@@ -31,26 +19,24 @@
 	width: 3rem;
 }
 
-.sapMListModeSingleSelect .sapMListTblSelCol{
+.sapMListModeSingleSelect .sapMListTblSelCol {
 	padding: 0;
 }
 
 .sapMListTblSelCol > .sapMLIBSelectSL,
 .sapMListTblSelCol > .sapMLIBSelectD,
-.sapMListTblSelCol > .sapMLIBSelectM{
+.sapMListTblSelCol > .sapMLIBSelectM {
 	margin: 0;
 }
 
-.sapMListTblUnreadCol{
+.sapMListTblUnreadCol {
 	display: none;
-}
-
-.sapMListTblHeader th{
-	border-bottom: 0.125rem solid @sapHCStandardFG;
 }
 
 .sapMListTbl {
 	font-size: @sapMFontMediumSize;
+	/* HCB Additional Style */
+	border: 1px solid @sapHCStandardFG;
 }
 
 .sapMListTbl .sapMText,
@@ -61,7 +47,7 @@
 	font-weight: normal;
 }
 
-.sapMListTbl .sapUiIcon:not(.sapMLIBImgNav){
+.sapMListTbl .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: @sapMFontLargeSize;
 }
 
@@ -104,7 +90,7 @@
 	padding-right: 0;
 }
 
-.sapMListTblHasNav .sapMListTblNavCol{
+.sapMListTblHasNav .sapMListTblNavCol {
 	width: 3rem;
 }
 
@@ -112,7 +98,7 @@
 	border-bottom: 0;
 }
 
-.sapMListTblCell.sapMListTblCellDup{
+.sapMListTblCell.sapMListTblCellDup {
 	border-color: transparent;
 }
 
@@ -173,7 +159,7 @@
 }
 
 /* decrease the navigation icon size */
-.sapUiSizeCompact .sapMListTblNavCol > .sapMLIBImgNav{
+.sapUiSizeCompact .sapMListTblNavCol > .sapMLIBImgNav {
 	width : auto;
 	height: 2rem;
 	line-height: 2rem;
@@ -185,7 +171,7 @@
 }
 
 /* decrease the navigation column width */
-.sapUiSizeCompact .sapMListTblHasNav .sapMListTblNavCol{
+.sapUiSizeCompact .sapMListTblHasNav .sapMListTblNavCol {
 	width: 2rem;
 }
 
@@ -195,7 +181,7 @@
 }
 
 /* min height for the table cells */
-.sapUiSizeCompact .sapMListTblCell{
+.sapUiSizeCompact .sapMListTblCell {
 	height: 2rem;
 }
 
@@ -209,12 +195,8 @@
 	padding: 0;
 }
 
+
 /* reset height of cells when no header is defined */
 .sapMListTblHeaderNone > .sapMListTblCell {
 	height: 0;
-}
-
-/* HCB Additional Styles */
-.sapMListTbl {
-	border: 1px solid @sapHCStandardFG;
 }
