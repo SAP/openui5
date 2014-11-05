@@ -56,8 +56,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			navButtonText : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
 	
 			/**
-			 * Whether the Page takes special measures to make page content scrollable and keep headers fixed.
-			 * If set to false, there will be no scrolling at all; for performance reasons this is highly recommended when scrolling is not needed.
+			 * Enable vertical scrolling of page contents. Page headers and footers are fixed and do not scroll.
+			 * If set to false, there will be no scrolling at all.
 			 * 
 			 * The Page only allows vertical scrolling because horizontal scrolling is discouraged in general for full-page content. If it still needs to be achieved, disable the Page scrolling and use a ScrollContainer as full-page content of the Page. This allows you to freely configure scrolling. It can also be used to create horizontally-scrolling sub-areas of (vertically-scrolling) Pages.
 			 */
@@ -170,14 +170,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		else if ( this._hasScrolling() && !this._oScroller) {
 			jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
-			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-scroll", {
+			this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, null, {
+				scrollContainerId: this.getId() + "-cont",
 				horizontal: false,
-				vertical: true,
-				zynga: false,
-				iscroll: this._bUseIScroll,
-				preventDefault: false,
-				nonTouchScrolling: "scrollbar",
-				scrollbarClass: "sapMScrollbar"
+				vertical: true
 			});
 		}
 	};

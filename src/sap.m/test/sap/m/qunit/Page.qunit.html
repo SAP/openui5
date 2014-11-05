@@ -209,13 +209,9 @@
 				}
 
 				test("Scroll area rendered", function() {
-// 					equal(jQuery.sap.domById("myFirstPage-scroll"), undefined, "Scroll container should not be rendered for page 1");
-// 					ok(jQuery.sap.domById("mySecondPage-scroll"), "Scroll container should be rendered for page 2");
-// 					equal(jQuery.sap.domById("myThirdPage-scroll"), undefined, "Scroll container should not be rendered for page 3");
-
-					ok(jQuery.sap.domById("myFirstPage-scroll"), "Scroll container should be rendered for page 1");
-					ok(jQuery.sap.domById("mySecondPage-scroll"), "Scroll container should be rendered for page 2");
-					ok(jQuery.sap.domById("myThirdPage-scroll"), "Scroll container should be rendered for page 3");
+					ok(jQuery.sap.domById("myFirstPage-cont"), "Scroll container should be rendered for page 1");
+					ok(jQuery.sap.domById("mySecondPage-cont"), "Scroll container should be rendered for page 2");
+					ok(jQuery.sap.domById("myThirdPage-cont"), "Scroll container should be rendered for page 3");
 				});
 	
 				test("Scrolling", function() {

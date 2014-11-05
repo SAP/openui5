@@ -9,7 +9,3 @@
 .sapUiMedia-Std-Phone .sapMSampleFioriListReportIconTabBar .sapMITBContent {
 	padding: 1rem 0;
 }
-
-.sapMSampleFioriListReportIconTabBarOverflow .sapMPageScroll {
-	overflow: auto;
-}

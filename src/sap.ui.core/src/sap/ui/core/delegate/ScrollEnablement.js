@@ -47,7 +47,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			 * @param {boolean} [oConfig.zynga=false] If set, then the Zynga scroller (http://zynga.github.com/scroller/) is used
 			 * @param {boolean} [oConfig.iscroll=false] If set, then iScroll (http://cubiq.org/iscroll-4) is used
 			 * @param {boolean} [oConfig.preventDefault=false] If set, the default of touchmove is prevented
-			 * @param {boolean} [oConfig.nonTouchScrolling=false] If true, the delegate will also be active to allow touch like scrolling with the mouse on non-touch platforms; if set to "scrollbar", there will be normal scrolling with scrollbars and no touch-like scrolling where the content is dragged
+			 * @param {boolean} [oConfig.nonTouchScrolling=false] If true, the delegate will also be active to allow touch like scrolling with the mouse on non-touch platforms.
+			 * @param {string} [oConfig.scrollContainerId=""] Native scrolling does not need content wrapper. In this case, ID of the container element should be provided.
 			 *
 			 * @version ${version}
 			 * @constructor
@@ -60,6 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._oControl = oControl;
 				this._oControl.addDelegate(this);
 				this._sContentId = sScrollContentDom;
+				this._sContainerId = oConfig.scrollContainerId;
 				this._bHorizontal = !!oConfig.horizontal;
 				this._bVertical = !!oConfig.vertical;
 				this._scrollX = 0;
@@ -977,7 +979,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			},
 	
 			onAfterRendering: function() {
-				var $Container = this._$Container = $.sap.byId(this._sContentId).parent();
+				var $Container = this._$Container = this._sContainerId ? $.sap.byId(this._sContainerId) : $.sap.byId(this._sContentId).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
 	
 				this._setOverflow();
@@ -1039,11 +1041,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		function initDelegateMembers(oScrollerInstance, oConfig) {
 			var oDelegateMembers;
 	
-			if (!sap.ui.Device.support.touch && !$.sap.simulateMobileOnDesktop && !oConfig.nonTouchScrolling) {  //TODO: Maybe find some better criteria
-				// nothing to do on desktop browsers when disabled
-				return;
-			}
-	
 			if (sap.ui.Device.support.touch || $.sap.simulateMobileOnDesktop) {
 				$.sap.require("jquery.sap.mobile");
 			}
@@ -1070,23 +1067,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 							return "z";
 						}
 
-						var bTouchScroll = sap.ui.Device.support.touch || sap.ui.Device.os.windows_phone; // except for combi devices
-
-						if ( sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1 ||
-							sap.ui.Device.os.blackberry || // BlackBerry: iScroll works smoother, no scroll bars in native scrolling
-							sap.ui.Device.os.ios && sap.ui.Device.os.version < 6) {
-							return "i";
-						}
-						if (!bTouchScroll && $.sap.simulateMobileOnDesktop) {
-							// simulate on desktop with iScroll
-							return "i";
-						}
-						if (oConfig.iscroll == "force") {
-							// force iScroll on any device
-							return "i";
-						}
-						if (bTouchScroll && sap.ui.getCore().getConfiguration().getNoNativeScroll()) {
-							// force iScroll on mobile devices with an URL parameter. See Config.js
+						if (oConfig.iscroll) {
 							return "i";
 						}
 
