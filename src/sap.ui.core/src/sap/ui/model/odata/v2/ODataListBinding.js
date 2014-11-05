@@ -68,11 +68,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
 			}	else {
-				// call getLength when metadata is already loaded or don't do anything
-				// if the the metadata gets loaded it will call a refresh on all bindings
-				if (this.oModel.getServiceMetadata()) {
-					this.resetData();
-				}
+				//initial reset
+				this.resetData();
 			}
 		},
 
