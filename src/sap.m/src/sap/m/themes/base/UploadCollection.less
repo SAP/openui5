@@ -29,9 +29,6 @@
 	vertical-align:		middle;
 }
 
-.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
-	padding-left:		0rem;
-}
 
 .sapMLIB.sapMUCListSingleItem,
 .sapMLIB.sapMUCListFirstItem,
@@ -61,13 +58,13 @@ span[id*="ia_iconHL"] {
 //	color: 				@sapUiElement;
 }
 
-
 .sapMImg.sapMUCItemImage{
 	height:				3rem;
 }
 
-div[id*="ta_textVL"] {
+.sapMUC .sapUiVlt {
 	margin:				1rem 0rem 1rem 0rem;
+	overflow:			visible;
 }
 
 
@@ -191,12 +188,14 @@ div[id*="ta_textVL"] {
 		line-height:		2rem;
 	}
 
-//	.sapMUCFileName.sapMLnk {
+	.sapMUCFileName.sapMLnk {
+		padding-top:		0.25rem;
 //		font-size:			@sapMFontMediumSize;
-//	}
+	}
 
 	.sapMUCDescriptionHL .sapMLabel{
-		padding-top:		0.75rem;
+		padding-top:		0.5rem;
+		padding-bottom:		0.25rem;
 	}
 
 	.sapMBusyIndicator.sapMUCloadingIcon {
@@ -356,4 +355,16 @@ div[id*="ta_textVL"] {
 			padding:			1rem 1rem 1rem 0rem;
 		}
 	}
+}
+
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls
+/* ************************************************************************************* */
+.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
+	padding-left:		0rem;
+}
+
+.sapMUC .sapUiIcon:focus {
+	outline-style: dotted;
 }
