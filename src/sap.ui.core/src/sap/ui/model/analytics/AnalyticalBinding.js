@@ -56,8 +56,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				this.bUseBatchRequests = (mParameters && mParameters.useBatchRequests === true) ? true : false;
 				this.bProvideTotalSize = (mParameters && mParameters.provideTotalResultSize === false) ? false : true;
 				this.bProvideGrandTotals = (mParameters && mParameters.provideGrandTotals === false) ? false : true;
+				this.bReloadSingleUnitMeasures = (mParameters && mParameters.reloadSingleUnitMeasures === false) ? false : true;
 				this.bUseAcceleratedAutoExpand = true; // TODO verify simple auto expand method // (mParameters && mParameters.useAcceleratedAutoExpand === true) ? true : false;
-				this.aRequestQueue = [];
 
 				// attribute members for maintaining loaded data; mapping from groupId to related information
 				this.iTotalSize = -1;
@@ -593,7 +593,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			groupMembersQuery : 1, // members of a named group G identified by its path /G1/G2/G3/.../G/  
 			totalSizeQuery : 2, // total number of entities in result matching all specified filter conditions 
 			groupMembersAutoExpansionQuery : 3, // all members residing in a group or sub group w.r.t. a given group ID  
-			levelMembersQuery : 4 // members of a given level 
+			levelMembersQuery : 4, // members of a given level
+			reloadMeasuresQuery : 5 // measures of a certain entry
 			};
 	
 	AnalyticalBinding._artificialRootContextGroupId = "artificialRootContext";
@@ -718,6 +719,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				bExecuteRequest = true;
 				var aMembersRequestId;
 				if (this.bUseBatchRequests) {
+					var aRequestQueue = [];
+					
 					if (bGroupLevelAutoExpansionIsActive) {
 						aMembersRequestId = this._prepareGroupMembersAutoExpansionRequestIds(sParentGroupId, iNumberOfExpandedLevels);
 						for (var i = -1, sRequestId; (sRequestId = aMembersRequestId[++i]) !== undefined; ) {
@@ -727,26 +730,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							}
 						}
 						if (bExecuteRequest) {
-							this.aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
+							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
 						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
-							this.aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
+							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
 							aMembersRequestId = [ this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}) ];
 						}
 					}
 					if (bExecuteRequest && bNeedTotalSize) {
 						aMembersRequestId.push(this._getRequestId(AnalyticalBinding._requestType.totalSizeQuery));
 						this._considerRequestGrouping(aMembersRequestId);
-						this.aRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
+						aRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
 					}
 					if (bExecuteRequest) {
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
 							this._abortAllPendingRequests();  
 						}
 						
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
+						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [ aRequestQueue ]);
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -786,8 +789,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		return aContext;
 	};
 	
-	AnalyticalBinding.prototype._processRequestQueue = function() {
-		if (this.aRequestQueue.length == 0) {
+	AnalyticalBinding.prototype._processRequestQueue = function(aRequestQueue) {
+		if (aRequestQueue.length == 0) {
 			return;
 		}
 	
@@ -796,7 +799,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var i, oRequestDetails, aRequestQueueEntry;
 		
 		// create request objects: process group member requests first to detect flat list requests 
-		for (i = -1; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
+		for (i = -1; (aRequestQueueEntry = aRequestQueue[++i]) !== undefined;) {
 			if (aRequestQueueEntry[0] == AnalyticalBinding._requestType.groupMembersQuery) { // request type is at array index 0
 				oRequestDetails = AnalyticalBinding.prototype._prepareGroupMembersQueryRequest.apply(this, aRequestQueueEntry);
 				bFoundFlatListRequest = bFoundFlatListRequest || oRequestDetails.bIsFlatListRequest;
@@ -805,7 +808,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		// create request objects for all other request types 
-		for (i = -1; (aRequestQueueEntry = this.aRequestQueue[++i]) !== undefined;) {
+		for (i = -1; (aRequestQueueEntry = aRequestQueue[++i]) !== undefined;) {
 			oRequestDetails = null;
 			switch (aRequestQueueEntry[0]) { // different request types
 			case AnalyticalBinding._requestType.groupMembersQuery:
@@ -822,22 +825,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					aRequestDetails.push(oLevelMembersRequestDetails);
 				}
 				break;
+			case AnalyticalBinding._requestType.reloadMeasuresQuery: {
+				var aReloadMeasureRequestDetails = aRequestQueueEntry[1];
+				for (var k = -1, oReloadMeasureRequestDetails; (oReloadMeasureRequestDetails = aReloadMeasureRequestDetails[++k]) !== undefined; ) {
+					aRequestDetails.push(oReloadMeasureRequestDetails);
+				}
+				break;
+			}
 			default:
-				jQuery.sap.log.fatal("unhandled request type " + this.aRequestQueue[i][0]);
+				jQuery.sap.log.fatal("unhandled request type " + aRequestQueue[i][0]);
 				continue;
 			}
 		}
 	
 		// execute them either directly in case of a single request or via a batch request
-	
 		if (aRequestDetails.length > 1) {
 			this._executeBatchRequest(aRequestDetails);
 		} else {
 			this._executeQueryRequest(aRequestDetails[0]);
 		}
 	
-		// clear queue
-		this.aRequestQueue = [];
 	};
 	
 	/** *************************************************************** */
@@ -1401,6 +1408,95 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	/**
 	 * @private
 	 * @function
+	 * @name AnalyticalBinding.prototype._prepareReloadMeasurePropertiesQueryRequest
+	 */
+	AnalyticalBinding.prototype._prepareReloadMeasurePropertiesQueryRequest = function(iRequestType, oGroupMembersRequestDetails, oMultiUnitRepresentative) {
+		// build OData request based on given request details
+
+		// (1) set up analytical OData request object
+		var oAnalyticalQueryRequest = new odata4analytics.QueryResultRequest(this.oAnalyticalQueryResult);
+		oAnalyticalQueryRequest.setResourcePath(this._getResourcePath());
+		oAnalyticalQueryRequest.getSortExpression().clear();
+
+		// (2) set aggregation level
+		var aAggregationLevel = oGroupMembersRequestDetails.aAggregationLevel;
+		oAnalyticalQueryRequest.setAggregationLevel(aAggregationLevel);
+
+		var bIsLeafGroupsRequest = oGroupMembersRequestDetails.bIsLeafGroupsRequest;
+		
+		// (3) set filter
+		var oFilterExpression = oAnalyticalQueryRequest.getFilterExpression();
+		oFilterExpression.clear();
+		if (this.aApplicationFilter) {
+			oFilterExpression.addUI5FilterConditions(this.aApplicationFilter);
+		}
+		if (this.aControlFilter) {
+			oFilterExpression.addUI5FilterConditions(this.aControlFilter);
+		}
+			// add conditions for aggregated dimension key
+		var aAggregationDimensionKeyFilter = [];
+		for (var i = 0; i < aAggregationLevel.length; i++) {
+			var oFilter = new sap.ui.model.Filter(aAggregationLevel[i], sap.ui.model.FilterOperator.EQ, oMultiUnitRepresentative.oEntry[aAggregationLevel[i]]);
+			aAggregationDimensionKeyFilter.push(oFilter);
+		}
+		oFilterExpression.addUI5FilterConditions(aAggregationDimensionKeyFilter);
+		
+		// (4) set measures as requested per column
+		var bIncludeRawValue;
+		var bIncludeFormattedValue;
+		var bIncludeUnitProperty;
+		var oMeasureDetails;
+	
+		var aSelectedUnitPropertyName = [];
+	
+		// consider only those mentioned in oMultiUnitRepresentative.aReloadMeasurePropertyName		
+		oAnalyticalQueryRequest.setMeasures(oMultiUnitRepresentative.aReloadMeasurePropertyName);
+	
+		for ( var sMeasureName in this.oMeasureDetailsSet) {
+			oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
+			if (jQuery.inArray(oMeasureDetails.name, oMultiUnitRepresentative.aReloadMeasurePropertyName) == -1) {
+				continue;
+			}
+			if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+				bIncludeRawValue = false;
+				bIncludeFormattedValue = false;
+				bIncludeUnitProperty = false;
+			} else {
+				bIncludeRawValue = (oMeasureDetails.rawValuePropertyName != undefined);
+				bIncludeFormattedValue = (oMeasureDetails.formattedValuePropertyName != undefined);
+				bIncludeUnitProperty = (oMeasureDetails.unitPropertyName != undefined);
+				if (bIncludeUnitProperty) {
+					// remember unit property together with using measure raw value property for response analysis in success handler
+					if (jQuery.inArray(oMeasureDetails.unitPropertyName, aSelectedUnitPropertyName) == -1) {
+						aSelectedUnitPropertyName.push(oMeasureDetails.unitPropertyName);
+					}
+				}
+			}
+			oAnalyticalQueryRequest.includeMeasureRawFormattedValueUnit(oMeasureDetails.name, bIncludeRawValue,
+					bIncludeFormattedValue, bIncludeUnitProperty);
+		}
+		// exclude those unit properties from the selected that are included in the current aggregation level
+		for ( var j in aAggregationLevel) {
+			var iMatchingIndex;
+			if ((iMatchingIndex = jQuery.inArray(aAggregationLevel[j], aSelectedUnitPropertyName)) != -1) {
+				aSelectedUnitPropertyName.splice(iMatchingIndex, 1);
+			}
+		}
+	
+		return {
+			iRequestType : iRequestType,
+			sRequestId : this._getRequestId(AnalyticalBinding._requestType.reloadMeasuresQuery, {multiUnitEntryKey: this.oModel.getKey(oMultiUnitRepresentative.oEntry)}),
+			oAnalyticalQueryRequest : oAnalyticalQueryRequest,
+			aSelectedUnitPropertyName : aSelectedUnitPropertyName,
+			aAggregationLevel : aAggregationLevel,
+			oMultiUnitRepresentative : oMultiUnitRepresentative
+		};
+		
+	};
+	
+	/**
+	 * @private
+	 * @function
 	 * @name AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionRequestIds
 	 */
 	AnalyticalBinding.prototype._prepareGroupMembersAutoExpansionRequestIds = function(sGroupId, iNumberOfExpandedLevels) {
@@ -1508,10 +1604,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 		}
 
-		jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
-		
 		var iRequestHandleId = this._getIdForNewRequestHandle();
 		if (aBatchQueryRequest.length > 0) {
+			jQuery.sap.log.debug("AnalyticalBinding: executing batch request with " + aExecutedRequestDetails.length + " operations");
+			
 			this.oModel.addBatchReadOperations(aBatchQueryRequest);
 			this.fireDataRequested();
 			var oRequestHandle = this.oModel.submitBatch(fnSuccess, fnError, true, true);
@@ -1553,6 +1649,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							break;
 						case AnalyticalBinding._requestType.levelMembersQuery:
 							that._processLevelMembersQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
+							break;
+						case AnalyticalBinding._requestType.reloadMeasuresQuery:
+							that._processReloadMeasurePropertiesQueryResponse(aExecutedRequestDetails[k], oData.__batchResponses[k].data);
 							break;
 						default:
 							jQuery.sap.log.fatal("invalid request type " + aExecutedRequestDetails[k].iRequestType);
@@ -1684,6 +1783,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				case AnalyticalBinding._requestType.levelMembersQuery:
 					that._processLevelMembersQueryResponse(oRequestDetails, oData);
 					break;
+				case AnalyticalBinding._requestType.reloadMeasuresQuery:
+					that._processReloadMeasurePropertiesQueryResponse(oRequestDetails, oData);
+					break;					
 				default:
 					jQuery.sap.log.fatal("invalid request type " + oRequestDetails.iRequestType);
 					break;
@@ -1748,6 +1850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var iFirstMatchingEntryIndex;
 		var iDiscardedEntriesCount = 0;
 		var bLastServiceKeyWasNew;
+		var oReloadMeasuresRequestDetails, aReloadMeasuresRequestDetails = [];
 
 // 		this._trace_enter("ReqExec", "_processGroupMembersQueryResponse", "groupId=" + oRequestDetails.sGroupId, { startIndex: iStartIndex, serviceStartIndex: iServiceStartIndex, length: iLength, resultCount: oData.__count, resultLength: oData.results.length }, ["startIndex","serviceStartIndex","length","resultCount","resultLength"]); // DISABLED FOR PRODUCTION 		
 
@@ -1811,16 +1914,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 /*start code block*	
 					this.bFoundMU = true;
 *end code block*/
-
-					// create a multi-unit repr. (includes a corresponding multi-unit entity) 
-					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, oRequestDetails.bIsFlatListRequest);
-					var aMultiUnitEntry = [];
 					// collect all related result entries for this multi-unit entity and set the keys
+					var aMultiUnitEntry = [];
 					for (var l = iFirstMatchingEntryIndex; l < h; l++) {
 						aMultiUnitEntry.push(oData.results[l]);
 					}
 					if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
 						aMultiUnitEntry.push(oData.results[h]);
+					}
+					// determine all deviating unit properties
+					var aDeviatingUnitPropertyName = [];
+					for (var m = 0; m < aSelectedUnitPropertyName.length; m++) {
+						var sUnitPropertyName = aSelectedUnitPropertyName[m];
+						for (var o = 1; o < aMultiUnitEntry.length; o++) {
+							if (aMultiUnitEntry[o - 1][sUnitPropertyName] != aMultiUnitEntry[o][sUnitPropertyName]) {
+								aDeviatingUnitPropertyName.push(sUnitPropertyName);
+								break;
+							}
+						}
+					}
+					// create a multi-unit repr. (includes a corresponding multi-unit entity) 
+					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, aDeviatingUnitPropertyName, oRequestDetails.bIsFlatListRequest);
+					if (oMultiUnitRepresentative.aReloadMeasurePropertyName.length > 0) {
+						oReloadMeasuresRequestDetails = this._prepareReloadMeasurePropertiesQueryRequest(AnalyticalBinding._requestType.reloadMeasuresQuery, oRequestDetails, oMultiUnitRepresentative);
+						aReloadMeasuresRequestDetails.push(oReloadMeasuresRequestDetails);
 					}
 					var iNewServiceKeyCount = this._setAdjacentMultiUnitKeys(oKeyIndexMapping, oMultiUnitRepresentative, aMultiUnitEntry);
 
@@ -1935,11 +2052,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 * eslint-enable no-debugger *
 *end code block*/
-		
+		// if any new requests have been created for reloading single-unit measures, execute and group them to get a single update event for them
+		var aReloadMeasureRequestId = [];
+		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
+			if (this.bUseBatchRequests) {
+				var aRequestQueue = [ [AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails] ];
+				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [aRequestQueue]);
+			} else {
+				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
+					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
+					this._executeQueryRequest(oReloadMeasuresRequestDetails2);
+				}
+			}
+			
+			for (var p = 0; p < aReloadMeasuresRequestDetails.length; p++){
+				var oReloadMeasuresRequestDetails3 = aReloadMeasuresRequestDetails[p];
+				aReloadMeasureRequestId.push(oReloadMeasuresRequestDetails3.sRequestId);
+			} 
+			this._considerRequestGrouping(aReloadMeasureRequestId);
+		}
+
 		// cleanup results entry array from added previous entry
 		if (aPreviousEntryServiceKey && aPreviousEntryServiceKey.length > 0) {
-			for (var m = 0, len2 = aPreviousEntryServiceKey.length; m < len2; m++) {
-				delete oData.results[m - len2];
+			for (var r = 0, len2 = aPreviousEntryServiceKey.length; r < len2; r++) {
+				delete oData.results[r - len2];
 			}
 		}
 		
@@ -2140,9 +2276,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			processSingleGroupFromLevelSubset(bProcessFirstLoadedGroup, oData.results.length == oRequestDetails.iLength);
 		}
 	};
+
 	
+	/**
+	 * @private
+	 * @function
+	 * @name AnalyticalBinding.prototype._processReloadMeasurePropertiesQueryResponse
+	 */
+	AnalyticalBinding.prototype._processReloadMeasurePropertiesQueryResponse = function(oRequestDetails, oData) {
+		var oMultiUnitRepresentative = oRequestDetails.oMultiUnitRepresentative;
+		var sMultiUnitEntryKey = this.oModel.getKey(oMultiUnitRepresentative.oEntry);
+// 		this._trace_enter("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "multi-unit key=" + sMultiUnitEntryKey); // DISABLED FOR PRODUCTION 		
+
+		if (oData.results.length != 1) {
+// 			this._trace_debug_if(true, "assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
+			jQuery.sap.log.fatal("assertion failed: more than one entity for reloaded measure properties of entity with key " + sMultiUnitEntryKey);
+			return;
+		}
+		
+		var oReloadedEntry = oData.results[0];
+		var oReloadedEntryKey = this.oModel.getKey(oReloadedEntry);
+		var oMultiUnitEntry = this.oModel.getObject("/" + sMultiUnitEntryKey);
+		if (! oMultiUnitEntry) {
+			jQuery.sap.log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
+			return;
+		}
+		var aMeasureName = oMultiUnitRepresentative.aReloadMeasurePropertyName;
+		for (var i = 0; i < aMeasureName.length; i++) {
+// 			this._trace_debug_if(oReloadedEntry[aMeasureName[i]] === undefined || oReloadedEntry[aMeasureName[i]] == "", "no value for reloaded measure property");
+			oMultiUnitEntry[aMeasureName[i]] = oReloadedEntry[aMeasureName[i]];
+		}
+		this.oModel.deleteCreatedEntry(this.oModel.getContext("/" + oReloadedEntryKey));
+// 		this._trace_leave("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "measures=" + oMultiUnitRepresentative.aReloadMeasurePropertyName.join()); // DISABLED FOR PRODUCTION 				
+	};
+	
+
 	/** *************************************************************** */
-	
+	 
 	/**
 	 * @private
 	 * @function
@@ -2719,6 +2889,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			return "" + AnalyticalBinding._requestType.levelMembersQuery + mParameters.level + (this.bUseAcceleratedAutoExpand == true ? "" : mParameters.groupId);
 		case AnalyticalBinding._requestType.totalSizeQuery:
 			return AnalyticalBinding._requestType.totalSizeQuery;
+		case AnalyticalBinding._requestType.reloadMeasuresQuery:
+			if (! mParameters.multiUnitEntryKey) {
+				jQuery.sap.log.fatal("missing multi unit entry key");
+			}
+			return AnalyticalBinding._requestType.reloadMeasuresQuery + mParameters.multiUnitEntryKey;
 		default:
 			jQuery.sap.log.fatal("invalid request type " + iRequestType);
 			return -1;
@@ -3107,7 +3282,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 // 					this._trace_message("SvcDatCons", "case 1.b.I"); // DISABLED FOR PRODUCTION 		
 // 					this._trace_debug_if(aKI[nPrimePrime_e] < n_i - 1, "unexpected: this key index must point to the last read service key or before"); // this case would be 1 b) II ii
 					// create a multi-unit entry for nPrimePrime_e
-					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, bIsFlatListRequest);
+					oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
 					oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 					// make nPrimePrime_e a multi-unit entry
 					aKI[nPrimePrime_e] = -aKI[nPrimePrime_e];
@@ -3161,7 +3336,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					} else { // case II: (nPrime_e - 1) is NOT a multi-unit entry 
 // 						this._trace_message("SvcDatCons", "case 1.c.II"); // DISABLED FOR PRODUCTION 		
 						// create a multi-unit entry for n_e - 1
-						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, bIsFlatListRequest);
+						oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(oKeyIndexMapping.sGroupId, oPreviousEntry, aSelectedUnitPropertyName, undefined, bIsFlatListRequest);
 						oMultiUnitEntryKey = this.oModel._getKey(oMultiUnitRepresentative.oEntry);
 						if (! oMultiUnitRepresentative.bIsNewEntry) {
 							jQuery.sap.log.fatal("assertion failed: multi-unit entry already existed before");
@@ -3204,12 +3379,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 	// create a local multi unit entry by copying the given reference entry, and modifying this new entry: clear all unit properties that are not part of the aggregation level, and all measures
 	// returns { oEntry, bIsNewEntry) the multi-unit representativ entry and a flag whether it already existed before this call 
-	AnalyticalBinding.prototype._createMultiUnitRepresentativeEntry = function(sGroupId, oReferenceEntry, aSelectedUnitPropertyName, bIsFlatListRequest) {
+	AnalyticalBinding.prototype._createMultiUnitRepresentativeEntry = function(sGroupId, oReferenceEntry, aSelectedUnitPropertyName, aDeviatingUnitPropertyName, bIsFlatListRequest) {
 		// set up properties for measures and units in this new entry
 		var oMultiUnitEntry = jQuery.extend(true, {}, oReferenceEntry);
-		for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
-			oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
-		}
+		var aReloadMeasurePropertyName = [];
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
 			if (!bIsFlatListRequest && !this.mAnalyticalInfoByProperty[sMeasureName].total) {
@@ -3227,7 +3400,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					oMultiUnitEntry[oMeasureDetails.formattedValuePropertyName] = "*";
 				}
 			}
+			// determine if this measure that can be reloaded, because their unit properties do not have deviating values
+			if (aDeviatingUnitPropertyName) {
+				if (!oMeasureDetails.unitPropertyName || jQuery.inArray(oMeasureDetails.unitPropertyName, aDeviatingUnitPropertyName) == -1) {
+					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName);
+				}
+			}
 		}
+		for (var k = 0; k < aSelectedUnitPropertyName.length; k++) {
+			if (jQuery.inArray(aSelectedUnitPropertyName[k], aDeviatingUnitPropertyName) != -1) {
+				oMultiUnitEntry[aSelectedUnitPropertyName[k]] = "*";
+			}
+		}
+		
 		/*
 		 * assign a key to this new entry that allows to import it into the OData model that is guaranteed to be stable when used for multiple
 		 * bindings 1) Take all(!) grouping dimensions in alphabetical order of their names 2) Concatenate the values of these dimenensions in this
@@ -3244,7 +3429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// check if an entry already exists; if so, dont proceed, but return it
 		var iMultiUnitEntryIndex;
 		if (this.mMultiUnitKey[sGroupId] && (iMultiUnitEntryIndex = jQuery.inArray(sMultiUnitEntryKey, this.mMultiUnitKey[sGroupId])) != -1) {
-			return { oEntry: this.oModel.getObject("/" + sMultiUnitEntryKey), bIsNewEntry : false, iIndex: iMultiUnitEntryIndex }; // already created
+			return { oEntry: this.oModel.getObject("/" + sMultiUnitEntryKey), bIsNewEntry : false, iIndex: iMultiUnitEntryIndex, aReloadMeasurePropertyName: aReloadMeasurePropertyName }; // already created
 		}
 		
 		// this modified copy must be imported to the OData model as a new entry with a modified key and OData metadata
@@ -3256,7 +3441,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// mark the context for this entry as volatile to facilitate special treatment by consumers
 		var sMultiUnitEntryModelKey = this.oModel._getKey(oMultiUnitEntry);
 		this.oModel.getContext('/' + sMultiUnitEntryModelKey)["_volatile"] = true;
-		return { oEntry: oMultiUnitEntry, bIsNewEntry : true }; 
+		return { oEntry: oMultiUnitEntry, bIsNewEntry : true, aReloadMeasurePropertyName: aReloadMeasurePropertyName }; 
 	};
 	
 	

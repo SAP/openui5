@@ -67,7 +67,12 @@ Please report bugs in English, so all users can understand them.
 
 If the bug appears to be a regression introduced in a new version of UI5, try to find the closest versions between which it was introduced and take special care to make sure the issue is not caused by your application's usage of any internal method which changed its behavior.
 
-Be aware that issues cannot be deleted once they are created, so be careful when creating them and do not use the issue tracker for testing.
+
+### Issue handling process
+
+When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "approved" label), close it if it is not an issue, or ask for more details. Approved issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
+
+An issue that is about a real bug is closed as soon as the fix is committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
 
 
 ### Reporting Security Issues

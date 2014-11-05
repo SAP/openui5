@@ -318,7 +318,8 @@ html[data-sap-ui-browser^="ie"] .sapUiCalYearSel:focus{
 }
 
 @media only screen
-and (orientation: portrait) {
+and (orientation: portrait)
+and (min-height: 380px) {
 	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCancel{
 		bottom: 1rem;
 		left: 25%;
@@ -333,9 +334,7 @@ and (orientation: portrait) {
 	}
 }
 
-@media only screen
-and (min-width : 320px)
-and (orientation: landscape) {
+.sapUiCalendarLandscape(){
 	.sap-phone .sapUiCal[data-sap-ui-popup]{
 		overflow: auto;
 	}
@@ -409,7 +408,7 @@ and (orientation: landscape) {
 	.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCancel{
 		top: 1rem;
 		right: 1rem;
-		width: 4rem;
+		width: 5rem;
 		height: 30px;
 		padding-top: 0.25rem;
 		padding-bottom: 0.5rem;
@@ -417,6 +416,18 @@ and (orientation: landscape) {
 	}
 }
 
+@media only screen
+and (min-width : 320px)
+and (max-height: 379px) {
+	.sapUiCalendarLandscape();
+}
+
+@media only screen
+and (min-width : 320px)
+and (min-height: 380px)
+and (orientation: landscape) {
+	.sapUiCalendarLandscape();
+}
 
 /* colors for special days */
 .dayColorMixIn(@class, @color){

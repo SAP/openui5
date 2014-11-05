@@ -1080,7 +1080,7 @@
 			{
 				"id": "sap.m.sample.P13nDialog",
 				"name": "Personalization Dialog", 
-				"description": "Dialog for personalization of column order and its visibility, sorting and filter conditions of columns."
+				"description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
 			},
 			{
 				"id": "sap.m.sample.MultiInput",
