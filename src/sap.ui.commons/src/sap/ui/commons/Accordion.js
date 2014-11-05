@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * PAGE DOWN key behavior
 	 * Beware that these shortcuts are used by FF3.6 to navigate between opened tabs in the browsers.
 	 * So this is declared as a limitation, but behaves as expected in Safari 5
-	 * Opens the next section and focuses the first element of this opened section
+	 * Opens the next section and focuses the header of this opened section
 	 * @param {jQuery.Event} oEvent Browser event
 	 * @private
 	 */
@@ -226,9 +226,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Open the next enabled section
 		this.openSection(oNextSection.id);
 	
-		// Drill down the DOM to get the next section and focus on its first active element
-		var oSection = this.getCorrespondingSection(oNextSection);
-		oSection.focusFirstControl();
+		// Ensure the focus is on the right section
+		var aSections = this.getSections();
+		aSections[this.__idxOfSec(oNextSection.id)].focus();
 	
 		// Stop the event
 		oEvent.preventDefault();
@@ -240,7 +240,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * PAGE UP key behavior
 	 * Beware that these shortcuts are used by FF3.6 to navigate between opened TABS in the browsers.
 	 * So this is declared as a limitation, but behaves as expected in Safari 5
-	 * Opens the previous section and focuses the first element of this opened section
+	 * Opens the previous section and focuses the header of this opened section
 	 * @param [jQuery.Event} oEvent Browser event
 	 * @private
 	 */
@@ -263,11 +263,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Open the previously enabled section
 		this.openSection(oNextSection.id);
 	
-		// Drill down the DOM to get the previous section and focus its first active element
-		var oSection = this.getCorrespondingSection(oNextSection);
-		if (oSection) {
-			oSection.focusFirstControl();
-		}
+		// Ensure the focus is on the right section
+		var aSections = this.getSections();
+		aSections[this.__idxOfSec(oNextSection.id)].focus();
 	
 		// Stop the event
 		oEvent.preventDefault();
