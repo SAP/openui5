@@ -19,7 +19,7 @@
 			"contributor" : "Susan Baker",
 			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 			"enableEdit" : false,
-//			"enableDelete" : false,
+/* 			"enableDelete" : false, */
 			"fileName" : "Screenshot.jpg",
 			"fileSize" : 20,
 			"mimeType" : "image/jpg",
@@ -29,8 +29,8 @@
 		}, {
 			"contributor" : "John Smith",
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-//			"enableEdit" : true,
-//			"enableDelete" : false,
+/* 			"enableEdit" : true,
+			"enableDelete" : false, */
 			"fileName" : "Notes.txt",
 			"fileSize" : 10,
 			"mimeType" : "text/plain",
@@ -136,11 +136,6 @@
 	/* Handle FileUploader events                                  */
 	/* =========================================================== */
 	var fnChange = function(oEvent){
-
-		var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({name:"x-csrf-token", value: "4711" });
-		var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({name:"slug", value: "Hi"});
-		oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
-		oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
 	};
 	var fnFileAllowed = function(oEvent) {
 	};
@@ -189,7 +184,7 @@
 			for (var i = 0; i < aUploadedFiles.length; i++) {
 				oItem = {
 					"contributor" : "You",
-					"documentId" : new Date().getTime().toString(),
+					"documentId" : this.getItems()[i].getId(),
 					"fileName" : aUploadedFiles[i],
 					"fileSize" : 10, // TODO get file size
 					"mimeType" : "",

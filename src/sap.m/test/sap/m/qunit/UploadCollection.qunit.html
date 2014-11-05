@@ -78,7 +78,17 @@
 			this.oUploadCollection.destroy();
 		}
 	});
-
+// 	test("Get uploaded files from an FileUploader event", function() {
+// 		var oEvent = new jQuery.Event("someEvent", {
+// 				oSource : {
+// 					mProperties : {
+// 						value: "'file_1.ext' 'file_2.ext' 'file_3.ext' "
+// 					}
+// 				}
+// 		});
+// 		equal(this.oUploadCollection._getUploadedFilesFromUploaderEvent(oEvent), ["file_1.ext", "file_2.ext", "file_3.ext"], "Correct files determined from the FileUploader event");
+// 	});
+	
 	test("Get number of attachments label", function() {
 		equal(typeof this.oUploadCollection._getNumberOfAttachmentsLabel(999), 'object', "Correct type of Label for number of attachments returned");
 		equal(this.oUploadCollection._getNumberOfAttachmentsLabel(999).getText(), 'Attachments (999)', "Correct label for number of attachments returned");
@@ -203,7 +213,7 @@
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1].status, "Edit", "'Edit'-status as expected in Line 2")
+		equal(this.oUploadCollection.aItems[1]._status, "Edit", "'Edit'-status as expected in Line 2")
 		equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct")
 		
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
@@ -217,7 +227,7 @@
 		oData.items[1].fileName = "NewDocument_toCancel";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1].status, "Display", "'Display'-status after 'cancel' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'cancel' as expected in Line 2");
 		
 		//check file name after cancel
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -234,7 +244,7 @@
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[1].sId);
 		oModel.setData(oData);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[1].status, "Display", "'Display'-status after 'ok' as expected in Line 2");
+		equal(this.oUploadCollection.aItems[1]._status, "Display", "'Display'-status after 'ok' as expected in Line 2");
 
 		//check chnaged file name after save
 		var sFileNameField = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
@@ -244,7 +254,7 @@
 		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId2).firePress();
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2].status, "Edit", "'Edit'-status as expected in Line 2");
+		equal(this.oUploadCollection.aItems[2]._status, "Edit", "'Edit'-status as expected in Line 2");
 		equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
 
 		var oInputField3 = jQuery.sap.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName-inner");
@@ -270,7 +280,7 @@
 		oObj.target.id =  this.oUploadCollection.aItems[2].sId + "-cancelButton";
 		this.oUploadCollection._handleClick(oObj, this.oUploadCollection, this.oUploadCollection.aItems[2].sId);
 		sap.ui.getCore().applyChanges();
-		equal(this.oUploadCollection.aItems[2].status, "Display", "'Display'-status after 'cancel' as expected in Line 3");
+		equal(this.oUploadCollection.aItems[2]._status, "Display", "'Display'-status after 'cancel' as expected in Line 3");
 
 		oEditButton0 = sap.ui.getCore().byId(this.oUploadCollection.aItems[0].sId + "-editButton");
 		oEditButton1 = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-editButton");
@@ -301,7 +311,7 @@
 		//check status = "Display"
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
-			equal( this.oUploadCollection.aItems[i].status, "Display", "Status of line " + i + " is correct");
+			equal( this.oUploadCollection.aItems[i]._status, "Display", "Status of line " + i + " is correct");
 		}
 
 		var oFileName = sap.ui.getCore().byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
