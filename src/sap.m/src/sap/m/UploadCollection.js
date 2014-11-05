@@ -368,13 +368,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (sStatus == "Edit") {
 			oOkButton = new sap.m.Button({
 				id : sItemId + "-okButton",
-				text : "Ok",
+				text : this._oRb.getText("UPLOADCOLLECTION_OKBUTTON_TEXT"),
 				type : sap.m.ButtonType.Transparent
 			}).addStyleClass("sapMUCOkBtn");
 
 			oCancelButton = new sap.m.Button({
 				id : sItemId + "-cancelButton",
-				text : "Cancel",
+				text : this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
 				type : sap.m.ButtonType.Transparent
 			}).addStyleClass("sapMUCCancelBtn");
 		}
@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		if (sStatus == "Display" || sStatus == "Uploading") {
 			var sButtonId = sItemId + "-deleteButton";
 			if (sStatus == "Uploading") {
-				sButtonId = sItemId + "-abortButton";
+				sButtonId = sItemId + "-terminateButton";
 			}
 			bEnabled = oItem.getEnableDelete();
 			if (this.sErrorState == "Error"){
@@ -415,7 +415,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}).addStyleClass("sapMUCDeleteBtn");
 			if (sStatus == "Uploading") {
 				oDeleteButton.attachPress(function(oEvent) {
-					sap.m.UploadCollection.prototype._handleAbort(oEvent, that);
+					sap.m.UploadCollection.prototype._handleTerminate(oEvent, that);
 				});
 			} else {
 				oDeleteButton.attachPress(function(oEvent) {
@@ -581,16 +581,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 			if (iIndex == 0 && iMaxIndex == 0){
 				oListItem.addStyleClass("sapMUCListSingleItem");
-				jQuery.sap.log.debug("List item " + iIndex);
 			} else if (iIndex == 0) {
 				oListItem.addStyleClass("sapMUCListFirstItem");
-				jQuery.sap.log.debug("List item " + iIndex);
 			} else if (iIndex == iMaxIndex) {
 				oListItem.addStyleClass("sapMUCListLastItem");
-				jQuery.sap.log.debug("List item " + iIndex);
 			} else {
 				oListItem.addStyleClass("sapMUCListItem");
-				jQuery.sap.log.debug("List item " + iIndex);
 			}
 
 			// add the mapped item to the List
@@ -640,7 +636,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var sItemId = oParams.id.split("-deleteButton")[0];
 		var index = sItemId.split("-").pop();
 		oContext.sDeletedItemId = sItemId;
-		var bCompact = false;
+		var sCompact = "";
+		if (jQuery.sap.byId(oContext.sId).hasClass("sapUiSizeCompact")) {
+			sCompact = "sapUiSizeCompact";
+		}
 
 		// popup delete file
 		sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_DELETE_TEXT", aItems[index].getFileName()), {
@@ -655,25 +654,28 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				}
 			},
 			dialogId : "messageBoxDeleteFile",
-			styleClass : bCompact ? "sapUiSizeCompact" : "" // TODO
+			styleClass : sCompact
 		});
 	};
 
-	UploadCollection.prototype._handleAbort = function(oEvent, oContext) {
-		var bCompact = false;
+	UploadCollection.prototype._handleTerminate = function(oEvent, oContext) {
+		var sCompact = "";
+		if (jQuery.sap.byId(oContext.sId).hasClass("sapUiSizeCompact")) {
+			sCompact = "sapUiSizeCompact";
+		}
 
-		// popup abort upload file
-		sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_ABORT_TEXT"), {
-			title : this._oRb.getText("UPLOADCOLLECTION_ABORT_TITLE"),
+		// popup terminate upload file
+		sap.m.MessageBox.show(this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TEXT"), {
+			title : this._oRb.getText("UPLOADCOLLECTION_TERMINATE_TITLE"),
 			actions : [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 			onClose : function(oAction) {
 				if (oAction === sap.m.MessageBox.Action.OK) {
-					// call FileUploader abort
+					// call FileUploader terminate
 					oContext._getFileUploader().abort();
 				}
 			},
-			dialogId : "messageBoxAbortUploadFile",
-			styleClass : bCompact ? "sapUiSizeCompact" : "" // TODO
+			dialogId : "messageBoxTerminateUploadFile",
+			styleClass : sCompact
 		});				
 	};
 	
@@ -844,7 +846,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		this.fireTypeMissmatch(oEvent);
 		MessageToast.show(oEvent.getId());
 	};
-	UploadCollection.prototype._onUploadAborted = function(oEvent) {
+	UploadCollection.prototype._onUploadTerminated = function(oEvent) {
 		// TODO not implemented
 	};
 
@@ -915,7 +917,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					that._onTypeMissmatch(oEvent);
 				},
 				uploadAborted : function(oEvent) { // only supported with property sendXHR set to true
-					that._onUploadAborted(oEvent);
+					that._onUploadTerminated(oEvent);
 				},
 				uploadComplete : function(oEvent) {
 					that._onUploadComplete(oEvent);
