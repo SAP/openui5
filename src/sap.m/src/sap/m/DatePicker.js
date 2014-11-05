@@ -567,21 +567,21 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			var oDateOld = this.getDateValue();
 			var oDate;
 	
+			this._oPopup.close();
+			this._bFocusNoPopup = true;
+			this.focus();
+
 			if (aSelectedDates.length > 0) {
 				oDate = aSelectedDates[0].getStartDate();
 			}
 			this.setDateValue(oDate);
-	
-			this._oPopup.close();
-			this._bFocusNoPopup = true;
-			this.focus();
-	
+		
 			// do not use this.onChange() because output pattern will change date (e.g. only last 2 number of year -> 1966 -> 2066 )
 			if (!jQuery.sap.equal(oDate, oDateOld)) {
 				// compare Dates because value can be the same if only 2 digits for year 
 				var sValue = this.getValue();
 				this.fireChangeEvent(sValue, {valid: true});
-				this._curpos = sValue.length;
+				this._curpos = this._$input.val().length;
 				this._$input.cursorPos(this._curpos);
 			}
 	
