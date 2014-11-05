@@ -2474,8 +2474,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			}
 		} else if (sMethod == "POST") {
 			// remove URL params
+			var sNormalizedPath = sPath;
 			if (sPath.indexOf('?') != -1 ) {
-				var sNormalizedPath = sPath.substr(0, sPath.indexOf('?'));
+				sNormalizedPath = sPath.substr(0, sPath.indexOf('?'));
 			}
 			oEntityType = this.oMetadata._getEntityTypeByPath(sNormalizedPath);
 			if (oEntityType) {
