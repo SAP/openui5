@@ -24,6 +24,10 @@
         <exclude name="sap.ui.commons.js." />
         <exclude name="sap.ui.commons.DatePicker*" />
     </jscoverage>
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/commons/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
+    
   </appData>
   
 </library>
