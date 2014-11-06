@@ -210,6 +210,23 @@
 	};
 
 	/**
+	 * Reset Opa.config to its default values 
+	 * @name sap.ui.test.Opa#resetConfig
+	 * @static
+	 * @public
+	 * @function
+	 * @since 1.25
+	 */
+	Opa.resetConfig = function () {
+		Opa.config = {
+				arrangements : new Opa(),
+				actions : new Opa(),
+				assertions : new Opa(),
+				timeout : 15,
+				pollingInterval : 400
+		};
+	};
+	/**
 	 * Waits until all waitFor calls are done
 	 * @name sap.ui.test.Opa#emptyQueue
 	 * @static
@@ -251,11 +268,5 @@
 	 * @public
 	 */
 	//create the default config
-	Opa.config = {
-			arrangements : new Opa(),
-			actions : new Opa(),
-			assertions : new Opa(),
-			timeout : 15,
-			pollingInterval : 400
-		};
+	Opa.resetConfig(); 
 })(jQuery);

@@ -38,8 +38,8 @@
 				"samples" : [ 
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
-					"sap.ui.core.sample.OpaReuse",
-					"sap.ui.core.sample.OpaDynamicWait"
+					"sap.ui.core.sample.OpaDynamicWait",
+					"sap.ui.core.sample.OpaPageObject"
 				]
 			},
 			{
@@ -79,14 +79,14 @@
 				"description": "OPA finds a control by its id, triggers a tap and then finds multiple controls by their ids"
 			},
 			{
-				"id": "sap.ui.core.sample.OpaReuse",
-				"name": "How to structure your OPA tests",
-				"description": "If you have complex apps you should build reuse functions to make your OPA tests maintainable."
-			},
-			{
 				"id": "sap.ui.core.sample.OpaDynamicWait",
 				"name": "How to write nested actions",
 				"description": "If you have complex control structures you are able to add actions based on the result of previous actions."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaPageObject",
+				"name": "How to structure your OPA tests with Page Objects",
+				"description": "If you have multiple pages or UI areas that have several operations, you should place reuse functions in Page Objects to make your OPA tests maintainable. The example shows as well how to share and reuse functionality within and across page objects."
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
