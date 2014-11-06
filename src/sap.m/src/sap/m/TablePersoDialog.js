@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	 * Initializes the TablePersoDialog instance after creation.
 	 *
 	 * @function
-	 * @name sap.m.TablePeroDialog.prototype.init
+	 * @name sap.m.TablePersoDialog.prototype.init
 	 * @protected
 	 */
 	TablePersoDialog.prototype.init = function() {
@@ -95,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._fnUpdateCheckBoxes = jQuery.proxy(function(oEvent) {
 			var bSelected = oEvent.getParameter('selected'),
 				oData = this._oP13nModel.getData();
-			if (oEvent.getSource().getParent().getParent() == this._oSelectAllHeader) {
+			if (oEvent.getSource().getId() === this._getSelectAllCheckboxId()) {
 				//'Select All' checkbox has been changed
 				oData.aColumns.forEach(function(oColumn) {
 					oColumn.visible = bSelected;
@@ -104,10 +104,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				//One of the list checkboxes has been modified
 				//Update the state of the 'Select All' checkbox
 				var bSelectAll = !oData.aColumns.some(function(oColumn) {
-						return !oColumn.visible;
-					}
-				);
-				oData.aHeaders[0].visible = bSelectAll;
+					return !oColumn.visible;
+				});
+
+				oData.aHeader.visible = bSelectAll;
 			}
 			//call setData to trigger update of bound controls
 			this._oP13nModel.setData(oData);
@@ -122,15 +122,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				select: this._fnUpdateCheckBoxes
 			})
 		}).addStyleClass("sapMPersoDialogLI");
-
-		// Template for fixed header list inside the dialog
-		this._oHeaderItemTemplate = new InputListItem({
-			label: "{Personalization>text}",
-			content: new sap.m.CheckBox({
-				selected: "{Personalization>visible}",
-				select: this._fnUpdateCheckBoxes
-			})
-		}).addStyleClass("sapMPersoDialogLI").addStyleClass("sapMPersoDialogLIHeader");
 
 		//Button definition for sorting of the table content(up/down)
 		this._oButtonUp = new Button({
@@ -153,16 +144,18 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			//check if dialog is rendered
 			if (that._oDialog) {
 				var $dialogCont = jQuery("#" + that._oDialog.getId() + "-cont");
-				if ($dialogCont.children().length > 0 && that._oSelectAllHeader.$().length > 0) {
+				if ($dialogCont.children().length > 0) {
 					var iContentHeight = $dialogCont.children()[0].clientHeight;
-					var iHeaderHeight = that.getShowSelectAll() ? that._oSelectAllHeader.$()[0].clientHeight : 0;
+
+					// take the header border into account otherwise the scroll container's
+					// height is 2px more and causes the selectAllToolbar to scroll as well
+					var iHeaderHeight = that.getShowSelectAll() ? that._oSelectAllToolbar.$().outerHeight() : 0;
 					that._oScrollContainer.setHeight((iContentHeight - iHeaderHeight) + 'px');
 				}
 			}
 		};
 
 		this._fnUpdateArrowButtons = function() {
-
 			//Initialisation of the enabled property
 			var bButtonDownEnabled = true,
 				bButtonUpEnabled = true,
@@ -206,26 +199,21 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 					$checkBox.insertBefore($label);
 				}
 			}
-
-			// we dont want to focus the list instead directly focus `All` checkbox
-			if (oEvent.srcControl.getId() === that._oSelectAllHeader.getId()) {
-				that._oSelectAllHeader._destroyItemNavigation();
-			}
-
-			// focus the first list element if available
-			if (oEvent.srcControl.getId() === that._oList.getId() && that._oList.getItems()[0]) {
-				that._oDialog.setInitialFocus(that._oList.getItems()[0]);
-			}
 		};
 
 		this._fnAfterToolbarRendering = function (oEvent) {
-			// remove the list from the tab chain
+			// remove the toolbar from the tab chain
 			that._oSelectAllToolbar.$().attr('tabindex', '-1');
 		};
 
 		this._fnAfterDialogOpen = function (oEvent) {
 			// on shift+tab the subheader gets focused
 			that._oDialog.getSubHeader().$().attr('tabindex', '-1');
+		};
+
+		this._fnAfterScrollContainerRendering = function (oEvent) {
+			// scroll container gets focused in Firefox
+			that._oScrollContainer.$().attr('tabindex', '-1');
 		};
 
 		this._oList =  new List({
@@ -235,13 +223,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			select: this._fnUpdateArrowButtons
 		});
 
-		this._oSelectAllHeader =  new List({
-			includeItemInSelection: true,
-			mode: sap.m.ListMode.None
-		});
-
 		this._oList.addDelegate({onAfterRendering : this._fnAfterListRendering});
-		this._oSelectAllHeader.addDelegate({onAfterRendering : this._fnAfterListRendering});
 
 		this._oSearchField = new sap.m.SearchField(this.getId() + "-searchField", {
 			width: "100%",
@@ -272,18 +254,26 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			width:'100%'
 		});
 
+		this._oScrollContainer.addDelegate({onAfterRendering : this._fnAfterScrollContainerRendering});
+
 		this._resetAllButton = new Button({
 			icon: "sap-icon://undo",
 			tooltip: this._oRb.getText('PERSODIALOG_UNDO'),
 			press : function () {
 				that._resetAll();
 			}
-		});
+		}).addStyleClass("sapMPersoDialogResetBtn");
+
+		this._oSelectAllCheckbox = new sap.m.CheckBox(this._getSelectAllCheckboxId(), {
+			selected: "{Personalization>/aHeader/visible}",
+			select: this._fnUpdateCheckBoxes,
+			text: "{Personalization>/aHeader/text}"
+		}).addStyleClass("sapMPersoDialogSelectAllCb");
 
 		this._oSelectAllToolbar = new Toolbar({
 			active: true,
 			design : sap.m.ToolbarDesign.Transparent,
-			content: [this._oSelectAllHeader, this._resetAllButton]
+			content: [this._oSelectAllCheckbox, this._resetAllButton]
 		}).addStyleClass("sapMPersoDialogFixedBar");
 
 		this._oSelectAllToolbar.addDelegate({onAfterRendering: this._fnAfterToolbarRendering});
@@ -357,10 +347,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			sorter: aSorter,
 			template: this._oColumnItemTemplate
 		});
-		this._oSelectAllHeader.bindAggregation("items", {
-			path: "Personalization>/aHeaders",
-			template: this._oHeaderItemTemplate
-		});
 
 		//Update 'Move' button's state
 		this._fnUpdateArrowButtons.call(this);
@@ -398,14 +384,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			this._oColumnItemTemplate = null;
 		}
 
-		if (this._oHeaderItemTemplate) {
-			this._oHeaderItemTemplate.destroy();
-			this._oHeaderItemTemplate = null;
-		}
-
-		if (this._oSelectAllHeader) {
-			this._oSelectAllHeader.destroy();
-			this._oSelectAllHeader = null;
+		if (this._oSelectAllToolbar) {
+			this._oSelectAllToolbar.destroy();
+			this._oSelectAllToolbar = null;
 		}
 
 		if (this._oList) {
@@ -467,7 +448,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 
 			this._oP13nModel.getData().aColumns = aInitialStateCopy;
 
-			this._oP13nModel.getData().aHeaders[0].visible = !this.getInitialColumnState().some(function(oColumn) {
+			this._oP13nModel.getData().aHeader.visible = !this.getInitialColumnState().some(function(oColumn) {
 				return !oColumn.visible;
 			});
 
@@ -565,14 +546,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		var oTable = sap.ui.getCore().byId(this.getPersoDialogFor()),
 			that = this,
 			aCurrentColumns = this.getColumnInfoCallback().call(this, oTable, this.getPersoMap(), this.getPersoService());
-		this._oP13nModel.setData({ aColumns : aCurrentColumns, aHeaders : [{
-			text : this._oRb.getText("PERSODIALOG_SELECT_ALL"),
-			visible : !aCurrentColumns.some(function(oColumn) {
+		this._oP13nModel.setData({
+			aColumns : aCurrentColumns,
+			aHeader : {
+				text : this._oRb.getText("PERSODIALOG_SELECT_ALL"),
+				visible : !aCurrentColumns.some(function(oColumn) {
 					return !oColumn.visible;
-				}
-			),
-			id: this.getId() + '_SelectAll'
-		}] });
+				}),
+				id: this._getSelectAllCheckboxId()
+			}
+		});
 
 		//Remember column captions, needed for 'Reset All'
 		this._mColumnCaptions = {};
@@ -580,6 +563,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				function(oColumn) {
 					that._mColumnCaptions[oColumn.id] = oColumn.text;
 		});
+	};
+
+	TablePersoDialog.prototype._getSelectAllCheckboxId = function () {
+		return this.getId() + '_SelectAll';
 	};
 
 	/**
