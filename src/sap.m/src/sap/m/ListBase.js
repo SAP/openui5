@@ -1515,7 +1515,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 */
 	ListBase.prototype.setNavigationItems = function(oItemNavigation, oNavigationRoot) {
 		if (oNavigationRoot) {
-			this._oItemNavigation.setItemDomRefs([].slice.call(oNavigationRoot.children));
+			oItemNavigation.setItemDomRefs([].slice.call(oNavigationRoot.children));
+			oItemNavigation.setFocusedIndex(0);
 		}
 	};
 	
@@ -1697,8 +1698,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		}
 	
 		// get the last focused element from the ItemNavigation
-		var $LastFocused = jQuery(this._oItemNavigation.getFocusedDomRef());
-		
+		var aNavigationDomRefs = this._oItemNavigation.getItemDomRefs();
+		var iLastFocusedIndex = this._oItemNavigation.getFocusedIndex();
+		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
+
 		// find related item control to get tabbables
 		var oRelatedControl = $LastFocused.control(0) || {};
 		var $Tabbables = oRelatedControl.getTabbables ? oRelatedControl.getTabbables() : $LastFocused.find(":sapTabbable");
