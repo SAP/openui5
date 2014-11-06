@@ -95,6 +95,10 @@
 	color: @sapUiTextInverted;
 }
 
+.sapMTB-Info-CTX .sapMLabel.sapMLabelTBHeader {
+	text-shadow: none;
+}
+
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMLabel{
 	margin-right: 1rem;
@@ -115,8 +119,8 @@
 	text-align: end !important; /* to overwrite setting on label */
 	width: 100%; /* to react on touch/click on whole label cell */
 	padding-right: 4px;
-	box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 /* in the cases text-align: end is set, we position the colon of the label to absolute so it does not get truncated in the ellipsis*/
