@@ -3173,7 +3173,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			delete this.mChangeHandles[sPath];
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
-
 		}
 	};
 
@@ -3218,8 +3217,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype.createEntry = function(sPath, mParameters) {
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
-			sKey, aUrlParams, sBatchGroupId, sChangeSetId,
-			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
+			sKey, aUrlParams, sBatchGroupId, sChangeSetId, oRequestHandle,
+			mUrlParams, mHeaders, mRequests, vProperties, oEntry, oEntity = {},
 			sMethod = "POST";
 
 		if (mParameters) {
@@ -3277,15 +3276,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oContext =  this.getContext("/" + sKey); // context wants a path
 		oRequest.context = oContext;
 		oRequest.key = sKey;
-
+		
+		if (!this.mChangedEntities[sKey]) {
+			oEntry = jQuery.extend(true,{}, oEntity);
+		}
+		this.mChangedEntities[sKey] = oEntry;
+		
 		mRequests = this.mRequests;
 		if (sBatchGroupId in this.mDeferredBatchGroups) {
 			mRequests = this.mDeferredRequests;
 		}
 
 		this._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
+		
+		oRequestHandle = {
+				abort: function() {
+					oRequest._aborted = true;
+				}
+		};
+		
+		this.mChangeHandles[sKey] = oRequestHandle;
+		
 		if (this.bUseBatch) {
+			
 			if (!this.oRequestTimer) {
 				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
 			}
