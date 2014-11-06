@@ -61,12 +61,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		// check if the button is disabled
 		if (!bEnabled) {
-			oRm.writeAttribute("tabIndex", -1);
+			oRm.writeAttribute("disabled", "disabled");
 			if (!oButton._isUnstyled()) {
 				oRm.addClass("sapMBtnDisabled");
 			}
 		} else {
-			oRm.writeAttribute("tabIndex", 0);
 			switch (sType) {
 			case sap.m.ButtonType.Accept:
 			case sap.m.ButtonType.Reject:
