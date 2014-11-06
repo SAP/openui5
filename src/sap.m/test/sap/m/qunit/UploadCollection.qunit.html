@@ -170,12 +170,12 @@
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				"enableEdit" : true,
 				"enableDelete" : true,
-				"fileName" : "Screenshot.jpg",
+				"fileName" : "Screenshot.ico",
 				"fileSize" : 20,
-				"mimeType" : "image/jpg",
+/* 				"mimeType" : "image/jpg", */
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-30",
-				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt",
+				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
 			},{
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
@@ -186,7 +186,7 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-08-01",
-				"url" : "/pathToTheFile/Notes.txt",
+				"url" : "/pathToTheFile/Notes.txt"
 			},{
 				"contributor" : "J Edgar Hoover",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
@@ -197,7 +197,7 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-09-01",
-				"url" : "/pathToTheFile/Document.txt",
+				"url" : "/pathToTheFile/Document.txt"
 			},{
 				"contributor" : "Kate Brown",
 				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
@@ -206,9 +206,9 @@
 				"fileName" : "Picture of a woman.png",
 				"fileSize" : 70,
 				"mimeType" : "image/png",
-				"thumbnailUrl" : "images/Woman_04.png",
+				"thumbnailUrl" : "/test-resources/sap/m/images/Woman_04.png",
 				"uploadedDate" : "2014-07-25",
-				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
+				"url" : "/test-resources/sap/m/images/Woman_04.png"
 			}]
 		};
 		var oItemTemplate = new sap.m.UploadCollectionItem({
@@ -330,6 +330,9 @@
 
 	module("Display tests", {
 		setup : function() {
+			sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
+				ok(true, "Link is triggered");
+			};
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
@@ -356,6 +359,11 @@
 		equal(oEditButton.getEnabled(), true, "Edit button is enabled");
 		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		equal(oFileName.getEnabled(), true, "File name is enabled");
+
+		expect(8); // verifies the event handler was executed
+		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
+//		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+
 	});
 
 </script>
