@@ -1,0 +1,19 @@
+[{
+	"itemid": "1",
+	"employeeid": "JSMITH",
+    "type": "Vacation",
+	"from": "2012-12-27",
+	"to": "2012-12-27",
+	"length": "1 day",
+	"availablebalance": "41 days",
+	"state": "Rejected"
+},
+{
+	"itemid": "2",
+	"employeeid": "JSMITH",
+    "type": "Vacation",
+	"from": "2012-12-03",
+	"to": "2012-12-04",
+	"length": "3 days",
+	"state": "Approved"
+}]
