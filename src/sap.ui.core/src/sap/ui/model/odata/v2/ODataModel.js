@@ -21,8 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @experimental This model implementation is experimental which means the API could change until it is stable.
-	 *
 	 * @param {string} [sServiceUrl] base uri of the service to request data from; additional URL parameters appended here will be appended to every request
 	 * 								can be passed with the mParameters object as well: [mParameters.serviceUrl] A serviceURl is required!
 	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
@@ -262,7 +260,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	};
 
-
+	/**
+	 * The 'requestFailed' event is fired, when data retrieval from a backend failed.
+	 * 
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Model#requestFailed
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	
+	 * @param {string} oControlEvent.getParameters.ID The request ID
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} oControlEvent.getParameters.method The HTTP method
+	 * @param {map} oControlEvent.getParameters.headers The request headers
+	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
+	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
+	 * @public
+	 */
+	 
+	 /**
+	 * The 'requestSent' event is fired, after a request has been sent to a backend.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 * 
+	 * @name sap.ui.model.Model#requestSent
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {string} oControlEvent.getParameters.ID The request ID
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} oControlEvent.getParameters.method The HTTP method
+	 * @param {map} oControlEvent.getParameters.headers The request headers
+	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
+	 * Each request object within the array contains the following properties: url, method, headers
+	 * 
+	 * @public
+	 */
+	 
+	 /**
+	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response), 
+	 * no matter whether the request succeeded or not.
+	 * 
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 * 
+	 * @name sap.ui.model.Model#requestCompleted
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {string} oControlEvent.getParameters.ID The request ID
+	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
+	 * @param {string} oControlEvent.getParameters.method The HTTP method
+	 * @param {map} oControlEvent.getParameters.headers The request headers
+	 * @param {boolean} oControlEvent.getParameters.success Request was successful or not
+	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
+	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
+	 * Each request object within the array contains the following properties: url, method, headers, response object
+	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response:
+	 * The response object contains the following properties: message, success, headers, statusCode, statusText
+	 * @public
+	 */
+	
 	// Keep a map of service specific data, which can be shared across different model instances
 	// on the same OData service
 	ODataModel.mServiceData = {
@@ -2353,8 +2417,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * 		the request was completed before continuing to work with the data.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
-	 * @param {string} [mParameters.sChangeSetId] changeSetId for this request
+	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -2435,8 +2499,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *		The handler can have the parameter <code>oError</code> which contains additional error information.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {map} [mParameters.headers] A map of headers for this request
-	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
-	 * @param {string} [mParameters.sChangeSetId] changeSetId for this request
+	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
@@ -2510,8 +2574,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
-	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
-	 * @param {string} [mParameters.sChangeSetId] changeSetId for this request
+	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -2593,8 +2657,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
-	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
-	 * @param {string} [mParameters.sChangeSetId] changeSetId for this request
+	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.changeSetId] changeSetId for this request
 	 *
 	 * @return {object} oRequestHandle An object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -2690,7 +2754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *		following parameters: oData and response.
 	 * @param {function} [mParameters.error] a callback function which is called when the request
 	 * 		failed. The handler can have the parameter: oError which contains additional error information.
-	 * @param {string} [mParameters.sBatchGroupId] batchGroupId for this request
+	 * @param {string} [mParameters.batchGroupId] batchGroupId for this request
 	 *
 	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
 	 *
@@ -3203,7 +3267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {String} sPath Name of the path to the EntitySet
 	 * @param {map} mParameters A map of the following parameters:
 	 * @param {array|object} [mParameters.properties] An array that specifies a set of properties or the entry
-	 * @param {string} [mParameters.sBatchGroupId] The batchGroupId
+	 * @param {string} [mParameters.batchGroupId] The batchGroupId
 	 * @param {string} [mParameters.changeSetId] The changeSetId
 	 * @param {sap.ui.model.Context} [mParameters.context] The binding context
 	 * @param {function} [mParameters.success] The success callback function

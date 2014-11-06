@@ -110,24 +110,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 		 * Depending on the model implementation a RequestFailed should be fired if a request to a backend failed.
 		 * Contains the parameters:
 		 * message, statusCode, statusText and responseText
+		 * 
 		 */
 		RequestFailed : "requestFailed",
 	
 		/**
 		 * Depending on the model implementation a RequestSent should be fired when a request to a backend is sent.
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject
+		 * 
 		 */
 		RequestSent : "requestSent",
 	
 		/**
 		 * Depending on the model implementation a RequestCompleted should be fired when a request to a backend is completed regardless if the request failed or succeeded.
 		 * Contains Parameters: url, type, async, info (<strong>deprecated</strong>), infoObject, success, errorobject
+		 * 
 		 */
 		RequestCompleted : "requestCompleted"
 	};
 	
 	/**
 	 * The 'requestFailed' event is fired, when data retrieval from a backend failed.
+	 * 
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
 	 * @name sap.ui.model.Model#requestFailed
 	 * @event
@@ -138,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * @param {string} oControlEvent.getParameters.message A text that describes the failure.
 	 * @param {string} oControlEvent.getParameters.statusCode HTTP status code returned by the request (if available)
 	 * @param {string} oControlEvent.getParameters.statusText The status as a text, details not specified, intended only for diagnosis output
-	 * @param {string} oControlEvent.getParameters.responseText Response that has been received for the request ,as a text string
+	 * @param {string} [oControlEvent.getParameters.responseText] Response that has been received for the request ,as a text string
 	 * @public
 	 */
 	
@@ -288,7 +293,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	/**
 	 * The 'requestSent' event is fired, after a request has been sent to a backend.
 	 *
-	 * Note: Subclasses might add additional parameters to the event object.
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 * 
 	 * @name sap.ui.model.Model#requestSent
 	 * @event
@@ -296,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
-	 * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
 	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
 	 * @param {string} [oControlEvent.getParameters.info] Additional information for the request (if available) <strong>deprecated</strong>
 	 * @param {object} [oControlEvent.getParameters.infoObject] Additional information for the request (if available)
@@ -367,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response), 
 	 * no matter whether the request succeeded or not.
 	 * 
-	 * Note: Subclasses might add additional parameters to the event object.
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 * 
 	 * @name sap.ui.model.Model#requestCompleted
 	 * @event
@@ -375,7 +380,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
 	 * @param {string} oControlEvent.getParameters.url The url which was sent to the backend
-	 * @param {string} oControlEvent.getParameters.type The type of the request (if available)
+	 * @param {string} [oControlEvent.getParameters.type] The type of the request (if available)
 	 * @param {boolean} oControlEvent.getParameters.success if the request has been successful or not. In case of errors consult the optional errorobject parameter.
 	 * @param {object} [oControlEvent.getParameters.errorobject] If the request failed the error if any can be accessed in this property.
 	 * @param {boolean} [oControlEvent.getParameters.async] If the request is synchronous or asynchronous (if available)
