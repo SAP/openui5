@@ -25,7 +25,7 @@
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	module("Basic tests", {
+	module("Basic tests for rendering and default values of properties", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
 			this.oUploadCollection.placeAt("uiArea");
@@ -50,6 +50,7 @@
 			nMaximumFileSize = 0,
 			sMimeType,
 			bMultiple = false,
+			sNoDataText = "",
 			sName = "",
 			bDeleteEnabled = true,
 			bRenameEnabled = true,
@@ -63,11 +64,31 @@
 		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
 		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
 		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
 		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
 		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
 		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 		});
 
+	module("Properties", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				noDataText : "myNoDataText"
+			});
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+	
+	test("Set properties' values", function() {
+		var sNoDataText = "myNoDataText";
+
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' set properly");
+		});
+	
 	/* --------------------------------------- */
 	/* Test methods                            */
 	/* --------------------------------------- */

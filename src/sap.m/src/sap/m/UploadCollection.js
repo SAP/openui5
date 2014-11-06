@@ -57,6 +57,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 * Allows multiple files to be chosen and uploaded from the same folder. This property is not supported by Internet Explorer 8 and 9.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
+			
+			/**
+			 * Allows set own text for No data label.
+			 */
+			noDataText : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
 			 * This property allowes upload of more than one file with the same file name. A typical use case would be if the files have different paths.
@@ -241,6 +246,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype.onBeforeRendering = function() {
 		var oNumberOfAttachmentsLabel = oNumberOfAttachmentsLabel || {};
+		var sNoDataText = sNoDataText || this.getNoDataText();
 		if (this.aItems) {
 			for (var i = 0; i < this.getItems().length; i++) {
 				this.getItems()[i]._status = this.aItems[i] ? this.aItems[i]._status : null;
@@ -261,6 +267,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		this._clearList();
 		this._fillList(this.aItems);
+		this._oList.setNoDataText(sNoDataText);
 		this._oList.setHeaderToolbar(this.oHeaderToolbar);
 	};
 
