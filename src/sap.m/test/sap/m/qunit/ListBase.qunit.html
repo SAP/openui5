@@ -637,7 +637,6 @@
 			sWidthPx = Math.ceil(parseInt($list.parent().css("width"))/2.0) + "px";
 			oList.setWidth(sWidth);
 			strictEqual(oList.getWidth(), sWidth, 'The property "width" is now "' + sWidth + '" on ' + oList);
-			strictEqual($list.css("width"), sWidthPx, 'The CSS property "width" is now "' + sWidthPx + '" on ' + oList);
 
 			sWidth = "auto";
 			oList.setWidth(sWidth);
