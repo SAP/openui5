@@ -97,6 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.mRequests = {};
 			this.mDeferredRequests = {};
 			this.mChangedEntities = {};
+			this.mChangeHandles = {};
 			this.mDeferredBatchGroups = {};
 			this.mChangeBatchGroups = {'*' : {batchGroupId:undefined, single: true}};
 
@@ -1882,10 +1883,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							oChangeSet = {__changeRequests:[]};
 							for (var i = 0; i < aChangeSet.length; i++) {
 								//clear metadata.create
-								if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
-									delete aChangeSet[i].request.data.__metadata.created;
+								if (!aChangeSet[i].request._aborted) {
+									if (aChangeSet[i].request.data && aChangeSet[i].request.data.__metadata) {
+										delete aChangeSet[i].request.data.__metadata.created;
+									}
+									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 								}
-								oChangeSet.__changeRequests.push(aChangeSet[i].request);
 							}
 							aReadRequests.push(oChangeSet);
 							aBatchGroup.push(oGroup.changes[sChangeSetId]);
@@ -1894,8 +1897,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					if (oGroup.requests) {
 						var aRequests = oGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
-							aReadRequests.push(aRequests[i].request);
-							aBatchGroup.push(aRequests[i]);
+							if (!aRequests[i].request._aborted) {
+								aReadRequests.push(aRequests[i].request);
+								aBatchGroup.push(aRequests[i]);
+							}
 						}
 					}
 					var oBatchRequest = that._createBatchRequest(aReadRequests, true);
@@ -1912,7 +1917,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						jQuery.each(oGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
-								oRequestHandle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
+								if (!aChangeSet[i].request._aborted) {
+									oRequestHandle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
+								}
 							}
 						});
 					}
@@ -1920,7 +1927,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						var aRequests = oGroup.requests;
 						for (var i = 0; i < aRequests.length; i++) {
 							// store last request Handle. If no batch there will be only 1 and we cpould return it?
-							oRequestHandle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
+							if (!aRequests[i].request._aborted) {
+								oRequestHandle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
+							}
 						}
 					}
 					delete mRequests[sGroupId];
@@ -2883,6 +2892,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		if (aKeys) {
 			jQuery.each(aKeys, function(iIndex, sKey) {
+				that.mChangeHandles[sKey].abort();
+				delete that.mChangeHandles[sKey];
 				delete that.mChangedEntities[sKey];
 			});
 		} else {
@@ -2915,7 +2926,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		var sProperty, mRequests, oRequest, oEntry = { }, oData = { },
 		sResolvedPath = this.resolve(sPath, oContext),
-		aParts,	sKey, oGroupInfo,
+		aParts,	sKey, oGroupInfo, oRequestHandle,
 		mChangedEntities = {};
 
 		// check if path / context is valid
@@ -2966,6 +2977,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
 		}
+		
+		oRequestHandle = {
+				abort: function() {
+					oRequest._aborted = true;
+				}
+		};
+		
+		this.mChangeHandles[sKey] = oRequestHandle;
+		
 		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 
 		if (this.bUseBatch) {
@@ -3148,7 +3168,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			if (jQuery.sap.startsWith(sPath, "/")) {
 				sPath = sPath.substr(1);
 			}
-			delete this.oRequestQueue[sPath];
+			this.mChangeHandles[sPath].abort();
+			delete this.mChangeHandles[sPath];
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 

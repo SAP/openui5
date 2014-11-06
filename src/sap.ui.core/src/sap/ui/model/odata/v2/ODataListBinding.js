@@ -47,7 +47,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			this.aLastContexts = null;
 			this.oLastContextData = null;
 			this.bInitial = true;
-
+			this.mRequestHandles = {};
+			
 			if (mParameters && mParameters.batchGroupId) {
 				this.sBatchGroupId = mParameters.batchGroupId;
 			}
@@ -119,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 		//get length
-		if (!this.bLengthRequestd) {
+		if (!this.bLengthFinal && !this.bPendingRequest && !this.bLengthRequestd) {
 			this._getLength();
 			this.bLengthRequestd = true;
 		}
@@ -154,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		// check if metadata are already available
 		if (this.oModel.getServiceMetadata()) {
 			// If rows are missing send a request
-			if (!this.bPendingRequest && oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
+			if (oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
 				this.loadData(oSection.startIndex, oSection.length);
 				aContexts.dataRequested = true;
 			} 	
@@ -437,7 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				that.bLengthFinal = true;
 			}
 
-			that.oRequestHandle = null;
+			delete that.mRequestHandles[sPath];
 			that.bPendingRequest = false;
 
 			// If request is originating from this binding, change must be fired afterwards
@@ -450,7 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		}
 
 		function fnError(oError, bAborted) {
-			that.oRequestHandle = null;
+			delete that.mRequestHandles[sPath];
 			that.bPendingRequest = false;
 			if (!bAborted) {
 				// reset data and trigger update
@@ -462,10 +463,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			}
 			that.fireDataReceived();
 		}
-
-//		function fnUpdateHandle(oHandle) {
-//			that.oRequestHandle = oHandle;
-//		}
 
 		var sPath = this.sPath,
 		oContext = this.oContext;
@@ -490,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				// Execute the request and use the metadata if available
 				this.bPendingRequest = true;
 				this.fireDataRequested();
-				this.oModel.read(sPath, {batchGroupId: this.sBatchGroupId, urlParameters: aParams, success: fnSuccess, error: fnError}); //, false) //, fnUpdateHandle, fnCompleted);
+				this.mRequestHandles[sPath] = this.oModel.read(sPath, {batchGroupId: this.sBatchGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 			}
 		}
 
@@ -542,9 +539,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 			that.iLength = parseInt(oData, 10);
 			that.bLengthFinal = true;
 			that.bLengthRequestd = true;
+			delete that.mRequestHandles[sPath];
 		}
 
 		function _handleError(oError) {
+			delete that.mRequestHandles[sPath];
 			var sErrorMsg = "Request for $count failed: " + oError.message;
 			if (oError.response){
 				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
@@ -557,11 +556,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 
 		// Only send request, if path is defined
 		if (sPath) {
-			var sUrl = this.oModel._createRequestUrl(sPath + "/$count", null, aParams);
-			/* var oRequest = */ this.oModel._createRequest(sUrl, "GET", false);
 			// execute the request and use the metadata if available
-			// (since $count requests are synchronous we skip the withCredentials here)
-			this.oModel.read(sPath + "/$count",{withCredentials: this.oModel.bWithCredentials, batchGroupId: this.sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
+			sPath = sPath + "/$count";
+			this.bPendingRequest = true;
+			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, batchGroupId: this.sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
 		}
 	};
 
@@ -755,9 +753,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @function
 	 */
 	ODataListBinding.prototype.abortPendingRequest = function() {	
-		if (this.oRequestHandle) {
-			this.oRequestHandle.abort();
-			this.oRequestHandle = null;
+		if (!jQuery.isEmptyObject(this.mRequestHandles)) {
+			jQuery.each(this.mRequestHandles, function(sPath, oRequestHandle){
+				oRequestHandle.abort();
+			});
+			this.mRequestHandles = {};
 			this.bPendingRequest = false;
 		}
 	};
