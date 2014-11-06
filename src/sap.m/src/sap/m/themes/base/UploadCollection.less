@@ -30,15 +30,16 @@
 }
 
 
-.sapMLIB.sapMUCListSingleItem,
-.sapMLIB.sapMUCListFirstItem,
-.sapMLIB.sapMUCListLastItem,
-.sapMLIB.sapMUCListItem {
+.sapMUC .sapMLIB.sapMUCListSingleItem,
+.sapMUC .sapMLIB.sapMUCListFirstItem,
+.sapMUC .sapMLIB.sapMUCListLastItem,
+.sapMUC .sapMLIB.sapMUCListItem {
 	height: 				5rem;
 	padding-top:			1rem;
 	padding-bottom: 		0.9375rem;	// border-bottom: 0.0625
 	border-bottom-width: 	0.0625rem;
 	border-bottom-style: 	solid;
+	border-bottom-color: 	transparent; // this is the central switch for having inner separators or not
 //	border-bottom-color: 	@sapUiMediumBorder;
 }
 
@@ -169,7 +170,6 @@ div[id*="ta_textVL"] {
 	.sapMLIB.sapMUCListLastItem,
 	.sapMLIB.sapMUCListItem {
 		padding-top:		0.5rem;
-		padding-bottom: 	0.5rem;
 	}
 
 	.sapMUCEditHL {
@@ -209,7 +209,6 @@ div[id*="ta_textVL"] {
 	.sapMLIB.sapMUCListSingleItem {
 		height:					5rem;
 		padding-top:			1rem;
-		padding-bottom:			0.9375rem;	// border-bottom: 0.0625
 
 		.sapMUCItemHL {
 			height:				5rem;
@@ -242,8 +241,7 @@ div[id*="ta_textVL"] {
 	.sapMLIB.sapMUCListFirstItem {
 		height:				4.5rem;
 		padding-top:		1rem;
-		padding-bottom:		0.5rem;
-		border-bottom:		none;
+		padding-bottom:		0.4375rem;	// border-bottom: 0.0625
 
 		>.sapMLIBContent.sapMLIBContentMargin {
 			margin-top:			-0.5rem;	// no idea why this is needed to align
@@ -294,7 +292,6 @@ div[id*="ta_textVL"] {
 	.sapMLIB.sapMUCListLastItem {
 		height:				4.5rem;
 		padding-top:		0.5rem;
-		padding-bottom:		0.9375rem;  // border-bottom: 0.0625
 
 		>.sapMLIBContent.sapMLIBContentMargin {
 			margin-top:			0.5rem;	//	no idea why this is needed to align
@@ -330,8 +327,7 @@ div[id*="ta_textVL"] {
 	.sapMLIB.sapMUCListItem {
 		height:					4rem;
 		padding-top:			0.5rem;
-		padding-bottom:			0.5rem;
-		border-bottom:			none;
+		padding-bottom:			0.4375rem;	// border-bottom: 0.0625
 
 		.sapMUCItemHL {
 			height:				4rem;
