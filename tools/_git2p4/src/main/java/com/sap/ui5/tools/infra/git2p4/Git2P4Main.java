@@ -263,9 +263,6 @@ public class Git2P4Main {
     if (!applyContributorsVersions) {
       return null;
     }
-    if (!(op.equals(ReleaseOperation.PatchRelease)||op.equals(ReleaseOperation.PatchDevelopment))){
-      return null;
-    }
     //read latest versions for uilib-collections.pom
     Version fromV = new Version(fromVersion);
     String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "").toString() + ")";
