@@ -1241,6 +1241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 		//check for metadata path
 		if (this.oMetadata && sPath && sPath.indexOf('#') > -1)  {
+			sResolvedPath = this.resolve(sPath, oContext);
 			if (sResolvedPath) {
 				oNode = this.oMetadata._getAnnotation(sResolvedPath);
 			}
