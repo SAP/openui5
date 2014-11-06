@@ -880,7 +880,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Core', './El
 	
 	/**
 	 * Sets the focus to the stored focus DOM reference
-	 * @private
+	 * @public
 	 * @name sap.ui.core.Element#focus
 	 * @function
 	 */
