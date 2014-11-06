@@ -3651,7 +3651,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aVisibleCols = [];
 		for (var k = 0, m = this.aAnalyticalInfo.length; k < m; k++) {
 			var oCol = this.aAnalyticalInfo[k];
-			if (oCol.visible) {
+			if ((oCol.visible || oCol.inResult) && oCol.name !== "") {
 				aVisibleCols.push(oCol.name);
 			}
 		}
