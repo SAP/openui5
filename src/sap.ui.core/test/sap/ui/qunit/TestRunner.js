@@ -155,9 +155,9 @@
 					var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
 					var sNewwidth = nBarwidth + nBarStep + "%";
 					jQuery("div#innerBar").width(sNewwidth);
-					$("#selectedTests").find("option").each(function(){
-						if(	$(this).text() === sTestPage){
-							$(this).remove();
+					jQuery("#selectedTests").find("option").each(function() {
+						if (jQuery(this).text() === sTestPage) {
+							jQuery(this).remove();
 						}
 					});
 					return that.runTests(aTestPages, nBarStep, true);
@@ -233,10 +233,10 @@
 						var fnTemplate = Handlebars.compile(sResultsTemplate);
 						var sHTML = fnTemplate(oContext);
 						$testResult = jQuery(sHTML);
-						jQuery($testResult[0].children[0]).click(function(){
+						jQuery($testResult[0].children[0]).click(function() {
 							jQuery(this.nextSibling).toggle();
 						});
-						jQuery($testResult[0].children[1]).find("li.test > p").click(function(){
+						jQuery($testResult[0].children[1]).find("li.test > p").click(function() {
 							jQuery(this.parentElement.children[2]).toggle();
 						});
 						$testResult.appendTo("div.test-reporting");
@@ -311,9 +311,9 @@
 				}]
 			};
 			
-			for(var i= 0; i < aTestResults.length; i++){
+			for (var i= 0; i < aTestResults.length; i++) {
 				
-				var $checkItems = $(aTestResults[i]).find("ol > li");
+				var $checkItems = jQuery(aTestResults[i]).find("ol > li");
 				var aTestMessages = [];
 				
 				for (var y = 0; y < $checkItems.length; y++) {
@@ -321,38 +321,38 @@
 					var oTestMessage = {message: "", expected: "", actual: "", diff: "", source: "", classname: $checkItems[y].className};
 					
 					if($checkItems[y].className === "pass") {
-					oTestMessage.message = $checkItems[y].innerText;
+					oTestMessage.message = jQuery($checkItems[y]).text();
 					} else {
-						var $messageSpan = $($checkItems[y]).find("span.test-message");
-						oTestMessage.message = $messageSpan[0].innerText;
+						var $messageSpan = jQuery($checkItems[y]).find("span.test-message");
+						oTestMessage.message = jQuery($messageSpan[0]).text();
 						
-						var $testExpected = $($checkItems[y]).find("tr.test-expected");
+						var $testExpected = jQuery($checkItems[y]).find("tr.test-expected");
 						console.log($testExpected);
 						if( $testExpected.length > 0) {
-							oTestMessage.expected = $testExpected[0].innerText;
+							oTestMessage.expected = jQuery($testExpected[0]).text();
 						}
 						
-						var $testActual = $($checkItems[y]).find("tr.test-actual");
+						var $testActual = jQuery($checkItems[y]).find("tr.test-actual");
 						if( $testActual.length > 0) {
-							oTestMessage.actual = $testActual[0].innerText;
+							oTestMessage.actual = jQuery($testActual[0]).text();
 						}
 						
-						var $testDiff = $($checkItems[y]).find("tr.test-diff");
+						var $testDiff = jQuery($checkItems[y]).find("tr.test-diff");
 						if( $testDiff.length > 0) {
-							oTestMessage.diff = $testDiff[0].innerText;
+							oTestMessage.diff = jQuery($testDiff[0]).text();
 						}
 						
-						var $testSource = $($checkItems[y]).find("tr.test-source");
+						var $testSource = jQuery($checkItems[y]).find("tr.test-source");
 						if( $testSource.length > 0) {
-							oTestMessage.source = $testSource[0].innerText;
+							oTestMessage.source = jQuery($testSource[0]).text();
 						}
 					}
 					
 					aTestMessages.push(oTestMessage);
 				}
 
-				var $test = $(aTestResults[i]).find("strong");
-				var sTest = $test[0].innerText;
+				var $test = jQuery(aTestResults[i]).find("strong");
+				var sTest = jQuery($test[0]).text();
 				
 				var sTestName = sTest.split("(");
 				var sCounts = sTest.match(/(\d+, \d+, \d+)/)[0].split(", ");
@@ -360,7 +360,7 @@
 				var sNumPassed = sCounts[1];
 				var sNumAll = sCounts[2];
 				
-				$failedTestResult = $(aTestResults[i]);
+				$failedTestResult = jQuery(aTestResults[i]);
 				var sRerunLink = $failedTestResult[0].children[1].href;
 				
 				var sLineItemClass = sCounts[0] == "0" ? "pass" : "fail";
