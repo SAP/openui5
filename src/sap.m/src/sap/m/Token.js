@@ -154,6 +154,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	
 	};
+
+	/**
+	 * Function is called when token is pressed to select/deselect token.
+	 * @name sap.m.Token#_onTokenPress
+	 * @private
+	 * @param {jQuery.Event}
+	 *          oEvent
+	 */
+	Token.prototype._onTokenPress = function() {
+		var bSelected = this.getSelected();
+		this.setSelected(!bSelected);
+		
+		if (!bSelected) {
+			this.fireSelect({});
+		}
+		
+	};
+	
+
+	/**
+	 * Event handler called when control is on tap
+	 *
+	 * @name sap.m.Token#ontap
+	 * @param {jQuery.Event}
+	 * 			oEvent
+	 * @private
+	 */
+	Token.prototype.ontap = function(oEvent) {
+		this._onTokenPress();
+	};
 	
 	/**
 	 * Event handler called when control touch ends, triggers possible click events / selects token
@@ -255,8 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Token.prototype.onsapspace = function(oEvent) {
 		
-		var bSelected = this.getSelected();
-		this.setSelected(!bSelected);
+		this._onTokenPress();
 		// stop browsers default behavior
 		if (oEvent) {
 			oEvent.preventDefault();
