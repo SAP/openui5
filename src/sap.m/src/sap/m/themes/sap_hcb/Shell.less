@@ -7,6 +7,7 @@
 		color: @sapHCStandardFG;
 	}
 }
+
 .sapUiUfdShell .sapMShellHeader {
 	border-top: none;
 }
@@ -22,7 +23,7 @@
 		color: @sapHCStandardFG;
 	}
 
-	 .sapMShellCentralBox {
+	.sapMShellCentralBox {
 		-moz-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
 		-webkit-box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
 		box-shadow: 0 0 2.5rem 0.125rem @sapHCShadowTint;
@@ -33,4 +34,14 @@
 
 .sapMShellBrandingBar {
 	background: none;
+}
+
+@media (min-width: @sapMShellAppWidthLimit) {
+	.sap-desktop {
+		.sapMShellAppWidthLimited {
+			.sapMShellCentralBox {
+				background-color: @sapHCStandardBG;
+			}
+		}
+	}
 }
