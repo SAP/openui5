@@ -20,6 +20,9 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
       <exclude name="sap.ui.suite.js." />
     </jscoverage>
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/suite/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
   </appData>
 
 </library>

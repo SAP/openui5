@@ -47,6 +47,12 @@
 			<resource>
 				<directory>src</directory>
 				<targetPath>META-INF/resources</targetPath>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>test</directory>
+				<targetPath>META-INF/test-resources</targetPath>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 

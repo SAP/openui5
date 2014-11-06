@@ -23,6 +23,9 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
       <exclude name="sap.ui.ux3.js." />
     </jscoverage>
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/ux3/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
   </appData>
 
 </library>

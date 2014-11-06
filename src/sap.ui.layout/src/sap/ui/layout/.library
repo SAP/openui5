@@ -29,6 +29,9 @@
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../../test-resources/sap/ui/layout/demokit/docuindex.json"
         resolve="lib" />
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/layout/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
     
   </appData>
 
