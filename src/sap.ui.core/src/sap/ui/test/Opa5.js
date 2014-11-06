@@ -10,8 +10,11 @@ sap.ui.define(['jquery.sap.global',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
 			'./matchers/Matcher',
+			'./matchers/AggregationContainsPropertyEqual',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
+			'./matchers/Properties',
+			'./matchers/Ancestor',
 			'./everyPolyfill',
 			'sap/ui/thirdparty/URI'],
 	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
@@ -324,9 +327,9 @@ sap.ui.define(['jquery.sap.global',
 		 * @static
 		 */
 		fnOpa5.extendConfig = Opa.extendConfig;
-		
+
 		/**
-		 * Reset Opa.config to its default values 
+		 * Reset Opa.config to its default values
 		 * @name sap.ui.test.Op5a#resetConfig
 		 * @static
 		 * @public
@@ -377,7 +380,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {map} mPageObject
 		 * @returns {map} mPageObject.<your page object name>
 		 * @returns {object} mPageObject.<your page object name>.actions an instance of baseClass or Opa5 with all the actions defined above
-		 * @returns {object} mPageObject.<your page object name>.assertions an instance of baseClass or Opa5 with all the assertions defined above 
+		 * @returns {object} mPageObject.<your page object name>.assertions an instance of baseClass or Opa5 with all the assertions defined above
 		 * @public
 		 * @function
 		 * @static
@@ -387,7 +390,7 @@ sap.ui.define(['jquery.sap.global',
 			//prevent circular dependency
 			return PageObjectFactory.create(mPageObjects,fnOpa5);
 		};
-		
+
 		/*
 		 * Privates
 		 */
@@ -421,7 +424,7 @@ sap.ui.define(['jquery.sap.global',
 				} else if (typeof vMatcher == "function") {
 					return {isMatching : vMatcher};
 				}
-				
+
 				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
 				return undefined;
 			}).filter(function(oMatcher) {
@@ -459,21 +462,21 @@ sap.ui.define(['jquery.sap.global',
 			registerAbsoluteModulePathInIframe("sap.ui.test");
 			oFrameJQuery.sap.require("sap.ui.test.OpaPlugin");
 			oFramePlugin = new oFrameWindow.sap.ui.test.OpaPlugin();
-			
+
 			registerAbsoluteModulePathInIframe("sap.ui.qunit.QUnitUtils");
 			oFrameWindow.jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 			oFrameUtils = oFrameWindow.sap.ui.qunit.QUnitUtils;
-			
+
 			oFrameWindow.jQuery.sap.require("sap.ui.core.routing.HashChanger");
 			modifyHashChanger(oFrameWindow.sap.ui.core.routing.HashChanger.getInstance());
 		}
-		
+
 		function registerAbsoluteModulePathInIframe(sModule) {
 			var sOpaLocation = jQuery.sap.getModulePath(sModule);
 			var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
 			oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
 		}
-		
+
 		function handleFrameLoad () {
 			oFrameWindow = $Frame[0].contentWindow;
 			bFrameLoaded = true;
