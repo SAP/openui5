@@ -133,11 +133,11 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 		}
 	
 		// create the content
-		sap.ui.base.ManagedObject.runWithOwner(function() {
+		this.runAsOwner(function() {
 			sap.ui.base.ManagedObject.runWithPreprocessors(function() {
 				that.setAggregation("rootControl", that.createContent());
 			}, oPreprocessors);
-		}, this);
+		});
 	
 		// only for root "views" we automatically define the target parent
 		var oRootControl = this.getAggregation("rootControl");
@@ -188,8 +188,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 			oView = oView.getView();
 		}
 		if (oView instanceof View) {
-			var sOwner = Component.getOwnerIdFor(oView),
-				oComponent = sap.ui.component(sOwner);
+			var oComponent = sap.ui.core.Component.getOwnerComponentFor(oView);
 			
 			if (oComponent) {
 				return oComponent.getRouter();

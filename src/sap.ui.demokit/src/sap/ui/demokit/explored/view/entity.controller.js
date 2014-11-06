@@ -11,7 +11,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.entity", {
 	onInit : function () {
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
-		this._component = sap.ui.component(sap.ui.core.Component.getOwnerIdFor(this.getView()));
+		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 	},
 
 	onTypeLinkPress : function (oEvt) {

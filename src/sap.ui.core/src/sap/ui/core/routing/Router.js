@@ -261,10 +261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 					return sap.ui.view(oViewOptions);
 				};
 				if (this._oOwner) {
-					var that = this;
-					ManagedObject.runWithOwner(function() {
-						that._oViews[sViewName] = fnCreateView();
-					}, this._oOwner);
+					this._oViews[sViewName] = this._oOwner.runAsOwner(fnCreateView);
 				} else {
 					this._oViews[sViewName] = fnCreateView();
 				}

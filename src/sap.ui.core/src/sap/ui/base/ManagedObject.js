@@ -261,37 +261,30 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	};
 
 	/*
-	 * Returns the ID of the owner ManagedObject in which context the given
-	 * ManagedObject has been created.
-	 * @name sap.ui.base.ManagedObject.getOwnerIdFor
-	 * @function
+	 * Returns the Id of the Component in whose context the given ManagedObject has been created.
+	 * 
+	 * Might return <code>undefined</code> or <code>null</code> when no owner
+	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor} 
+	 * for detailed constraints.
+	 * 
+	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.getOwnerIdFor or sap.ui.core.Component.getOwnerComponentFor instead.
 	 */
 	ManagedObject.getOwnerIdFor = function(oObject) {
+		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.getOwnerIdFor must no longer be used. Use the public sap.ui.core.Component.getOwnerForId instead.");
 		return oObject && oObject._sOwnerId;
 	};
 
 	/*
-	 * Internal function to assign the ID of the owner in which the creation of
-	 * a ManagedObject will be done.
-	 * @name sap.ui.base.ManagedObject.runWithOwner
-	 * @function
+	 * Redirect to new functionality
+	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.runAsOwner instead.
 	 */
-	ManagedObject.runWithOwner = function(fn, oObject) {
-
-		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
-		jQuery.sap.assert(oObject instanceof ManagedObject, "oObject is not an instance of sap.ui.core.ManagedObject");
-
-		var oldOwnerId = ManagedObject._sOwnerId;
-		try {
-			ManagedObject._sOwnerId = oObject.getId();
-			var result = fn.call();
-			ManagedObject._sOwnerId = oldOwnerId;
-			return result;
-		} catch (e) {
-			ManagedObject._sOwnerId = oldOwnerId;
-			throw e;
+	ManagedObject.runWithOwner = function(fn, oOwner) {
+		jQuery.sap.log.error("[Deprecated] The private method sap.ui.base.ManagedObject.runWithOwner must no longer be used. Use the public sap.ui.core.Component.runAsOwner instead.");
+		if ( oOwner && typeof oOwner.runAsOwner === "function" ) {
+			oOwner.runAsOwner(fn);
+		} else {
+			throw new Error("trying to execute a function with a non-suitable owner " + oOwner + ". See the deprecation hint in the console.");
 		}
-
 	};
 
 	/**

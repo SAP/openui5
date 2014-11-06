@@ -252,13 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		 */
 		Controller.prototype.getOwnerComponent = function () {
 			jQuery.sap.require("sap.ui.core.Component");
-			var vComponentId = sap.ui.core.Component.getOwnerIdFor(this.getView());
-
-			if (vComponentId === undefined) {
-				return undefined;
-			}
-
-			return sap.ui.component(vComponentId);
+			return sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		};
 	
 	

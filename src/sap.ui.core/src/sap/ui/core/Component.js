@@ -120,15 +120,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	Component.deactivateCustomizing = function(sComponentName) {
 		// noop since it will be handled by component termination
 	};
-	
+
+	// ---- Ownership functionality ------------------------------------------------------------
+
+	//
+	// Implementation note: the whole ownership functionality is now part of Component
+	//  a) to ensure that only Components are used as owners
+	//  b) to keep component related code out of ManagedObject as far as possible
+	// 
+	// Only exception is the _sOwnerId property and its assignment in the ManagedObject 
+	// constructor, but that doesn't require much knowledge about components
+
 	/**
-	 * Returns the ID of the owner UI Component in which the given Component or View has been created using 
-	 * <pre>
-	 *   UIComponent.prototype.createContent();
-	 * </pre>
-	 *  
-	 * @param {sap.ui.core.Component|sap.ui.core.mvc.View} oObject Object to retrieve the owner for
-	 * @return {string} the owner component ID
+	 * Returns the Id of the object in whose "context" the given ManagedObject has been created.
+	 * 
+	 * For objects that are not ManagedObjects or for which the owner is unknown, 
+	 * <code>undefined</code> will be returned as owner Id.
+	 * 
+	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time 
+	 * when they are created. It is not checked or updated afterwards. And it can only be detected 
+	 * while the {@link sap.ui.core.Component.runAsOwner Component.runAsOwner} function is executing. 
+	 * Without further action, this is only the case while the content of an UIComponent is
+	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a 
+	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
+	 * 
+	 * <strong>Note</string>: This method does not guarantee that the returned owner Id belongs
+	 * to a Component. Currently, it always does. But future versions of UI5 might introduce a 
+	 * more fine grained ownership concept, e.g. taking Views into account. Callers that 
+	 * want to deal only with components as owners, should use the following method:
+	 * {@link sap.ui.core.Component.getOwnerComponentFor Component.getOwnerComponentFor}.
+	 * It guarantees that the returned object (if any) will be a Component. 
+	 *
+	 * <strong>Further note</strong> that only the Id of the owner is recorded. In rare cases, 
+	 * when the lifecycle of a ManagedObject is not bound to the lifecycle of its owner,
+	 * (e.g. by the means of aggregations), then the owner might have been destroyed already
+	 * whereas the ManagedObject is still alive. So even the existence of an owner Id is 
+	 * not a guarantee for the existence of the corresponding owner.
+	 * 
+	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner Id for
+	 * @return {string} the Id of the owner or <code>undefined</code>
 	 * @static
 	 * @public
 	 * @since 1.15.1 
@@ -136,13 +166,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @function
 	 */
 	Component.getOwnerIdFor = function(oObject) {
-		// the owner id is only supported for Components and Views
-		if (oObject && (oObject instanceof Component ||
-						oObject instanceof sap.ui.core.mvc.View)) {
-			return ManagedObject.getOwnerIdFor(oObject);
+		jQuery.sap.assert(oObject instanceof ManagedObject, "oObject must be given and must be a ManagedObject");
+		var sOwnerId = ( oObject instanceof ManagedObject ) && oObject._sOwnerId;
+		return sOwnerId || undefined; // no or empty id --> undefined 
+	};
+
+	/**
+	 * Returns the Component instance in whose "context" the given ManagedObject has been created
+	 * or <code>undefined</code>.
+	 *
+	 * This is a convenience wrapper around {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}. 
+	 * If the owner Id cannot be determined for the reasons document with <code>getOwnerForId</code> 
+	 * or when the Component for the determined Id no longer exists, <code>undefined</code> 
+	 * will be returned.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner Component for
+	 * @return {sap.ui.core.Component} the owner Component or <code>undefined</code>.
+	 * @static
+	 * @public
+	 * @since 1.25.1 
+	 * @name sap.ui.core.Component.getOwnerComponentFor
+	 * @function
+	 */
+	Component.getOwnerComponentFor = function(oObject) {
+		var sOwnerId = Component.getOwnerIdFor(oObject);
+		return sOwnerId && sap.ui.component(sOwnerId);
+	};
+
+	/**
+	 * Calls the function <code>fn</code> once and marks all ManagedObjects
+	 * created during that call as "owned" by this Component.
+	 * 
+	 * Nested calls of this method are supported (e.g. inside a newly created,
+	 * nested component). The currently active owner Component will be remembered 
+	 * before executing <code>fn</code> and restored afterwards.
+	 *
+	 * @param {function} fn the function to execute
+	 * @return {any} result of function <code>fn</code>
+	 * @since 1.25.1
+	 * @public
+	 * @experimental
+	 * @name sap.ui.core.Component.runAsOwner
+	 * @function
+	 */
+	Component.prototype.runAsOwner = function(fn) {
+		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
+
+		var oldOwnerId = ManagedObject._sOwnerId;
+		try {
+			ManagedObject._sOwnerId = this.getId();
+			return fn.call();
+		} finally {
+			ManagedObject._sOwnerId = oldOwnerId;
 		}
 	};
-	
+
+	// ---- ----
+
 	/**
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
@@ -469,7 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * of an existing <code>Component</code>.
 	 * 
 	 * If you want to lookup all an existing <code>Component</code> you can call
-	 * this function with a component ID as parameter:
+	 * this function with a component Id as parameter:
 	 * <pre> 
 	 *   var oComponent = sap.ui.component(sComponentId);
 	 * </pre>

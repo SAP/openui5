@@ -9,7 +9,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 		this._afterRenderingDone = false;
 
 		// subscribe to app events
-		this._component = sap.ui.component(sap.ui.core.Component.getOwnerIdFor(this.getView()));
+		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		this._component.getEventBus().subscribe("app", "setCompact", this._setCompactMode, this);
 	},
 
