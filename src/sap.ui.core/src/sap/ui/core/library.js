@@ -1395,7 +1395,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		Unknown : "Unknown"
 	
 	};
-		
+
+	/**
+	 * Prefixes to be used for rendering "unusual" DOM-Elements, like dummy elements, placeholders
+	 * for invisible controls, etc.
+	 * 
+	 * @enum {string}
+	 * @private
+	 */
+	sap.ui.core.RenderPrefixes =  {
+
+		/**
+		 * The control has not been rendered because it is invisible, the element rendered with this
+		 * prefix can be found by the RenderManager to avoid rerendering the parents
+		 * @private
+		 */
+		Invisible : "sap-ui-invisible-",
+
+		/**
+		 * A dummy element is rendered with the intention of replacing it with the real content
+		 * @private
+		 */
+		Dummy : "sap-ui-dummy-"
+	};
+
 	var lazy = sap.ui.lazyRequire;
 	
 	function each(sPackage,aClasses,sShortcutPkg) {

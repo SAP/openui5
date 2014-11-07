@@ -4,7 +4,7 @@
 
 // Provides the render manager sap.ui.core.RenderManager
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'jquery.sap.act', 'jquery.sap.encoder'],
-	function(jQuery, Interface, BaseObject/* , jQuerySap1, jQuerySap */) {
+	function(jQuery, Interface, BaseObject /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	var aCommonMethods = ["renderControl", "write", "writeEscaped", "translate", "writeAcceleratorKey", "writeControlData",
@@ -218,11 +218,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		jQuery.sap.measure.pause(oControl.getId() + "---renderControl");
 		// don't measure getRenderer because if Load needed its measured in Ajax call
 		// but start measurement before is to see general rendering time including loading time
-		var oRenderer = this.getRenderer(oControl);
+
+		// Either render the control normally, or invoke the InvisibleRenderer in case the control
+		// uses the default visible property
+		var oRenderer;
+		var oMetadata = oControl.getMetadata();
+		var bVisible = oControl.getVisible();
+		if (bVisible) {
+			// If the control is visible, return its renderer (Should be the default case, just like before)
+			oRenderer = oMetadata.getRenderer();
+		} else {
+			// If the control is invisible, find out whether it uses its own visible implementation
+			var oVisibleProperty = oMetadata.getJSONKeys()["visible"];
+
+			var bUsesDefaultVisibleProperty = 
+				   oVisibleProperty 
+				&& oVisibleProperty._oParent 
+				&& oVisibleProperty._oParent.getName() == "sap.ui.core.Control";
+
+			oRenderer = bUsesDefaultVisibleProperty 
+				// If the control inherited its visible property from sap.ui.core.Control, use
+				// the default InvisibleRenderer to render a placeholder instead of the real
+				// control HTML
+				? InvisibleRenderer 
+				// If the control has their own visible property or one not inherited from
+				// sap.ui.core.Control, return the real renderer
+				: oMetadata.getRenderer();
+		}
+
 		jQuery.sap.measure.resume(oControl.getId() + "---renderControl");
-	
-		// notify the control that it will be rendered soon (e.g. detached from DOM)
+
 		triggerBeforeRendering(this, oControl);
+
 		// unbind any generically bound browser event handlers
 		var aBindings = oControl.aBindParameters;
 		if (aBindings && aBindings.length > 0) { // if we have stored bind calls...
@@ -250,7 +277,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		}
 		
 		//Check whether the control has produced HTML
+		// Special case: If an invisible placeholder was rendered, use a non-boolean value
 		oControl.bOutput = this.aBuffer.length != iBufferLength;
+		if (oRenderer === InvisibleRenderer) {
+			oControl.bOutput = "invisible"; // Still evaluates to true, but can be checked for the special case
+		}
 	
 		// end performance measurement
 		jQuery.sap.measure.end(oControl.getId() + "---renderControl");
@@ -313,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			// Notify the behavior object that the controls will be attached to DOM
 			for (var i = 0, size = aRenderedControls.length; i < size; i++) {
 				var oControl = aRenderedControls[i];
-				if (oControl.bOutput) {
+				if (oControl.bOutput && oControl.bOutput !== "invisible") {
 					oRM._bLocked = true;
 					try {
 						var oEvent = jQuery.Event("AfterRendering");
@@ -490,8 +521,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 					var oldDomNode = oControl.getDomRef();
 					if ( RenderManager.isPreservedContent(oldDomNode) ) {
 						// use placeholder instead
-						oldDomNode = jQuery.sap.byId("sap-ui-dummy-" + oControl.getId())[0] || oldDomNode;
+						oldDomNode = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + oControl.getId())[0] || oldDomNode;
 					}
+					if (!oldDomNode) {
+						// In case no old DOM node was found, search for the invisible placeholder
+						oldDomNode = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
+					}
+
 					var bNewTarget = oldDomNode && oldDomNode.parentNode != oTargetDomNode;
 	
 					var fAppend = function(){
@@ -691,7 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		 * Create a placeholder node for the given node (which must have an ID) and insert it before the node
 		 */
 		function makePlaceholder(node) {
-			jQuery("<DIV/>", { id: "sap-ui-dummy-" + node.id}).addClass("sapUiHidden").insertBefore(node);
+			jQuery("<DIV/>", { id: sap.ui.core.RenderPrefixes.Dummy + node.id}).addClass("sapUiHidden").insertBefore(node);
 		}
 		
 		/**
@@ -1329,6 +1365,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		if (bIconURI) {
 			bTextNeeded && this.write(oIconInfo.content);
 			this.write("</span>");
+		}
+	};
+
+
+	/**
+	 * Renders an invisible dummy element for controls that have set their visible-property to
+	 * false. In case the control has its own visible property, it has to handle rendering itself.
+	 */
+	var InvisibleRenderer = {
+		/**
+		 * Renders the invisible dummy element
+		 * 
+		 * @param {sap.ui.core.RenderManager} [oRm] The RenderManager instance
+		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
+		 */
+		render: function(oRm, oControl) {
+			var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oControl.getId();
+
+			var sPlaceholderHtml = 
+				'<span id="' + sPlaceholderId + '" ' + 
+					'data-sap-ui="' + sPlaceholderId + '" ' + 
+					'style="display: none;"' + 
+					'aria-hidden="true">' + 
+				'</span>';
+
+			oRm.write(sPlaceholderHtml);
 		}
 	};
 	

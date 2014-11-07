@@ -175,19 +175,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/core/XMLTemp
 						}
 						var $childDOM = aChildren[i].$();
 						// jQuery.sap.log.debug("replacing placeholder for " + aChildren[i] + " with content");
-						jQuery.sap.byId("sap-ui-dummy-" + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
+						jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + aChildren[i].getId(), this._$oldContent).replaceWith($childDOM);
 					}
 				}
 				// move preserved DOM into place
 				// jQuery.sap.log.debug("moving preserved dom into place for " + this);
-				jQuery.sap.byId("sap-ui-dummy-" + this.getId()).replaceWith(this._$oldContent);
+				jQuery.sap.byId(sap.ui.core.RenderPrefixes.Dummy + this.getId()).replaceWith(this._$oldContent);
 			}
 			this._$oldContent = undefined;
 		};
 		
 		XMLView.prototype._onChildRerenderedEmpty = function(oControl, oElement) {
 			// when the render manager notifies us about an empty child rendering, we replace the old DOM with a dummy
-			jQuery(oElement).replaceWith('<div id="sap-ui-dummy-' + oControl.getId() + '" class="sapUiHidden"/>');
+			jQuery(oElement).replaceWith('<div id="' + sap.ui.core.RenderPrefixes.Dummy + oControl.getId() + '" class="sapUiHidden"/>');
 			return true; // indicates that we have taken care
 		};
 		
