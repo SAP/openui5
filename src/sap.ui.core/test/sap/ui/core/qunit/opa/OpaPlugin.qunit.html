@@ -8,7 +8,7 @@
 <script
 	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.ui.commons">
-	
+
 </script>
 
 <script>
@@ -93,7 +93,7 @@ test("Should retrieve a control by a global id - if visible is set to false", fu
 	var oPlugin = new OpaPlugin();
 
 	// Act
-	var oRetrievedButton = oPlugin.getMatchingControls({ 
+	var oRetrievedButton = oPlugin.getMatchingControls({
 		id : sId,
 		visible : false
 	});
@@ -197,6 +197,72 @@ test("Should get null when nothing is provided", function() {
 
 	// Assert
 	strictEqual(oRetrievedButtons, null, "did return null");
+});
+
+module("Controls with a control type and id", {
+	setup : function() {
+		this.oPlugin = new OpaPlugin();
+
+		this.oButton = new sap.ui.commons.Button("my_id1");
+		this.oButton2 = new sap.ui.commons.Button("my_id2");
+		this.oCheckBox = new sap.ui.commons.CheckBox("my_id3");
+
+		this.oButton.placeAt("qunit-fixture");
+		this.oButton2.placeAt("qunit-fixture");
+		this.oCheckBox.placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+	},
+	teardown : function() {
+		this.oButton.destroy();
+		this.oButton2.destroy();
+		this.oCheckBox.destroy();
+	}
+});
+
+test("Should retrieve a control by a global id and control type", function() {
+	// Act
+	var oRetrievedButton = this.oPlugin.getMatchingControls({
+		id : "my_id2",
+		controlType : sap.ui.commons.Button
+	});
+
+	// Assert
+	strictEqual(oRetrievedButton, this.oButton2);
+});
+
+test("Should not retrieve a control by a global id if a control type is different", function() {
+	// Act
+	var oRetrievedButton = this.oPlugin.getMatchingControls({
+		id : "my_id2",
+		controlType : sap.ui.commons.CheckBox
+	});
+
+	// Assert
+	strictEqual(oRetrievedButton, null);
+});
+
+test("Should retrieve multiple controls by global id's with regexp and control type", function() {
+	// Act
+	var aRetrievedControls = this.oPlugin.getMatchingControls({
+		id : /my_id/i,
+		controlType : sap.ui.commons.CheckBox
+	});
+
+	// Assert
+	strictEqual(aRetrievedControls.length, 1);
+	strictEqual(aRetrievedControls[0], this.oCheckBox);
+});
+
+test("Should retrieve multiple controls by global id's with regexp and control type", function() {
+	// Act
+	var aRetrievedControls = this.oPlugin.getMatchingControls({
+		id : /not_my_id/i,
+		controlType : sap.ui.commons.Button
+	});
+
+	// Assert
+	strictEqual(aRetrievedControls.length, 0);
 });
 
 module("Controls in a view");
