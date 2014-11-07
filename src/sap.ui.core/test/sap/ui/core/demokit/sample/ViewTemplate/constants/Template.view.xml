@@ -14,16 +14,20 @@
 				<Text text="{path: 'meta>@A.Decimal', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Label text="edm:Float" />
 				<Text text="{path: 'meta>@A.Float', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#inf', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#minusInf', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#nan', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Text text="{path: 'meta>@A.Float#Element', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Label text="edm:Int" />
 				<Text text="{path: 'meta>@An.Int', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Label text="edm:String" />
 				<Text text="{path: 'meta>@A.String', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.String#withAmp', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Text text="{path: 'meta>@A.String#ToBeEscaped', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Label text="edm:Guid" />
+				<Text text="{path: 'meta>@A.Guid', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Guid#Element', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 			</template:with>
-
-			<Label text="edm:Guid" />
-			<Label design="Bold" text="TODO!" />
 
 			<template:with path="meta>/schemas/Y/annotations/6/@Y.Something">
 				<Label text="edm:Duration" />
@@ -40,6 +44,10 @@
 					</template:if>
 				</template:repeat>
 				<Label text="edm:Binary" />
+				<Text text="{path: 'meta>@Some.Binary#two', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#twoEqEq', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#three', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#threeEq', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Text text="{path: 'meta>@Some.Binary', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 			</template:with>
 		</layout:content>

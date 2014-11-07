@@ -61,7 +61,7 @@
         },
         {
           "@odata.type":"Edm.TimeOfDay",
-          "value":"23:59:59.123"
+          "value":"23:59:59.123456789012"
         },
         {
           "@odata.type":"Edm.Path",
@@ -152,19 +152,19 @@
           "value":"Customer/$count"
         }
       },
-      "@Some.Binary":{
+      "@Some.Binary#two":{
         "@odata.type":"Edm.Binary",
         "value":"Zg"
       },
-      "@Some.Binary":{
+      "@Some.Binary#twoEqEq":{
         "@odata.type":"Edm.Binary",
         "value":"Zg=="
       },
-      "@Some.Binary":{
+      "@Some.Binary#three":{
         "@odata.type":"Edm.Binary",
         "value":"Zm8"
       },
-      "@Some.Binary":{
+      "@Some.Binary#threeEq":{
         "@odata.type":"Edm.Binary",
         "value":"Zm8="
       },
@@ -480,20 +480,23 @@
       "@A.Bool@Annotate.A.Bool":{
         
       },
-      "@A.Decimal":12.34,
+      "@A.Decimal":{
+        "@odata.type":"Edm.Decimal",
+        "value":12.34
+      },
       "@A.Float":{
         "@odata.type":"Edm.Double",
         "value":1.23e4
       },
-      "@A.Float":{
+      "@A.Float#inf":{
         "@odata.type":"Edm.Double",
         "value":"INF"
       },
-      "@A.Float":{
+      "@A.Float#minusInf":{
         "@odata.type":"Edm.Double",
         "value":"-INF"
       },
-      "@A.Float":{
+      "@A.Float#nan":{
         "@odata.type":"Edm.Double",
         "value":"NaN"
       },
@@ -503,8 +506,16 @@
       },
       "@An.Int":1234,
       "@A.String":"1.23e4",
-      "@A.String":"Fast&Furious",
+      "@A.String#withAmp":"Fast&Furious",
       "@A.String#ToBeEscaped":"A\/\"good\"\r\nstory\\for\tkids",
+      "@A.Guid":{
+        "@odata.type":"Edm.Guid",
+        "value":"86a96539-871b-45cf-b96b-93dbc235105e"
+      },
+      "@A.Guid#Element":{
+        "@odata.type":"Edm.Guid",
+        "value":"86a96539-871b-45cf-b96b-93dbc235105e"
+      },
       "@A.Date":{
         "@odata.type":"Edm.Date",
         "value":"2013-10-09"

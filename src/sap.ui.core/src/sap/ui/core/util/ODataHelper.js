@@ -9,8 +9,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		'use strict';
 
 		var oCore = sap.ui.getCore(),
+			rDecimal = /^[-+]?\d+(\.\d+)?$/,
 			fnEscape = BindingParser.complexParser.escape,
 			oIntegerOptions = {groupingEnabled: true},
+			rInt64 = /^[-+]?\d{1,19}$/,
 			rISODate = /^\d{4}-\d{2}-\d{2}$/,
 			// Note: oISODate*Format always contains fallback formats!
 			oISODateFormat = DateFormat.getDateInstance({
@@ -43,15 +45,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		}
 
 		/**
+		 * Handles floating-point types according to the given regular expression.
+		 *
+		 * @param {any} vRawValue
+		 *    the raw value from the meta model
+		 * @param {RegExp} [rNumber]
+		 *    regular expression defining the number syntax; if missing, string values are illegal
+		 * @returns {string}
+		 *    the resulting string value to write into the processed XML
+		 */
+		function floatingPoint(vRawValue, rNumber) {
+			if (typeof vRawValue.value === "number" && isFinite(vRawValue.value)
+				// IEEE754Compatible: decimal values sent as string
+				|| rNumber && rNumber.test(vRawValue.value)) {
+				return fnEscape(NumberFormat.getFloatInstance().format(vRawValue.value));
+			}
+			return illegalValue(vRawValue);
+		}
+
+		/**
 		 * Returns the given integer value properly formatted and escaped.
 		 *
-		 * @param {int} iValue
-		 *   integer value
+		 * @param {number} fValue
+		 *   some number value
 		 * @returns {string}
 		 *  integer value properly formatted and escaped
 		 */
-		function formatInteger(iValue) {
-			return fnEscape(NumberFormat.getIntegerInstance(oIntegerOptions).format(iValue));
+		function formatInteger(fValue) {
+			return fnEscape(NumberFormat.getIntegerInstance(oIntegerOptions).format(fValue));
+		}
+
+		/**
+		 * Warns about an illegal value for a type and returns an appropriate string representation
+		 * of the value.
+		 *
+		 * @param {any} vRawValue
+		 *    the raw value from the meta model
+		 * @returns {string}
+		 *    the resulting string value to write into the processed XML
+		 */
+		function illegalValue(vRawValue) {
+			jQuery.sap.log.warning("Illegal value for " + vRawValue["@odata.type"] + ": "
+					+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
+			return escapedString(vRawValue.value);
+		}
+
+		/**
+		 * @see http://wiki.ecmascript.org/doku.php?id=harmony:number.isinteger
+		 * @param {any} vValue any value
+		 * @returns {boolean} whether the given value represents an integer
+		 */
+		function isInteger(vValue) {
+			return typeof vValue === 'number' && isFinite(vValue)
+				&& vValue > -9007199254740992 && vValue < 9007199254740992
+				&& Math.floor(vValue) === vValue;
 		}
 
 		/**
@@ -73,14 +120,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 			 *    the resulting string value to write into the processed XML
 			 */
 			format: function (vRawValue) {
-				var oDate;
+				var oDate,
+					fNumber;
 
 				switch (typeof vRawValue) {
 				case "boolean": // 14.4.2 Expression edm:Bool
 					return oLibraryResourceBundle.getText(vRawValue ? "YES" : "NO");
 
 				case "number": // 14.4.10 Expression edm:Int
-					return formatInteger(vRawValue);
+					return isInteger(vRawValue)
+						? formatInteger(vRawValue)
+						: illegalValue({"@odata.type": "Edm.Int64", value: vRawValue});
 
 				case "string": // 14.4.11 Expression edm:String
 					return fnEscape(vRawValue);
@@ -95,9 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 									return fnEscape(DateFormat.getDateInstance().format(oDate));
 								}
 							}
-							jQuery.sap.log.warning("Illegal value for Edm.Date: "
-									+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
-							return escapedString(vRawValue.value);
+							return illegalValue(vRawValue);
 
 						case "Edm.DateTimeOffset": // 14.4.4 Expression edm:DateTimeOffset
 							if (rISODateTime.test(vRawValue.value)) {
@@ -107,12 +155,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 										DateFormat.getDateTimeInstance().format(oDate));
 								}
 							}
-							jQuery.sap.log.warning("Illegal value for Edm.DateTimeOffset: "
-									+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
-							return escapedString(vRawValue.value);
+							return illegalValue(vRawValue);
 
-						case "Edm.Int64": // 14.4.10 Expression edm:Int
-							return formatInteger(vRawValue.value);
+						case "Edm.Decimal": // 14.4.5 Expression edm:Decimal
+							return floatingPoint(vRawValue, rDecimal);
+
+						case "Edm.Double": // 14.4.8 Expression edm:Float
+							switch (vRawValue.value) {
+							//TODO special cases for numbers should be included in NumberFormat!
+							//TODO mapping "INF" -> Infinity of course would remain here
+							case "INF":
+								return oLibraryResourceBundle.getText("INFINITY");
+							case "-INF":
+								return oLibraryResourceBundle.getText("MINUS_INFINITY");
+							case "NaN":
+								return oLibraryResourceBundle.getText("NAN");
+							// no default
+							}
+							return floatingPoint(vRawValue);
+
+						case "Edm.Int64": // 14.4.10 Expression edm:Int (IEEE754Compatible)
+							if (typeof vRawValue.value === "string"
+								&& rInt64.test(vRawValue.value)) {
+								fNumber = parseInt(vRawValue.value, 10);
+								if (isInteger(fNumber)) {
+									return formatInteger(fNumber);
+								}
+							}
+							return illegalValue(vRawValue);
 
 						case "Edm.Path": // 14.5.12 Expression edm:Path
 							if (typeof vRawValue.value === "string") {
@@ -129,9 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 									return fnEscape(DateFormat.getTimeInstance().format(oDate));
 								}
 							}
-							jQuery.sap.log.warning("Illegal value for Edm.TimeOfDay: "
-									+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
-							return escapedString(vRawValue.value);
+							return illegalValue(vRawValue);
 
 						// no default
 						}
