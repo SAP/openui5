@@ -7,9 +7,14 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	>
 	<VBox>
-		<Select change="onChangeType" items="{ui>/types}" selectedKey="{ui>/selectedKey}">
-			<core:ListItem text="{ui>key}" key="{ui>key}"/>
+		<HBox>
+		<Select id="selectType" change="onChangeType" items="{ui>/types}" selectedKey="{ui>/selectedType}">
+			<core:ListItem text="{ui>type}" key="{ui>type}"/>
 		</Select>
+		<Select id="selectInstance" change="onChangeInstance" selectedKey="{ui>/selectedInstance}">
+			<!-- aggregation items is bound in controller  -->
+		</Select>
+		</HBox>
 		<commons:HorizontalDivider/>
 		<HBox id="detail"/>
 	</VBox>
