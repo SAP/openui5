@@ -71,7 +71,7 @@
 			oModel = initModel(false);
 		},
 		teardown : function() {
-			delete oModel;
+			oModel = undefined;
 			removeSharedMetadata();
 		}
 	});
@@ -496,11 +496,59 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(fnFilter);
 	});
+	
+	asyncTest("Error Case: Service returns partial data, Binding should keep data, length final", function(){
+		var handler = function() {
+			oBinding.detachChange(handler);
+			
+			// check necessary prerequisites
+			equal(oBinding.getPath(), "/Orders", "ListBinding path");
+			equal(oBinding.bFaultTolerant, true, "Binding should run in faultTolerant mode");
+			equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
+			
+			// actual assertations against the behavior in the error case when the service could not collect all
+			// data from its data-sources
+			equal(oBinding.aKeys.length, 2, "Loaded data count");
+			equal(oBinding.iLength, 3, "Service says there are still entities to load");
+			equal(oBinding.bLengthFinal, false, "Length should not be final already");
+			
+			oBinding.attachChange(handler2);
+			oBinding.getContexts(2, 1, 0);
+		};
+		
+		var handler2 = function() {
+			oBinding.detachChange(handler);
+			
+			equal(oBinding.aKeys.length, 2, "Loaded data count is still smaller than expected (somethings missing)");
+			equal(oBinding.iLength, 2, "Length is now set to the correct value, because result was empty...");
+			equal(oBinding.bLengthFinal, true, "...and the length should be final now.");
+			
+			start(); // resume normal testing
+		};
+		
+		var oBinding = oModel.bindList(
+			"/Orders",
+			null,
+			null,
+			[new sap.ui.model.Filter("ShipCity", "EQ", "TEST_FAULT_TOLERANCE")],
+			{
+				//parameters
+				faultTolerant: true,
+				countMode: sap.ui.model.odata.CountMode.InlineRepeat,
+			}
+		);
+		
+		oBinding.attachChange(handler);
+		
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(0, 2, 0);
+		})
+	});
 	</script>
 
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: OData List Binding</h1>
+<h1 id="qunit-header">QUnit tests: OData List Binding (V2)</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>
