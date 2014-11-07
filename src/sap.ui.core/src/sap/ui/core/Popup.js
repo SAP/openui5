@@ -900,7 +900,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				if (!this.touchEnabled && !this._sTimeoutId) {
 					var iDuration = typeof this._durations.close === "string" ? 0 : this._durations.close;
 					// provide some additional event-parameters: closingDuration, where this delayed call comes from
-					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close");
+					this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, "close", [iDuration, "autocloseBlur"]);
 				}
 			}
 		}
@@ -935,6 +935,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 * @function
 	 */
 	Popup.prototype.close = function(iDuration) {
+		if (Popup._autoCloseDebug) {
+			return;
+		}
 		if (this._sTimeoutId) {
 			jQuery.sap.clearDelayedCall(this._sTimeoutId);
 			this._sTimeoutId = null;
