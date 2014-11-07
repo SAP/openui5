@@ -1390,7 +1390,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 				this._bAvoidChildTapEvent = true;
 			} else if (oEvent.target.className == "sapMTCRemove") {
-				this.fireTileDelete({ tile: oTouchSession.oControl });
+				if (oEvent.type === "touchend" || (oEvent.type === "mouseup" && oEvent.button === 0)) {
+					this.fireTileDelete({ tile: oTouchSession.oControl });
+				}
 			}
 		} else {
 			var oContentDimension = this._getContentDimension();
