@@ -8538,6 +8538,45 @@
 			});
 
 			/* ------------------------------ */
+			/* onfocusin and onsapfocusleave */
+			/* ------------------------------ */
+			test("onfocusleave", function() {
+				var focusedClass = "sapMComboBoxFocused";
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					value: "Germany"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				sap.ui.qunit.QUnitUtils.triggerEvent("focusin", oComboBox);
+				this.clock.tick(0);
+
+				// assert
+				ok(oComboBox.$().hasClass(focusedClass), "The combobox should have class: " + focusedClass);
+
+				// act
+				sap.ui.qunit.QUnitUtils.triggerEvent("onsapfocusleave", oComboBox);
+				this.clock.tick(0);
+
+				// assert
+				ok(!oComboBox.$().hasClass(focusedClass), "The combobox should not have class: " + focusedClass)
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------ */
 			/* onBeforeOpen                   */
 			/* ------------------------------ */
 
