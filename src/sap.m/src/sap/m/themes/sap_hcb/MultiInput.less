@@ -41,6 +41,17 @@
 	border-color: @sapHCStandardFG;
 }
 
+.sapMInputFocused:not(.sapMMultiInputNotEditable) .sapMMultiInputBorder::before {
+	border: 2px dotted @sapHCStandardFG;
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	pointer-events: none;
+}
+
 .sapMMultiInputShadowDiv {
 	font-size: @sapMFontHeader5Size;
 	font-family: @sapUiFontFamily;
