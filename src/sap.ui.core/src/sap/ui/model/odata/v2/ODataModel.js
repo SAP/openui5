@@ -662,7 +662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					var aChangeSet = aBatchRequests[i];
 					for (var j = 0; j < aChangeSet.length; j++) {
 						var oRequest = aChangeSet[j].request;
-						var oInnerResponse = aBatchRequests[i].response;
+						var oInnerResponse = aBatchRequests[i][j].response;
 						oBatchRequest.url = oRequest.requestUri;
 						oBatchRequest.method = oRequest.method;
 						oBatchRequest.headers = oRequest.headers;
@@ -711,7 +711,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oEventInfo.success = false;
 			}
 			//in case of aborted requests there is no further info
-			if (vResponse.statusCode) {
+			if (vResponse && vResponse.statusCode) {
 				oEventInfo.response.headers = vResponse.headers;
 				oEventInfo.response.statusCode = vResponse.statusCode;
 				oEventInfo.response.statusText = vResponse.statusText;
@@ -1742,7 +1742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 										that._processResponse(oRequestObject.request, oChangeResponse, oRequestObject.fnSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 									}
 								}
-								oRequestObject.response = oResponse;
+								oRequestObject.response = oChangeResponse;
 							}
 						}
 					} else {
@@ -1930,21 +1930,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {string} sBatchGroupId The batchGroupId
 	 * @param {function} fnSuccess Success callback function
 	 * @param {function} fnError Erro callback function
-	 * @returns {object} oRequestHandle The request handle
+	 * @returns {object|array} oRequestHandle The request handle: array if multiple request will be sent
 	 * @private
 	 * @name sap.ui.model.odata.v2.ODataModel#_processRequestQueue
 	 * @function
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sBatchGroupId, fnSuccess, fnError){
 		var that = this,
-			oRequestHandle;
+			oRequestHandle = [];
 
 		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
 			jQuery.sap.clearDelayedCall(this.oRequestTimer);
 			this.oRequestTimer = undefined;
 		}
 		if (this.bUseBatch) {
-			oRequestHandle = [];
 			//auto refresh for batch / for single requests we refresh after the request was successful
 			if (that.bRefreshAfterChange) {
 				jQuery.each(mRequests, function(sGroupId, oGroup) {
@@ -1972,8 +1971,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 									oChangeSet.__changeRequests.push(aChangeSet[i].request);
 								}
 							}
-							aReadRequests.push(oChangeSet);
-							aBatchGroup.push(oGroup.changes[sChangeSetId]);
+							if (oChangeSet.__changeRequests && oChangeSet.__changeRequests.length > 0) {
+								aReadRequests.push(oChangeSet);
+								aBatchGroup.push(oGroup.changes[sChangeSetId]);
+							}
 						});
 					}
 					if (oGroup.requests) {
@@ -1985,9 +1986,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							}
 						}
 					}
-					var oBatchRequest = that._createBatchRequest(aReadRequests, true);
+					if (aReadRequests.length > 0) {
+						var oBatchRequest = that._createBatchRequest(aReadRequests, true);
+						oRequestHandle.push(that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError));
+					}
 					delete mRequests[sGroupId];
-					oRequestHandle.push(that._submitBatchRequest(oBatchRequest, aBatchGroup, fnSuccess, fnError));
 				}
 			});
 		} else  {
@@ -2000,7 +2003,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							for (var i = 0; i < aChangeSet.length; i++) {
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
 								if (!aChangeSet[i].request._aborted) {
-									oRequestHandle = that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError);
+									oRequestHandle.push(that._submitSingleRequest(aChangeSet[i].request, aChangeSet[i].fnSuccess, aChangeSet[i].fnError));
 								}
 							}
 						});
@@ -2010,7 +2013,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						for (var i = 0; i < aRequests.length; i++) {
 							// store last request Handle. If no batch there will be only 1 and we cpould return it?
 							if (!aRequests[i].request._aborted) {
-								oRequestHandle = that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError);
+								oRequestHandle.push(that._submitSingleRequest(aRequests[i].request, aRequests[i].fnSuccess, aRequests[i].fnError));
 							}
 						}
 					}
@@ -2018,7 +2021,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				}
 			});
 		}
-		return oRequestHandle;
+		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
 	/**
@@ -2902,7 +2905,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * Important: The success/error handler will only be called if batch support is enabled. If multiple batchGroups are submitted the handlers will be called for every batchGroup.
 	 *
 	 * @param {string} [mParameters.eTag] an ETag which can be used for concurrency control. If it is specified, it will be used in an If-Match-Header in the request to the server for this entry.
-	 * @return {object} an object which has an <code>abort</code> function to abort the current request.
+	 * @return {objec|array} an object which has an <code>abort</code> function to abort the current request: returns an array if multiple requests will be sent.
 	 *
 	 * @public
 	 * @name sap.ui.model.odata.v2.ODataModel#submitChanges
