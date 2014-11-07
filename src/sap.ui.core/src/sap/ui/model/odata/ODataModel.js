@@ -179,6 +179,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				}, this);
 				this.oMetadata.attachFailed(this.fireMetadataFailed, this);
 			}
+			if (this.oMetadata.isFailed()){
+				this.refreshMetadata();
+			}
 
 			if (this.sAnnotationURI) {
 				this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(this.sAnnotationURI, this.oMetadata, { async: this.bLoadMetadataAsync });
@@ -218,7 +221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		},
 		metadata : {
 
-			publicMethods : ["create", "remove", "update", "submitChanges", "getServiceMetadata", "read", "hasPendingChanges", "refresh", "resetChanges",
+			publicMethods : ["create", "remove", "update", "submitChanges", "getServiceMetadata", "read", "hasPendingChanges", "refresh", "refreshMetadata", "resetChanges",
 							 "isCountSupported", "setCountSupported", "setDefaultCountMode", "getDefaultCountMode", "forceNoCache", "setProperty",
 							 "getSecurityToken", "refreshSecurityToken", "setHeaders", "getHeaders", "setUseBatch"]
 		}
@@ -300,7 +303,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				that.metadataLoadEvent = jQuery.sap.delayedCall(0, that, doFire);
 			} else {
 				that.fireMetadataLoaded({metadata: that.oMetadata});
-				ODataModel.mServiceData[that.sServiceUrl] = that.oMetadata;
 				jQuery.sap.log.debug("ODataModel fired metadataloaded");
 			}
 		};
@@ -552,6 +554,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	ODataModel.prototype.detachMetadataFailed = function(fnFunction, oListener) {
 		this.detachEvent("metadataFailed", fnFunction, oListener);
 		return this;
+	};
+
+	/**
+	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed 
+	 *
+	 * @public
+	 * @name sap.ui.model.odata.ODataModel#refreshMetadata
+	 * @function
+	 */
+	ODataModel.prototype.refreshMetadata = function(){
+		if (this.oMetadata && this.oMetadata.refresh){
+			this.oMetadata.refresh();
+		}
 	};
 
 	/**

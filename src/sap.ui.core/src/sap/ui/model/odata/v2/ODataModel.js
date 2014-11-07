@@ -172,6 +172,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				this.oMetadata.attachFailed(this.fireMetadataFailed, this);
 			}
 
+			if (this.oMetadata.isFailed()){
+				this.refreshMetadata();
+			}
+
 			if (this.sAnnotationURI) {
 				this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(this.sAnnotationURI, this.oMetadata, { async: this.bLoadMetadataAsync });
 				this.oAnnotations.attachFailed(this.fireAnnotationsFailed, this);
@@ -210,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		},
 		metadata : {
 			publicMethods : ["read", "create", "update", "remove", "submitChanges", "getServiceMetadata",
-			                 "hasPendingChanges", "refresh", "resetChanges", "setDefaultCountMode",
+			                 "hasPendingChanges", "refresh", "refreshMetadata", "resetChanges", "setDefaultCountMode",
 			                 "setDefaultBindingMode", "getDefaultBindingMode", "getDefaultCountMode",
 			                 "setProperty", "getSecurityToken", "refreshSecurityToken", "setHeaders",
 			                 "getHeaders", "setUseBatch", "setDeferredBatchGroups", "getDeferredBatchGroups",
@@ -384,6 +388,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			// In case of synchronous or asynchronous non-joined loading, or if no annotations are
 			// loaded at all, the events are fired individually
 			doFire(this.bLoadMetadataAsync, bDelayEvent);
+		}
+	};
+
+	/**
+	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed 
+	 *
+	 * @public
+	 * @name sap.ui.model.odata.ODataModel#refreshMetadata
+	 * @function
+	 */
+	ODataModel.prototype.refreshMetadata = function(){
+		if (this.oMetadata && this.oMetadata.refresh){
+			this.oMetadata.refresh();
 		}
 	};
 

@@ -132,6 +132,28 @@
 		if (that.clock) that.clock.tick(1);
 	});
 
+	asyncTest("metadata failed handling", function(){
+		var that = this;
+		var mOptions = {
+				json : true,
+				loadMetadataAsync: true,
+				useBatch:false
+			};
+ 		var oModel = new sap.ui.model.odata.v2.ODataModel("/DOESNOTEXIST", mOptions);
+ 		var handleFailed = function(){
+			ok(!oModel.getServiceMetadata(), "Metadata failed correctly");
+			ok(oModel.oMetadata.isFailed(), "Failed on metadata object has been set correctly");
+			var oModel2 = new sap.ui.model.odata.v2.ODataModel("/DOESNOTEXIST", mOptions);
+			oModel2.attachMetadataFailed(function(){
+				ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+			});
+			oModel.detachMetadataFailed(handleFailed);
+			start();
+ 		};
+		oModel.attachMetadataFailed(handleFailed);
+		if (that.clock) that.clock.tick(1);
+	});
+	
 	asyncTest("test oDataModel _loadData XML",function(){
 		var oModel = initModel(sURI, false);
 		oModel.attachMetadataLoaded(function(){
