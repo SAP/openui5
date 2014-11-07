@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.core.routing.Route</title>
+
+	<script src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		(function () {
+			"use strict";
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			}
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			//signals does a ducktype to determine if node.js is running. We have to set module to undefined when we include signals
+			var fnOriginal = module;
+			module = undefined;
+			jQuery.sap.require("sap.ui.core.routing.Route");
+			module = fnOriginal;
+
+			var oRouterStub = {
+				fireRouteMatched : function () {},
+				fireRoutePatternMatched : function () {}
+			};
+
+			function fnRouteEventsTestCase (sTestName, sEventName) {
+				test(sTestName, function() {
+					// Arrange
+					var sName = "testRoute",
+							oRoute = new sap.ui.core.routing.Route(null, { name : sName }),
+							fnEventSpy = this.spy(function(oEvent, oActualData) {
+								strictEqual(oActualData, oData, "the data is correct");
+								strictEqual(oEvent.getParameters().name, sName, "the name is correct");
+								strictEqual(this, oListener, "the this pointer is correct");
+							}),
+							oListener = {},
+							oData = {some: "data"},
+							oRouteConstructor = {},
+							oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
+
+					// Act
+					oRoute._routeMatched(
+							oRouterStub,
+							{},
+							true);
+
+					// Assert
+					strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);
+					strictEqual(oAttachReturnValue, oRoute, "did return this for chaining for the event " + sEventName);
+				});
+			}
+
+			fnRouteEventsTestCase("Should attach to the matched event", "Matched");
+			fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
+
+			function fnDetachRouteEventTestCase(sTestName, sEventName) {
+				test(sTestName, function() {
+					// Arrange
+					var sName = "testRoute",
+						oRoute = new sap.ui.core.routing.Route(null, { name : sName }),
+						fnEventSpy = this.spy(),
+						fnRouteMatchedSpy = this.spy(),
+						oListener = {};
+
+					oRoute["attach" + sEventName](fnEventSpy, oListener);
+					oRoute["attach" + sEventName](fnEventSpy);
+
+					// Act
+					var oDetachedReturnValue = oRoute["detach" + sEventName](fnEventSpy, oListener);
+					oRoute["detach" + sEventName](fnEventSpy);
+
+					// FireEvent to make sure no spy is called
+					oRoute._routeMatched({
+								fireRouteMatched : fnRouteMatchedSpy,
+								fireRoutePatternMatched : fnRouteMatchedSpy
+							},
+							{},
+							true);
+
+					// Assert
+					strictEqual(fnEventSpy.callCount, 0, "did not call the spy since it was detached");
+					strictEqual(oDetachedReturnValue, oRoute, "did return this for chaining");
+				});
+			}
+
+			fnDetachRouteEventTestCase("Should detach the matched event", "Matched");
+			fnDetachRouteEventTestCase("Should detach the patternMatched event", "PatternMatched");
+
+
+
+		})();
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Route</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
