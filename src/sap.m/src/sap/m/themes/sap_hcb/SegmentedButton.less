@@ -98,14 +98,6 @@
 		outline: none;
 		border-left: none;
 	}
-
-	.sapMSegBBtnFocusable:last-child:focus {
-		border-right: 0.125rem dotted @sapHCStandardFG;
-	}
-
-	.sapMSegBBtnFocusable.sapMSegBBtnSel:last-child:focus {
-		border-right: 0.125rem dotted @sapHCStandardFG;
-	}
 }
 
 .sapMSegBIcons .sapMSegBBtn {
@@ -200,8 +192,6 @@
 	}
 	.sapMSegBBtn:not(.sapMSegBBtnDis):focus:before {
 		content: " ";
-		-webkit-box-sizing: border-box;
-		-moz-box-sizing: border-box;
 		box-sizing: border-box;
 		width: 100%;
 		height: 100%;
@@ -213,16 +203,40 @@
 	.sapMSegBBtn:not(.sapMSegBBtnDis):focus:last-child {
 		border-right: none;
 	}
+	.sapMSegBBtn:last-child:focus {
+		margin-right: 0;
+	}
 }
 
-/* Fix for mobile segmented button in header or footer element */
+/* Fix for mobile segmented button in header, footer or bar element */
 html[data-sap-ui-browser^="sf"],
 html[data-sap-ui-os^="iOS"],
-html[data-sap-ui-os^="Android"] {
+html[data-sap-ui-os^="bb"],
+html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"],
+html[data-sap-ui-os^="Android4.2"][data-sap-ui-browser^="an"],
+html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 	header,
-	footer {
+	footer,
+	.sapMBar {
 		.sapMSegB {
-			margin-top: -0.280rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			display: inline-block;
+		}
+	}
+}
+/* Android 4.4 Specific fixes */
+html[data-sap-ui-os^="Android4.4"] {
+	.sapMSegB {
+		display: block;
+	}
+	header,
+	footer,
+	.sapMBar {
+		.sapMSegB {
+			height: 1.5rem;
+			line-height: 1.5rem;
+			display: inline-block;
 		}
 	}
 }
