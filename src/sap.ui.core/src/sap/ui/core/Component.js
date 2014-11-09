@@ -342,6 +342,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		
 		var oMetadata = this.getMetadata();
 		
+		// currently the automatic creation of the models is not activated
+		// for the metadata version 2 - here the implementation needs to be
+		// adopted to take the model configuration out of the models section
+		// of sap.ui5 and the datasources mapping from sap.app
+		if (oMetadata.getMetadataVersion() === 2) {
+			jQuery.sap.log.debug("Skipping component model creation for manifest.json models.");
+			return;
+		} 
+		
 		// get the application configuration
 		var oModelsConfig = mModels || oMetadata.getModels(),
 			oServicesConfig = mServices || oMetadata.getServices();

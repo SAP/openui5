@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	"use strict";
 
 
-		
 	/**
 	 * Creates a new metadata object for a Component subclass.
 	 *
@@ -52,7 +51,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		// the component metadata will be loaded from the specified file 
 		// which needs to be located next to the Component.js file.
 		var sName = this.getName(),
-		sPackage = sName.replace(/\.\w+?$/, "");
+		    sPackage = sName.replace(/\.\w+?$/, "");
 		if (oStaticInfo._src) {
 			if (oStaticInfo._src == "component.json") {
 				jQuery.sap.log.warning("Usage of declaration \"metadata: 'component.json'\" is deprecated (component " + sName + "). Use \"metadata: 'json'\" instead.");
@@ -81,32 +80,178 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		this._bInitialized = false;
 		this._iInstanceCount = 0;
 		
-		// extract the custom component data from the static info 
-		this._sVersion = oStaticInfo.version;
-		this._mDependencies = oStaticInfo.dependencies;
-		this._aIncludes = oStaticInfo.includes;
-		this._mConfig = oStaticInfo.config;
-		this._mCustomizing = oStaticInfo.customizing;
-	
-		// extract the models and services custom component data
-		// (as models and services are experimental the default value is applied here
-		//  to avoid mentioning those options in the component metadata section!) 
-		this._mModels = oStaticInfo.models || {};
-		this._mServices = oStaticInfo.services || {};
+		// get the parent component
+		var oParent = this.getParent();
+		
+		// extract the manifest
+		var oManifest = oStaticInfo["manifest"];
+		
+		// if a manifest is available we switch to load the manifest for the 
+		// metadata instead of using the component metadata section
+		if (oManifest) {
+			
+			// set the version of the metadata
+			oStaticInfo.__metadataVersion = 2;
+			
+			// load the manifest if defined as string
+			if (typeof oManifest === "string" && oManifest === "json") {
+				
+				var sResource = sPackage.replace(/\./g, "/") + "/manifest.json";
+				jQuery.sap.log.info("The manifest of the component " + sName + " is loaded from file " + sResource + ".");
+				try {
+					// the synchronous loading would be only relevant during the
+					// development time - for productive usage the Component should
+					// provide a preload packaging which includes the manifest 
+					// next to the Component code - so the sync request penalty
+					// should be ignorable for now (async implementation will 
+					// change the complete behavior of the constructor function)
+					var oResponse = jQuery.sap.loadResource(sResource, {
+						dataType: "json"
+					});
+					oManifest = oResponse;
+				} catch (err) {
+					jQuery.sap.log.error("Failed to load component manifest from \"" + sResource + "\" (component " + sName + ")! Reason: " + err);
+					// in case of error the manifest is an empty object
+					// to behave similar like for missing component.json
+					oManifest = {};
+				}
+				
+			}
+			
+			// ensure property name incl. sap.app and sap.ui5 namespace
+			oManifest["name"] = oManifest["name"] || this.getName();
+			oManifest["sap.app"] = oManifest["sap.app"] || {};
+			oManifest["sap.ui5"] = oManifest["sap.ui5"] || {};
+			
+		} else {
+			
+			// else branch can be outsourced in future when the ComponentMetadata
+			// is not used anymore and the new Application manifest is used - 
+			// but for now we keep it as it will be one of the common use cases
+			// to have the classical ComponentMetadata and this should be 
+			// transformed into the new manifest structure for compatibility
+			
+			// set the version of the metadata
+			oStaticInfo.__metadataVersion = 1;
+			
+			// create the manifest object
+			var oManifest = {
+				"name": this.getName(),
+				"sap.app": {},
+				"sap.ui5": {}
+			};
+			
+			// converter for array with string values to object
+			var fnCreateObject = function(a, fnCallback) {
+				var o = {};
+				if (a) {
+					for (var i = 0, l = a.length; i < l; i++) {
+						var oValue = a[i];
+						if (typeof oValue === "string") {
+							o[oValue] = typeof fnCallback === "function" && fnCallback(oValue) || {};
+						}
+					}
+				}
+				return o;
+			};
+			
+			// add the old information on component metadata to the manifest info
+			var oAppManifest = oManifest["sap.app"];
+			var oUI5Manifest = oManifest["sap.ui5"];
+			for (var sName in oStaticInfo) {
+				var oValue = oStaticInfo[sName];
+				switch (sName) {
+					case "name":
+						oAppManifest["id"] = oValue;
+						break;
+					case "description":
+					case "keywords":
+						oAppManifest[sName] = oValue;
+						break;
+					case "version":
+						oAppManifest.applicationVersion = {
+							version: oValue
+						};
+						break;
+					case "config":
+						oUI5Manifest[sName] = oValue;
+						break;
+					case "customizing":
+						oUI5Manifest["extends"] = {
+							component: oParent ? oParent.getName() : undefined,
+							extensions: oValue
+						};
+						break;
+					case "dependencies":
+						oUI5Manifest[sName] = {};
+						oUI5Manifest[sName].minUI5Version = oValue.ui5version;
+						oUI5Manifest[sName].libs = fnCreateObject(oValue.libs);
+						oUI5Manifest[sName].components = fnCreateObject(oValue.components);
+						break;
+					case "includes":
+						oUI5Manifest["resources"] = {};
+						if (oValue && oValue.length > 0) {
+							for (var i = 0, l = oValue.length; i < l; i++) {
+								var sResource = oValue[i];
+								var m = sResource.match(/\.(css|js)$/i);
+								if (m) {
+									oUI5Manifest["resources"][m[1]] = oUI5Manifest["resources"][m[1]] || [];
+									oUI5Manifest["resources"][m[1]].push({
+										"uri": sResource
+									});
+								}
+							}
+						}
+						break;
+					case "models":
+						var oModels = {};
+						for (var sModel in oValue) {
+							var oDS = oValue[sModel];
+							var oModel = {
+								settings: {}
+							};
+							for (var sDSSetting in oDS) {
+								var oDSSetting = oDS[sDSSetting];
+								switch (sDSSetting) {
+									case "type":
+										oModel[sDSSetting] = oDSSetting;
+										break;
+									default: 
+										oModel.settings[sDSSetting] = oDSSetting;
+								}
+							}
+							oModels[sModel] = oModel;
+						}
+						oUI5Manifest["models"] = oModels;
+						break;
+					// no default
+				}
+			}
+			
+		}
+		
+		// apply the manifest to the static info and store the static info for
+		// later access to specific custom entries of the manifest itself
+		oStaticInfo["manifest"] = oManifest;
+		this._oStaticInfo = oStaticInfo;
 		
 		// some metadata needs to be merged with the metadata for the parent component
 		// except of the version, dependencies and includes => they are handled by the
 		// specific component metadata implementation and no merge is required here!
-		var oParent = this.getParent();
 		if (oParent instanceof ComponentMetadata) {
-			this._mConfig = jQuery.extend(true, {}, oParent._mConfig, this._mConfig);
-			this._mCustomizing = jQuery.extend(true, {}, oParent._mCustomizing, this._mCustomizing);
-			this._mModels = jQuery.extend(true, {}, oParent._mModels, this._mModels);
-			this._mServices = jQuery.extend(true, {}, oParent._mServices, this._mServices);
+			var oUI5Manifest = oManifest["sap.ui5"];
+			var oParentUI5Manifest = oParent.getManifestEntry("sap.ui5");
+			if (oParentUI5Manifest.config) {
+				oUI5Manifest.config = jQuery.extend(true, {}, oParentUI5Manifest.config, oUI5Manifest.config);
+			}
+			if (oParentUI5Manifest["extends"] && oParentUI5Manifest["extends"].extensions) {
+				oUI5Manifest["extends"] = oUI5Manifest["extends"] || {};
+				oUI5Manifest["extends"].extensions = jQuery.extend(true, {}, oParentUI5Manifest["extends"].extensions, oUI5Manifest["extends"].extensions);
+			}
+			if (oParentUI5Manifest.models) {
+				oUI5Manifest.models = jQuery.extend(true, {}, oParentUI5Manifest.models, oUI5Manifest.models);
+			}
 		}
-		
-		// Store the static metadata for later usage (see getCustomConfiguration)
-		this._oStaticInfo = oStaticInfo;
 		
 	};
 	
@@ -138,9 +283,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	
 	/**
 	 * Static termination of components.
-	 *  
+	 * 
 	 * TODO: Right now it is unclear when this function should be called. Just to
 	 *       make sure that we do not forget this in future. 
+	 * 
 	 * @private
 	 */
 	ComponentMetadata.prototype.exit = function() {
@@ -161,7 +307,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 */
 	ComponentMetadata.prototype.onInitComponent = function() {
-		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(this._mCustomizing)) {
+		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
 			jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
 			sap.ui.core.CustomizingConfiguration.activateForComponent(this._sComponentName);
 		}
@@ -176,11 +324,84 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
 		this._iInstanceCount--;
-		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(this._mCustomizing)) {
+		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(mExtensions)) {
 			if (sap.ui.core.CustomizingConfiguration) {
 				sap.ui.core.CustomizingConfiguration.deactivateForComponent(this._sComponentName);
 			}
 		}
+	};
+	
+	/**
+	 * Returns the version of the metadata which could be 1 or 2. 1 is for legacy 
+	 * metadata whereas 2 is for the manifest.
+	 * @return {int} metadata version () 
+	 * @protected
+	 * @since 1.27.1
+	 */
+	ComponentMetadata.prototype.getMetadataVersion = function() {
+		return this._oStaticInfo.__metadataVersion;
+	};
+	
+	/**
+	 * Returns the manifest defined in the metadata of the component. 
+	 * If not specified, the return value is null.
+	 * @return {Object} manifest. 
+	 * @public
+	 * @since 1.27.1
+	 */
+	ComponentMetadata.prototype.getManifest = function() {
+		// only a copy of the manifest will be returned to make sure that it
+		// cannot be modified - TODO: think about Object.freeze() instead
+		return jQuery.extend(true, {}, this._oStaticInfo.manifest);
+	};
+	
+	/**
+	 * Returns the manifest configuration entry with the specified key (Must be a JSON object).
+	 * If no key is specified, the return value is null.
+	 * 
+	 * Example:
+	 * <code>
+	 *   sap.ui.core.Component.extend("sample.Component", {
+	 *       metadata: {
+	 *           manifest: {
+	 *               "my.custom.config" : {
+	 *                   "property1" : true,
+	 *                   "property2" : "Something else"
+	 *               }
+	 *           }
+	 *       }
+	 *   });
+	 * </code>
+	 * 
+	 * The configuration above can be accessed via <code>sample.Component.getMetadata().getManifestEntry("my.custom.config")</code>.
+	 * 
+	 * @param {string} sKey key of the custom configuration (must be prefixed with a namespace / separated with dots)
+	 * @param {boolean} bMerged whether the custom configuration should be merged with components parent custom configuration.
+	 * @return {Object} custom Component configuration with the specified key. 
+	 * @public
+	 * @since 1.27.1
+	 */
+	ComponentMetadata.prototype.getManifestEntry = function(sKey, bMerged) {
+		if (!sKey || sKey.indexOf(".") <= 0) {
+			jQuery.sap.log.warning("Manifest entries with keys without namespace prefix can not be read via getManifestEntry. Key: " + sKey + ", Component: " + this.getName());
+			return null;
+		}
+		
+		var oManifest = this.getManifest();
+		var oData = oManifest && oManifest[sKey] || {};
+		
+		if (!jQuery.isPlainObject(oData)) {
+			jQuery.sap.log.warning("Custom Manifest entry with key '" + sKey + "' must be an object. Component: " + this.getName());
+			return null;
+		}
+		
+		var oParent = this.getParent();
+		if (bMerged && oParent instanceof ComponentMetadata) {
+			return jQuery.extend(true, {}, oParent.getManifestEntry(sKey, bMerged), oData);
+		}
+		return jQuery.extend(true, {}, oData);
 	};
 	
 	/**
@@ -205,6 +426,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @param {boolean} bMerged whether the custom configuration should be merged with components parent custom configuration.
 	 * @return {Object} custom Component configuration with the specified key. 
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifestEntry
 	 */
 	ComponentMetadata.prototype.getCustomEntry = function(sKey, bMerged){
 		if (!sKey || sKey.indexOf(".") <= 0) {
@@ -226,6 +448,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		return jQuery.extend(true, {}, oData);
 	};
 	
+	
 	/**
 	 * Returns the name of the Component (which is the namespace only with the module name)
 	 * @return {string} Component name
@@ -239,42 +462,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns the dependencies defined in the metadata of the component. If not specified, the return value is null.
 	 * @return {Object} Component dependencies. 
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getDependencies = function() {
-		return this._mDependencies;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getDependencies is deprecated!");
+		if (!this._oLegacyDependencies) {
+			var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+			    mDependencies = oUI5Manifest && oUI5Manifest.dependencies,
+			    sUI5Version = mDependencies && mDependencies.minUI5Version || null,
+			    mLibs = mDependencies && mDependencies.libs || {},
+			    mComponents = mDependencies && mDependencies.components || {};
+			var mLegacyDependencies = {
+				ui5version: sUI5Version,
+				libs: [],
+				components: []
+			};
+			for (var sLib in mLibs) {
+				mLegacyDependencies.libs.push(sLib);
+			}
+			for (var sComponent in mComponents) {
+				mLegacyDependencies.components.push(sComponent);
+			}
+			this._oLegacyDependencies = mLegacyDependencies;
+		}
+		return this._oLegacyDependencies;
 	};
 	
 	/**
 	 * Returns the array of the included files that the Component requires such as css and js. If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Included files.
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getIncludes = function() {
-		return (this._aIncludes && this._aIncludes.length > 0) ? this._aIncludes : null;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getIncludes is deprecated!");
+		if (!this._oLegacyIncludes) {
+			var aIncludes = [],
+			    oUI5Manifest = this.getManifestEntry("sap.ui5"),
+			    mResources = oUI5Manifest && oUI5Manifest.resources || {},
+			    aCSSResources = mResources && mResources.css || [],
+			    aJSResources = mResources && mResources.js || [];
+				for (var i = 0, l = aCSSResources.length; i < l; i++) {
+					if (aCSSResources[i] && aCSSResources[i].uri) {
+						aIncludes.push(aCSSResources[i].uri);
+					}
+				}
+				for (var i = 0, l = aJSResources.length; i < l; i++) {
+					if (aJSResources[i] && aJSResources[i].uri) {
+						aIncludes.push(aJSResources[i].uri);
+					}
+				}
+			this._oLegacyIncludes = (aIncludes.length > 0) ? aIncludes : null;
+		}
+		return this._oLegacyIncludes;
 	};
 	
 	/**
 	 * Returns the required version of SAP UI5 defined in the metadata of the Component. If returned value is null, then no special UI5 version is required.
 	 * @return {string} Required version of UI5 or if not specified then null.
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getUI5Version = function() {
-		return this._mDependencies ? this._mDependencies.ui5version : null;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getUI5Version is deprecated!");
+		return this.getDependencies().ui5version;
 	};
 	
 	/**
 	 * Returns array of components specified in the metadata of the Component. If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Required Components.
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getComponents = function() {
-		var aComponents = null;
-		if (this._mDependencies) {
-			if (this._mDependencies.components && (this._mDependencies.components.length > 0) ) {
-				aComponents = this._mDependencies.components;
-			}
-		}
-		return aComponents;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getComponents is deprecated!");
+		return this.getDependencies().components;
 	};
 	
 	/**
@@ -282,15 +544,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Required libraries.
 	 * @public
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getLibs = function() {
-		var aLibs = null;
-		if (this._mDependencies) {
-			if (this._mDependencies.libs && (this._mDependencies.libs.length > 0) ) {
-				aLibs = this._mDependencies.libs;
-			}
-		}
-		return aLibs;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getLibs is deprecated!");
+		return this.getDependencies().libs;
 	};
 	
 	/**
@@ -299,9 +557,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @public
 	 */
 	ComponentMetadata.prototype.getVersion = function() {
-		return this._sVersion;
+		var oAppManifest = this.getManifestEntry("sap.app");
+		return oAppManifest && oAppManifest.applicationVersion && oAppManifest.applicationVersion.version;
 	};
-	
 	
 	/**
 	 * Returns a copy of the configuration property to disallow modifications. If no 
@@ -310,9 +568,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @return {object} the value of the configuration property
 	 * @public
 	 * @since 1.15.1
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getConfig = function(sKey) {
-		return this._mConfig ? jQuery.extend({}, sKey ? this._mConfig[sKey] : this._mConfig) : undefined;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getConfig is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		    mConfig = oUI5Manifest && oUI5Manifest.config;
+		return mConfig ? jQuery.extend({}, sKey ? mConfig[sKey] : mConfig) : undefined;
 	};
 	
 	
@@ -322,9 +584,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getCustomizing = function() {
-		return this._mCustomizing ? jQuery.extend({}, this._mCustomizing) : undefined;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getCustomizing is deprecated!");
+		var oUI5Manifest = this.getManifestEntry("sap.ui5"),
+		    mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+		return mExtensions ? jQuery.extend({}, mExtensions) : undefined;
 	};
 	
 	
@@ -335,9 +601,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1 
 	 * @experimental Since 1.15.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getModels = function() {
-		return this._mModels;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getModels is deprecated!");
+		if (!this._oLegacyModels) {
+			var mModels = {},
+			    oUI5Manifest = this.getManifestEntry("sap.ui5"),
+			    mDataSources = oUI5Manifest && oUI5Manifest.models || {};
+			for (var sDataSource in mDataSources) {
+				var oDataSource = mDataSources[sDataSource];
+				mModels[sDataSource] = oDataSource.settings || {};
+				mModels[sDataSource].type = oDataSource.type;
+			}
+			this._oLegacyModels = mModels;
+		}
+		return this._oLegacyModels;
 	};
 	
 	/**
@@ -347,9 +626,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1 
 	 * @experimental Since 1.15.1. Implementation might change. 
+	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
 	 */
 	ComponentMetadata.prototype.getServices = function() {
-		return this._mServices;
+		jQuery.sap.log.warning("Usage of sap.ui.core.ComponentMetadata.protoype.getServices is deprecated!");
+		// legacy API - for the manifest services has a different meaning!
+		return this._oStaticInfo.services || {};
 	};
 	
 	/**
@@ -365,7 +647,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		if (aIncludes && aIncludes.length > 0) {
 			var that = this;
 			var sLibName = this.getLibraryName();
-			jQuery.each(aIncludes, function(i, sFile) {
+			for (var i = 0, l = aIncludes.length; i < l; i++) {
+				var sFile = aIncludes[i];
 				if (sFile.match(/\.css$/i)) {
 					var sCssUrl = sap.ui.resource(sLibName, sFile);
 					jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading CSS: \"" + sCssUrl + "\"");
@@ -381,7 +664,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 						jQuery.sap._requirePath(sPath);
 					}
 				}
-			});
+			}
 		}
 		
 	};
@@ -401,21 +684,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			// load the libraries
 			var aLibraries = oDep.libs;
 			if (aLibraries) {
-				jQuery.each(aLibraries, function(i, sLib) {
+				for (var i = 0, l = aLibraries.length; i < l; i++) {
+					var sLib = aLibraries[i];
 					jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading library: \"" + sLib + "\"");
 					sap.ui.getCore().loadLibrary(sLib);
-				});
+				}
 			}
 			
 			// load the components
 			var aComponents = oDep.components;
 			if (aComponents) {
-				jQuery.each(aComponents, function(i, sName){
+				for (var i = 0, l = aComponents.length; i < l; i++) {
+					var sName = aComponents[i];
 					jQuery.sap.log.info("Component \"" + that.getName() + "\" is loading component: \"" + sName + ".Component\"");
 					sap.ui.component.load({
 						name: sName
 					});
-				});
+				}
 			}
 			
 		}
