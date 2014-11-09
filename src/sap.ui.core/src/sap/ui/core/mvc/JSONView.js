@@ -138,8 +138,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 									oSettings[sKey] = that.createId(oValue);
 									break;
 								case 5: // EVENTS
-									if ( typeof oSettings[sKey] === "string" ) {
-										oSettings[sKey] = [oController[oSettings[sKey]], oController];
+									if ( typeof oValue === "string" ) {
+										oSettings[sKey] = View._resolveEventHandler(oValue, oController);
 									}
 									break;
 								}
