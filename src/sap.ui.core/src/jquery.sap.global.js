@@ -464,8 +464,8 @@
 					jQuery.extend(oCfg, normalize((new Function("return {" + sConfig + "};"))())); // TODO jQuery.parseJSON would be better but imposes unwanted restrictions on valid syntax
 					/*eslint-enable no-new-func */
 				} catch (e) {
-				  // no log yet, how to report this error?
-				  _earlyLog("error", "failed to parse data-sap-ui-config attribute: " + (e.message || e));
+					// no log yet, how to report this error?
+					_earlyLog("error", "failed to parse data-sap-ui-config attribute: " + (e.message || e));
 				}
 			}
 
