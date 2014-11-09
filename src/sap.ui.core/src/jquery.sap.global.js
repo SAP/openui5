@@ -2415,7 +2415,7 @@
 						oData = handleData(data);
 					},
 					error : function(xhr, textStatus, error) {
-						oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors.");
+						oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
 						oError.status = textStatus;
 						oError.error = error;
 						oError.statusCode = xhr.status;

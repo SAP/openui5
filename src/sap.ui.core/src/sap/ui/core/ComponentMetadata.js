@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 		sPackage = sName.replace(/\.\w+?$/, "");
 		if (oStaticInfo._src) {
 			if (oStaticInfo._src == "component.json") {
-				jQuery.sap.log.warning("Usage of declacation \"metadata: 'component.json'\" is deprecated (component " + sName + "). Use \"metadata: 'json'\" instead.");
+				jQuery.sap.log.warning("Usage of declaration \"metadata: 'component.json'\" is deprecated (component " + sName + "). Use \"metadata: 'json'\" instead.");
 			} else if (oStaticInfo._src != "json") {
 				throw new Error("Invalid metadata declaration for component " + sName + ": \"" + oStaticInfo._src + "\"! Use \"metadata: 'json'\" to load metadata from component.json.");
 			}
@@ -64,8 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			jQuery.sap.log.info("The metadata of the component " + sName + " is loaded from file " + sResource + ".");
 			try {
 				var oResponse = jQuery.sap.loadResource(sResource, {
-					dataType: "json",
-					failOnError : false
+					dataType: "json"
 				});
 				jQuery.extend(oStaticInfo, oResponse);
 			} catch (err) {
