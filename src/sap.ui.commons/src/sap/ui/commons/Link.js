@@ -52,12 +52,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 			/**
 			 * 
-			 * Invisible links are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
-			/**
-			 * 
 			 * Unique identifier used for help service.
 			 */
 			helpId : {type : "string", group : "Behavior", defaultValue : ''},
