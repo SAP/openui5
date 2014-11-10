@@ -55,13 +55,17 @@
 			Toolbar : {},
 			Label : {text: "text"}
 		});
-		
+
+
 		strictEqual(oTB.$().length, 1, "Toolbar is in DOM");
 		ok(oTB.$().hasClass("sapMTB"), "Toolbar has correct class name");
 		oTB.setVisible(false);
 		sap.ui.getCore().applyChanges();
-		strictEqual(oTB.$().length, 1, "Toolbar is still in DOM after setting it to invisible");
-		strictEqual(oTB.$().css("display"), "none", "Toolbar should have display none when invisible");
+		$ToolbarPlaceHolder = jQuery.sap.byId(sap.ui.core.RenderPrefixes.Invisible + oTB.getId());
+		strictEqual(oTB.$().length, 0, "Toolbar is no longer in DOM after setting it to invisible");
+		strictEqual($ToolbarPlaceHolder.length, 1, "Toolbar placeholder is in DOM after setting it to invisible");
+		strictEqual($ToolbarPlaceHolder.css("display"), "none", "Toolbar placeholder should have display none when invisible");
+
 		oTB.destroy();
 	});
 	

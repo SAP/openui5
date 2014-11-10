@@ -40,12 +40,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		],
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Sets the visibility of the control.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Defines the width of the control.
 			 * By default the Toolbar is block element, if the the width is not explicitly set, control will simply have its own natural size.

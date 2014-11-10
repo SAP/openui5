@@ -56,13 +56,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 			 * The design of the bar. If set to auto it is dependent on the place, where the bar is placed.
 			 * @since 1.22
 			 */
-			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : sap.m.BarDesign.Auto},
-	
-			/**
-			 * Determines whether the control is visible or not. If set to false, the bar will be rendered invisible.
-			 * @since 1.22
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			design : {type : "sap.m.BarDesign", group : "Appearance", defaultValue : sap.m.BarDesign.Auto}
 		},
 		aggregations : {
 	
