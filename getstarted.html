@@ -103,6 +103,9 @@
    <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.ui.commons"</span><span class="shTag">&gt;
 &lt;/script&gt;</span>
 </pre>
+				<p>The parameters used above determine which resources are loaded apart from the UI5 core. The data-sap-ui-theme parameter e.g. determines which of the available themes the application will be using, and in the data-sap-ui-libs parameter you decide
+				which control libraries you want to use.
+				</p>
 				<p>
 					A simple application looks like this:<br>
 					<span class="smaller">(Note: it uses the "sap.ui.commons" control library. To run it with the reduced mobile package of OpenUI5, use the "sap.m" library instead.)</span>
@@ -134,8 +137,31 @@
     <span class="shTag">&lt;div</span> <span class="shAttr">id</span>=<span class="shString">'content'</span><span class="shTag">&gt;&lt;/div&gt;</span>
 <span class="shTag">&lt;/body&gt;</span>
 <span class="shTag">&lt;/html&gt;</span></pre>
-
-
+				<p>Let's take a closer look at the code above. Basically, we are instantiating a simple control here using these lines:</p>
+				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button({
+	<span class="shAttr">text</span>:<span class="shString">'Press me!'</span>,
+	<span class="shAttr">press</span>: <span class="sh-js-keyword">function</span>() {
+		alert(<span class="shString">"Hello!"</span>)
+	}
+    });</pre>
+				<p>So what exactly are we doing here? We are creating a new instance of a control named Button, which is part of our commons library. 
+				Within the constructor call, we are making use of the JSON notation to pass some initial values to the control right away. In particular, these are:
+				<ul><li>The value for the text displayed on the button and</li>
+				<li>The handler attached to the onPress event, which in this case does nothing more than alerting "Hello" to us when someone clicks the button.</li>
+				</ul>
+				<p>Note that we could have achieved the same output by doing something like this:</p>
+				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button();
+btn.setText(<span class="shString">'Press me!'</span>);
+btn.attachPress(<span class="sh-js-keyword">function</span>() {
+			alert(<span class="shString">"Hello!"</span>);
+		});
+</pre>
+				<p>For all controls in UI5, there are getters and setters for each public attribute as well as attach and detach methods for events.</p>
+				<p>However, this code alone does not display anything on screen yet. To accomplish this, we need one more line from above's example, namely this: </p>
+<pre class="codeblock">
+btn.placeAt(<span class="shString">'content'</span>);
+</pre>
+				<p>This line tells UI5 to render this control inside of the div tag with the id "content" in the HTML code below these lines.</p>
 				<div class="result">
 					<p>
 						This Button is the result:
@@ -146,13 +172,10 @@
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/1347/embed?html,output&height=600px&width=760px">Hello World</a>
+						<a class="jsbin-embed" href="http://jsbin.com/openui5-hello-world/1347/embed?html,output&height=600px&width=1000px">Hello World</a>
 						<script src="http://static.jsbin.com/js/embed.js"></script>
 					</div>
 				</div>
-
-
-
 
 				<div class="resultIE">
 					<p>
@@ -165,7 +188,7 @@
 				Let’s see how we could replace the simple control with a view and find out how to use MVC in UI5.
 				We will start with an XML view which will usually be defined in a file separate from your index page.</p>
 				<p>Here’s the view code:</p>
-				<pre class="codeblock"><span class="shTag">&lt;core:View <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> xmlns</span>=<span class="shString">"sap.ui.commons"</span> 
+				<pre class="codeblock"><span class="shTag">&lt;mvc:View <span class="shAttr">xmlns:core</span>=<span class="shString">"sap.ui.core"</span> xmlns:mvc</span>=<span class="shString">"sap.ui.core.mvc"</span> xmlns</span>=<span class="shString">"sap.ui.commons"</span> 
 		controllerName</span>=<span class="shString">"getStarted"</span> xmlns:html</span>=<span class="shString">"http://www.w3.org/1999/xhtml"</span>&gt;</span>
 	
 	Get started with MVC<span class="shTag">&lthtml:br/<span class="shTag">&gt;</span></span>
@@ -178,7 +201,7 @@
 			<span class="shTag">&lt;/html:tr&gt;</span>
 		<span class="shTag">&lt;/html:table&gt;</span>
 	<span class="shTag">&lt;/Panel&gt;</span>
-<span class="shTag">&lt;/core:View&gt;</span></pre>
+<span class="shTag">&lt;/mvc:View&gt;</span></pre>
 
 				<p>In an application structure, this code would e.g. go into a file named getStarted.view.xml.
 					Let’s take a closer look at the Button control within this view. It does not display a simple text anymore, but instead gets its new value from a model via databinding. With the notation in curly braces, you can reference a particular node in a model. In our example, we will be using a simple JSON model, but we’ll talk more about this in a minute. First, note how the control has a press handler attached – obviously, it is trying to invoke a function called “doSomething”. We will define this function in our controller belonging to this view, and the controller code could look like this:
@@ -227,7 +250,7 @@
 				Next, we are instantiating our view and afterwards place it within a div with the id “content” on our page, using the placeAt method you already know.</p>
 				<p>If you want to see this example in action and start modifying it, check out the following JSBin:<br/>
 					<div class="corset"> <!-- for Ipad -->
-						<a class="jsbin-embed" href="http://jsbin.com/openui5-js-view/6/embed?html,output&height=600px&width=760px">UI5 MVC example with JS view</a>
+						<a class="jsbin-embed" href="http://jsbin.com/openui5-js-view/6/embed?html,output&height=600px&width=1000px">UI5 MVC example with JS view</a>
 						<script src="http://static.jsbin.com/js/embed.js"></script>
 					</div>
 				</p>
@@ -304,7 +327,7 @@ oTable.setModel(oModel);</pre>
 				<p>Now that we know which properties our control has, let’s create the renderer. Each control has a renderer function which defines what is displayed on screen. 
 				The renderer method is responsible for creating the HTML structure that makes up the control. 
 				It is different from the other methods, as it is a static one, so the this keyword is not available. 
-				Instead, a control instance and a <a href="https://sapui5.netweaver.ondemand.com/sdk/docs/api/symbols/sap.ui.core.RenderManager.html" target"_blank">RenderManager</a> instance are given to the method.</p>
+				Instead, a control instance and a <a href="https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.core.RenderManager.html" target"_blank">RenderManager</a> instance are given to the method.</p>
 					<pre class="codeblock">	// the part creating the HTML:
 	 <span class="shAttr">renderer</span> :  <span class="sh-js-keyword">function</span>(oRm, oControl) { // static function, so use the given "oControl" instance instead of "this"
 		oRm.write(<span class="shString">"&lt;div"</span>); 
