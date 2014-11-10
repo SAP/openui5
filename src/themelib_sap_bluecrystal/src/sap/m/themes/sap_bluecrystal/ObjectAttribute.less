@@ -78,6 +78,38 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	line-height: 1.5rem;
-	max-height: 1.5rem;
+	max-height: 1rem;
+}
+
+/*=========================================== */
+/* Custom design for Static Object Header     */
+/*=========================================== */
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeDiv {
+	max-height: 2rem;
+	overflow: hidden;
+}
+
+.sapMOH .sapMOHAttr .sapMObjectAttributeTitle,
+.sapMOH .sapMOHAttr .sapMObjectAttributeText,
+.sapMOH .sapMOHAttr .sapMObjectAttributeColon {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
+	color: @sapUiLink;
+	cursor: pointer;
+}
+
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:active,
+.sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText:hover {
+	text-decoration: underline;
+}
+
+.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: -1px;
 }

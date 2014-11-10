@@ -105,31 +105,27 @@
 
 	module("Attributes Wrapping");
 	
-	asyncTest("Attributes Wrapping in ObjectHeader", function() {
+	test("Attributes Wrapping in ObjectHeader", function() {
 		
 		// arrange
-		var oAttr = new sap.m.ObjectAttribute("oOA1", {text:"ObjectHeader wrapping test"}),
+		var oAttr = new sap.m.ObjectAttribute("oOA1", {title: "Test",
+			text:"ObjectHeader wrapping"}),
 			oObjectHeader = new sap.m.ObjectHeader("oOH1", {
 				attributes : [oAttr]
-			}),
-			hasNativeLineClamp = (typeof document.documentElement.style.webkitLineClamp != "undefined"); 
+			});
 			
 		oObjectHeader.placeAt("objectAtrributesWrap");
 		
 		sap.ui.getCore().applyChanges()
 		
 		// assertions
-		ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextMaxLine"), "sapMTextMaxLine class is present.");
-		if(hasNativeLineClamp) {
-			ok(oAttr.mAggregations._textControl.$("inner").hasClass("sapMTextLineClamp"), "sapMTextLineClamp class is present.");
-			equal(oAttr.mAggregations._textControl.getMaxLines(),2,"Max lines should be 2");
-		}
+		ok(oAttr.$().hasClass("sapMObjectAttributeDiv"), "sapMObjectAttributeDiv class is present.");
+		ok(oAttr.$("title").hasClass("sapMObjectAttributeTitle"), "The title span has class sapMObjectAttributeTitle.");
+		ok(oAttr.$("colon").hasClass("sapMObjectAttributeColon"), "The colon span has class sapMObjectAttributeColon.");
+		ok(oAttr.$("text").hasClass("sapMObjectAttributeText"), "The text span has class sapMObjectAttributeText.");
+		
 		//Cleanup
 		oObjectHeader.destroy(); 
-		
-		setTimeout( function() {
-			start();
-		}, 500);
 	});
 	
 	test("Attributes Wrapping in Responsive ObjectHeader", function() {
