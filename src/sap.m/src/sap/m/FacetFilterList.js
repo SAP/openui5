@@ -34,6 +34,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 * The title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to Simple. It is also displayed as a list item in the facet page of the dialog.
 			 */
 			title : {type : "string", group : "Appearance", defaultValue : null},
+			/**
+             * If true, item text wraps when it is too long.
+             */
+             wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
 			 * Specifies whether multiple or single selection is used.
