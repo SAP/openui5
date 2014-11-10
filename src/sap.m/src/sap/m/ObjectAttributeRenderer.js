@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("title", sTooltip);
 			}
 			oRm.write(">");
-			if (oParent && (oParent instanceof sap.m.ObjectHeader && oParent.getResponsive())) {
+			if (oParent && (oParent instanceof sap.m.ObjectHeader)) {
 				if (oOA.getProperty("title")) {
 					oRm.write("<span id=\"" + oOA.getId() + "-title\"");
 					oRm.addClass("sapMObjectAttributeTitle");
