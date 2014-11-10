@@ -1671,7 +1671,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		};
 		var handleError = function(oError) {
 			if (fnError) {
-				fnError(oError);
+				fnError(that._handleError(oError));
 			}
 			oEventInfo = that._createEventInfo(oRequest, oError);
 	
@@ -2586,7 +2586,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 *
 	 * @param {string} sPath A string containing the path to the data that should be removed.
 	 *		The path is concatenated to the sServiceUrl which was specified in the model constructor.
-	 * @param {object} [mParameters] Optional, can contain the following attributes: oContext, fnSuccess, fnError, sETag:
+	 * @param {object} [mParameters] Optional, can contain the following attributes:
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success]  a callback function which is called when the data has been successfully retrieved.
 	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
