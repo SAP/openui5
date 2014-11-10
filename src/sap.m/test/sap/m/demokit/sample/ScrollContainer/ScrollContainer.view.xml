@@ -8,7 +8,8 @@
 		height="100%"
 		width="100%"
 		horizontal="true"
-		vertical="true" >
+		vertical="true"
+		focusable="true">
 		<Image
 			src="test-resources/sap/ui/demokit/explored/img/large_HT-6100.jpg"
 			width="{/width}" />
