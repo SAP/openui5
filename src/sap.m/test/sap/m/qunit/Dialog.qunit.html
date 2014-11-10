@@ -698,7 +698,22 @@
 				// Clean up
 				oDialog.destroy();
 			});
-			
+
+			test("No phone special CSS class when runs on desktop", function() {
+				var oSystem = {
+					desktop: true,
+					tablet: false,
+					phone: false
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oDialog = new sap.m.Dialog();
+				oDialog.open();
+				ok(!oDialog.$().hasClass("sapMDialogPhone"), "Dialog shouldn't have phone CSS class on desktop");
+
+				oDialog.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
