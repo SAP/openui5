@@ -1740,7 +1740,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 			// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 			sGroupId = null;
-			this.mServiceLength = this.mLength[sGroupId] = 1;
+			this.mServiceLength[sGroupId] = this.mLength[sGroupId] = 1;
 			this.mServiceFinalLength[sGroupId] = true;
 			this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 			this.bNeedsUpdate = true;
