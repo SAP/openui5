@@ -1096,9 +1096,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype._getFocusedListItem = function() {
-		var jFocusedElement = jQuery(':focus');
-		var oFocusedElement = sap.ui.getCore().byId(jFocusedElement.attr('id'));
-		if (this.getList() && oFocusedElement
+		if (!document.activeElement) {
+			return null;
+		}
+		var oFocusedElement = sap.ui.getCore().byId(document.activeElement.id);
+		if (this.getList()
 				&& jQuery.sap.containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
 			return oFocusedElement;
 		}
