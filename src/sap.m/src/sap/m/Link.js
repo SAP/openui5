@@ -101,7 +101,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Also trigger link activation when space is pressed on the focused control
 	 */
 	Link.prototype.onsapspace = function(oEvent) {
-		Link.prototype._handlePress.apply(this, arguments);
+		this._handlePress(oEvent); // this calls any JS event handlers
+		// _handlePress() checks the return value of the event handler and prevents default if required or of the Link is disabled
+		if (this.getHref() && !oEvent.isDefaultPrevented()) { 
+			// Normal browser link, the browser does the job. According to the keyboard spec, Space should do the same as Enter/Click.
+			// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
+			
+			// first disarm the Space key event
+			oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
+			oEvent.setMarked();
+			
+			// then create the click event
+			var oClickEvent = document.createEvent('MouseEvents');
+			oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
+			this.getDomRef().dispatchEvent(oClickEvent);
+		}
 	};
 	
 	
