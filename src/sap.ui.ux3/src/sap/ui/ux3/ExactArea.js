@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Toolbar', 'sap/ui/core/Contr
 			/**
 			 * Specifies whether the tool bar shall be visible
 			 */
-			toolbarVisible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Specifies whether the control shall be visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			toolbarVisible : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		defaultAggregation : "content",
 		aggregations : {
