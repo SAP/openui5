@@ -105,20 +105,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	EnabledPropagator.call(InputBase.prototype);
-	IconPool.insertFontFaceStyle();
-	
-	/* Android browser does not scroll a focused input into the view correctly */
-	if (sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
-		jQuery(window).on("resize", function(){
-			var active = document.activeElement;
-			if (active.tagName == "INPUT" && active.classList.contains("sapMInputBaseInner")) {
-				window.setTimeout(function(){
-					active.scrollIntoViewIfNeeded();
-				}, 0);
-			}
-		});
-	}
-	
+	IconPool.insertFontFaceStyle();	
 	
 	/* =========================================================== */
 	/* Private methods and properties                              */
