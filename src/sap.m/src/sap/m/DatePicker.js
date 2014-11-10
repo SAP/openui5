@@ -581,10 +581,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 				// compare Dates because value can be the same if only 2 digits for year 
 				var sValue = this.getValue();
 				this.fireChangeEvent(sValue, {valid: true});
-				this._curpos = this._$input.val().length;
-				this._$input.cursorPos(this._curpos);
-			}
-	
+				if (this.getDomRef()) { // as control could be destroyed during update binding
+					this._curpos = this._$input.val().length;
+					this._$input.cursorPos(this._curpos);
+				}
+			}	
 		};
 	
 		function _cancel(oEvent) {
