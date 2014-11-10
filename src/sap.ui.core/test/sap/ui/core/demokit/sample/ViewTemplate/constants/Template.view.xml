@@ -1,0 +1,47 @@
+<!-- Copyright (c) 2014 SAP SE, All Rights Reserved -->
+<mvc:View
+	xmlns="sap.m"
+	xmlns:layout="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+	isTemplate="true">
+	<layout:VerticalLayout>
+		<layout:content>
+			<template:with path="meta>/schemas/Model1">
+				<Label text="edm:Bool" />
+				<Text text="{path: 'meta>@A.Bool', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Label text="edm:Decimal" />
+				<Text text="{path: 'meta>@A.Decimal', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Label text="edm:Float" />
+				<Text text="{path: 'meta>@A.Float', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#Element', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Label text="edm:Int" />
+				<Text text="{path: 'meta>@An.Int', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Label text="edm:String" />
+				<Text text="{path: 'meta>@A.String', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.String#ToBeEscaped', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			</template:with>
+
+			<Label text="edm:Guid" />
+			<Label design="Bold" text="TODO!" />
+
+			<template:with path="meta>/schemas/Y/annotations/6/@Y.Something">
+				<Label text="edm:Duration" />
+				<Text text="{path: 'meta>SomeTime', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>MoreTime', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			</template:with>
+
+			<!--edm:Date, edm:DateTimeOffset, edm:TimeOfDay; edm:EnumMember -->
+			<template:with path="meta>/definitions/Model1.Weird">
+				<template:repeat list="{meta>@Some.Term#SomeQualifier}">
+					<template:if test="{meta>@odata.type}">
+						<Label text="{meta>@odata.type}" />
+						<Text text="{path: 'meta>', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+					</template:if>
+				</template:repeat>
+				<Label text="edm:Binary" />
+				<Text text="{path: 'meta>@Some.Binary', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+			</template:with>
+		</layout:content>
+	</layout:VerticalLayout>
+</mvc:View>

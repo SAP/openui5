@@ -1,0 +1,14 @@
+{
+	"config": {
+		"sample": {
+			"files": [
+				"Component.js",
+				"Template.view.xml"
+			]
+		}
+	},
+	"dependencies": [],
+	"description": "Component for XMLView template sample with constant expressions",
+	"name": "sap.ui.core.demokit.sample.ViewTemplate.constants",
+	"version": "1.25.1-SNAPSHOT"
+}
