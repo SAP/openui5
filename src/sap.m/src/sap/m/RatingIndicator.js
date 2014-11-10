@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconSelected = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
 			this.setProperty("iconSelected", sURI, true);
 			return;
 		}
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconUnselected = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
 			this.setProperty("iconUnselected", sURI, true);
 			return;
 		}
@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	RatingIndicator.prototype.setIconHovered = function (sURI) {
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === true) {
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
 			this.setProperty("iconHovered", sURI, true);
 			return;
 		}
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oImage = null,
 			sURI = null;
 
-		if (document.querySelector("html").classList.contains("sapUiTheme-sap_hcb") === false) {
+		if (sap.ui.getCore().getConfiguration().getTheme() !== "sap_hcb") {
 			// preset the variables based on the state requested
 			switch (iState) {
 				case 1: // unselected
