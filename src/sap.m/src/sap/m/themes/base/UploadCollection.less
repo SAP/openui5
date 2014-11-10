@@ -6,8 +6,13 @@
 
 
 /* ************************************************************************************* */
-/* Common Styles                                                                         */
+/* Cozy Form Factor                                                                      */
 /* ************************************************************************************* */
+/* Align Upload Button in Toolbar */
+.sapMUC .sapMIBar > .sapMBarChild:last-child {
+	margin-right: 		0rem;
+}
+
 /* List Header */
 .sapMTB.sapMUCListHeader {
 	width:				100%;
@@ -39,7 +44,7 @@
 	padding-bottom: 		0.9375rem;	// border-bottom: 0.0625
 	border-bottom-width: 	0.0625rem;
 	border-bottom-style: 	solid;
-	border-bottom-color: 	transparent; // this is the central switch for having inner separators or not
+//	border-bottom-color: 	transparent; // this is the central switch for having inner separators or not
 //	border-bottom-color: 	@sapUiMediumBorder;
 }
 
@@ -53,7 +58,7 @@
 }
 
 /* Item Icon */
-span[id*="ia_iconHL"] {
+.sapMUCItemIcon {
 	font-family:		SAP-icons;
 	font-size:			2.5rem;
 //	color: 				@sapUiElement;
@@ -63,31 +68,9 @@ span[id*="ia_iconHL"] {
 	height:				3rem;
 }
 
-.sapMUC .sapUiVlt {
-	margin:				1rem 0rem 1rem 0rem;
-	overflow:			visible;
-}
-
-
-/* Button Horizontal Layout  */
-.sapMUCBtnHL {
-	position:			absolute;
-	right:				0rem;
-	padding:			1rem 1rem 1rem 0rem;
-	display:			flex;
-}
-
-/* Buttons */
-.sapMBtn.sapMUCEditBtn,
-.sapMBtn.sapMUCDeleteBtn,
-.sapMBtn.sapMUCCancelBtn,
-.sapMBtn.sapMUCOkBtn {
-	margin-left:		0.125rem;
-}
-
 /* Text: Filename */
-.sapMUCFileName.sapMLnk {
-	padding-top:		0.125rem;
+.sapMUC .sapMUCFileName.sapMLnk {
+	margin-top:			0.125rem;
 
 	font-family:		@sapUiFontFamily;
 //	font-size:			@sapMFontLargeSize;
@@ -98,11 +81,15 @@ span[id*="ia_iconHL"] {
 	vertical-align:		top;
 }
 
+.sapMUC .sapMUCItem .sapMUCFileName.sapMLnk:focus {
+	outline-offset:		0.0625rem;
+}
+
 /* Text: Description (/Progress) */
 .sapMUCDescriptionHL .sapMLabel{
 	height:				1rem;
-	padding-top:		0.625rem;
-	padding-bottom:		0.125rem;
+	margin-top:			0.625rem;
+	margin-bottom:		0.125rem;
 
 	font-family: 		@sapUiFontFamily;
 //	font-size:			@sapMFontMediumSize;
@@ -114,10 +101,30 @@ span[id*="ia_iconHL"] {
 	vertical-align:		bottom;
 }
 
-div[id*="ta_textVL"] {
-	height:				3rem;
+.sapMUC .sapUiVlt {
+	margin:				1rem 0rem 1rem 0rem;
+	overflow:			visible;
 }
 
+/* Button Horizontal Layout  */
+.sapMUCBtnHL {
+	position:			absolute;
+	right:				0rem;
+	margin:				1rem 1rem 1rem 0rem;
+	display:			flex;
+}
+
+/* Buttons */
+.sapMBtn.sapMUCEditBtn,
+.sapMBtn.sapMUCDeleteBtn,
+.sapMBtn.sapMUCCancelBtn,
+.sapMBtn.sapMUCOkBtn {
+	margin-left:		0.125rem;
+}
+
+.sapMUCText {
+	height:				3rem;
+}
 
 .sapMUCItemHL > .sapUiHLayoutChildWrapper {
 	height:				3rem;
@@ -140,13 +147,6 @@ div[id*="ta_textVL"] {
 	width:				50%;
 }
 
-/* Text: File Extension */
-.sapMUCEditHL .sapMUCExtension {
-	padding-left:		0.5rem;
-	line-height:		3rem;
-	white-space: 		nowrap;
-}
-
 /* Busy Indicator */
 .sapMBusyIndicator.sapMUCloadingIcon {
 	padding-top:		1.25rem;
@@ -162,40 +162,20 @@ div[id*="ta_textVL"] {
 
 
 /* ************************************************************************************* */
-/* Compact Mode                                                                          */
+/* Borderless Design (Cozy Form Factor)                                                  */
 /* ************************************************************************************* */
-.sapUiSizeCompact {
+.sapMUC .sapMListShowSeparatorsNone {
 	.sapMLIB.sapMUCListSingleItem,
 	.sapMLIB.sapMUCListFirstItem,
 	.sapMLIB.sapMUCListLastItem,
 	.sapMLIB.sapMUCListItem {
+		border-bottom-color: 	transparent; // this is the central switch for having inner separators or not
 		padding-top:		0.5rem;
-	}
-
-	.sapMUCEditHL {
-		margin-top:			0.5rem;
-	}
-
-	.sapMUCBtnHL {
-		margin-top:			1rem;
-	}
-
-	.sapMUCEditMode .sapMUCBtnHL {
-		margin:				0rem;
-	}
-
-	.sapMUCExtension {
-		line-height:		2rem;
+		padding-bottom:		0.4375rem;	// border-bottom: 0.0625
 	}
 
 	.sapMUCFileName.sapMLnk {
-		padding-top:		0.25rem;
-//		font-size:			@sapMFontMediumSize;
-	}
-
-	.sapMUCDescriptionHL .sapMLabel{
-		padding-top:		0.5rem;
-		padding-bottom:		0.25rem;
+		margin-top:			0.125rem;  //compact 0.25rem
 	}
 
 	.sapMBusyIndicator.sapMUCloadingIcon {
@@ -203,12 +183,44 @@ div[id*="ta_textVL"] {
 		padding-bottom:		0.75rem;
 	}
 
-/* ----------------------------------*/
-/* Single List Item in Compact Mode  */
-/* ----------------------------------*/
+
+	/* ---------------------------------------*/
+	/* General List Item  (Cozy Form Factor)  */
+	/* ---------------------------------------*/
+	.sapMLIB.sapMUCListItem {
+		height:					4rem;
+
+		.sapMUCItemHL {
+			height:				4rem;
+		}
+
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
+		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
+			margin-top:			0.5rem;
+			margin-bottom:		0.5rem;
+		}
+
+		.sapMUCText {
+			margin:				0.5rem 0rem 0.5rem 0rem;
+		}
+
+		.sapMUCBtnHL {
+			margin:			0.5rem 1rem 0.5rem 0rem;
+		}
+
+		.sapMUCEditMode .sapMUCBtnHL {
+			margin:			0.5rem 1rem 0.5rem 0rem;
+		}
+
+	}
+
+	/* --------------------------------------*/
+	/* Single List Item  (Cozy Form Factor)  */
+	/* --------------------------------------*/
 	.sapMLIB.sapMUCListSingleItem {
 		height:					5rem;
 		padding-top:			1rem;
+		padding-bottom: 		0.9375rem;	// border-bottom: 0.0625;
 
 		.sapMUCItemHL {
 			height:				5rem;
@@ -221,12 +233,11 @@ div[id*="ta_textVL"] {
 		}
 
 		.sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
+			margin:			1rem 1rem 1rem 0rem;
 		}
 
 		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			0.5rem;
-			padding:			1rem 1rem 1rem 0rem;
+			margin:			1rem 1rem 1rem 0rem;
 		}
 
 		.sapMBusyIndicator.sapMUCloadingIcon {
@@ -235,16 +246,15 @@ div[id*="ta_textVL"] {
 		}
 	}
 
-	/* ----------------------------------*/
-	/* First List Item in Compact Mode   */
-	/* ----------------------------------*/
+	/* -------------------------------------*/
+	/* First List Item  (Cozy Form Factor)  */
+	/* -------------------------------------*/
 	.sapMLIB.sapMUCListFirstItem {
 		height:				4.5rem;
 		padding-top:		1rem;
-		padding-bottom:		0.4375rem;	// border-bottom: 0.0625
 
 		>.sapMLIBContent.sapMLIBContentMargin {
-			margin-top:			-0.5rem;	// no idea why this is needed to align
+			margin-top:			-0.5rem;	//	no idea why this is needed to align
 		}
 
 		.sapMUCItemHL {
@@ -252,12 +262,7 @@ div[id*="ta_textVL"] {
 		}
 
 		.sapMUCBtnHL {
-			padding:			1rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			.5625rem;
-			padding:			1rem 1rem 1rem 0rem;
+			margin:				1rem 1rem 0.5rem 0rem;
 		}
 
 		.sapMUCItemHL > .sapUiHLayoutChildWrapper {
@@ -271,13 +276,7 @@ div[id*="ta_textVL"] {
 			margin-bottom:		0.5rem
 		}
 
-		.sapMUCEditMode .sapMUCBtnHL {
-			margin-top:			1rem;
-			margin-bottom:		0.5rem;
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		div[id*="ta_textVL"] {
+		.sapMUCText {
 			margin:				1rem 0rem 0.5rem 0rem;
 		}
 
@@ -286,12 +285,12 @@ div[id*="ta_textVL"] {
 		}
 	}
 
-	/* ----------------------------------*/
-	/* Last List Item in Compact Mode    */
-	/* ----------------------------------*/
+	/* ------------------------------------*/
+	/* Last List Item  (Cozy Form Factor)  */
+	/* ------------------------------------*/
 	.sapMLIB.sapMUCListLastItem {
 		height:				4.5rem;
-		padding-top:		0.5rem;
+		padding-bottom: 	0.9375rem;	// border-bottom: 0.0625;
 
 		>.sapMLIBContent.sapMLIBContentMargin {
 			margin-top:			0.5rem;	//	no idea why this is needed to align
@@ -307,55 +306,144 @@ div[id*="ta_textVL"] {
 			margin-bottom:		1rem;
 		}
 
-		div[id*="ta_textVL"] {
+		.sapMUCText {
 			margin: 			0.5rem 0rem 1rem 0rem;
 		}
 
 		.sapMUCBtnHL {
-			margin-bottom:		0.5rem;
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
-		}
-	}
-
-	/* ----------------------------------*/
-	/* General List Item in Compact Mode */
-	/* ----------------------------------*/
-	.sapMLIB.sapMUCListItem {
-		height:					4rem;
-		padding-top:			0.5rem;
-		padding-bottom:			0.4375rem;	// border-bottom: 0.0625
-
-		.sapMUCItemHL {
-			height:				4rem;
-		}
-
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemIcon,
-		.sapMUCItemHL > .sapUiHLayoutChildWrapper > .sapMUCItemImage {
-			margin-top:			0.5rem;
-			margin-bottom:		0.5rem;
-		}
-
-		div[id*="ta_textVL"] {
-			margin:				0.5rem 0rem 0.5rem 0rem;
-		}
-
-		.sapMUCBtnHL {
-			padding:			0.5rem 1rem 0.5rem 0rem;
-		}
-
-		.sapMUCEditMode .sapMUCBtnHL {
-			padding:			1rem 1rem 1rem 0rem;
+			margin	:			0.5rem 1rem 1rem 0rem;
 		}
 	}
 }
 
 
+
 /* ************************************************************************************* */
-/* local fixes: should be done by used simple controls
+/* Compact Form Factor                                                                   */
+/* ************************************************************************************* */
+.sapUiSizeCompact .sapMUC {
+	.sapMUC .sapMUCFileName.sapMLnk {
+	margin-top:			0.125rem;
+//	font-size:			@sapMFontMediumSize;
+	}
+
+	.sapMUCDescriptionHL .sapMLabel{
+		margin-top:			0.5rem;
+		margin-bottom:		0.25rem;
+	}
+
+	/* Button Horizontal Layout  */
+	.sapMUCBtnHL {
+		margin:				2rem 1rem 1rem 0rem;
+	}
+
+	.sapMUCEditHL {
+		height:				3rem;
+	}
+
+	.sapMUCEditBox {
+		height:				3rem;
+		padding-top:		0.6875rem;
+		padding-bottom:		0.6875rem;
+	}
+
+	.sapMUCEditMode .sapMUCBtnHL {
+		margin	:			1.5rem 1rem 1.5rem 0rem;
+	}
+
+
+	/* ********************************************************************************* */
+	/* Borderless Design (Compact Form Factor)                                           */
+	/* ********************************************************************************* */
+	.sapMListShowSeparatorsNone {
+
+		.sapMUCFileName.sapMLnk {
+			margin-top:			0.25rem;
+//			font-size:			@sapMFontLargeSize;
+		}
+
+		.sapMBusyIndicator.sapMUCloadingIcon {
+			padding-top:		0.75rem;
+			padding-bottom:		0.75rem;
+		}
+
+		.sapMUCBtnHL {
+			margin:			1.5rem 1rem 0.5rem 0rem;
+		}
+
+
+		/* ------------------------------------------*/
+		/* General List Item  (Compact Form Factor)  */
+		/* ------------------------------------------*/
+		.sapMLIB.sapMUCListItem {
+			padding-top:		0.5rem;
+			padding-bottom:		0.4375rem;	// border-bottom: 0.0625
+
+			.sapMUCBtnHL {
+				margin:			1.5rem 1rem 0.5rem 0rem;
+			}
+
+			.sapMUCEditMode .sapMUCBtnHL {
+				margin:			1rem 1rem 1rem 0rem;
+			}
+		}
+
+		/* -----------------------------------------*/
+		/* Single List Item  (Compact Form Factor)  */
+		/* -----------------------------------------*/
+		.sapMLIB.sapMUCListSingleItem {
+			padding-top:		1rem;
+			padding-bottom: 	0.9375rem;	// border-bottom: 0.0625;
+
+			.sapMUCBtnHL {
+				margin:			2rem 1rem 1rem 0rem;
+			}
+
+			.sapMUCEditMode .sapMUCBtnHL {
+				margin:			1.5rem 1rem 1.5rem 0rem;
+			}
+		}
+
+		/* ----------------------------------------*/
+		/* First List Item  (Compact Form Factor)  */
+		/* ----------------------------------------*/
+		.sapMLIB.sapMUCListFirstItem {
+			padding-top:		1rem;
+			padding-bottom:		0.4375rem;	// border-bottom: 0.0625
+
+			.sapMUCBtnHL {
+				margin:			2rem 1rem 0.5rem 0rem;
+			}
+
+			.sapMUCEditMode .sapMUCBtnHL {
+				margin:			1.5rem 1rem 1rem 0rem;
+			}
+
+		}
+
+		/* ---------------------------------------*/
+		/* Last List Item  (Compact Form Factor)  */
+		/* ---------------------------------------*/
+		.sapMLIB.sapMUCListLastItem {
+			padding-top:		0.5rem;
+			padding-bottom: 	0.9375rem;	// border-bottom: 0.0625;
+
+			.sapMUCBtnHL {
+				margin:			1.5rem 1rem 1rem 0rem;
+			}
+
+			.sapMUCEditMode .sapMUCBtnHL {
+				margin:			1rem 1rem 1.5rem 0rem;
+			}
+		}
+	}
+}
+
+
+
+
+/* ************************************************************************************* */
+/* local fixes: should be done by used simple controls                                   */
 /* ************************************************************************************* */
 .sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
 	padding-left:		0rem;
