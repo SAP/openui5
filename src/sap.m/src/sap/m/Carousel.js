@@ -50,11 +50,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			loop : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Shows or hides the carousel.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
 			 * Show or hide carousel's page indicator.
 			 */
 			showPageIndicator : {type : "boolean", group : "Appearance", defaultValue : true},
