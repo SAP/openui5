@@ -1517,6 +1517,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name AnalyticalBinding.prototype._getQueryODataRequestOptions
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest) {
+		
+		try {
+			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
+		} catch(e){
+			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
+			return undefined;
+		}
+		
 		var sSelect = oAnalyticalQueryRequest.getURIQueryOptionValue("$select");
 		var sFilter = oAnalyticalQueryRequest.getURIQueryOptionValue("$filter");
 		var sOrderBy = oAnalyticalQueryRequest.getURIQueryOptionValue("$orderby");
@@ -1731,6 +1739,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// determine relevant request query options  
 		var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntitySet();
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
+		
+		if (!aParam) {
+			// parameters could not be determined correctly
+			return; 
+		}
 	
 		var that = this;
 	
@@ -3638,6 +3651,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// determine the entityset path incl. the required params (sort, filter, ...)
 		var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntitySet();
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
+		
+		if (!aParam) {
+			// parameters could not be determined correctly
+			return undefined; 
+		}
 		
 		// search and remove the $select
 		for (var j = 0, l = aParam.length; j < l; j++) {
