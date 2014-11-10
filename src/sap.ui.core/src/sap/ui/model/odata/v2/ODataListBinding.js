@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		// check if metadata are already available
 		if (this.oModel.getServiceMetadata()) {
 			// If rows are missing send a request
-			if (oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
+			if (!this.bPendingRequest && oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
 				this.loadData(oSection.startIndex, oSection.length);
 				aContexts.dataRequested = true;
 			}
@@ -582,7 +582,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (sPath) {
 			// execute the request and use the metadata if available
 			sPath = sPath + "/$count";
-			this.bPendingRequest = true;
 			this.mRequestHandles[sPath] = this.oModel.read(sPath,{withCredentials: this.oModel.bWithCredentials, batchGroupId: this.sBatchGroupId, urlParameters:aParams, success: _handleSuccess, error: _handleError}); //;, undefined, undefined, this.oModel.getServiceMetadata());
 		}
 	};
