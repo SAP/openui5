@@ -21,12 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oTable an object representation of the control that should be rendered
 	 */
 	TableRenderer.render = function(rm, oTable) {
-	
-		// return immediately if control is invisible
-		if (!oTable.getVisible()) {
-			return;
-		}
-		
 		// create the rows of the table 
 		// (here we could think about a swith to allow the programmatic usage of the table)
 		oTable._createRows();
