@@ -5,9 +5,9 @@ module.exports = function(grunt, config) {
 			livereload: true
 		},
 
-		css: {
+		styles: {
 			files: config.libraries.map(function(library) {
-				return library.path + '/src/**/themes/*/*.{css,less}';
+				return library.path + '/src/**/themes/*/*.less';
 			})
 		},
 
