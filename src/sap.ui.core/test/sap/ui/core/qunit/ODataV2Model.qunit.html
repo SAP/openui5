@@ -830,12 +830,15 @@
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
-			bUseBatch: false
+			bUseBatch: false,
+			refreshAfterChange: false
 		});
 
 		var oBinding = oModel.bindList("/Categories").initialize();
+		oModel.setDeferredBatchGroups(["myId"]);
 		var handler = function() { // delay the following test
-			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"}});
+			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"},
+				batchGroupId : "myId"});
 			ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
 			ok(oEntry, "entry check");
@@ -844,14 +847,16 @@
 			equal(oEntry.CategoryID, 99, "category ID check");
 			equal(oEntry.Description, "Food Desc", "category ID check");
 			
-			ok(oModel.mDeferredRequests['undefined'].changes['undefined'].length == 1, "queue check");
+			//oModel.setProperty("CategoryName", "test",oContext);
+			
+			ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
 			ok(oModel.mContexts[oContext.getPath()], "context check");
 			equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
-			// TODO: implement deleteCreatedEntry 
-			//oModel.deleteCreatedEntry(oContext);
-			//equal(oModel.oRequestQueue[oContext.getPath().substr(1)], undefined, "queue check");
-			//equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
-			//equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
+			 
+			oModel.deleteCreatedEntry(oContext);
+			equal(oModel.mDeferredRequests['myId'].changes['undefined'][0].request._aborted, true, "queue check");
+			equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
+			equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 			
 			// check default values
 			oContext = oModel.createEntry("Categories");
