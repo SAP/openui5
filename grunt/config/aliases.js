@@ -12,7 +12,13 @@ module.exports = function(grunt, config) {
 			if (!mode || (mode !== 'src' && mode !== 'target')) {
 				mode = 'src';
 			}
-			grunt.task.run(['openui5_connect:' + mode]);
+			var taskName = 'openui5_connect:' + mode;
+			if (grunt.option('watch') && mode === 'src') {
+				grunt.task.run([ taskName, 'watch']);
+			} else {
+				grunt.task.run(taskName + ':keepalive');
+			}
+
 		},
 
 		// Lint task
@@ -40,6 +46,8 @@ module.exports = function(grunt, config) {
 
 			// listen to the connect server startup
 			grunt.event.on('connect.*.listening', function(hostname, port) {
+
+				// 0.0.0.0 does not work in windows
 				if (hostname === '0.0.0.0') {
 					hostname = 'localhost';
 				}
@@ -47,24 +55,13 @@ module.exports = function(grunt, config) {
 				// set baseUrl (using hostname / port from connect task)
 				grunt.config(['selenium_qunit', 'options', 'baseUrl'], 'http://' + hostname + ':' + port);
 
-				// define the contextpath
-				grunt.config(['selenium_qunit', 'run', 'options', 'contextPath'], '/' + config.testsuite.name);
-
 				// run selenium task
 				grunt.task.run(['selenium_qunit:run']);
 			});
 
-			// TODO: test:target mode should also work!!!
-
-			// dynamic port
-			grunt.config(['openui5_connect', mode, 'options', 'port'], 0);
-
-			// disable keepalive for server
-			grunt.config(['openui5_connect', mode, 'options', 'keepalive'], false);
-
 			// cleanup and start connect server
 			grunt.task.run([
-				'clean:target.surefire-reports',
+				'clean:surefire-reports',
 				'openui5_connect:' + mode
 			]);
 		},
