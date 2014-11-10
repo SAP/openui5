@@ -51,11 +51,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Invisible buttons are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-
-			/**
 			 * Icon to be displayed as graphical element within the button. This can be an image or an icon from the icon font.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
