@@ -30,12 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Indicates if the object attribute is visible. An invisible object attribute is not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * The object attribute title.
 			 */
