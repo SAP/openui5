@@ -6,7 +6,7 @@
 
 
 /* ************************************************************************************* */
-/* Common Styles                                                                         */
+/* Cozy Form Factor                                                                      */
 /* ************************************************************************************* */
 /* List Header */
 .sapMTB.sapMUCListHeader {
@@ -27,7 +27,7 @@
 }
 
 /* Item Icon */
-span[id*="ia_iconHL"] {
+.sapMUCItemIcon {
 	color:					@sapHCStandardFG;
 }
 
@@ -52,11 +52,11 @@ span[id*="ia_iconHL"] {
 }
 
 /* ************************************************************************************* */
-/* Compact Mode                                                                          */
+/* Borderless Design (Cozy Form Factor)                                                  */
 /* ************************************************************************************* */
-.sapUiSizeCompact {
+.sapMUC .sapMListShowSeparatorsNone {
 	.sapMUCFileName.sapMLnk {
-		font-size:			@sapMFontMediumSize;
+		font-size:			@sapMFontLargeSize;
 	}
 
 	/* ----------------------------------*/
@@ -66,6 +66,21 @@ span[id*="ia_iconHL"] {
 		padding-bottom:		1rem;
 	}
 }
+
+
+
+/* ************************************************************************************* */
+/* Compact Form Factor                                                                   */
+/* ************************************************************************************* */
+.sapUiSizeCompact .sapMUC {
+	/* Text: Filename */
+	.sapMUCFileName.sapMLnk {
+	margin-top:			0.25rem;
+	font-size:			@sapMFontMediumSize;
+	}
+}
+
+
 
 
 /* ************************************************************************************* */

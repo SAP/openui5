@@ -69,6 +69,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			sameFilenameAllowed : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
+			 * Defines whether separators are shown between list items.
+			 */
+			showSeparators : {type : "sap.m.ListSeparators", group : "Appearance", defaultValue : sap.m.ListSeparators.None},
+
+			/**
 			 * This property enables an upload of a file.
 			 */
 			uploadEnabled : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -78,17 +83,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			 */
 			uploadUrl : {type : "string", group : "Data", defaultValue : "../../../upload"}
 		},
+		defaultAggregation : "items",
 		aggregations : {
 
 			/**
 			 * Uploaded items.
 			 */
-			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item"}, 
+			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item"},
 
 			/**
 			 * The header parameters for the FileUploader which are only submitted with XHR requests. Header parameters are not supported by Internet Explorer 8 and 9.
 			 */
-			headerParameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "headerParameter"}, 
+			headerParameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "headerParameter"},
 
 			/**
 			 * The parameters for the FileUploader which are rendered as a hidden input field.
@@ -232,8 +238,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	UploadCollection.prototype.init = function() {
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		sap.m.UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._oList = new sap.m.List(this.getId() + "-list", {
-		});
+		this._oList = new sap.m.List(this.getId() + "-list", {});
 		this._oList.addStyleClass("sapMUCList");
 	};
 
@@ -309,8 +314,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		//prepare the list with list items
 		this._clearList();
 		this._fillList(this.aItems);
-		this._oList.setNoDataText(sNoDataText);
+		this._oList.setProperty("noDataText", sNoDataText, true);
 		this._oList.setHeaderToolbar(this.oHeaderToolbar);
+		this._oList.setProperty("showSeparators", this.getShowSeparators(), true);
 	};
 
 	/**
@@ -394,7 +400,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			oProgressLabel,
 			oTextDescriptionHL,
 			oFileNameEditBox,
-			oFileExtensionLabel,
 			oItemIcon,
 			sThumbnailUrl,
 			oButtonsHL,
@@ -506,17 +511,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 
 		if (sStatus == "Edit") {
-			var aFileName = sFileNameLong.split(".");
-			var sExtension = "." + aFileName[1];
+			var oFile = UploadCollection.prototype._splitFilename(sFileNameLong);
 			var iMaxLength = that.getMaximumFilenameLength();
 			var sValueState = "None";
 			var bShowValueStateMessage = false;
-			var sFileName = aFileName[0];
-
-			// Extension
-			oFileExtensionLabel = new sap.m.Text(sItemId + "-extension", {
-				text : sExtension
-			}).addStyleClass("sapMUCExtension");
+			var sFileName = oFile.name;
 
 			if (oItem.errorState == "Error") {
 				bShowValueStateMessage = true;
@@ -530,11 +529,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				valueState : sValueState,
 				valueStateText : this._oRb.getText("UPLOADCOLLECTION_EXISTS"),
 				showValueStateMessage: bShowValueStateMessage,
-				value : sFileName
+				value : sFileName,
+				description: oFile.extension
 			}).addStyleClass("sapMUCEditBox");
 
-			if ((iMaxLength - sExtension.length) > 0) {
-				oFileNameEditBox.setProperty("maxLength", iMaxLength - sExtension.length, true);
+			if ((iMaxLength - oFile.extension.length) > 0) {
+				oFileNameEditBox.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
 			}
 
 			oFileNameEditBox.setLayoutData(new sap.m.FlexItemData({
@@ -542,7 +542,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			}));
 
 			oInputExtensionHL = new sap.m.HBox(sItemId + "-ta_extensionHL", {
-				items : [oFileNameEditBox, oFileExtensionLabel]
+				items : [oFileNameEditBox]
 			}).addStyleClass("sapMUCEditHL");
 
 		}
@@ -550,7 +550,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		oTextVL = new sap.ui.layout.VerticalLayout(sItemId + "-ta_textVL", {
 			content : [oFileNameLabel, oInputExtensionHL, oTextDescriptionHL],
 			allowWrapping : true
-		});
+		}).addStyleClass("sapMUCText");
 
 		// /////////////////// ListItem Icon
 		if (sStatus == "Display" || sStatus == "Edit") {
@@ -816,34 +816,34 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var bTriggerOk = true;
 		var oEditbox = document.getElementById(sSourceId + "-ta_editFileName-inner");
 		// get new/changed file name and remove possible leading spaces
-		var sValue = oEditbox.value.replace(/^\s+/,"");
+		var sNewFileName = oEditbox.value.replace(/^\s+/,"");
 
 		if (!oContext.sFocusId) {
 			oContext.sFocusId = oContext.editModeItem + "-ta_HL";
 		}
 
-		if (sValue.length > 0) {
+		if (sNewFileName.length > 0) {
 			var iSourceLine = sSourceId.split("-").pop();
 			oContext.aItems[iSourceLine]._status = "Display";
 			// get original file name
-			var sOriginalValue = oContext.aItems[iSourceLine].getProperty("fileName").split(".")[0];
+			var sOrigFullFileName = oContext.aItems[iSourceLine].getProperty("fileName");
+			var oFile = UploadCollection.prototype._splitFilename(sOrigFullFileName);
 			// in case there is a difference additional activities are necessary
-			if (sOriginalValue != sValue) {
-				var sExtension = sap.ui.getCore().byId(sSourceId + "-extension").getProperty("text");
+			if (oFile.name != sNewFileName) {
 				// here we have to check possible double items if it's necessary
 				if (!oContext.getSameFilenameAllowed()) {
 					var oInput = sap.ui.getCore().byId(sSourceId + "-ta_editFileName");
 					// Check double file name
-					if (sap.m.UploadCollection.prototype._checkDoubleFileName(sValue + sExtension, oContext.aItems)) {
+					if (sap.m.UploadCollection.prototype._checkDoubleFileName(sNewFileName + oFile.extension, oContext.aItems)) {
 						var sErrorStateBefore = oContext.aItems[iSourceLine].errorState;
 						var sChangedNameBefore = oContext.aItems[iSourceLine].changedFileName;
 						oInput.setProperty("valueState", "Error", true);
 						oContext.aItems[iSourceLine]._status = "Edit";
 						oContext.aItems[iSourceLine].errorState = "Error";
-						oContext.aItems[iSourceLine].changedFileName = sValue;
+						oContext.aItems[iSourceLine].changedFileName = sNewFileName;
 						oContext.sErrorState = "Error";
 						bTriggerOk = false;
-						if (sErrorStateBefore != "Error" || sChangedNameBefore != sValue){
+						if (sErrorStateBefore != "Error" || sChangedNameBefore != sNewFileName){
 							oContext.invalidate();
 						}
 					} else {
@@ -858,7 +858,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				if (bTriggerOk) {
 					oContext.fireFileRenamed({
 						documentId : oContext.aItems[iSourceLine].getProperty("documentId"),
-						fileName : sValue + sExtension
+						fileName : sNewFileName + oFile.extension
 					});
 				}
 			} else {
@@ -1121,27 +1121,27 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @private
 	 */
 	UploadCollection.prototype._getIconFromFilename = function(sFilename) {
-		var sFileExtension = this._getExtensionFromFilename(sFilename);
+		var sFileExtension = this._splitFilename(sFilename).extension;
 
 		switch (sFileExtension) {
-			case 'bmp' :
-			case 'jpg' :
-			case 'png' :
+			case '.bmp' :
+			case '.jpg' :
+			case '.png' :
 				return 'sap-icon://attachment-photo';
-			case 'csv' :
-			case 'xls' :
-			case 'xlsx' :
+			case '.csv' :
+			case '.xls' :
+			case '.xlsx' :
 				return 'sap-icon://excel-attachment';
-			case 'doc' :
-			case 'docx' :
-			case 'odt' :
+			case '.doc' :
+			case '.docx' :
+			case '.odt' :
 				return 'sap-icon://doc-attachment';
-			case 'pdf' :
+			case '.pdf' :
 				return 'sap-icon://pdf-attachment';
-			case 'ppt' :
-			case 'pptx' :
+			case '.ppt' :
+			case '.pptx' :
 				return 'sap-icon://ppt-attachment';
-			case 'txt' :
+			case '.txt' :
 				return 'sap-icon://document-text';
 			default :
 				return 'sap-icon://document';
@@ -1384,19 +1384,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	};
 
 	/**
-	 * @description Determines the extension from the file name.
-	 * @name sap.m.UploadCollection#_getExtensionFromFilename
-	 * @param {string} sFilename File name inclusive the extension
-	 * @returns {string} sExtension Extension of the file name
-	 * @function
-	 * @private
-	 */
-	UploadCollection.prototype._getExtensionFromFilename = function(sFilename) {
-		var aSplit = sFilename.split(".");
-		return aSplit[aSplit.length - 1]; // the last part of the file name is expected to be the file extension
-	};
-
-	/**
 	 * @description Determines if the filename is already in usage.
 	 * @name sap.m.UploadCollection#_checkDoubleFileName
 	 * @param {string} sFilename inclusive file extension
@@ -1420,6 +1407,23 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 		return false;
 	};
+
+	/**
+	 * @description Split file name into name and extension.
+	 * @name sap.m.UploadCollection#_splitFilename
+	 * @param {string} sFilename Full file name inclusive the extension
+	 * @returns {object} oResult Filename and Extension
+	 * @function
+	 * @private
+	 */
+	UploadCollection.prototype._splitFilename = function(sFilename) {
+		var oResult = {};
+		var aNameSplit = sFilename.split(".");
+		oResult.extension = "." + aNameSplit.pop();
+		oResult.name = aNameSplit.join(".");
+		return oResult;
+	};
+
 
 	return UploadCollection;
 

@@ -250,9 +250,9 @@
 				"id" : "sap.m.UploadCollection",
 				"name" : "Upload Collection",
 				"category" : "Action",
-				"since" : "1.23",
+				"since" : "1.26",
 				"appComponent" : "CA-UI5-BS-FCW",
-				"samples" : [ ]
+				"samples" : [ "sap.m.sample.UploadCollection" ]
 			},
 			{
 				"id" : "sap.m.IconTabBar",
@@ -1431,6 +1431,11 @@
 				"id": "sap.m.sample.TitleToolBar",
 				"name": "Title Toolbar",
 				"description": "A TitleToolBar is always 3 rem in height. The Text inside of it should always have the header font-size of 4. This results in 16px. For achieving this you can add the style-class sapMH4FontSize"
+			},
+			{
+				"id": "sap.m.sample.UploadCollection",
+				"name": "Upload Collection",
+				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
 			}
 		]
 	}
