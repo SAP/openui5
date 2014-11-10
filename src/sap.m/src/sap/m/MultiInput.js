@@ -793,6 +793,18 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		return this._tokenizer.getTokens();
 	};
 	
+	MultiInput.prototype.insertToken = function(oToken, iIndex) {
+		return this._tokenizer.insertToken(oToken, iIndex);
+	};
+	
+	MultiInput.prototype.indexOfToken = function(oToken) {
+		return this._tokenizer.indexOfToken(oToken);
+	};
+	
+	MultiInput.prototype.destroyTokens = function() {
+		return this._tokenizer.destroyTokens();
+	};	
+	
 	/**
 	 * Function overwrites clone function to add tokens to MultiInput
 	 * 
