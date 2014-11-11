@@ -107,8 +107,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./TreeBindingAdapter
 	
 		// initialize API by loading the analytical OData model
 		try {
-			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(new odata4analytics.Model.ReferenceByModel(
-					this), sAnnotationDoc);
+			this.oOData4SAPAnalyticsModel = new odata4analytics.Model(new odata4analytics.Model.ReferenceByModel(this), {sAnnotationJSONDoc: sAnnotationDoc});
 		} catch (exception) {
 			throw "Failed to instantiate analytical extensions for given OData model: " + exception.message;
 		}
