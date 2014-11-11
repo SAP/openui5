@@ -2,9 +2,108 @@
 /* CSS for control sap.m/ObjectHeaderItem.control */
 /* ============================================= */
 .sapMOH {
-    background-color: @sapHCStandardBG;
+	background-color: @sapHCStandardBG;
 	margin: 1rem;
 	padding: 1rem;
+	border-bottom: 0.125rem solid @sapHCStandardFG;
+	box-sizing: border-box;
+	.sapUiIcon {
+		color: @sapHCStandardFG;
+	}
+	.sapMObjStatusNone {
+		.sapMObjStatusText,
+		.sapUiIcon {
+			color: @sapHCNeutral;
+		}
+	}
+	.sapMObjStatusError {
+		.sapMObjStatusText,
+		.sapUiIcon {
+			color: @sapHCNegative;
+		}
+	}
+	.sapMObjStatusSuccess {
+		.sapMObjStatusText,
+		.sapUiIcon {
+			color: @sapHCPositive;
+		}
+	}
+	.sapMObjStatusWarning {
+		.sapMObjStatusText,
+		.sapUiIcon {
+			color: @sapHCCritical;
+		}
+	}
+	.sapMObjectAttributeActive {
+		outline: none;
+		span {
+			text-decoration: underline;
+			&:hover {
+				text-decoration: none;
+			}
+		}
+		&:focus > span {
+			outline: 0.125rem dotted @sapHCStandardFG;
+			outline-offset: -0.125rem;
+			text-decoration: none;
+		}
+	}
+	.sapMOHTitleActive {
+		.sapMOHTitle {
+			text-decoration: underline;
+			cursor: pointer;
+		}
+		&:active,
+		&:focus {
+			.sapMOHTitle {
+				outline: 0.125rem dotted @sapHCStandardFG;
+				outline-offset: -0.125rem;
+				text-decoration: none;
+			}
+		}
+		&:hover {
+			.sapMOHTitle {
+				text-decoration: none;
+			}
+		}
+	}
+	.sapMObjectAttributeActive > div,
+	.sapMOHIntroActive > span {
+		&:focus {
+			outline: 0.125rem dotted @sapHCStandardFG;
+			outline-offset: -0.125rem;
+			text-decoration: none;
+			display: inline-block;
+		}
+	}
+	.sapMOHTitleArrow .sapUiIcon:focus {
+		outline: 0.125rem dotted @sapHCStandardFG;
+		outline-offset: -0.125rem;
+	}
+	.sapMOHIcon.sapMPointer:focus {
+		outline: 0.125rem dotted @sapHCStandardFG;
+	}
+	.sapMOHIntroActive {
+		text-decoration: underline;
+		&:focus,
+		&:active,
+		&:hover {
+			text-decoration: none;
+			cursor: pointer;
+		}
+	}
+	.sapMOHNumberStateNone {
+		color: @sapHCNeutral;
+	}
+	.sapMOHNumberStateSuccess {
+		color: @sapHCPositive;
+	}
+	.sapMOHNumberStateError {
+		color: @sapHCNegative;
+	}
+	.sapMOHNumberStateWarning {
+		color: @sapHCCritical;
+	}
 }
 
 .sap-phone .sapMOH {
@@ -45,23 +144,11 @@
 	text-overflow: ellipsis;
 	font-size: .875rem;
 	margin-bottom: 1rem;
+	color: @sapHCStandardFG;
 }
 
 .sapMOHIntroActive,.sapMOHTitleActive {
 	color: @sapHCStandardFG;
-}
-
-.sapMOHIntroActive:active,
-.sapMOHIntroActive:focus,
-.sapMOHIntroActive:hover,
-.sapMOHTitleActive .sapMText:active,
-.sapMOHTitleActive .sapMText:focus,
-.sapMOHTitleActive .sapMText:hover {
-	text-decoration: underline;
-}
-
-.sapMOHTopRow {
-	
 }
 
 .sapMOHTitleDiv {
@@ -97,16 +184,17 @@
 .sapMOHIcon {
 	position: absolute;
 	width: 3rem;
+	color: @sapHCStandardFG;
 }
 
 .sapMOHTitle {
 	display: inline-block;
 	position: relative;
+	color: @sapHCStandardFG;
 }
 
 .sapMText.sapMOHTitle {
 	font-size: 1.5rem;
-		
 	position: relative;
 }
 
@@ -117,6 +205,8 @@
 .sapMOHTitleAndArrow {
 	display: inline-block;
 	position: relative;
+	/* Fix for Android 4.3 when you have a short title hiding part of the icon in it */
+	min-height: 2rem;
 }
 
 .sapMOHTitleIcon {
@@ -144,6 +234,9 @@
 	display: inline-block;
 	position: absolute;
 	right: 0;
+	.sapUiIcon {
+		outline-offset: -0.125rem;
+	}
 }
 
 .sapMOHTitle+.sapMOHTitleArrow {
@@ -264,6 +357,51 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHAttr {
 	clear: both;
 }
 
+/* Fix firefox title icon outline */
+html[data-sap-ui-browser^="ff"] {
+	.sapMOH {
+		.sapMOHTitleArrow .sapUiIcon {
+			border: 0.125rem solid transparent;
+			&:active,
+			&:focus {
+				border: 0.125rem dotted @sapHCStandardFG;
+				outline: none;
+			}
+		}
+	}
+}
+
+/* Fix ie outlines */
+html[data-sap-ui-browser^="ie"] {
+	.sapMOH {
+		.sapMOHTitleArrow .sapUiIcon,
+		.sapMOHTitleActive {
+			margin-top: 0.125rem;
+			padding-top: 0.125rem;
+			padding-left: 0.125rem;
+			padding-right: 0.125rem;
+			span {
+				margin-right: 0.125rem;
+			}
+		}
+		.sapMOHTitleAndArrow {
+			padding-top: 0.125rem;
+		}
+		.sapMOHTitleActive:focus .sapMOHTitle > span {
+			outline: none;
+			border: 0.125rem dotted @sapHCStandardFG;
+		}
+
+		.sapMObjectAttributeActive {
+			padding: 0.125rem;
+		}
+
+		.sapMOHIntroActive {
+			padding: 0.125rem;
+		}
+	}
+}
+
 /*
  * Do NOT clear if ObjectHeader is placed in a responsive grid layout.
  * The layout will clear after the ObjectHeader by itself. This caused problems
@@ -274,12 +412,12 @@ div[class*='sapUiRespGrid'] > .sapMOH > .sapMOHLastDivider {
 }
 
 
-html[data-sap-ui-browser^=ie] .sapMOHStatus, 
+html[data-sap-ui-browser^=ie] .sapMOHStatus,
 html[data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
 	text-align: right;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatus, 
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatus,
 html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
 	text-align: left;
 }
@@ -580,7 +718,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
 	width: 50%;
 }
 
-/* 5) flag + favorite markers */ 
+/* 5) flag + favorite markers */
 .sapMOHR .sapMObjStatusMarker {
 	float: right;
 	display: inline-block;
@@ -588,12 +726,12 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
 }
 
 .sapMOHR .sapMObjStatusMarker .sapUiIcon {
-display: block;
+	display: block;
 }
 
 .sapMOHR .sapMObjStatusMarker .sapUiIcon + .sapUiIcon {
-margin-left: 0; /*override*/
-margin-top: 0.5rem;
+	margin-left: 0; /*override*/
+	margin-top: 0.5rem;
 }
 
 /* override for IconTabHeader in ObjectHeader*/
@@ -651,7 +789,7 @@ margin-top: 0.5rem;
 	margin: 0;
 	padding: 0;
 }
-	
+
 .sapMOHR.sapMOH > .sapMOHTitleDiv.sapMOHTitleIcon > .sapMOHIcon {
 	height: 3rem;
 	width: 3rem;
@@ -808,7 +946,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHR.sapMOH > .sapMOHStates > .sapMOH
 
 /*new design for tabs */
 .sapMOHR.sapMOH  > .sapMOHTabs {
-/*	margin: 0; */
+	/*	margin: 0; */
 	padding: 0 1rem 0 2rem;
 	margin-top: 1rem;
 	vertical-align: bottom;
@@ -945,7 +1083,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHR.sapMOH > .sapMOHStates > .sapMOH
 }
 
 /* tablet: title 100%, with markers + desktop: five or more states with markers */
-.sapMOHR.sapMOH.sapMOHStatesFiveOrMore.sapMOHNoCalc:not(.sapMOHNoMarkers) > .sapMOHTitleDiv, 
+.sapMOHR.sapMOH.sapMOHStatesFiveOrMore.sapMOHNoCalc:not(.sapMOHNoMarkers) > .sapMOHTitleDiv,
 .sapUiMedia-Std-Tablet .sapMOHR.sapMOH.sapMOHStatesThreeOrFour.sapMOHNoCalc:not(.sapMOHNoMarkers) > .sapMOHTitleDiv{
 	width: 100%;
 	padding-right: 3rem;
@@ -1032,56 +1170,4 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHR.sapMOH > .sapMOHStates > .sapMOH
 /* all: title and default size */
 .sapMOHR.sapMOHNoCalc > .sapMOHTitleIcon > .sapMOHTitleAndArrow {
 	width: 64%;
-}
-
-/* HCB Related styles for sapMOH */
-.sapMOH {
-  border-bottom: 0.125rem solid @sapHCStandardFG;
-  box-sizing: border-box;
-  .sapUiIcon,
-  .sapMOHIcon,
-  .sapMOHTitle,
-  .sapMOHIntro {
-    color: @sapHCStandardFG;
-  }
-  .sapMObjStatusNone {
-    .sapMObjStatusText,
-    .sapUiIcon {
-      color: @sapHCNeutral;
-    }
-  }
-  .sapMObjStatusError {
-    .sapMObjStatusText,
-    .sapUiIcon {
-      color: @sapHCNegative;
-    }
-  }
-  .sapMObjStatusSuccess {
-    .sapMObjStatusText,
-    .sapUiIcon {
-      color: @sapHCPositive;
-    }
-  }
-  .sapMObjStatusWarning {
-    .sapMObjStatusText,
-    .sapUiIcon {
-      color: @sapHCCritical;
-    }
-  }
-  .sapMOHNumberStateNone {
-    color: @sapHCNeutral;
-  }
-  .sapMOHNumberStateSuccess {
-    color: @sapHCPositive;
-  }
-  .sapMOHNumberStateError {
-    color: @sapHCNegative;
-  }
-  .sapMOHNumberStateWarning {
-    color: @sapHCCritical;
-  }
-  /* Fix for Android 4.3 when you have a short title hiding part of the icon in it */
-  .sapMOHTitleAndArrow {
-    min-height: 2rem;
-  }
 }

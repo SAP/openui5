@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', 'jquery.sap.act', 'jquery.sap.ui'],
-	function(jQuery, ManagedObject, Element/* , jQuerySap1, jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui'],
+	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap */) {
 	"use strict";
 
 	/**
@@ -688,7 +688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', 'j
 				oRenderLog.debug("Full Rendering of UIArea '" + this.getId() + "'");
 
 				// save old content
-				sap.ui.core.RenderManager.preserveContent(this.oRootNode, /* bPreserveRoot */ false, /* bPreserveNodesWithId */ this.bInitial);
+				RenderManager.preserveContent(this.oRootNode, /* bPreserveRoot */ false, /* bPreserveNodesWithId */ this.bInitial);
 				this.bInitial = false;
 				
 				var cleanUpDom = function(aCtnt, bCtrls){
@@ -696,7 +696,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', 'j
 					var oDomRef;
 					for (var i = 0; i < len; i++) {
 						oDomRef = bCtrls ? aCtnt[i].getDomRef() : aCtnt[i];
-						if ( oDomRef && !sap.ui.core.RenderManager.isPreservedContent(oDomRef) && that.oRootNode === oDomRef.parentNode) {
+						if ( oDomRef && !RenderManager.isPreservedContent(oDomRef) && that.oRootNode === oDomRef.parentNode) {
 							jQuery(oDomRef).remove();
 						}
 					}
@@ -790,13 +790,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', 'j
 	 * @function
 	 */
 	UIArea.rerenderControl = function(oControl){
-		var oDomRef = oControl ? oControl.getDomRef() : null;
+		var oDomRef = null;
+		if (oControl) {
+			oDomRef = oControl.getDomRef();
+			if (!oDomRef) {
+				// If no DOM node was found, look for the invisible placeholder node
+				oDomRef = jQuery.sap.domById(sap.ui.core.RenderPrefixes.Invisible + oControl.getId());
+			}
+		}
+
 		var oParentDomRef = oDomRef && oDomRef.parentNode; // remember parent here as preserveContent() might move the node!
 		if (oParentDomRef) {
 			var uiArea = oControl.getUIArea();
 			var rm = uiArea ? uiArea.oCore.oRenderManager : sap.ui.getCore().createRenderManager();
 			oRenderLog.debug("Rerender Control '" + oControl.getId() + "'" + (uiArea ? "" : " (using a temp. RenderManager)"));
-			sap.ui.core.RenderManager.preserveContent(oDomRef, /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+			RenderManager.preserveContent(oDomRef, /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
 			rm.render(oControl, oParentDomRef);
 		} else {
 			var uiArea = oControl.getUIArea();

@@ -1424,7 +1424,8 @@
 				'sap/ui/thirdparty/require.js': true,
 				'sap/ui/thirdparty/SecondLevelDomains.js': true,
 				'sap/ui/thirdparty/signals.js': true,
-				'sap/ui/thirdparty/URI.js' : true
+				'sap/ui/thirdparty/URI.js' : true,
+				'sap/ui/demokit/js/esprima.js' : true
 		  },
 		  
 		/**
@@ -2414,7 +2415,7 @@
 						oData = handleData(data);
 					},
 					error : function(xhr, textStatus, error) {
-						oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors.");
+						oError = new Error("resource " + sResourceName + " could not be loaded from " + sUrl + ". Check for 'file not found' or parse errors. Reason: " + error);
 						oError.status = textStatus;
 						oError.error = error;
 						oError.statusCode = xhr.status;

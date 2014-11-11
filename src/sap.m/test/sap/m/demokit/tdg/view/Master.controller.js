@@ -19,18 +19,13 @@ sap.ui.demo.tdg.util.Controller.extend("sap.ui.demo.tdg.view.Master", {
 			return;
 		}
 
-		this.getRouter().attachRoutePatternMatched(this.onRouteMatched, this);
+		this.getRouter().getRoute("main").attachPatternMatched(this.onRouteMatched, this);
 
 		oEventBus.subscribe("Detail", "Changed", this.onDetailChanged, this);
 		oEventBus.subscribe("Detail", "NotFound", this.onNotFound, this);
 	},
 
 	onRouteMatched : function(oEvent) {
-		var sName = oEvent.getParameter("name");
-
-		if (sName !== "main") {
-			return;
-		}
 
 		//Load the detail view in desktop
 		this.getRouter().myNavToWithoutHash({ 

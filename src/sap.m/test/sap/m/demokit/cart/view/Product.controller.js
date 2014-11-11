@@ -6,7 +6,8 @@ sap.ui.controller("view.Product", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);
-		this._router.attachRoutePatternMatched(this._routePatternMatched, this);
+		this._router.getRoute("product").attachPatternMatched(this._routePatternMatched, this);
+		this._router.getRoute("cartProduct").attachPatternMatched(this._routePatternMatched, this);
 
 		// register for events
 		var oBus = sap.ui.getCore().getEventBus();
@@ -14,41 +15,39 @@ sap.ui.controller("view.Product", {
 	},
 
 	_routePatternMatched: function(oEvent) {
-		if (oEvent.getParameter("name") === "product" || oEvent.getParameter("name") === "cartProduct") {
-			var sId = oEvent.getParameter("arguments").productId,
-				oView = this.getView(),
-				sPath = "/Products('" + sId + "')";
+		var sId = oEvent.getParameter("arguments").productId,
+			oView = this.getView(),
+			sPath = "/Products('" + sId + "')";
 
-			/**
-			 * This is how you would implement deepLinking in your app.
-			 * Because the oDataService which we use is not fully implemented, we cannot deep link.
-			 * Instead we redirect to the start screen.
-	
-			var that = this;
-			var oModel = oView.getModel();
-			var oData = oModel.getData(sPath);
-			oView.bindElement(sPath);
-			//if there is no data the model has to request new data
-			if (!oData) {
-				oView.getElementBinding().attachEventOnce("dataReceived", function() {
-					that._checkIfProductAvailable(sPath, sId);
-				});
-			}
+		/**
+		 * This is how you would implement deepLinking in your app.
+		 * Because the oDataService which we use is not fully implemented, we cannot deep link.
+		 * Instead we redirect to the start screen.
 
-			 * End.
-			 */
-			
-			/**
-			 * Workaround because the oDataService is not fully implemented
-			 */
-			var oModel = oView.getModel();
-			var oData = oModel.getData(sPath);
-			oView.bindElement(sPath);
-			if (!oData) {
-				this._router.navTo("home", {}, true);
-				if (!sap.ui.Device.system.phone) {
-					this._router._myNavToWithoutHash("view.Welcome", "XML", false);
-				}
+		var that = this;
+		var oModel = oView.getModel();
+		var oData = oModel.getData(sPath);
+		oView.bindElement(sPath);
+		//if there is no data the model has to request new data
+		if (!oData) {
+			oView.getElementBinding().attachEventOnce("dataReceived", function() {
+				that._checkIfProductAvailable(sPath, sId);
+			});
+		}
+
+		 * End.
+		 */
+
+		/**
+		 * Workaround because the oDataService is not fully implemented
+		 */
+		var oModel = oView.getModel();
+		var oData = oModel.getData(sPath);
+		oView.bindElement(sPath);
+		if (!oData) {
+			this._router.navTo("home", {}, true);
+			if (!sap.ui.Device.system.phone) {
+				this._router._myNavToWithoutHash("view.Welcome", "XML", false);
 			}
 		}
 	},
@@ -66,7 +65,6 @@ sap.ui.controller("view.Product", {
 		// show not found page
 		if (!oData) {
 			this._router._myNavToWithoutHash("view.NotFound", "XML", false, {path: sId});
-			return;
 		}
 	},
 
@@ -74,6 +72,7 @@ sap.ui.controller("view.Product", {
 		var oBundle = sap.ui.getCore().getModel("i18n").getResourceBundle();
 		var oProduct = this.getView().getBindingContext().getObject();
 		var sProdStatus = oProduct.status;
+		var that = this;
 
 		switch (sProdStatus) {
 		case "D":
@@ -95,7 +94,7 @@ sap.ui.controller("view.Product", {
 				function (oAction) {
 					// order
 					if (sap.m.MessageBox.Action.OK === oAction) {
-						this._addProduct(oProduct);
+						that._addProduct(oProduct);
 					}
 				}
 			);

@@ -16,9 +16,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * @param {object}
 	 *          [mSettings] initial settings for the new control
 	 * 
-	 * @class The P13nDialog control provides dialog that contains one or more panels. On each of the panels, one or more changes with
-	 *        regards to a table can be processed. For example, a panel to set a column to invisible, change the order of the columns or a
-	 *        panel to sort or filter tables.
+	 * @class The P13nDialog control provides dialog that contains one or more panels. On each of the panels, one or more
+	 *        changes with regards to a table can be processed. For example, a panel to set a column to invisible, change
+	 *        the order of the columns or a panel to sort or filter tables.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
 	 * @version ${version}
@@ -36,8 +36,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			library : "sap.m",
 			properties : {
 				/**
-				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to true,
-				 * clicking the 'Reset' button will trigger the 'reset' event sending a notification that model data must be reset.
+				 * This property determines whether the 'Reset' button is shown inside the dialog. If this property is set to
+				 * true, clicking the 'Reset' button will trigger the 'reset' event sending a notification that model data must
+				 * be reset.
 				 */
 				showReset : {
 					type : "boolean",
@@ -66,7 +67,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				/**
 				 * Event fired if the 'cancel' button in P13nDialog is clicked.
 				 */
-				cancel : {},	
+				cancel : {},
 				/**
 				 * Event fired if the 'reset' button in P13nDialog is clicked.
 				 */
@@ -135,6 +136,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 		if (this._getSegmentedButton()) {
 			var oButton = this._mapPanelToButton(oPanel);
 			this._getSegmentedButton().addButton(oButton);
+			this._setDialogTitleFor(oPanel, this.getContent().length);
 			// TODO: workaround because SegmentedButton does not raise event when we set the "selectedButton"
 			var bVisible = false;
 			if (this.getContent().length === 1) {
@@ -142,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			}
 			oPanel.setVisible(bVisible);
 			if (bVisible) {
-				this.setVerticalScrolling( oPanel.getVerticalScrolling());
+				this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			}
 			this.getSubHeader().getContentLeft()[0].setVisible(!bVisible);
 		}
@@ -170,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			}
 			oPanel.setVisible(bVisible);
 			if (bVisible) {
-				this.setVerticalScrolling( oPanel.getVerticalScrolling());
+				this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			}
 		}
 		return this;
@@ -248,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 */
 	P13nDialog.prototype._switchPanel = function(oButton) {
 		var oPanel = this._getPanelByButton(oButton);
-		this.setVerticalScrolling( oPanel.getVerticalScrolling());
+		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		this.getContent().forEach(function(oPanel_) {
 			if (oPanel_ === oPanel) {
 				oPanel_.setVisible(true);
@@ -259,6 +261,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			this.rerender();
 		}, this);
 	};
+
 	/**
 	 * Returns panel.
 	 * 
@@ -271,6 +274,34 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Sets title of dialog in regard to oPanel.
+	 * 
+	 * @private
+	 */
+	P13nDialog.prototype._setDialogTitleFor = function(oPanel, iPanelCount) {
+		if (iPanelCount > 1) {
+			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
+			return;
+		}
+		switch (oPanel.getType()) {
+			case sap.m.P13nPanelType.filter :
+				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_FILTER")); // "VALUEHELPDLG_RANGESTITLE"
+				break;
+			case sap.m.P13nPanelType.sort :
+				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_SORT"));
+				break;
+			case sap.m.P13nPanelType.group :
+				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_GROUP"));
+				break;
+			case sap.m.P13nPanelType.columns :
+				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS"));
+				break;
+			default :
+				this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
+		}
 	};
 
 	/**

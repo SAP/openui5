@@ -42,7 +42,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 
 		// subscribe to app events
-		this._component = sap.ui.component(sap.ui.core.Component.getOwnerIdFor(this.getView()));
+		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		this._component.getEventBus().subscribe("app", "selectEntity", this.onSelectEntity, this);
 
 		// subscribe to nav container events

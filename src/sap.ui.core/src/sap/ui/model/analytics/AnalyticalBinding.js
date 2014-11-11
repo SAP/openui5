@@ -1517,6 +1517,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @name AnalyticalBinding.prototype._getQueryODataRequestOptions
 	 */
 	AnalyticalBinding.prototype._getQueryODataRequestOptions = function(oAnalyticalQueryRequest) {
+		
+		try {
+			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
+		} catch(e){
+			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
+			return undefined;
+		}
+		
 		var sSelect = oAnalyticalQueryRequest.getURIQueryOptionValue("$select");
 		var sFilter = oAnalyticalQueryRequest.getURIQueryOptionValue("$filter");
 		var sOrderBy = oAnalyticalQueryRequest.getURIQueryOptionValue("$orderby");
@@ -1731,6 +1739,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		// determine relevant request query options  
 		var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntitySet();
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
+		
+		if (!aParam) {
+			// parameters could not be determined correctly
+			return; 
+		}
 	
 		var that = this;
 	
@@ -1740,7 +1753,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	
 			// perform all steps of fct fnSuccess (w/o calling it, b/c its argument is some data object and not a context
 			sGroupId = null;
-			this.mServiceLength = this.mLength[sGroupId] = 1;
+			this.mServiceLength[sGroupId] = this.mLength[sGroupId] = 1;
 			this.mServiceFinalLength[sGroupId] = true;
 			this._setServiceKey(this._getKeyIndexMapping(sGroupId, 0), AnalyticalBinding._artificialRootContextGroupId);
 			this.bNeedsUpdate = true;
@@ -3639,6 +3652,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var sPath = oAnalyticalQueryRequest.getURIToQueryResultEntitySet();
 		var aParam = this._getQueryODataRequestOptions(oAnalyticalQueryRequest);
 		
+		if (!aParam) {
+			// parameters could not be determined correctly
+			return undefined; 
+		}
+		
 		// search and remove the $select
 		for (var j = 0, l = aParam.length; j < l; j++) {
 			if (/^\$select/i.test(aParam[j])) {
@@ -3651,7 +3669,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aVisibleCols = [];
 		for (var k = 0, m = this.aAnalyticalInfo.length; k < m; k++) {
 			var oCol = this.aAnalyticalInfo[k];
-			if (oCol.visible) {
+			if ((oCol.visible || oCol.inResult) && oCol.name !== "") {
 				aVisibleCols.push(oCol.name);
 			}
 		}

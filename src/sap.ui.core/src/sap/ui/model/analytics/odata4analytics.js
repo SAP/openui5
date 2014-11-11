@@ -3368,9 +3368,9 @@ sap.ui.define(['jquery.sap.global'],
 		 *          message is thrown
 		 * @public
 		 * @function
-		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#isValid
+		 * @name sap.ui.model.analytics.odata4analytics.FilterExpression#checkValidity
 		 */
-		isValid : function() {
+		checkValidity : function() {
 			// (a) all properties required in the filter expression have been referenced
 			var aRequiredFilterPropertyNames = this._oEntityType.getRequiredFilterPropertyNames();
 			var oPropertiesInFilterExpression = this.getReferencedProperties();
@@ -4600,7 +4600,7 @@ sap.ui.define(['jquery.sap.global'],
 			
 			// check if request is compliant with filter constraints expressed in
 			// metadata
-			this.getFilterExpression().isValid();
+			this.getFilterExpression().checkValidity();
 	
 			// construct query options
 			var sSelectOption = this.getURIQueryOptionValue("$select");
@@ -4877,7 +4877,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 			// check if request is compliant with filter constraints expressed in
 			// metadata
-			this.getFilterExpression().isValid();
+			this.getFilterExpression().checkValidity();
 	
 			// construct query options
 			var sSelectOption = this.getURIQueryOptionValue("$select");
@@ -5337,7 +5337,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 			// check if request is compliant with filter constraints expressed in
 			// metadata
-			this.getFilterExpression().isValid();
+			this.getFilterExpression().checkValidity();
 	
 			// construct query options
 			var sSelectOption = this.getURIQueryOptionValue("$select");

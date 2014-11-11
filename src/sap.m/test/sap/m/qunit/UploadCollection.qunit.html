@@ -18,11 +18,14 @@
 <script type="text/javascript"
 	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
+	if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
 
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	module("Basic tests", {
+	module("Basic tests for rendering and default values of properties", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
 			this.oUploadCollection.placeAt("uiArea");
@@ -47,6 +50,7 @@
 			nMaximumFileSize = 0,
 			sMimeType,
 			bMultiple = false,
+			sNoDataText = "",
 			sName = "",
 			bDeleteEnabled = true,
 			bRenameEnabled = true,
@@ -60,11 +64,31 @@
 		strictEqual(this.oUploadCollection.getProperty("maximumFileSize"), nMaximumFileSize, "Property 'maximumFileSize': default value is '" + nMaximumFileSize + "'");
 		strictEqual(this.oUploadCollection.getProperty("mimeType"), sMimeType, "Property 'mimeType': default value is '" + sMimeType + "'");
 		strictEqual(this.oUploadCollection.getProperty("multiple"), bMultiple, "Property 'multiple': default value is '" + bMultiple + "'");
+		strictEqual(this.oUploadCollection.getProperty("noDataText"), sNoDataText, "Property 'noDataText': default value is '" + sNoDataText + "'");
 		strictEqual(this.oUploadCollection.getProperty("sameFilenameAllowed"), bSameFilenameAllowed, "Property 'sameFilenameAllowed': default value is '" + bSameFilenameAllowed + "'");
 		strictEqual(this.oUploadCollection.getProperty("uploadEnabled"), bUploadEnabled, "Property 'uploadEnabled': default value is '" + bUploadEnabled + "'");
 		strictEqual(this.oUploadCollection.getProperty("uploadUrl"), sUploadUrl, "Property 'uploadUrl': default value is '" + sUploadUrl + "'");
 		});
 
+	module("Properties", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				noDataText : "myNoDataText"
+			});
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+	
+	test("Set properties' values", function() {
+		var sNoDataText = "myNoDataText";
+
+		equal(jQuery.sap.byId(this.oUploadCollection._oList.getId() + "-nodata-text").text(), sNoDataText, "Property 'noDataText' set properly");
+		});
+	
 	/* --------------------------------------- */
 	/* Test methods                            */
 	/* --------------------------------------- */
@@ -146,13 +170,13 @@
 				"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				"enableEdit" : true,
 				"enableDelete" : true,
-				"fileName" : "Screenshot.jpg",
+				"fileName" : "Screenshot.ico",
 				"fileSize" : 20,
-				"mimeType" : "image/jpg",
+/* 				"mimeType" : "image/jpg", */
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-07-30",
-				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt",
-			}, {
+				"url" : "/test-resources/sap/ca/ui/demokit/sample/UploadCollection/test.txt"
+			},{
 				"contributor" : "John Smith",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
 				"enableEdit" : true,
@@ -162,8 +186,8 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-08-01",
-				"url" : "/pathToTheFile/Notes.txt",
-			}, {
+				"url" : "/pathToTheFile/Notes.txt"
+			},{
 				"contributor" : "J Edgar Hoover",
 				"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
 				"enableEdit" : true,
@@ -173,7 +197,18 @@
 				"mimeType" : "text/plain",
 				"thumbnailUrl" : "",
 				"uploadedDate" : "2014-09-01",
-				"url" : "/pathToTheFile/Document.txt",
+				"url" : "/pathToTheFile/Document.txt"
+			},{
+				"contributor" : "Kate Brown",
+				"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
+				"enableEdit" : true,
+				"enableDelete" : true,
+				"fileName" : "Picture of a woman.png",
+				"fileSize" : 70,
+				"mimeType" : "image/png",
+				"thumbnailUrl" : "/test-resources/sap/m/images/Woman_04.png",
+				"uploadedDate" : "2014-07-25",
+				"url" : "/test-resources/sap/m/images/Woman_04.png"
 			}]
 		};
 		var oItemTemplate = new sap.m.UploadCollectionItem({
@@ -196,6 +231,7 @@
 	module("Edit tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
+				maximumFilenameLength : 35,
 				items : {
 					path : "/items",
 					template : oItemTemplate
@@ -294,6 +330,9 @@
 
 	module("Display tests", {
 		setup : function() {
+			sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
+				ok(true, "Link is triggered");
+			};
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
@@ -320,6 +359,11 @@
 		equal(oEditButton.getEnabled(), true, "Edit button is enabled");
 		equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		equal(oFileName.getEnabled(), true, "File name is enabled");
+
+		expect(8); // verifies the event handler was executed
+		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
+//		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+
 	});
 
 </script>

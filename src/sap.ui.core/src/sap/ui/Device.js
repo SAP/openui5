@@ -589,8 +589,8 @@ if (typeof window.sap.ui !== "object") {
 				webkitVersion = regExpWebkitVersion[1];
 			}
 			oExpMobile = /Mobile/;
-			if ( _ua.match(/Chrome\/(\d+\.\d+).\d+/) ) {
-				var version = parseFloat(RegExp.$1);
+			if ( _ua.match(/(Chrome|CriOS)\/(\d+\.\d+).\d+/)) {
+				var version = parseFloat(RegExp.$2);
 				return {
 					name: BROWSER.CHROME,
 					versionStr: "" + version,

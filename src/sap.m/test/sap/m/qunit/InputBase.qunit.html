@@ -1055,7 +1055,7 @@
 				sap.ui.getCore().applyChanges();
 
 				oErrorInput.focus();
-				this.clock.tick(500);
+				this.clock.tick(oErrorInput.iOpenMessagePopupDuration);
 				ok(jQuery.sap.domById("errorinput-message"), "error message popup is open when focusin");
 				equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 

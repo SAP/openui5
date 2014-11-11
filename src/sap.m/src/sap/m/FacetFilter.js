@@ -796,6 +796,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
+			oPopover.setContentWidth("30%");
 			
 		//IE9
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {

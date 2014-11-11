@@ -84,6 +84,15 @@
 				
 	});
 	
+	test("select/deselect token", function() {
+		token1.setSelected(false);
+		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
+		ok(token1.$().hasClass("sapMTokenSelected"), "token is unselected");
+		
+		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
+		ok(!token1.$().hasClass("sapMTokenSelected"), "token is unselected");
+	});
+	
 </script>
 
 </head>

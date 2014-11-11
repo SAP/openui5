@@ -4,7 +4,7 @@
 /*global crossroads *///declare unusual global vars for JSLint/SAPUI5 validation
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', './HashChanger', './Route', 'sap/ui/thirdparty/crossroads', 'sap/ui/thirdparty/signals'],
-	function(jQuery, EventProvider, ManagedObject, HashChanger, Route, crossroads1, signals) {
+	function(jQuery, EventProvider, ManagedObject, HashChanger, Route) {
 	"use strict";
 
 
@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 			},
 			metadata : {
-				publicMethods: ["initialize", "getURL", "register"]
+				publicMethods: ["initialize", "getURL", "register", "getRoute"]
 			}
 
 		});
@@ -129,8 +129,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * Attaches the router to the hash changer @see sap.ui.core.routing.HashChanger
 		 *
 		 * @public
-		 * @returns { sap.ui.core.routing.Router } this for chaining.
 		 * @name sap.ui.core.routing.Router#initialize
+		 * @returns {sap.ui.core.routing.Router} this for chaining.
 		 * @function
 		 */
 		Router.prototype.initialize = function () {
@@ -225,14 +225,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				oParameters = {};
 			}
 			
-			var oRoute = this._oRoutes[sName];
+			var oRoute = this.getRoute(sName);
 			if (!oRoute) {
 				jQuery.sap.log.warning("Route with name " + sName + " does not exist");
 				return;
 			}
 			return oRoute.getURL(oParameters);
 		};
-		
+
+		/**
+		 * Returns the Route with a name, if no route is found undefined is returned
+		 *
+		 * @param {string} sName Name of the route
+		 * @return {sap.ui.core.routing.Route} the route with the provided name or undefined.
+		 * @public
+		 * @since 1.25.1
+		 * @name sap.ui.core.routing.Router#getRoute
+		 * @function
+		 */
+		Router.prototype.getRoute = function (sName){
+			return this._oRoutes[sName];
+		};
+
 		/**
 		 * Returns a cached view for a given name or creates it if it does not yet exists
 		 * 
@@ -261,10 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 					return sap.ui.view(oViewOptions);
 				};
 				if (this._oOwner) {
-					var that = this;
-					ManagedObject.runWithOwner(function() {
-						that._oViews[sViewName] = fnCreateView();
-					}, this._oOwner);
+					this._oViews[sViewName] = this._oOwner.runAsOwner(fnCreateView);
 				} else {
 					this._oViews[sViewName] = fnCreateView();
 				}
@@ -312,18 +323,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				this.oHashChanger.setHash(this.getURL(sName, oParameters));
 			}
 		};
-		
+
 		/**
 		 * Attach event-handler <code>fnFunction</code> to the 'routeMatched' event of this <code>sap.ui.core.routing.Router</code>.<br/>
 		 *
 		 *
-		 * @param {object}
-		 *            [oData] The object, that should be passed along with the event-object when firing the event.
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs. This function will be called on the
+		 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+		 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 		 *            oListener-instance (if present) or in a 'static way'.
-		 * @param {object}
-		 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+		 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
@@ -340,10 +348,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * The passed function and listener object must match the ones previously used for event registration.
 		 *
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs.
-		 * @param {object}
-		 *            oListener Object on which the given function had to be called.
+		 * @param {function} fnFunction The function to call, when the event occurs.
+		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
 		 * @name sap.ui.core.routing.Router#detachRouteMatched
@@ -424,13 +430,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * Attach event-handler <code>fnFunction</code> to the 'routePatternMatched' event of this <code>sap.ui.core.routing.Router</code>.<br/>
 		 * This event is similar to route matched. But it will only fire for the route that has a matching pattern, not for its parent Routes <br/>
 		 *
-		 * @param {object}
-		 *            [oData] The object, that should be passed along with the event-object when firing the event.
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs. This function will be called on the
+		 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+		 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 		 *            oListener-instance (if present) or in a 'static way'.
-		 * @param {object}
-		 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+		 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
 		 *
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
@@ -448,10 +451,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 *
 		 * The passed function and listener object must match the ones previously used for event registration.
 		 *
-		 * @param {function}
-		 *            fnFunction The function to call, when the event occurs.
-		 * @param {object}
-		 *            oListener Object on which the given function had to be called.
+		 * @param {function} fnFunction The function to call, when the event occurs.
+		 * @param {object} oListener Object on which the given function had to be called.
 		 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 		 * @public
 		 * @name sap.ui.core.routing.Router#detachRoutePatternMatched

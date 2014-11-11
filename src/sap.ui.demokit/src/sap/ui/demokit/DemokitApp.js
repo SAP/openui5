@@ -770,7 +770,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 				oIndex = firstChild(oIndex);
 			}
 			
-			if (oIndex && oIndex.links) {
+			if (oIndex) {
+				oIndex.links = oIndex.links || [];
 				oIndex.links.push({ref: sUrl, text: sTitle, alias: "docs/guide/ReleaseNotes.html"});
 			}
 			

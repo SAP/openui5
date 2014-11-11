@@ -3,8 +3,8 @@
  */
 
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', './mvc/View'],
+	function(jQuery, View) {
 	"use strict";
 
 
@@ -394,15 +394,11 @@ sap.ui.define(['jquery.sap.global'],
 	
 					} else if (oInfo && oInfo._iKind === 5 /* EVENT */ ) {
 						// EVENT
-						var fnEventHandler = oView._oContainingView.oController[sValue];
-						if (typeof (fnEventHandler) !== "function") {
+						var vEventHandler = View._resolveEventHandler(sValue, oView._oContainingView.oController);
+						if ( vEventHandler ) {
+							mSettings[sName] = vEventHandler;
+						} else {
 							jQuery.sap.log.warning(oView + ": event handler function \"" + sValue + "\" is not a function or does not exist in the controller.");
-						}
-						if (fnEventHandler) {
-							// the handler name is set as property on the function to keep this information
-							// e.g. for serializers which converts a control tree back to a declarative format
-							fnEventHandler["_sapui_handlerName"] = sValue;
-							mSettings[sName] = [fnEventHandler, oView._oContainingView.oController];
 						}
 	
 					} else if ( sName !== "xmlns" ) {

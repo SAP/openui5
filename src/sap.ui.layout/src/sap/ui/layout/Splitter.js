@@ -600,12 +600,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 */
 	Splitter.prototype._resize = function() {
 		var i = 0, $Bar;
-		
+		var aContentAreas = this.getContentAreas();
+
+		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding 
+		// container does not have a size set, the content of the Splitter defines the height/width,
+		// in which case the size of the splitter bars is incorrect.
+		var $this = this.$();
+		// First remove the size from the splitter bar so it does not lead to growing the content
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
+			$Bar.css(this._sizeTypeNot, "");
+		}
+		// Now measure the content and adapt the size of the Splitter bar
+		for (i = 0; i < aContentAreas.length - 1; ++i) {
+			$Bar = this.$("splitbar-" + i);
+			var iSize = this._bHorizontal ? $this.height() : $this.width();
+			$Bar.css(this._sizeType, "");
+			$Bar.css(this._sizeTypeNot, iSize + "px");
+		}
+
 		// Save calculated sizes to be able to tell whether a resize occurred
 		var oldCalculatedSizes = this.getCalculatedSizes();
 		this._recalculateSizes();
 		var newCalculatedSizes = this.getCalculatedSizes();
-		
+
 		var bSizesValid = false;
 		for (i = 0; i < newCalculatedSizes.length; ++i) {
 			if (newCalculatedSizes[i] !== 0) {
@@ -619,7 +637,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			return;
 		}
 		
-		var aContentAreas = this.getContentAreas();
 		var bLastContentResizable = true;
 		for (i = 0; i < aContentAreas.length; ++i) {
 			var $Content = this.$("content-" + i);
@@ -641,23 +658,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			}
 			bLastContentResizable = bContentResizable;
 		}
-		
-		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding 
-		// container does not have a size set, the content of the Splitter defines the height/width,
-		// in which case the size of the splitter bars is incorrect.
-		var $this = this.$();
-		// First remove the size from the splitter bar so it does not lead to growing the content
-		for (i = 0; i < aContentAreas.length - 1; ++i) {
-			$Bar = this.$("splitbar-" + i);
-			$Bar.css(this._sizeTypeNot, "");
-		}
-		// Now measure the content and adapt the size of the Splitter bar
-		for (i = 0; i < aContentAreas.length - 1; ++i) {
-			$Bar = this.$("splitbar-" + i);
-			var iSize = this._bHorizontal ? $this.height() : $this.width();
-			$Bar.css(this._sizeTypeNot, iSize + "px");
-		}
-		
+
 		// In case something was resized, change sizes and fire resize event
 		if (_sizeArraysDiffer(oldCalculatedSizes, newCalculatedSizes)) {
 			this.fireResize({

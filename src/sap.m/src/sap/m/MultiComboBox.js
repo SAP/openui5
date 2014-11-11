@@ -174,7 +174,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this._oTokenizer.getSelectedTokens().length) {
 			return;
 		}
-	
 		this._oTraversalItem = this._getNextTraversalItem();
 	
 		if (this._oTraversalItem) {
@@ -194,7 +193,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapup = function(oEvent) {
-	
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -210,7 +208,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		}
 	
 		this._oTraversalItem = this._getPreviousTraversalItem();
-	
 		if (this._oTraversalItem) {
 			this.updateDomValue(this._oTraversalItem.getText());
 			this.selectText(0, this.getValue().length);
@@ -429,7 +426,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
-	
+
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -460,10 +457,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		var aItems = this._getItemsStartingText(sValue);
 		var bVisibleItemFound = !!aItems.length;
 	
+		
 		// suppress invalid value
 		if (!bVisibleItemFound && sValue !== "") {
 			this.updateDomValue(this._sOldValue || "");
-	
+			
 			if (this._iOldCursorPos) {
 				jQuery(this.getFocusDomRef()).cursorPos(this._iOldCursorPos);
 			}
@@ -471,7 +469,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			return;
 		}
 	
-		this.getSelectableItems().forEach(function(oItem) {
+		var aItemsToCheck = this.getSelectableItems();
+		if (this._sOldInput && this._sOldInput.length > sValue.length) {
+			aItemsToCheck = this.getItems();
+		}
+		
+		aItemsToCheck.forEach(function(oItem) {
 			var bMatch = jQuery.sap.startsWithIgnoreCase(oItem.getText(), sValue);
 			if (sValue === "") {
 				bMatch = true;
@@ -484,12 +487,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	
 		this._setContainerSizes();
 	
-		// First do manipulations on list items and then let the list renders
-		if (this.getValue() === "" || !bVisibleItemFound) {
+		// First do manipulations on list items and then let the list render
+		if (!this.getValue() || !bVisibleItemFound) {
 			this.close();
 		} else {
 			this.open();
 		}
+		
+		this._sOldInput = sValue;
 	};
 	
 	/**
@@ -1091,9 +1096,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype._getFocusedListItem = function() {
-		var jFocusedElement = jQuery(':focus');
-		var oFocusedElement = sap.ui.getCore().byId(jFocusedElement.attr('id'));
-		if (this.getList() && oFocusedElement
+		if (!document.activeElement) {
+			return null;
+		}
+		var oFocusedElement = sap.ui.getCore().byId(document.activeElement.id);
+		if (this.getList()
 				&& jQuery.sap.containsOrEquals(this.getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
 			return oFocusedElement;
 		}
@@ -1185,6 +1192,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 					oItemCurrent = this._getCurrentItem();
 					oItem = this._getPreviousVisibleItemOf(oItemCurrent);
 				}
+				
+				if (oEvent.shiftKey && oEvent.which === jQuery.sap.KeyCodes.SPACE) {
+					oItemCurrent = this._getCurrentItem();
+					this._selectPreviousItemsOf(oItemCurrent);
+				}
 				if (oItem && oItem !== oItemCurrent) {
 					if (this.getListItem(oItemCurrent).isSelected()) {
 						this.setSelection({
@@ -1209,15 +1221,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 				}
 	
 				this._resetCurrentItem();
-	
-				// Paging inside the list via CTRL + SPACE is not
-				// required, so
-				// switch it out.
-				if (oEvent.ctrlKey && oEvent.which == jQuery.sap.KeyCodes.SPACE) {
-					oEvent.setMarked();
-					oEvent.preventDefault();
-					return;
-				}
 	
 				// Handle when CTRL + A is pressed to select all
 				// Note: at first this function should be called and
@@ -1324,6 +1327,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			},
 			onfocusin : function(oEvent) {
 				this.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
+				
+				// Update Input Value accordingly
+				var oItemCurrent = oEvent.srcControl;
+				
+				if (oItemCurrent && (oItemCurrent instanceof sap.m.StandardListItem)) {
+					if (oItemCurrent.isSelected()) {
+						this.setValue("");
+					} else {
+						this.setValue(oItemCurrent.getTitle());
+					}
+				}
 			},
 			onfocusout : function(oEvent) {
 				this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
@@ -1577,6 +1591,40 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 	
 	/**
+	 * Selects all previous items, starting from the given item, ending at the first preceding selected item.
+	 * @param {sap.ui.core.Item} oItem The reference item.
+	 * @private
+	 * @name sap.m.MultiComboBox#_selectPreviousItemsOf
+	 */
+	MultiComboBox.prototype._selectPreviousItemsOf = function(oItem) {
+		var bIsSelected;
+		do {
+			bIsSelected = true;
+
+			var oPreviousItem = this._getPreviousVisibleItemOf(oItem);
+			if (oPreviousItem) {
+				var oListItem = this.getListItem(oPreviousItem);
+				if (oListItem) {
+					bIsSelected = this.getListItem(oPreviousItem).getSelected();
+				}
+			}
+
+			this.setSelection({
+				item: oItem,
+				id: oItem.getId(),
+				key: oItem.getKey(),
+				fireChangeEvent: true,
+				suppressInvalidate: true
+			});
+
+			oItem = oPreviousItem;
+		} while (!bIsSelected);
+	};
+	
+	/**
+	 * Returns the next visible item of the given item.
+	 * @param {sap.ui.core.Item} oItem The reference item.
+	 * @returns {sap.ui.core.Item} The first following visible item.
 	 * @private
 	 */
 	MultiComboBox.prototype._getNextVisibleItemOf = function(oItem) {
@@ -1589,6 +1637,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 	
 	/**
+	 * Returns the previous visible item of the given item.
+	 * @param {sap.ui.core.Item} oItem The reference item.
+	 * @returns {sap.ui.core.Item} The first preceding visible item.
 	 * @private
 	 */
 	MultiComboBox.prototype._getPreviousVisibleItemOf = function(oItem) {
@@ -1601,35 +1652,76 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 	
 	/**
+	 * Returns the next unselected item of the given item.
+	 * @param {sap.ui.core.Item} oItem The reference item.
+	 * @returns {sap.ui.core.Item} The first following unselected item.
+	 * @private
+	 */
+	MultiComboBox.prototype._getNextUnselectedItemOf = function(oItem) {
+		var aItems = this._getUnselectedItems();
+		var iIndex = aItems.indexOf(oItem) + 1;
+		if (iIndex <= 0 || iIndex > aItems.length - 1) {
+			return null;
+		}
+		return aItems[iIndex];
+	};
+	
+	/**
+	 * Returns the previous unselected item of the given item.
+	 * @param {sap.ui.core.Item} oItem The reference item.
+	 * @returns {sap.ui.core.Item} The first preceding unselected item.
+	 * @private
+	 */
+	MultiComboBox.prototype._getPreviousUnselectedItemOf = function(oItem) {
+		var aItems = this._getUnselectedItems();
+		var iIndex = aItems.indexOf(oItem) - 1;
+		if (iIndex < 0) {
+			return null;
+		}
+		return aItems[iIndex];
+	};
+	
+	/**
 	 * Gets next visible Item corresponding to text in input field.
-	 * 
+	 * @returns {sap.ui.core.Item} The next visible item.
 	 * @private
 	 */
 	MultiComboBox.prototype._getNextTraversalItem = function() {
 		var aItems = this._getItemsStartingText(this.getValue());
+		var aSelectableItems = this._getUnselectedItems();
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
-			return this._getNextVisibleItemOf(this._oTraversalItem);
+			return this._getNextUnselectedItemOf(this._oTraversalItem);
 		}
 		if (aItems.length && aItems[0].getText() === this.getValue()) {
-			return this._getNextVisibleItemOf(aItems[0]);
+			return this._getNextUnselectedItemOf(aItems[0]);
 		}
-		return aItems.length ? aItems[0] : this.getSelectableItems()[0];
+		return aItems.length ? aItems[0] : aSelectableItems[0];
 	};
 	
 	/**
 	 * Gets previous visible Item corresponding to text in input field.
-	 * 
+	 * @returns {sap.ui.core.Item} The previous visible item.
 	 * @private
 	 */
 	MultiComboBox.prototype._getPreviousTraversalItem = function() {
 		var aItems = this._getItemsStartingText(this.getValue());
 		if (aItems.indexOf(this._oTraversalItem) > -1 && this._oTraversalItem.getText() === this.getValue()) {
-			return this._getPreviousVisibleItemOf(this._oTraversalItem);
+			return this._getPreviousUnselectedItemOf(this._oTraversalItem);
 		}
 		if (aItems.length && aItems[aItems.length - 1].getText() === this.getValue()) {
-			return this._getPreviousVisibleItemOf(aItems[aItems.length - 1]);
+			return this._getPreviousUnselectedItemOf(aItems[aItems.length - 1]);
 		}
-		return aItems.length ? aItems[aItems.length - 1] : this._getPreviousVisibleItemOf(null);
+
+		if (aItems.length) {
+			return aItems[aItems.length - 1];
+		} else {
+			var aSelectableItems = this._getUnselectedItems();
+			if (aSelectableItems.length > 0) {
+				return aSelectableItems[aSelectableItems.length - 1];
+			} else {
+				return null;
+			}
+		}
 	};
 	
 	/* =========================================================== */
@@ -1810,9 +1902,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 	
 	/**
+	 * Retrieves the unselected item objects from the association named <code>selectedItems</code>.
+	 * 
+	 * @returns {sap.ui.core.Item[]} Array of sap.ui.core.Item instances. The current target of the <code>selectedItems</code>
+	 *          association.
+	 * @private
+	 * @since 1.26.0
+	 * @name sap.m.MultiComboBox#_getUnselectedItems
+	 * @function
+	 */
+	MultiComboBox.prototype._getUnselectedItems = function() {
+		return jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+	};
+	
+	/**
 	 * Retrieves the selected item objects from the association named <code>selectedItems</code>.
 	 * 
-	 * @returns {array} Array of sap.ui.core.Item instances. The current target of the <code>selectedItems</code>
+	 * @returns {sap.ui.core.Item[]} Array of sap.ui.core.Item instances. The current target of the <code>selectedItems</code>
 	 *          association.
 	 * @public
 	 * @name sap.m.MultiComboBox#getSelectedItems

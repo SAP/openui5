@@ -845,6 +845,34 @@
 		oMockServer.destroy();
 
 	});
+	
+	test("test mockdata linkage to entityset", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/DataModel.xml"// url to the service metadata document
+		var sMockdataBaseUrl = "testdata/"// base url which contains the mockdata
+		oMockServer.simulate(sMetadataUrl, sMockdataBaseUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemSubCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "");
+		equal(oResponse.data.d.results.length, 2, "");
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/LeaveItemCollection",
+			dataType : "json"
+		});
+		ok(oResponse.success, "");
+		equal(oResponse.data.d.results.length, 7, "");
+
+		oMockServer.destroy();
+
+	});
 
 	test("test $format", function() {
 		var oMockServer = new sap.ui.core.util.MockServer({

@@ -1042,85 +1042,112 @@ sap.ui
 					};
 
 					/**
-					 * loads the mock data for the given entity sets and tries to load them from
-					 * the files inside the given base url. The name of the JSON files containing the
-					 * mock data should be the same as the name of the underlying entity type. As
-					 * an alternative you could also specify the url to a single JSON file containing
-					 * the mock data for all entity types.
-					 * @param {map} mEntitySets map of entity sets
-					 * @param {string} sBaseUrl the base url which contains the mock data in JSON files or if the url is pointing to a JSON file containing all entity types
-					 * @return {array} the mockdata arary containing the data for the entity sets
-					 * @private 
+					 * loads the mock data for the given entity sets and tries
+					 * to load them from the files inside the given base url.
+					 * The name of the JSON files containing the mock data
+					 * should be either the name of the entity set or the name
+					 * of the underlying entity type. As an alternative you
+					 * could also specify the url to a single JSON file
+					 * containing the mock data for all entity types.
+					 * 
+					 * @param {map}
+					 *                mEntitySets map of entity sets
+					 * @param {string}
+					 *                sBaseUrl the base url which contains the
+					 *                mock data in JSON files or if the url is
+					 *                pointing to a JSON file containing all
+					 *                entity types
+					 * @return {array} the mockdata arary containing the data
+					 *         for the entity sets
+					 * @private
 					 * @name sap.ui.core.util.MockServer#_loadMockdata
 					 * @function
 					 */
 					MockServer.prototype._loadMockdata = function(mEntitySets, sBaseUrl) {
-						// load the entity sets (map the entity type data to the entity set)
-						var that = this, mEntityTypesData = {};
+						var that = this, mData = {};
 						this._oMockdata = {};
-						// load the entity types data 
+						var fnLoadMockData = function(sUrl, oEntitySet) {
+							var oResponse = jQuery.sap.sjax({
+								url : sUrl,
+								dataType : "json"
+							});
+							if (oResponse.success) {
+								if (!!oResponse.data.d) {
+									if (!!oResponse.data.d.results) {
+										mData[oEntitySet.name] = oResponse.data.d.results;
+									} else {
+										jQuery.sap.log.error("The mockdata format for entity set \"" + oEntitySet.name + "\" invalid");
+									}
+								} else {
+									mData[oEntitySet.name] = oResponse.data;
+								}
+								return true;
+							} else {
+								if (oResponse.status === "parsererror") {
+									jQuery.sap.log.error("The mockdata for entity set \"" + oEntitySet.name + "\" could not be loaded due to a parsing error!");
+								}
+								return false;
+							}
+						};
+
+						// load all the mock data in one single file
 						if (jQuery.sap.endsWith(sBaseUrl, ".json")) {
-							// all entity types are in one file
 							var oResponse = jQuery.sap.sjax({
 								url : sBaseUrl,
 								dataType : "json"
 							});
 							if (oResponse.success) {
-								mEntityTypesData = oResponse.data;
+								mData = oResponse.data;
 							} else {
-								jQuery.sap.log.error("The mockdata for all the entity types could not be found at \"" + sBaseUrl + "\"!");
+								jQuery.sap.log.warning("The mockdata for all the entity types could not be found at \"" + sBaseUrl + "\"!");
 							}
 						} else {
-							// load the entity types individually
+							// load the mock data individually
 							jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
-								if (!mEntityTypesData[oEntitySet.type]) {
-									var sEntityTypeUrl = sBaseUrl + oEntitySet.type + ".json";
-									var oResponse = jQuery.sap.sjax({
-										url : sEntityTypeUrl,
-										dataType : "json"
-									});
-									if (oResponse.success) {
-										if (!!oResponse.data.d) {
-											if (!!oResponse.data.d.results) {
-												mEntityTypesData[oEntitySet.type] = oResponse.data.d.results;
-											} else {
-												jQuery.sap.log.error("The mockdata format for entity type \"" + oEntitySet.type
-														+ "\" invalid");
-											}
-										} else {
-											mEntityTypesData[oEntitySet.type] = oResponse.data;
-										}
-									} else {
-										if (oResponse.status === "parsererror") {
-											jQuery.sap.log.error("The mockdata for entity type \"" + oEntitySet.type
-													+ "\" could not be loaded due to a parsing error!");
-										} else {
-											jQuery.sap.log.error("The mockdata for entity type \"" + oEntitySet.type
-													+ "\" could not be found at \"" + sBaseUrl + "\"!");
+								if (!mData[oEntitySet.type] || !mData[oEntitySet.name]) {
+									// first look for a file by
+									// the entity set name
+									var sEntitySetUrl = sBaseUrl + oEntitySet.name + ".json";
+									if (!fnLoadMockData(sEntitySetUrl, oEntitySet)) {
+										jQuery.sap.log.warning("The mockdata for entity set \"" + oEntitySet.name + "\" could not be found at \"" + sBaseUrl + "\"!");
+										var sEntityTypeUrl = sBaseUrl + oEntitySet.type + ".json";
+										if (!fnLoadMockData(sEntityTypeUrl, oEntitySet)) {
+											jQuery.sap.log.warning("The mockdata for entity type \"" + oEntitySet.type + "\" could not be found at \"" + sBaseUrl + "\"!");
+											// generate random
+											// mock data
 											if (!!that._bGenerateMissingMockData) {
 												var mEntitySet = {};
 												mEntitySet[oEntitySet.name] = oEntitySet;
-												mEntityTypesData[oEntitySet.type] = that._generateODataMockdataForEntitySet(mEntitySet,
-														that._oMetadata)[oEntitySet.name];
+												mData[oEntitySet.type] = that._generateODataMockdataForEntitySet(mEntitySet, that._oMetadata)[oEntitySet.name];
 											}
 										}
 									}
 								}
 							});
 						}
-						// create the mock data for the entity sets and enhance the mock data with metadata
+						// create the mock data for the entity sets and enhance
+						// the mock data with metadata
 						jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
-							// TODO: should we clone here or not? right now we clone because of unique metadata for 
-							//       individual entity sets otherwise the data of the entity types would be a 
-							//       reference and thus it overrides the metadata from the other entity type.
-							//       this happens especially then when we have two entity sets for the same
-							//       entity type => maybe we move the metdata generation to the response creation!
+							// we clone because of unique metadata for
+							// individual entity sets otherwise the data of the
+							// entity types would be a
+							// reference and thus it overrides the metadata from
+							// the other entity type.
+							// this happens especially then when we have two
+							// entity sets for the same
+							// entity type => maybe we move the metdata
+							// generation to the response creation!
 							that._oMockdata[sEntitySetName] = [];
-							if (mEntityTypesData[oEntitySet.type]) {
-								jQuery.each(mEntityTypesData[oEntitySet.type], function(iIndex, oEntity) {
+							if (mData[oEntitySet.name]) {
+								jQuery.each(mData[oEntitySet.name], function(iIndex, oEntity) {
+									that._oMockdata[sEntitySetName].push(jQuery.extend(true, {}, oEntity));
+								});
+							} else if (mData[oEntitySet.type]) {
+								jQuery.each(mData[oEntitySet.type], function(iIndex, oEntity) {
 									that._oMockdata[sEntitySetName].push(jQuery.extend(true, {}, oEntity));
 								});
 							}
+
 							// enhance with OData metadata if exists
 							if (that._oMockdata[sEntitySetName].length > 0) {
 								that._enhanceWithMetadata(oEntitySet, that._oMockdata[sEntitySetName]);
@@ -1129,7 +1156,7 @@ sap.ui
 						// return the new mockdata
 						return this._oMockdata;
 					};
-
+					
 					/**
 					 * enhances the mock data for the given entity set with the necessary metadata.
 					 * Important is at least to have a metadata entry incl. uri for the entry and 

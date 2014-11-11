@@ -724,6 +724,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @function
 		 */
 		ComboBox.prototype.onfocusin = function(oEvent) {
+			this.$().addClass("sapMComboBoxFocused");
 
 			// the arrow is receiving focus
 			if (oEvent.target === this.getOpenArea()) {
@@ -773,6 +774,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
 			var oPicker = this.getAggregation("picker");
+
+			this.$().removeClass("sapMComboBoxFocused");
 
 			if (!oEvent.relatedControlId || !oPicker) {
 				return;

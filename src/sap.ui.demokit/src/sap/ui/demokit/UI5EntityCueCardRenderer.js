@@ -31,11 +31,10 @@ sap.ui.define(['jquery.sap.global'],
 			while ( sType.slice(-2) == "[]" ) {
 				sType = sType.slice(0, -2);
 			}
-			if ( sType.indexOf("sap.ui.core.") != 0 ) {
-				return false;
+			if ( sType.indexOf("sap.ui.core.") == 0 ) {
+				sType = sType.slice("sap.ui.core.".length);
 			}
-			sType = sType.slice("sap.ui.core.".length);
-			return "boolean int float number function object string void any ".indexOf(sType) >= 0;
+			return /^(any|boolean|float|int|object|string|void)$/.test(sType);
 		}
 		
 		rm.write("<div");

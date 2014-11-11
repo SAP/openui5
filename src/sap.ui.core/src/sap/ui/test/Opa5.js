@@ -6,6 +6,7 @@
 sap.ui.define(['jquery.sap.global',
 			'./Opa',
 			'./OpaPlugin',
+			'./PageObjectFactory',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
 			'./matchers/Matcher',
@@ -13,7 +14,7 @@ sap.ui.define(['jquery.sap.global',
 			'./matchers/PropertyStrictEquals',
 			'./everyPolyfill',
 			'sap/ui/thirdparty/URI'],
-	function($, Opa, OpaPlugin, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Matcher, AggregationFilled, PropertyStrictEquals) {
 		var fnOpa5,
 			oPlugin = new OpaPlugin(),
 			oFrameWindow = null,
@@ -323,6 +324,25 @@ sap.ui.define(['jquery.sap.global',
 		 * @static
 		 */
 		fnOpa5.extendConfig = Opa.extendConfig;
+		
+		/**
+		 * Reset Opa.config to its default values 
+		 * @name sap.ui.test.Op5a#resetConfig
+		 * @static
+		 * @public
+		 * @function
+		 * @since 1.25
+		 */
+		fnOpa5.resetConfig = function() {
+			Opa.resetConfig();
+			Opa.extendConfig({
+				viewNamespace : "",
+				arrangements : new fnOpa5(),
+				actions : new fnOpa5(),
+				assertions : new fnOpa5(),
+				visible : true
+			});
+		};
 
 		/**
 		 * Waits until all waitFor calls are done
@@ -340,6 +360,34 @@ sap.ui.define(['jquery.sap.global',
 		fnOpa5.matchers.AggregationFilled = AggregationFilled;
 		fnOpa5.matchers.PropertyStrictEquals = PropertyStrictEquals;
 
+		/**
+		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
+		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
+		 * @name sap.ui.test.Opa5#createPageObjects
+		 * @param {map} mPageObjects
+		 * @param {map} mPageObjects.<your page object name> Multiple page objects are possible, provide at least actions or assertions
+		 * @param {function} [mPageObjects.<your page object name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
+		 * @param {function} [mPageObjects.<your page object name>.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
+		 * @param {map} [mPageObjects.<your page object name>.actions] can be used as arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
+		 * @param {function} mPageObjects.<your page object name>.actions.<your action 1>
+		 * @param {function} mPageObjects.<your page object name>.actions.<your action 2>
+		 * @param {map} [mPageObjects.<your page object name>.assertions]
+		 * @param {function} mPageObjects.<your page object name>.assertions.<your assertions 1>
+		 * @param {function} mPageObjects.<your page object name>.assertions.<your assertions 2>
+		 * @returns {map} mPageObject
+		 * @returns {map} mPageObject.<your page object name>
+		 * @returns {object} mPageObject.<your page object name>.actions an instance of baseClass or Opa5 with all the actions defined above
+		 * @returns {object} mPageObject.<your page object name>.assertions an instance of baseClass or Opa5 with all the assertions defined above 
+		 * @public
+		 * @function
+		 * @static
+		 * @since 1.25
+		 */
+		fnOpa5.createPageObjects = function(mPageObjects) {
+			//prevent circular dependency
+			return PageObjectFactory.create(mPageObjects,fnOpa5);
+		};
+		
 		/*
 		 * Privates
 		 */
@@ -399,14 +447,7 @@ sap.ui.define(['jquery.sap.global',
 		/*
 		 * Apply defaults
 		 */
-
-		Opa.extendConfig({
-			viewNamespace : "",
-			arrangements : new fnOpa5(),
-			actions : new fnOpa5(),
-			assertions : new fnOpa5(),
-			visible : true
-		});
+		fnOpa5.resetConfig();
 
 		/*
 		 * INTERNALS

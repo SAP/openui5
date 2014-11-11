@@ -78,8 +78,8 @@ li.sapMSltItemDisabled,
 	border-color: @sapHCStandardFG;
 }
 
-// IE does not support css outline-offset
-
+/* FIX: IE does not support css outline-offset */
+ 
 html[data-sap-ui-browser^="ie"] {
 	.sapMSlt:focus:not(.sapMSltPressed) {
 		outline: none;
@@ -96,6 +96,12 @@ html[data-sap-ui-browser^="ie"] {
 		top: 0rem;
 		border: 0.125rem dotted @sapHCStandardFG;
 	}
+}
+
+/* FIX: In FF bottom outline-offset is not working as expected when Select is in sap.m.Bar and is left-aligned */
+
+html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
+		line-height: 0rem;
 }
 
 /* Select IconOnly hover and focus */
@@ -208,16 +214,6 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 /* ------------------------------ */
-/* SelectList element             */
-/* ------------------------------ */
-
-/* focus */
-
-.sap-desktop li.sapMSelectListItem:focus {
-	outline: 0.125rem dotted @sapHCStandardFG;
-}
-
-/* ------------------------------ */
 /* Native HTML select element     */
 /* ------------------------------ */
 
@@ -238,7 +234,6 @@ html[data-sap-ui-browser^="ie"] {
 	outline-offset: -0.125rem;
 	border-color: transparent;
 }
-
 
 /* hover: Select IconOnly in all contexts */
 

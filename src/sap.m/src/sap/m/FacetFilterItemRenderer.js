@@ -20,7 +20,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	FacetFilterItemRenderer.renderLIContent = function(oRm, oControl) {
 	
 		oRm.write("<div");
-		oRm.addClass("sapMFFLITitle");
+		if (oControl.getParent() && oControl.getParent().getWordWrap()) {
+			oRm.addClass("sapMFFLITitleWrap");
+		} else {
+			oRm.addClass("sapMFFLITitle");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 	  oRm.writeEscaped(oControl.getText());

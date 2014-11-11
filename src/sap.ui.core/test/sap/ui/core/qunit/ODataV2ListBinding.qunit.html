@@ -71,7 +71,7 @@
 			oModel = initModel(false);
 		},
 		teardown : function() {
-			delete oModel;
+			oModel = undefined;
 			removeSharedMetadata();
 		}
 	});
@@ -144,8 +144,7 @@
 			oSorter = new sap.ui.model.Sorter("CategoryName", false);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler2);
-			// fire first loading
-			oBinding.getContexts();
+
 		};
 
 		var handler0 = function(oEvent){
@@ -166,10 +165,11 @@
 			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
 			oBinding.sort(oSorter);
 			oBinding.attachChange(handler1);
-			// fire first loading
-			oBinding.getContexts();
+
 		};
-		oBinding.attachRefresh(function() {oBinding.getContexts();});
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
 		oBinding.attachChange(handler0);
 	});
 
@@ -199,7 +199,6 @@
 			var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler1);
-			oBinding.getContexts();
 		};
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
@@ -213,7 +212,6 @@
 			oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.BT, "Beverages","D");
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler2);
-			oBinding.getContexts();
 		};
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
@@ -229,7 +227,6 @@
 			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ngs");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler3);
-			oBinding.getContexts();
 		};
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
@@ -241,7 +238,6 @@
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.LE, value1: "Z"}, {operator:sap.ui.model.FilterOperator.GE, value1: "A"}, {operator:sap.ui.model.FilterOperator.NE, value1: "Beverages"}]);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler4);
-			oBinding.getContexts();
 		};
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
@@ -253,7 +249,6 @@
 			oFilter = new sap.ui.model.odata.Filter("CategoryName", [{operator:sap.ui.model.FilterOperator.EQ, value1: "Condiments"}, {operator:sap.ui.model.FilterOperator.EQ, value1: "Beverages"}], false);
 			oBinding.filter([oFilter]);
 			oBinding.attachChange(handler5);
-			oBinding.getContexts();
 		};
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
@@ -267,7 +262,6 @@
 			oFilter2 = new sap.ui.model.Filter("Description", sap.ui.model.FilterOperator.EndsWith, "ings");
 			oBinding.filter([oFilter, oFilter2]);
 			oBinding.attachChange(handler6);
-			oBinding.getContexts();
 		};
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
@@ -287,7 +281,6 @@
 			var oMultiFilter3 = new sap.ui.model.Filter([oMultiFilter2, oFilter5], true);
 			oBinding.filter(oMultiFilter3);
 			oBinding.attachChange(handler7);
-			oBinding.getContexts();
 		};
 		var handler7 = function(oEvent){
 			// contexts should be now loaded
@@ -377,7 +370,6 @@
 			}], false);
 			oBinding.filter(oFilter.convert());
 			oBinding.attachChange(handler1);
-			oBinding.getContexts();
 		};
 		var handler1 = function(oEvent){
 			// contexts should be now loaded
@@ -395,7 +387,6 @@
 			}]);
 			oBinding.filter(oFilter.convert());
 			oBinding.attachChange(handler2);
-			oBinding.getContexts();
 		};
 		var handler2 = function(oEvent){
 			// contexts should be now loaded
@@ -411,7 +402,6 @@
 			oFilter2 = new sap.ui.model.odata.Filter("Description", [{operator: sap.ui.model.FilterOperator.EndsWith, value1: "ngs"}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
 			oBinding.attachChange(handler3);
-			oBinding.getContexts();
 		};
 		var handler3 = function(oEvent){
 			// contexts should be now loaded
@@ -432,7 +422,6 @@
 			}]);
 			oBinding.filter(oFilter.convert());
 			oBinding.attachChange(handler4);
-			oBinding.getContexts();
 		};
 		var handler4 = function(oEvent){
 			// contexts should be now loaded
@@ -450,7 +439,6 @@
 			}], false);
 			oBinding.filter(oFilter.convert());
 			oBinding.attachChange(handler5);
-			oBinding.getContexts();
 		};
 		var handler5 = function(oEvent){
 			// contexts should be now loaded
@@ -471,7 +459,6 @@
 			}]);
 			oBinding.filter([oFilter.convert(), oFilter2.convert()]);
 			oBinding.attachChange(handler6);
-			oBinding.getContexts();
 		};
 		var handler6 = function(oEvent){
 			// contexts should be now loaded
@@ -496,11 +483,59 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(fnFilter);
 	});
+	
+	asyncTest("Error Case: Service returns partial data, Binding should keep data, length final", function(){
+		var handler = function() {
+			oBinding.detachChange(handler);
+			
+			// check necessary prerequisites
+			equal(oBinding.getPath(), "/Orders", "ListBinding path");
+			equal(oBinding.bFaultTolerant, true, "Binding should run in faultTolerant mode");
+			equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.InlineRepeat, "Binding should use CountMode.InlineRepeat");
+			
+			// actual assertations against the behavior in the error case when the service could not collect all
+			// data from its data-sources
+			equal(oBinding.aKeys.length, 2, "Loaded data count");
+			equal(oBinding.iLength, 3, "Service says there are still entities to load");
+			equal(oBinding.bLengthFinal, false, "Length should not be final already");
+			
+			oBinding.attachChange(handler2);
+			oBinding.getContexts(2, 1, 0);
+		};
+		
+		var handler2 = function() {
+			oBinding.detachChange(handler);
+			
+			equal(oBinding.aKeys.length, 2, "Loaded data count is still smaller than expected (somethings missing)");
+			equal(oBinding.iLength, 2, "Length is now set to the correct value, because result was empty...");
+			equal(oBinding.bLengthFinal, true, "...and the length should be final now.");
+			
+			start(); // resume normal testing
+		};
+		
+		var oBinding = oModel.bindList(
+			"/Orders",
+			null,
+			null,
+			[new sap.ui.model.Filter("ShipCity", "EQ", "TEST_FAULT_TOLERANCE")],
+			{
+				//parameters
+				faultTolerant: true,
+				countMode: sap.ui.model.odata.CountMode.InlineRepeat,
+			}
+		);
+		
+		oBinding.attachChange(handler);
+		
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts(0, 2, 0);
+		})
+	});
 	</script>
 
 </head>
 <body>
-<h1 id="qunit-header">QUnit tests: OData List Binding</h1>
+<h1 id="qunit-header">QUnit tests: OData List Binding (V2)</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <div id="qunit-testrunner-toolbar"></div>

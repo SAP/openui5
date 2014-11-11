@@ -900,18 +900,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	/**
 	 * Function is called when token is pressed, toggles the token's selection state depending on ctrl key state, deselectes
-	 * other tokens
+	 * other tokens. Currently handled by sap.m.Token#ontap
 	 * 
 	 * @private
 	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
-	Tokenizer.prototype._onTokenPress = function(oEvent) {
-		var sourceToken = oEvent.oSource;
-		var bSelected = sourceToken.getSelected();
-		sourceToken.setSelected(!bSelected);
-			
-	};
+	Tokenizer.prototype._onTokenPress = function(oEvent) {};
 	
 	Tokenizer.prototype.setEditable = function(bEditable) {
 		this.setProperty("editable", bEditable);

@@ -11,6 +11,14 @@
 <script type="text/javascript">
 	var bCheckBoxSet = true;
 
+	var oModel = new sap.ui.model.json.JSONModel({
+	                                 			"TextTrue": "TitleActive",
+	                                			"true" : true,
+	                                			"TextFalse" : "TitleNotActive",
+	                                			"false" : false,
+	                                			"formatterTest" : "dummyString"
+	                                		});
+	
 	var oi1 = new sap.m.ObjectIdentifier("oi1", {
 		title : "Gummib\u00E4" + "r\u00E7" + "he\u00D1",
 		text : "Gummib\u00E4" + "r\u00E7" + "he\u00D1 bla bla bla bla bla bla bla bla bla silly table",
@@ -47,6 +55,35 @@
 		badgeAttachments : true,
 		visible : true
 	});
+	
+	var oi4 = new sap.m.ObjectIdentifier("oi4", {
+		title : "{/TextTrue}",
+		text : "Model sets true",
+		titlePress: function() {
+			alert('ok')
+		},
+		titleActive : "{/true}"
+	});
+	
+	var oi5 = new sap.m.ObjectIdentifier("oi5", {
+		title : "{/TextFalse}",
+		text : "Model sets false",
+		titleActive : "{/false}"
+	});
+	
+	var oi6 = new sap.m.ObjectIdentifier("oi6", {
+		title: "{/TextTrue}",
+		text: "Formatter sets true",
+		titlePress: function() {
+			alert('ok')
+		},
+		titleActive: {
+			path: "/formatterTest",
+			formatter: function(e) {
+				return (e == "dummyString") ? true : false;
+			}
+		}
+	});
 
 	var app = new sap.m.App();
 	var page = new sap.m.Page({
@@ -56,10 +93,14 @@
 	app.setInitialPage(page.getId());
 	app.addPage(page);
 
+	page.setModel(oModel);
 	page.addContent(oi1);
 	page.addContent(cb1);
 	page.addContent(oi2);
 	page.addContent(oi3);
+	page.addContent(oi4);
+	page.addContent(oi5);
+	page.addContent(oi6);
 	app.placeAt('body');
 </script>
 </head>

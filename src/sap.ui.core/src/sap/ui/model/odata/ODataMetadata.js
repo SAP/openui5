@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		},
 
 		metadata : {
-			publicMethods : ["getServiceMetadata", "attachFailed", "detachFailed", "attachLoaded", "detachLoaded"]
+			publicMethods : ["getServiceMetadata", "attachFailed", "detachFailed", "attachLoaded", "detachLoaded", "refresh"]
 		}
 
 	});
@@ -78,6 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var oRequest = this._createRequest(this.sUrl);
 
 		function _handleSuccess(oMetadata, oResponse) {
+			that.bFailed = false;
 			if (!oMetadata || !oMetadata.dataServices) {
 				var mParameters = {
 						message: "Invalid metadata document",
@@ -100,6 +101,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		function _handleError(oError) {
+			that.bFailed = true;
 			var mParams = { message: oError.message };
 			if (oError.response) {
 					mParams.statusCode = oError.response.statusCode;
@@ -121,6 +123,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		// execute the request
 		this.oRequestHandle = OData.request(oRequest, _handleSuccess, _handleError, OData.metadataHandler);
 	};
+
+	/**
+	 * refreshes the metadata creating a new request to the server  
+	 *
+	 * @public
+	 * @name sap.ui.model.odata.ODataMetadata.refresh
+	 * @function
+	 */
+	ODataMetadata.prototype.refresh = function(){
+		this._loadMetadata();
+		return this;
+	};
+
 
 	/**
 	 * Creates a new subclass of class sap.ui.model.odata.ODataMetadata with name <code>sClassName</code>
@@ -160,6 +175,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		return this.bLoaded;
 	};
 
+	/**
+	 * Checks whether metadata loading has already failed 
+	 * 
+	 * @public
+	 * @returns {boolean} returns whether metadata request has failed
+	 */
+	ODataMetadata.prototype.isFailed = function() {
+		return this.bFailed;
+	};
+	
 	/**
 	 * Fire event loaded to attached listeners.
 	 *

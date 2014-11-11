@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	
 	CodeViewer.load = function() {
 		if ( !window.prettyPrint ) {
-			jQuery.sap.require("sap.ui.demokit.js.prettify");
+			jQuery.sap.require("sap.ui.demokit.js.google-code-prettify.prettify");
 		}
 	};
 	

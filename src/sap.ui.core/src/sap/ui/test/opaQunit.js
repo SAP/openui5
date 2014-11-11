@@ -14,6 +14,8 @@
 //// The only dependency is jQuery. As i plan to get this into a separate repository, i did not use the UI5 naming conventions
 /////////////////////
 opaTest = function (testName, expected, callback, async) {
+	"use strict";
+
 	var config = sap.ui.test.Opa.config;
 	//Increase qunits timeout to 90 seconds to match default OPA timeouts
 	if (!QUnit.config.testTimeout) {
