@@ -98,16 +98,7 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			});
 
-			/**
-			 * sets the array of conditions.
-			 * 
-			 * @param {object[]}
-			 *            aConditions the complete list of conditions
-			 */
-			P13nGroupPanel.prototype.setConditions = function(aConditions) {
-				this._oGroupPanel.setConditions(aConditions);
-			};
-
+			
 			/**
 			 * returns the array of conditions.
 			 * 
@@ -245,12 +236,12 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						key : oGroupItem_.getKey(),
 						keyField : oGroupItem_.getColumnKey(),
 						operation : oGroupItem_.getOperation(),
-						grouping :  oGroupItem_.getGrouping()
+						showIfGrouped : oGroupItem_.getShowIfGrouped()
 					});
 				});
 
 				if (!this._bIgnoreAdd) {
-					this.setConditions(aConditions);
+					this._oGroupPanel.setConditions(aConditions);
 				}
 			};
 
@@ -261,13 +252,14 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 					var oNewData = oEvent.getParameter("newData");
 					var sOperation = oEvent.getParameter("operation");
 					var sKey = oEvent.getParameter("key");
-
+					var iIndex = oEvent.getParameter("index");
+					
 					if (sOperation === "update") {
-						var oGroupItem = that._getGroupItem(sKey);
+						var oGroupItem = that.getGroupItems()[iIndex];
 						if (oGroupItem) {
 							oGroupItem.setColumnKey(oNewData.keyField);
 							oGroupItem.setOperation(oNewData.operation);
-							oGroupItem.setGrouping(oNewData.grouping);
+							oGroupItem.setShowIfGrouped(oNewData.showIfGrouped);
 
 							// sap.m.MessageToast.show("update GroupItem ---> " + sKey);
 						}
@@ -278,33 +270,23 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 							key : sKey,
 							columnKey : oNewData.keyField,
 							operation : oNewData.operation,
-							grouping : oNewData.grouping
+							showIfGrouped : oNewData.showIfGrouped
 						});
 
 						that.fireAddGroupItem({
 							key : sKey,
-							index : oEvent.getParameter("index"),
+							index : iIndex,
 							newItem : oGroupItem
 						});
 						that._bIgnoreAdd = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveGroupItem({
-							key : sKey
+							//key : sKey,
+							index : iIndex
 						});
 					}
 				};
-			};
-
-			P13nGroupPanel.prototype._getGroupItem = function(sKey) {
-				var oGroupItem = null;
-				this.getGroupItems().forEach(function(oGroupItem_) {
-					if (oGroupItem_.getKey() === sKey) {
-						oGroupItem = oGroupItem_;
-						return;
-					}
-				});
-				return oGroupItem;
 			};
 
 			return P13nGroupPanel;

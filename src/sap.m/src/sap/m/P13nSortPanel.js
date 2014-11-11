@@ -280,14 +280,14 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 						});
 
 						that.fireAddSortItem({
-							index : oEvent.getParameter("index"),
+							index : iIndex,
 							newItem : oSortItem
 						});
 						that._bIgnoreAdd = false;
 					}
 					if (sOperation === "remove") {
 						that.fireRemoveSortItem({
-							index : oEvent.getParameter("index")
+							index : iIndex
 						});
 					}
 				};

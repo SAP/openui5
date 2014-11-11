@@ -390,6 +390,8 @@ sap.ui
 							var oNewData = oEvent.getParameter("newData");
 							var sOperation = oEvent.getParameter("operation");
 							var sKey = oEvent.getParameter("key");
+							var iIndex = oEvent.getParameter("index");
+							
 							var oFilterItemData = null;
 							if (oNewData){
 								oFilterItemData = {
@@ -402,7 +404,7 @@ sap.ui
 								};
 							}
 							if (sOperation === "update") {
-								var oFilterItem = that._getFilterItem(sKey);
+								var oFilterItem = that.getFilterItems()[iIndex];
 								if (oFilterItem) {
 									oFilterItem.setExclude(oNewData.exclude);
 									oFilterItem.setColumnKey(oNewData.keyField);
@@ -412,7 +414,7 @@ sap.ui
 								}
 								that.fireUpdateFilterItem({
 									key : sKey,
-									index : oEvent.getParameter("index"),
+									index : iIndex,
 									filterItemData: oFilterItemData
 								});
 							}
@@ -420,7 +422,7 @@ sap.ui
 								that._bIgnoreAdd = true;							
 								that.fireAddFilterItem({
 									key : sKey,
-									index : oEvent.getParameter("index"),
+									index : iIndex,
 									filterItemData : oFilterItemData
 								});
 								that._bIgnoreAdd = false;
@@ -428,21 +430,10 @@ sap.ui
 							if (sOperation === "remove") {
 								that.fireRemoveFilterItem({
 									key : sKey,
-									index : oEvent.getParameter("index")
+									index : iIndex
 								});
 							}
 						};
-					};
-
-					P13nFilterPanel.prototype._getFilterItem = function(sKey) {
-						var oFilterItem = null;
-						this.getFilterItems().forEach(function(oFilterItem_) {
-							if (oFilterItem_.getKey() === sKey) {
-								oFilterItem = oFilterItem_;
-								return;
-							}
-						});
-						return oFilterItem;
 					};
 
 					return P13nFilterPanel;
