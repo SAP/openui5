@@ -23,8 +23,6 @@
 }
 
 .sapMSFF{
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	height: 2.5rem;
 	line-height: 2.375rem;
@@ -37,7 +35,7 @@
 	padding-right: 4.75rem;
 }
 
-.sapMFocus>.sapMSFF {
+.sapMFocus > .sapMSFF {
 	border: 1px solid @sapHCStandardFG;
 	outline: 0.125rem dotted @sapHCStandardFG;
 	outline-offset: -3px;
@@ -45,8 +43,21 @@
 
 /* fix for IE focus outline */
 html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
-	border: 2px dotted @sapHCStandardFG;
-	outline: 1px solid @sapHCStandardFG;
+	border: 1px solid @sapHCStandardFG;
+	outline: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		display: block;
+		width: 100%;
+		height: 100%;
+		border: 0.125rem dotted @sapHCStandardFG;
+		box-sizing: border-box;
+		pointer-events: none;
+	}
 }
 
 .sapMSFF.sapMSFNS{ /* no search button */
@@ -110,32 +121,43 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	position: absolute;
 	width: 2.375rem;
 	height: 2.375rem;
+	line-height: 2.375rem;
 	font-size: 1.125rem;
 	color: @sapHCStandardFG;
 	text-align: center;
 	cursor: default;
-	margin:0;
-	padding:0;
-	line-height: 2.375rem;
+	margin: 0;
+	padding: 2px 2px 2px 1px;
 	right: 0;
 	top: 0;
+	box-sizing: border-box;
+	vertical-align: middle;
+	border-width: 1px;
+	border-left: 1px solid transparent;
+	cursor: pointer;
 }
+
 .sapMSFB:focus {
 	outline: none;
-	border: 0.125rem dotted @sapHCStandardFG;
+	border-width: 2px;
+	border-style: dotted;
+	border-color: @sapHCStandardFG;
+	padding: 0;
+
+}
+
+.sapMSFB:active,
+.sapMSFB:hover{
+	/* Needs repeating statements because of IE interpretation of :focus */
+	border-width: 0 0 0 1px;
+	background-color: @sapHCHighlightBG;
+	border-left-color: @sapHCStandardFG;
+	border-left-style: solid;
+	padding: 2px 2px 2px 1px;
 }
 
 .sapMFocus>.sapMSFF>.sapMSFB{
 	color: @sapHCStandardFG;
-}
-
-.sapMFocus>.sapMSFF>.sapMSFB:active{
-	color: @sapHCStandardFG;
-}
-
-.sapMSFB:hover{
-	background-color: @sapHCHighlightBG;
-	border-left: 1px solid @sapHCStandardFG;
 }
 
 .sapMFocus>.sapMSFF>.sapMSFB.sapMSFBA,
@@ -161,6 +183,8 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 	border-right: 1px solid transparent;
 }
 
+.sapMFocus>.sapMSFF>.sapMSFR:active,
+.sapMSFR:active,
 .sapMSFR:hover {
 	border-right: 1px solid @sapHCStandardFG;
 }
@@ -271,7 +295,7 @@ html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
 		right: 2rem;
 	}
 
-	/* custom placeholder if not natively supported (IE9) */ 
+	/* custom placeholder if not natively supported (IE9) */
 	.sapMSF>.sapMSFF>.sapMSFPlaceholder {
 		left: 0.5rem;
 		height: 1.5rem;
