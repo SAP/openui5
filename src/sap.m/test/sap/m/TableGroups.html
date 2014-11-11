@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+<title>Table Grouping Example Page</title>
+
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script>
+
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+	// JSON sample data
+	var data = {
+		teamMembers:[
+			{firstName:"John", lastName:"Doe",birthDate:"1986-05-11",gender:"Male"},
+			{firstName:"Harry", lastName:"Potter",birthDate:"1976-05-19",gender:"Male"},
+			{firstName:"Heinz", lastName:"Piper",birthDate:"1989-08-08",gender:"Male"},
+			{firstName:"Indiana", lastName:"Jones",birthDate:"1991-12-03",gender:"Male"},
+			{firstName:"Darth", lastName:"Vader",birthDate:"1977-02-24",gender:"Male"},
+			{firstName:"Barbara", lastName:"Dreher",birthDate:"1999-08-31",gender:"Female"},
+			{firstName:"Dante", lastName:"Alighieri",birthDate:"1982-04-22",gender:"Male"},
+			{firstName:"Mark", lastName:"Anson",birthDate:"1984-05-24",gender:"Male"},
+			{firstName:"Jane", lastName:"Doe",birthDate:"1976-07-17",gender:"Female"},
+			{firstName:"Sean", lastName:"Penn",birthDate:"1977-09-15",gender:"Male"},
+			{firstName:"Terry", lastName:"Jones",birthDate:"1988-06-07",gender:"Male"},
+			{firstName:"Leia", lastName:"Vader",birthDate:"1991-11-09",gender:"Female"},
+			{firstName:"Karla", lastName:"Damon",birthDate:"1981-12-08",gender:"Female"},
+			{firstName:"Andante", lastName:"Allegro",birthDate:"1985-07-02",gender:"Male"},
+			{firstName:"John", lastName:"Dufke",birthDate:"1979-08-17",gender:"Male"},
+			{firstName:"Hermione", lastName:"Potter",birthDate:"1971-06-15",gender:"Female"},
+			{firstName:"Dante", lastName:"Alioli",birthDate:"1987-05-11",gender:"Male"},
+			{firstName:"Heinz", lastName:"Pepper",birthDate:"1995-10-21",gender:"Male"},
+			{firstName:"John", lastName:"Johnson",birthDate:"1981-10-26",gender:"Male"},
+			{firstName:"Luke", lastName:"Vader",birthDate:"1972-06-06",gender:"Male"},
+			{firstName:"Petra", lastName:"Delorean",birthDate:"1988-04-24",gender:"Female"},
+			{firstName:"Venus", lastName:"Botticelli",birthDate:"1976-09-08",gender:"Female"}
+		]};
+
+	// create JSON model instance
+	var oModel = new sap.ui.model.json.JSONModel();
+
+	// set the data for the model
+	oModel.setData(data);
+
+	// set the model to the core
+	sap.ui.getCore().setModel(oModel);
+
+	// create a Sorter with very simple grouping by the gender attribute
+	var oGenderSorter = new sap.ui.model.Sorter("gender", false, true);
+
+	// create a Sorter with grouping function
+	var oLastNameSorter = new sap.ui.model.Sorter("lastName", false, function(oContext){
+		var sKey = oContext.getProperty("lastName").charAt(0);
+		return {
+			key: sKey, // group by first letter of last name
+			text: "First letter: " + sKey
+		}
+	});
+
+	// another Sorter with grouping function
+	var oFirstNameSorter = new sap.ui.model.Sorter("firstName", false, function(oContext){
+		return {
+			key: oContext.getProperty("firstName").charAt(0), // group by first letter of first name
+			sorter_sorted_by: "FirstName"  // this information is only meant for the factory function!
+		}
+	});
+
+	// another Sorter with grouping function
+	var oDateSorter = new sap.ui.model.Sorter("birthDate", false, function(oContext){
+		var year = parseInt(oContext.getProperty("birthDate").split("-")[0], 10);
+		var key, text;
+
+		if (year < 1980) {
+			key = "70s";
+			text = "Seventies";
+		} else if (year < 1990) {
+			key = "80s";
+			text = "Eighties";
+		} else {
+			key = "90s";
+			text = "Nineties";
+		}
+
+		return {
+			key: key,
+			text: text
+		}
+	});
+	
+	// define the row template
+	var oItemTemplate = new sap.m.ColumnListItem({
+		tooltip: "Gender icon chosen because no better suitable icon is available... no discrimination of any gender intended",
+		cells : [
+			new sap.ui.core.Icon({
+				src : {
+					path: "gender",
+					formatter: function(sGender) {
+						return (sGender === "Male" ? "sap-icon://wrench" : "sap-icon://show");
+					}
+				}
+			}),
+			new sap.m.Label({
+				text : "{firstName}"
+			}),
+			new sap.m.Label({
+				text: "{lastName}"
+			}),
+			new sap.m.Label({
+				text: "{birthDate}"
+			}),
+			new sap.m.Label({
+				text: "{gender}"
+			})
+		]
+	});
+	
+	// init table 
+	var oTable = new sap.m.Table({
+		growing : true,
+		growingThreshold : 5,
+		headerText : "Team Members",
+		columns : [
+			new sap.m.Column({
+				width : "2rem",
+				hAlign : "Center",
+				mergeDuplicates : true,
+				mergeFunctionName : "getSrc"
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "First Name"
+				})
+			}),
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Last Name"
+				})
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				minScreenWidth : "Phone",
+				demandPopin : true,
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Birth Date"
+				})
+			}),
+			new sap.m.Column({
+				hAlign : "Right",
+				width : "4rem",
+				demandPopin : true,
+				minScreenWidth : "Tablet",
+				popinDisplay : "Inline",
+				header : new sap.m.Label({
+					text : "Gender"
+				}),
+				mergeDuplicates : true
+			})
+		],
+		updateStarted : function(e) {
+			console.log("updateStarted", e.getParameters(), Date.now());
+		},
+		updateFinished : function(e) {
+			console.log("updateFinished", e.getParameters(), Date.now());
+		}
+	});
+
+	// bind the aggregation and initially sort (and group) by last name
+	oTable.bindAggregation("items", {
+		path: "/teamMembers",
+		template: oItemTemplate,
+		sorter: oLastNameSorter,
+		groupHeaderFactory: function(oGroup) { // will be called by any sorter!
+			if (oGroup.sorter_sorted_by == "FirstName") { // factory only returns a custom header if sorted and grouped by FirstName!
+				return new sap.m.GroupHeaderListItem({title:"First name starts with: " + oGroup.key});
+			}
+		}
+	});
+
+	// the one and only page
+	var oPage = new sap.m.Page({
+		title: "Grouped Table",
+		content : [oTable],
+		footer : new sap.m.Toolbar({
+			content: [
+				new sap.m.Button({
+					text : "Group by LastName",
+					press : function() {
+						oTable.getBinding("items").sort(oLastNameSorter);
+					}
+				}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button({
+					text : "Group by FirstName",
+					press : function() {
+						oTable.getBinding("items").sort(oFirstNameSorter);
+					}
+				}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button({
+					text : "Group by Date",
+					press : function() {
+						oTable.getBinding("items").sort(oDateSorter);
+					}
+				}),
+				new sap.m.ToolbarSpacer(),
+				new sap.m.Button({
+					text : "Group by Gender",
+					press : function() {
+						oTable.getBinding("items").sort(oGenderSorter);
+					}
+				})
+			]
+		})
+	});
+
+	var oApp = new sap.m.App({
+		pages : [oPage]
+	}).placeAt("content");
+</script>
+</head>
+<body class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>
