@@ -147,7 +147,7 @@
 				<p>So what exactly are we doing here? We are creating a new instance of a control named Button, which is part of our commons library. 
 				Within the constructor call, we are making use of the JSON notation to pass some initial values to the control right away. In particular, these are:
 				<ul><li>The value for the text displayed on the button and</li>
-				<li>The handler attached to the onPress event, which in this case does nothing more than alerting "Hello" to us when someone clicks the button.</li>
+				<li>The handler attached to the button's "press" event, which in this case does nothing more than alerting "Hello" to us when someone clicks the button.</li>
 				</ul>
 				<p>Note that we could have achieved the same output by doing something like this:</p>
 				<pre class="codeblock"><span class="sh-js-keyword">var</span> btn = <span class="sh-js-keyword">new</span> sap.ui.commons.Button();
@@ -161,13 +161,14 @@ btn.attachPress(<span class="sh-js-keyword">function</span>() {
 <pre class="codeblock">
 btn.placeAt(<span class="shString">'content'</span>);
 </pre>
-				<p>This line tells UI5 to render this control inside of the div tag with the id "content" in the HTML code below these lines.</p>
+				<p>This line tells UI5 to render this control inside the div tag with the id "content" in the HTML code below these lines.</p>
 				<div class="result">
 					<p>
-						This Button is the result:
+						This Button is the result: <span class="smaller">(click to see the alert)</span>
 					</p>
 					<div id="content">
 					</div>
+					
 					<p>
 						Try it out yourself - feel free to modify and extend this example!
 					</p>
