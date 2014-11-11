@@ -226,8 +226,7 @@
 
 	//*********************************************************************************************
 	jQuery.each(["2000-01-01T16:00:00Z", "2000-01-01T16:00:00.0Z", "2000-01-01T16:00:00.000Z",
-	             "2000-01-02T01:00:00.000+09:00"],
-// Date cannot handle more than 3 digits for milliseconds! "2000-01-01T16:00:00.0000000000Z",
+	             "2000-01-02T01:00:00.000+09:00", "2000-01-01T16:00:00.000456789012Z"],
 // Note: milliseconds are not part of standard time patterns
 		function (i, sDateTime) {
 			test("14.4.4 Expression edm:DateTimeOffset (" + sDateTime + ")", function () {
@@ -254,6 +253,7 @@
 	//*********************************************************************************************
 	testIllegalValues([null, "{}", "2000-01-01", "20000101 160000",
 	             "2000-01-32T16:00:00.000Z",
+	             "2000-01-01T16:00:00.1234567890123Z",
 // Note: not checked by DateFormat, too much effort for us
 //	             "2000-01-01T16:00:00.000+14:01", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
 //	             "2000-01-01T16:00:00.000+00:60",
@@ -274,6 +274,10 @@
 		}), "23{59}59.123");
 		strictEqual(formatAndParseNoWarning({
 			"@odata.type": "Edm.TimeOfDay",
+			"value": "23:59:59.123456789012"
+		}), "23{59}59.123", "beyond millis");
+		strictEqual(formatAndParseNoWarning({
+			"@odata.type": "Edm.TimeOfDay",
 			"value": "23:59:59.1"
 		}), "23{59}59.100");
 		strictEqual(formatAndParseNoWarning({
@@ -288,12 +292,8 @@
 
 	//*********************************************************************************************
 	testIllegalValues([null, 0, "{}", "23", "23:59:60", "23:60:59", "24:00:00",
-	                   "23:59:59.123456789012"],
+	                   "23:59:59.1234567890123"],
 	                   "14.4.12 Expression edm:TimeOfDay", "Edm.TimeOfDay", true);
-	//TODO "23:59:59.123456789012" is an example by Ralf Handl and valid according to the spec:
-	// http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/abnf/odata-abnf-construction-rules.txt
-	// fractionalSeconds = 1*12DIGIT
-	// --> this means 1..12 digits in my opinion
 
 	//*********************************************************************************************
 	test("14.4.8 Expression edm:Float", function () {

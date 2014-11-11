@@ -19,12 +19,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 				pattern: "yyyy-MM-dd",
 				strictParsing: true
 			}),
-			rISODateTime = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[-+]\d{2}:\d{2})$/,
+			rISODateTime = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(\.\d{1,12})?(Z|[-+]\d{2}:\d{2})$/,
 			oISODateTimeFormat = DateFormat.getDateTimeInstance({
 				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX",
 				strictParsing: true
 			}),
-			rISOTime = /^\d{2}:\d{2}(:\d{2}(\.\d+)?)?$/,
+			rISOTime = /^\d{2}:\d{2}(:\d{2}(\.\d{1,12})?)?$/,
 			oISOTimeFormat = DateFormat.getTimeInstance({
 				pattern: "HH:mm:ss.SSS",
 				strictParsing: true
@@ -121,6 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 			 */
 			format: function (vRawValue) {
 				var oDate,
+					aMatches,
 					fNumber;
 
 				switch (typeof vRawValue) {
@@ -148,7 +149,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							return illegalValue(vRawValue);
 
 						case "Edm.DateTimeOffset": // 14.4.4 Expression edm:DateTimeOffset
-							if (rISODateTime.test(vRawValue.value)) {
+							aMatches = rISODateTime.exec(vRawValue.value);
+							if (aMatches) {
+								if (aMatches[2] && aMatches[2].length > 4) {
+									// "round" to millis, BEWARE of the dot!
+									vRawValue.value
+										= aMatches[1] + aMatches[2].slice(0, 4) + aMatches[3];
+								}
 								oDate = oISODateTimeFormat.parse(vRawValue.value);
 								if (oDate) {
 									return fnEscape(
@@ -194,6 +201,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 
 						case "Edm.TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
 							if (rISOTime.test(vRawValue.value)) {
+								if (vRawValue.value.length > 12) {
+									// "round" to millis: "HH:mm:ss.SSS"
+									vRawValue.value = vRawValue.value.slice(0, 12);
+								}
 								oDate = oISOTimeFormat.parse(vRawValue.value);
 								if (oDate) {
 									return fnEscape(DateFormat.getTimeInstance().format(oDate));
