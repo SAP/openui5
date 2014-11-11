@@ -36,15 +36,14 @@
 	}
 
 	/**
-	 * Creates an <mvc:View> tag with namespace definitions and isTemplate="true".
+	 * Creates an <mvc:View> tag with namespace definitions.
 	 * @param {string} [sPrefix="template"] the prefix for the template namespace
 	 * @returns {string}
 	 */
 	function mvcView(sPrefix) {
 		sPrefix = sPrefix || "template";
 		return '<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:' + sPrefix
-			+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
-			+ ' isTemplate="true">';
+			+ '="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">';
 	}
 
 	/**
@@ -70,16 +69,14 @@
 	}
 
 	/**
-	 * Checks if document is equal to the concatenation of the given strings (with
-	 * isTemplate adjusted accordingly).
+	 * Checks if document is equal to the concatenation of the given strings.
 	 *
 	 * @param {Element} oElement the actual XML document's root element
 	 * @param {string[]} aStrings the expected XML
 	 */
 	function checkXml(oElement, aStrings) {
 		var sActual = jQuery.sap.serializeXML(oElement),
-			sExpected = aStrings.join("")
-				.replace(/isTemplate="true"/, 'isTemplate="false"');
+			sExpected = aStrings.join("");
 
 		strictEqual(normalizeXml(sActual), normalizeXml(sExpected),
 			"XML looks as expected: " + sExpected);
@@ -183,7 +180,9 @@
 		withBalancedBindAggregation(function () {
 			withBalancedBindProperty(function () {
 				// code under test
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings || {});
+				strictEqual(
+					sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings || {}, "qux"),
+					oViewContent);
 			});
 		});
 
@@ -199,15 +198,13 @@
 	 * @param {string} sExpectedMessage
 	 *   "{0}" is replaced with the 2nd line of the view content (i.e. the first inner element)
 	 * @param {object} [mSettings={}]
-	 *   a settings object for the preprocessor; view name is always "foo"!
+	 *   a settings object for the preprocessor
 	 */
 	function checkError(aViewContent, sExpectedMessage, mSettings) {
 		var oViewContent = xml(aViewContent);
 
-		mSettings = mSettings || {};
-		mSettings.viewName = "foo";
 		try {
-			sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings);
+			sap.ui.core.util.XMLPreprocessor.process(oViewContent, mSettings || {}, "qux");
 			ok(false);
 		} catch (ex) {
 			strictEqual(ex.message, sExpectedMessage.replace("{0}", aViewContent[1]));
@@ -228,26 +225,6 @@
 			}
 		}
 	});
-
-	//*********************************************************************************************
-	jQuery.each(['', ' isTemplate="foo"'],
-		function (i, sTemplateSpec) {
-			test("XML w/o isTemplate is unchanged (" + i + ")", function () {
-				var aViewContent = [
-						mvcView().replace(/ isTemplate="true"/, sTemplateSpec),
-						'<In id="{/flag}"/>',
-						'<template:if test="false">',
-						'<Out/>',
-						'<\/template:if>',
-						'<\/mvc:View>'
-					],
-					oViewContent = xml(aViewContent);
-
-				sap.ui.core.util.XMLPreprocessor.process(oViewContent, {});
-
-				checkXml(oViewContent, aViewContent);
-			});
-		});
 
 	//*********************************************************************************************
 	test("XML with template:if test='false'", function () {
@@ -419,8 +396,8 @@
 					.returns(bIsLoggable);
 				oLogMock.expects("warning")
 					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-					.calledWith(
-						'Error in formatter of ' + aViewContent[1] + ' in view foo',
+					.withExactArgs(
+						'qux: Error in formatter of ' + aViewContent[1],
 						oError, "sap.ui.core.util.XMLPreprocessor");
 
 				window.foo = {
@@ -432,8 +409,7 @@
 				};
 
 				check(aViewContent, {
-					models: new sap.ui.model.json.JSONModel({flag: true}),
-					viewName: "foo"
+					models: new sap.ui.model.json.JSONModel({flag: true})
 				});
 			})
 		);
@@ -622,11 +598,11 @@
 				});
 
 				try {
-					sap.ui.core.util.XMLPreprocessor.process(xml(aViewContent), {viewName: "foo"});
+					sap.ui.core.util.XMLPreprocessor.process(xml(aViewContent), {}, "qux");
 					ok(false);
 				} catch (e) {
 					strictEqual(e.message,
-						'Unexpected tag ' + aViewContent[iUnexpected] + ' in view foo');
+						'qux: Unexpected tag ' + aViewContent[iUnexpected]);
 				}
 			}
 		);
@@ -695,8 +671,8 @@
 					.returns(bIsLoggable);
 				oLogMock.expects("debug")
 					.exactly(bIsLoggable ? 2 : 0) // do not construct arguments in vain!
-					.calledWith(
-						sinon.match(/Error in formatter of <In text=".*"\/> in view undefined/),
+					.withExactArgs(
+						sinon.match(/qux: Error in formatter of <In text=".*"\/>/),
 						oError, "sap.ui.core.util.XMLPreprocessor");
 				window.foo = {
 						Helper: {
@@ -785,7 +761,7 @@
 			mvcView(),
 			'<template:with path="some>random/path" var="path"/>', // "some" not defined here!
 			'<\/mvc:View>'
-		], "Missing model 'some' in {0} in view foo");
+		], "qux: Missing model 'some' in {0}");
 	});
 
 	//*********************************************************************************************
@@ -794,7 +770,7 @@
 			mvcView(),
 			'<template:with path="some/random/place" var="place"/>',
 			'<\/mvc:View>'
-		], "Cannot resolve path for {0} in view foo", {
+		], "qux: Cannot resolve path for {0}", {
 			models: new sap.ui.model.json.JSONModel()
 		});
 	});
@@ -857,7 +833,7 @@
 			mvcView(),
 			'<template:repeat/>',
 			'<\/mvc:View>'
-		], "Missing binding for {0} in view foo");
+		], "qux: Missing binding for {0}");
 	});
 
 	//*********************************************************************************************
@@ -866,7 +842,7 @@
 			mvcView(),
 			'<template:repeat list="no binding"/>',
 			'<\/mvc:View>'
-		], "Missing binding for {0} in view foo");
+		], "qux: Missing binding for {0}");
 	});
 
 	//*********************************************************************************************
@@ -875,7 +851,7 @@
 			mvcView(),
 			'<template:repeat list="{unknown>foo}"/>',
 			'<\/mvc:View>'
-		], "Missing model 'unknown' in {0} in view foo");
+		], "qux: Missing model 'unknown' in {0}");
 	});
 
 	//*********************************************************************************************
@@ -888,7 +864,7 @@
 			'<!-- prevent empty tag -->',
 			'<\/mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel(), viewName: "foo"
+			models: new sap.ui.model.json.JSONModel()
 		});
 	});
 

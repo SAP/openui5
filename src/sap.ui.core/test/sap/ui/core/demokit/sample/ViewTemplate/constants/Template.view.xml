@@ -3,8 +3,7 @@
 	xmlns="sap.m"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-	isTemplate="true">
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<layout:VerticalLayout>
 		<layout:content>
 			<template:with path="meta>/schemas/Model1">

@@ -39,10 +39,15 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.constants.Compon
 		});
 
 		return sap.ui.view({
+			preprocessors: {
+				xml: {
+					models: {meta: oMetaModel}
+				}
+			},
 			type: sap.ui.core.mvc.ViewType.XML,
 			viewName: "sap.ui.core.sample.ViewTemplate.constants.Template",
-			bindingContexts: {"undefined": oModel.createBindingContext("/")},
-			models: {"undefined": oModel, meta: oMetaModel}
+			bindingContexts: oModel.createBindingContext("/"),
+			models: oModel
 		});
 	}
 });

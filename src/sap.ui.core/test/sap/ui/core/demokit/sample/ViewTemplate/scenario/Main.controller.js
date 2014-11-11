@@ -109,10 +109,14 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 			}
 		}
 		oDetailView = sap.ui.view({
+			preprocessors: {
+				xml: {
+					bindingContexts: {meta: oMetaContext},
+					models: {meta: oMetaModel}
+				}
+			},
 			type: sap.ui.core.mvc.ViewType.XML,
-			viewName: "sap.ui.core.sample.ViewTemplate.scenario.Detail",
-			bindingContexts: {meta: oMetaContext},
-			models: {meta: oMetaModel}
+			viewName: "sap.ui.core.sample.ViewTemplate.scenario.Detail"
 		});
 
 		oDetailView.bindElement(sPath, {models: oModel});

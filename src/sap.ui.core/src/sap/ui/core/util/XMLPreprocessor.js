@@ -147,13 +147,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 * @param {object} mSettings
 			 *   map/JSON-object with initial property values, etc.
 			 * @param {object} mSettings.bindingContexts
+			 *   binding contexts relevant for template pre-processing
 			 * @param {object} mSettings.models
-			 * @param {string} [mSettings.viewName]
+			 *   models relevant for template pre-processing
+			 * @param {string} sCaller
+			 *   identifies the caller of this preprocessor; used as a prefix for log or
+			 *   exception messages
+			 * @returns {Element}
+			 *   <code>oRootElement</code>
 			 *
 			 * @name sap.ui.core.util.XMLPreprocessor#process
 			 * @private
 			 */
-			process: function(oRootElement, mSettings) {
+			process: function(oRootElement, mSettings, sCaller) {
 				/**
 				 * Get the XML element for given <template:if> element which has to be part of the
 				 * output.
@@ -235,8 +241,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							// just don't replace XML attribute value
 							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
 								jQuery.sap.log.debug(
-									'Error in formatter of ' + serializeSingleElement(oElement)
-										+ ' in view ' + mSettings.viewName,
+									sCaller + ': Error in formatter of '
+										+ serializeSingleElement(oElement),
 									ex, "sap.ui.core.util.XMLPreprocessor");
 							}
 						}
@@ -261,8 +267,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						} catch (ex) {
 							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
 								jQuery.sap.log.warning(
-									'Error in formatter of ' + serializeSingleElement(oElement)
-										+ ' in view ' + mSettings.viewName,
+									sCaller + ': Error in formatter of '
+										+ serializeSingleElement(oElement),
 									ex, "sap.ui.core.util.XMLPreprocessor");
 							}
 							vTest = false;
@@ -293,8 +299,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						sVar = oElement.getAttribute("var");
 
 					if (!oBindingInfo) {
-						throw new Error('Missing binding for ' + serializeSingleElement(oElement)
-							+ ' in view ' + mSettings.viewName);
+						throw new Error(sCaller + ': Missing binding for '
+							+ serializeSingleElement(oElement));
 					}
 
 					// set up a scope for the loop variable, so to say
@@ -308,8 +314,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					oNewWithControl.unbindAggregation("list", true);
 					sModelName = oBindingInfo.model; // added by bindAggregation
 					if (!oListBinding) {
-						throw new Error("Missing model '" + sModelName + "' in "
-							+ serializeSingleElement(oElement) + " in view " + mSettings.viewName);
+						throw new Error(sCaller + ": Missing model '" + sModelName + "' in "
+							+ serializeSingleElement(oElement));
 					}
 					aContexts = oListBinding.getContexts();
 
@@ -355,18 +361,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						oBindingInfo = makeSimpleBindingInfo(sPath);
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
-							throw new Error("Missing model '" + oBindingInfo.model + "' in "
-								+ serializeSingleElement(oElement) + " in view "
-								+ mSettings.viewName);
+							throw new Error(sCaller + ": Missing model '" + oBindingInfo.model
+								+ "' in " + serializeSingleElement(oElement));
 						}
 						//TODO any trick to avoid explicit resolution of relative paths here?
 						sResolvedPath = oModel.resolve(oBindingInfo.path,
 							oWithControl.getBindingContext(oBindingInfo.model));
 						if (!sResolvedPath) {
-							throw new Error(
-								'Cannot resolve path for ' + serializeSingleElement(oElement)
-								+ ' in view ' + mSettings.viewName
-							);
+							throw new Error(sCaller + ': Cannot resolve path for '
+								+ serializeSingleElement(oElement));
 						}
 						oNewWithControl.setModel(oModel, sVar);
 						oNewWithControl.bindObject({
@@ -387,8 +390,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				 * @param {Element} oElement the DOM element
 				 */
 				function unexpectedTag(oElement) {
-					throw new Error("Unexpected tag " + serializeSingleElement(oElement)
-						+ " in view " + mSettings.viewName);
+					throw new Error(sCaller + ": Unexpected tag "
+						+ serializeSingleElement(oElement));
 				}
 
 				/**
@@ -453,14 +456,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					visitChildNodes(oNode, oWithControl);
 				}
 
-				if (oRootElement.getAttribute("isTemplate") !== "true") {
-					return;
-				}
 				visitNode(oRootElement, new With({
 					models: mSettings.models,
 					bindingContexts: mSettings.bindingContexts
 				}));
-				oRootElement.setAttribute("isTemplate", "false");
+				return oRootElement;
 			}
 		};
 	}, /* bExport= */ true);
