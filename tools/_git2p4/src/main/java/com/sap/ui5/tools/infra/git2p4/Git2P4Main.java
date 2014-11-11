@@ -216,7 +216,7 @@ public class Git2P4Main {
       }
     }
     
-    Properties contributorsVersions = retrieveLatestVersions(fromVersion, op);
+    Properties contributorsVersions = retrieveLatestVersions(fromVersion, toVersion, op);
         
     Map<String,Map<String,String[]>> suspiciousRepositories = new LinkedHashMap<String,Map<String,String[]>>(); 
     
@@ -279,14 +279,15 @@ public class Git2P4Main {
   }
 
 
-  private static Properties retrieveLatestVersions(String fromVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
+  private static Properties retrieveLatestVersions(String fromVersion, String toVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
     //Filter operations to apply to
     if (!applyContributorsVersions) {
       return null;
     }
     //read latest versions for uilib-collections.pom
     Version fromV = new Version(fromVersion);
-    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(fromV.major, fromV.minor + 1, 0, "").toString() + ")";
+    Version toV = new Version(toVersion);
+    String versionRange = "[" + new Version(fromV.major, fromV.minor, 0, "").toString() + "," + new Version(toV.major, toV.minor + 1, 0, "").toString() + ")";
     Log.println("Contributors version range: " + versionRange);
     MvnClient.execute(new File(".", TOOLS_VERSION_HELPER_POM).getAbsoluteFile(), "install", "-DversionOrRange=" + versionRange);
     File versionFile = new File(".", TOOLS_VERSION_HELPER_POM + "/target/LatestVersions.prop");
