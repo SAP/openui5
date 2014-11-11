@@ -27,35 +27,31 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Compone
 
 			oMockServer = new sap.ui.core.util.MockServer({rootUri: sUri});
 			//TODO/FIX4MASTER check mock data to allow for delivery with OpenUI5
-			oMockServer.simulate(sMockServerBaseUri + "metadata.xml", {
+			oMockServer.simulate(/*TODO sUri?!*/sMockServerBaseUri + "metadata.xml", {
 				sMockdataBaseUrl: sMockServerBaseUri,
 				bGenerateMissingMockData: true
 			});
 			oMockServer.start();
+		} else if (location.hostname === "localhost") { //for local testing prefix with proxy
+			sUri = "proxy" + sUri;
 		}
 
-		oModel = new sap.ui.model.odata.v2.ODataModel(sUri, {json: true, loadMetadataAsync: true});
+		oModel = new sap.ui.model.odata.v2.ODataModel(sUri, {
+			annotationURI: /*TODO sUri!*/sMockServerBaseUri + "annotations.xml",
+			json: true,
+			loadMetadataAsync: true
+		});
 
-		oMetaModel = new sap.ui.model.json.JSONModel(sMockServerBaseUri + "metadataMerged.json");
-
-		function createView() {
+		oModel.getMetaModel().loaded().then(function() {
 			oLayout.addItem(sap.ui.view({
 				type: sap.ui.core.mvc.ViewType.XML,
 				viewName: "sap.ui.core.sample.ViewTemplate.scenario.Main",
 				models: {
 					undefined: oModel,
-					"meta": oMetaModel
+					"meta": oModel.getMetaModel()
 				}
 			}));
-		}
-
-		// _after_ meta data is loaded, create and add view
-		//TODO Investigate with UI5 why we need to wait for loaded metadata if these are loaded async
-		if (oModel.getServiceMetadata()) {
-			createView();
-		} else {
-			oModel.attachMetadataLoaded(createView);
-		}
+		});
 
 		return oLayout;
 	}

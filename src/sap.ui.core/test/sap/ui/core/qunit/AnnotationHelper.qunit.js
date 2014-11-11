@@ -8,84 +8,95 @@
 	"use strict";
 
 	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
-	jQuery.sap.require("sap.ui.core.format.NumberFormat");
+
+	// WARNING! These are on by default and break the Promise polyfill...
+	sinon.config.useFakeTimers = false;
 
 	var oCIRCULAR = {},
+		oBoolean = {
+			name : "sap.ui.model.odata.type.Boolean",
+			constraints : {"nullable" : false}
+		},
+		oDecimal = {
+			name : "sap.ui.model.odata.type.Decimal",
+			//TODO really store default values explicitly? save memory?!
+			//TODO who converts string values to boolean/number?
+			constraints : {"nullable" : true, "precision" : 13, "scale" : 3}
+		},
+		oInt32 = {
+			name : "sap.ui.model.odata.type.Int32",
+			//TODO why are max/min public visible?
+			constraints : {"nullable" : false, "maximum": 2147483647, "minimum": -2147483648}
+		},
+		oString10 = {
+			name : "sap.ui.model.odata.type.String",
+			//TODO "nullable" support for String!
+			constraints : {/*"nullable" : false,*/ "maxLength" : 10}
+		},
+		oString80 = {
+			name : "sap.ui.model.odata.type.String",
+			constraints : {/*"nullable" : true,*/ "maxLength" : 80}
+		},
 		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oMetaModel = new sap.ui.model.json.JSONModel({
-			"definitions": {
-				"SomeEntity": {
-					"properties": {
-						"ProductID" : {
-							"type" : "number", //TODO string
-							"maxLength" : 10,
-							"@Common.Label" : "Product ID",
-							"@TODO.updatable" : "false"
-						},
-						"SupplierName" : {
-							"type" : ["number", "null"], //TODO string
-							"maxLength" : 80,
-							"@Common.Label" : "Company Name",
-							"@TODO.creatable" : "false",
-							"@TODO.updatable" : "false"
-						},
-						"WeightMeasure" : {
-							"anyOf" : [{
-								"type" : "number",
-								"multipleOf" : 0.001,
-								"minimum" : -9999999999.999,
-								"maximum" : 9999999999.999
-							}, {
-								"type" : "null"
-							}],
-							"@TODO.unit" : "WeightUnit",
-							"@Common.Label" : "Wt. Measure",
-							"@Org.OData.Measures.V1.Unit" : {
-								"@odata.type" : "#Path",
-								"value" : "WeightUnit"
+			"dataServices" : {
+				"schema" : [{
+//					"namespace" : "GWSAMPLE_BASIC",
+					"entityType" : [{
+//						"name" : "Product",
+						"property" : [{
+							"name" : "ProductID",
+							"type" : "Edm.String",
+							"nullable" : "false",
+							"maxLength" : "10"
+						}, {
+							"name" : "SupplierName",
+							"type" : "Edm.String",
+							"maxLength" : "80"
+						}, {
+							"name" : "WeightMeasure",
+							"type" : "Edm.Decimal",
+							"precision" : "13",
+							"scale" : "3",
+//							"Org.OData.Measures.V1.Unit" : {
+//								"Path" : "WeightUnit"
+//							}
+						}, {
+							"name" : "WeightUnit",
+							"type" : "Edm.String",
+							"maxLength" : "3"
+						}, {
+							"name" : "_Boolean",
+							"type" : "Edm.Boolean",
+							"nullable" : "false"
+						}, {
+							"name" : "_Int32",
+							"type" : "Edm.Int32",
+							"nullable" : "false"
+						}],
+						"com.sap.vocabularies.UI.v1.DataPoint" : {
+							"Value" : {
+								"Path" : "WeightMeasure",
+								"EdmType" : "Edm.Decimal"
 							}
 						},
-						"WeightUnit" : {
-							"type" : ["string", "null"],
-							"maxLength" : 3,
-							"@Common.Label" : "Qty. Unit",
-							"@TODO.semantics" : "unit-of-measure"
-						},
-					},
-					"@com.sap.vocabularies.UI.v1.DataPoint" : {
-						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataPointType",
-						"Title" : "Weight",
-						"Description" : {},
-						"Value" : {
-							"@odata.type" : "#Path",
-							"value" : "WeightMeasure"
-						}
-					},
-					"@com.sap.vocabularies.UI.v1.Identification" : [{
-						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-						"Label" : "Product ID",
-						"Value" : {
-							"@odata.type" : "#Path",
-							"value" : "ProductID"
-						}
-					}, {
-						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-						"Label" : "Supplier",
-						"Value" : {
-							"@odata.type" : "#Path",
-							"value" : "SupplierName"
-						}
-					}, {
-						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-						"Label" : "Weight",
-						"Value" : {
-							"@odata.type" : "#Path",
-							"value" : "WeightMeasure"
-						}
+						"com.sap.vocabularies.UI.v1.Identification" : [{
+							"Value" : {"Path" : "ProductID"}
+						}, {
+							"Value" : {"Path" : "SupplierName"}
+						}, {
+							"Value" : {"Path" : "WeightMeasure"}
+						}, {
+							"Value" : {"Path" : "_Boolean"}
+						}, {
+							"Value" : {"Path" : "_Int32"}
+						}]
 					}]
-				}
+				}]
 			}
-		});
+		}),
+		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
+		sPathPrefix = "/dataServices/schema/0/entityType/0/";
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
@@ -101,7 +112,7 @@
 	function formatAndParse(vValue, oCurrentBinding) {
 		var sResult,
 			oThis = {
-				currentBinding: function () {
+				currentBinding : function () {
 					return oCurrentBinding;
 				}
 			};
@@ -149,29 +160,28 @@
 	function testIllegalValues(aValues, sTitle, sType, bAsObject) {
 		jQuery.each(aValues, function (i, vValue) {
 			test(sTitle + " (invalid: " + vValue + ")", sinon.test(function () {
-				var oLogMock = this.mock(jQuery.sap.log);
+				var oLogMock = this.mock(jQuery.sap.log),
+					vRawValue = vValue;
 
+				if (bAsObject) {
+					vRawValue = {};
+					vRawValue[sType] = vValue;
+				}
 				oLogMock.expects("warning").once().withExactArgs(
 					"Illegal value for " + sType + ": " + vValue,
 					null, "sap.ui.model.odata.AnnotationHelper");
 
-				strictEqual(formatAndParse(bAsObject
-					? {"@odata.type": sType, "value": vValue}
-					: vValue
-				), String(vValue));
+				strictEqual(formatAndParse(vRawValue), String(vValue));
 			}));
 		});
 	}
 
-	// WARNING! These are on by default and break the Promise polyfill...
-	sinon.config.useFakeTimers = false;
-
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper", {
-		setup: function () {
+		setup : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
-		teardown: function () {
+		teardown : function () {
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("decimal");
 			sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group");
@@ -182,40 +192,7 @@
 	});
 
 	//*********************************************************************************************
-	jQuery.each(["", "foo", "{path:'foo'}", 'path: "{\\f,o,o}"'], function (i, sString) {
-		test("14.4.11 Expression edm:String: " + sString, function () {
-			strictEqual(formatAndParseNoWarning(sString), sString);
-		});
-	});
-
-	//*********************************************************************************************
-	jQuery.each(["", "/", ".", "foo", "path:'foo'", 'path: "{\\f,o,o}"'], function (i, sPath) {
-		test("14.5.12 Expression edm:Path: " + sPath, function () {
-			var oMetaModel = new sap.ui.model.json.JSONModel({
-					"Value": {
-						"@odata.type": "#Path",
-						"value": sPath
-					}
-				}),
-				sMetaPath = "/Value",
-				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
-				oRawValue = oMetaModel.getProperty(sMetaPath),
-				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
-
-			strictEqual(oSingleBindingInfo.path, sPath);
-			strictEqual(oSingleBindingInfo.type, undefined);
-		});
-	});
-	// Q: output simple binding expression in case application has not opted-in to complex ones?
-	//    /* if (ManagedObject.bindingParser === sap.ui.base.BindingParser.simpleParser) {} */
-	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
-
-	//*********************************************************************************************
-	testIllegalValues([undefined, null, {}, false, true, 0, 1, NaN], "14.5.12 Expression edm:Path",
-		"#Path", true);
-
-	//*********************************************************************************************
-	jQuery.each([undefined, Function, oCIRCULAR],
+	jQuery.each([undefined, false, true, 0, 1, NaN, Function, oCIRCULAR],
 		function (i, vRawValue) {
 			test("Make sure that output is always a string: " + vRawValue, function () {
 				strictEqual(formatAndParse(vRawValue), String(vRawValue));
@@ -224,7 +201,7 @@
 	);
 
 	//*********************************************************************************************
-	jQuery.each([null, {}, {foo: "bar"}, {"@odata.type" : "#Unsupported"}],
+	jQuery.each([null, {}, {foo : "bar"}],
 		function (i, oRawValue) {
 			test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
 				function () {
@@ -236,298 +213,83 @@
 	);
 
 	//*********************************************************************************************
-	test("14.4.10 Expression edm:Int", function () {
-		var oRawValue = {
-			"@odata.type" : "#Int64",
-			value: -1234567890
-		};
-
-		strictEqual(formatAndParseNoWarning(oRawValue), "-1,234,567,890");
-
-		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		strictEqual(formatAndParseNoWarning(oRawValue), "-1'234'567'890");
-
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
-		strictEqual(formatAndParseNoWarning(oRawValue), "{1}234}567}890");
+	jQuery.each(["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'], function (i, sString) {
+		test("14.4.11 Expression edm:String: " + sString, function () {
+			strictEqual(formatAndParseNoWarning({"String" : sString}), sString);
+		});
 	});
 
 	//*********************************************************************************************
-	//TODO support large integers beyond 53 bit!
-	testIllegalValues([Infinity, -Infinity, NaN, 9007199254740992, -9007199254740992,
-	                   1234567890123456789, 3.14, null, true, "1.0", "{}", "foo", "1a",
-	                   "9007199254740992", "-9007199254740992", "1234567890123456789"],
-	                   "14.4.10 Expression edm:Int", "#Int64", true);
+	testIllegalValues(aNonStrings, "14.4.11 Expression edm:String", "String", true);
 
 	//*********************************************************************************************
-	test("14.4.10 Expression edm:Int (IEEE754Compatible)", function () {
-		var oRawValue = {
-				"@odata.type" : "#Int64",
-				value: "-1234567890"
-			};
+	jQuery.each(["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'], function (i, sPath) {
+		test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+			var oMetaModel = new sap.ui.model.json.JSONModel({
+					"Value" : {
+						"Path" : sPath
+					}
+				}),
+				sMetaPath = "/Value",
+				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
+				oRawValue = oMetaModel.getProperty(sMetaPath),
+				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
 
-		strictEqual(formatAndParseNoWarning(oRawValue), "-1,234,567,890");
-
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
-		strictEqual(formatAndParseNoWarning(oRawValue), "{1}234}567}890");
+			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+			strictEqual(oSingleBindingInfo.path, sPath);
+			strictEqual(oSingleBindingInfo.type, undefined);
+		});
 	});
+	// Q: output simple binding expression in case application has not opted-in to complex ones?
+	//    /* if (ManagedObject.bindingParser === sap.ui.base.BindingParser.simpleParser) {} */
+	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
 
 	//*********************************************************************************************
-	test("14.4.2 Expression edm:Bool", function () {
-		strictEqual(formatAndParseNoWarning(false), "No");
-		strictEqual(formatAndParseNoWarning(true), "Yes");
-	});
-
-	//*********************************************************************************************
-	test("14.4.3 Expression edm:Date", function () {
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Date",
-			"value": "2000-01-01"
-		}), "Jan 1, 2000");
-
-		sap.ui.getCore().getConfiguration().getFormatSettings().setDatePattern("medium", "{}");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Date",
-			"value": "2000-01-01"
-		}), "{}");
-	});
-
-	//*********************************************************************************************
-	testIllegalValues([null, 0, "{}", "20000101", "2000-13-01", "2000-01-01T16:00:00Z"],
-		"14.4.3 Expression edm:Date", "#Date", true);
-
-	//*********************************************************************************************
-	jQuery.each(["2000-01-01T16:00:00Z", "2000-01-01T16:00:00.0Z", "2000-01-01T16:00:00.000Z",
-	             "2000-01-02T01:00:00.000+09:00", "2000-01-01T16:00:00.000456789012Z"],
-// Note: milliseconds are not part of standard time patterns
-		function (i, sDateTime) {
-			test("14.4.4 Expression edm:DateTimeOffset (" + sDateTime + ")", function () {
-				// Note: Date c'tor in IE8 cannot parse timestamps!
-				var oDate = new Date();
-				oDate.setUTCFullYear(2000);
-				oDate.setUTCMonth(0);
-				oDate.setUTCDate(1);
-				oDate.setUTCHours(16);
-				oDate.setUTCMinutes(0);
-				oDate.setUTCSeconds(0);
-				oDate.setUTCMilliseconds(0);
-
-				sap.ui.getCore().getConfiguration().getFormatSettings()
-					.setDatePattern("medium", "yyyy{MM}dd");
-				strictEqual(formatAndParseNoWarning({
-					"@odata.type": "#DateTimeOffset",
-					"value": sDateTime
-				}), sap.ui.core.format.DateFormat.getDateTimeInstance().format(oDate));
-			});
-		}
-	);
-
-	//*********************************************************************************************
-	testIllegalValues([null, "{}", "2000-01-01", "20000101 160000",
-	             "2000-01-32T16:00:00.000Z",
-	             "2000-01-01T16:00:00.1234567890123Z",
-// Note: not checked by DateFormat, too much effort for us
-//	             "2000-01-01T16:00:00.000+14:01", // http://www.w3.org/TR/xmlschema11-2/#nt-tzFrag
-//	             "2000-01-01T16:00:00.000+00:60",
-	             "2000-01-01T16:00:00.000~00:00",
-	             "2000-01-01T16:00:00.Z"],
-	             "14.4.4 Expression edm:DateTimeOffset", "#DateTimeOffset", true);
-
-	//*********************************************************************************************
-	test("14.4.12 Expression edm:TimeOfDay", function () {
-		// Note: milliseconds are not part of standard time patterns
-		sap.ui.getCore().getConfiguration().getFormatSettings()
-			.setTimePattern("medium", "HH{mm}ss.SSS");
-
-		// Note: TimeOfDay is not UTC!
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#TimeOfDay",
-			"value": "23:59:59.123"
-		}), "23{59}59.123");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#TimeOfDay",
-			"value": "23:59:59.123456789012"
-		}), "23{59}59.123", "beyond millis");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#TimeOfDay",
-			"value": "23:59:59.1"
-		}), "23{59}59.100");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#TimeOfDay",
-			"value": "23:59:59"
-		}), "23{59}59.000");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#TimeOfDay",
-			"value": "23:59"
-		}), "23{59}00.000");
-	});
-
-	//*********************************************************************************************
-	testIllegalValues([null, 0, "{}", "23", "23:59:60", "23:60:59", "24:00:00",
-	                   "23:59:59.1234567890123"],
-	                   "14.4.12 Expression edm:TimeOfDay", "#TimeOfDay", true);
-
-	//*********************************************************************************************
-	test("14.4.8 Expression edm:Float", function () {
-		strictEqual(formatAndParseNoWarning(1.23e4), "12,300");
-		strictEqual(formatAndParseNoWarning(31415.926535), "31,415.926535");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Double",
-			"value": 1.23e4
-		}), "12,300");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Double",
-			"value": "INF"
-		}), "Infinity");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Double",
-			"value": "-INF"
-		}), "Minus infinity");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Double",
-			"value": "NaN"
-		}), "Not a number");
-
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Double",
-			"value": -1.23e4
-		}), "{12}300");
-	});
-
-	//*********************************************************************************************
-	testIllegalValues([-Infinity, NaN],
-			"14.4.8 Expression edm:Float", "#Double", false);
-
-	//*********************************************************************************************
-	testIllegalValues([undefined, null, false, {}, "foo", "1a", "1e", "12.34", -Infinity, NaN],
-		"14.4.8 Expression edm:Float", "#Double", true);
-
-	//*********************************************************************************************
-	test("14.4.5 Expression edm:Decimal", function () {
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Decimal",
-			"value": 12.34
-		}), "12.34");
-
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
-		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("decimal", "}");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Decimal",
-			"value": -12.34
-		}), "{12}34");
-	});
-
-	//*********************************************************************************************
-	testIllegalValues([undefined, null, false, {}, "foo", "1a", "1e", -Infinity, NaN, "INF",
-	                   "-INF", "NaN", "1e+12"],
-		"14.4.5 Expression edm:Decimal", "#Decimal", true);
-
-	//*********************************************************************************************
-	test("14.4.5 Expression edm:Decimal (IEEE754Compatible)", function () {
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Decimal",
-			"value": "12.34"
-		}), "12.34");
-	});
-
-	//*********************************************************************************************
-	jQuery.each(["+1.1", "+123.123", "-123.1", "+123.1", "1.123", "-1.123", "123.1", "1", "-123"],
-		function (i, sDecimal) {
-			test("14.4.5 Expression edm:Decimal (IEEE754Compatible): " + sDecimal, function () {
-				var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings(),
-					sResult;
-
-				oFormatSettings.setNumberSymbol("minusSign", "{");
-				oFormatSettings.setNumberSymbol("group", "}");
-				sResult = sap.ui.core.format.NumberFormat.getFloatInstance().format(sDecimal);
-
-				strictEqual(formatAndParseNoWarning({
-					"@odata.type": "#Decimal",
-					"value": sDecimal
-				}), sResult, "Expected result: " + sResult);
-			});
-		}
-	);
-
-	//*********************************************************************************************
-	test("14.4.9 Expression edm:Guid", function () {
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Guid",
-			"value": "86a96539-871b-45cf-b96b-93dbc235105a"}), "86a96539-871b-45cf-b96b-93dbc235105a");
-		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "#Guid",
-			"value": "86A96539-871B-45CF-B96B-93DBC235105A"}), "86A96539-871B-45CF-B96B-93DBC235105A");
-	});
-
-	//*********************************************************************************************
-	testIllegalValues([undefined, null, false, {}, "foo", "123g5678-1234-1234-1234-123456789abc",
-	                   "12345-1234-1234-1234-123456789abc", "12_45678-1234-1234-1234-123456789abc"],
-		"14.4.9 Expression edm:Guid", "#Guid", true);
-
-	//*********************************************************************************************
-	jQuery.each(["", "U0FQ", "QUI=", "QQ==",
-	    "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG-__--_thequickbrownfoxjumpsoverthelazydog0123456789AA"],
-		function (i, sValue) {
-			test("14.4.1 Expression edm:Binary: " + sValue, function () {
-				strictEqual(
-					formatAndParseNoWarning({"@odata.type": "#Binary", "value": sValue}),
-					sValue.replace(/-/g, "+").replace(/_/g, "/")
-				);
-			});
-		}
-	);
-
-	//*********************************************************************************************
-	testIllegalValues([undefined, null, false, {}, "A===", "+", "/", "%"],
-	                   "14.4.1 Expression edm:Binary", "#Binary", true);
+	testIllegalValues(aNonStrings, "14.5.12 Expression edm:Path", "Path", true);
 
 	//*********************************************************************************************
 	jQuery.each([{
-		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.DataPoint/Value"
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.DataPoint/Value",
+		type : oDecimal
 	}, {
-		path: "Value",
-		context: oMetaModel.createBindingContext(
-			"/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.DataPoint/")
+		path : "Value",
+		context : oMetaModel.createBindingContext(
+			sPathPrefix + "com.sap.vocabularies.UI.v1.DataPoint/"),
+		type : oDecimal
 	}, {
-		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/0/Value"
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/0/Value",
+		type : oString10
 	}, {
-		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/1/Value"
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/1/Value",
+		type : oString80
 	}, {
-		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/2/Value"
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/2/Value",
+		type : oDecimal
 	}, {
-		path: "Value",
-		context: oMetaModel.createBindingContext(
-			"/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/2/")
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/3/Value",
+		type : oBoolean
+	}, {
+		path : sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/4/Value",
+		type : oInt32
+	}, {
+		path : "Value",
+		context : oMetaModel.createBindingContext(
+			sPathPrefix + "com.sap.vocabularies.UI.v1.Identification/2/"),
+		type : oDecimal
 	}], function (i, oFixture) {
-		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path, function () {
+		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path
+				+ ", type = " + oFixture.type.name, function () {
 			var oCurrentBinding = oMetaModel.bindProperty(oFixture.path, oFixture.context),
 				oRawValue = oCurrentBinding.getValue(),
 				oSingleBindingInfo;
 
 			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
 
-			strictEqual(oSingleBindingInfo.path, oRawValue.value);
-			ok(oSingleBindingInfo.type instanceof sap.ui.model.odata.type.Decimal);
+			strictEqual(oSingleBindingInfo.path, oRawValue.Path);
+			ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oFixture.type.name),
+				"type is " + oFixture.type.name);
+			deepEqual(oSingleBindingInfo.type.oConstraints, oFixture.type.constraints);
 		});
 	});
-
-	//TODO {..., formatOptions: {minFractionDigits: 3, maxIntegerDigits: 10}}
-	//TODO {..., type: 'sap.ui.model.odata.type.Decimal', formatOptions: {scale: 3, precision: 13}}
-	//TODO jQuery.sap.require() for "non-core types"
-
-	//TODO anyOf/allOf "trees" can hardly be supported
-//	"CreatedAt" : {
-//		"anyOf" : [{
-//			"allOf" : [{
-//				"$ref" : "http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTime"
-//			}, {
-//				"pattern" : "(^[^.]*$|[.][0-9]{1,7}$)"
-//			}]
-//		}, {
-//			"type" : "null"
-//		}],
-//	},
+	//TODO further Int-like types!
 } ());

@@ -747,18 +747,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 	};
 
 	/**
-	 * Returns id the provided path is a list (aggregation) or an entity
-	 *
+	 * Returns the meta model associated with this model if it is available for the concrete
+	 * model type.
 	 * @abstract
-	 * @name sap.ui.model.Model.prototype.bindContext
-	 * @function
-	 * @param {string} sPath the path pointing to the property that should be bound
-	 * @param {object} [oContext=null] the context object for this databinding (optional)
-	 * @return {boolean}
-	 * @since 1.17.1
 	 * @public
+	 * @returns {sap.ui.model.MetaModel} The meta model or undefined if no meta model exists.
 	 */
-
+	Model.prototype.getMetaModel = function() {
+		return undefined;
+	};
 
 	return Model;
 

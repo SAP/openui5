@@ -8,7 +8,7 @@
 	<VBox>
 		<form:SimpleForm>
 			<core:Title text="HeaderInfo"/>
-			<template:with path="meta>@com.sap.vocabularies.UI.v1.HeaderInfo">
+			<template:with path="meta>com.sap.vocabularies.UI.v1.HeaderInfo">
 				<Label text="Type Name"/>
 				<Text text="{path: 'meta>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				<Label text="{path: 'meta>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
@@ -19,7 +19,7 @@
 				</template:if>
 			</template:with>
 			<core:Title text="Identification"/>
-			<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}">
+			<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
 				<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				<Text text="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 			</template:repeat>
