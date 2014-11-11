@@ -187,25 +187,35 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	
 	AutoComplete.prototype._fireLiveChange = function(oEvent) {
 		var bFireSuggest = false;
+		var iKC;
 		if (!this.getEnabled() || !this.getEditable()) {
 			this._close();
 		} else {
 			this._sTypedChars = jQuery(this.getInputDomRef()).val();
 			switch (oEvent.type) {
 				case "keyup":
+				case "sapup":
+				case "sapdown":
+				case "saphome":
+				case "sapend":
 					if (!ComboBox._isHotKey(oEvent)) {
-						var iKC = oEvent.which || oEvent.keyCode;
-						if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
-							this._close();
-							break;
-						} else {
-							bFireSuggest = true;
-							// and fall through below
-						}
+						bFireSuggest = true;
+						// and fall through below
 					} else {
 						break;
 					}
 					// falls through
+				case "sapescape":
+					this._close();
+					break;
+				case "keypress":
+					// in Firefox escape is handled on keypress
+					iKC = oEvent.which || oEvent.keyCode;
+					if (iKC === jQuery.sap.KeyCodes.ESCAPE) {
+						this._close();
+						break;
+					}
+				// falls through
 				default:
 					refreshListBoxItems(this);
 					bFireSuggest = true;
