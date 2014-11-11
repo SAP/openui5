@@ -76,18 +76,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 	
 			/**
-			 * Text control to display the object title
+			 * Control to display the object title (can be either Text or Link)
 			 * 
 			 * @private
 			 */
-			_titleTextControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
-			
-			/**
-			 * Link control to display the clickable object title (titleActive = true)
-			 * 
-			 * @private
-			 */
-			_titleLinkControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
+			_titleControl : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"},
 			
 			/**
 			 * Text control to display the object text
@@ -117,17 +110,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	///**
 	// * This file defines behavior for the control
 	// */
-	
-	/**
-	 *  Initialize member variables
-	 * 
-	 * @private
-	 */
-	sap.m.ObjectIdentifier.prototype.init = function() {
-		this.setAggregation("_textControl", new sap.m.Text());
-		this.setAggregation("_titleTextControl", new sap.m.Text());
-		this.setAggregation("_titleLinkControl", new sap.m.Link());
-	};
 	
 	/**
 	 * Called when the control is destroyed.
@@ -213,19 +195,68 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	    oImage.setSrc(sURI);
 	
 	    return oImage;
-	};
-	
+	};	
+
 	/**
 	 * Get the proper control for the title.
 	 * 
 	 * @private
 	 */
-	sap.m.ObjectIdentifier.prototype._getTitleControl = function() {
-		if (this.getProperty("titleActive")) {
-			return this.getAggregation("_titleLinkControl");
+	ObjectIdentifier.prototype._getTitleControl = function() {
+
+		var oTitleControl = this.getAggregation("_titleControl"),
+			bIsTitleActive;
+
+		if (!oTitleControl) {
+			// Lazy initialization
+			if (this.getProperty("titleActive")) {
+				oTitleControl = new sap.m.Link({
+					text: this.getProperty("title")
+				});
+			} else {
+				oTitleControl = new sap.m.Text({
+					text: this.getProperty("title")
+				});
+			}
+			this.setAggregation("_titleControl", oTitleControl);
 		} else {
-			return this.getAggregation("_titleTextControl");
+			// Update the title control if necessary
+			bIsTitleActive = this.getProperty("titleActive");
+
+			if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
+				this.destroyAggregation("_titleControl", true);
+				oTitleControl = new sap.m.Link({
+					text: this.getProperty("title")
+				});
+				this.setAggregation("_titleControl", oTitleControl);
+			} else if (!bIsTitleActive && oTitleControl instanceof sap.m.Link) {
+				this.destroyAggregation("_titleControl", true);
+				oTitleControl = new sap.m.Text({
+					text: this.getProperty("title")
+				});
+				this.setAggregation("_titleControl", oTitleControl);
+			}
 		}
+
+		return oTitleControl;
+	};
+	
+	/**
+	 * Lazy initialization of _textControl aggregation
+	 * 
+	 * @private
+	 */
+	ObjectIdentifier.prototype._getTextControl = function() {
+
+		var oTextControl = this.getAggregation("_textControl");
+
+		if (!oTextControl) {
+			oTextControl = new sap.m.Text();
+			oTextControl.setProperty("text", this.getProperty("text"));
+			this.setAggregation("_textControl", oTextControl);
+		}
+
+		return oTextControl;
 	};
 	
 	/**
@@ -236,9 +267,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ObjectIdentifier.prototype._rerenderTitle = function() {
-		this._getTitleControl().setProperty("text", this.getTitle());
+		var oTitleControl = this._getTitleControl();
+		oTitleControl.setProperty("text", this.getProperty("title"), true);
 		var oRm = sap.ui.getCore().createRenderManager();
-		oRm.renderControl(this._getTitleControl());
+		oRm.renderControl(oTitleControl);
 		oRm.flush(this.$("title")[0]);
 		oRm.destroy();
 	};
@@ -253,11 +285,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectIdentifier.prototype.setTitle = function (sTitle) {
 		//always suppress rerendering because title div is rendered
 		//if text is empty or not
-		this.setProperty("title", sTitle, true);
-		
 		var oTitleControl = this._getTitleControl();
-		oTitleControl.setProperty("text", this.getTitle());
-		
+		oTitleControl.setProperty("text", sTitle, false);
+		this.setProperty("title", sTitle, true);
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow", 
 				!!this.getProperty("text") && !!this.getProperty("title"));
 	
@@ -274,11 +304,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectIdentifier.prototype.setText = function (sText) {
 		//always suppress rerendering because text div is rendered
 		//if text is empty or not
+		var oTextControl = this._getTextControl();
+		oTextControl.setProperty("text", sText, false);
 		this.setProperty("text", sText, true);
-		
-		var oTextControl = this.getAggregation("_textControl");
-		oTextControl.setProperty("text", this.getText());
-		
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow", 
 				!!this.getProperty("text") && !!this.getProperty("title"));
 	
@@ -294,14 +322,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ObjectIdentifier.prototype.setTitleActive = function(bValue) {
 		var bPrevValue = this.getProperty("titleActive");
-		this.setProperty("titleActive", bValue, true);
 
-		// If titleActive is actually changed and the title is already rendered,
-		// then the title control has to be updated and rerendered
-		if ((bPrevValue != bValue) && (this.$("title").children().length > 0)) {
-			this._rerenderTitle();
+		// Return if the new value is the same as the old one
+		if (bPrevValue != bValue) {
+			this.setProperty("titleActive", bValue, true);
+			// If the title is already rendered, then the title control has to be updated and rerendered
+			if (this.$("title").children().length > 0) {
+				this._rerenderTitle();
+			}
 		}
-		
 		return this;
 	};
 	
