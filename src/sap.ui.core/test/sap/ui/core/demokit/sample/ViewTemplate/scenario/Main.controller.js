@@ -7,6 +7,8 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 	onInit: function () {
 		var oEntityTypes = {
 				selectedType: "Product",
+				icon: jQuery.sap.getUriParameters().get("realOData") === "true" ?
+						"sap-icon://building" : "sap-icon://record",
 				types: [
 					{
 						type: "BusinessPartner",
