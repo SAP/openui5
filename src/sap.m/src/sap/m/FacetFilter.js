@@ -1089,7 +1089,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		var oFacetList = this._createFacetList();
 		var oFacetsSearchField = new sap.m.SearchField({
 			width : "100%",
-			tooltip : this._bundle.getText("Search"),
+			tooltip: this._bundle.getText("FACETFILTER_SEARCH"),
 			liveChange : function(oEvent) {
 	
 				var binding = oFacetList.getBinding("items");
