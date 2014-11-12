@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new Button.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -93,10 +93,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Event is fired when the user taps the control.
-			 * @deprecated Since version 1.20.0. 
+			 * @deprecated Since version 1.20.0.
 			 * This event is deprecated, use the press event instead.
 			 */
-			tap : {deprecated: true}, 
+			tap : {deprecated: true},
 
 			/**
 			 * Event is fired when the user clicks on the control.
@@ -151,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
-	Button.prototype.ontouchend = function(oEvent) {
+	Button.prototype.ontouchend = function() {
 
 		// set inactive button state
 		this._inactiveButton();
@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
-	Button.prototype.ontouchcancel = function(oEvent) {
+	Button.prototype.ontouchcancel = function() {
 
 		// set inactive button state
 		this._inactiveButton();
@@ -251,7 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {jQuery.Event} oEvent - the focus event
 	 * @private
 	 */
-	Button.prototype.onfocusout = function(oEvent) {
+	Button.prototype.onfocusout = function() {
 
 		// set inactive button state
 		this._inactiveButton();
@@ -305,7 +305,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function is called when image control needs to be loaded.
-	 * 
+	 *
 	 * @param {string} sImgId - id to be used for the image
 	 * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
 	 * @param {sap.ui.core.URI} sActiveSrc - URI indicating the image to use as active image source
@@ -342,17 +342,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// add style classes to the object
 		oImage.addStyleClass("sapMBtnIcon");
 
+		// remove previous set style classes
+		if (oImage.hasStyleClass("sapMBtnIconLeft")) {
+			oImage.removeStyleClass("sapMBtnIconLeft");
+		}
+		if (oImage.hasStyleClass("sapMBtnIconRight")) {
+			oImage.removeStyleClass("sapMBtnIconRight");
+		}
+		if (oImage.hasStyleClass("sapMBtnBackIconLeft")) {
+			oImage.removeStyleClass("sapMBtnBackIconLeft");
+		}
+
 		if (this.getText()) {
-			// remove previous set style classes
-			if (oImage.hasStyleClass("sapMBtnIconLeft")) {
-				oImage.removeStyleClass("sapMBtnIconLeft");
-			}
-			if (oImage.hasStyleClass("sapMBtnIconRight")) {
-				oImage.removeStyleClass("sapMBtnIconRight");
-			}
-			if (oImage.hasStyleClass("sapMBtnBackIconLeft")) {
-				oImage.removeStyleClass("sapMBtnBackIconLeft");
-			}
 			// check and set absolute position depending on icon and icon position
 			if (this.getIconFirst()) {
 				if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
@@ -441,8 +442,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				// Check if an icon is set
 				if (this.getIcon()) {
-					oDomRef = this.getDomRef("inner");
-
 					// Remove all text padding classes
 					this._removeTextPadding();
 
@@ -483,7 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var oDomRef = this.getDomRef("img");
 			var bShouldSupressRendering = !!oDomRef;
 
-			// Check if old and new icon URI is equal 
+			// Check if old and new icon URI is equal
 			if (IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue)) {
 				bShouldSupressRendering = true;
 			} else {
@@ -526,27 +525,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (bShouldSupressRendering) {
 
-				if (this.getText()) {
-					// remove previous set style classes
-					if (this.$("img").hasClass("sapMBtnIconLeft")) {
-						this.$("img").removeClass("sapMBtnIconLeft");
-					}
-					if (this.$("img").hasClass("sapMBtnIconRight")) {
-						this.$("img").removeClass("sapMBtnIconRight");
-					}
-					if (this.$("img").hasClass("sapMBtnBackIconLeft")) {
-						this.$("img").removeClass("sapMBtnBackIconLeft");
-					}
-					if (this.$("content").hasClass("sapMBtnContentLeft")) {
-						this.$("content").removeClass("sapMBtnContentLeft");
-					}
-					if (this.$("content").hasClass("sapMBtnContentRight")) {
-						this.$("content").removeClass("sapMBtnContentRight");
-					}
-					if (this.$("content").hasClass("sapMBtnBackContentRight")) {
-						this.$("content").removeClass("sapMBtnBackContentRight");
-					}
+				// remove previous set style classes
+				if (this.$("img").hasClass("sapMBtnIconLeft")) {
+					this.$("img").removeClass("sapMBtnIconLeft");
+				}
+				if (this.$("img").hasClass("sapMBtnIconRight")) {
+					this.$("img").removeClass("sapMBtnIconRight");
+				}
+				if (this.$("img").hasClass("sapMBtnBackIconLeft")) {
+					this.$("img").removeClass("sapMBtnBackIconLeft");
+				}
+				if (this.$("content").hasClass("sapMBtnContentLeft")) {
+					this.$("content").removeClass("sapMBtnContentLeft");
+				}
+				if (this.$("content").hasClass("sapMBtnContentRight")) {
+					this.$("content").removeClass("sapMBtnContentRight");
+				}
+				if (this.$("content").hasClass("sapMBtnBackContentRight")) {
+					this.$("content").removeClass("sapMBtnBackContentRight");
+				}
 
+				if (this.getText()) {
 					// check and set absolute position depending on icon and icon position
 					if (bIconFirst) {
 						if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
