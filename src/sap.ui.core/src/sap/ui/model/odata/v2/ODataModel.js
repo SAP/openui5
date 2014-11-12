@@ -2926,7 +2926,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		jQuery.each(this.mChangedEntities, function(sKey, oData) {
 			oGroupInfo = that._resolveGroup(sKey);
 			if (oGroupInfo.batchGroupId === sBatchGroupId || !sBatchGroupId) {
-				oRequest = that._processChange(sKey, oData, oGroupInfo, bMerge);
+				oRequest = that._processChange(sKey, oData, bMerge);
 				oRequest.key = sKey;
 				mRequests = that.mRequests;
 				if (oGroupInfo.batchGroupId in that.mDeferredBatchGroups) {
