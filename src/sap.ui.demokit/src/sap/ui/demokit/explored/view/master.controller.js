@@ -70,25 +70,67 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		this._updateView();
 	},
 
-	onToggleCompactMode : function (oEvt) {
+	onOpenAppSettings : function(oEvent) {
 
-		// toggle view settings
-		this._oViewSettings.compactOn = (!this._oViewSettings.compactOn);
-		var s = JSON.stringify(this._oViewSettings);
-		this._oStorage.put(this._sStorageKey, s);
-
-		// notify user
-		jQuery.sap.require("sap.m.MessageToast");
-		if (this._oViewSettings.compactOn) {
-			sap.m.MessageToast.show("Now displaying content in 'Compact' Size");
-		} else {
-			sap.m.MessageToast.show("Now displaying content in default size ('Condensed' or 'Cozy')");
+		if (!this._oSettingsDialog){
+			this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.demokit.explored.view.appSettingsDialog", this);
+			this.getView().addDependent(this._oSettingsDialog);
 		}
+		
+		var oCaller = oEvent.getSource();
+		jQuery.sap.delayedCall(0, this, function(){
+			
+			// variable for convenience 
+			var oAppSettings = sap.ui.getCore().getConfiguration();
+			var sCompactMode = (this._oViewSettings.compactOn) ? "compactOn" : "compactOff";
+			
+			// setting the button for Theme
+			sap.ui.getCore().byId("ThemeButtons").setSelectedButton(oAppSettings.getTheme());
+			
+			// setting the button for Compact Mode
+			sap.ui.getCore().byId("CompactModeButtons").setSelectedButton(sCompactMode);
+			
+			//TODO: this for RTL
+			
+			this._oSettingsDialog.open();
+		}, oCaller);
+		
+	},
 
-		// notify app controller to set class
-		this._component.getEventBus().publish("app", "setCompact", {
-			compactOn : this._oViewSettings.compactOn
+	onSaveAppSettings : function(oEvent){
+
+		this._oSettingsDialog.close();
+		
+		if (!this._oBusyDialog){
+			jQuery.sap.require("sap.m.BusyDialog");
+			this._oBusyDialog = new sap.m.BusyDialog();
+			this.getView().addDependent(this._oBusyDialog);
+		}
+		var bCompact =  (sap.ui.getCore().byId('CompactModeButtons').getSelectedButton() === "compactOn") ? true : false;
+		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedButton();		
+		
+		// busy dialog
+		this._oBusyDialog.open();	
+		jQuery.sap.delayedCall(1000, this, function(){
+			this._oBusyDialog.close();
 		});
+
+		// write new settings into local storage
+		this._oViewSettings.compactOn = bCompact;
+		this._oViewSettings.themeActive = sTheme;
+		var s = JSON.stringify(this._oViewSettings);
+		this._oStorage.put(this._sStorageKey, s);		
+		
+		// handle settings change
+		this._component.getEventBus().publish("app", "applyAppConfiguration", {
+			themeActive : sTheme,
+			compactOn : bCompact
+		});
+	},
+	
+	onDialogCloseButton : function(){
+
+		this._oSettingsDialog.close();
 	},
 
 	onSelectEntity : function (sChannel, sEvent, oData) {
@@ -207,14 +249,14 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			// init the view settings
 			this._initViewSettings();
 
-			// notify app controller to set compact mode
-			this._component.getEventBus().publish("app", "setCompact", {
+			// apply app settings
+			this._component.getEventBus().publish("app", "applyAppConfiguration", {
+				themeActive : this._oViewSettings.themeActive,
 				compactOn : this._oViewSettings.compactOn
 			});
-
-			// set compact button
-			this.getView().byId("compactModeButton").setPressed(this._oViewSettings.compactOn);
+		
 		}
+		
 
 		// update the filter bar
 		this._updateFilterBarDisplay();
@@ -310,7 +352,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				filter : {},
 				groupProperty : "category",
 				groupDescending : false,
-				compactOn : false
+				compactOn : false,
+				themeActive : "sap_bluecrystal"
 			};
 
 		} else {
@@ -345,6 +388,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			// handling data stored with an older explored versions
 			if (!this._oViewSettings.hasOwnProperty("compactOn")) { // compactOn was introduced later
 				this._oViewSettings.compactOn = false;
+			}
+			
+			if (!this._oViewSettings.hasOwnProperty("themeActive")) { // themeActive was introduced later
+				this._oViewSettings.themeActive = "sap_bluecrystal";
 			}
 		}
 	},
