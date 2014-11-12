@@ -75,7 +75,10 @@ sap.ui.define(['jquery.sap.global'],
 	
 		// render child controls
 		rm.write('<section id="' + oPage.getId() + '-cont">');
-		rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+		
+		if (oPage._bUseScrollDiv) { // fallback to old rendering
+			rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+		}
 	
 		var aContent = oPage.getContent();
 		var l = aContent.length;
@@ -84,7 +87,9 @@ sap.ui.define(['jquery.sap.global'],
 			rm.renderControl(aContent[i]);
 		}
 	
-		rm.write("</div>");
+		if (oPage._bUseScrollDiv) { // fallback to old rendering
+			rm.write("</div>");
+		}
 	
 		rm.write("</section>");
 	

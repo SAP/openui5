@@ -117,10 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
 		this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-scroll", {
 			horizontal: true,
-			vertical: false,
-			zynga: false,
-			preventDefault: false,
-			nonTouchScrolling: "scrollbar"
+			vertical: false
 		});
 		// TODO: do the resize listening only when ScrollContainer becomes visible and unbind when getting visible
 	};
