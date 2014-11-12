@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			properties : {
 
 				/**
-				 * Name of the person who has uploded the file.
+				 * Name of the person who has uploaded the file.
 				 * 
 				 * @since 1.12.2
 				 */
