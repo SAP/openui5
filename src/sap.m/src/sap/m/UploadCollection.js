@@ -694,9 +694,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		var oParams = oEvent.getParameters();
 		var aItems = oContext.getAggregation("items");
 		var sItemId = oParams.id.split("-deleteButton")[0];
-		var index = sItemId.split("-").pop();
-		oContext.sDeletedItemId = sItemId;
+		var index = null;
 		var sCompact = "";
+		oContext.sDeletedItemId = sItemId;
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].sId == sItemId) { 
+				index = i;
+				break;
+			}
+		}
 		if (jQuery.sap.byId(oContext.sId).hasClass("sapUiSizeCompact")) {
 			sCompact = "sapUiSizeCompact";
 		}
@@ -992,7 +998,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._onTypeMissmatch = function(oEvent) {
 		this.fireTypeMissmatch(oEvent);
-		MessageToast.show(oEvent.getId());
 	};
 
 	/**
