@@ -231,58 +231,62 @@
 		equal(oTypeMissmatchSpy.callCount, 2, "typeMissmatch (mimeType) Event should be called TWICE now");
 		
 		//file allowed
-		oFileUploader.setFileType([]);
-		oFileUploader.setMimeType(["image/png"]);
+		oFileUploader.setFileType(["html"]);
+		oFileUploader.setMimeType(["text/html"]);
 		fakeEvent.target.files[0] = createFakeFile({
-			name:"picture.png", 
-			type:"image/png", 
+			name:"FileUploader.qunit.html", 
+			type:"text/html", 
 			size: 100301
 		});
 		oFileUploader.handlechange(fakeEvent);
-		equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
+		if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+			equal(oFileAllowedSpy.callCount, 1, "fileAllowed Event should be called exactly ONCE");
+		};
 		
 		//cleanup
 		oFileUploader.destroy();
 	});
 	
-	test("Testing the filename lenth validation handling - handlechange()", function () {
-		//setup
-		var oFileUploader = createFileUploader({
-				maximumFilenameLength: 10,
-				fileType: ["java"],
-				mimeType: ["text/x-java-source,java"]
-			}),
-			//rebuilding the native event structure
-			fakeEvent = {
-				type: "change",
-				target: {
-					files : {
-						"0": createFakeFile({
-								name:"AbstractSingletonProxyFactoryBean.java", 
-								type:"text/x-java-source,java", 
-								size:1226
-							}),
-						"length" : 1
+	if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+		test("Testing the filename lenth validation handling - handlechange()", function () {
+			//setup
+			var oFileUploader = createFileUploader({
+					maximumFilenameLength: 10,
+					fileType: ["java"],
+					mimeType: ["text/x-java-source,java"]
+				}),
+				//rebuilding the native event structure
+				fakeEvent = {
+					type: "change",
+					target: {
+						files : {
+							"0": createFakeFile({
+									name:"AbstractSingletonProxyFactoryBean.java", 
+									type:"text/x-java-source,java", 
+									size:1226
+								}),
+							"length" : 1
+						}
 					}
-				}
-			},
-			fnFilenameLengthExceedHandler = function (oEvent) {
-				equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
-			},
-			oSpy = this.spy(oFileUploader, "fireFilenameLengthExceed");
+				},
+				fnFilenameLengthExceedHandler = function (oEvent) {
+					equal(oEvent.getParameter("fileName"), "AbstractSingletonProxyFactoryBean.java", "filenameLengthExceed Event delivers correct fileName, which is too long");
+				},
+				oSpy = this.spy(oFileUploader, "fireFilenameLengthExceed");
+				
+			//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
+			oFileUploader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+				
+			oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
 			
-		//explicit place the FileUploader somewhere, otherwise there are some internal objects missing!
-		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+			oFileUploader.handlechange(fakeEvent);
+			equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
 			
-		oFileUploader.attachEvent("filenameLengthExceed", fnFilenameLengthExceedHandler);
-		
-		oFileUploader.handlechange(fakeEvent);
-		equal(oSpy.callCount, 1, "filenameLengthExceed Event should be called exactly ONCE");
-		
-		//cleanup
-		oFileUploader.destroy();
-	});
+			//cleanup
+			oFileUploader.destroy();
+		});
+	};
 	
 	test("Testing the clearing of the input fields - clear()", function () {
 		//setup
