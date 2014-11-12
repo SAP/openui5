@@ -54,13 +54,21 @@ module.exports = function(grunt, config) {
 
 		if (library.bower !== false && grunt.option('publish')) {
 			copy['bower-' + library.name] = {
-				files: [ {
-					expand: true,
-					dot: true,
-					cwd: 'target/openui5-' + library.name,
-					src: '**',
-					dest: '../bower-openui5-' + library.name
-				} ]
+				files: [
+					// built resources/test-resources
+					{
+						expand: true,
+						dot: true,
+						cwd: 'target/openui5-' + library.name,
+						src: '**',
+						dest: '../bower-openui5-' + library.name
+					},
+					// license file should also be present in each bower repo
+					{
+						src: 'LICENSE.txt',
+						dest: '../bower-openui5-' + library.name + '/LICENSE.txt'
+					}
+				]
 			};
 		}
 
