@@ -449,13 +449,6 @@ public class Git2P4Main {
     sapui5Runtime.resourcesMap.put("/resources/", "/src/main/uilib/");
     sapui5Runtime.addToRelNotesPath = "../../";
     mappings.add(sapui5Runtime);
-    mappings.add(new Mapping(
-        "/sapui5/sapui5.platforms.gwt.git",
-        new File(repositoryRoot, "sapui5.platforms.gwt"),
-        p4depotPrefix + "/src/platforms/gwt",
-        null,
-        null
-        ));
     if (getMinorVersion(branch) > 24) {
       Mapping openui5 = new Mapping(
           "/openui5.git",
