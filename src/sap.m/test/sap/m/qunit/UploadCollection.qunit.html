@@ -223,11 +223,70 @@
 			uploadedDate : "{uploadedDate}",
 			url : "{url}"
 		});
-
+	
 		var oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(oData);
 		sap.ui.getCore().setModel(oModel);	
-
+	
+	module("Event tests", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				maximumFilenameLength : 35,
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				},
+				typeMissmatch : function(oEvent) {
+					ok(true, "Event fileSizeExceed fired");
+					equal(oEvent.getId(), "typeMissmatch", "Event Id 'typeMissmatch' provided");
+					equal(oEvent.mParameters.getParameter("fileName"), "someFileName", "Correct file name provided");
+					equal(oEvent.mParameters.getParameter("fileType"), "someNotAllowedFileType", "Correct file type provided");
+					equal(oEvent.mParameters.getParameter("mimeType"), "someNotAllowedMimeType", "Correct mime type provided")
+				},
+				fileSizeExceed : function(oEvent) {
+					ok(true, "Event fileSizeExceed fired");
+					equal(oEvent.getId(), "fileSizeExceed", "Event Id 'fileSizeExceed' provided")
+				},
+				filenameLengthExceed : function(oEvent) {
+					ok(true, "Event filenameLengthExceed fired");
+					equal(oEvent.getId(), "filenameLengthExceed", "Event Id 'filenameLengthExceed' provided")
+				}
+			});
+			this.oUploadCollection.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+		}
+	});
+	
+	test("Event typeMissmatch", function() {
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(5); // verifies the event handler was executed
+		oFileUploader.fireTypeMissmatch({
+			fileName : "someFileName",
+			fileType : "someNotAllowedFileType",
+			mimeType : "someNotAllowedMimeType"
+		});
+	});
+	
+	test("Event fileSizeExceed", function() {
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(2); // verifies the event handler was executed
+		oFileUploader.fireFileSizeExceed({
+			fileName : "someFileName",
+			fileSize : "tooBigFileSize"
+		});
+	});
+	
+	test("Event filenameLengthExceed", function() {
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		expect(2); // verifies the event handler was executed
+		oFileUploader.fireFilenameLengthExceed({
+			fileName : "someFileName"
+		});
+	});
+	
 	module("Edit tests", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection({
@@ -244,6 +303,7 @@
 			this.oUploadCollection.destroy();
 		}
 	});
+	
 	test("Edit", function() {
 		//trigger edit button of line 2 and check the status of the line 
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
