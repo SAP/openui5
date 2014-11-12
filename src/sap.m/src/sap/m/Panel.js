@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 
@@ -34,27 +34,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		properties : {
 
 			/**
-			 * Is the control visible
+			 * Specifies whether the control is visible.
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Sets the header text
+			 * Sets the header text.
 			 */
 			headerText : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * The Panel width
+			 * The Panel width.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : '100%'},
 
 			/**
-			 * The Panel height
+			 * The Panel height.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : 'auto'},
 
 			/**
-			 * Is the control expandable
+			 * Specifies whether the control is expandable. Per default the control is rendered as expanded.
 			 * @since 1.22
 			 */
 			expandable : {type : "boolean", group : "Appearance", defaultValue : false},
@@ -144,6 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			oDomRef.style.height = sHeight;
+			this._setContentHeight();
 		}
 		return this;
 	};
@@ -193,16 +194,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.setExpanded = function(bExpanded) {
 
 		// should not toggle if nothing changed
-		if (bExpanded === this.getExpanded()) {
+		if (bExpanded === this.getExpanded() || !this.getExpandable()) {
 			return;
 		}
 
 		this.setProperty("expanded", bExpanded, true); // do not rerender !
-
-		if (!this.getExpandable()) {
-			return;
-		}
-
 		var $this = this.$();
 		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
 
@@ -227,6 +223,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.onAfterRendering = function() {
 
 		var $this = this.$();
+
+		this._setContentHeight();
 
 		if (this.getExpandable()) {
 			if (this.getExpanded()) {
@@ -255,6 +253,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	Panel.prototype._getIcon = function() {
 		return this.oIconCollapsed;
+	};
+
+	/**
+	 * Set the height of the panel content div
+	 * @private
+	 */
+	Panel.prototype._setContentHeight = function() {
+		if (this.getHeight() === "auto") {
+			return;
+		}
+
+		var iHeight = 0,
+			oHeaderToolbar = this.getHeaderToolbar(),
+			oInfoToolbar = this.getInfoToolbar(),
+			$this = this.$();
+
+		if (oHeaderToolbar) {
+			iHeight += parseInt(oHeaderToolbar.$().outerHeight(), 10);
+		}
+
+		if (!oHeaderToolbar && this.getHeaderText() !== "") {
+			iHeight += parseInt($this.find(".sapMPanelHdr").outerHeight(), 10);
+		}
+
+		if (oInfoToolbar) {
+			iHeight += parseInt(oInfoToolbar.$().outerHeight(), 10);
+		}
+
+		$this.find(".sapMPanelContent").css("height", parseInt($this.outerHeight(), 10) - iHeight);
 	};
 
 
