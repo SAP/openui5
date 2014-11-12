@@ -11,6 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		var oCore = sap.ui.getCore(),
 			rDecimal = /^[-+]?\d+(\.\d+)?$/,
 			fnEscape = BindingParser.complexParser.escape,
+			rGuid = /^[A-F0-9]{8}-([A-F0-9]{4}-){3}[A-F0-9]{12}$/i,
 			oIntegerOptions = {groupingEnabled: true},
 			rInt64 = /^[-+]?\d{1,19}$/,
 			rISODate = /^\d{4}-\d{2}-\d{2}$/,
@@ -173,6 +174,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							// no default
 							}
 							return floatingPoint(vRawValue);
+
+						case "Edm.Guid": // 14.4.9 Expression edm:Guid
+							return rGuid.test(vRawValue.value) ? vRawValue.value : illegalValue(vRawValue);
 
 						case "Edm.Int64": // 14.4.10 Expression edm:Int (IEEE754Compatible)
 							if (typeof vRawValue.value === "string"

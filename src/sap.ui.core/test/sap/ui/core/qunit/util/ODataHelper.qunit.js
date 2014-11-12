@@ -372,4 +372,20 @@
 			});
 		}
 	);
+
+	//*********************************************************************************************
+	test("14.4.9 Expression edm:Guid", function () {
+		strictEqual(formatAndParseNoWarning({
+			"@odata.type": "Edm.Guid",
+			"value": "86a96539-871b-45cf-b96b-93dbc235105a"}), "86a96539-871b-45cf-b96b-93dbc235105a");
+		strictEqual(formatAndParseNoWarning({
+			"@odata.type": "Edm.Guid",
+			"value": "86A96539-871B-45CF-B96B-93DBC235105A"}), "86A96539-871B-45CF-B96B-93DBC235105A");
+	});
+
+	//*********************************************************************************************
+	testIllegalValues([undefined, null, false, {}, "foo", "123g5678-1234-1234-1234-123456789abc",
+	                   "12345-1234-1234-1234-123456789abc", "12_45678-1234-1234-1234-123456789abc"],
+		"14.4.9 Expression edm:Guid", "Edm.Guid", true);
+
 } ());
