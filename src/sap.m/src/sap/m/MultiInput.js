@@ -155,7 +155,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		if (this._tokenizer._bDoTouchScroll && this._oSuggestionPopup) {
 			// on certain touch devices the setting back of the selected value happens 'late', in "attachAfterClose" (in the
 			// sap.m.Input), which is why we need - slightly later - to set the value back to ""
-			this._oSuggestionPopup.attachAfterClose(function() {
+			// attach SuggestionItemSelected event to set value after item selected, not after popup is closed.
+			this.attachSuggestionItemSelected(function() {	
 				setTimeout(function() {
 					that.setValue("");
 					that._tokenizer.scrollToEnd();
