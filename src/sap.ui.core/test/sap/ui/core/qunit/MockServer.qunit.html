@@ -1537,6 +1537,12 @@
 					dataType : "json"
 				});
 				ok(oResponse.data.d.CategoryName, "Products(5)/Category");
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$filter=UnitsInStock eq (120)",
+					dataType : "json"
+				});
+				equal(oResponse.data.d.results.length, 1, "$filter=UnitsInStock eq (120)");
 
 				oMockServer.destroy();
 			});
