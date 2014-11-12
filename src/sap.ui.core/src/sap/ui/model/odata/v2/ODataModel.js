@@ -125,9 +125,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			// determine the service base url and the url parameters
 			this.sServiceUrl = sServiceUrl;
 			var aUrlParts = sServiceUrl.split("?");
-			if (aUrlParts[1]) {
+			if (aUrlParts.length > 1) {
 				this.sServiceUrl = aUrlParts[0];
-				this.aUrlParams.push(aUrlParts[1]);
+				if (aUrlParts[1]) {
+					this.aUrlParams.push(aUrlParts[1]);
+				}
 			}
 			// Remove trailing slash (if any)
 			this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
@@ -266,7 +268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * The 'requestFailed' event is fired, when data retrieval from a backend failed.
-	 * 
+	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
 	 * @name sap.ui.model.Model#requestFailed
@@ -274,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	
+
 	 * @param {string} oControlEvent.getParameters.ID The request ID
 	 * @param {string} oControlEvent.getParameters.url The url which is sent to the backend
 	 * @param {string} oControlEvent.getParameters.method The HTTP method
@@ -285,12 +287,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} oControlEvent.getParameters.response The response object - empty object if no response
 	 * @public
 	 */
-	 
+
 	 /**
 	 * The 'requestSent' event is fired, after a request has been sent to a backend.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 * 
+	 *
 	 * @name sap.ui.model.Model#requestSent
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
@@ -303,16 +305,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} oControlEvent.getParameters.async If the request is synchronous or asynchronous (if available)
 	 * @param {array} oControlEvent.getParameters.requests Array of embedded requests ($batch) - empty array for non batch requests.
 	 * Each request object within the array contains the following properties: url, method, headers
-	 * 
+	 *
 	 * @public
 	 */
-	 
+
 	 /**
-	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response), 
+	 * The 'requestCompleted' event is fired, after a request has been completed (includes receiving a response),
 	 * no matter whether the request succeeded or not.
-	 * 
+	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
-	 * 
+	 *
 	 * @name sap.ui.model.Model#requestCompleted
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
@@ -330,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * The response object contains the following properties: message, success, headers, statusCode, statusText
 	 * @public
 	 */
-	
+
 	// Keep a map of service specific data, which can be shared across different model instances
 	// on the same OData service
 	ODataModel.mServiceData = {
@@ -392,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
-	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed 
+	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed
 	 *
 	 * @public
 	 * @name sap.ui.model.odata.ODataModel#refreshMetadata
@@ -634,7 +636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		this.detachEvent("metadataFailed", fnFunction, oListener);
 		return this;
 	};
-	
+
 	/**
 	 * creates the EventInfo Object for request sent/completed/failed
 	 * @param {object} oRequest The request object
@@ -647,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._createEventInfo = function(oRequest, vResponse, aBatchRequests) {
 		var oEventInfo = {};
-		
+
 		oEventInfo.url = oRequest.requestUri;
 		oEventInfo.method = oRequest.method;
 		oEventInfo.async = oRequest.async;
@@ -680,7 +682,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						}
 						oEventInfo.requests.push(oBatchRequest);
 					}
-				} else { 
+				} else {
 					var oRequest = aBatchRequests[i].request;
 					var oInnerResponse = aBatchRequests[i].response;
 					oBatchRequest.url = oRequest.requestUri;
@@ -720,10 +722,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oEventInfo.ID = oRequest.requestID;
 		return oEventInfo;
 	};
-	
+
 	/**
 	 * create a request ID
-	 * 
+	 *
 	 * @returns {string} sRequestID A request ID
 	 * @name sap.ui.model.odata.v2.ODataModel#_createRequestID
 	 * @function
@@ -731,7 +733,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 */
 	ODataModel.prototype._createRequestID = function () {
 		var sRequestID;
-		
+
 		sRequestID = jQuery.sap.uid();
 		return sRequestID;
 	};
@@ -1639,7 +1641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			}
 			//handler only needed for $batch; datajs gets the handler from the accept header
 			oHandler = that._getODataHandler(oRequest.requestUri);
-			
+
 			return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 		}
 
@@ -1673,11 +1675,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 				}
 			}
-			
+
 			that._updateChangedEntities(mChangeEntities);
-			
+
 			oEventInfo = that._createEventInfo(oRequest, oResponse);
-	
+
 			that.fireRequestCompleted(oEventInfo);
 		};
 		var handleError = function(oError) {
@@ -1685,18 +1687,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				fnError(that._handleError(oError));
 			}
 			oEventInfo = that._createEventInfo(oRequest, oError);
-	
+
 			that.fireRequestCompleted(oEventInfo);
 			if (!oRequestHandle || !oRequestHandle.bAborted) {
 				that.fireRequestFailed(oEventInfo);
 			}
 		};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
-		
+
 		oEventInfo = this._createEventInfo(oRequest);
-		
+
 		this.fireRequestSent(oEventInfo);
-		
+
 		return oRequestHandle;
 	};
 
@@ -1727,7 +1729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				var i,j;
 				for (i = 0; i < aBatchResponses.length; i++) {
 					oResponse = aBatchResponses[i];
-					
+
 					if (jQuery.isArray(aRequests[i])) {
 						//changeSet failed
 						if (oResponse.message) {
@@ -1785,19 +1787,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				fnError(oError);
 			}
 			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-	
+
 			that.fireRequestCompleted(oEventInfo);
-			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation) 
+			// Don't fire RequestFailed for intentionally aborted requests; fire event if we have no (OData.read fails before handle creation)
 			if (!oRequestHandle || !oRequestHandle.bAborted) {
 				that.fireRequestFailed(oEventInfo);
 			}
 		};
 
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-		
+
 		oEventInfo = this._createEventInfo(oBatchRequest, null, aRequests);
 		this.fireRequestSent(oEventInfo);
-		
+
 		return oRequestHandle;
 	};
 
@@ -2402,9 +2404,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		if (this.bWithCredentials) {
 			oRequest.withCredentials = this.bWithCredentials;
 		}
-		
+
 		oRequest.requestID = this._createRequestID();
-		
+
 		return oRequest;
 	};
 
@@ -2845,7 +2847,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		sUrl = this._createRequestUrl(sPath, oContext, aUrlParams, this.bUseBatch);
 
 		oRequest = this._createRequest(sUrl, sMethod, mHeaders);
-		
+
 		mRequests = this.mRequests;
 		if (sBatchGroupId in this.mDeferredBatchGroups) {
 			mRequests = this.mDeferredRequests;
@@ -3073,15 +3075,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		} else {
 			oRequest = this._processChange(sKey, oEntry);
 		}
-		
+
 		oRequestHandle = {
 				abort: function() {
 					oRequest._aborted = true;
 				}
 		};
-		
+
 		this.mChangeHandles[sKey] = oRequestHandle;
-		
+
 		this._pushToRequestQueue(mRequests, oGroupInfo.batchGroupId, oGroupInfo.changeSetId, oRequest);
 
 		if (this.bUseBatch) {
@@ -3371,29 +3373,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		oContext =  this.getContext("/" + sKey); // context wants a path
 		oRequest.context = oContext;
 		oRequest.key = sKey;
-		
+
 		if (!this.mChangedEntities[sKey]) {
 			oEntry = jQuery.extend(true,{}, oEntity);
 		}
 		this.mChangedEntities[sKey] = oEntry;
-		
+
 		mRequests = this.mRequests;
 		if (sBatchGroupId in this.mDeferredBatchGroups) {
 			mRequests = this.mDeferredRequests;
 		}
 
 		this._pushToRequestQueue(mRequests, sBatchGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-		
+
 		oRequestHandle = {
 				abort: function() {
 					oRequest._aborted = true;
 				}
 		};
-		
+
 		this.mChangeHandles[sKey] = oRequestHandle;
-		
+
 		if (this.bUseBatch) {
-			
+
 			if (!this.oRequestTimer) {
 				this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
 			}

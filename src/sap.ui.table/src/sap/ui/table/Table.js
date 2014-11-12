@@ -1632,9 +1632,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			// update the scrollbar only if it is required
-			jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
-			if (bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
-
+			if (bOnAfterRendering || bForceUpdateVSb || iSteps !== this._oVSb.getSteps() || this.getFirstVisibleRow() !== this._oVSb.getScrollPosition()) {
+				jQuery.sap.clearDelayedCall(this._sScrollBarTimer);
 				// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
 				//       height changes of the scrollbar should not require a re-rendering!
 				this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
@@ -2565,6 +2564,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onmouseup = function(oEvent) {
+		// clean up the timer
+		jQuery.sap.clearDelayedCall(this._sDelayedActionTimer);
+
 		if (this.$().find(".sapUiTableCtrl td :focus").length > 0) {
 			// when clicking into a focusable control we enter the action mode!
 			this._enterActionMode(this.$().find(".sapUiTableCtrl td :focus"));

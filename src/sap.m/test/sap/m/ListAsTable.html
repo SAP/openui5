@@ -9,10 +9,7 @@
 </script>
 
 <script>
-
-	// initialize application first
 	jQuery.sap.require("sap.m.MessageToast");
-	var app = new sap.m.App();
 
 	var data = {
 		navigation : [{
@@ -43,150 +40,128 @@
 		}]
 	};
 
-	var model = new sap.ui.model.json.JSONModel();
-	model.setData({
+	var o18n = new sap.ui.model.json.JSONModel();
+	o18n.setData({
 		Name : "Name",
-		Qty : "Qty",
 		Value : "Value",
-		Price : "Price"
+		Price : "Price",
+		Qty : "Quantity",
 	});
-	sap.ui.getCore().setModel(model, "i18n");
-
-	var page = new sap.m.Page({
-		title : "Table",
-		enableScrolling : true,
-		footer: new sap.m.Toolbar({
-			content : [
-						new sap.m.Text({
-							text : "Items (5)",
-							wrapping : false
-						}),
-						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({
-							icon: "sap-icon://drop-down-list",
-							press : function() {
-								sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
-							}
-						}),
-						new sap.m.Button({
-							icon: "sap-icon://action-settings",
-							press : function() {
-								sap.m.MessageToast.show("Table personalization popup will be shown on press.");
-							}
-						})
-					]
-				}),
-		content : [oTable = new sap.m.Table("items", {
-			growing : false,
-			growingThreshold: 2,
-			inset : false,
-			mode: "MultiSelect",
-			showUnread : true,
-			growingScrollToLoad : false,
-			selectionChange : function(e) {
-				jQuery.sap.log.info("selectionChanged", Date.now());
-			},
-			itemPress : function(e) {
-				jQuery.sap.log.info("itemPressed", e.getParameter("listItem").getId(), e.getParameter("srcControl").getId());
-			},
-			updateStarted : function(e) {
-				jQuery.sap.log.info("updateStarted ", JSON.stringify(e.getParameters()), Date.now());
-			},
-			updateFinished : function(e) {
-				jQuery.sap.log.info("updateFinished ", JSON.stringify(e.getParameters()), Date.now());
-			},
-			//headerText : "Items (5)",
-			footerText : "Items (5)",
-			headerToolbar : new sap.m.Toolbar({
-				content : [
-					new sap.m.Text({
-						text : "Items (5)",
-						wrapping : false
-					}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Button({
-						icon: "sap-icon://drop-down-list",
-						press : function() {
-							sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
-						}
-					}),
-					new sap.m.Button({
-						icon: "sap-icon://action-settings",
-						press : function() {
-							sap.m.MessageToast.show("Table personalization popup will be shown on press.");
-						}
-					})
-				]
+	sap.ui.getCore().setModel(o18n, "i18n");
+	
+	var oFooterToolbar = new sap.m.Toolbar({
+		content : [
+			new sap.m.Text({
+				text : "Items (5)",
+				wrapping : false
 			}),
-			infoToolbar : new sap.m.Toolbar({
-				active : true,
-				content : [
-					new sap.m.Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					}),
-					new sap.m.ToolbarSpacer(),
-					new sap.ui.core.Icon({
-						src : "sap-icon://add-filter"
-					})
-				]
-			}).attachPress(function() {
-				sap.m.MessageToast.show("InfoBar Pressed!");
-			}),
-			swipeContent : new sap.m.Button({
-				text : "Swipe Button",
-				type : "Accept",
-				press : function(e) {
-					oTable.swipeOut();
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({
+				icon: "sap-icon://drop-down-list",
+				press : function() {
+					sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
 				}
 			}),
-			columns : [
-				new sap.m.Column({
-					styleClass : "name",
-					hAlign : "Left",
-					header : new sap.m.Label({
-						text : "{i18n>/Name}"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					styleClass : "qty",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "{i18n>/Qty}"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "Right",
-					styleClass : "limit",
-					width : "30%",
-					header : new sap.m.Label({
-						text : "{i18n>/Value}"
-					}),
-					minScreenWidth : "XXSmall",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "Right",
-					styleClass : "price",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "{i18n>/Price}"
-					}),
-					footer : new sap.m.Label({
-						text : "130.00 EUR"
-					}),
-					minScreenWidth : "400px",
-					demandPopin : true
-				})
-			]
-		})]
+			new sap.m.Button({
+				icon: "sap-icon://action-settings",
+				press : function() {
+					sap.m.MessageToast.show("Table personalization popup will be shown on press.");
+				}
+			})
+		]
 	});
-
-	var template = new sap.m.ColumnListItem({
+	
+	var oHeaderToolbar = new sap.m.Toolbar({
+		content : [
+			new sap.m.Text({
+				text : "Items (5)",
+				wrapping : false
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({
+				icon: "sap-icon://drop-down-list",
+				press : function() {
+					sap.m.MessageToast.show("Sorting-Grouping-Filtering popup will be shown on press.");
+				}
+			}),
+			new sap.m.Button({
+				icon: "sap-icon://action-settings",
+				press : function() {
+					sap.m.MessageToast.show("Table personalization popup will be shown on press.");
+				}
+			})
+		]
+	});
+	
+	var oInfoToolbar = new sap.m.Toolbar({
+		active : true,
+		content : [
+			new sap.m.Text({
+				text : "The quick brown fox jumps over the lazy dog.",
+				wrapping : false
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.ui.core.Icon({
+				src : "sap-icon://add-filter"
+			})
+		]
+	}).attachPress(function() {
+		sap.m.MessageToast.show("InfoBar Pressed!");
+	});
+	
+	var oSwipeContent = new sap.m.Button({
+		text : "Swipe Button",
+		type : "Accept",
+		press : function(e) {
+			oTable.swipeOut();
+		}
+	});
+	
+	var aColumns = [
+		new sap.m.Column({
+			styleClass : "name",
+			hAlign : "Left",
+			header : new sap.m.Label({
+				text : "{i18n>/Name}"
+			})
+		}),
+		new sap.m.Column({
+			hAlign : "Center",
+			styleClass : "qty",
+			popinDisplay : "Inline",
+			header : new sap.m.Label({
+				text : "{i18n>/Qty}"
+			}),
+			minScreenWidth : "Tablet",
+			demandPopin : true
+		}),
+		new sap.m.Column({
+			hAlign : "Right",
+			styleClass : "limit",
+			width : "30%",
+			header : new sap.m.Label({
+				text : "{i18n>/Value}"
+			}),
+			minScreenWidth : "XXSmall",
+			demandPopin : true
+		}),
+		new sap.m.Column({
+			hAlign : "Right",
+			styleClass : "price",
+			width : "30%",
+			popinDisplay : "Inline",
+			header : new sap.m.Label({
+				text : "{i18n>/Price}"
+			}),
+			footer : new sap.m.Label({
+				text : "130.00 EUR"
+			}),
+			minScreenWidth : "400px",
+			demandPopin : true
+		})
+	];
+	
+	var oTemplate = new sap.m.ColumnListItem({
 		type : "Navigation",
 		unread : false,
 		vAlign : "Middle",
@@ -209,42 +184,48 @@
 			})
 		]
 	});
+	
+	var oTable = new sap.m.Table("items", {
+		growing : false,
+		growingThreshold: 2,
+		inset : false,
+		mode: "MultiSelect",
+		showUnread : true,
+		growingScrollToLoad : false,
+		selectionChange : function(e) {
+			jQuery.sap.log.info("selectionChanged", Date.now());
+		},
+		itemPress : function(e) {
+			jQuery.sap.log.info("itemPressed", e.getParameter("listItem").getId(), e.getParameter("srcControl").getId());
+		},
+		updateStarted : function(e) {
+			jQuery.sap.log.info("updateStarted ", JSON.stringify(e.getParameters()), Date.now());
+		},
+		updateFinished : function(e) {
+			jQuery.sap.log.info("updateFinished ", JSON.stringify(e.getParameters()), Date.now());
+		},
+		footerText : "This is a table footer",
+		headerToolbar : oHeaderToolbar,
+		infoToolbar : oInfoToolbar,
+		swipeContent : oSwipeContent,
+		columns : aColumns
+	})
 
+	var oPage = new sap.m.Page({
+		title : "Table",
+		enableScrolling : true,
+		footer: oFooterToolbar,
+		content : [oTable]
+	});
 
 	var oModel = new sap.ui.model.json.JSONModel();
 	oModel.setData(data);
 	oTable.setModel(oModel);
-	oTable.bindAggregation("items", "/navigation", template);
-
-	/*
-	var sProxyBaseUrl = "../../../proxy/";
-
-	var aServices = [
-			{
-				serviceUrl : sProxyBaseUrl + "http/services.odata.org/(S(k0llwbowwin2l5shlweie0c2))/OData/OData.svc/",
-				products : {
-					collection : "/Products",
-					properties : [ "ID", "Name", "Description", "ReleaseDate", "Price", "Rating" ]
-				}
-			},
-			{
-				serviceUrl : sProxyBaseUrl + "http/ldcibcn.wdf.sap.corp:53600/sap/bc/sepm_odata/purchase/",
-				products : {
-					collection : "/ProductCollection",
-					properties : [ "ProductID", "Name", "Price/Amount", "Price/CurrencyCode" ]
-				}
-			} ];
-
-	jQuery.sap.require("sap.ui.model.odata.ODataModel");
-	// set the data for the model
-	var oModel = new sap.ui.model.odata.ODataModel(aServices[1].serviceUrl, true, "anzeiger", "display");
-	// set the model to the oTable
-	oTable.setModel(oModel);
-
-	oTable.bindAggregation("items", "/ProductCollection", template);
-	*/
-	app.addPage(page).placeAt("body");
-
+	oTable.bindAggregation("items", "/navigation", oTemplate);
+	
+	var oApp = new sap.m.App({
+		pages : [oPage]
+	}).placeAt("body");
 
 </script>
 </head>

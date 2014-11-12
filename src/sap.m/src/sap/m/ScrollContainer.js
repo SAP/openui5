@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @function
 	 * @param {int} iX
 	 *         The horizontal pixel position to scroll to.
-	 *         Scrolling to the right happens with positive values.
+	 *         Scrolling to the right happens with positive values. In right-to-left mode scrolling starts at the right side and higher values scroll to the left.
 	 *         If only vertical scrolling is enabled, give 0 as value.
 	 * @param {int} iY
 	 *         The vertical pixel position to scroll to.
@@ -117,10 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		jQuery.sap.require("sap.ui.core.delegate.ScrollEnablement");
 		this._oScroller = new sap.ui.core.delegate.ScrollEnablement(this, this.getId() + "-scroll", {
 			horizontal: true,
-			vertical: false,
-			zynga: false,
-			preventDefault: false,
-			nonTouchScrolling: "scrollbar"
+			vertical: false
 		});
 		// TODO: do the resize listening only when ScrollContainer becomes visible and unbind when getting visible
 	};
@@ -156,7 +153,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	ScrollContainer.prototype.scrollTo = function(x, y, time) {
 		if (this._oScroller) {
-			if (this.getDomRef()) { // only if rendered
+			
+			var oDomRef = this.getDomRef();
+			if (oDomRef) { // only if rendered
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					x = jQuery.sap.denormalizeScrollBeginRTL(x, oDomRef);
+				}
 				this._oScroller.scrollTo(x, y, time);
 			} else {
 				this._oScroller._scrollX = x; // remember for later rendering

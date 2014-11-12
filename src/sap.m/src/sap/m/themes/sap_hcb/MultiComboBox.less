@@ -15,6 +15,17 @@
 	border-color: @sapHCStandardFG;
 }
 
+.sapMMultiComboBoxFocused:not(.sapMInputBaseReadonly) > .sapMMultiComboBoxBorder::before {
+	border: 2px dotted @sapHCStandardFG;
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	pointer-events: none;
+}
+
 .sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	background: @sapHCStandardBG;
 	border: .0625rem solid @sapHCStandardFG;

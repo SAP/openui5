@@ -130,7 +130,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			} else {
 				var aUrlParts = sServiceUrl.split("?");
 				this.sServiceUrl = aUrlParts[0];
-				this.aUrlParams.push(aUrlParts[1]);
+				if (aUrlParts[1]) {
+					this.aUrlParams.push(aUrlParts[1]);
+				}
 			}
 
 			if (sap.ui.getCore().getConfiguration().getStatistics()) {
@@ -557,7 +559,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
-	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed 
+	 * refreshes the metadata for model, e.g. in case the first request for metadata has failed
 	 *
 	 * @public
 	 * @name sap.ui.model.odata.ODataModel#refreshMetadata

@@ -24,8 +24,8 @@
 /* Custom design for Responsive Object Header */
 /*=========================================== */
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle,
-.sapMOHR .sapMOHAttr .sapMObjectAttributeText {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle,
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeText {
 	display: inline-block;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
@@ -38,14 +38,14 @@
 	max-width: 50%;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeTitle {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle {
 	padding-right: 0.5rem;
 	max-width: 50%;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeColon {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeColon {
 	display: inline-block;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
@@ -55,6 +55,7 @@
 	white-space: nowrap;
 	max-width: 0.5rem;
 	margin-left: -0.5rem;
+	overflow: auto;
 }
 
 .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText {
@@ -73,7 +74,7 @@
 	outline-offset: -1px;
 }
 
-.sapMOHR .sapMOHAttr .sapMObjectAttributeDiv {
+.sapMOHR .sapMOHRAttr .sapMObjectAttributeDiv {
 	display: block;
 	white-space: nowrap;
 	overflow: hidden;
