@@ -414,6 +414,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	
 		var sMaxHeight = this.getMaxHeight();
 		var iMaxHeight = sMaxHeight ? parseInt(sMaxHeight, 10) : 0;
+		
+		/*
+		 * Fix the width (if necessary)
+		 */
+		var sMaxWidth = this.getMaxWidth();
+		if (sMaxWidth) {
+			var iMaxWidth = parseInt(sMaxWidth, 10);
+		
+			var sBorderLeft = $This.css("border-left-width");
+			var iBorderLeft = parseInt(sBorderLeft, 10);
+			var sBorderRight = $This.css("border-right-width");
+			var iBorderRight = parseInt(sBorderRight, 10);
+		
+			var sPaddingLeft = $This.css("padding-left");
+			var iPaddingLeft = parseInt(sPaddingLeft, 10);
+			var sPaddingRight = $This.css("padding-right");
+			var iPaddingRight = parseInt(sPaddingRight, 10);
+		
+			iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
+			$This.css("max-width", iMaxWidth + "px");
+		} else {
+			$This.css("max-width", "");
+		}
 	
 		/*
 		 * Fix the height
@@ -502,29 +525,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			$Content.css("max-height", iValue + "px");
 		
 			$Content.toggleClass("sapUiUx3TPLargeContent", true);
-		}
-	
-		/*
-		 * Fix the width (if necessary)
-		 */
-		var sMaxWidth = this.getMaxWidth();
-		if (sMaxWidth) {
-			var iMaxWidth = parseInt(sMaxWidth, 10);
-		
-			var sBorderLeft = $This.css("border-left-width");
-			var iBorderLeft = parseInt(sBorderLeft, 10);
-			var sBorderRight = $This.css("border-right-width");
-			var iBorderRight = parseInt(sBorderRight, 10);
-		
-			var sPaddingLeft = $This.css("padding-left");
-			var iPaddingLeft = parseInt(sPaddingLeft, 10);
-			var sPaddingRight = $This.css("padding-right");
-			var iPaddingRight = parseInt(sPaddingRight, 10);
-		
-			iMaxWidth -= iBorderLeft + iPaddingLeft + iPaddingRight + iBorderRight;
-			$This.css("max-width", iMaxWidth + "px");
-		} else {
-			$This.css("max-width", "");
 		}
 
 		fnSetArrow(this);
@@ -839,6 +839,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 			if (oOpenerRect) {
 				iZero = oOpenerRect.left - oPopRect.left;
+				if (iZero < 0) {
+					iZero = oPopRect.width - oThis.iArrowHeight;
+				}
 
 				iVal = Math.round(iZero + oOpenerRect.width / 2);
 				// if the position would exceed the ToolPopup's width
