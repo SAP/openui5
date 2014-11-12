@@ -5050,7 +5050,7 @@
 						ok(oSelect.$("label").hasClass(CSS_CLASS + "Label"), 'The select first-child html label element "must have" the CSS class "' + CSS_CLASS + 'Label"');
 						ok(oSelect.$("arrow").hasClass(CSS_CLASS + "Arrow"), 'The select html span element "must have" the CSS class "' + CSS_CLASS + 'Arrow"');
 					} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
-						ok(oSelect.$().find("." + CSS_CLASS + "Icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element "must have" the CSS class "' + CSS_CLASS + 'Arrow"');
+						ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 					}
 	
 					// cleanup

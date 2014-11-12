@@ -129,7 +129,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		 * @private
 		 */
 		SelectRenderer.renderIcon = function(oRm, oSelect) {
-			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon");
+			oRm.writeIcon(oSelect.getIcon(), SelectRenderer.CSS_CLASS + "Icon", {
+				id: oSelect.getId() + "-icon"
+			});
 		};
 
 		/**
