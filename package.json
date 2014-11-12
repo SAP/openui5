@@ -33,7 +33,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-eslint": "^2.0.0",
     "grunt-mocha-test": "^0.12.1",
-    "grunt-openui5": "^0.2.1",
+    "grunt-openui5": "^0.3.0",
     "grunt-text-replace": "^0.3.12",
     "grunt-timer": "^0.5.4",
     "load-grunt-config": "^0.13.2",
