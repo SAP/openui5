@@ -467,7 +467,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index < iLength - 1) {
-			this.getTokens()[index + 1].setSelected(true);
+			var oNextToken = this.getTokens()[index + 1];
+			oNextToken.setSelected(true);
+			this._ensureTokenVisible(oNextToken);
+
 			oEvent.preventDefault();
 		} else if (index === iLength - 1) {
 			// focus is on last token - we do not handle this event and let it bubble
@@ -480,7 +483,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		oEvent.setMarked();
 	
 	};
-	
+
+	/**
+	 * Adjusts the scrollLeft so that the given token is visible from its left side
+	 * @param {sap.m.Token} oToken The token that will be fully visible
+	 * @private
+	 * @name sap.m.Tokenizer#_ensureTokenVisible
+	 * @function
+	*/
+	Tokenizer.prototype._ensureTokenVisible = function(oToken) {
+		var iTokenizerLeftOffset = this.$().offset().left,
+			iTokenLeftOffset = oToken.$().offset().left;
+
+		if (iTokenLeftOffset < iTokenizerLeftOffset) {
+			this.$().scrollLeft(this.$().scrollLeft() - iTokenizerLeftOffset + iTokenLeftOffset);
+		}
+	};
+
 	/**
 	 * Called when the user presses the left arrow key, selects previous token
 	 * @param {jQuery.Event} oEvent The event triggered by the user
@@ -506,7 +525,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 	
 		if (index > 0) {
-			this.getTokens()[index - 1].setSelected(true);
+			var oPrevToken = this.getTokens()[index - 1];
+			oPrevToken.setSelected(true);
+			this._ensureTokenVisible(oPrevToken);
 		} else if (index === -1) {
 			this.getTokens()[this.getTokens().length - 1].setSelected(true);
 		}

@@ -293,6 +293,39 @@
 		tokenizer1.removeAllTokens();
 	});
 
+    test("selected token is visible after select with left arrow", function() {
+        var oSpecialToken = new sap.m.Token({text: "Token 5", key: "0005"});
+        var oMultiInput = new sap.m.MultiInput({
+            width: '300px',
+            tokens: [
+                new sap.m.Token({text: "Token 1", key: "0001"}),
+                new sap.m.Token({text: "Token 2", key: "0002"}),
+                new sap.m.Token({text: "Token 3", key: "0003"}),
+                new sap.m.Token({text: "Token 4", key: "0004"}),
+                oSpecialToken,
+                new sap.m.Token({text: "Token 6", key: "0006"}),
+                new sap.m.Token({text: "Token 7", key: "0007"}),
+                new sap.m.Token({text: "Token 8", key: "0008"})
+            ],
+            editable: true
+        });
+
+        oMultiInput.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
+
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+
+        equals(oSpecialToken.getSelected(), true, "Token5 is selected");
+        ok(oSpecialToken.$().offset().left >= jQuery(oTokenizerDomRef).offset().left, "token 5 left side is visible.");
+
+        oMultiInput.destroy();
+    });
+
 </script>
 
 </head>
