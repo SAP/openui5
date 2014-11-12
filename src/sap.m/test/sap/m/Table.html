@@ -298,7 +298,7 @@
 		selectionChange : function(e) {
 			sap.m.MessageToast.show("selection is changed");
 		},
-		delete : function(oEvent) {
+		"delete" : function(oEvent) {
 			var oItem = oEvent.getParameter("listItem");
 			
 			sap.m.MessageBox.confirm("Are you sure to delete this record?", {
