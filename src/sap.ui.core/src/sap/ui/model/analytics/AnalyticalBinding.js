@@ -31,6 +31,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object} [mParameters=null] additional model specific parameters (optional) 
 	 * 
+	 * @throws Will throw an error if no QueryResult object could be retrieved, either from an explicitly
+	 *         given EntitySet (via optional mParameters.entitySet argument), or by default implicitly from 
+	 *         the binding path (see mandatory sPath argument).
+	 * 
 	 * @name sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
 	 * @experimental This module is only for experimental use!
@@ -79,6 +83,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				
 				// attribute members for maintaining structure details requested by the binding consumer
 				this.oAnalyticalQueryResult = this.oModel.getAnalyticalExtensions().findQueryResultByName(this._getEntitySet());
+				
+				// Sanity check: If the AnalyticalQueryResult could not be retrieved, the AnalyticalBinding will not work correctly,
+				// and it will sooner or later break when accessing the AnalyticalQueryResult object.
+				if (!this.oAnalyticalQueryResult) {
+					throw ("Error in AnalyticalBinding - The QueryResult '" + this._getEntitySet() + "' could not be retrieved. Please check your service definition.");
+				}
+				
 				this.aAnalyticalInfo = [];
 				this.mAnalyticalInfoByProperty = {};
 
