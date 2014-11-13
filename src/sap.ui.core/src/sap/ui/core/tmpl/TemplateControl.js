@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * clone the fnRenderer
 	 */
 	TemplateControl.prototype.clone = function() {
-		var oClone = sap.ui.core.Control.prototype.clone.apply(this, arguments);
+		var oClone = Control.prototype.clone.apply(this, arguments);
 		oClone.fnRenderer = this.fnRenderer;
 		return oClone;
 	};
