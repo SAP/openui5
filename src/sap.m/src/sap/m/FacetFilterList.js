@@ -50,7 +50,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 * Indicates that the list is displayed as a button when the FacetFilter type is set to Simple.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
-	
+
+
+            /**
+             * If true, enable case-insensitive search for OData .
+             */
+			enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
+
 			/**
 			 * Number of objects that match this item in the target data set when all filter items are selected.
 			 */
@@ -477,13 +483,18 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					}
 				}
 			}
-	
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 											// possible
 				if (sSearchVal || numberOfsPath > 0) {
 					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
+						if (oBinding.getModel() instanceof sap.ui.model.odata.ODataModel && this.getEnableCaseInsensitiveSearch()){
+							 //notice the single quotes wrapping the value from the UI control!
+							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
+							sEncodedString = sEncodedString.toLowerCase();
+							oUserFilter = new sap.ui.model.Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
+						}
 						if (numberOfsPath > 1) {
 							var oFinalFilter = new sap.ui.model.Filter([oUserFilter, this._saveBindInfo], true);
 						} else {
