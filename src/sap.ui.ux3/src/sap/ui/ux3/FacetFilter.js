@@ -31,12 +31,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	
 		library : "sap.ui.ux3",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
 			/**
 			 * If the value is "Auto" - the Facet Filter takes the whole available height. If "Fixed" , then the default number of Facet Filter Items (5) is visible.
 			 */
