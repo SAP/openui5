@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	};
 	
 	/**
-	* Handles the Scroll event.
+	* Handles the Scroll event. 
 	*
 	* @param {jQuery.Event}  oEvent Event object
 	* @private
@@ -426,9 +426,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var iScrollPos = null;
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				iScrollPos = this._$ScrollDomRef.scrollTop();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				iScrollPos = this._$ScrollDomRef.scrollLeft();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
 				if ( !!sap.ui.Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
 				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
@@ -597,7 +597,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			iScrollPos = iCheckedSP * this._iFactor;
 		}
 	
-		iCheckedSP = Math.floor(iCheckedSP);
+		iCheckedSP = Math.round(iCheckedSP);
 	
 		this._bSuppressScroll = !callScrollEvent;
 		this.setProperty("scrollPosition", iCheckedSP, true);
@@ -661,9 +661,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		var iScrollPos = null;
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				iScrollPos = this._$ScrollDomRef.scrollTop();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				iScrollPos = this._$ScrollDomRef.scrollLeft();
+				iScrollPos = Math.round(this._$ScrollDomRef.scrollLeft());
 				if (!!sap.ui.Device.browser.firefox && this._bRTL ) {
 					iScrollPos = Math.abs(iScrollPos);
 				} else if ( !!sap.ui.Device.browser.webkit && this._bRTL ) {
@@ -692,6 +692,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		} else {
 	
 			// Set new scroll position without the rerendering:
+			iScrollPos = Math.round(iScrollPos);
 			this.setProperty("scrollPosition", iScrollPos, true);
 	
 			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + eAction + " --- Direction is forward: " + bForward);
@@ -718,9 +719,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	ScrollBar.prototype.getNativeScrollPosition = function() {
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				return this._$ScrollDomRef.scrollTop();
+				return Math.round(this._$ScrollDomRef.scrollTop());
 			} else {
-				return this._$ScrollDomRef.scrollLeft();
+				return Math.round(this._$ScrollDomRef.scrollLeft());
 			}
 		}
 		return 0;
@@ -732,11 +733,12 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	* @private
 	*/
 	ScrollBar.prototype.setNativeScrollPosition = function(iNativeScrollPos) {
+		var iScrollPos = Math.round(iNativeScrollPos);
 		if (this._$ScrollDomRef) {
 			if (this.getVertical()) {
-				this._$ScrollDomRef.scrollTop(iNativeScrollPos);
+				this._$ScrollDomRef.scrollTop(iScrollPos);
 			} else {
-				this._$ScrollDomRef.scrollLeft(iNativeScrollPos);
+				this._$ScrollDomRef.scrollLeft(iScrollPos);
 			}
 		}
 	};
