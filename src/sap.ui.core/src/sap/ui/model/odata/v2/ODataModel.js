@@ -672,6 +672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 							if (oInnerResponse.message) {
 								oBatchRequest.response.message = oInnerResponse.message;
 								oInnerResponse = oInnerResponse.response;
+								oBatchRequest.response.responseText = oInnerResponse.body;
 								oBatchRequest.success = false;
 							}
 							oBatchRequest.response.headers = oInnerResponse.headers;
@@ -692,6 +693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 						if (oInnerResponse.message) {
 							oBatchRequest.response.message = oInnerResponse.message;
 							oInnerResponse = oInnerResponse.response;
+							oBatchRequest.response.responseText = oInnerResponse.body;
 							oBatchRequest.success = false;
 						}
 						oBatchRequest.response.headers = oInnerResponse.headers;
@@ -715,6 +717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				oEventInfo.response.headers = vResponse.headers;
 				oEventInfo.response.statusCode = vResponse.statusCode;
 				oEventInfo.response.statusText = vResponse.statusText;
+				oEventInfo.response.responseText = vResponse.body;
 			}
 		}
 		oEventInfo.ID = oRequest.requestID;
