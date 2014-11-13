@@ -25,11 +25,6 @@ sap.ui.define(['jquery.sap.global'],
 		// Convenience variable
 		var rm = oRenderManager;
 	
-		// Return immediately if control is invisible
-		if (!oSlider.getVisible()) {
-			return;
-		}
-	
 		// Write the HTML into the render manager
 		rm.write('<DIV');
 		rm.writeControlData(oSlider);

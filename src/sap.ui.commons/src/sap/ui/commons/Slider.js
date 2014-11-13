@@ -69,11 +69,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			stepLabels : {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
-			 * Invisible sliders are not rendered.
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
-			/**
 			 * Using the slider interactively requires value "true".
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -162,7 +157,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	Slider.prototype.onAfterRendering = function () {
-	
 		// Warning in the case of wrong properties
 		if ( this.getMin() >= this.getMax() ) {
 			jQuery.sap.log.warning('Property wrong: Min:' + this.getMin() + ' > Max:' + this.getMax() );
