@@ -84,12 +84,7 @@ sap.ui.define(['jquery.sap.global', './Control', './IconPool', './library'],
 			 * Background color for Icon in active state.
 			 */
 			activeBackgroundColor : {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null},
-	
-			/**
-			 * An invisible icon is not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * A decorative icon is included for design reasons. Accessibility tools will ignore decorative icons. Decorative icons don't have tab stop.
 			 * @since 1.16.4
