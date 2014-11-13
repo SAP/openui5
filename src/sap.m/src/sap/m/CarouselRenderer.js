@@ -21,12 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	CarouselRenderer.render = function(rm, oCarousel){
-		// Return immediately if control is invisible or if there are no pages to be rendered
-		if (!oCarousel.getVisible()) {
-			return;
-		}
-
-
 		//Outer carousel div
 		rm.write("<div");
 		rm.writeControlData(oCarousel);
