@@ -968,9 +968,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @function
 	 * @private
 	 */
-	UploadCollection.prototype._onFileRenamed = function(oEvent) {
-		// TODO not implemented
-	};	
+	UploadCollection.prototype._onFilenameLengthExceed = function(oEvent){
+		this.fireFilenameLengthExceed(oEvent);
+	};
 
 	/**
 	 * @description Handling of the Event fileSizeExceed of the fileUploader
@@ -981,7 +981,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	UploadCollection.prototype._onFileSizeExceed = function(oEvent){
 		this.fireFileSizeExceed(oEvent);
-		MessageToast.show(oEvent.getId());
 	};
 
 	/**
@@ -1081,6 +1080,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 				},
 				fileDeleted : function(oEvent) {
 					that._onFileDeleted(oEvent);
+				},
+				filenameLengthExceed : function(oEvent) {
+					that._onFilenameLengthExceed(oEvent);
 				},
 				fileRenamed : function(oEvent) {
 					that._onFileRenamed(oEvent);

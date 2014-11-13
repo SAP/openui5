@@ -155,6 +155,11 @@
 			oModel.setData(oData);
 		};
 	};
+	
+	var fnFilenameLengthExceed = function(oEvent) {
+		sap.m.MessageToast.show(oEvent.getId());
+	};
+	
 	var fnFileRenamed = function(oEvent) {
 		var oData = oModel.getData();
 		var aItems = oData.items;
@@ -169,6 +174,7 @@
 		oModel.setData(oData);
 	};
 	var fnFileSizeExceed = function(oEvent) {
+		sap.m.MessageToast.show(oEvent.getId());
 	};
 	var fnTypeMissmatch = function(oEvent) {
 	};
@@ -217,16 +223,18 @@
 
 	// create instance of UploadCollection and set model
 	var oUploadCollection = new sap.m.UploadCollection({
-		maximumFilenameLength : 35,
 		items : {
 			path : "/items",
 			template : oItemTemplate
 		},
+		maximumFilenameLength : 10,
+		maximumFileSize : 1,
 		multiple : true,
 		// events
 		change : fnChange,
 		fileAllowed : fnFileAllowed,
 		fileDeleted : fnFileDeleted,
+		filenameLengthExceed : fnFilenameLengthExceed,
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
