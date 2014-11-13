@@ -1335,6 +1335,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	
 		return this;
 	};
+
+	Dialog.prototype.setInitialFocus = function(sInitialFocus) {
+		// Skip the invalidation when sets the initialfocus
+		//
+		// The initial focus takes effect after the next open of the dialog, when it's set
+		// after the dialog is open, the current focus won't be changed
+		// SelectDialog depends on this. If this has to be changed later, please make sure to
+		// check the SelectDialog as well where setIntialFocus is called.
+		return this.setAssociation("initialFocus", sInitialFocus, true);
+	};
 	/* =========================================================== */
 	/*                           end: setters                      */
 	/* =========================================================== */
