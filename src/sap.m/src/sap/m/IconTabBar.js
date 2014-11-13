@@ -63,12 +63,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			 * @since 1.15.0
 			 */
 			selectedKey : {type : "string", group : "Data", defaultValue : null},
-	
-			/**
-			 * Invisible controls are not rendered
-			 * @since 1.15.0
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Determines whether the text of the icon tab filter (not the count) is uppercased.
