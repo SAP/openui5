@@ -268,8 +268,8 @@ sap.ui
 						this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 						if (!this._aIncludeOperations) {
-							this.setIncludeOperations([sap.m.P13nConditionOperation.BT,
-									sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Contains,
+							this.setIncludeOperations([sap.m.P13nConditionOperation.EQ,
+									sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.Contains,
 									sap.m.P13nConditionOperation.StartsWith, sap.m.P13nConditionOperation.EndsWith,
 									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
 									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE]);
@@ -293,10 +293,10 @@ sap.ui
 							dataChange : this._handleDataChange()
 						});
 						this._oIncludeFilterPanel.setOperations(this._aIncludeOperations);
-						this._oIncludeFilterPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+						this._oIncludeFilterPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
 									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
 									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
-						this._oIncludeFilterPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+						this._oIncludeFilterPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
 									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
 									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
 						
