@@ -22,6 +22,7 @@
 	border-right: 0;
 	background-color: @sapHCStandardBG;
 	margin-right: 0;
+	-webkit-tap-highlight-color: transparent;
 	&:first-child {
 		border-top-left-radius: 0.375rem;
 		border-bottom-left-radius: 0.375rem;
@@ -70,34 +71,32 @@
 }
 
 /* Custom focus outline: */
-.sap-desktop {
-	.sapMSegBBtnFocusable:focus {
-		outline: 0.125rem dotted @sapHCStandardFG;
-		border: 1px solid transparent;
-		outline-offset: -0.125rem;
-	}
+.sapMSegBBtnFocusable:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	border: 1px solid transparent;
+	outline-offset: -0.125rem;
+}
 
-	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
-		outline: 0.125rem dotted @sapHCStandardFG;
-		border:	1px solid transparent;
-		outline-offset: -0.125rem;
-	}
+.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	border:	1px solid transparent;
+	outline-offset: -0.125rem;
+}
 
-	.sapMSegBBtnFocusable:active {
-		outline: 0.125rem dotted @sapHCStandardFG;
-		border:	1px solid transparent;
-		outline-offset: -0.125rem;
-	}
+.sapMSegBBtnFocusable:active {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	border:	1px solid transparent;
+	outline-offset: -0.125rem;
+}
 
-	.sapMSegBBtnFocusable:focus + .sapMSegBBtn{
-		outline: none;
-		border-left: none;
-	}
+.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
+	outline: none;
+	border-left: none;
+}
 
-	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus	+ .sapMSegBBtn{
-		outline: none;
-		border-left: none;
-	}
+.sapMSegBBtnFocusable.sapMSegBBtnSel:focus + .sapMSegBBtn {
+	outline: none;
+	border-left: none;
 }
 
 .sapMSegBIcons .sapMSegBBtn {
@@ -115,7 +114,7 @@
 		color: @sapHCStandardFG;
 	}
 }
-.sapMSegBBtnFocusable.sapMBtnActive	{
+.sapMSegBBtnFocusable.sapMBtnActive {
 	background: @sapHCHighlightAltBG;
 	color: @sapHCStandardFG;
 	.sapUiIcon{
@@ -123,8 +122,9 @@
 	}
 }
 
-.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
-.sapMSegBBtnFocusable.sapMBtnActive:hover{
+.sapMSegBBtnSel:active,
+.sap-desktop .sapMSegBBtnSel:hover,
+.sapMSegBBtnFocusable.sapMBtnActive:hover {
 	background: @sapHCHighlightBG;
 }
 
@@ -143,7 +143,7 @@
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 	.sapMSegB {
 		height: 1.625rem;
 		padding: 0.1875rem 0;
@@ -184,8 +184,8 @@
 	}
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-.sap-desktop[data-sap-ui-browser^="ie"] {
+/* IE mobile and desctop ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"] {
 	.sapMSegBBtn:focus {
 		outline: none;
 		position: relative;
@@ -199,9 +199,7 @@
 		left: 0;
 		top: 0;
 		border: 0.125rem dotted @sapHCStandardFG;
-	}
-	.sapMSegBBtn:not(.sapMSegBBtnDis):focus:last-child {
-		border-right: none;
+		pointer-events: none;
 	}
 	.sapMSegBBtn:last-child:focus {
 		margin-right: 0;
