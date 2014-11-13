@@ -26,11 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		oMenuBar.doBeforeRendering();
-	
-		if (!oMenuBar.getVisible()) {
-			return;
-		}
-	
+
 		rm.write("<div");
 		rm.writeControlData(oMenuBar);
 		rm.addClass("sapUiMnuBar");
