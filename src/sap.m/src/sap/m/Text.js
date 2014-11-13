@@ -47,11 +47,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 	
 			/**
-			 * Set this property to false to make the text invisible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Set this property to false to disable the automatic text wrapping.
 			 */
 			wrapping : {type : "boolean", group : "Appearance", defaultValue : true},
