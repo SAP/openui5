@@ -50,12 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Control width in CSS size
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		},
 		defaultAggregation : "steps",
 		aggregations : {
