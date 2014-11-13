@@ -448,6 +448,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			LibraryChanged : "libraryChanged",
 			ValidationError : "validationError", ParseError : "parseError", FormatError : "formatError", ValidationSuccess : "validationSuccess"};
 	
+	
+	// Id of the static UIArea
+	var STATIC_UIAREA_ID = "sap-ui-static";
+	
 	/**
 	 * Boots the core and injects the necessary css and js files for the library.
 	 * Applications shouldn't call this method. It is automatically called by the bootstrap scripts (e.g. sap-ui-core.js)
@@ -1363,9 +1367,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		// oDomRef might be (and actually IS in most cases!) a string (the ID of a DOM element)
 		if (typeof (oDomRef) === "string") {
 			var id = oDomRef;
-			oDomRef = jQuery.sap.domById(oDomRef);
-			if (!oDomRef) {
-				throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
+			
+			if (id == STATIC_UIAREA_ID) {
+				oDomRef = this.getStaticAreaRef();
+			} else {
+				oDomRef = jQuery.sap.domById(oDomRef);
+				if (!oDomRef) {
+					throw new Error("DOM element with ID '" + id + "' not found in page, but application tries to insert content.");
+				}
 			}
 		}
 	
@@ -2001,15 +2010,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @function
 	 */
 	Core.prototype.getStaticAreaRef = function() {
-		var sStaticId = "sap-ui-static";
-		var oStatic = jQuery.sap.domById(sStaticId);
+		var oStatic = jQuery.sap.domById(STATIC_UIAREA_ID);
 		if (!oStatic) {
 			if (!this.bDomReady) {
 				throw new Error("DOM is not ready yet. Static UIArea cannot be created.");
 			}
 			
 			var leftRight = this.getConfiguration().getRTL() ? "right" : "left";
-			oStatic = jQuery("<DIV/>", {id:sStaticId}).css({
+			oStatic = jQuery("<DIV/>", {id:STATIC_UIAREA_ID}).css({
 				"height"   : "0",
 				"width"    : "0",
 				"overflow" : "hidden",
@@ -2032,7 +2040,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @function
 	 */
 	Core.prototype.isStaticAreaRef = function(oDomRef) {
-		return oDomRef && (oDomRef.id === "sap-ui-static");
+		return oDomRef && (oDomRef.id === STATIC_UIAREA_ID);
 	};
 	
 	/**
