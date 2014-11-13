@@ -48,11 +48,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Invisible Panels are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Specifies the scroll position from left to right. Value "0" means leftmost position.
 			 */
 			scrollLeft : {type : "int", group : "Behavior", defaultValue : 0},
