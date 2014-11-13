@@ -63,7 +63,7 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheet button.sapMActionSheetBu
 .sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton.sapMBtnAccept > .sapMBtnInner,
 .sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton.sapMBtnReject > .sapMBtnInner {
 	border-bottom: none;
-} 
+}
 
 .sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetCancelButton > .sapMBtnInner {
 	text-align: center;
@@ -114,7 +114,9 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetDialog.sapMDialogPhone > 
 }
 .sap-desktop .sapMActionSheetPopover.sapMPopover {
 	background-color: @sapHCStandardBG;
-	border: solid 0.125rem @sapHCStandardFG;
+
+	// use px because in IE the content width cannot be calculated correctly
+	border: solid 2px @sapHCStandardFG;
 }
 
 .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrDown:after {
