@@ -104,12 +104,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 			}
 		});
 	
-		// am-pm picker is hard-coded in mobiscroll so use 24 hour format for RTL
-		if (sap.ui.getCore().getConfiguration().getRTL()) {
+		// am-pm picker is hard-coded so use 24 hour format when language is not English
+		if (sap.m.getLocale().getLanguage() != "en") {
 			["valueFormat", "displayFormat"].forEach(function(sFormatType) {
 				var oTime = oPrototype._types.Time;
 				var sFormat = oTime[sFormatType];
-				oTime[sFormatType] = sFormat.replace(/a+/i, "").replace(/h+/i, "HH").trim();
+				if (sFormat.indexOf("a") != -1) {
+					oTime[sFormatType] = sFormat.replace(/a+/i, "").replace(/h+/i, "HH").trim();
+				}
 			});
 		}
 	
