@@ -2725,17 +2725,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 */
 	
 	
-	// TODO come up with more sophisticated solution.
-	// e.g. check for script tag, check for config... if not (yet) there, delay creation by e.g. 500ms or so.
-	if (!window.sap.ui.getCore) {
-		/**
-		 * Create Core instance and make it available.
-		 */
-		(function(){
-			new Core();
-		}());
-	}
-	
 	/**
 	 * Displays the control tree with the given root inside the area of the given
 	 * DOM reference (or inside the DOM node with the given ID) or in the given Control.
@@ -2771,6 +2760,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	};
 	
 
-	return Core;
+	/*
+	 * Create a new (the only) instance of the Core and return it as module value.
+	 * 
+	 * Do not export the module value under the global name!
+	 * 
+	 * Note that the Core = EventProvider.extend() call above already exposes sap.ui.core.Core.
+	 * This is needed for backward compatibility reason, in case some other code tries to enhance
+	 * the core prototype. Once global names are switched off, such extension scnearios are 
+	 * no longer supported. 
+	 */
+	return new Core();
 
-}, /* bExport= */ true);
+}, /* bExport= */ false);
