@@ -22,48 +22,134 @@
 	this._oModel = new sap.ui.model.json.JSONModel();
 
 	var _oData = {
-		columns: {
-			title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
-			items: [ {
-				key: '4711',
-				visible: true,
-				text: "Column1",
-				tooltip: "Column1_Tooltip"
-			}, {
-				key: '4712',
-				visible: true,
-				text: "Column2",
-				tooltip: "Column2_Tooltip"
-			}, {
-				key: '4713',
-				visible: false,
-				text: "Column3",
-				tooltip: "Column3_Tooltip"
-			}, {
-				key: '4714',
-				visible: true,
-				text: "Column4",
-				tooltip: "Column4_Tooltip"
-			} ]
-		}
+			transientData: {	
+				columns: {
+					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.comp").getText("PERSODIALOG_TAB_COLUMNS"),
+					items: [ {
+						columnKey: '4711',
+						visible: true,
+						text: "Column1",
+						tooltip: "Column1_Tooltip"
+					}, {
+						columnKey: '4712',
+						visible: true,
+						text: "Column2",
+						tooltip: "Column2_Tooltip"
+					}, {
+						columnKey: '4713',
+						visible: false,
+						text: "Column3",
+						tooltip: "Column3_Tooltip"
+					}, {
+						columnKey: '4714',
+						visible: true,
+						text: "Column4",
+						tooltip: "Column4_Tooltip"
+					}, {
+						columnKey: '4715',
+						visible: true,
+						text: "Column5",
+						tooltip: "Column5_Tooltip"
+					}, {
+						columnKey: '4716',
+						visible: true,
+						text: "Column6",
+						tooltip: "Column6_Tooltip"
+					}, {
+						columnKey: '4717',
+						visible: true,
+						text: "Column7",
+						tooltip: "Column7_Tooltip"
+					}, {
+						columnKey: '4718',
+						visible: true,
+						text: "Column8",
+						tooltip: "Column8_Tooltip"
+					}, {
+						columnKey: '4719',
+						visible: true,
+						text: "Column9",
+						tooltip: "Column9_Tooltip"
+					}, {
+						columnKey: '4720',
+						visible: true,
+						text: "Column10",
+						tooltip: "Column10_Tooltip"
+					} ]
+				}
+			},
+			persistentData: {
+				columns: {
+					columnsItems: [ {
+						columnKey: '4711',
+						index: 1
+					}, {
+						columnKey: '4712',
+						index: 0
+					}, {
+						columnKey: '4714',
+						visible: false
+					}]
+				}
+			}
 	};
 
 	this._oModel.setData(_oData);
 
 	this._oColumnsPanel = new sap.m.P13nColumnsPanel({
-		title: "{/columns/title}",
-		type: "columns"
+		title : "{/transientData/columns/title}",
+		type : "columns",
+		items : {
+			path : '/transientData/columns/items',
+			template : new sap.m.P13nItem({
+				columnKey : "{columnKey}",
+				text : '{text}',
+				visible : '{visible}',
+				tooltip : '{tooltip}'
+			})
+		},
+		columnsItems : {
+			path : "/persistentData/columns/columnsItems",
+			template : new sap.m.P13nColumnsItem({
+				columnKey : "{columnKey}",
+				index : "{index}",
+				visible : "{visible}",
+				width : "{width}"
+			})
+		}
 	});
+	
+	this._oColumnsPanel.attachAddColumnsItem(function(oEvent) {
+		var oData = this._oModel.getData();
+		var oParams = oEvent.getParameters();
+		var oColumnsItem = {
+			columnKey : oParams.newItem.getColumnKey(),
+			index : oParams.newItem.getIndex(),
+			visible : oParams.newItem.getVisible(),
+			width : oParams.newItem.getWidth()
+		};
+		oData.persistentData.columns.columnsItems.push(oColumnsItem);
+		this._oModel.setData(oData, true);
+	}, this);
+
+	this._oColumnsPanel.attachRemoveColumnsItem(function(oEvent) {
+		var oData = this._oModel.getData();
+		var oParams = oEvent.getParameters();
+		var sColumnsKey = oParams.item.getColumnKey();
+
+		if (sColumnsKey !== null && sColumnsKey !== undefined && sColumnsKey !== "") {
+			oData.persistentData.columns.columnsItems.forEach(function(oColumnsItem, iIndex) {
+				if (oColumnsItem.columnKey === sColumnsKey) {
+					oData.persistentData.columns.columnsItems.splice(iIndex, 1);
+					this._oModel.setData(oData, true);
+					return;
+				}
+			}, this);
+		}
+	}, this);
 
 	this._oColumnsPanel.setModel(this._oModel)
-
-	this._oColumnsPanel.bindItems("/columns/items", new sap.m.P13nItem({
-		columnKey: "{key}",
-		text: "{text}",
-		visible: "{visible}",
-		tooltip: "{tooltip}"
-	}));
-
+	
 	var oPage = new sap.m.Page("page1", {
 		content: [ this._oColumnsPanel ]
 	});
