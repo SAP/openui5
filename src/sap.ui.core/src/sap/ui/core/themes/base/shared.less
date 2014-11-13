@@ -131,3 +131,73 @@
 	bottom: 0;
 	right: 0;
 }
+/*
+ * Enforces 'auto' width. To be used in combination 
+ * with pre-defined margin classes to remove any '100%'
+ * width's that might be set.
+ */
+.sapUiForceWidthAuto { width: auto !important; }
+
+/* 
+ * Pre-defined margins classes. These contain css margin
+ * properties which are flagged 'important' to make sure
+ * margins that come with a control are overwritten (an
+ * example for a control with a pre defined margin is the
+ * sap.m.List). Also all margin classes that with horizontal
+ * margin properties (begin and or end) are equipped with 
+ * an important 'width: auto' to make sure that any default
+ * 100% width is removed.
+ */
+
+/* Margins all around */
+.sapUiSmallMargin 	{ width: auto !important; margin: @sapUiMarginSmall !important; }
+.sapUiMediumMargin 	{ width: auto !important; margin: @sapUiMarginMedium !important; }
+.sapUiLargeMargin 	{ width: auto !important; margin: @sapUiMarginLarge !important; }
+
+/* Two-sided margins */
+.sapUiSmallMarginBeginEnd {
+	width: auto !important; 
+	margin-left: @sapUiMarginSmall !important; 
+	margin-right: @sapUiMarginSmall !important; 
+}
+.sapUiSmallMarginTopBottom {
+	margin-top: @sapUiMarginSmall !important; 
+	margin-bottom: @sapUiMarginSmall !important; 
+}
+.sapUiMediumMarginBeginEnd {
+	width: auto !important; 
+	margin-left: @sapUiMarginMedium !important; 
+	margin-right: @sapUiMarginMedium !important; 
+}
+.sapUiMediumMarginTopBottom {
+	margin-top: @sapUiMarginMedium !important; 
+	margin-bottom: @sapUiMarginMedium !important; 
+}
+.sapUiLargeMarginBeginEnd {
+	width: auto !important; 
+	margin-left: @sapUiMarginLarge !important; 
+	margin-right: @sapUiMarginLarge !important; 
+}
+.sapUiLargeMarginTopBottom { 
+	margin-top: @sapUiMarginLarge !important; 
+	margin-bottom: @sapUiMarginLarge !important; 
+}
+
+/* Single-sided margins */
+.sapUiSmallMarginTop    { margin-top: @sapUiMarginSmall !important; }
+.sapUiSmallMarginBottom { margin-bottom: @sapUiMarginSmall !important; }
+.sapUiSmallMarginBegin  { width: auto !important; margin-left: @sapUiMarginSmall !important; }
+.sapUiSmallMarginEnd    { width: auto !important; margin-right: @sapUiMarginSmall !important; }
+
+.sapUiMediumMarginTop    { margin-top: @sapUiMarginMedium !important; }
+.sapUiMediumMarginBottom { margin-bottom: @sapUiMarginMedium !important; }
+.sapUiMediumMarginBegin  { width: auto !important; margin-left: @sapUiMarginMedium !important; }
+.sapUiMediumMarginEnd    { width: auto !important; margin-right: @sapUiMarginMedium !important; }
+
+.sapUiLargeMarginTop    { margin-top: @sapUiMarginLarge !important; }
+.sapUiLargeMarginBottom { margin-bottom: @sapUiMarginLarge !important; }
+.sapUiLargeMarginBegin  { width: auto !important; margin-left: @sapUiMarginLarge !important; }
+.sapUiLargeMarginEnd    { width: auto !important; margin-right: @sapUiMarginLarge !important; }
+
+
+
