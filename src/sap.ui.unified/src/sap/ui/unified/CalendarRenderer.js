@@ -33,6 +33,10 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oCal);
 		oRm.addClass("sapUiCal");
 		oRm.writeClasses();
+		// This makes the calendar focusable and therefore
+		// the white empty areas can be clicked without closing the calendar
+		// by accident.
+		oRm.writeAttribute("tabindex", "-1");
 	
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		oRm.writeAccessibilityState(oCal, {
