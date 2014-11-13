@@ -48,12 +48,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies whether multiple selection is allowed.
 			 */
 			allowMultiSelect : {type : "boolean", group : "Behavior", defaultValue : false},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * Control width as common CSS-size (px or % as unit, for example).
 			 */
