@@ -98,22 +98,17 @@ sap.ui
 								/**
 								 * event raised when a filterItem was added
 								 */
-								addFilterItem : {
-									parameters : {
-
-										/**
-										 * item added
-										 */
-										newItem : {
-											type : "sap.m.P13nFilterItem"
-										}
-									}
-								},
+								addFilterItem : {},
 
 								/**
 								 * remove a filter item
 								 */
-								removeFilterItem : {}
+								removeFilterItem : {},
+								
+								/**								 
+								 * update a filter item
+								 */
+								updateFilterItem : {}
 							}
 						}
 					});
@@ -395,7 +390,17 @@ sap.ui
 							var oNewData = oEvent.getParameter("newData");
 							var sOperation = oEvent.getParameter("operation");
 							var sKey = oEvent.getParameter("key");
-
+							var oFilterItemData = null;
+							if (oNewData){
+								oFilterItemData = {
+									key : sKey,
+									exclude : oNewData.exclude,
+									columnKey : oNewData.keyField,
+									operation : oNewData.operation,
+									value1 : oNewData.value1,
+									value2 : oNewData.value2
+								};
+							}
 							if (sOperation === "update") {
 								var oFilterItem = that._getFilterItem(sKey);
 								if (oFilterItem) {
@@ -404,25 +409,19 @@ sap.ui
 									oFilterItem.setOperation(oNewData.operation);
 									oFilterItem.setValue1(oNewData.value1);
 									oFilterItem.setValue2(oNewData.value2);
-
-									// sap.m.MessageToast.show("update FilterItem ---> " + sKey);
 								}
+								that.fireUpdateFilterItem({
+									key : sKey,
+									index : oEvent.getParameter("index"),
+									filterItemData: oFilterItemData
+								});
 							}
 							if (sOperation === "add") {
-								that._bIgnoreAdd = true;
-								var oFilterItem = new sap.m.P13nFilterItem({
-									key : sKey,
-									exclude : oNewData.exclude,
-									columnKey : oNewData.keyField,
-									operation : oNewData.operation,
-									value1 : oNewData.value1,
-									value2 : oNewData.value2
-								});
-
+								that._bIgnoreAdd = true;							
 								that.fireAddFilterItem({
 									key : sKey,
 									index : oEvent.getParameter("index"),
-									newItem : oFilterItem
+									filterItemData : oFilterItemData
 								});
 								that._bIgnoreAdd = false;
 							}

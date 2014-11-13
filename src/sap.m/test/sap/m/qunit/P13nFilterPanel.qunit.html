@@ -204,18 +204,11 @@
 				var params = oEvent.getParameters();
 				var oModel = oP13nFilterPanel.getModel();
 				var oData = oModel.getData();
-				var oFilterItem = {
-					key : params.key,
-					columnKey : params.newItem.getColumnKey(),
-					operation : params.newItem.getOperation(),
-					exclude : params.newItem.getExclude(),
-					value1 : params.newItem.getValue1(),
-					value2 : params.newItem.getValue2()
-				};
+				var oFilterItemData = params.filterItemData;
 				if (params.index) {
-					oData.filterItems.splice(params.index, 0, oFilterItem);
+					oData.filterItems.splice(params.index, 0, oFilterItemData);
 				} else {
-					oData.filterItems.push(oFilterItem);
+					oData.filterItems.push(oFilterItemData);
 				}
 				oModel.setData(oData, true);
 			}				
