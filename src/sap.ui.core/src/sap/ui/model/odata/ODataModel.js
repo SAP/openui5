@@ -143,10 +143,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			// Remove trailing slash (if any)
 			this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
 
-			// Get service specific data container
-			if (ODataModel.mServiceData[this.sServiceUrl]) {
-				this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+			// Get/create service specific data container or create one if it doesn't exist
+			if (!ODataModel.mServiceData[this.sServiceUrl]) {
+				ODataModel.mServiceData[this.sServiceUrl] = {};
 			}
+			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+
 
 			// Get CSRF token, if already available
 			if (this.bTokenHandling && this.oServiceData.securityToken) {
@@ -161,12 +163,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object
-				this.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("$metadata", undefined, mMetadataUrlParams),
-						{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
-				that.oServiceData.oMetadata = that.oMetadata;
-			} else {
-				this.oMetadata = this.oServiceData;
+				this.oServiceData.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("$metadata", undefined, mMetadataUrlParams),
+									{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
 			}
+			this.oMetadata = this.oServiceData.oMetadata;
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl
