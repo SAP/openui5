@@ -25,11 +25,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	 *          rendered
 	 */
 	ListBaseRenderer.render = function(rm, oControl) {
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// container
 		rm.write("<div");
 		rm.addClass("sapMList");
