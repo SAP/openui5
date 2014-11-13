@@ -31,9 +31,7 @@ module.exports = function(grunt, config) {
 				cwd: library.path + '/src',
 				src: [
 					'**',
-					'!testsuite/testframe.html', // only a redirect file. real testsuite is located in /test/testsuite
-					'!**/themes/**/*.{css,less}', // css files will be created by the 'openui5_less' task
-					//'!**/*.{js}' // do not exclude js files ('uglify' task is currently skipped)
+					'!testsuite/testframe.html' // only a redirect file. real testsuite is located in /test/testsuite
 				],
 				dest: 'target/openui5-' + library.name + '/resources'
 			} ]
