@@ -32,11 +32,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 				bEnabled = oSelect.getEnabled(),
 				CSS_CLASS = SelectRenderer.CSS_CLASS;
 
-			// suppress rendering if not visible
-			if (!oSelect.getVisible()) {
-				return;
-			}
-
 			oRm.write("<div");
 			this.addStyleClass(oRm, oSelect);
 			oRm.addClass(CSS_CLASS);
