@@ -46,13 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 				r.borderWidths = 0;
 			}
 		}
-	
-	
-		// Return immediately if control is invisible
-		if (!oListBox.getVisible()) {
-			return;
-		}
-	
+
 		rm.addClass("sapUiLbx");
 		var bStd = true;
 		if (!oListBox.getEditable()) {
