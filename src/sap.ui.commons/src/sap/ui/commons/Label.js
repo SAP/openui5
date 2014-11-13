@@ -68,13 +68,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			text : {type : "string", group : "Misc", defaultValue : ''},
 	
 			/**
-			 * 
-			 * Invisible labels are not rendered.
-			 * @since 1.14.0
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * Icon to be displayed in the control.
 			 * This can be an URI to an image or an icon font URI.
 			 */
