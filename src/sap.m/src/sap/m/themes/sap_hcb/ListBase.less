@@ -144,7 +144,6 @@
 
 /*HCB additional styles for Growing feature*/
 .sapMLIBContent > .sapMGrowingListTrigger{
-	margin: 0.25rem;
 	-webkit-box-sizing:   border-box;
 	-moz-box-sizing:      border-box;
 	box-sizing:           border-box;
@@ -160,12 +159,18 @@
 	background: @sapHCStandardBG !important;
 }
 
+//Needed to fix the margin collapsing behaviour on safari
+.sap-desktop .sapMGrowingList > .sapMCLI{
+	padding: 0.25rem;
+}
+
 .sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus{
 	outline:none;
 }
 
-.sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus > .sapMLIBContent .sapMGrowingListTrigger{
+.sap-desktop .sapMLIB-CTX:focus .sapMGrowingListTrigger {
 	border: 0.125rem dotted @sapHCStandardFG;
+	border-radius: 0;
 }
 
 /* Compact size */
