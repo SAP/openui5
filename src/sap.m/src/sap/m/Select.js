@@ -1006,6 +1006,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
+		 * Handle the focusin event.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 * @private
+		 * @name sap.m.Select#onfocusin
+		 * @function
+		 */
+		Select.prototype.onfocusin = function(oEvent) {
+
+			// note: in some circumstances IE browsers focus non-focusable elements
+			if (oEvent.target !== this.getFocusDomRef()) {	// whether an inner element is receiving the focus
+
+				// force the focus to leave the inner element and set it back to the control's root element
+				this.focus();
+			}
+		};
+
+		/**
 		 * Handle the focus leave event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
@@ -1027,23 +1045,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 				// force the focus to stay in the input field
 				this.focus();
-			}
-		};
-
-		/**
-		 * Handle the focusin event.
-		 * IE FIX: the browser does not focus on sap.m.Select but on its inner span (select icon).
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 * @name sap.m.Select#onfocusin
-		 * @function
-		 */
-		Select.prototype.onfocusin = function(oEvent) {
-			if (sap.ui.Device.browser.internet_explorer) {
-				var oSelectIcon = this.$().children(".sapMSltIcon");
-				if (oSelectIcon.is(":focus")) {
-					this.focus();
-				}
 			}
 		};
 
