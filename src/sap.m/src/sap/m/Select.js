@@ -36,11 +36,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				name: { type : "string", group : "Misc", defaultValue : "" },
 
 				/**
-				 * Determines whether the control is visible or not.
-				 */
-				visible: { type: "boolean", group: "Appearance", defaultValue: true },
-
-				/**
 				 * Determines whether the user can change the selected value.
 				 */
 				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
