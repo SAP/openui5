@@ -26,12 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	ImageRenderer.render = function(oRenderManager, oImage) {
 		var rm = oRenderManager;
-	
-		// Return immediately if control is invisible
-		if (!oImage.getVisible()) {
-			return;
-		}
-	
+
 		// Open the <img> tag
 		rm.write("<img");
 		rm.writeControlData(oImage);
