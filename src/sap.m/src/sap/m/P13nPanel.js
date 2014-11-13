@@ -29,12 +29,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * This property decides whether the panel is visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Title text appears in the panel
 			 */
