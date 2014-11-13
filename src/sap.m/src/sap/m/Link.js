@@ -48,11 +48,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Invisible links are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Options are _self, _top, _blank, _parent, _search. Alternatively, a frame name can be entered.
 			 */
 			target : {type : "string", group : "Behavior", defaultValue : null},
