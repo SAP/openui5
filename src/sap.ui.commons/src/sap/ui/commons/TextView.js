@@ -47,11 +47,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 	
 			/**
-			 * Invisible text views are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * When the control is disabled, it is greyed out and no longer focusable.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
