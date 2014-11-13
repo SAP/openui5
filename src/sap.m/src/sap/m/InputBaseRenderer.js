@@ -21,10 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.m.Select} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.render = function(oRm, oControl) {
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var sValueState = oControl.getValueState();
 		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign());
 	
