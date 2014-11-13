@@ -92,6 +92,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				
 				this.aAnalyticalInfo = [];
 				this.mAnalyticalInfoByProperty = {};
+				
+				// maintaining request to be bundled in a single $batch request
+				this.aBatchRequestQueue = [];
 
 				// considering different count mode settings
 				if (mParameters && mParameters.countMode == sap.ui.model.odata.CountMode.None) {
@@ -730,8 +733,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 				bExecuteRequest = true;
 				var aMembersRequestId;
 				if (this.bUseBatchRequests) {
-					var aRequestQueue = [];
-					
 					if (bGroupLevelAutoExpansionIsActive) {
 						aMembersRequestId = this._prepareGroupMembersAutoExpansionRequestIds(sParentGroupId, iNumberOfExpandedLevels);
 						for (var i = -1, sRequestId; (sRequestId = aMembersRequestId[++i]) !== undefined; ) {
@@ -741,26 +742,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							}
 						}
 						if (bExecuteRequest) {
-							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
+							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersAutoExpansionQuery, sParentGroupId, oGroupExpansionFirstMissingMember, missingMemberCount, iNumberOfExpandedLevels ]);
 						}
 					} else { // ! bGroupLevelAutoExpansionIsActive
 						bExecuteRequest = !this._isRequestPending(this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}));
 						if (bExecuteRequest) {
-							aRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
+							this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.groupMembersQuery, sParentGroupId, oGroupSection.startIndex, oGroupSection.length ]);
 							aMembersRequestId = [ this._getRequestId(AnalyticalBinding._requestType.groupMembersQuery, {groupId: sParentGroupId}) ];
 						}
 					}
 					if (bExecuteRequest && bNeedTotalSize) {
 						aMembersRequestId.push(this._getRequestId(AnalyticalBinding._requestType.totalSizeQuery));
 						this._considerRequestGrouping(aMembersRequestId);
-						aRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
+						this.aBatchRequestQueue.push([ AnalyticalBinding._requestType.totalSizeQuery ]);
 					}
 					if (bExecuteRequest) {
 						if (sParentGroupId == null) { // root node is requested, so discard all not received responses, because the entire table must be set up from scratch
 							this._abortAllPendingRequests();  
 						}
 						
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [ aRequestQueue ]);
+						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [ this.aBatchRequestQueue ]);
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -856,6 +857,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this._executeQueryRequest(aRequestDetails[0]);
 		}
 	
+		// clean up request queue after processing, if it is based on the shared member request queue
+		if (aRequestQueue === this.aBatchRequestQueue) {
+			this.aBatchRequestQueue = [];
+		}
 	};
 	
 	/** *************************************************************** */
@@ -2080,8 +2085,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		var aReloadMeasureRequestId = [];
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
 			if (this.bUseBatchRequests) {
-				var aRequestQueue = [ [AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails] ];
-				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [aRequestQueue]);
+				this.aBatchRequestQueue.push([AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails]);
+				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [this.aBatchRequestQueue]);
 			} else {
 				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
 					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
