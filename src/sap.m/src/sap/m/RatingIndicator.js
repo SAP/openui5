@@ -33,12 +33,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		library : "sap.m",
 		properties : {
-
-			/**
-			 * If set to invisible, the control is not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-
 			/**
 			 * Value "true" is required to let the user rate with this control. It is recommended to set this parameter to "false" for the "Small" size which is meant for indicating a value only
 			 */
