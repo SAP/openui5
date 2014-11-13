@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * Defines whether the navigation bar shall have top-level appearance
 			 */
-			toplevelVariant : {type : "boolean", group : "Misc", defaultValue : false},
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			toplevelVariant : {type : "boolean", group : "Misc", defaultValue : false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
