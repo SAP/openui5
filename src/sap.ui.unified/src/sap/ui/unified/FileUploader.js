@@ -43,11 +43,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-
-			/**
 			 * Used when URL address is on a remote server.
 			 */
 			uploadUrl : {type : "sap.ui.core.URI", group : "Data", defaultValue : ''},
