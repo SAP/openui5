@@ -21,12 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	SplitterRenderer.render = function(oRenderManager, oControl) {
-	
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		var rm = oRenderManager;
 		var orientation = oControl.getSplitterOrientation();
 		var position = oControl.getSplitterPosition();

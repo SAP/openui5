@@ -62,11 +62,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			height : {type : "sap.ui.commons.SplitterSize", group : "Behavior", defaultValue : '100%'},
 	
 			/**
-			 * Invisible splitters are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
-			/**
 			 * Specifies if the browser should display scroll bars or simply cut the content of a splitter pane when the content does not fit into its pane.
 			 */
 			showScrollBars : {type : "boolean", group : "Behavior", defaultValue : true},
