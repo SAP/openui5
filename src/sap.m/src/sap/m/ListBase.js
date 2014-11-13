@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 			inset : {type : "boolean", group : "Appearance", defaultValue : false},
 	
 			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * The header text appearing in the list/table header.
 			 * Note: if "headerToolbar" aggregation is set, then this property is ignored.
 			 */
