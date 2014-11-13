@@ -1604,7 +1604,12 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				that._addDelegateFlag = true;
 				that._invalidateFlag = true;
 				that.fireReset();
-				
+				//clear search value when 'reset' button clicked
+				var aLists = that.getLists();
+				for (var i = 0; i < aLists.length; i++) {
+					aLists[i]._searchValue = "";
+					jQuery.sap.focus(aLists[i].getItems()[0]);
+				}
 				// Make sure we update selection texts
 				that.invalidate();
 							
