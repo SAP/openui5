@@ -36,8 +36,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			properties : {
 
 				/**
-				 * Name of the person who has uploaded the file.
-				 * 
+				 * Specifies the name of the user who uploaded the file.
+				 *
 				 * @since 1.12.2
 				 */
 				contributor : {
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * An unique identifier of the file (created by the application).
+				 * Specifies a unique identifier of the file (created by the application).
 				 */
 				documentId : {
 					type : "string",
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Name of the uploaded file.
+				 * Specifies the name of the uploaded file.
 				 */
 				fileName : {
 					type : "string",
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Size of the uploaded file (in megabytes).
+				 * Specifies the size of the uploaded file (in megabytes).
 				 */
 				fileSize : {
 					type : "float",
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * MIME type of the file.
+				 * Specifies the MIME type of the file.
 				 */
 				mimeType : {
 					type : "string",
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Url where the thumbnail of the file is located.
+				 * Specifies the URL where the thumbnail of the file is located.
 				 */
 				thumbnailUrl : {
 					type : "string",
@@ -92,7 +92,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Date when the file was uploaded.
+				 * Specifies the date on which the file was uploaded. 
+				 * The application has to define the date format.
 				 */
 				uploadedDate : {
 					type : "string",
@@ -101,7 +102,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Url where the file is located.
+				 * Specifies the URL where the file is located.
 				 */
 				url : {
 					type : "string",
@@ -110,8 +111,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Enabling/Disabling the edit button. If the value is true, the edit button is enabled and the edit
-				 * functionality can be used. In case the value is false, the edit functionality is not available.
+				 * Enables/Disables the Edit pushbutton.
+				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * If the value is false, the edit function is not available.
 				 */
 				enableEdit : {
 					type : "boolean",
@@ -120,8 +122,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 				},
 
 				/**
-				 * Enabling/Disabling the delete button. If the value is true, the delete button is enabled and the delete
-				 * functionality can be used. In case the value is false, the delete functionality is not available.
+				 * Enables/Disables the Edit pushbutton.
+				 * If the value is true, the Edit pushbutton is enabled and the edit function can be used.
+				 * If the value is false, the edit function is not available.
 				 */
 				enableDelete : {
 					type : "boolean",
