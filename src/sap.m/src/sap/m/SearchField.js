@@ -186,16 +186,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			.bind("focus",  jQuery.proxy(this.onFocus,  this))
 			.bind("blur",   jQuery.proxy(this.onBlur,  this));
 		
-		// Listen to native touchstart/mousedown.
-		// Windows Phone has both, one is enough.
-		var pointerDown = sap.ui.Device.os.windows_phone ? "mousedown" : "touchstart mousedown";
-		this.$().bind(pointerDown, jQuery.proxy(this.onButtonPress,  this));
-		
-		// FF does not set :active by preventDefault, use class:
-		if (sap.ui.Device.browser.firefox) { 
-			this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
-				jQuery(oEvent.target).removeClass("sapMSFBA");
-			});
+		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			// Listen to native touchstart/mousedown.
+			this.$().bind("touchstart mousedown", jQuery.proxy(this.onButtonPress,  this));
+
+			// FF does not set :active by preventDefault, use class:
+			if (sap.ui.Device.browser.firefox) { 
+				this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
+					jQuery(oEvent.target).removeClass("sapMSFBA");
+				});
+			}
 		}
 	};
 	
