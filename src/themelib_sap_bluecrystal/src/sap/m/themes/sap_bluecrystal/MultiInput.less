@@ -85,4 +85,9 @@
 .sapUiSizeCompact  .sapMMultiInput .sapMInputBaseInner {
 	padding-left: 0.0rem;
 	padding-right: 0.1rem;
-} 
+}
+
+// If a non-native placeholder is used, make sure that it is in front of children elements.
+.sapMMultiInput  > .sapMInputBasePlaceholder {
+	z-index: 1;
+}
