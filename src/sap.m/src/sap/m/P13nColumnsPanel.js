@@ -1201,6 +1201,13 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		}
 	};
 
+	// TODO ER:fast implementation, please check!
+	P13nColumnsPanel.prototype.destroyItems = function() {
+		this.destroyAggregation("items");
+		this._oTable.destroyItems();
+		return this;
+	};
+
 	/**
 	 * Add ColumnsItem to columnsItems aggregation
 	 * 
