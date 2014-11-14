@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/*
 	 * Adds some DialogItem <code>oDialogItem</code> to the aggregation named <code>DialogItems</code>.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oDialogItem The DialogItem to add; if empty, nothing is added. @returns {P13nDialog}
+	 * @param {sap.m.P13nPanel} oDialogItem The DialogItem to add; if empty, nothing is added. @returns {P13nDialog}
 	 * <code>this</code> to allow method chaining. @public @name P13nDialog#addDialogItem @function
 	 */
 	P13nDialog.prototype.addPanel = function(oPanel) {
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/*
 	 * Inserts an item into the aggregation named <code>items</code>.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The
+	 * @param {sap.m.P13nPanel} oItem The item to insert; if empty, nothing is inserted. @param {int} iIndex The
 	 * <code>0</code>-based index the item should be inserted at; for a negative value of <code>iIndex</code>, the
 	 * item is inserted at position 0; for a value greater than the current size of the aggregation, the item is inserted
 	 * at the last position. @returns {P13nDialog} <code>this</code> to allow method chaining. @public @name
@@ -181,8 +181,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	/*
 	 * Removes an item from the aggregation named <code>items</code>.
 	 * 
-	 * @param {int | string | sap.m.P13nDialogItem} vItem The item to remove or its index or id. @returns
-	 * {sap.m.P13nDialogItem} The removed item or null. @public @name P13nDialog#removeItem @function
+	 * @param {int | string | sap.m.P13nPanel} vItem The item to remove or its index or id. @returns
+	 * {sap.m.P13nPanel} The removed item or null. @public @name P13nDialog#removeItem @function
 	 */
 	P13nDialog.prototype.removePanel = function(vPanel) {
 		vPanel = this.removeAggregation("panels", vPanel);
@@ -196,7 +196,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * Removes all the controls in the aggregation named <code>items</code>. Additionally unregisters them from the
 	 * hosting UIArea and clears the selection.
 	 * 
-	 * @returns {sap.m.P13nDialogItem[]} An array of the removed items (might be empty). @public @name
+	 * @returns {sap.m.P13nPanel[]} An array of the removed items (might be empty). @public @name
 	 * P13nDialog#removeAllItems @function
 	 */
 	P13nDialog.prototype.removeAllPanels = function() {
@@ -220,9 +220,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	};
 
 	/*
-	 * Map an item type of sap.m.P13nDialogItem to an item type of sap.m.IconTabBarFilter.
+	 * Map an item type of sap.m.P13nPanel to an item type of sap.m.IconTabBarFilter.
 	 * 
-	 * @param {sap.m.P13nDialogItem} oItem @returns {sap.m.IconTabFilter | null} @private @name
+	 * @param {sap.m.P13nPanel} oItem @returns {sap.m.IconTabFilter | null} @private @name
 	 * P13nDialog#_mapItemToTabBarItem @function
 	 */
 	P13nDialog.prototype._mapPanelToButton = function(oPanel) {
@@ -256,10 +256,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 				oPanel_.setVisible(true);
 			} else {
 				oPanel_.setVisible(false);
-			}
-			this.invalidate();
-			this.rerender();
+			}			
 		}, this);
+		this.invalidate();
+		this.rerender();
 	};
 
 	/**

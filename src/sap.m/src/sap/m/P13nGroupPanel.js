@@ -235,6 +235,15 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			};
 
+			// TODO ER:fast implementation, please check!
+			P13nGroupPanel.prototype.destroyItems = function() {
+				this.destroyAggregation("items");
+				if (this._oGroupPanel) {
+					this._oGroupPanel.removeAllKeyFields();
+				}
+				return this;
+			};
+			
 			P13nGroupPanel.prototype.addGroupItem = function(oGroupItem) {
 				this.addAggregation("groupItems", oGroupItem);
 
