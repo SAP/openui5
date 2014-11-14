@@ -28,11 +28,6 @@ sap.ui.define(['jquery.sap.global'],
 			sTooltip,
 			i = 0;
 
-		// return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-
 		// write the HTML into the render manager
 		oRM.write("<ul");
 		oRM.addClass("sapMSegB");

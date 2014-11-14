@@ -37,12 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * 
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
-	
-			/**
-			 * boolean property to make the control visible or invisible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
+
 			/**
 			 * If disabled all buttons look grey, you cannot focus on them, you can not even click on them.
 			 */
