@@ -141,8 +141,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			// Remove trailing slash (if any)
 			this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
 
-			// Get service specific data container
-			if (ODataModel.mServiceData[this.sServiceUrl]) {
+			// Get/create service specific data container
+			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+			if (!this.oServiceData) {
+				ODataModel.mServiceData[this.sServiceUrl] = {};
 				this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
 			}
 
@@ -161,9 +163,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				//create Metadata object
 				this.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("$metadata", undefined, mMetadataUrlParams),
 						{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
-				that.oServiceData.oMetadata = that.oMetadata;
+				this.oServiceData.oMetadata = this.oMetadata;
 			} else {
-				this.oMetadata = this.oServiceData;
+				this.oMetadata = this.oServiceData.oMetadata;
 			}
 
 			if (mServiceUrlParams) {
