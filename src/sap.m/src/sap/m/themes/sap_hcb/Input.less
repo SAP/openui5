@@ -5,6 +5,20 @@
 
 .sapMInput {}
 
+/* focus */
+.sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline:               0.125rem dotted @sapHCStandardFG;
+	outline-offset:        -0.188rem;
+}
+
+/* focus in IE (workaround) */
+html[data-sap-ui-browser^="ie"] .sapMInput .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	border-style: dotted;
+	border-width: 0.125rem;
+	outline-style: solid;
+	outline-width: 0.0625rem;
+}
+
 /* Value Help */
 .sapMInputVH > .sapMInputBaseInner {
 	padding-right: 2.5rem;
