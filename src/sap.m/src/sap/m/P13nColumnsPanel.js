@@ -905,6 +905,42 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
+	 * Add table item based on content of corresponding columnsItems
+	 * 
+	 * @private
+	 * @param {object}
+	 *          oItem is the item that shall be added to the table
+	 */
+	P13nColumnsPanel.prototype._addTableItem = function(oItem) {
+		var oColumnsItem = null;
+		var oNewTableItem = null, sColumnKeys = null;
+
+		if (oItem) {
+			sColumnKeys = oItem.getColumnKey();
+			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
+
+			oNewTableItem = new sap.m.ColumnListItem({
+				cells : [new sap.m.Text({
+					text : oItem.getText()
+				})],
+				visible : true,
+				selected : oItem.getVisible(),
+				tooltip : oItem.getTooltip(),
+				type : sap.m.ListType.Active
+			});
+			oNewTableItem.data('P13nColumnKey', sColumnKeys);
+
+			// Add or insert the new item according to found ColumnsItem information
+			if (oColumnsItem) {
+				oNewTableItem.setVisible(oColumnsItem.getVisible());
+				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
+			} else {
+				this._oTable.addItem(oNewTableItem);
+			}
+		}
+	};
+
+	/**
 	 * Apply all ColumnsItem changes (that are stored in its properties) to the proper table item (if it already exist)
 	 * 
 	 * @private
@@ -1164,12 +1200,56 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			});
 			oNewTableItem.data('P13nColumnKey', sColumnKeys);
 
-			// Add or insert the new item according to found ColumnsItem information
+			// Add or insert the new
 			if (oColumnsItem) {
+				// a columnsItems exist for current item -> insert the new item according to found ColumnsItem information
 				oNewTableItem.setVisible(oColumnsItem.getVisible());
 				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
 			} else {
+				// no columnsItems exist for current item -> add the new item at the end
 				this._oTable.addItem(oNewTableItem);
+			}
+		}
+	};
+
+	/**
+	 * Add item to items aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#addItem
+	 * @param {int}
+	 *          iIndex is the index where the new item shall be inserted
+	 * @param {object}
+	 *          oItem is the new item that shall be added
+	 */
+	P13nColumnsPanel.prototype.insertItem = function(iIndex, oItem) {
+		var oColumnsItem = null;
+		var oNewTableItem = null, sColumnKeys = null;
+
+		if (oItem) {
+			sColumnKeys = oItem.getColumnKey();
+			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
+
+			oNewTableItem = new sap.m.ColumnListItem({
+				cells : [new sap.m.Text({
+					text : oItem.getText()
+				})],
+				visible : true,
+				selected : oItem.getVisible(),
+				tooltip : oItem.getTooltip(),
+				type : sap.m.ListType.Active
+			});
+			oNewTableItem.data('P13nColumnKey', sColumnKeys);
+
+			// Add or insert the new item
+			if (oColumnsItem) {
+				// a columnsItems exist for current item -> insert the new item according to found ColumnsItem information
+				oNewTableItem.setVisible(oColumnsItem.getVisible());
+				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
+			} else {
+				// no columnsItems exist for current item -> insert the new item at iIndex
+				this._oTable.insertItem(iIndex, oNewTableItem);
 			}
 		}
 	};
@@ -1204,6 +1284,45 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		}
 	};
 
+	P13nColumnsPanel.prototype.destroyItems = function() {
+		this.destroyAggregation("items");
+		if (this._oTable) {
+			this._oTable.destroyItems();
+		}
+		return this;
+	};
+
+	/**
+	 * Remove all item from items aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#removeAllItems
+	 */
+	P13nColumnsPanel.prototype.removeAllItems = function() {
+		P13nPanel.prototype.removeAllItems.apply(this, arguments);
+		if (this._oTable) {
+			this._oTable.removeAllItems();
+		}
+		return this;
+	};
+
+	/**
+	 * Destroy instances from items aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#destroyItems
+	 */
+	P13nColumnsPanel.prototype.destroyItems = function() {
+		P13nPanel.prototype.destroyItems.apply(this, arguments);
+
+		if (this._oTable) {
+			this._oTable.destroyItems();
+		}
+		return this;
+	};
+
 	/**
 	 * Add ColumnsItem to columnsItems aggregation
 	 * 
@@ -1216,6 +1335,24 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
 		this.addAggregation("columnsItems", oColumnsItem);
 		this._updateTableItems(oColumnsItem);
+		return this;
+	};
+
+	/**
+	 * Insert ColumnsItem to columnsItems aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#addColumnsItem
+	 * @param {int}
+	 *          iIndex is the index where the columnsItem item shall be inserted
+	 * @param {object}
+	 *          oColumnsItem is the new columnsItem that shall be inserted
+	 */
+	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
+		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
+		this._updateTableItems(oColumnsItem);
+		return this;
 	};
 
 	/**
@@ -1228,21 +1365,66 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 *          oColumnsItem is the ColumnsItem that shall be removed
 	 */
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
-		var aItems = null;
-
 		this.removeAggregation("columnsItems", oColumnsItem);
 
-		// First: Remove all existing table items
-		this._oTable.removeAllItems();
+		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
+		if (this._oTable) {
+			this._oTable.removeAllItems();
+		}
+		// Second: Insert items again from items aggregation
+		var aItems = this.getItems();
+		aItems.forEach(function(oItem) {
+			this._addTableItem(oItem);
+		}, this);
+		// TODO return removed item instance
+	};
+
+	/**
+	 * Remove all ColumnsItems from columnsItems aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#removeAllItems
+	 */
+	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
+		this.removeAllAggregation("columnsItems");
+
+		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
+		if (this._oTable) {		
+			this._oTable.removeAllItems();
+		}
 
 		// Second: Insert items again from items aggregation
-		aItems = this.getItems();
+		var aItems = this.getItems();
 		aItems.forEach(function(oItem) {
-			this._oTable.addItem(oItem);
+			this._addTableItem(oItem);
+		}, this);
+	// TODO return all removed items
+	};
+
+	/**
+	 * Destroy all instances from columnsItems aggregation
+	 * 
+	 * @function
+	 * @public
+	 * @name ColumnsPanel#destroyItems
+	 */
+	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
+		this.destroyAggregation("columnsItems");
+
+		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
+		if (this._oTable) {
+			this._oTable.removeAllItems();
+		}
+
+		// Now insert items again from items aggregation
+		var aItems = this.getItems();
+		aItems.forEach(function(oItem) {
+			this._addTableItem(oItem);
 		}, this);
 
-		// Last: Apply remain columnsItems again
-		this._updateTableItems();
+		// Last: As no columnsItems does exist any more -> this._updateTableItems() is not needed to apply
+		return this;
 	};
 
 	return P13nColumnsPanel;

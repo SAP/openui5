@@ -363,6 +363,18 @@ sap.ui
 						}
 					};
 
+					// TODO ER:fast implementation, please check!
+					P13nFilterPanel.prototype.destroyItems = function() {
+						this.destroyAggregation("items");
+						if (this._oIncludeFilterPanel) {
+							this._oIncludeFilterPanel.removeAllKeyFields();
+						}
+						if (this._oExcludeFilterPanel) {
+							this._oExcludeFilterPanel.removeAllKeyFields();
+						}						
+						return this;
+					};
+					
 					P13nFilterPanel.prototype.addFilterItem = function(oFilterItem) {
 						this.addAggregation("filterItems", oFilterItem);
 

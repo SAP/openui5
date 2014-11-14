@@ -235,6 +235,15 @@ sap.ui.define(['jquery.sap.global', './P13nConditionPanel', './P13nPanel', './li
 				}
 			};
 
+			// TODO ER:fast implementation, please check!
+			P13nSortPanel.prototype.destroyItems = function() {
+				this.destroyAggregation("items");
+				if (this._oSortPanel) {
+				this._oSortPanel.removeAllKeyFields();
+				}
+				return this;
+			};
+			
 			P13nSortPanel.prototype.addSortItem = function(oSortItem) {
 				this.addAggregation("sortItems", oSortItem);
 
