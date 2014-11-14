@@ -21,11 +21,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *            oControl an object representation of the control that should be rendered
 	 */
 	P13nConditionPanelRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-	//	if (!oControl.getVisible()) {
-	//		return;
-	//	}
-	
 		// start ConditionPanel
 		oRm.write("<section");
 		oRm.writeControlData(oControl);
