@@ -32,54 +32,60 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		properties : {
 
 			/**
-			 * The chosen files will be checked against an array of file types. If at least one file does not fit the file type restriction the upload is prevented.
-			 * Example: ["jpg", "png", "bmp"].
+			 * Defines the allowed file types for the upload.
+			 * The chosen files will be checked against an array of file types.
+			 * If at least one file does not fit the file type requirements, the upload is prevented.  Example: ["jpg", "png", "bmp"].
 			 */
 			fileType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
-			 * The maximum length of a file name. If the maximum file name length is exceeded, the corresponding event 'filenameLengthExceed' is fired.
+			 * Specifies the maximum length of a file name.
+			 * If the maximum file name length is exceeded, the corresponding event 'filenameLengthExceed' is triggered.
 			 */
 			maximumFilenameLength : {type : "int", group : "Data", defaultValue : null},
 
 			/**
-			 * A file size limit in bytes which prevents the upload if at least one file exceeds it. This property is not supported by Internet Explorer 8 and 9.
+			 * Specifies a file size limit in bytes that prevents the upload if at least one file exceeds the limit.
+			 * This property is not supported by Internet Explorer 8 and 9.
 			 */
 			maximumFileSize : {type : "int", group : "Data", defaultValue : null},
 
 			/**
-			 * The chosen files will be checked against an array of mime types. If at least one file does not fit the mime type restriction, the upload is prevented. This property is not supported by Internet Explorer 8 and 9.
-			 * Example: mimeType ["image/png", "image/jpeg"].
+			 * Defines the allowed MIME types of files to be uploaded.
+			 * The chosen files will be checked against an array of MIME types.
+			 * If at least one file does not fit the MIME type requirements, the upload is prevented.
+			 * This property is not supported by Internet Explorer 8 and 9. Example: mimeType ["image/png", "image/jpeg"].
 			 */
 			mimeType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
-			 * Allows multiple files to be chosen and uploaded from the same folder. This property is not supported by Internet Explorer 8 and 9.
+			 * Allows multiple files to be chosen and uploaded from the same folder.
+			 * This property is not supported by Internet Explorer 8 and 9.
 			 */
 			multiple : {type : "boolean", group : "Behavior", defaultValue : false},
-			
+
 			/**
-			 * Allows set own text for No data label.
+			 * Allows you to set your own text for the 'No data' label.
 			 */
 			noDataText : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * This property allows upload of more than one file with the same file name. A typical use case would be if the files have different paths.
+			 * Allows the upload of more than one file with the same file name. For example, if there are files have different paths.
 			 */
 			sameFilenameAllowed : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * This property defines whether separators are shown between list items or not
+			 * Defines whether separators are shown between list items.
 			 */
 			showSeparators : {type : "sap.m.ListSeparators", group : "Appearance", defaultValue : sap.m.ListSeparators.None},
 
 			/**
-			 * This property enables an upload of a file.
+			 * Enables the upload of a file.
 			 */
 			uploadEnabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * The URL where the uploaded files have to be stored.
+			 * Specifies the URL where the uploaded files have to be stored.
 			 */
 			uploadUrl : {type : "string", group : "Data", defaultValue : "../../../upload"}
 		},
@@ -89,35 +95,36 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 			/**
 			 * Uploaded items.
 			 */
-			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item"}, 
+			items : {type : "sap.m.UploadCollectionItem", multiple : true, singularName : "item"},
 
 			/**
-			 * The header parameters for the FileUploader which are only submitted with XHR requests. Header parameters are not supported by Internet Explorer 8 and 9.
+			 * Specifies the header parameters for the FileUploader that are submitted only with XHR requests.
+			 * Header parameters are not supported by Internet Explorer 8 and 9.
 			 */
-			headerParameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "headerParameter"}, 
+			headerParameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "headerParameter"},
 
 			/**
-			 * The parameters for the FileUploader which are rendered as a hidden input field.
+			 * Specifies the parameters for the FileUploader that are rendered as a hidden input field.
 			 */
 			parameters : {type : "sap.m.UploadCollectionParameter", multiple : true, singularName : "parameter"}
 		},
 		events : {
 
 			/**
-			 * Event is fired when file(s) selected.
+			 * The event is triggered when files are selected.
 			 */
 			change : {
 				parameters : {
-	
+
 					/**
 					 * An unique Id of the attached document.
 					 */
 					documentId : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
-			 * Event is fired when a file delete event occurs - typically by clicking at the delete icon.
+			 * The event is triggered when a fileDeleted event occurs, typically by choosing the Delete pushbutton.
 			 */
 			fileDeleted : {
 				parameters : {
@@ -127,10 +134,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					documentId : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
-			 * Event is fired when the filename of a chosen file is longer than the value specified with the maximumFilenameLength property (only if provided by the application).
+			 * The event is triggered when the name of a chosen file is longer than the value specified with the maximumFilenameLength property (only if provided by the application).
 			 */
 			filenameLengthExceed : {
 				parameters : {
@@ -140,10 +147,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					documentId : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
-			 * Event is fired when the file name was changed.
+			 * The event is triggered when the file name is changed.
 			 */
 			fileRenamed : {
 				parameters : {
@@ -158,10 +165,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					 */
 					fileName : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
-			 * Event is fired when the file size of an uploaded file was exceed (only in case if property maxFileSize was provided by the application). This event is not supported by Internet Explorer 8 and 9.
+			 * The event is triggered when the file size of an uploaded file is  exceeded (only if the maxFileSize property was provided by the application).
+			 * This event is not supported by Internet Explorer 8 and 9.
 			 */
 			fileSizeExceed : {
 				parameters : {
@@ -169,17 +177,17 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					/**
 					 * An unique Id of the attached document.
 					 */
-					documentId : {type : "string"}, 
+					documentId : {type : "string"},
 
 					/**
 					 * The size in MB of a file to be uploaded.
 					 */
 					fileSize : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
-			 * Event is fired when the file type or the MIME type don't match the allowed types (only in case if property property fileType, resp. mimeType were provided by the application).
+			 * The event is triggered when the file type or the MIME type don't match the permitted types (only if the fileType property or the mimeType property are provided by the application).
 			 */
 			typeMissmatch : {
 				parameters : {
@@ -187,22 +195,22 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					/**
 					 * An unique Id of the attached document.
 					 */
-					documentId : {type : "string"}, 
+					documentId : {type : "string"},
 
 					/**
 					 * File type.
 					 */
-					fileType : {type : "string"}, 
+					fileType : {type : "string"},
 
 					/**
-					 * Mime type.
+					 * MIME type.
 					 */
 					mimeType : {type : "string"}
 				}
-			}, 
+			},
 
 			/**
-			 * Event is fired as soon as the upload request is completed (either successful or unsuccessful).
+			 * The event is triggered as soon as the upload request is completed.
 			 */
 			uploadComplete : {
 				parameters : {
@@ -210,12 +218,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 					/**
 					 * Ready state XHR.
 					 */
-					readyStateXHR : {type : "string"}, 
+					readyStateXHR : {type : "string"},
 
 					/**
 					 * Response.
 					 */
-					response : {type : "string"}, 
+					response : {type : "string"},
 
 					/**
 					 * Status.
