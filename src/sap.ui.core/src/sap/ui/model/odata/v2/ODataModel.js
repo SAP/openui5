@@ -111,7 +111,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshBatchGroupId = undefined;
-
+			
+			//collect internal changes in a deferred batchgroup as default
+			this.sDefaultChangeBatchGroup = "changes";
+			this.setDeferredBatchGroups([this.sDefaultChangeBatchGroup]);
+			this.setChangeBatchGroups({"*":{batchGroupId: this.sDefaultChangeBatchGroup}});
+			
 			// Load annotations support on demand
 			if (this.sAnnotationURI) {
 				jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
@@ -3319,7 +3324,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 		}
-
+		
+		sBatchGroupId = sBatchGroupId ? sBatchGroupId : this.sDefaultChangeBatchGroup;
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
 
 		if (!jQuery.sap.startsWith(sPath, "/")) {
