@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * @class Button renderer.
-	 * @static
+	 * Button renderer.
+	 * @namespace
 	 */
 	var ButtonRenderer = {};
 

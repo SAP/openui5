@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Form renderer.
-	 * @static
+	 * Form renderer.
+	 * @namespace
 	 */
 	var FormRenderer = {
 	};

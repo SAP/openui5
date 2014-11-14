@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @param {sap.ui.core.routing.Router} router - A router that creates views</br>
 	 * @param {boolean} closeDialogs - the default is true - will close all open dialogs before navigating, if set to true. If set to false it will just navigate without closing dialogs.
 	 * @public
-	 * @name sap.m.routing.RouteMatchedHandler
+	 * @alias sap.m.routing.RouteMatchedHandler
 	 */
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {

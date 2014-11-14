@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.GroupHeaderListItem
+	 * @alias sap.m.GroupHeaderListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GroupHeaderListItem = ListItemBase.extend("sap.m.GroupHeaderListItem", /** @lends sap.m.GroupHeaderListItem.prototype */ { metadata : {

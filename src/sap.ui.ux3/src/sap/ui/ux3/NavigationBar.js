@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.NavigationBar
+	 * @alias sap.ui.ux3.NavigationBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavigationBar = Control.extend("sap.ui.ux3.NavigationBar", /** @lends sap.ui.ux3.NavigationBar.prototype */ { metadata : {
@@ -88,30 +88,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Replaces the currently associated items with the ones in the given array
-	 *
-	 * @name sap.ui.ux3.NavigationBar#setAssociatedItems
-	 * @function
-	 * @param {sap.ui.ux3.NavigationItem[]} aItems
-	 *         The items to associate
-	 * @type sap.ui.ux3.NavigationBar
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether there is a selectedItem set which is actually present in the items aggregation; or, if the aggregation is empty, in the associatedItems association.
-	 *
-	 * @name sap.ui.ux3.NavigationBar#isSelectedItemValid
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	NavigationBar.SCROLL_STEP = 250; // how many pixels to scroll with every overflow arrow click
@@ -736,6 +712,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	
 	/* API method implementations */
 	
+
+	/**
+	 * Replaces the currently associated items with the ones in the given array
+	 *
+	 * @param {sap.ui.ux3.NavigationItem[]} aItems
+	 *         The items to associate
+	 * @type sap.ui.ux3.NavigationBar
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavigationBar.prototype.setAssociatedItems = function(aItems /* bResetArrowPosition */) { // second parameter is currently not in the public API
 		jQuery.sap.assert(jQuery.isArray(aItems), "aItems must be an array");
 	
@@ -785,6 +771,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	
 	
+
+	/**
+	 * Returns whether there is a selectedItem set which is actually present in the items aggregation; or, if the aggregation is empty, in the associatedItems association.
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavigationBar.prototype.isSelectedItemValid = function() {
 		var selId = this.getSelectedItem();
 		if (!selId) {

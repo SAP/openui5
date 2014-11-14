@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FacetFilter renderer. 
-	 * @static
+	 * FacetFilter renderer. 
+	 * @namespace
 	 */
 	var FacetFilterRenderer = {
 	};

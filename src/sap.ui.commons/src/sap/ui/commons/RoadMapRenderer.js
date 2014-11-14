@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global'],
 	
 	
 	/**
-	 * @class RoadMap renderer.
-	 * @static
+	 * RoadMap renderer.
+	 * @namespace
 	 */
 	var RoadMapRenderer = {
 	};

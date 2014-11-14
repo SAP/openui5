@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.Message
+	 * @alias sap.ui.core.Message
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Message = Element.extend("sap.ui.core.Message", /** @lends sap.ui.core.Message.prototype */ { metadata : {
@@ -64,19 +64,18 @@ sap.ui.define(['jquery.sap.global', './Element', './library', './theming/Paramet
 	
 	
 	/**
-	 * Returns the icon's default URI depending on given size. There are default icons for messages available that can be used this way. If no parameter is given the size will be 16x16 per default. If larger icons are needed the parameter "32x32" might be given.
+	 * Returns the icon's default URI depending on given size. 
+	 * 
+	 * There are default icons for messages available that can be used this way. If no 
+	 * parameter is given, the size will be 16x16 per default. If larger icons are needed, 
+	 * the parameter "32x32" might be given.
 	 *
-	 * @name sap.ui.core.Message#getDefaultIcon
-	 * @function
 	 * @param {string} sSize
-	 *         If parameter is not set the default icon's size will be 16x16. If parameter is set to "32x32" the icon size will be 32x32.
-	 * @type sap.ui.core.URI
+	 *         If parameter is not set the default icon's size will be 16x16. If parameter 
+	 *         is set to "32x32" the icon size will be 32x32.
+	 * @return {sap.ui.core.URI} URI of the default icon.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	/**
-	 * This file defines behavior for the control,
 	 */
 	Message.prototype.getDefaultIcon = function(sSize) {
 		var sModulePath = jQuery.sap.getModulePath("sap.ui.core", '/');

@@ -16,15 +16,19 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	"use strict";
 
 	// Static class
+
+	/**
+	 * @alias sap.ui.model.odata.ODataUtils
+	 * @namespace
+	 * @private
+	 */
 	var ODataUtils = function() {};
 
 	/**
 	 * Create URL parameters for sorting
-	 * @name sap.ui.model.odata.ODataUtils#createSortParams
 	 * @param {array} aSorters an array of sap.ui.model.Sorter
 	 * @return {string} the URL encoded sorter parameters
 	 * @private
-	 * @function
 	 */
 	ODataUtils.createSortParams = function(aSorters) {
 		var sSortParam;
@@ -53,9 +57,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * @see {array} aFilters an array of sap.ui.model.Filter
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
-	 * @name sap.ui.model.odata.ODataUtils#createFilterParams
 	 * @private
-	 * @function
 	 */
 	ODataUtils.createFilterParams = function(aFilters, oMetadata, oEntityType) {
 		if (!aFilters || aFilters.length == 0) {
@@ -70,9 +72,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * @param {array} aFilters an array of sap.ui.model.Filter
 	 * @param {object} oEntityType the entity metadata object
 	 * @return {string} the URL encoded filter parameters
-	 * @name sap.ui.model.odata.ODataUtils#createFilterParams
 	 * @private
-	 * @function
 	 */
 	ODataUtils._createFilterParams = function(aFilters, oMetadata, oEntityType) {
 		var sFilterParam;
@@ -150,8 +150,6 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 *
 	 * @private
 	 * @param {string|object|array} vParams
-	 * @name sap.ui.model.odata.ODataUtils#_createUrlParamsArray
-	 * @function
 	 */
 	ODataUtils._createUrlParamsArray = function(vParams) {
 		var aUrlParams, sType = jQuery.type(vParams), sParams;
@@ -200,8 +198,6 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * convert multi filter to filter string
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.ODataUtils#_resolveMultiFilter
-	 * @function
 	 */
 	ODataUtils._resolveMultiFilter = function(oMultiFilter, oMetadata, oEntityType){
 		var that = this,
@@ -234,8 +230,6 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * Create a single filter segment of the OData filter parameters
 	 *
 	 * @private
-	 * @name sap.ui.model.odata.ODataUtils#_createFilterSegment
-	 * @function
 	 */
 	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, sFilterParam) {
 
@@ -295,9 +289,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
 	 * @return {string} the formatted value
-	 * @name sap.ui.model.odata.ODataUtils#formatValue
 	 * @public
-	 * @function
 	 */
 	ODataUtils.formatValue = function(vValue, sType) {
 		// Lazy creation of format objects

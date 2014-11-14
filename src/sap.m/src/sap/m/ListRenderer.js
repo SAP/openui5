@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 
 	/**
-	 * @class List renderer.
-	 * @static
+	 * List renderer.
+	 * @namespace
 	 *
 	 * ListRenderer extends the ListBaseRenderer
 	 */

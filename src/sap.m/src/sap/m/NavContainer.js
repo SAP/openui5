@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.NavContainer
+	 * @alias sap.m.NavContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NavContainer = Control.extend("sap.m.NavContainer", /** @lends sap.m.NavContainer.prototype */ { metadata : {
@@ -201,241 +201,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	
-	/**
-	 * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
-	 * 
-	 * Note that any modifications to the target page (like setting its title, or anything else that could cause a re-rendering) should be done BEFORE calling to(), in order to avoid unwanted side effects, e.g. related to the page animation.
-	 * 
-	 * Available transitions currently include "slide" (default), "fade", "flip", and "show". None of these is currently making use of any given transitionParameters.
-	 * 
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given data object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
-	 *
-	 * @name sap.m.NavContainer#to
-	 * @function
-	 * @param {string} sPageId
-	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
-	 * 
-	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
-	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
-	 * 
-	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 * 
-	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back one level. If already on the initial page and there is no place to go back, nothing happens.
-	 * 
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
-	 *
-	 * @name sap.m.NavContainer#back
-	 * @function
-	 * @param {object} oBackData
-	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         Since version 1.7.1. This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back to the nearest previous page in the NavContainer history with the given ID. If there is no such page among the previous pages, nothing happens.
-	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
-	 * 
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
-	 *
-	 * @name sap.m.NavContainer#backToPage
-	 * @function
-	 * @param {string} sPageId
-	 *         The ID of the screen to which back navigation should happen. The ID or the control itself can be given. The nearest such page among the previous pages in the history stack will be used.
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the "backToPage" navigation. The event on the target page will contain this data object as "backData" property.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @since 1.7.2
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back to the initial/top level (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
-	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
-	 * 
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
-	 *
-	 * @name sap.m.NavContainer#backToTop
-	 * @function
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the "backToTop" navigation. The event on the target page will contain this data object as "backData" property.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the control with the given ID from the "pages" aggregation (if available).
-	 *
-	 * @name sap.m.NavContainer#getPage
-	 * @function
-	 * @param {string} sId
-	 *         The ID of the aggregated control to find.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the currently displayed page-level control. Note: it is not necessarily an instance of sap.m.Page, but it could also be a sap.ui.core.View, sap.m.Carousel, or whatever is aggregated.
-	 * 
-	 * Returns undefined if no page has been added yet.
-	 *
-	 * @name sap.m.NavContainer#getCurrentPage
-	 * @function
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the previous page (the page from which the user drilled down to the current page with "to()").
-	 * Note: this is not the page which the user has seen before, but the page which is the target of the next "back()" navigation.
-	 * If there is no previous page, "undefined" is returned.
-	 *
-	 * @name sap.m.NavContainer#getPreviousPage
-	 * @function
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @since 1.7.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Adds a custom transition to the NavContainer type (not to a particular instance!). The transition is identified by a "name". Make sure to only use names that will not collide with transitions which may be added to the NavContainer later. A suggestion is to use the prefix "c_" or "_" for your custom transitions to ensure this.
-	 * 
-	 * "to" and "back" are the transition functions for the forward and backward navigation.
-	 * Both will be called with the following parameters:
-	 * - oFromPage: the Control which is currently being displayed by the NavContainer
-	 * - oToPage: the Control which should be displayed by the NavContainer after the transition
-	 * - fCallback: a function which MUST be called when the transition has completed
-	 * - oTransitionParameters: a data object that can be given by application code when triggering the transition by calling to() or back(); this object could give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration
-	 * 
-	 * The contract for "to" and "back" is that they may do an animation of their choice, but it should not take "too long". At the beginning of the transition the target page "oToPage" does have the CSS class "sapMNavItemHidden" which initially hides the target page (visibility:hidden). The transition can do any preparation (e.g. move that page out of the screen or make it transparent) and then should remove this CSS class.
-	 * After the animation the target page "oToPage" should cover the entire screen and the source page "oFromPage" should not be visible anymore. This page should then have the CSS class "sapMNavItemHidden".
-	 * For adding/removing this or other CSS classes, the transition can use the addStyleClass/removeStyleClass method:
-	 * oFromPage.addStyleClass("sapMNavItemHidden");
-	 * When the transition is complete, it MUST call the given fCallback method to inform the NavContainer that navigation has finished!
-	 * 
-	 * Hint: if the target page of your transition stays black on iPhone, try wrapping the animation start into a
-	 * setTimeout(..., 0)
-	 * block (delayed, but without waiting).
-	 * 
-	 * This method can be called on any NavContainer instance or statically on the sap.m.NavContainer type. However, the transition will always be registered for the type (and ALL instances), not for the single instance on which this method was invoked.
-	 * 
-	 * Returns the sap.m.NavContainer type if called statically, or "this" (to allow method chaining) if called on a particular NavContainer instance.
-	 *
-	 * @name sap.m.NavContainer#addCustomTransition
-	 * @function
-	 * @param {string} sName
-	 *         The name of the transition. This name can be used by the application to choose this transition when navigating "to()" or "back()": the "transitionName" parameter of "NavContainer.to()" corresponds to this name, the back() navigation will automatically use the same transition.
-	 * 
-	 *         Make sure to only use names that will not collide with transitions which may be added to the NavContainer later. A suggestion is to use the prefix "c_" or "_" for your custom transitions to ensure this.
-	 * @param {object} oTo
-	 *         The function which will be called by the NavContainer when the application navigates "to()", using this animation's name. The NavContainer instance is the "this" context within the animation function.
-	 * 
-	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
-	 * @param {object} oBack
-	 *         The function which will be called by the NavContainer when the application navigates "back()" from a page where it had navigated to using this animation's name. The NavContainer instance is the "this" context within the animation function.
-	 * 
-	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Inserts the page/control with the specified ID into the navigation history stack of the NavContainer.
-	 * 
-	 * This can be used for deep-linking when the user directly reached a drilldown detail page using a bookmark and then wants to navigate up in the drilldown hierarchy. Normally such a back navigation would not be possible because there is no previous page in the NavContainer's history stack.
-	 *
-	 * @name sap.m.NavContainer#insertPreviousPage
-	 * @function
-	 * @param {string} sPageId
-	 *         The ID of the control/page/screen which is inserted into the history stack. The respective control must be aggregated by the NavContainer, otherwise this will cause an error.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
-	 *         This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 * @param {object} oData
-	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
-	 * @type sap.m.NavContainer
-	 * @public
-	 * @since 1.16.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether the current page is the top/initial page.
-	 * 
-	 * Note: going to the initial page again with a row of "to" navigations causes the initial page to be displayed again, but logically one is not at the top level, so this method returns "false" in this case.
-	 *
-	 * @name sap.m.NavContainer#currentPageIsTopPage
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	NavContainer.prototype.init = function() {
 		this._pageStack = [];
 		this._aQueue = [];
@@ -552,6 +317,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	//*** API methods ***
 	
+
+	/**
+	 * Returns the control with the given ID from the "pages" aggregation (if available).
+	 *
+	 * @param {string} sId
+	 *         The ID of the aggregated control to find.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.getPage = function(pageId) {
 		var aPages = this.getPages();
 		for (var i = 0; i < aPages.length; i++) {
@@ -572,6 +347,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this._pageStack;
 	};
 	
+
+	/**
+	 * Returns the currently displayed page-level control. Note: it is not necessarily an instance of sap.m.Page, but it could also be a sap.ui.core.View, sap.m.Carousel, or whatever is aggregated.
+	 * 
+	 * Returns undefined if no page has been added yet.
+	 *
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.getCurrentPage = function() {
 		var stack = this._ensurePageStackInitialized();
 	
@@ -583,6 +368,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Returns the previous page (the page from which the user drilled down to the current page with "to()").
+	 * Note: this is not the page which the user has seen before, but the page which is the target of the next "back()" navigation.
+	 * If there is no previous page, "undefined" is returned.
+	 *
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @since 1.7.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.getPreviousPage = function() {
 		var stack = this._ensurePageStackInitialized();
 		
@@ -597,12 +393,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Returns whether the current page is the top/initial page.
+	 * 
+	 * Note: going to the initial page again with a row of "to" navigations causes the initial page to be displayed again, but logically one is not at the top level, so this method returns "false" in this case.
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.currentPageIsTopPage = function() {
 		var stack = this._ensurePageStackInitialized();
 		return (stack.length === 1);
 	};
 	
 	
+
+	/**
+	 * Inserts the page/control with the specified ID into the navigation history stack of the NavContainer.
+	 * 
+	 * This can be used for deep-linking when the user directly reached a drilldown detail page using a bookmark and then wants to navigate up in the drilldown hierarchy. Normally such a back navigation would not be possible because there is no previous page in the NavContainer's history stack.
+	 *
+	 * @param {string} sPageId
+	 *         The ID of the control/page/screen which is inserted into the history stack. The respective control must be aggregated by the NavContainer, otherwise this will cause an error.
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
+	 *         This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 * @param {object} oData
+	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @since 1.16.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.insertPreviousPage = function(pageId, transitionName, data) {
 		var stack = this._ensurePageStackInitialized();
 		if (this._pageStack.length > 0) {
@@ -668,6 +492,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Navigates to the next page (with drill-down semantic) with the given (or default) animation. This creates a new history item inside the NavContainer and allows going back.
+	 * 
+	 * Note that any modifications to the target page (like setting its title, or anything else that could cause a re-rendering) should be done BEFORE calling to(), in order to avoid unwanted side effects, e.g. related to the page animation.
+	 * 
+	 * Available transitions currently include "slide" (default), "fade", "flip", and "show". None of these is currently making use of any given transitionParameters.
+	 * 
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given data object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
+	 *
+	 * @param {string} sPageId
+	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 * 
+	 *         None of the standard transitions is currently making use of any given transition parameters.
+	 * @param {object} oData
+	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
+	 * 
+	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 * 
+	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 *         The "show", "slide" and "fade" transitions do not use any parameter.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.to = function(pageId, transitionName, data, oTransitionParameters) {
 		if (pageId instanceof Control) {
 			pageId = pageId.getId();
@@ -798,16 +656,88 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * Navigates back one level. If already on the initial page and there is no place to go back, nothing happens.
+	 * 
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
+	 *
+	 * @param {object} oBackData
+	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         Since version 1.7.1. This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.back = function(backData, oTransitionParameters) {
 		this._backTo("back", backData, oTransitionParameters);
 		return this;
 	};
 	
+
+	/**
+	 * Navigates back to the nearest previous page in the NavContainer history with the given ID. If there is no such page among the previous pages, nothing happens.
+	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
+	 * 
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
+	 *
+	 * @param {string} sPageId
+	 *         The ID of the screen to which back navigation should happen. The ID or the control itself can be given. The nearest such page among the previous pages in the history stack will be used.
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the "backToPage" navigation. The event on the target page will contain this data object as "backData" property.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @since 1.7.2
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.backToPage = function(pageId, backData, oTransitionParameters) {
 		this._backTo("backToPage", backData, oTransitionParameters, pageId);
 		return this;
 	};
 	
+
+	/**
+	 * Navigates back to the initial/top level (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
+	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
+	 * 
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
+	 *
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the "backToTop" navigation. The event on the target page will contain this data object as "backData" property.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @since 1.7.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.backToTop = function(backData, oTransitionParameters) {
 		this._backTo("backToTop", backData, oTransitionParameters);
 		return this;
@@ -1487,6 +1417,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}
 	
 	
+
+	/**
+	 * Adds a custom transition to the NavContainer type (not to a particular instance!). The transition is identified by a "name". Make sure to only use names that will not collide with transitions which may be added to the NavContainer later. A suggestion is to use the prefix "c_" or "_" for your custom transitions to ensure this.
+	 * 
+	 * "to" and "back" are the transition functions for the forward and backward navigation.
+	 * Both will be called with the following parameters:
+	 * - oFromPage: the Control which is currently being displayed by the NavContainer
+	 * - oToPage: the Control which should be displayed by the NavContainer after the transition
+	 * - fCallback: a function which MUST be called when the transition has completed
+	 * - oTransitionParameters: a data object that can be given by application code when triggering the transition by calling to() or back(); this object could give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration
+	 * 
+	 * The contract for "to" and "back" is that they may do an animation of their choice, but it should not take "too long". At the beginning of the transition the target page "oToPage" does have the CSS class "sapMNavItemHidden" which initially hides the target page (visibility:hidden). The transition can do any preparation (e.g. move that page out of the screen or make it transparent) and then should remove this CSS class.
+	 * After the animation the target page "oToPage" should cover the entire screen and the source page "oFromPage" should not be visible anymore. This page should then have the CSS class "sapMNavItemHidden".
+	 * For adding/removing this or other CSS classes, the transition can use the addStyleClass/removeStyleClass method:
+	 * oFromPage.addStyleClass("sapMNavItemHidden");
+	 * When the transition is complete, it MUST call the given fCallback method to inform the NavContainer that navigation has finished!
+	 * 
+	 * Hint: if the target page of your transition stays black on iPhone, try wrapping the animation start into a
+	 * setTimeout(..., 0)
+	 * block (delayed, but without waiting).
+	 * 
+	 * This method can be called on any NavContainer instance or statically on the sap.m.NavContainer type. However, the transition will always be registered for the type (and ALL instances), not for the single instance on which this method was invoked.
+	 * 
+	 * Returns the sap.m.NavContainer type if called statically, or "this" (to allow method chaining) if called on a particular NavContainer instance.
+	 *
+	 * @param {string} sName
+	 *         The name of the transition. This name can be used by the application to choose this transition when navigating "to()" or "back()": the "transitionName" parameter of "NavContainer.to()" corresponds to this name, the back() navigation will automatically use the same transition.
+	 * 
+	 *         Make sure to only use names that will not collide with transitions which may be added to the NavContainer later. A suggestion is to use the prefix "c_" or "_" for your custom transitions to ensure this.
+	 * @param {object} oTo
+	 *         The function which will be called by the NavContainer when the application navigates "to()", using this animation's name. The NavContainer instance is the "this" context within the animation function.
+	 * 
+	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
+	 * @param {object} oBack
+	 *         The function which will be called by the NavContainer when the application navigates "back()" from a page where it had navigated to using this animation's name. The NavContainer instance is the "this" context within the animation function.
+	 * 
+	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
+	 * @type sap.m.NavContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	NavContainer.prototype.addCustomTransition = function(sName, fTo, fBack) {
 		if (NavContainer.transitions[sName]) {
 			jQuery.sap.log.warning("Transition with name " + sName + " already exists in " + this + ". It is now being replaced by custom transition.");

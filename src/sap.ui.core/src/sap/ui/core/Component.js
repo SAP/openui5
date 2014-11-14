@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @abstract
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.Component
+	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
 	var Component = ManagedObject.extend("sap.ui.core.Component", /** @lends sap.ui.core.Component.prototype */
@@ -101,8 +101,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * Activates the customizing configuration for the given component.
 	 * @param {string} sComponentName the name of the component to activate
 	 * @private
-	 * @name sap.ui.core.Component.activateCustomizing
-	 * @function
 	 * @deprecated Since 1.21.0 as it is handled by component instantiation
 	 */
 	Component.activateCustomizing = function(sComponentName) {
@@ -113,8 +111,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * Deactivates the customizing configuration for the given component.
 	 * @param {string} sComponentName the name of the component to activate
 	 * @private
-	 * @name sap.ui.core.Component.deactivateCustomizing
-	 * @function
 	 * @deprecated Since 1.21.0 as it is handled by component termination
 	 */
 	Component.deactivateCustomizing = function(sComponentName) {
@@ -162,8 +158,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @static
 	 * @public
 	 * @since 1.15.1 
-	 * @name sap.ui.core.Component.getOwnerIdFor
-	 * @function
 	 */
 	Component.getOwnerIdFor = function(oObject) {
 		jQuery.sap.assert(oObject instanceof ManagedObject, "oObject must be given and must be a ManagedObject");
@@ -185,8 +179,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @static
 	 * @public
 	 * @since 1.25.1 
-	 * @name sap.ui.core.Component.getOwnerComponentFor
-	 * @function
 	 */
 	Component.getOwnerComponentFor = function(oObject) {
 		var sOwnerId = Component.getOwnerIdFor(oObject);
@@ -206,8 +198,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @since 1.25.1
 	 * @public
 	 * @experimental
-	 * @name sap.ui.core.Component.runAsOwner
-	 * @function
 	 */
 	Component.prototype.runAsOwner = function(fn) {
 		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
@@ -226,8 +216,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	/**
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
-	 * @name sap.ui.core.Component#getInterface
-	 * @function
 	 */
 	Component.prototype.getInterface = function() {
 		return this;
@@ -235,8 +223,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	
 	/*
 	 * initialize the Component and keep the component data
-	 * @name sap.ui.core.Component#_initCompositeSupport
-	 * @function
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
 	
@@ -280,8 +266,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	
 	/*
 	 * clean up mock server and event handlers
-	 * @name sap.ui.core.Component#destroy
-	 * @function
 	 */
 	Component.prototype.destroy = function() {
 		
@@ -328,8 +312,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @return {object} componentData
 	 * @public
 	 * @since 1.15.0
-	 * @name sap.ui.core.Component#getComponentData
-	 * @function
 	 */
 	Component.prototype.getComponentData = function() {
 		return this.oComponentData;
@@ -341,8 +323,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @return {sap.ui.core.EventBus} the event bus
 	 * @since 1.20.0
 	 * @public
-	 * @name sap.ui.core.Component#getEventBus
-	 * @function
 	 */
 	Component.prototype.getEventBus = function() {
 		if (!this._oEventBus) {
@@ -357,8 +337,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * Initializes the component models and services.
 	 * 
 	 * @private
-	 * @name sap.ui.core.Component#initComponentModels
-	 * @function
 	 */
 	Component.prototype.initComponentModels = function(mModels, mServices) {
 		

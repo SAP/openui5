@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Table renderer.
-	 * @static
+	 * Table renderer.
+	 * @namespace
 	 */
 	var TableRenderer = {};
 	

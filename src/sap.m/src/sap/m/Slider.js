@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 *
 		 * @constructor
 		 * @public
-		 * @name sap.m.Slider
+		 * @alias sap.m.Slider
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata : {
@@ -871,8 +871,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		/**
 		 * Increments the slider value by multiplying the <code>step</code> with the given parameter.
 		 *
-		 * @name sap.m.Slider.prototype.stepUp
-		 * @function
 		 * @param {int} [iStep=1] The number of steps the slider goes up.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
@@ -885,8 +883,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		/**
 		 * Decrements the slider value by multiplying the step the <code>step</code> with the given parameter.
 		 *
-		 * @name sap.m.Slider.prototype.stepDown
-		 * @function
 		 * @param {int} [iStep=1] The number of steps the slider goes down.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @type sap.m.Slider
@@ -904,8 +900,6 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @param {float} fNewValue new value for property <code>value</code>.
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @public
-		 * @name sap.m.Slider#setValue
-		 * @function
 		 */
 		Slider.prototype.setValue = function(fNewValue) {
 

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Popover
+	 * @alias sap.m.Popover
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Popover = Control.extend("sap.m.Popover", /** @lends sap.m.Popover.prototype */ { metadata : {
@@ -225,42 +225,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Close the popover
-	 *
-	 * @name sap.m.Popover#close
-	 * @function
-	 * @type sap.m.Popover
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Open the popover.
-	 *
-	 * @name sap.m.Popover#openBy
-	 * @function
-	 * @param {object} oControl
-	 *         This is the control to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover.
-	 * @type sap.m.Popover
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * The method checks if the Popover is open. It returns true when the Popover is currently open (this includes opening and closing animations), otherwise it returns false.
-	 *
-	 * @name sap.m.Popover#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.9.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/* =========================================================== */
@@ -537,10 +501,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * Opens the popover and set the popover position according to the {@link #getPlacement() placement} property
 	 * around the <code>oControl</code> parameter.
 	 *
-	 * @param {object} oControl The control to which the popover is aligned based on the <code>placement</code> property
+	 * @param {object} oControl
+	 *         This is the control to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover.
 	 * @param {boolean} bSkipInstanceManager
+	 * @type sap.m.Popover
 	 * @public
-	 *
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Popover.prototype.openBy = function(oControl, bSkipInstanceManager){
 		// If already opened with the needed content then return
@@ -637,7 +603,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	
 	/**
 	 * Closes the popover when it's already opened.
+	 *
+	 * @type sap.m.Popover
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Popover.prototype.close = function(){
 		var eOpenState = this.oPopup.getOpenState(),
@@ -667,6 +636,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		return this;
 	};
 	
+
+	/**
+	 * The method checks if the Popover is open. It returns true when the Popover is currently open (this includes opening and closing animations), otherwise it returns false.
+	 *
+	 * @type boolean
+	 * @public
+	 * @since 1.9.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Popover.prototype.isOpen = function(){
 		return this.oPopup && this.oPopup.isOpen();
 	};
@@ -680,8 +658,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * @return {sap.m.Popover} The popover itself for method chaining
 	 * @protected
 	 * @since 1.16.8
-	 * @name sap.m.Popover#setFollowOf
-	 * @function
 	 */
 	Popover.prototype.setFollowOf = function(bValue){
 		if (bValue) {
@@ -1629,9 +1605,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	/* ==================================================== */
 	/**
 	 * Set the placement of the popover.
-	 * @param {string} sPlacement
+	 * @param {sap.m.PlacementType} sPlacement
+	 * @returns {sap.m.Popover} <code>this</this> to facilitate method chaining
 	 * @public
-	 *
 	 */
 	Popover.prototype.setPlacement = function(sPlacement){
 		this.setProperty("placement", sPlacement, true);
@@ -1649,6 +1625,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * If you want to show a header in the popover, don't forget to set the 
 	 * {@link #setShowHeader showHeader} property to true.
 	 * @param {string} sTitle
+	 * @returns {sap.m.Popover} <code>this</this> to facilitate method chaining
 	 * @public
 	 */
 	Popover.prototype.setTitle = function(sTitle){
@@ -1774,8 +1751,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 	 * @param {string} [sModalCSSClass] a CSS class (or space-separated list of classes) that should be added to the block layer.
 	 * @return {sap.m.Popover} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.Popover#setModal
-	 * @function
 	 */
 	Popover.prototype.setModal = function(bModal, sModalCSSClass) {
 		if (bModal === this.getModal()) {

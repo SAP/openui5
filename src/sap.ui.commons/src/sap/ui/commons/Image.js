@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Image
+	 * @alias sap.ui.commons.Image
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Image = Control.extend("sap.ui.commons.Image", /** @lends sap.ui.commons.Image.prototype */ { metadata : {

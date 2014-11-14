@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ApplicationHeader
+	 * @alias sap.ui.commons.ApplicationHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ApplicationHeader = Control.extend("sap.ui.commons.ApplicationHeader", /** @lends sap.ui.commons.ApplicationHeader.prototype */ { metadata : {
@@ -65,9 +65,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 	
-	///**
-	// * This file defines behavior for the control,
-	// */
 	ApplicationHeader.prototype.init = function(){
 		this.initializationDone = false;
 	};

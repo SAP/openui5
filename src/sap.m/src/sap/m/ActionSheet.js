@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @name sap.m.ActionSheet
+	 * @alias sap.m.ActionSheet
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ActionSheet = Control.extend("sap.m.ActionSheet", /** @lends sap.m.ActionSheet.prototype */ { metadata : {
@@ -102,41 +102,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	}});
 	
 	
-	/**
-	 * Calling this method will make the ActionSheet visible on the screen.
-	 *
-	 * @name sap.m.ActionSheet#openBy
-	 * @function
-	 * @param {object} oControl
-	 *         The ActionSheet behaves as a sap.m.Popover in iPad and the control parameter is the object to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover. In other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Calling this method will make the ActionSheet disappear from the screen.
-	 *
-	 * @name sap.m.ActionSheet#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
-	 *
-	 * @name sap.m.ActionSheet#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	ActionSheet.prototype.init = function() {
 		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
 		this._oItemNavigation = new ItemNavigation();
@@ -202,6 +167,16 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.close();
 	};
 	
+
+	/**
+	 * Calling this method will make the ActionSheet visible on the screen.
+	 *
+	 * @param {object} oControl
+	 *         The ActionSheet behaves as a sap.m.Popover in iPad and the control parameter is the object to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover. In other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ActionSheet.prototype.openBy = function(oControl){
 		var that = this;
 	
@@ -420,6 +395,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 	
 	
+
+	/**
+	 * Calling this method will make the ActionSheet disappear from the screen.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ActionSheet.prototype.close = function(oControl){
 		if (this._parent) {
 			this._parent.close();
@@ -427,6 +410,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 	
 	
+
+	/**
+	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ActionSheet.prototype.isOpen = function(oControl){
 		return !!this._parent && this._parent.isOpen();
 	};

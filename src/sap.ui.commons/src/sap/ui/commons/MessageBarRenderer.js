@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Popup'],
 //jQuery.sap.require("sap.ui.commons.MessageType");
 	
 	/**
-	 * @class MessageBar renderer.
-	 * @static
+	 * MessageBar renderer.
+	 * @namespace
 	 */
 	var MessageBarRenderer = {
 	};

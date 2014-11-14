@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FilterPanel renderer.
-	 * @static
+	 * FilterPanel renderer.
+	 * @namespace
 	 */
 	var P13nFilterPanelRenderer = {};
 	

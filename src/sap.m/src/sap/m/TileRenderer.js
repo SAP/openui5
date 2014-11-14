@@ -9,9 +9,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class Text renderer
+	 * Text renderer
 	 * @author SAP SE
-	 * @static
+	 * @namespace
 	 */
 	var TileRenderer = {};
 	

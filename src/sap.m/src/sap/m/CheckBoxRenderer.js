@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class CheckBox renderer.
-	 * @static
+	 * CheckBox renderer.
+	 * @namespace
 	 */
 	var CheckBoxRenderer = {
 	};

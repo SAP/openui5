@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @abstract
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.UIComponent
+	 * @alias sap.ui.core.UIComponent
 	 * @since 1.9.2
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -99,8 +99,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * initialization. <b>When overriding this function make sure to invoke the
 	 * init function of the UIComponent as well!</b> 
 	 *
-	 * @function
-	 * @name sap.ui.core.Component.prototype.init
 	 * @protected
 	 */
 	UIComponent.prototype.init = function() {
@@ -150,8 +148,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	
 	/*
 	 * Destruction of the UIComponent
-	 * @name sap.ui.core.UIComponent#destroy
-	 * @function
 	 */
 	UIComponent.prototype.destroy = function() {
 		// destroy the router
@@ -179,8 +175,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @return {sap.ui.core.routing.Router} the router instance
 	 * @since 1.16.1
 	 * @public
-	 * @name sap.ui.core.UIComponent.getRouterFor
-	 * @function
 	 */
 	UIComponent.getRouterFor = function(oControllerOrView) {
 		var oView = oControllerOrView;
@@ -204,8 +198,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @since 1.16.1
 	 * @return {sap.ui.core.routing.Router} the router instance
 	 * @public
-	 * @name sap.ui.core.UIComponent#getRouter
-	 * @function
 	 */
 	UIComponent.prototype.getRouter = function() {
 		return this._oRouter;
@@ -223,8 +215,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @since 1.15.1
 	 * @return {boolean} true, if the controls IDs should be prefixed automatically
 	 * @protected
-	 * @name sap.ui.core.UIComponent#getAutoPrefixId
-	 * @function
 	 */
 	UIComponent.prototype.getAutoPrefixId = function() {
 		return false;
@@ -236,8 +226,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @param {string} sId
 	 * @return {sap.ui.core.Element} Element by its id
 	 * @public
-	 * @name sap.ui.core.UIComponent#byId
-	 * @function
 	 */
 	UIComponent.prototype.byId = function(sId) {
 		return sap.ui.getCore().byId(this.createId(sId));
@@ -249,8 +237,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @param {string} sId
 	 * @return {string} prefixed id
 	 * @public
-	 * @name sap.ui.core.UIComponent#createId
-	 * @function
 	 */
 	UIComponent.prototype.createId = function(sId) {
 		if (!this.isPrefixedId(sId)) {
@@ -265,8 +251,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *
 	 * @param {string} potentially prefixed id
 	 * @return whether the ID is already prefixed
-	 * @name sap.ui.core.UIComponent#isPrefixedId
-	 * @function
 	 */
 	UIComponent.prototype.isPrefixedId = function(sId) {
 		return (sId && sId.indexOf(this.getId() + "---") === 0);
@@ -278,8 +262,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * if the root view is not declared in the component metadata.
 	 *
 	 * @public
-	 * @name sap.ui.core.UIComponent#createContent
-	 * @function
 	 */
 	UIComponent.prototype.createContent = function() {
 		var oRootView = this.getMetadata().getRootView();
@@ -294,8 +276,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager a RenderManager instance
 	 * @public
-	 * @name sap.ui.core.UIComponent#render
-	 * @function
 	 */
 	UIComponent.prototype.render = function(oRenderManager) {
 		var oControl = this.getAggregation("rootControl");
@@ -309,8 +289,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *
 	 * @return {sap.ui.core.UIArea} reference to the UIArea of the container
 	 * @public
-	 * @name sap.ui.core.UIComponent#getUIArea
-	 * @function
 	 */
 	UIComponent.prototype.getUIArea = function() {
 		return (this.oContainer ? this.oContainer.getUIArea() : null);
@@ -319,8 +297,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	/**
 	 * @see sap.ui.base.EventProvider#getEventingParent
 	 * @protected
-	 * @name sap.ui.core.UIComponent#getEventingParent
-	 * @function
 	 */
 	UIComponent.prototype.getEventingParent = function() {
 		return this.getUIArea();
@@ -333,8 +309,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 * @param {sap.ui.core.ComponentContainer} oContainer reference to a ComponentContainer
 	 * @return {sap.ui.core.UIComponent} reference to this instance to allow method chaining
 	 * @public
-	 * @name sap.ui.core.UIComponent#setContainer
-	 * @function
 	 */
 	UIComponent.prototype.setContainer = function(oContainer) {
 		this.oContainer = oContainer;
@@ -348,8 +322,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *
 	 * Subclasses of UIComponent override this hook to implement any necessary actions before the rendering.
 	 *
-	 * @function
-	 * @name sap.ui.core.UIComponent.prototype.onBeforeRendering
 	 * @protected
 	 */
 	UIComponent.prototype.onBeforeRendering = function() {};
@@ -361,8 +333,6 @@ sap.ui.define(['jquery.sap.global', './Component', './UIComponentMetadata', './m
 	 *
 	 * Subclasses of UIComponent override this hook to implement any necessary actions after the rendering.
 	 *
-	 * @function
-	 * @name sap.ui.core.UIComponent.prototype.onAfterRendering
 	 * @protected
 	 */
 	UIComponent.prototype.onAfterRendering = function() {};

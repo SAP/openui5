@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class P13nPanel renderer.
-	 * @static
+	 * P13nPanel renderer.
+	 * @namespace
 	 */
 	var P13nPanelRenderer = {};
 	

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.ComponentContainer
+	 * @alias sap.ui.core.ComponentContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ComponentContainer = Control.extend("sap.ui.core.ComponentContainer", /** @lends sap.ui.core.ComponentContainer.prototype */ { metadata : {

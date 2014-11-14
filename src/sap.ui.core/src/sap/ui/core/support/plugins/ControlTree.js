@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'sap/ui/core/u
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.ControlTree
+		 * @alias sap.ui.core.support.plugins.ControlTree
 		 */
 		var ControlTree = Plugin.extend("sap.ui.core.support.plugins.ControlTree", {
 			constructor : function(oSupportStub) {

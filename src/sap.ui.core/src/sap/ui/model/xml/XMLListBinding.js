@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] initial sort order (can be either a sorter or an array of sorters)
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
-	 * @name sap.ui.model.xml.XMLListBinding
+	 * @alias sap.ui.model.xml.XMLListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
 	var XMLListBinding = ClientListBinding.extend("sap.ui.model.xml.XMLListBinding");
@@ -33,8 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 *
 	 * @return {sap.ui.model.Context[]} the contexts array
 	 * @protected
-	 * @name sap.ui.model.xml.XMLListBinding#getContexts
-	 * @function
 	 */
 	XMLListBinding.prototype.getContexts = function(iStartIndex, iLength) {
 		this.iLastStartIndex = iStartIndex;
@@ -84,8 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	/**
 	 * Update the list, indices array and apply sorting and filtering
 	 * @private
-	 * @name sap.ui.model.xml.XMLListBinding#update
-	 * @function
 	 */
 	XMLListBinding.prototype.update = function(){
 		var oList = this.oModel._getObject(this.sPath, this.oContext);
@@ -116,8 +112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 * 
 	 * @param {boolean} bForceupdate
 	 * 
-	 * @name sap.ui.model.xml.XMLListBinding#checkUpdate
-	 * @function
 	 */
 	XMLListBinding.prototype.checkUpdate = function(bForceupdate){
 		

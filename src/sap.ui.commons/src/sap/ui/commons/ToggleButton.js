@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ToggleButton
+	 * @alias sap.ui.commons.ToggleButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToggleButton = Button.extend("sap.ui.commons.ToggleButton", /** @lends sap.ui.commons.ToggleButton.prototype */ { metadata : {

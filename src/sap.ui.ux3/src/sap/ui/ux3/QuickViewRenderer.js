@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/u
 
 
 	/**
-	 * @class QuickView renderer. 
-	 * @static
+	 * QuickView renderer. 
+	 * @namespace
 	 */
 	var QuickViewRenderer = Renderer.extend(CalloutBaseRenderer);
 	

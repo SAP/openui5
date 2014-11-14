@@ -1,0 +1,492 @@
+/*!
+ * ${copyright}
+ */
+
+// Provides a simpel static code analyzer 
+sap.ui.define(function() {
+
+// TODO further migrate Java source
+
+	/**
+	 * A very basic static code analyzer that tracks variable assignments within each scope.
+	 * 
+	 * Mainly used to identify local variables that have a constant value and to recognize 
+	 * constant module references (using sap.ui.define)
+	 * 
+	 * @author Frank Weigel
+	 * @since 1.23.0
+	 */
+
+	final StaticAnalyzer parent;
+	final EnhancedDocument doc;
+	final JSScope<EnhancedContext> scope;
+	final ModuleName moduleName;
+	final Set<StaticAnalyzer> nestedAnalyzers = new HashSet<StaticAnalyzer>();
+
+	private StaticAnalyzer(EnhancedDocument document, ModuleName name) {
+		this.parent = null;
+		this.scope = this.doc = document;
+		this.moduleName = name;
+		for (JSFunction<EnhancedContext> childFunc : scope.getFunctions()) {
+			nestedAnalyzers.add(new StaticAnalyzer(this, childFunc));
+		}
+		// System.out.println("executing analyzer for " + scope.getIdentifier());
+		analyze(scope.getNode(), false, false);
+	}
+
+	private StaticAnalyzer(StaticAnalyzer parent, JSFunction<EnhancedContext> function) {
+		// pass 1 collect name declarations for each scope (params, functions, variables)
+		// pass 2 collect assignments (assignment, ifi params + return)
+			either assign to local name or let parent scope handle it
+		// pass 3 analyze children
+		this.parent = parent;
+		this.scope = function;
+		this.doc = parent.doc;
+		this.moduleName = parent.moduleName;
+		for (JSFunction<EnhancedContext> childFunc : function.getFunctions()) {
+			nestedAnalyzers.add(new StaticAnalyzer(this, childFunc));
+		}
+		// System.out.println("executing analyzer for " + scope.getIdentifier());
+		analyze(function.getBody(), false, false);
+	}
+
+	function analyze(node, conditional, iterative) {
+
+		// ----- general assignment ----
+		if ( node.type == Syntax.AssignmentExpression ) {
+			if( node.left.type == Syntax.Identifier ) {
+				scope.addAssignment(node.left.name, new TreeValue(node.getChild(1), scope), conditional, iterative);
+			}
+		} else if ( 
+			node.type == Syntax.ADDASS 
+			|| node.type == Syntax.SUBASS
+			|| node.type == Syntax.MULASS
+			|| node.type == Syntax.MODASS
+			|| node.type == Syntax.SHLASS
+			|| node.type == Syntax.SHRASS
+			|| node.type == Syntax.SHUASS
+			|| node.type == Syntax.INC
+			|| node.type == Syntax.PINC
+			|| node.type == Syntax.DEC
+			|| node.type == Syntax.PDEC ) {
+			if ( node.left.type == Syntax.Identifier ) {
+				scope.addAssignment(node.getChild(0).getText(), new TreeValue(node.getChild(1), scope, node.getType()), conditional, iterative);
+			}
+			
+		} else if ( node.type == Syntax.ForStatement) { 
+
+			analyze(node.init, conditional, iterative);
+			analyze(node.test, conditional, true);
+			analyze(node.update, true, true);
+			analyze(node.body, true, true);
+		
+		} else if ( node.type == Syntax.ForInStatement) {
+
+			if ( node.left.type == Syntax.Identifier ) {
+				//System.out.printf("<foriter> mit %s%n", node.getChild(0).getChild(0).getText());
+				scope.addAssignment(node.left.name, new TreeValue(node.getChild(0).getChild(1), scope, ES3Parser.FORITER), conditional, true);
+			} else if ( node.left.type == Syntax.VariableDeclaration 
+						&& node.left.declarations[0].id.type === Syntax.Identifier ) {
+					//System.out.printf("<foriter> mit %s%n", node.getChild(0).getChild(0).getText());
+					scope.addAssignment(node.getChild(0).getChild(0).getChild(0).getText(), new TreeValue(node.getChild(0).getChild(1), scope, ES3Parser.FORITER), conditional, true);
+			} else {
+				throw new IllegalStateException();
+			}
+
+			analyze(node.right, conditional, iterative);
+			analyze(node.block, true, true);
+
+			return;
+
+		} else if ( node.type == Syntax.WhileStatement ) {
+
+			analyze(node.test, conditional, true); // condition is executed on the same conditions as the surrounding block and potentially repeated
+			analyze(node.block, true, true); // block, maybe entered only conditionally but can be repeated
+
+			return;
+
+		} else if ( node.type == Syntax.DoWhileStatement) {
+
+			analyze(node.test, conditional, true); // condition is executed on the same conditions as the surrounding block, potentially repeated 
+			analyze(node.block, conditional, true); // block is always entered and might be repeated
+
+			return;
+
+		} else if ( node.type == Syntax.IF ) {
+
+			analyze(node.test, conditional, iterative); // condition expression
+			analyze(node.consequent, true, iterative); // if block only conditional
+			analyze(node.alternate, true, iterative); // else block if present, only conditional
+
+			return;
+			
+		} else 
+
+			// special case: immediate function invocation 
+			if ( !conditional && !iterative && isImmediateFunctionInvocation(node) ) {
+				// propagate args to parameters
+				// TODO in what phase should these values be propagated? before or after the child function?
+				Tree function = node.getChild(0).getChild(0);
+				Tree declaredArgs = function.getChild(function.getChildCount() < 3 ? 0 : 1);
+				Tree args = node.getChild(0).getChild(1);
+				JSFunction<EnhancedContext> f = scope.findFunction(function);
+				// System.out.printf("**** immediate function invocation: %s calls %s%n", scope.getIdentifier(), f.getIdentifier());
+				for(int i=0; i<declaredArgs.getChildCount(); i++) {
+					Value argValue = i < args.getChildCount() ? new TreeValue(args.getChild(i), scope) : SpecialValue.UNDEFINED;
+					//System.out.printf("	replace param %s with %s%n", f.getParameters().get(i), argValue); 
+					f.getContext().replaceParameterAssignment(f.getParameters().get(i), argValue);
+				}
+			}
+
+		// special case: sap.ui.define() call: 
+		// - collect informations about the module: name, dependencies
+		// - assign modules as 'value' to the parameters of the factory function
+		if ( node.type == Syntax.CallExpression && JSUtils.isMethodCall(node, CALL_SAP_UI_DEFINE) ) {
+			// collect informations about the module: name, dependencies
+			// assign modules as 'value' to the parameters of the factory function
+			ModuleName name = moduleName;
+			ModuleName[] modules = null;
+			Tree args = node.getChild(1);
+			int iChild=0;
+			if ( args.getChild(iChild).type == Syntax.StringLiteral ) {
+				name = ModuleName.fromRequireJSName(JSUtils.strFromJSStringLiteral(args.getChild(iChild).getText()));
+				iChild++;
+			}
+			if ( args.getChild(iChild).type == Syntax.ARRAY ) {
+				modules = analyzeDependencyArray(args.getChild(iChild), name);
+				iChild++;
+
+			}
+			if ( args.getChild(iChild).type == Syntax.FUNCTION ) {
+				Tree factory = args.getChild(iChild);
+				JSFunction<EnhancedContext> f = scope.findFunction(factory);
+				for(int i=0; i<f.getParameters().size(); i++) {
+					f.getContext().replaceParameterAssignment(f.getParameters().get(i), new ModuleValue(modules[i]));
+				}
+			}
+		} 
+
+		if (node.type != Syntax.FunctionExpression ) {
+			// visit children
+			for (int i = 0; i < node.getChildCount(); i++) {
+				analyze(node.getChild(i), conditional, iterative);
+			}
+		}
+
+	}
+
+	protected static String resolveRelativeNames(ModuleName baseName, String relativeName) {
+		if ( relativeName.startsWith("./") ) {
+			return baseName.getPackagePath() + relativeName.substring("./".length());
+		}
+		return relativeName;
+	}
+
+	private ModuleName[] analyzeDependencyArray(Tree array, ModuleName name) {
+		ModuleName[] result = new ModuleName[array.getChildCount()];
+		for(int i=0; i<array.getChildCount(); i++ ){
+			Tree item = array.getChild(i);
+			if ( item.type == Syntax.ITEM && item.getChildCount() == 1 && item.getChild(0).type == Syntax.StringLiteral ) {
+				String requiredModuleName = JSUtils.strFromJSStringLiteral(item.getChild(0).getText());
+				requiredModuleName = resolveRelativeNames(name, requiredModuleName);
+				result[i] = ModuleName.fromRequireJSName(requiredModuleName);
+			}
+		}
+		return result;
+	}
+
+	//		static class ImmediateFunctionInvocation {
+	//			
+	//			static ImmediateFunctionInvocation check(Tree node) {
+	//				if ( node.type == Syntax.PAREXPR
+	//						 && node.getChildCount() == 1 
+	//						 && node.getChild(0).type == Syntax.CALL 
+	//						 && node.getChild(0).getChildCount() == 2 
+	//						 && node.getChild(0).getChild(0).type == Syntax.FUNCTION
+	//						 && node.getChild(0).getChild(1).type == Syntax.ARGS ) {
+	//					return new ImmediateFunctionInvocation(node.getChild(0));
+	//				}
+	//
+	//				return null;
+	//			}
+	//			
+	//			ImmediateFunctionInvocation(Tree node) {
+	//				Tree function = node.getChild(0);
+	//				Tree args = node.getChild(1);
+	//			}
+	//		}
+	function isImmediateFunctionInvocation(node) {
+		return (
+			node.type == Syntax.ExpressionStatement
+			&& node.expression.type == Syntax.CallExpression 
+			&& node.expression.callee == Syntax.FunctionExpression
+			);
+	}
+
+	// ---- Values ------------------------------------------------------------------------------------------
+	
+	static abstract class Value {
+		
+	}
+	
+	static class SpecialValue extends Value {
+		
+		private final String str;
+		private SpecialValue(String str) {
+			this.str = str;
+		};
+		
+		public String toString() {
+			return str;
+		}
+		
+		public static final SpecialValue INITIAL = new SpecialValue("(initial)"); 
+		public static final SpecialValue UNKNOWN = new SpecialValue("(unknown)"); 
+		public static final SpecialValue FUNCTION = new SpecialValue("(function decl)"); 
+		public static final SpecialValue UNDEFINED = new SpecialValue("(undefined)"); 
+	}
+	
+	static class VarInfo {
+
+		private final String name;
+		private final VarKind kind;
+		private String declLocation;
+		private Value firstAssignedValue = null;
+		private int nAssignments = 0;
+		private boolean conditional = false;
+				
+		VarInfo(String name, VarKind type, String location) {
+			this.name = name;
+			this.kind = type;
+			this.declLocation = location;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public VarKind getKind() {
+			return kind;
+		}
+		
+		public String getLocation() {
+			return declLocation;
+		}
+		
+		public void addAssignment(Value assignment, boolean conditional, boolean repeated) { // TODO location?
+			if ( firstAssignedValue == null ) {
+				firstAssignedValue = assignment;
+			}
+			this.conditional = this.conditional || conditional;
+			nAssignments++;
+			if ( repeated ) {
+				nAssignments++;
+			}
+		}
+		
+		public boolean isInitial() {
+			return nAssignments == 0;
+		}
+		
+		public boolean isConstant() {
+			return nAssignments == 1 && !conditional;
+		}
+		
+		public Object getConstantValue() {
+			if ( nAssignments == 1 && !conditional ) {
+				return firstAssignedValue;
+			} else if ( nAssignments == 0 ) {
+				return SpecialValue.INITIAL;
+			}
+			return null; // throw new IllegalStateException("not a constant value: " + name);
+		}
+	}
+	
+	public static class TreeValue extends Value {
+
+		Tree node;
+		JSScope<EnhancedContext> scope;
+		int operator; // Node type of a modifying operator (inc/dec/,add assign etc.) or 0 for a pure assignment
+
+		TreeValue(Tree node, JSScope<EnhancedContext> scope) {
+			this(node, scope, 0);
+		}
+
+		TreeValue(Tree node, JSScope<EnhancedContext> scope, int operator) {
+			this.node = node;
+			this.scope = scope;
+			this.operator = operator;
+		}
+
+		public Tree getNode() {
+			return node;
+		}
+
+		public String toString() {
+			return "TreeValue(" + node + ")";
+		}
+	}
+
+	public static class ModuleValue extends Value {
+		ModuleName module;
+
+		ModuleValue(ModuleName module) {
+			this.module = module;
+		}
+
+		public ModuleName getModuleName() {
+			return module;
+		}
+
+		public String toString() {
+			return "ModuleValue(" + module + ")";
+		}
+	}
+
+	// ---- Scope Context -------------------------------------------------------
+	
+	public static class EnhancedContext extends JSScopeContext<VarInfo> {
+	
+		private final EnhancedContext parent;
+		
+		public EnhancedContext(JSScope<EnhancedContext> scope, EnhancedContext parent) {
+			super(scope, parent);
+			this.parent = parent;
+		}
+		
+		@Override
+		protected VarInfo createVarInfo(String name, Tree t, VarKind kind) {
+			VarInfo info = new VarInfo(name, kind, t == null ? null : JSUtils.getLocation(t));
+			if ( kind == VarKind.Parameter || kind == VarKind.Catch ) {
+				info.addAssignment(SpecialValue.UNKNOWN, false, false);
+			} else if ( kind == VarKind.LocalFunction ) {
+				info.addAssignment(SpecialValue.FUNCTION, false, false);
+			}
+//		} else { 
+			// Order of assignment in Ecma 262-3 Spec (chapter 10.1.13 - Variable Instantiation):
+			// - formal parameter (if name is used twice, the last one wins) value is the concrete value provided by the caller
+			// - local function declarations, names must not be used twice, value is the function
+			// - variable declaration, does not change the value of existing local name
+//			if ( info.kind == VarKind.Var && type == VarKind.Var ) {
+//				System.out.printf("**** warning: duplicate var declaration for %s: %s, %s%n", name, info.declLocation, JSUtils.getLocation(t));
+//			} else {
+//				System.out.printf("**** error: duplicate var declaration for %s: %s(%s), %s(%s)%n", name, info.declLocation, info.kind, JSUtils.getLocation(t), type);
+//			}
+			/* TODO
+			if ( info.type == VarType.Parameter ) {
+				if ( type == VarType.Parameter ) {
+					// name used multiple times, complain?
+				} else if ( type == VarType.LocalFunction	) {
+					info.type = type;
+					info.initialValue = SpecialValue.Function;
+				} else if ( type == VarType.Var ) {
+					info.type = type;
+					// if initial value is initial, then replace it with function, otherwise not touched
+				}
+			} else if ( info.type == VarType.LocalFunction ) {
+				if ( type == VarType.Parameter ) {
+					// ignored
+				} else if ( type == VarType.LocalFunction ) {
+					// name used multiple times, complain?
+				} else if ( type == VarType.Var ) {
+					// initial value not touched
+				}
+			} else if ( info.type == VarType.Var ) {
+				if ( type == VarType.Parameter ) {
+					info.initialValue =	
+				} else if ( type == VarType.LocalFunction ) {
+					// name used multiple times, complain?
+				} else if ( type == VarType.Var ) {
+					// initial value not touched
+				}
+			}
+			*/
+			return info;
+		}
+		
+		@Override
+		protected String getLocation(VarInfo varInfo) {
+			return varInfo.getLocation();
+		}
+
+		public Object getConstantValue(String name) {
+			VarInfo info = locals.get(name);
+			if ( info == null && parent != null ) {
+				return parent.getConstantValue(name);
+			}
+			// System.out.printf("asking for var %s results in %s%n", name, info == null ? null : info.getConstantValue());
+			return info == null ? null : info.getConstantValue(); 
+		}
+	
+		public void addAssignment(String name, Value value, boolean conditional, boolean repeated) {
+			if ( locals.containsKey(name) ) {
+				// System.out.println("assignment: " + name + "=" + value);
+				locals.get(name).addAssignment(value, conditional, repeated);
+			} else if ( parent != null ) {
+				parent.addAssignment(name, value, conditional, repeated); // TODO depends on our invocation
+			}
+		}
+
+		public void replaceParameterAssignment(String name, Value value) {
+			VarInfo info = locals.get(name);
+			if ( info == null || info.kind != VarKind.Parameter ) {
+				throw new IllegalStateException();
+			}
+			info.firstAssignedValue = value;
+		}
+		
+		public String getObjectName(Tree node) {
+			StringBuilder buf = new StringBuilder();
+			getObjectName(node, buf);
+			return buf.toString();
+		}
+		
+		private void getObjectName(Tree byfield, StringBuilder buf) {
+			if ( byfield.type == Syntax.BYFIELD ) {
+				getObjectName(byfield.getChild(0), buf);
+				buf.append(".");
+				buf.append(byfield.getChild(1).getText());
+			} else {
+				String name = byfield.getText();
+				Object value = getConstantValue(name);
+				if ( value instanceof ModuleValue ) {
+					// case 1: the name has been assigned the value of a required module -> resolve to module name
+					name = ((ModuleValue) value).getModuleName().toUI5LegacyName();
+				} else if ( value instanceof TreeValue ) {
+					TreeValue treeValue = (TreeValue) value;
+					Tree valueNode = treeValue.getNode();
+					if ( JSUtils.isExtendCall(valueNode) ) {
+						// case 2: the name has been assigned the result of an extend() call -> resolve to first argument of extend call
+						name = JSUtils.strFromJSStringLiteral(valueNode.getChild(1).getChild(0).getText()); // className
+					} else if ( JSUtils.isNamedObject(valueNode) ) {
+						// case 3: another named object was assigned -> resolve that name in its scope
+						if ( this != treeValue.scope.getContext() || valueNode.getType() != ES3Parser.Identifier || !name.equals(valueNode.getText()) ) {
+							// same name and scope obviously would result in an endless loop, so check it here
+							// System.out.printf("instead of %s, follow %s%n", name, valueNode);
+							treeValue.scope.getContext().getObjectName(valueNode, buf);
+							return;
+						}
+					}
+				}
+				buf.append(name);
+			}
+		}
+	}
+	
+	// ---- Document -------------------------------------------------------
+	
+	public static class EnhancedDocument extends JSDocument<EnhancedContext> {
+
+		public EnhancedDocument(Tree root, TokenStream tokens, Trace trace) {
+			super(root, tokens, trace);
+		}
+		
+		@Override
+		protected EnhancedContext createScopeContext(JSScope<EnhancedContext> scope, EnhancedContext parentContext) {
+			return new EnhancedContext(scope, parentContext);
+		}
+		
+	}
+	return null;
+
+}, false);

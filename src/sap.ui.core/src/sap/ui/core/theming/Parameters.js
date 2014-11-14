@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * @static
 		 *
 		 * @public
-		 * @name sap.ui.core.theming.Parameters
+		 * @alias sap.ui.core.theming.Parameters
 		 */
 		var Parameters = {};
 	
@@ -109,8 +109,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * Must be called AFTER a link-tag (with id: "sap-ui-theme" + sLibName) for the theme has been created.
 		 * @param {string} sLibName name of the theme library.
 		 * @private
-		 * @name sap.ui.core.theming.Parameters._addLibraryTheme
-		 * @function
 		 */
 		Parameters._addLibraryTheme = function(sLibName) {
 			// only load parameters if someone had requested them before
@@ -129,8 +127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * @returns {any} the CSS parameter value
 		 *
 		 * @public
-		 * @name sap.ui.core.theming.Parameters.get
-		 * @function
 		 */
 		Parameters.get = function(sName) {
 	
@@ -163,8 +159,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 *
 		 * @param {Object} mLibraryParameters
 		 * @private
-		 * @name sap.ui.core.theming.Parameters._setOrLoadParameters
-		 * @function
 		 */
 		Parameters._setOrLoadParameters = function(mLibraryParameters) {
 			mParameters = {};
@@ -187,8 +181,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * the next time they are queried via the method <code>get</code>.
 		 * 
 		 * @public
-		 * @name sap.ui.core.theming.Parameters.reset
-		 * @function
 		 */
 		Parameters.reset = function() {
 			// hidden parameter {boolean} bOnlyWhenNecessary
@@ -202,10 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core'],
 		 * Helper function to get an image URL based on a given theme parameter.
 		 * 
 		 * @private
-		 * @name sap.ui.core.theming.Parameters._getThemeImage
 		 * @param {string} sParamName the theme parameter which contains the logo definition. If nothing is defined the parameter 'sapUiGlobalLogo' is used.
 		 * @param {boolean} bForce whether a valid URL should be returned even if there is no logo defined.
-		 * @function
 		 */
 		Parameters._getThemeImage = function(sParamName, bForce) {
 			sParamName = sParamName || "sapUiGlobalLogo";

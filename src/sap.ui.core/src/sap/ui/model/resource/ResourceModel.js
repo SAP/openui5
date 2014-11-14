@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 * @param {boolean} [oData.async=false] whether the language bundle should be loaded asynchronously
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.resource.ResourceModel
+	 * @alias sap.ui.model.resource.ResourceModel
 	 */
 	var ResourceModel = Model.extend("sap.ui.model.resource.ResourceModel", /** @lends sap.ui.model.resource.ResourceModel.prototype */ {
 	
@@ -68,30 +68,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.resource.ResourceModel with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.resource.ResourceModel.extend
-	 * @function
-	 */
-	
-	/**
 	 * Returns the resource bundle
 	 *
 	 * @param {object} oData
 	 * @return loaded resource bundle or Promise in async case
 	 * @private
-	 * @name sap.ui.model.resource.ResourceModel#loadResourceBundle
-	 * @function
 	 */
 	ResourceModel.prototype.loadResourceBundle = function(oData) {
 		var oConfiguration = sap.ui.getCore().getConfiguration(),
@@ -119,8 +100,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 * @return Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
 	 * @since 1.16.1
 	 * @protected
-	 * @name sap.ui.model.resource.ResourceModel#enhance
-	 * @function
 	 */
 	ResourceModel.prototype.enhance = function(oData) {
 		var that = this,
@@ -155,8 +134,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 *
-	 * @name sap.ui.model.resource.ResourceModel#bindProperty
-	 * @function
 	 */
 	ResourceModel.prototype.bindProperty = function(sPath) {
 		var oBinding = new ResourcePropertyBinding(this, sPath);
@@ -170,8 +147,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 * @type any
 	 * @return the value of the property
 	 * @public
-	 * @name sap.ui.model.resource.ResourceModel#getProperty
-	 * @function
 	 */
 	ResourceModel.prototype.getProperty = function(sPath) {
 		return this._oResourceBundle ? this._oResourceBundle.getText(sPath) : null;
@@ -182,8 +157,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ResourcePropertyBin
 	 *
 	 * @return loaded resource bundle or ECMA Script 6 Promise in asynchronous case
 	 * @public
-	 * @name sap.ui.model.resource.ResourceModel#getResourceBundle
-	 * @function
 	 */
 	ResourceModel.prototype.getResourceBundle = function() {
 		if (!this.bAsync) {

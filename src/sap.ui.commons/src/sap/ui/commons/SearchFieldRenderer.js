@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SearchField renderer.
-	 * @static
+	 * SearchField renderer.
+	 * @namespace
 	 */
 	var SearchFieldRenderer = {
 	};

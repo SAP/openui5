@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.ObjectHeader
+	 * @alias sap.m.ObjectHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectHeader = Control.extend("sap.m.ObjectHeader", /** @lends sap.m.ObjectHeader.prototype */ { metadata : {
@@ -320,7 +320,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Set the number state to the internal aggregation
 	 * @override
 	 * @public
-	 * @param {string} sState the new value
+	 * @param {sap.ui.core.ValueState} sState the new value
 	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberState = function (sState) {

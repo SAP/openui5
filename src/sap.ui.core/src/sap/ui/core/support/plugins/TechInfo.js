@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo
+		 * @alias sap.ui.core.support.plugins.TechInfo
 		 */
 		var TechInfo = Plugin.extend("sap.ui.core.support.plugins.TechInfo", {
 			constructor : function(oSupportStub) {
@@ -49,8 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoData
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoData = function(oEvent){
 			var that = this;
@@ -158,8 +156,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoToggleDebug
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoToggleDebug = function(oEvent){
 			jQuery.sap.debug(!jQuery.sap.debug());
@@ -171,8 +167,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoStartE2ETrace
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoStartE2ETrace = function(oEvent) {
 	
@@ -194,8 +188,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoFinishedE2ETrace
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoFinishedE2ETrace = function(oEvent) {
 			this.$("startE2ETrace").removeClass("active").text("Start");
@@ -208,8 +200,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoRefresh
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoRefresh = function(oEvent){
 			sendData(this);
@@ -220,8 +210,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.TechInfo#onsapUiSupportTechInfoToggleStatistics
-		 * @function
 		 */
 		TechInfo.prototype.onsapUiSupportTechInfoToggleStatistics = function(oEvent){
 			jQuery.sap.statistics(!jQuery.sap.statistics());

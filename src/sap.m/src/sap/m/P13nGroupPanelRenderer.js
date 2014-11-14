@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class GroupPanel renderer.
-	 * @static
+	 * GroupPanel renderer.
+	 * @namespace
 	 */
 	var P13nGroupPanelRenderer = {};
 	

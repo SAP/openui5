@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
 	 * @version ${version}
-	 * @name sap.ui.core.Control
+	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Control = Element.extend("sap.ui.core.Control", /* @lends sap.ui.core.Control */ {
@@ -85,47 +85,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	
 	});
 	
-	/**
-	 * Creates a new subclass of class sap.ui.core.Control with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * <code>oClassInfo</code> might contain the same kind of informations as described in {@link sap.ui.core.Element.extend Element.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.core.ElementMetadata.
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.core.Control.extend
-	 * @function
-	 */
-	
-	/**
-	 * Getter for property <code>busy</code>.
-	 * 
-	 * Whether the control is currently in busy state.
-	 * 
-	 * Default value is <code>false</code>
-	 *
-	 * @return {boolean} the value of property <code>busy</code>
-	 * @public
-	 * @name sap.ui.core.Control#getBusy
-	 * @function
-	 */
-
-	/**
-	 * Getter for property <code>busyIndicatorDelay</code>.
-	 * 
-	 * The time in milliseconds after which the control displays a busy indicator after becoming busy.
-	 * 
-	 * Default value is <code>1000</code> ms.
-	 *
-	 * @return {int} the value of property <code>busyIndicatorDelay</code>
-	 * @public
-	 * @name sap.ui.core.Control#getBusyIndicatorDelay
-	 * @function
-	 */
 
 	/**
 	 * Overrides {@link sap.ui.core.Element#clone Element.clone} to clone additional 
@@ -142,8 +101,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @return {sap.ui.core.Element} reference to the newly created clone
 	 * @protected
-	 * @name sap.ui.core.Control#clone
-	 * @function
 	 */
 	Control.prototype.clone = function() {
 		var oClone = Element.prototype.clone.apply(this, arguments);
@@ -167,8 +124,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 *
 	 * @return {boolean} whether the control is still in the active DOM
 	 * @private
-	 * @name sap.ui.core.Control#isActive
-	 * @function
 	 */
 	Control.prototype.isActive = function() {
 		return jQuery.sap.domById(this.sId) != null;
@@ -182,8 +137,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 *
 	 * @param {object} oOrigin
 	 * @protected
-	 * @name sap.ui.core.Control#invalidate
-	 * @function
 	 */
 	Control.prototype.invalidate = function(oOrigin) {
 		var oUIArea;
@@ -232,8 +185,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	/**
 	 * Tries to replace its DOM reference by re-rendering.
 	 * @protected
-	 * @name sap.ui.core.Control#rerender
-	 * @function
 	 */
 	Control.prototype.rerender = function() {
 		sap.ui.core.UIArea.rerenderControl(this);
@@ -253,8 +204,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @param {boolean} bAllow whether to allow text selection or not
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Control#allowTextSelection
-	 * @function
 	 */
 	Control.prototype.allowTextSelection = function(bAllow) {
 		this.bAllowTextSelection = bAllow;
@@ -361,8 +310,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @param {object} [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Control#attachBrowserEvent
-	 * @function
 	 */
 	Control.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
@@ -404,8 +351,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @param {function} [fnHandler] The function that is to be no longer executed.
 	 * @param {object} [oListener] The context object that was given in the call to attachBrowserEvent.
 	 * @public
-	 * @name sap.ui.core.Control#detachBrowserEvent
-	 * @function
 	 */
 	Control.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
@@ -440,8 +385,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 *
 	 * @return {object} a Renderer suitable for this Control instance.
 	 * @protected
-	 * @name sap.ui.core.Control#getRenderer
-	 * @function
 	 */
 	Control.prototype.getRenderer = function () {
 		//TODO introduce caching?
@@ -471,8 +414,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * @param {string|int} oPosition Describes the position where the control should be put into the container
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Control#placeAt
-	 * @function
 	 */
 	Control.prototype.placeAt = function(oRef, oPosition) {
 		var oCore = sap.ui.getCore();
@@ -551,8 +492,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * Cancels user text selection if text selection is disabled for this control.
 	 * See the {@link #allowTextSelection} method.
 	 * @private
-	 * @name sap.ui.core.Control#onselectstart
-	 * @function
 	 */
 	Control.prototype.onselectstart = function (oBrowserEvent) {
 		if (!this.bAllowTextSelection) {
@@ -598,8 +537,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 	 * 
 	 * @return {string} Id to be used for the <code>labelFor</code> 
 	 * @public
-	 * @name sap.ui.core.Control#getIdForLabel
-	 * @function
 	 */
 	Control.prototype.getIdForLabel = function () {
 		return this.getId();
@@ -723,8 +660,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		 * @param {boolean} bBusy The new busy state to be set
 		 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
 		 * @public
-		 * @name sap.ui.core.Control#setBusy
-		 * @function
 		 */
 		Control.prototype.setBusy = function (bBusy, sBusySection /* this is an internal parameter to apply partial local busy indicator for a specific section of the control */) {
 			this._sBusySection = sBusySection;
@@ -784,8 +719,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		 * @public
 		 * @deprecated Use getBusy instead
 		 * @return boolean
-		 * @name sap.ui.core.Control#isBusy
-		 * @function
 		 */
 		Control.prototype.isBusy = function() {
 			return this.getProperty("busy");
@@ -797,8 +730,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		 * @public
 		 * @param {int} iDelay The delay in ms
 		 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
-		 * @name sap.ui.core.Control#setBusyIndicatorDelay
-		 * @function
 		 */
 		Control.prototype.setBusyIndicatorDelay = function(iDelay) {
 			this.setProperty("busyIndicatorDelay", iDelay, true);
@@ -809,8 +740,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		 * Cleanup all timers which might have been created by the busy indicator
 		 * 
 		 * @private
-		 * @name sap.ui.core.Control#_cleanupBusyIndicator
-		 * @function
 		 */
 		Control.prototype._cleanupBusyIndicator = function() {
 			if (this._busyIndicatorDelayedCallId) {

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @constructor
 	 * @public
 	 * @since 1.15.1
-	 * @name sap.m.ResponsivePopover
+	 * @alias sap.m.ResponsivePopover
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsivePopover = Control.extend("sap.m.ResponsivePopover", /** @lends sap.m.ResponsivePopover.prototype */ { metadata : {
@@ -206,20 +206,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	
 	
 	/**
-	 * Opens the ResponsivePopover. The ResponsivePopover is positioned relatively to the control parameter when runs on tablet or desktop and is full screen when runs on phone. Therefore the control parameter only has its usage when runs on tablet or desktop and is ignored when runs on phone.
-	 *
-	 * @name sap.m.ResponsivePopover#openBy
-	 * @function
-	 * @param {object} oControl
-	 * 
-	 *         When this control runs on tablet or desktop, the ResponsivePopover is positioned relatively to this control.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * Closes the ResponsivePopover.
 	 *
 	 * @name sap.m.ResponsivePopover#close
@@ -339,6 +325,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		};
 	};
 	
+
+	/**
+	 * Opens the ResponsivePopover. The ResponsivePopover is positioned relatively to the control parameter when runs on tablet or desktop and is full screen when runs on phone. Therefore the control parameter only has its usage when runs on tablet or desktop and is ignored when runs on phone.
+	 *
+	 * @param {object} oControl
+	 * 
+	 *         When this control runs on tablet or desktop, the ResponsivePopover is positioned relatively to this control.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ResponsivePopover.prototype.openBy = function(oParent){
 		if (!this._bAppendedToUIArea && !this.getParent()) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();

@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 /**
-	 * @class Provides methods to manage instances. This is specifically designed for managing the opened Popover, Dialog, ActionSheet,
+	 * Provides methods to manage instances. This is specifically designed for managing the opened Popover, Dialog, ActionSheet,
 	 * and it's possible to close all of the opened Popover, Dialog, ActionSheet in history handling.
 	 *
 	 * As <code>InstanceManager</code> is a static class, a <code>jQuery.sap.require("sap.m.InstanceManager");</code> statement
@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *   sap.m.InstanceManager.closeAllPopovers();
 	 * </pre>
 	 *
-	 * @static
+	 * @namespace
 	 * @public
 	 * @since 1.9.2
 	 */

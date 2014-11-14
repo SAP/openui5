@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class BusyIndicator renderer.
-	 * @static
+	 * BusyIndicator renderer.
+	 * @namespace
 	 */
 	var BusyIndicatorRenderer = {
 	};

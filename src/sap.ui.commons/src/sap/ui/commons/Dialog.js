@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Dialog
+	 * @alias sap.ui.commons.Dialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Dialog = Control.extend("sap.ui.commons.Dialog", /** @lends sap.ui.commons.Dialog.prototype */ { metadata : {
@@ -200,50 +200,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	/**
-	 * Opens the dialog control instance.
-	 *
-	 * @name sap.ui.commons.Dialog#open
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Closes the dialog control instance.
-	 *
-	 * @name sap.ui.commons.Dialog#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether the Dialog is open (this includes opening and closing animations). For more detailed information about the current state check Dialog.getOpenState().
-	 *
-	 * @name sap.ui.commons.Dialog#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether the Dialog is currently open, closed, or transitioning between these states.
-	 *
-	 * @name sap.ui.commons.Dialog#getOpenState
-	 * @function
-	 * @type sap.ui.core.OpenState
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * Initialization hook for the dialog.
 	 * It creates the instance of the Popup helper service and does some basic configuration for it.
 	 *
@@ -345,8 +301,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Opens this instance of dialog
+	 * Opens the dialog control instance.
+	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Dialog.prototype.open = function() {
 	
@@ -415,8 +374,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Closes this Dialog
+	 * Closes the dialog control instance.
+	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Dialog.prototype.close = function() {
 	
@@ -671,11 +633,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	// Implementation of API method isOpen
+
+	/**
+	 * Returns whether the Dialog is open (this includes opening and closing animations). For more detailed information about the current state check Dialog.getOpenState().
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.isOpen = function(){
 		return this.oPopup.isOpen();
 	};
 	
 	// Implementation of API method isOpen
+
+	/**
+	 * Returns whether the Dialog is currently open, closed, or transitioning between these states.
+	 *
+	 * @type sap.ui.core.OpenState
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.getOpenState = function(){
 		return this.oPopup.getOpenState();
 	};

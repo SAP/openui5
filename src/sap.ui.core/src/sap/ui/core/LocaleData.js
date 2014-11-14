@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.LocaleData
+	 * @alias sap.ui.core.LocaleData
 	 */
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
@@ -569,8 +569,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 	/**
 	 * 
-	 * @name sap.ui.core.LocaleData.getInstance
-	 * @function
 	 */
 	LocaleData.getInstance = function(oLocale) {
 		return oLocale.hasPrivateUseSubtag("sapufmt") ? new sap.ui.core.CustomLocaleData(oLocale) : new LocaleData(oLocale);

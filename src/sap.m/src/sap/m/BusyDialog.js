@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.BusyDialog
+	 * @alias sap.m.BusyDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BusyDialog = Control.extend("sap.m.BusyDialog", /** @lends sap.m.BusyDialog.prototype */ { metadata : {
@@ -122,34 +122,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	
-	/**
-	 * Open the busy popup.
-	 *
-	 * @name sap.m.BusyDialog#open
-	 * @function
-	 * @type sap.m.BusyDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Close the busy popup.
-	 *
-	 * @name sap.m.BusyDialog#close
-	 * @function
-	 * @type sap.m.BusyDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.BusyDialog.prototype.init = function(){
-	//   // do something for initialization...
-	//};
-	
 	BusyDialog.prototype.init = function(){
 		var that = this;
 		this._$window = jQuery(window);
@@ -220,10 +192,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Opens the dialog
+	 * Opens the busy popup.
 	 *
+	 * @type sap.m.BusyDialog
 	 * @public
-	 *
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BusyDialog.prototype.open = function(){
 		jQuery.sap.log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
@@ -260,10 +233,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Closes the dialog
+	 * Close the busy popup.
 	 *
+	 * @type sap.m.BusyDialog
 	 * @public
-	 *
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BusyDialog.prototype.close = function(bFromCancelButton){
 		this._bOpenRequested = false;

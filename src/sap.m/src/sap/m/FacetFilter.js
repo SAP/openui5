@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.FacetFilter
+	 * @alias sap.m.FacetFilter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilter = Control.extend("sap.m.FacetFilter", /** @lends sap.m.FacetFilter.prototype */ { metadata : {
@@ -124,18 +124,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			reset : {}
 		}
 	}});
-	
-	
-	/**
-	 * Opens the facet filter dialog.
-	 *
-	 * @name sap.m.FacetFilter#openFilterDialog
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	
 	
 	// How many pixels to scroll with every overflow arrow click
@@ -263,6 +251,14 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	
 	
 	// API doc provided in the meta-data
+
+	/**
+	 * Opens the facet filter dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilter.prototype.openFilterDialog = function() {
 	
 		var oDialog = this._getFacetDialog();

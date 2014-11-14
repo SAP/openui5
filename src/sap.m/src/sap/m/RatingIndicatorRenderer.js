@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 	/*jslint nomen: false */
 	
 	/**
-	 * @class RatingIndicator renderer.
-	 * @static
+	 * RatingIndicator renderer.
+	 * @namespace
 	 */
 	var RatingIndicatorRenderer = {
 	};

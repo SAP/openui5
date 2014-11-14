@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @param {object} [oContext=null] the context object for this databinding (optional)
 	 * @param {array} [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object} [mParameters=null] additional model specific parameters (optional) 
-	 * @name sap.ui.model.ClientTreeBinding
+	 * @alias sap.ui.model.ClientTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
 	var ClientTreeBinding = TreeBinding.extend("sap.ui.model.ClientTreeBinding", /** @lends sap.ui.model.ClientTreeBinding.prototype */ {
@@ -42,31 +42,12 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.ClientTreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.ClientTreeBinding.extend
-	 * @function
-	 */
-	
-	/**
 	 * Return root contexts for the tree
 	 *
 	 * @return {object[]} the contexts array
 	 * @protected
-	 * @name sap.ui.model.ClientTreeBinding#getRootContexts
 	 * @param {integer} iStartIndex the startIndex where to start the retrieval of contexts
 	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @function
 	 */
 	ClientTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -101,8 +82,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @param {integer} iLength determines how many contexts to retrieve beginning from the start index.
 	 * @return {object[]} the contexts array
 	 * @protected
-	 * @name sap.ui.model.ClientTreeBinding#getNodeContexts
-	 * @function
 	 */
 	ClientTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -155,8 +134,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	/**
 	 * Returns if the node has child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.hasChildren
 	 * @param {object} oContext the context element of the node
 	 * @return {boolean} true if node has children
 	 *
@@ -192,8 +169,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
 	 * @public
-	 * @name sap.ui.model.ClientTreeBinding#filter
-	 * @function
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
@@ -218,8 +193,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * filters the tree recursively.
 	 * @param {object} oParentContext the context where to start. The children of this node context are then filtered recursively.
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#filterRecursive
-	 * @function
 	 */
 	ClientTreeBinding.prototype.filterRecursive = function(oParentContext){
 	
@@ -241,8 +214,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * Performs the real filtering and stores all filtered contexts and its parent context into an array.
 	 * @param {object} oParentContext the context where to start. The children of this node context are filtered.
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#applyFilter
-	 * @function
 	 */
 	ClientTreeBinding.prototype.applyFilter = function(oParentContext){
 		if (!this.aFilters) {
@@ -323,8 +294,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * Resolve the client list binding and check if an index matches
 	 *
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#_resolveMultiFilter
-	 * @function
 	 */
 	ClientTreeBinding.prototype._resolveMultiFilter = function(oMultiFilter, oUnfilteredContext){
 		var that = this,
@@ -364,8 +333,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	/**
 	 * Provides a JS filter function for the given filter
 	 * @private
-	 * @name sap.ui.model.ClientTreeBinding#getFilterFunction
-	 * @function
 	 */
 	ClientTreeBinding.prototype.getFilterFunction = function(oFilter){
 		if (oFilter.fnTest) {
@@ -413,8 +380,6 @@ sap.ui.define(['jquery.sap.global', './TreeBinding'],
 	 * 
 	 * @param {boolean} bForceupdate
 	 * 
-	 * @name sap.ui.model.ClientTreeBinding#checkUpdate
-	 * @function
 	 */
 	ClientTreeBinding.prototype.checkUpdate = function(bForceupdate){
 		this._fireChange();

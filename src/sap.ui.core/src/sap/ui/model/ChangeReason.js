@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @static
 	* @public
-	* @name sap.ui.model.ChangeReason
+	* @alias sap.ui.model.ChangeReason
 	*/
 	var ChangeReason = {
 	

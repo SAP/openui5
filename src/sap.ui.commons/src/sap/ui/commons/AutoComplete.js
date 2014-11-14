@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	 * @constructor
 	 * @public
 	 * @since 1.10.0
-	 * @name sap.ui.commons.AutoComplete
+	 * @alias sap.ui.commons.AutoComplete
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AutoComplete = ComboBox.extend("sap.ui.commons.AutoComplete", /** @lends sap.ui.commons.AutoComplete.prototype */ { metadata : {
@@ -62,17 +62,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	}});
 	
 	
-	/**
-	 * Sets a custom filter function for items. Default is to check whether the item text begins with the typed value.
-	 *
-	 * @name sap.ui.commons.AutoComplete#setFilterFunction
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	AutoComplete._DEFAULTFILTER = function(sValue, oItem){
 		if (this._skipFilter) { //Easy (currently internal) way to skip auto filtering
 			return true;
@@ -104,10 +93,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	 * </code>
 	 *
 	 * @param {function} [fFilter] The filter function. If not set the default filter function will be used.
-	 * 
-	 * @name sap.ui.commons.AutoComplete.prototype.setFilterFunction
-	 * @function
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AutoComplete.prototype.setFilterFunction = function(fFilter) {
 		if (typeof (fFilter) == "function") {
@@ -403,8 +390,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	/**
 	 * @deprecated NOT SUPPORTED
 	 * @public
-	 * @name sap.ui.commons.AutoComplete#setListBox
-	 * @function
 	 */
 	AutoComplete.prototype.setListBox = function(){
 		return this;
@@ -422,8 +407,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	/**
 	 * @deprecated NOT SUPPORTED
 	 * @public
-	 * @name sap.ui.commons.AutoComplete#setSelectedKey
-	 * @function
 	 */
 	AutoComplete.prototype.setSelectedKey = function(){
 		return this;
@@ -441,8 +424,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 	/**
 	 * @deprecated NOT SUPPORTED
 	 * @public
-	 * @name sap.ui.commons.AutoComplete#setSelectedItemId
-	 * @function
 	 */
 	AutoComplete.prototype.setSelectedItemId = function(){
 		return this;

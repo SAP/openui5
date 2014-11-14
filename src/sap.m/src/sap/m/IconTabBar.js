@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.IconTabBar
+	 * @alias sap.m.IconTabBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IconTabBar = Control.extend("sap.m.IconTabBar", /** @lends sap.m.IconTabBar.prototype */ { metadata : {
@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*           begin: reflectors for header properties           */
 	/* =========================================================== */
 	
-	/**
+	/*
 	 * Reflector for the internal header's showSelection property
 	 * @overwrite
 	 * @public
@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 	
-	/**
+	/*
 	 * Reflector for the internal header's showSelection property
 	 * @overwrite
 	 * @public

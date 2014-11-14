@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Token
+	 * @alias sap.m.Token
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {
@@ -157,7 +157,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Function is called when token is pressed to select/deselect token.
-	 * @name sap.m.Token#_onTokenPress
 	 * @private
 	 * @param {jQuery.Event}
 	 *          oEvent
@@ -176,7 +175,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Event handler called when control is on tap
 	 *
-	 * @name sap.m.Token#ontap
 	 * @param {jQuery.Event}
 	 * 			oEvent
 	 * @private

@@ -34,7 +34,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @since 1.22.0
 	 * @experimental Since version 1.22.0. 
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.layout.Splitter
+	 * @alias sap.ui.layout.Splitter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Splitter = Control.extend("sap.ui.layout.Splitter", /** @lends sap.ui.layout.Splitter.prototype */ { metadata : {

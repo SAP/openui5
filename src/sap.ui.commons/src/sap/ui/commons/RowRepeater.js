@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RowRepeater
+	 * @alias sap.ui.commons.RowRepeater
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RowRepeater = Control.extend("sap.ui.commons.RowRepeater", /** @lends sap.ui.commons.RowRepeater.prototype */ { metadata : {
@@ -193,105 +193,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	
 	/**
-	 * Resizes the row repeater by changing the number of displayed rows. This method will only resize the RowRepeater if the property showMoreSteps is set.
-	 *
-	 * @name sap.ui.commons.RowRepeater#resize
-	 * @function
-	 * @param {int} iNumberOfRows
-	 *         The new value of number of rows displayed.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Applies a filter.
-	 *
-	 * @name sap.ui.commons.RowRepeater#applyFilter
-	 * @function
-	 * @param {string} sId
-	 *         The ID if the filter.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sort the data.
-	 *
-	 * @name sap.ui.commons.RowRepeater#triggerSort
-	 * @function
-	 * @param {string} sId
-	 *         The ID of the sorter.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Switch to first page.
-	 *
-	 * @name sap.ui.commons.RowRepeater#firstPage
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Switch to last page.
-	 *
-	 * @name sap.ui.commons.RowRepeater#lastPage
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Switch to previous page.
-	 *
-	 * @name sap.ui.commons.RowRepeater#previousPage
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Switch to next page.
-	 *
-	 * @name sap.ui.commons.RowRepeater#nextPage
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Switch to specified page.
-	 *
-	 * @name sap.ui.commons.RowRepeater#gotoPage
-	 * @function
-	 * @param {int} iPageNumber
-	 *         The index of the page to go to.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	///**
-	//* This file defines behavior for the control,
-	//*/
-	
-	/**
 	 * This value of the paging mode boolean is true if the showMoreSteps
 	 * property is not set. This value is updated whenever the value
 	 * of showMoreSteps is changed.
@@ -416,6 +317,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Resizes the row repeater by changing the number of displayed rows. This method will only resize the RowRepeater if the property showMoreSteps is set.
+	 *
+	 * @param {int} iNumberOfRows
+	 *         The new value of number of rows displayed.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.resize = function(numberOfRows) {
 	
 		// execute only if showMoreSteps is bigger than 0
@@ -464,6 +375,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Applies a filter.
+	 *
+	 * @param {string} sId
+	 *         The ID if the filter.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.applyFilter = function(id) {
 	
 		// local variables
@@ -504,6 +425,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Sort the data.
+	 *
+	 * @param {string} sId
+	 *         The ID of the sorter.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.triggerSort = function(id) {
 	
 		// local variables
@@ -544,6 +475,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Switch to first page.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.firstPage = function() {
 	
 		// only execute if showMoreSteps is not bigger than 0
@@ -595,6 +534,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Switch to last page.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.lastPage = function() {
 	
 		// only execute if showMoreSteps is not bigger than 0
@@ -647,6 +594,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Switch to previous page.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.previousPage = function() {
 	
 		// only execute if showMoreSteps is not bigger than 0
@@ -698,6 +653,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Switch to next page.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.nextPage = function() {
 	
 		// only execute if showMoreSteps is not bigger than 0
@@ -750,6 +713,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	
+
+	/**
+	 * Switch to specified page.
+	 *
+	 * @param {int} iPageNumber
+	 *         The index of the page to go to.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RowRepeater.prototype.gotoPage = function(iPageNumber) {
 	
 		// only execute if showMoreSteps is not bigger than 0

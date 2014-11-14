@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ColorPicker
+	 * @alias sap.ui.commons.ColorPicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ColorPicker = Control.extend("sap.ui.commons.ColorPicker", /** @lends sap.ui.commons.ColorPicker.prototype */ { metadata : {
@@ -138,21 +138,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	}});
-
-
-	/**
-	 * This method delivers the current RGB-values
-	 *
-	 * @name sap.ui.commons.ColorPicker#getRGB
-	 * @function
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
-	 * This file defines behavior for the control sap.ui.commons.ColorPicker
-	 */
 
 
 	/**
@@ -425,7 +410,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 
-	/**
+	/*
 	 * Evaluate parameter values
 	 */
 	ColorPicker.prototype.setColorString = function(iColorString) {
@@ -1484,9 +1469,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 
-
 	/**
-	 * Deliver current RGB-values
+	 * Deliver current RGB-values.
+	 *
+	 * @name sap.ui.commons.ColorPicker#getRGB
+	 * @function
+	 * @type object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ColorPicker.prototype.getRGB = function (){
 

@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 * @constructor
 		 * @public
 		 * @since 1.16
-		 * @name sap.m.ActionSelect
+		 * @alias sap.m.ActionSelect
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ActionSelect = Select.extend("sap.m.ActionSelect", /** @lends sap.m.ActionSelect.prototype */ { metadata : {
@@ -68,7 +68,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 *
 		 * @override
 		 * @private
-		 * @name sap.m.ActionSelect#addContent
 		 */
 		ActionSelect.prototype.addContent = function() {
 			var oCore = sap.ui.getCore(),
@@ -89,7 +88,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 *
 		 * @override
 		 * @protected
-		 * @name sap.m.ActionSelect#onAfterRenderingPicker
 		 */
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
@@ -110,8 +108,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 * @param {int | string | sap.m.Button} vButton The button to remove or its index or id.
 		 * @returns {string} The id of the removed button or null.
 		 * @public
-		 * @name sap.m.ActionSelect#removeButton
-		 * @function
 		 */
 		ActionSelect.prototype.removeButton = function(vButton) {
 			var oPicker = this.getPicker();
@@ -133,8 +129,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 *
 		 * @returns {string[]} An array with the ids of the removed elements (might be empty).
 		 * @public
-		 * @name sap.m.ActionSelect#removeAllButtons
-		 * @function
 		 */
 		ActionSelect.prototype.removeAllButtons = function() {
 			var oPicker = this.getPicker();
@@ -206,8 +200,6 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
-		 * @name sap.m.ActionSelect#onsapfocusleave
-		 * @function
 		 */
 		ActionSelect.prototype.onsapfocusleave = function(oEvent) {
 			// Keep focus on Action Select's input field if does not go to 

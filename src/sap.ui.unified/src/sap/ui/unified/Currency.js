@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @constructor
 	 * @public
 	 * @since 1.21.1
-	 * @name sap.ui.unified.Currency
+	 * @alias sap.ui.unified.Currency
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Currency = Control.extend("sap.ui.unified.Currency", /** @lends sap.ui.unified.Currency.prototype */ { metadata : {
@@ -56,26 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}});
 	
 	
-	/**
-	 * The formatted value
-	 *
-	 * @name sap.ui.unified.Currency#getFormattedValue
-	 * @function
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
-	/**
-	 * Get symbol of the currency, if available
-	 *
-	 * @name sap.ui.unified.Currency#getCurrencySymbol
-	 * @function
-	 * @type string
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
+	
 	
 	
 	//Whitespace characters to align values
@@ -88,6 +72,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		});
 	};
 	
+
+	/**
+	 * The formatted value
+	 *
+	 * @type string
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Currency.prototype.getFormattedValue = function() {
 		if (this.getCurrency() === "*") {
 			return "";
@@ -110,6 +102,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		return sValue;
 	};
 	
+
+	/**
+	 * Get symbol of the currency, if available
+	 *
+	 * @type string
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Currency.prototype.getCurrencySymbol = function() {
 		return this._oFormat.oLocaleData.getCurrencySymbol(this.getCurrency());
 	};

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12.0
-	 * @name sap.m.InputBase
+	 * @alias sap.m.InputBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata : {
@@ -405,9 +405,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @protected
 	 * @param {object} oEvent
-	 * @name sap.m.InputBase#onChange
 	 * @returns {true|undefined} true when change event is fired
-	 * @function
 	 */
 	InputBase.prototype.onChange = function(oEvent) {
 	
@@ -443,11 +441,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Fires the change event for the listeners
 	 *
 	 * @protected
-	 * @name sap.m.InputBase#fireChangeEvent
 	 * @param {String} sValue value of the input.
 	 * @param {Object} [oParams] extra event parameters.
 	 * @since 1.22.1
-	 * @function
 	 */
 	InputBase.prototype.fireChangeEvent = function(sValue, oParams) {
 		// generate event parameters
@@ -467,10 +463,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * It may require to re-implement this method from sub classes for control specific behaviour.
 	 *
 	 * @protected
-	 * @name sap.m.InputBase#onValueRevertedByEscape
 	 * @param {String} sValue Reverted value of the input.
 	 * @since 1.26
-	 * @function
 	 */
 	InputBase.prototype.onValueRevertedByEscape = function(sValue) {
 		// fire private live change event
@@ -596,8 +590,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @returns {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @protected
 	 * @since 1.22.1
-	 * @name sap.m.InputBase#selectText
-	 * @function
 	 */
 	InputBase.prototype.selectText = function(iSelectionStart, iSelectionEnd) {
 		jQuery(this.getFocusDomRef()).selectText(iSelectionStart, iSelectionEnd);
@@ -624,7 +616,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {function} fnCallback Function to be called when the value of the input element is changed.
 	 * @deprecated Since 1.22. Instead use event delegation(oninput) to listen input event.
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
-	 * @name sap.m.InputBase#bindToInputEvent
 	 * @protected
 	 */
 	InputBase.prototype.bindToInputEvent = function(fnCallback) {
@@ -648,7 +639,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {string} sValue value of the input field.
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
-	 * @name sap.m.InputBase#updateDomValue
 	 * @since 1.22
 	 * @protected
 	 */
@@ -675,10 +665,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Close value state message.
 	 *
-	 * @name sap.m.InputBase.prototype#closeValueStateMessage
 	 * @since 1.26
 	 * @protected
-	 * @function
 	 */
 	InputBase.prototype.closeValueStateMessage = function (){
 		if (this._popup) {
@@ -690,10 +678,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Get the reference element which the message popup should dock to.
 	 *
 	 * @return {object} DOM element which the message popup should dock to
-	 * @name sap.m.InputBase#getDomRefForValueStateMessage
 	 * @since 1.26
 	 * @protected
-	 * @function
 	 */
 	InputBase.prototype.getDomRefForValueStateMessage = function(){
 		return this.getFocusDomRef();
@@ -704,10 +690,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Open value state message popup.
 	 *
-	 * @name sap.m.InputBase#openValueStateMessage
 	 * @since 1.26
 	 * @protected
-	 * @function
 	 */
 	InputBase.prototype.openValueStateMessage = function (){
 		var sState = this.getValueState();
@@ -791,8 +775,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {sap.ui.core.ValueState} sValueState New value for property <code>valueState</code>.
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.InputBase#setValueState
-	 * @function
 	 */
 	InputBase.prototype.setValueState = function(sValueState) {
 		var sOldValueState = this.getValueState();
@@ -846,8 +828,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining
 	 * @since 1.26
 	 * @public
-	 * @name sap.m.InputBase#setValueStateText
-	 * @function
 	 */
 	InputBase.prototype.setValueStateText = function (sText) {
 		this.setProperty("valueStateText", sText, true);
@@ -863,8 +843,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {string} sValue New value for property <code>value</code>.
 	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
 	 * @public
-	 * @name sap.m.InputBase#setValue
-	 * @function
 	 */
 	InputBase.prototype.setValue = function(sValue) {
 	
@@ -895,8 +873,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @return {object} An object representing the serialized focus information.
 	 * @protected
-	 * @name sap.m.InputBase.prototype#getFocusInfo
-	 * @function
 	 */
 	InputBase.prototype.getFocusInfo = function() {
 		var oFocusInfo = Control.prototype.getFocusInfo.call(this),
@@ -927,8 +903,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {object} oFocusInfo
 	 * @protected
-	 * @name sap.m.InputBase.prototype#applyFocusInfo
-	 * @function
 	 */
 	InputBase.prototype.applyFocusInfo = function(oFocusInfo) {
 		Control.prototype.applyFocusInfo.call(this, oFocusInfo);

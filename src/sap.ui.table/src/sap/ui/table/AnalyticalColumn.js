@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 	 * @public
 	 * @experimental Since version 1.21. 
 	 * The AnalyticalColumn will be productized soon. Some attributes will be added to Column.
-	 * @name sap.ui.table.AnalyticalColumn
+	 * @alias sap.ui.table.AnalyticalColumn
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ { metadata : {

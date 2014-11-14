@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ShellLayoutRender
 
 
 	/**
-	 * @class Renderer for the sap.ui.unified.Shell
-	 * @static
+	 * Renderer for the sap.ui.unified.Shell
+	 * @namespace
 	 */
 	var ShellRenderer = Renderer.extend(ShellLayoutRenderer);
 	

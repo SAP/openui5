@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Tokenizer
+	 * @alias sap.m.Tokenizer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tokenizer = Control.extend("sap.m.Tokenizer", /** @lends sap.m.Tokenizer.prototype */ { metadata : {
@@ -366,8 +366,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * check if all tokens in the tokenizer are selected.
 	 *
 	 * @private
-	 * @name sap.m.Tokenizer#isAllTokenSelected
-	 * @function
 	 */
 	Tokenizer.prototype.isAllTokenSelected = function() {
 		if (this.getTokens().length === this.getSelectedTokens().length) {
@@ -480,7 +478,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		oEvent.setMarked();
 	
 	};
-	
+
+	/**
+	 * Adjusts the scrollLeft so that the given token is visible from its left side
+	 * @param {sap.m.Token} oToken The token that will be fully visible
+	 * @private
+	*/
+	Tokenizer.prototype._ensureTokenVisible = function(oToken) {
+		var iTokenizerLeftOffset = this.$().offset().left,
+			iTokenLeftOffset = oToken.$().offset().left;
+
+		if (iTokenLeftOffset < iTokenizerLeftOffset) {
+			this.$().scrollLeft(this.$().scrollLeft() - iTokenizerLeftOffset + iTokenLeftOffset);
+		}
+	};
+
 	/**
 	 * Called when the user presses the left arrow key, selects previous token
 	 * @param {jQuery.Event} oEvent The event triggered by the user

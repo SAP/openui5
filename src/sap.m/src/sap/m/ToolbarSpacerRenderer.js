@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class ToolbarSpacer renderer.
-	 * @static
+	 * ToolbarSpacer renderer.
+	 * @namespace
 	 */
 	var ToolbarSpacerRenderer = {};
 	

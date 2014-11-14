@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectStatus renderer. 
-	 * @static
+	 * ObjectStatus renderer. 
+	 * @namespace
 	 */
 	var ObjectStatusRenderer = {
 	};

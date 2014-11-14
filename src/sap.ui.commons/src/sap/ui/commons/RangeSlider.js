@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
-	 * @name sap.ui.commons.RangeSlider
+	 * @alias sap.ui.commons.RangeSlider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RangeSlider = Slider.extend("sap.ui.commons.RangeSlider", /** @lends sap.ui.commons.RangeSlider.prototype */ { metadata : {

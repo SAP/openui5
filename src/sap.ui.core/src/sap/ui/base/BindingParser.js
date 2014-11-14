@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * @static
 	 * @namespace
-	 * @name sap.ui.base.BindingParser
+	 * @alias sap.ui.base.BindingParser
 	 */
 	var BindingParser = {};
 	

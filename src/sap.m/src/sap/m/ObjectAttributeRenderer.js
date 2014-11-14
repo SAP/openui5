@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectAttributeA renderer. 
-	 * @static
+	 * ObjectAttributeA renderer. 
+	 * @namespace
 	 */
 	var ObjectAttributeRenderer = {
 	};

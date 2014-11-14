@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/Menu
 
 
 	/**
-	 * @class Renderer for the sap.ui.table.ColumnMenuRendere
-	 * @static
+	 * Renderer for the sap.ui.table.ColumnMenuRendere
+	 * @namespace
 	 */
 	var ColumnMenuRenderer = Renderer.extend(MenuRenderer);
 

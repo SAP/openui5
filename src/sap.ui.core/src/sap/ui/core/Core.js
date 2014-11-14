@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
-	 * @name sap.ui.core.Core 
+	 * @alias sap.ui.core.Core 
 	 * @public
 	 */
 	var Core = EventProvider.extend("sap.ui.core.Core", /** @lends sap.ui.core.Core.prototype */ {
@@ -442,7 +442,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Map of event names and ids, that are provided by this class
 	 * @private
-	 * @name sap.ui.core.Core.M_EVENTS
 	 */
 	Core.M_EVENTS = {ControlEvent: "ControlEvent", UIUpdated: "UIUpdated", ThemeChanged: "ThemeChanged", LocalizationChanged: "localizationChanged",
 			LibraryChanged : "libraryChanged",
@@ -453,8 +452,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Applications shouldn't call this method. It is automatically called by the bootstrap scripts (e.g. sap-ui-core.js)
 	 *
 	 * @private
-	 * @name sap.ui.core.Core#_boot
-	 * @function
 	 */
 	Core.prototype._boot = function() {
 	
@@ -522,8 +519,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sThemeName the name of the theme to be loaded
 	 * @param {string} [sThemeBaseUrl] the (optional) base location of the theme
 	 * @public
-	 * @name sap.ui.core.Core#applyTheme
-	 * @function
 	 */
 	Core.prototype.applyTheme = function(sThemeName, sThemeBaseUrl) {
 		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
@@ -598,8 +593,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param sLibName
 	 * @param sThemeName
 	 * @private
-	 * @name sap.ui.core.Core#_getThemePath
-	 * @function
 	 */
 	Core.prototype._getThemePath = function(sLibName, sThemeName) {
 		if (this._mThemeRoots) {
@@ -647,8 +640,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.Core} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
-	 * @name sap.ui.core.Core#setThemeRoot
-	 * @function
 	 */
 	Core.prototype.setThemeRoot = function(sThemeName, aLibraryNames, sThemeBaseUrl) {
 		jQuery.sap.assert(typeof sThemeName === "string", "sThemeName must be a string");
@@ -684,8 +675,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Initializes the Core after the initial page was loaded
 	 * @private
-	 * @name sap.ui.core.Core#init
-	 * @function
 	 */
 	Core.prototype.init = function() {
 	
@@ -801,8 +790,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Handles the load event of the browser to initialize the Core
 	 * @private
-	 * @name sap.ui.core.Core#handleLoad
-	 * @function
 	 */
 	Core.prototype.handleLoad = function () {
 		this.bDomReady = true;
@@ -827,8 +814,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {boolean} whether the Core has already been initialized
 	 * @public
-	 * @name sap.ui.core.Core#isInitialized
-	 * @function
 	 */
 	Core.prototype.isInitialized = function () {
 		return this.bInitialized;
@@ -842,8 +827,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {boolean} whether the styles of the current theme are already applied
 	 * @public
-	 * @name sap.ui.core.Core#isThemeApplied
-	 * @function
 	 */
 	Core.prototype.isThemeApplied = function () {
 		return ThemeCheck.themeLoaded;
@@ -858,8 +841,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction the function to be called on event firing.
 	 * @public
 	 * @deprecated since 1.13.2 Register to the more convenient {@link sap.ui.core.Core#attachInit init event} instead
-	 * @name sap.ui.core.Core#attachInitEvent
-	 * @function
 	 */
 	Core.prototype.attachInitEvent = function (fnFunction) {
 		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
@@ -877,8 +858,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction the callback function to be called on event firing.
 	 * @public
 	 * @since 1.13.2
-	 * @name sap.ui.core.Core#attachInit
-	 * @function
 	 */
 	Core.prototype.attachInit = function (fnFunction) {
 		jQuery.sap.assert(typeof fnFunction === "function", "fnFunction must be a function");
@@ -895,8 +874,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Lock should be called before and after the dom is modified for rendering, roundtrips...
 	 * Exceptions might be the case for asynchronous UI behavior
 	 * @public
-	 * @name sap.ui.core.Core#lock
-	 * @function
 	 */
 	Core.prototype.lock = function () {
 		// TODO clarify it the documentation is really (stil?) true
@@ -908,8 +885,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * 
 	 * Browser events are dispatched to the controls again after this method is called.
 	 * @public
-	 * @name sap.ui.core.Core#unlock
-	 * @function
 	 */
 	Core.prototype.unlock = function () {
 		this.bLocked = false;
@@ -919,8 +894,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Returns the locked state of the <code>sap.ui.core.Core</code>
 	 * @return {boolean} locked state
 	 * @public
-	 * @name sap.ui.core.Core#isLocked
-	 * @function
 	 */
 	Core.prototype.isLocked = function () {
 		return this.bLocked;
@@ -931,8 +904,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Configuration} the Configuration of the current Core.
 	 * @public
-	 * @name sap.ui.core.Core#getConfiguration
-	 * @function
 	 */
 	Core.prototype.getConfiguration = function () {
 		return this.oConfiguration;
@@ -941,8 +912,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * @public
 	 * @deprecated Since version 0.15.0. Replaced by <code>createRenderManager()</code>
-	 * @name sap.ui.core.Core#getRenderManager
-	 * @function
 	 */
 	Core.prototype.getRenderManager = function() {
 		return this.createRenderManager(); //this.oRenderManager;
@@ -953,8 +922,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.RenderManager} the new instance of the RenderManager interface.
 	 * @public
-	 * @name sap.ui.core.Core#createRenderManager
-	 * @function
 	 */
 	Core.prototype.createRenderManager = function() {
 		return (new RenderManager()).getInterface();
@@ -964,8 +931,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Returns the Id of the control/element currently in focus.
 	 * @return {string} the Id of the control/element currently in focus.
 	 * @public
-	 * @name sap.ui.core.Core#getCurrentFocusedControlId
-	 * @function
 	 */
 	Core.prototype.getCurrentFocusedControlId = function() {
 		if (!this.isInitialized()) {
@@ -997,8 +962,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sLibrary name of the library to import
 	 * @param {string} [sUrl] URL to load the library from
 	 * @public
-	 * @name sap.ui.core.Core#loadLibrary
-	 * @function
 	 */
 	Core.prototype.loadLibrary = function(sLibrary, sUrl) {
 		jQuery.sap.assert(typeof sLibrary === "string", "sLibrary must be a string");
@@ -1062,8 +1025,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} [sId] the ID for the component instance
 	 * @param {object} [mSettings] the settings object for the component
 	 * @public
-	 * @name sap.ui.core.Core#createComponent
-	 * @function
 	 */
 	Core.prototype.createComponent = function(vComponent, sUrl, sId, mSettings) {
 		
@@ -1092,8 +1053,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Component} instance of the current root component
 	 * @public
-	 * @name sap.ui.core.Core#getRootComponent
-	 * @function
 	 */
 	Core.prototype.getRootComponent = function() {
 		return this.oRootComponent;
@@ -1112,8 +1071,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @param {string|object} vLibInfo name of or info object for the library to import
 	 * @public
-	 * @name sap.ui.core.Core#initLibrary
-	 * @function
 	 */
 	Core.prototype.initLibrary = function(vLibInfo) {
 		jQuery.sap.assert(typeof vLibInfo === "string" || typeof vLibInfo === "object", "vLibInfo must be a string or object");
@@ -1227,8 +1184,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} [sVariant] the variant to include (optional)
 	 * @param {string} [sQuery] to be used only by the Core
 	 * @public
-	 * @name sap.ui.core.Core#includeLibraryTheme
-	 * @function
 	 */
 	Core.prototype.includeLibraryTheme = function(sLibName, sVariant, sQuery) {
 		jQuery.sap.assert(typeof sLibName === "string", "sLibName must be a string");
@@ -1283,8 +1238,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {map} map of library names / controls
 	 * @public
-	 * @name sap.ui.core.Core#getLoadedLibraries
-	 * @function
 	 */
 	Core.prototype.getLoadedLibraries = function() {
 		return jQuery.extend({}, this.mLibraries); // TODO deep copy or real Library object?
@@ -1301,8 +1254,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} [sLocale] locale to retrieve the resource bundle for
 	 * @return {jQuery.sap.util.ResourceBundle} the best matching resource bundle for the given parameters or undefined
 	 * @public
-	 * @name sap.ui.core.Core#getLibraryResourceBundle
-	 * @function
 	 */
 	Core.prototype.getLibraryResourceBundle = function(sLibraryName, sLocale) {
 		jQuery.sap.assert((sLibraryName === undefined && sLocale === undefined) || typeof sLibraryName === "string", "sLibraryName must be a string or there is no argument given at all");
@@ -1330,8 +1281,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *            oControl the Control that should be the added to the <code>UIArea</code>.
 	 * @public
 	 * @deprecated Use function <code>oControl.placeAt(oDomRef, "only")</code> of <code>sap.ui.core.Control</code> instead.
-	 * @name sap.ui.core.Core#setRoot
-	 * @function
 	 */
 	Core.prototype.setRoot = function(oDomRef, oControl) {
 		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
@@ -1349,8 +1298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.UIArea} a new UIArea
 	 * @public
 	 * @deprecated Use <code>setRoot()</code> instead!
-	 * @name sap.ui.core.Core#createUIArea
-	 * @function
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
 		var that = this;
@@ -1397,8 +1344,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @public
 	 * @param {string|Element} o a DOM Element or ID string of the UIArea
 	 * @return {sap.ui.core.UIArea} a UIArea with a given id or dom ref.
-	 * @name sap.ui.core.Core#getUIArea
-	 * @function
 	 */
 	Core.prototype.getUIArea = function(o) {
 		jQuery.sap.assert(typeof o === "string" || typeof o === "object", "o must be a string or object");
@@ -1430,8 +1375,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @param {sap.ui.core.UIArea} oUIArea UIArea that just became invalid
 	 * @private
-	 * @name sap.ui.core.Core#addInvalidatedUIArea
-	 * @function
 	 */
 	Core.prototype.addInvalidatedUIArea = function(oUIArea) {
 		if ( !this._sRerenderTimer ) {
@@ -1517,8 +1460,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {boolean} true if there are pending (or executing) rendering tasks.
 	 * @public
-	 * @name sap.ui.core.Core#getUIDirty
-	 * @function
 	 */
 	Core.prototype.getUIDirty = function() {
 		return !!(this._sRerenderTimer || this._bRendering);
@@ -1611,8 +1552,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction callback to be called 
 	 * @param {object} oListener context object to cal lthe function on.
 	 * @public
-	 * @name sap.ui.core.Core#attachLocalizationChanged
-	 * @function
 	 */
 	Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
@@ -1627,8 +1566,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction callback to be deregistered
 	 * @param {object} oListener context object given in a previous call to attachLocalizationChanged.
 	 * @public
-	 * @name sap.ui.core.Core#detachLocalizationChanged
-	 * @function
 	 */
 	Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
@@ -1636,8 +1573,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 	/**
 	 * @private
-	 * @name sap.ui.core.Core#fireLocalizationChanged
-	 * @function
 	 */
 	Core.prototype.fireLocalizationChanged = function(mChanges) {
 		var sEventId = Core.M_EVENTS.LocalizationChanged,
@@ -1725,8 +1660,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 	/**
 	 * Register a listener for the {@link sap.ui.core.Core#event:libraryChanged} event.
-	 * @name sap.ui.core.Core#attachLibraryChanged
-	 * @function
 	 */
 	Core.prototype.attachLibraryChanged = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -1734,8 +1667,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 	/**
 	 * Unregister a listener from the {@link sap.ui.core.Core#event:libraryChanged} event.
-	 * @name sap.ui.core.Core#detachLibraryChanged
-	 * @function
 	 */
 	Core.prototype.detachLibraryChanged = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.LibraryChanged, fnFunction, oListener);
@@ -1743,8 +1674,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 	/**
 	 * @private
-	 * @name sap.ui.core.Core#fireLibraryChanged
-	 * @function
 	 */
 	Core.prototype.fireLibraryChanged = function(oParams) {
 		// notify registered Core listeners 
@@ -1757,8 +1686,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * In general, applications should avoid calling this method and
 	 * instead let the framework manage any necessary rendering.
 	 * @public
-	 * @name sap.ui.core.Core#applyChanges
-	 * @function
 	 */
 	Core.prototype.applyChanges = function() {
 		this.renderPendingUIUpdates();
@@ -1766,8 +1693,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 	/**
 	 * @private
-	 * @name sap.ui.core.Core#registerElementClass
-	 * @function
 	 */
 	Core.prototype.registerElementClass = function(oMetadata) {
 		var sName = oMetadata.getName(),
@@ -1808,8 +1733,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Registers the given element. Must be called once during construction.
 	 * @param {sap.ui.core.Element} oElement
 	 * @private
-	 * @name sap.ui.core.Core#registerElement
-	 * @function
 	 */
 	Core.prototype.registerElement = function(oElement) {
 		var oldElement = this.byId(oElement.getId());
@@ -1830,8 +1753,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Deregisters the given element. Must be called once during destruction.
 	 * @param {sap.ui.core.Element} oElement
 	 * @private
-	 * @name sap.ui.core.Core#deregisterElement
-	 * @function
 	 */
 	Core.prototype.deregisterElement = function(oElement) {
 		delete this.mElements[oElement.getId()];
@@ -1841,8 +1762,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Registers the given object. Must be called once during construction.
 	 * @param {sap.ui.core.ManagedObject} oObject the object instance
 	 * @private
-	 * @name sap.ui.core.Core#registerObject
-	 * @function
 	 */
 	Core.prototype.registerObject = function(oObject) {
 		var sId = oObject.getId(),
@@ -1861,8 +1780,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Deregisters the given object. Must be called once during destruction.
 	 * @param {sap.ui.core.ManagedObject} oObject the object instance
 	 * @private
-	 * @name sap.ui.core.Core#deregisterObject
-	 * @function
 	 */
 	Core.prototype.deregisterObject = function(oObject) {
 		var sId = oObject.getId(),
@@ -1876,8 +1793,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sId
 	 * @return {sap.ui.core.Element} the element for the given id
 	 * @public
-	 * @name sap.ui.core.Core#byId
-	 * @function
 	 */
 	Core.prototype.byId = function(sId) {
 		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
@@ -1933,7 +1848,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
-	 * @name sap.ui.core.Core#getControl
 	 */
 	Core.prototype.getControl = Core.prototype.byId;
 	
@@ -1944,7 +1858,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
-	 * @name sap.ui.core.Core#getElementById
 	 */
 	Core.prototype.getElementById = Core.prototype.byId;
 	
@@ -1954,8 +1867,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the component for the given id
 	 * @private
-	 * @name sap.ui.core.Core#getObject
-	 * @function
 	 */
 	Core.prototype.getObject = function(sType, sId) {
 		jQuery.sap.assert(sId == null || typeof sId === "string", "sId must be a string when defined");
@@ -1968,8 +1879,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the component for the given id
 	 * @public
-	 * @name sap.ui.core.Core#getComponent
-	 * @function
 	 */
 	Core.prototype.getComponent = function(sId) {
 		return this.getObject("component", sId);
@@ -1980,8 +1889,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
-	 * @name sap.ui.core.Core#getTemplate
-	 * @function
 	 */
 	Core.prototype.getTemplate = function(sId) {
 		return this.getObject("template", sId);
@@ -1997,8 +1904,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {Element} the static, hidden area DOM element belonging to this core instance.
 	 * @throws {Error} an Error if the document is not yet ready
 	 * @public
-	 * @name sap.ui.core.Core#getStaticAreaRef
-	 * @function
 	 */
 	Core.prototype.getStaticAreaRef = function() {
 		var sStaticId = "sap-ui-static";
@@ -2028,8 +1933,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {object} oDomRef
 	 * @return {boolean} whether the given DomRef is the StaticAreaRef
 	 * @protected
-	 * @name sap.ui.core.Core#isStaticAreaRef
-	 * @function
 	 */
 	Core.prototype.isStaticAreaRef = function(oDomRef) {
 		return oDomRef && (oDomRef.id === "sap-ui-static");
@@ -2038,7 +1941,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Interval for central interval timer.
 	 * @private
-	 * @name sap.ui.core.Core._I_INTERVAL
 	 */
 	Core._I_INTERVAL = 200;
 	
@@ -2057,8 +1959,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {object} [oListener] optional context object to call the callback on.
 	 * @since 1.16.0
 	 * @public
-	 * @name sap.ui.core.Core#attachIntervalTimer
-	 * @function
 	 */
 	Core.prototype.attachIntervalTimer = function(fnFunction, oListener) {
 		if (!this.oTimedTrigger) {
@@ -2078,8 +1978,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {object} [oListener] context object given during registration
 	 * @since 1.16.0
 	 * @public
-	 * @name sap.ui.core.Core#detachIntervalTimer
-	 * @function
 	 */
 	Core.prototype.detachIntervalTimer = function(fnFunction, oListener) {
 		if (this.oTimedTrigger) {
@@ -2093,8 +1991,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction callback to be called for each control event
 	 * @param {object} [oListener] optional context object to call the callback on.
 	 * @public
-	 * @name sap.ui.core.Core#attachControlEvent
-	 * @function
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -2109,8 +2005,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {function} fnFunction function to unregister
 	 * @param {object} [oListener] context object given during registration
 	 * @public
-	 * @name sap.ui.core.Core#detachControlEvent
-	 * @function
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.ControlEvent, fnFunction, oListener);
@@ -2120,8 +2014,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Notifies the listeners that a event on a control occures
 	 * @param {map} mParameters { browserEvent: jQuery.EventObject }
 	 * @private
-	 * @name sap.ui.core.Core#fireControlEvent
-	 * @function
 	 */
 	Core.prototype.fireControlEvent = function(mParameters) {
 		this.fireEvent(Core.M_EVENTS.ControlEvent, mParameters);
@@ -2133,8 +2025,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {jQuery.EventObject} oEvent control event
 	 * @param {string} sUIAreaId id of the UIArea that received the event
 	 * @private
-	 * @name sap.ui.core.Core#_handleControlEvent
-	 * @function
 	 */
 	Core.prototype._handleControlEvent = function(/**event*/oEvent, sUiAreaId) {
 		// Create a copy of the event
@@ -2152,8 +2042,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.app.Application} instance of the current application
 	 * @public
 	 * @deprecated Since 1.15.1. The Component class is enhanced to take care about the Application code.
-	 * @name sap.ui.core.Core#getApplication
-	 * @function
 	 */
 	Core.prototype.getApplication = function() {
 		return sap.ui.getApplication && sap.ui.getApplication();
@@ -2172,8 +2060,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
-	 * @name sap.ui.core.Core#registerPlugin
-	 * @function
 	 */
 	Core.prototype.registerPlugin = function(oPlugin) {
 		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
@@ -2206,8 +2092,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @param {object} oPlugin reference to a Plugin object
 	 * @public
-	 * @name sap.ui.core.Core#unregisterPlugin
-	 * @function
 	 */
 	Core.prototype.unregisterPlugin = function(oPlugin) {
 		jQuery.sap.assert(typeof oPlugin === "object", "oPlugin must be an object");
@@ -2244,8 +2128,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Internal method to start all registered plugins
 	 * @private
-	 * @name sap.ui.core.Core#startPlugins
-	 * @function
 	 */
 	Core.prototype.startPlugins = function() {
 		for (var i = 0, l = this.aPlugins.length; i < l; i++) {
@@ -2259,8 +2141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	/**
 	 * Internal method to stop all registered plugins
 	 * @private
-	 * @name sap.ui.core.Core#stopPlugins
-	 * @function
 	 */
 	Core.prototype.stopPlugins = function() {
 		for (var i = 0, l = this.aPlugins.length; i < l; i++) {
@@ -2290,8 +2170,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#setModel
-	 * @function
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
 		jQuery.sap.assert(oModel == null || oModel instanceof sap.ui.model.Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
@@ -2325,8 +2203,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {string|undefined} [sName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
 	 * @public
-	 * @name sap.ui.core.Core#getModel
-	 * @function
 	 */
 	Core.prototype.getModel = function(sName) {
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
@@ -2337,8 +2213,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Check if a Model is set to the core
 	 * @return {boolean} true or false
 	 * @public
-	 * @name sap.ui.core.Core#hasModel
-	 * @function
 	 */
 	Core.prototype.hasModel = function() {
 		return !jQuery.isEmptyObject(this.oModels);
@@ -2349,8 +2223,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @return {sap.ui.core.EventBus} the event bus
 	 * @since 1.8.0
 	 * @public
-	 * @name sap.ui.core.Core#getEventBus
-	 * @function
 	 */
 	Core.prototype.getEventBus = function() {
 		if (!this.oEventBus) {
@@ -2373,8 +2245,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#attachValidationError
-	 * @function
 	 */
 	Core.prototype.attachValidationError = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.ValidationError, fnFunction, oListener);
@@ -2392,8 +2262,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#detachValidationError
-	 * @function
 	 */
 	Core.prototype.detachValidationError = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.ValidationError, fnFunction, oListener);
@@ -2412,8 +2280,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#attachParseError
-	 * @function
 	 */
 	Core.prototype.attachParseError = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.ParseError, fnFunction, oListener);
@@ -2431,8 +2297,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#detachParseError
-	 * @function
 	 */
 	Core.prototype.detachParseError = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.ParseError, fnFunction, oListener);
@@ -2451,8 +2315,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#attachFormatError
-	 * @function
 	 */
 	Core.prototype.attachFormatError = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.FormatError, fnFunction, oListener);
@@ -2470,8 +2332,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#detachFormatError
-	 * @function
 	 */
 	Core.prototype.detachFormatError = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.FormatError, fnFunction, oListener);
@@ -2490,8 +2350,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#attachValidationSuccess
-	 * @function
 	 */
 	Core.prototype.attachValidationSuccess = function(fnFunction, oListener) {
 		this.attachEvent(Core.M_EVENTS.ValidationSuccess, fnFunction, oListener);
@@ -2509,8 +2367,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 *            oListener Object on which the given function had to be called.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.Core#detachValidationSuccess
-	 * @function
 	 */
 	Core.prototype.detachValidationSuccess = function(fnFunction, oListener) {
 		this.detachEvent(Core.M_EVENTS.ValidationSuccess, fnFunction, oListener);
@@ -2534,8 +2390,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.Core#fireParseError
-	 * @function
 	 */
 	Core.prototype.fireParseError = function(mArguments) {
 		this.fireEvent(Core.M_EVENTS.ParseError, mArguments);
@@ -2576,8 +2430,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.Core#fireValidationError
-	 * @function
 	 */
 	Core.prototype.fireValidationError = function(mArguments) {
 		this.fireEvent(Core.M_EVENTS.ValidationError, mArguments);
@@ -2618,8 +2470,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.Core#fireFormatError
-	 * @function
 	 */
 	Core.prototype.fireFormatError = function(mArguments) {
 		this.fireEvent(Core.M_EVENTS.FormatError, mArguments);
@@ -2659,8 +2509,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.core.Core#fireValidationSuccess
-	 * @function
 	 */
 	Core.prototype.fireValidationSuccess = function(mArguments) {
 		this.fireEvent(Core.M_EVENTS.ValidationSuccess, mArguments);
@@ -2688,8 +2536,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * Check if the script is running on mobile
 	 * @return {boolean} true or false
 	 * @public
-	 * @name sap.ui.core.Core#isMobile
-	 * @function
 	 */
 	Core.prototype.isMobile = function() {
 		return Device.browser.mobile;

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class RangeSlider renderer.
-	 * @static
+	 * RangeSlider renderer.
+	 * @namespace
 	 */
 	var RangeSliderRenderer = Renderer.extend(SliderRenderer);
 	

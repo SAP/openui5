@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Text
+	 * @alias sap.m.Text
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Text = Control.extend("sap.m.Text", /** @lends sap.m.Text.prototype */ { metadata : {
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @since 1.22
 	 * @protected
-	 * @type {Number}
+	 * @type {number}
 	 */
 	Text.prototype.normalLineHeight = 1.2;
 	
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @since 1.22
 	 * @protected
-	 * @type {Boolean}
+	 * @type {boolean}
 	 */
 	Text.prototype.cacheLineHeight = true;
 	
@@ -101,7 +101,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @since 1.13.2
 	 * @protected
-	 * @type {String}
+	 * @type {string}
 	 */
 	Text.prototype.ellipsis = '…';
 	
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * Defines whether browser supports native line clamp or not
 	 *
 	 * @since 1.13.2
-	 * @returns {Boolean}
+	 * @returns {boolean}
 	 * @protected
 	 * @readonly
 	 * @static

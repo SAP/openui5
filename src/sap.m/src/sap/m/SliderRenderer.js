@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Slider renderer.
-		 * @static
+		 * Slider renderer.
+		 * @namespace
 		 */
 		var SliderRenderer = {};
 

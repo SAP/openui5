@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	IconPool.insertFontFaceStyle();
 	
 	/**
-	 * @class PullToRefresh renderer. 
-	 * @static
+	 * PullToRefresh renderer. 
+	 * @namespace
 	 */
 	var PullToRefreshRenderer = {
 	};

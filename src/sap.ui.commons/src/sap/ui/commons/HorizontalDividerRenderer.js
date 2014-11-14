@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class HorizontalDivider renderer.
-	 * @static
+	 * HorizontalDivider renderer.
+	 * @namespace
 	 */
 	var HorizontalDividerRenderer = {
 	};

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.16
-	 * @name sap.m.ViewSettingsFilterItem
+	 * @alias sap.m.ViewSettingsFilterItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewSettingsFilterItem = ViewSettingsItem.extend("sap.m.ViewSettingsFilterItem", /** @lends sap.m.ViewSettingsFilterItem.prototype */ { metadata : {

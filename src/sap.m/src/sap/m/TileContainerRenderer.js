@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Bar renderer. 
-	 * @static
+	 * Bar renderer. 
+	 * @namespace
 	 */
 	var TileContainerRenderer = {
 	};

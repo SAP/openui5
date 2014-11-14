@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/Res
 	 * @since 1.9.1
 	 * @deprecated Since version 1.16.0. 
 	 * moved to sap.ui.layout library. Please use this one.
-	 * @name sap.ui.commons.layout.ResponsiveFlowLayout
+	 * @alias sap.ui.commons.layout.ResponsiveFlowLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveFlowLayout = ResponsiveFlowLayout1.extend("sap.ui.commons.layout.ResponsiveFlowLayout", /** @lends sap.ui.commons.layout.ResponsiveFlowLayout.prototype */ { metadata : {

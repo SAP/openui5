@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
-	 * @name sap.ui.model.odata.ODataListBinding
+	 * @alias sap.ui.model.odata.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.ODataListBinding", /** @lends sap.ui.model.odata.ODataListBinding.prototype */ {
@@ -82,23 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.odata.ODataListBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.odata.ODataListBinding.extend
-	 * @function
-	 */
-	
-	/**
 	 * Return contexts for the list
 	 *
 	 * @param {int} [iStartIndex=0] the start index of the requested contexts
@@ -106,8 +89,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {int} [iThreshold=0]
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.odata.ODataListBinding#getContexts
-	 * @function
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
 	
@@ -195,8 +176,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 *
 	 * @return {Array} the contexts array
 	 * @private
-	 * @name sap.ui.model.odata.ODataListBinding#_getContexts
-	 * @function
 	 */
 	ODataListBinding.prototype._getContexts = function(iStartIndex, iLength) {
 		var aContexts = [],
@@ -228,8 +207,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/*
 	 * @private
-	 * @name sap.ui.model.odata.ODataListBinding#calculateSection
-	 * @function
 	 */
 	ODataListBinding.prototype.calculateSection = function(iStartIndex, iLength, iThreshold, aContexts) {
 		var iSectionLength,
@@ -311,8 +288,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	/**
 	 * Setter for context
 	 * @param {Object} oContext the new context object
-	 * @name sap.ui.model.odata.ODataListBinding#setContext
-	 * @function
 	 */
 	ODataListBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
@@ -347,8 +322,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	/**
 	 * Get download URL
 	 * @param {string} sFormat The required format for the download
-	 * @name sap.ui.model.odata.ODataListBinding#getDownloadUrl
-	 * @function
 	 * @since 1.24
 	 */
 	ODataListBinding.prototype.getDownloadUrl = function(sFormat) {
@@ -377,8 +350,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * Load list data from the server
-	 * @name sap.ui.model.odata.ODataListBinding#loadData
-	 * @function
 	 */
 	ODataListBinding.prototype.loadData = function(iStartIndex, iLength, bPretend) {
 	
@@ -511,8 +482,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.getLength
 	 *
-	 * @name sap.ui.model.odata.ODataListBinding#getLength
-	 * @function
 	 */
 	ODataListBinding.prototype.getLength = function() {
 		// If length is not final, add some additional length to enable scrolling/paging for
@@ -528,8 +497,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
 	 *
-	 * @name sap.ui.model.odata.ODataListBinding#isLengthFinal
-	 * @function
 	 */
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
@@ -539,8 +506,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * Return the length of the list
 	 *
 	 * @return {number} the length
-	 * @name sap.ui.model.odata.ODataListBinding#_getLength
-	 * @function
 	 */
 	ODataListBinding.prototype._getLength = function() {
 	
@@ -598,8 +563,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * 
 	 * @param {boolean} [bForceUpdate] Update the bound control even if no data has been changed
 	 * @public
-	 * @name sap.ui.model.odata.ODataListBinding#refresh
-	 * @function
 	 */
 	ODataListBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
@@ -633,8 +596,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * fireRefresh
-	 * @name sap.ui.model.odata.ODataListBinding#_fireRefresh
-	 * @function
 	 */
 	ODataListBinding.prototype._fireRefresh = function(mArguments) {
 		 if (this.oModel.resolve(this.sPath, this.oContext)) {
@@ -649,8 +610,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * metadata is loaded.
 	 *  
 	 * @public
-	 * @name sap.ui.model.odata.ODataListBinding#initialize
-	 * @function
 	 */
 	ODataListBinding.prototype.initialize = function() {
 		if (this.oModel.oMetadata.isLoaded()) {
@@ -668,8 +627,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 *
 	 * @param {boolean} bForceUpdate
 	 * @param {object} mChangedEntities
-	 * @name sap.ui.model.odata.ODataListBinding#checkUpdate
-	 * @function
 	 */
 	ODataListBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities) {
 		var bChangeReason = this.sChangeReason ? this.sChangeReason : sap.ui.model.ChangeReason.Change,
@@ -746,8 +703,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * Resets the current list data and length
 	 * 
 	 * @private
-	 * @name sap.ui.model.odata.ODataListBinding#resetData
-	 * @function
 	 */
 	ODataListBinding.prototype.resetData = function() {
 		this.aKeys = [];
@@ -769,8 +724,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * e.g. when filtering/sorting is triggered or the context is changed.
 	 * 
 	 * @private
-	 * @name sap.ui.model.odata.ODataListBinding#abortPendingRequest
-	 * @function
 	 */
 	ODataListBinding.prototype.abortPendingRequest = function() {
 		if (this.oRequestHandle) {
@@ -786,8 +739,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {sap.ui.model.Sorter|Array} aSorters the Sorter or an array of sorter objects object which define the sort order
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
 	 * @public
-	 * @name sap.ui.model.odata.ODataListBinding#sort
-	 * @function
 	 */
 	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
 		
@@ -836,8 +787,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
 	 * 
 	 * @public
-	 * @name sap.ui.model.odata.ODataListBinding#filter
-	 * @function
 	 */
 	ODataListBinding.prototype.filter = function(aFilters, sFilterType, bReturnSuccess) {
 		
@@ -896,8 +845,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aControlFilters An Array of control filters
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} [aApplicationFilters] An Array of application filters
 	 * @private
-	 * @name sap.ui.model.odata.ODataListBinding#createFilterParams
-	 * @function
 	 */
 	ODataListBinding.prototype.createFilterParams = function(aControlFilters, aApplicationFilters) {
 		// create URL Parameters for the Control- and Application-Filters

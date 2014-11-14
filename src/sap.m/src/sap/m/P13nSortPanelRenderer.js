@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class SortPanel renderer.
-	 * @static
+	 * SortPanel renderer.
+	 * @namespace
 	 */
 	var P13nSortPanelRenderer = {};
 	

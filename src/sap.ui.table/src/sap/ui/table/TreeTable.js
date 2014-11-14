@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.TreeTable
+	 * @alias sap.ui.table.TreeTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeTable = Table.extend("sap.ui.table.TreeTable", /** @lends sap.ui.table.TreeTable.prototype */ { metadata : {
@@ -71,46 +71,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	}});
-
-
-	/**
-	 * expands the row for the given row index
-	 *
-	 * @name sap.ui.table.TreeTable#expand
-	 * @function
-	 * @param {int} iRowIndex
-	 *         index of the row to expand
-	 * @type sap.ui.table.TreeTable
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * collapses the row for the given row index
-	 *
-	 * @name sap.ui.table.TreeTable#collapse
-	 * @function
-	 * @param {int} iRowIndex
-	 *         index of the row to collapse
-	 * @type sap.ui.table.TreeTable
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * returns whether the row is expanded or collapsed
-	 *
-	 * @name sap.ui.table.TreeTable#isExpanded
-	 * @function
-	 * @param {int} iRowIndex
-	 *         index of the row to check
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
+	
+	
 	/**
 	 * Initialization of the TreeTable control
 	 * @private
@@ -145,8 +107,6 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 * @param {int} iFixedRowCount  new value for property <code>fixedRowCount</code>
 	 * @return {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.table.TreeTable#setFixedRowCount
-	 * @function
 	 */
 	TreeTable.prototype.setFixedRowCount = function(iRowCount) {
 		// this property makes no sense for the TreeTable
@@ -497,6 +457,15 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 
 	};
 
+	/**
+	 * expands the row for the given row index
+	 *
+	 * @param {int} iRowIndex
+	 *         index of the row to expand
+	 * @type sap.ui.table.TreeTable
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	TreeTable.prototype.expand = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -505,6 +474,15 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		}
 	};
 
+	/**
+	 * collapses the row for the given row index
+	 *
+	 * @param {int} iRowIndex
+	 *         index of the row to collapse
+	 * @type sap.ui.table.TreeTable
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	TreeTable.prototype.collapse = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -512,7 +490,16 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			oBinding.collapseContext(oContext);
 		}
 	};
-
+	
+	/**
+	 * returns whether the row is expanded or collapsed
+	 *
+	 * @param {int} iRowIndex
+	 *         index of the row to check
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	TreeTable.prototype.isExpanded = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {

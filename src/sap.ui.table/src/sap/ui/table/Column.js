@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.Column
+	 * @alias sap.ui.table.Column
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.ui.table.Column", /** @lends sap.ui.table.Column.prototype */ { metadata : {
@@ -164,32 +164,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	}});
 
 
-	/**
-	 * sorts the current column ascending or descending
-	 *
-	 * @name sap.ui.table.Column#sort
-	 * @function
-	 * @param {boolean} bDescending
-	 *         sort order of the column (if undefined the default will be ascending)
-	 * @type sap.ui.table.Column
-	 * @public
-	 * @deprecated Since version 1.5.1.
-	 * Please use the function "sap.ui.Table.prototype.sort".
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * toggles the sort order of the column
-	 *
-	 * @name sap.ui.table.Column#toggleSort
-	 * @function
-	 * @type sap.ui.table.Column
-	 * @public
-	 * @deprecated Since version 1.5.1.
-	 * Please use the function "sap.ui.Table.prototype.sort".
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/** default filter type for the columns */
@@ -470,11 +448,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		oMenu.open(false, this.getFocusDomRef(), eDock.BeginTop, eDock.BeginBottom, this.getDomRef(), "none none");
 	};
 
+
+	/**
+	 * toggles the sort order of the column
+	 *
+	 * @type sap.ui.table.Column
+	 * @public
+	 * @deprecated Since version 1.5.1.
+	 * Please use the function "sap.ui.Table.prototype.sort".
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Column.prototype.toggleSort = function() {
 		// by default we sort ascending / only if already is sorted ascending then we toggle
 		this.sort(this.getSorted() && this.getSortOrder() === sap.ui.table.SortOrder.Ascending);
 	};
 
+
+	/**
+	 * sorts the current column ascending or descending
+	 *
+	 * @param {boolean} bDescending
+	 *         sort order of the column (if undefined the default will be ascending)
+	 * @type sap.ui.table.Column
+	 * @public
+	 * @deprecated Since version 1.5.1.
+	 * Please use the function "sap.ui.Table.prototype.sort".
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Column.prototype.sort = function(bDescending, bAdd) {
 
 		var oTable = this.getParent();

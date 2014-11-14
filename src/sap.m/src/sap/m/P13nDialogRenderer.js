@@ -7,9 +7,9 @@ sap.ui.define(['jquery.sap.global', './DialogRenderer'],
 
 
 	/**
-	 * @class P13nDialog renderer.
+	 * P13nDialog renderer.
 	 *
-	 * @static
+	 * @namespace
 	 */
 	var P13nDialogRenderer = sap.ui.core.Renderer.extend(DialogRenderer);
 	

@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP
 	 * @version ${version}
-	 * @name sap.m.TablePersoDialog
+	 * @alias sap.m.TablePersoDialog
 	 */
 	var TablePersoDialog = ManagedObject.extend("sap.m.TablePersoDialog", /** @lends sap.m.TablePersoDialog */
 
@@ -75,8 +75,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 	/**
 	 * Initializes the TablePersoDialog instance after creation.
 	 *
-	 * @function
-	 * @name sap.m.TablePersoDialog.prototype.init
 	 * @protected
 	 */
 	TablePersoDialog.prototype.init = function() {

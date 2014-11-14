@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FeedChunk renderer.
-	 * @static
+	 * FeedChunk renderer.
+	 * @namespace
 	 */
 	var FeedChunkRenderer = {
 	};

@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.model.odata.ODataMetadata
+	 * @alias sap.ui.model.odata.ODataMetadata
 	 * @extends sap.ui.base.EventProvider
 	 */
 	var ODataMetadata = sap.ui.base.EventProvider.extend("sap.ui.model.odata.ODataMetadata", /** @lends sap.ui.model.odata.ODataMetadata.prototype */ {
@@ -68,8 +68,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Loads the metadata for the service
 	 * @private
-	 * @name sap.ui.model.odata.ODataMetadata#_loadMetadata
-	 * @function
 	 */
 	ODataMetadata.prototype._loadMetadata = function() {
 
@@ -128,8 +126,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * refreshes the metadata creating a new request to the server  
 	 *
 	 * @public
-	 * @name sap.ui.model.odata.ODataMetadata.refresh
-	 * @function
 	 */
 	ODataMetadata.prototype.refresh = function(){
 		this._loadMetadata();
@@ -138,28 +134,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 
 	/**
-	 * Creates a new subclass of class sap.ui.model.odata.ODataMetadata with name <code>sClassName</code>
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 *
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code>
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.odata.ODataMetadata.extend
-	 * @function
-	 */
-	
-	/**
 	 * Return the metadata object
 	 *
 	 * @return {Object} metdata object
 	 * @public
-	 * @name sap.ui.model.odata.ODataMetadata#getServiceMetadata
 	 */
 	ODataMetadata.prototype.getServiceMetadata = function() {
 		return this.oMetadata;
@@ -298,8 +276,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * /Categories(1)/Products(1)/Category --> will get the Categories entity type
 	 * /Products --> will get the Products entity type
 	 * @return {object} the entity type or null if not found
-	 * @name sap.ui.model.odata.ODataMetadata#_getEntityTypeByPath
-	 * @function
 	 */
 	ODataMetadata.prototype._getEntityTypeByPath = function(sPath) {
 		if (!sPath) {
@@ -389,8 +365,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * 
 	 * #/Category/CategoryName --> will get the Category entity type
 	 * @return {object} the entity type or null if not found
-	 * @name sap.ui.model.odata.ODataMetadata#_getEntityTypeByName
-	 * @function
 	 */
 	ODataMetadata.prototype._getEntityTypeByName = function(sName) {
 		var oEntityType, that = this;
@@ -426,9 +400,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Extracts an Annotation from given path parts 
 	 * @param {array} aMetaParts
 	 * @returns {any}
-	 * @name sap.ui.model.odata.ODataMetadata#_getAnnotation
 	 * @private
-	 * @function
 	 */
 	ODataMetadata.prototype._getAnnotation = function(sPath) {
 		var oNode, aParts, sMetaPath, aMetaParts, oEntityType, sPropertyPath, oProperty;
@@ -492,8 +464,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Extract the Annotation Object from a given oProperty and a metadata path  
 	 * 
 	 * @return {object} the annotation object/value
-	 * @name sap.ui.model.odata.ODataMetadata#_getEntityTypeByName
-	 * @function
 	 */
 	ODataMetadata.prototype._getAnnotationObject = function(oEntityType, oObject, sMetaDataPath) {
 		var aAnnotationParts, aParts, oAnnotation, oNode, sAnnotation;
@@ -596,8 +566,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * splits a name e.g. Namespace.Name into [Name, Namespace]
-	 * @name sap.ui.model.odata.ODataMetadata#_splitName
-	 * @function
 	 */
 	ODataMetadata.prototype._splitName = function(sFullName) {
 		var aParts = [];
@@ -612,8 +580,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	*  search metadata for specified collection name (= entity set name)
-	* @name sap.ui.model.odata.ODataMetadata#_getEntityTypeName
-	* @function
 	*/
 	ODataMetadata.prototype._getEntityTypeName = function(sCollection) {
 		var sEntityTypeName;
@@ -639,8 +605,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * get the object of a specified type name and namespace
-	 * @name sap.ui.model.odata.ODataMetadata#_getObjectMetadata
-	 * @function
 	 */
 	ODataMetadata.prototype._getObjectMetadata = function(sObjectType, sObjectName, sNamespace) {
 		var oObject;
@@ -666,9 +630,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * Get the the use-batch extension value if any
-	 * @name sap.ui.model.odata.ODataMetadata#getUseBatch;
 	 * @public
-	 * @function
 	 */
 	ODataMetadata.prototype.getUseBatch = function() {
 		var bUseBatch = false;
@@ -695,8 +657,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {string} sFunctionName The name of the function import to look up
 	 * @param {string} sMethod The HTTP Method for which this function is requested
-	 * @name sap.ui.model.odata.ODataMetadata#_getFunctionImportMetadata
-	 * @function
 	 */
 	ODataMetadata.prototype._getFunctionImportMetadata = function(sFunctionName, sMethod) {
 		var oObject = null;
@@ -753,8 +713,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	 * get all navigation property names in an array by the specified entity type
-	 * @name sap.ui.model.odata.ODataMetadata#_getNavigationPropertyNames
-	 * @function
 	 */
 	ODataMetadata.prototype._getNavigationPropertyNames = function(oEntityType) {
 		var aNavProps = [];
@@ -768,8 +726,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	
 	/**
 	*  extract the property metadata of a specified property of a entity type out of the metadata document
-	* @name sap.ui.model.odata.ODataMetadata#_getPropertyMetadata
-	* @function
 	*/
 	ODataMetadata.prototype._getPropertyMetadata = function(oEntityType, sProperty) {
 		var oPropertyMetadata, that = this;

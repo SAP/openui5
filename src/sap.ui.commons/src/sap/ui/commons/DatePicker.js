@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.DatePicker
+	 * @alias sap.ui.commons.DatePicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DatePicker = TextField.extend("sap.ui.commons.DatePicker", /** @lends sap.ui.commons.DatePicker.prototype */ { metadata : {
@@ -430,8 +430,6 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/model/ty
 		 * @param {boolean} bInvalidValue true is value is invalid
 		 * @return {sap.ui.commons.DatePicker} <code>this</code> to allow method chaining
 		 * @protected
-		 * @name sap.ui.commons.DatePicker#fireChange
-		 * @function
 		 */
 		DatePicker.prototype.fireChange = function(bInvalidValue) {
 	

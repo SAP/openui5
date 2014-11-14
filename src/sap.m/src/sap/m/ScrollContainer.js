@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.ScrollContainer
+	 * @alias sap.m.ScrollContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ScrollContainer = Control.extend("sap.m.ScrollContainer", /** @lends sap.m.ScrollContainer.prototype */ { metadata : {
@@ -78,29 +78,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	}});
 	
 	
-	/**
-	 * Scrolls to the given position.
-	 * When called while the control is not rendered (yet), the scrolling position is still applied, but there is no animation.
-	 *
-	 * @name sap.m.ScrollContainer#scrollTo
-	 * @function
-	 * @param {int} iX
-	 *         The horizontal pixel position to scroll to.
-	 *         Scrolling to the right happens with positive values. In right-to-left mode scrolling starts at the right side and higher values scroll to the left.
-	 *         If only vertical scrolling is enabled, give 0 as value.
-	 * @param {int} iY
-	 *         The vertical pixel position to scroll to.
-	 *         Scrolling down happens with positive values.
-	 *         If only horizontal scrolling is enabled, give 0 as value.
-	 * @param {int} iTime
-	 *         The duration of animated scrolling.
-	 *         To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
-	 * @type sap.m.ScrollContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	/*
 	 * TODO:
 	 * - events when scrolling is ongoing
@@ -148,6 +125,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	//*** API Methods ***
 	
+
+	/**
+	 * Scrolls to the given position.
+	 * When called while the control is not rendered (yet), the scrolling position is still applied, but there is no animation.
+	 *
+	 * @param {int} iX
+	 *         The horizontal pixel position to scroll to.
+	 *         Scrolling to the right happens with positive values. In right-to-left mode scrolling starts at the right side and higher values scroll to the left.
+	 *         If only vertical scrolling is enabled, give 0 as value.
+	 * @param {int} iY
+	 *         The vertical pixel position to scroll to.
+	 *         Scrolling down happens with positive values.
+	 *         If only horizontal scrolling is enabled, give 0 as value.
+	 * @param {int} iTime
+	 *         The duration of animated scrolling.
+	 *         To scroll immediately without animation, give 0 as value. 0 is also the default value, when this optional parameter is omitted.
+	 * @type sap.m.ScrollContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ScrollContainer.prototype.scrollTo = function(x, y, time) {
 		if (this._oScroller) {
 			

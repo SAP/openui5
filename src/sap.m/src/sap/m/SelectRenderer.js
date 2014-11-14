@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		"use strict";
 
 		/**
-		 * @class Select renderer.
-		 * @static
+		 * Select renderer.
+		 * @namespace
 		 */
 		var SelectRenderer = {};
 

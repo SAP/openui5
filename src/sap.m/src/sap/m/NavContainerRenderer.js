@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class NavContainer renderer. 
-	 * @static
+	 * NavContainer renderer. 
+	 * @namespace
 	 */
 	var NavContainerRenderer = {
 	};

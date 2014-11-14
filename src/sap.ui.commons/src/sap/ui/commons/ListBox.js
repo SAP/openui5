@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ListBox
+	 * @alias sap.ui.commons.ListBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListBox = Control.extend("sap.ui.commons.ListBox", /** @lends sap.ui.commons.ListBox.prototype */ { metadata : {
@@ -158,199 +158,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Zero-based index of selected item. Index value for no selection is -1. When multiple selection is enabled and multiple items are selected, the method returns the first selected item.
-	 *
-	 * @name sap.ui.commons.ListBox#getSelectedIndex
-	 * @function
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sets the zero-based index of the currently selected item. This method removes any previous selections. When the given index is invalid, the call is ignored.
-	 *
-	 * @name sap.ui.commons.ListBox#setSelectedIndex
-	 * @function
-	 * @param {int} iIndex
-	 *         Index to be selected
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Adds the given index to current selection. When multiple selection is disabled, this replaces the current selection. When the given index is invalid, the call is ignored.
-	 *
-	 * @name sap.ui.commons.ListBox#addSelectedIndex
-	 * @function
-	 * @param {int} iIndex
-	 *         Index to add to selection.
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes the given index from this selection. When the index is invalid or not selected, the call is ignored.
-	 *
-	 * @name sap.ui.commons.ListBox#removeSelectedIndex
-	 * @function
-	 * @param {int} iIndex
-	 *         Index that shall be removed from selection.
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
-	 *
-	 * @name sap.ui.commons.ListBox#getSelectedIndices
-	 * @function
-	 * @type int[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
-	 * When multiple selection is disabled and multiple items are given, the selection is set to the index of the first valid index in the given array.
-	 * Any invalid indices are ignored.
-	 * The previous selection is in any case replaced.
-	 *
-	 * @name sap.ui.commons.ListBox#setSelectedIndices
-	 * @function
-	 * @param {int[]} aIndices
-	 *         Indices of the items to be selected.
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Adds the given indices to selection. Any invalid indices are ignored.
-	 *
-	 * @name sap.ui.commons.ListBox#addSelectedIndices
-	 * @function
-	 * @param {int[]} aIndices
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns whether the given index is selected.
-	 *
-	 * @name sap.ui.commons.ListBox#isIndexSelected
-	 * @function
-	 * @param {int} iIndex
-	 *         Index which is checked for selection state.
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns selected item. When no item is selected, "null" is returned. When multi-selection is enabled and multiple items are selected, only the first selected item is returned.
-	 *
-	 * @name sap.ui.commons.ListBox#getSelectedItem
-	 * @function
-	 * @type sap.ui.core.Item
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns an array containing the selected items. In the case of no selection, an empty array is returned.
-	 *
-	 * @name sap.ui.commons.ListBox#getSelectedItems
-	 * @function
-	 * @type sap.ui.core.Item[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Removes complete selection.
-	 *
-	 * @name sap.ui.commons.ListBox#clearSelection
-	 * @function
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * If the ListBox has a scroll bar because the number of items is larger than the number of visible items, this method scrolls to the item with the given index. If there are enough items, this item will then appear at the topmost visible position in the ListBox. If bLazy is true, it only scrolls as far as required to make the item visible.
-	 * Setting the scrollTop property and calling scrollToIndex are two operations influencing the same "physical" property, so the last call "wins".
-	 *
-	 * @name sap.ui.commons.ListBox#scrollToIndex
-	 * @function
-	 * @param {int} iIndex
-	 *         The index to which the ListBox should scroll.
-	 * @param {boolean} bLazy
-	 *         If set to true, the ListBox only scrolls if the item is not completely visible, and it scrolls for exactly the space to make it fully visible. If set to false, the item is scrolled to the top position (if possible).
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Allows setting the list items as array for this instance of ListBox.
-	 *
-	 * @name sap.ui.commons.ListBox#setItems
-	 * @function
-	 * @param {sap.ui.core.ListItem[]} aItems
-	 *         The items to set for this ListBox.
-	 * @param {boolean} bDestroyItems
-	 *         Optional boolean parameter to indicate that the formerly set items should be destroyed, instead of just removed.
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Keys of the items to be selected, wrapped in an array. An empty array means no selection. When multiple selection is disabled,
-	 * and multiple keys are given, the selection is set to the item with the first valid key in the given array. Any invalid keys are ignored.
-	 * The previous selection is replaced in any case.
-	 *
-	 * @name sap.ui.commons.ListBox#setSelectedKeys
-	 * @function
-	 * @param {string[]} aKeys
-	 *         The keys of the items to be selected
-	 * @type sap.ui.commons.ListBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the keys of the selected items in an array. If a selected item does not have a key, the respective array entry will be undefined.
-	 *
-	 * @name sap.ui.commons.ListBox#getSelectedKeys
-	 * @function
-	 * @type string[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/**
@@ -575,6 +382,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * Scrolls the item with the given index into view, preferably at the topmost position.
 	 */
+
+	/**
+	 * If the ListBox has a scroll bar because the number of items is larger than the number of visible items, this method scrolls to the item with the given index. If there are enough items, this item will then appear at the topmost visible position in the ListBox. If bLazy is true, it only scrolls as far as required to make the item visible.
+	 * Setting the scrollTop property and calling scrollToIndex are two operations influencing the same "physical" property, so the last call "wins".
+	 *
+	 * @param {int} iIndex
+	 *         The index to which the ListBox should scroll.
+	 * @param {boolean} bLazy
+	 *         If set to true, the ListBox only scrolls if the item is not completely visible, and it scrolls for exactly the space to make it fully visible. If set to false, the item is scrolled to the top position (if possible).
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.scrollToIndex = function(iIndex, bLazy) {
 		var oDomRef = this.getDomRef();
 		if (oDomRef) { // only if already rendered
@@ -686,7 +506,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets the height of this ListBox in CSS units
 	
-	 * @param {string} sHeight
+	 * @param {sap.ui.core.CSSSize} sHeight
 	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -710,7 +530,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Setter for property width.
 	 *
-	 * @param {string} sWidth
+	 * @param {sap.ui.core.CSSSize} sWidth
 	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -940,6 +760,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	/* --- Overwritten setters and getters affecting the selection --- */
 	
+
+	/**
+	 * Zero-based index of selected item. Index value for no selection is -1. When multiple selection is enabled and multiple items are selected, the method returns the first selected item.
+	 *
+	 * @type int
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.getSelectedIndex = function() {
 		for (var i = 0; i < this._aSelectionMap.length; i++) {
 			if (this._aSelectionMap[i]) {
@@ -949,6 +777,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return -1;
 	};
 	
+
+	/**
+	 * Sets the zero-based index of the currently selected item. This method removes any previous selections. When the given index is invalid, the call is ignored.
+	 *
+	 * @param {int} iIndex
+	 *         Index to be selected
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.setSelectedIndex = function(iSelectedIndex) {
 		if ((iSelectedIndex < -1) || (iSelectedIndex > this._aSelectionMap.length - 1)) {
 			return;
@@ -973,6 +811,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+
+	/**
+	 * Adds the given index to current selection. When multiple selection is disabled, this replaces the current selection. When the given index is invalid, the call is ignored.
+	 *
+	 * @param {int} iIndex
+	 *         Index to add to selection.
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.addSelectedIndex = function(iSelectedIndex) {
 		if (!this.getAllowMultiSelect()) { // If multi-selection is not allowed, this call equals setSelectedIndex
 			this.setSelectedIndex(iSelectedIndex);
@@ -1000,6 +848,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+
+	/**
+	 * Removes the given index from this selection. When the index is invalid or not selected, the call is ignored.
+	 *
+	 * @param {int} iIndex
+	 *         Index that shall be removed from selection.
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.removeSelectedIndex = function(iIndex) {
 		if ((iIndex < 0) || (iIndex > this._aSelectionMap.length - 1)) {
 			return;
@@ -1016,6 +874,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+
+	/**
+	 * Removes complete selection.
+	 *
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.clearSelection = function() {
 		for (var i = 0; i < this._aSelectionMap.length; i++) {
 			if (this._aSelectionMap[i]) {
@@ -1035,6 +901,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	
+
+	/**
+	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
+	 *
+	 * @type int[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.getSelectedIndices = function() {
 		var aResult = [];
 		for (var i = 0; i < this._aSelectionMap.length; i++) {
@@ -1045,6 +919,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return aResult;
 	};
 	
+
+	/**
+	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
+	 * When multiple selection is disabled and multiple items are given, the selection is set to the index of the first valid index in the given array.
+	 * Any invalid indices are ignored.
+	 * The previous selection is in any case replaced.
+	 *
+	 * @param {int[]} aIndices
+	 *         Indices of the items to be selected.
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.setSelectedIndices = function(aSelectedIndices) {
 		var indicesToSet = [];
 		var aItems = this.getItems();
@@ -1076,6 +963,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+
+	/**
+	 * Adds the given indices to selection. Any invalid indices are ignored.
+	 *
+	 * @param {int[]} aIndices
+	 *         Indices of the items that shall additionally be selected.
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.addSelectedIndices = function(aSelectedIndices) {
 		var indicesToSet = [];
 		var aItems = this.getItems();
@@ -1104,6 +1001,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * Returns whether the given index is selected.
+	 *
+	 * @param {int} iIndex
+	 *         Index which is checked for selection state.
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.isIndexSelected = function(iIndex) {
 		if ((iIndex < -1) || (iIndex > this._aSelectionMap.length - 1)) {
 			return false; // Invalid index -> not selected
@@ -1113,6 +1020,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * Keys of the items to be selected, wrapped in an array. An empty array means no selection. When multiple selection is disabled,
+	 * and multiple keys are given, the selection is set to the item with the first valid key in the given array. Any invalid keys are ignored.
+	 * The previous selection is replaced in any case.
+	 *
+	 * @param {string[]} aKeys
+	 *         The keys of the items to be selected
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.setSelectedKeys = function(aSelectedKeys) {
 		var aItems = this.getItems();
 	
@@ -1131,6 +1050,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.setSelectedIndices(aIndices);
 	};
 	
+
+	/**
+	 * Returns the keys of the selected items in an array. If a selected item does not have a key, the respective array entry will be undefined.
+	 *
+	 * @type string[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.getSelectedKeys = function() {
 		var aItems = this.getItems();
 		var aResult = [];
@@ -1143,6 +1070,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * Returns selected item. When no item is selected, "null" is returned. When multi-selection is enabled and multiple items are selected, only the first selected item is returned.
+	 *
+	 * @type sap.ui.core.Item
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.getSelectedItem = function() {
 		var iIndex = this.getSelectedIndex();
 		if ((iIndex < 0) || (iIndex >= this._aSelectionMap.length)) {
@@ -1151,6 +1086,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getItems()[iIndex];
 	};
 	
+
+	/**
+	 * Returns an array containing the selected items. In the case of no selection, an empty array is returned.
+	 *
+	 * @type sap.ui.core.Item[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListBox.prototype.getSelectedItems = function() {
 		var aItems = this.getItems();
 		var aResult = [];
@@ -1204,6 +1147,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Implementation of API method setItems.
 	 * Semantically belonging to "items" aggregation but not part of generated method set.
 	 * @param bNoItemsChanged not in official API, only needed in DropdownBox TypeAhead
+	 */
+
+	/**
+	 * Allows setting the list items as array for this instance of ListBox.
+	 *
+	 * @param {sap.ui.core.ListItem[]} aItems
+	 *         The items to set for this ListBox.
+	 * @param {boolean} bDestroyItems
+	 *         Optional boolean parameter to indicate that the formerly set items should be destroyed, instead of just removed.
+	 * @type sap.ui.commons.ListBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.setItems = function(aItems, bDestroyItems, bNoItemsChanged) {
 		this.bNoItemsChangeEvent = true;

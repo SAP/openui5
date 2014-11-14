@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
-	 * @name sap.ui.base.ManagedObject
+	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
 	 * oScope in the constructor is still experimental and might change in future versions. Applications should not rely on it.
 	 */
@@ -179,8 +179,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {object} oKeyInfo
 	 * @public
 	 * @static
-	 * @name sap.ui.base.ManagedObject.create
-	 * @function
 	 */
 	ManagedObject.create = function(vData, oKeyInfo) {
 		if ( !vData || vData instanceof ManagedObject || typeof vData !== "object" || vData instanceof String) {
@@ -219,7 +217,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return new ID of the ManagedObject
 	 * @type function
 	 * @private
-	 * @name sap.ui.base.ManagedObject._fnIdPreprocessor
 	 */
 	ManagedObject._fnIdPreprocessor = null;
 
@@ -233,7 +230,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @type function
 	 * @private
-	 * @name sap.ui.base.ManagedObject._fnSettingsPreprocessor
 	 */
 	ManagedObject._fnSettingsPreprocessor = null;
 
@@ -306,8 +302,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @public
 	 * @experimental Since 1.11.2 support for the scope object for resolving string based type
 	 * and formatter references in bindings is still experimental
-	 * @name sap.ui.base.ManagedObject#applySettings
-	 * @function
 	 */
 	ManagedObject.prototype.applySettings = function(mSettings, oScope) {
 
@@ -463,8 +457,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Mainly useful for tracing purposes.
 	 * @public
 	 * @return {string} a string description of this managed object
-	 * @name sap.ui.base.ManagedObject#toString
-	 * @function
 	 */
 	ManagedObject.prototype.toString = function() {
 		return "ManagedObject " + this.getMetadata().getName() + "#" + this.getId();
@@ -475,8 +467,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {string} the objects's Id.
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getId
-	 * @function
 	 */
 	ManagedObject.prototype.getId = function() {
 		return this.sId;
@@ -494,8 +484,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * TODO better name bSuppressInvalidate positive, e.g. "bStayValid"
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#setProperty
-	 * @function
 	 */
 	ManagedObject.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 
@@ -549,8 +537,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @type any
 	 * @return the value of the property
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getProperty
-	 * @function
 	 */
 	ManagedObject.prototype.getProperty = function(sPropertyName) {
 		var oValue = this.mProperties[sPropertyName],
@@ -586,8 +572,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {any} the passed value or the property's default value if null or undefined was passed
 	 * @throws Error if no property with the given name is found or the given value does not fit to the property type
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#validateProperty
-	 * @function
 	 */
 	ManagedObject.prototype.validateProperty = function(sPropertyName, oValue) {
 		var oMetadata = this.getMetadata(),
@@ -655,8 +639,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sPropertyName the name of the property
 	 * @return {object} a map of properties describing the origin of this property value or null
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getOriginInfo
-	 * @function
 	 */
 	ManagedObject.prototype.getOriginInfo = function(sPropertyName) {
 		var oValue = this.mProperties[sPropertyName];
@@ -682,8 +664,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, the managed objects invalidate method is not called
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#setAssociation
-	 * @function
 	 */
 	ManagedObject.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
 		if (sId instanceof ManagedObject) {
@@ -724,8 +704,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *			  oDefaultForCreation the object that is used in case the current aggregation is empty (only null or empty array allowed)
 	 * @return {string | string[]} the ID of the associated managed object or an array of such IDs; may be null if the association has not been populated
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getAssociation
-	 * @function
 	 */
 	ManagedObject.prototype.getAssociation = function(sAssociationName, oDefaultForCreation) {
 		var result = this.mAssociations[sAssociationName];
@@ -755,8 +733,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, this managed object as well as the newly associated object are not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#addAssociation
-	 * @function
 	 */
 	ManagedObject.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
 		if (sId instanceof ManagedObject) {
@@ -803,8 +779,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, the managed object is not marked as changed
 	 * @return the ID of the removed ManagedObject or null
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#removeAssociation
-	 * @function
 	 */
 	ManagedObject.prototype.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
 		var aIds = this.mAssociations[sAssociationName];
@@ -858,8 +832,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @type Array
 	 * @return an array with the IDs of the removed objects (might be empty)
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#removeAllAssociation
-	 * @function
 	 */
 	ManagedObject.prototype.removeAllAssociation = function(sAssociationName, bSuppressInvalidate){
 		var aIds = this.mAssociations[sAssociationName];
@@ -903,8 +875,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {sap.ui.base.ManagedObject|any} the passed object
 	 * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#validateAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
 		var oMetadata = this.getMetadata(),
@@ -992,8 +962,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#setAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		var oOldChild = this.mAggregations[sAggregationName];
@@ -1037,8 +1005,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @type sap.ui.base.ManagedObject|Array
 	 * @return the aggregation array in case of 0..n-aggregations or the managed object or null in case of 0..1-aggregations
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.getAggregation = function(sAggregationName, oDefaultForCreation) {
 		var aChildren = this.mAggregations[sAggregationName];
@@ -1069,8 +1035,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            oObject the ManagedObject whose index is looked for.
 	 * @return {int} the index of the provided managed object in the aggregation.
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#indexOfAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.indexOfAggregation = function(sAggregationName, oObject) {
 		var aChildren = this.mAggregations[sAggregationName];
@@ -1108,8 +1072,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#insertAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		if (!oObject) {
@@ -1147,8 +1109,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#addAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 		if (!oObject) {
@@ -1179,8 +1139,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @type sap.ui.base.ManagedObject
 	 * @return the removed object or null
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#removeAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
 		var aChildren = this.mAggregations[sAggregationName],
@@ -1248,8 +1206,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @type Array
 	 * @return an array of the removed elements (might be empty)
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#removeAllAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
 		var aChildren = this.mAggregations[sAggregationName];
@@ -1288,8 +1244,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#destroyAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
 		var aChildren = this.mAggregations[sAggregationName],
@@ -1356,8 +1310,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * This triggers rerendering of itself and its children.<br/> As <code>sap.ui.base.ManagedObject</code> "bubbles up" the
 	 * invalidate, changes to child-<code>Elements</code> will also result in rerendering of the whole sub tree.
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#invalidate
-	 * @function
 	 */
 	ManagedObject.prototype.invalidate = function() {
 		if (this.oParent) {
@@ -1370,8 +1322,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Returns whether rerendering is currently suppressed on this ManagedObject
 	 * @return boolean
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#isInvalidateSuppressed
-	 * @function
 	 */
 	ManagedObject.prototype.isInvalidateSuppressed = function() {
 		var bInvalidateSuppressed = this.iSuppressInvalidate > 0;
@@ -1394,8 +1344,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 	 * @private
-	 * @name sap.ui.base.ManagedObject#_removeChild
-	 * @function
 	 */
 	ManagedObject.prototype._removeChild = function(oChild, sAggregationName, bSuppressInvalidate) {
 		if (!sAggregationName) {
@@ -1453,8 +1401,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @return {sap.ui.base.ManagedObject}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @private
-	 * @name sap.ui.base.ManagedObject#setParent
-	 * @function
 	 */
 	ManagedObject.prototype.setParent = function(oParent, sAggregationName, bSuppressInvalidate) {
 		if ( !oParent ) {
@@ -1516,8 +1462,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.ManagedObject} The parent managed object or <code>null</code>
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getParent
-	 * @function
 	 */
 	ManagedObject.prototype.getParent = function() {
 		/* Be aware that internally this.oParent is used to reduce method calls.
@@ -1536,8 +1480,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 	 * @public
-	 * @name sap.ui.base.ManagedObject#destroy
-	 * @function
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
 		var that = this;
@@ -1605,7 +1547,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	// DataBinding
 	/**
 	 * Binding parser to use.
-	 * @name sap.ui.base.ManagedObject.bindingParser
 	 */
 	ManagedObject.bindingParser = BindingParser.simpleParser;
 
@@ -1621,8 +1562,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @private
 	 * @deprecated
-	 * @name sap.ui.base.ManagedObject#isBinding
-	 * @function
 	 */
 	ManagedObject.prototype.isBinding = function(oValue, oKeyInfo) {
 		return typeof this.extractBindingInfo(oValue) === "object";
@@ -1657,8 +1596,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *     additional properties
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#extractBindingInfo
-	 * @function
 	 */
 	ManagedObject.prototype.extractBindingInfo = function(oValue, oScope) {
 
@@ -1696,8 +1633,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *                   and, dependant of the binding type, additional properties
 	 *
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getBindingInfo
-	 * @function
 	 */
 	ManagedObject.prototype.getBindingInfo = function(sName) {
 		return this.mBindingInfos[sName];
@@ -1713,8 +1648,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#bindObject
-	 * @function
 	 */
 	ManagedObject.prototype.bindObject = function(sPath, mParameters) {
 		var boundObject = {},
@@ -1757,8 +1690,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Create object binding
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#_bindObject
-	 * @function
 	 */
 	ManagedObject.prototype._bindObject = function(sModelName, oBoundObject) {
 		var oBinding,
@@ -1795,8 +1726,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sPath the binding path
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#bindContext
-	 * @function
 	 */
 	ManagedObject.prototype.bindContext = function(sPath) {
 		return this.bindElement(sPath);
@@ -1810,8 +1739,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [sModelName] name of the model to remove the context for.
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#unbindContext
-	 * @function
 	 */
 	ManagedObject.prototype.unbindContext = function(sModelName) {
 		return this.unbindElement(sModelName);
@@ -1824,8 +1751,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [sModelName] name of the model to remove the context for.
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#unbindObject
-	 * @function
 	 */
 	ManagedObject.prototype.unbindObject = function(sModelName) {
 		//TODO detach changerHandler
@@ -1866,8 +1791,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#bindProperty
-	 * @function
 	 */
 	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo) {
 		var sPath,
@@ -2038,8 +1961,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {boolean} bSuppressReset whether the reset to the default value when unbinding should be suppressed
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#unbindProperty
-	 * @function
 	 */
 	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -2063,8 +1984,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * it to the setter.
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#updateProperty
-	 * @function
 	 */
 	ManagedObject.prototype.updateProperty = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -2104,8 +2023,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param sName the name of the property to update
 	 * @param oValue the new value to set for the property in the model
 	 * @private
-	 * @name sap.ui.base.ManagedObject#updateModelProperty
-	 * @function
 	 */
 	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){
 		if (this.isBound(sName)) {
@@ -2194,8 +2111,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#bindAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.bindAggregation = function(sName, oBindingInfo) {
 		var sPath,
@@ -2326,8 +2241,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {boolean} bSuppressReset whether the reset to empty aggregation when unbinding should be suppressed
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#unbindAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -2360,8 +2273,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * default behaviour.
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#updateAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.updateAggregation = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -2422,8 +2333,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * getContexts method to trigger fetching of new data.
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#refreshAggregation
-	 * @function
 	 */
 	ManagedObject.prototype.refreshAggregation = function(sName) {
 		var oBindingInfo = this.mBindingInfos[sName],
@@ -2440,8 +2349,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *  @return {boolean} whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
 	 *
 	 *  @protected
-	 * @name sap.ui.base.ManagedObject#isTreeBinding
-	 * @function
 	 */
 	ManagedObject.prototype.isTreeBinding = function(sName) {
 		return false;
@@ -2458,8 +2365,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string|undefined} sModelName name of a model whose bindings should be updated
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#updateBindings
-	 * @function
 	 */
 	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
 		var that = this;
@@ -2550,8 +2455,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sName the name of the property or aggregation
 	 * @return {boolean} whether a binding exists for the given name
 	 * @public
-	 * @name sap.ui.base.ManagedObject#isBound
-	 * @function
 	 */
 	ManagedObject.prototype.isBound = function(sName){
 		return (sName in this.mBindingInfos);
@@ -2563,8 +2466,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sModelName the name of the model
 	 * @return {sap.ui.model.Binding} the element binding for the given model name
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getObjectBinding
-	 * @function
 	 */
 	ManagedObject.prototype.getObjectBinding = function(sModelName){
 		return this.mBoundObjects[sModelName] && this.mBoundObjects[sModelName].binding;
@@ -2576,8 +2477,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.EventProvider} the parent event provider
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getEventingParent
-	 * @function
 	 */
 	ManagedObject.prototype.getEventingParent = function() {
 		return this.oParent;
@@ -2589,8 +2488,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sName the name of the property or aggregation
 	 * @return {sap.ui.model.Binding} the binding for the given name
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getBinding
-	 * @function
 	 */
 	ManagedObject.prototype.getBinding = function(sName){
 		return this.mBindingInfos[sName] && this.mBindingInfos[sName].binding;
@@ -2602,8 +2499,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sName the name of the property or aggregation
 	 * @return {string} the binding path for the given name
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#getBindingPath
-	 * @function
 	 */
 	ManagedObject.prototype.getBindingPath = function(sName){
 		var oInfo = this.mBindingInfos[sName];
@@ -2623,8 +2518,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
-	 * @name sap.ui.base.ManagedObject#setBindingContext
-	 * @function
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
@@ -2641,8 +2534,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	/**
 	 * Update the binding context in this object and all aggregated children
 	 * @private
-	 * @name sap.ui.base.ManagedObject#updateBindingContext
-	 * @function
 	 */
 	ManagedObject.prototype.updateBindingContext = function(bSkipLocal, bSkipChildren, sModelName, bUpdateAll){
 
@@ -2750,8 +2641,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [sModelName] the name of the model or <code>undefined</code>
 	 * @return {Object} the binding context of this object
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getBindingContext
-	 * @function
 	 */
 	ManagedObject.prototype.getBindingContext = function(sModelName){
 		var oModel = this.getModel(sModelName);
@@ -2794,8 +2683,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
 	 * @return {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.base.ManagedObject#setModel
-	 * @function
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {
 		jQuery.sap.assert(oModel == null || oModel instanceof Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
@@ -2827,8 +2714,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *           Otherwise only those for the given model name (undefined == name of default model)
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject#propagateProperties
-	 * @function
 	 */
 	ManagedObject.prototype.propagateProperties = function(vName) {
 		var oProperties = this._getPropertiesToPropagate(),
@@ -2867,8 +2752,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * Get properties for propagation
 	 * @return {object} oProperties
 	 * @private
-	 * @name sap.ui.base.ManagedObject#_getPropertiesToPropagate
-	 * @function
 	 */
 	ManagedObject.prototype._getPropertiesToPropagate = function() {
 		var bNoOwnModels = jQuery.isEmptyObject(this.oModels),
@@ -2903,8 +2786,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string|undefined} [sName] name of the model to be retrieved
 	 * @return {sap.ui.model.Model} oModel
 	 * @public
-	 * @name sap.ui.base.ManagedObject#getModel
-	 * @function
 	 */
 	ManagedObject.prototype.getModel = function(sName) {
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
@@ -2918,8 +2799,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *
 	 * @return {boolean} whether a model reference exists or not
 	 * @public
-	 * @name sap.ui.base.ManagedObject#hasModel
-	 * @function
 	 */
 	ManagedObject.prototype.hasModel = function() {
 		return !(jQuery.isEmptyObject(this.oModels) && jQuery.isEmptyObject(this.oPropagatedProperties.oModels));
@@ -2975,8 +2854,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {Object} [oOptions] configuration object
 	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
 	 * @protected
-	 * @name sap.ui.base.ManagedObject#clone
-	 * @function
 	 */
 	ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
 		var that = this,
@@ -3115,8 +2992,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * is not defined (Core.mElements order)
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObject._handleLocalizationChange
-	 * @function
 	 */
 	ManagedObject._handleLocalizationChange = function(iPhase) {
 		var i;
@@ -3172,8 +3047,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 * @param {string} sOldAggrName Name of the old deprecated aggregation
 	 * @param {string} sNewAggrName Name of the new aggregation
 	 * @deprecated
-	 * @name sap.ui.base.ManagedObject._mapAggregation
-	 * @function
 	 */
 	ManagedObject._mapAggregation = function(oPrototype, sOldAggrName, sNewAggrName){
 		var mKeys = oPrototype.getMetadata().getJSONKeys(); // TODO fix handling of hidden entitites?
@@ -3214,8 +3087,6 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 	 *          bRecursive true, if all nested children should be returned.
 	 * @return {sap.ui.base.ManagedObject[]} array of child elements and controls
 	 * @public
-	 * @name sap.ui.base.ManagedObject#findAggregatedObjects
-	 * @function
 	 */
 	ManagedObject.prototype.findAggregatedObjects = function(bRecursive) {
 
