@@ -15,7 +15,7 @@
 	border-color:  @sapUiInputBaseFocus;
 }
 
-.sapMMultiComboBox>.sapMMultiComboBoxBorder {
+.sapMMultiComboBox > .sapMMultiComboBoxBorder {
 	background: @sapUiLightestBG;
 	border: 1px solid @sapUiInputBaseBorder;
 	padding-left: 0.75rem;
@@ -83,6 +83,11 @@
 
 .sapUiSizeCompact .sapMMultiComboBoxShadowDiv {
 	height: 1.625rem;
+}
+
+// If a non-native placeholder is used, make sure that it is in front of children elements.
+.sapMMultiComboBox  > .sapMInputBasePlaceholder {
+	z-index: 1;
 }
 
 /* ------------------------------ */
