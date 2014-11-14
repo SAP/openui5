@@ -222,7 +222,7 @@ sap.ui.define(['jquery.sap.global',
 					return vControl ? vControl : null;
 				}
 
-				if (vStringOrArrayOrRegex instanceof RegExp) {
+				if (jQuery.type(vStringOrArrayOrRegex) === "regexp") {
 
 					//Performance critical
 					for (var sPropertyName in oCoreElements) {
