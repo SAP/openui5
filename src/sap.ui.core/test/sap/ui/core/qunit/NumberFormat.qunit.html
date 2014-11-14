@@ -55,7 +55,11 @@
 	test("integer default format", function(){
 		equal(oDefaultInteger.format(1), "1", "1");
 		equal(oDefaultInteger.format(123), "123", "123");
+		// Integer instance has TOWARDS_ZERO set as default rounding mode
 		equal(oDefaultInteger.format(123.23), "123", "123.23");
+		equal(oDefaultInteger.format(123.78), "123", "123.78");
+		equal(oDefaultInteger.format(-123.23), "-123", "-123");
+		equal(oDefaultInteger.format(-123.78), "-123", "-123");
 		equal(oDefaultInteger.format(1234), "1234", "1234");
 		equal(oDefaultInteger.format(12345), "12345", "12345");
 		equal(oDefaultInteger.format(-123), "-123", "-123");
