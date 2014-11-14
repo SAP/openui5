@@ -3963,9 +3963,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onkeyup = function(oEvent) {
+		if (!this._bEventSapSelect === true) {
+			return;
+		}
+		this._bEventSapSelect = false;
+
 		// this mimics the sapselect event but on keyup
 		if (oEvent.keyCode !== jQuery.sap.KeyCodes.ENTER &&
-			oEvent.keyCode !== jQuery.sap.KeyCodes.SPACE ||
+			oEvent.keyCode !== jQuery.sap.KeyCodes.SPACE &&
+			oEvent.keyCode !== jQuery.sap.KeyCodes.F4 ||
 			oEvent.srcControl !== this &&
 			jQuery.inArray(oEvent.srcControl,this.getRows()) === -1 &&
 			jQuery.inArray(oEvent.srcControl,this.getColumns()) === -1) {
@@ -3989,6 +3995,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._onSelect(oEvent);
 		this._bShowMenu = false;
 		oEvent.preventDefault();
+	};
+
+	Table.prototype.onsapselect = function() {
+		this._bEventSapSelect = true;
 	};
 
 	/**
@@ -4166,7 +4176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/**
 	 * Implements selecting/deselecting rows when pressing SHIFT + UP
-	 * 
+	 *
 	 * @private
 	 */
 	Table.prototype.onsapupmodifiers = function(oEvent) {
@@ -4194,7 +4204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/**
 	 * dynamic scrolling when reaching the top row with the ARROW UP key
-	 * 
+	 *
 	 * @private
 	 */
 	Table.prototype.onsapup = function(oEvent) {
@@ -4530,7 +4540,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.onsapleft = function(oEvent) {
 		this._collapseGroupHeader(oEvent);
 	};
-	
+
 	/**
 	 * Default handler for sapright event.
 	 * @private
@@ -4538,8 +4548,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.onsapright = function(oEvent) {
 		this._expandGroupHeader(oEvent);
 	};
-	
-	
+
+
 	/**
 	 * If focus is on group header, close the group header, else do the default behaviour of item navigation
 	 * @private
@@ -4556,7 +4566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			oEvent.stopImmediatePropagation();
 		}
 	};
-	
+
 	/**
 	 * If focus is on group header, open the group header, else do the default behaviour of item navigation
 	 * @private
