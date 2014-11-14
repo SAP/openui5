@@ -186,8 +186,7 @@
 }
 
 .sap-desktop .sapUiCalDay:hover > .sapUiCalDayNum,
-.sap-desktop .sapUiCalDay:focus > .sapUiCalDayNum{
-	border: 2px solid @sapHCReducedAltFG;
+.sap-desktop .sapUiCalDay:focus > .sapUiCalDayNum{	
 	line-height: 40px;
 }
 
@@ -230,34 +229,44 @@
 	outline-offset: -4px;
 }
 
-.sap-desktop[data-sap-ui-browser^="ie"] {
-  .sapUiCalMonthSel,
-  .sapUiCalYearSel,
-  .sapUiCalMonthSel:hover,
-  .sapUiCalYearSel:hover,
-  .sapUiCalMonthSel:focus,
-  .sapUiCalYearSel:focus {
-    outline: none;
-    position: relative;
-  }
-  .sapUiCalMonthSel:before,
-  .sapUiCalYearSel:before,
-  .sapUiCalMonthSel:hover:before,
-  .sapUiCalYearSel:hover:before,
-  .sapUiCalMonthSel:focus:before,
-  .sapUiCalYearSel:focus:before {
-    content: " ";
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    width: 97.5%;
-    height: 95%;
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    border: 2px solid @sapHCStandardFG;
-    pointer-events: none;
-  }  
+.sap-desktop[data-sap-ui-browser^="ie"] {	
+	.sapUiCalMonthPick:active,
+	.sapUiCalYearPick:active {
+		position: relative;
+    	top: -1px;
+    	left: -1px;
+	}
+	.sapUiCalPrev:active > span,
+	.sapUiCalNext:active > span {
+		position: relative;
+	}
+	.sapUiCalMonthSel,
+	.sapUiCalYearSel,
+	.sapUiCalMonthSel:hover,
+	.sapUiCalYearSel:hover,
+	.sapUiCalMonthSel:focus,
+	.sapUiCalYearSel:focus {
+    	outline: none;
+    	position: relative;
+  	}
+  	.sapUiCalMonthSel:before,
+  	.sapUiCalYearSel:before,
+  	.sapUiCalMonthSel:hover:before,
+  	.sapUiCalYearSel:hover:before,
+  	.sapUiCalMonthSel:focus:before,
+  	.sapUiCalYearSel:focus:before {
+	    content: " ";
+	    -webkit-box-sizing: border-box;
+	    -moz-box-sizing: border-box;
+	    box-sizing: border-box;
+	    width: 97.5%;
+	    height: 95%;
+	    position: absolute;
+	    left: 1px;
+	    top: 1px;
+	    border: 2px solid @sapHCStandardFG;
+	    pointer-events: none;
+  	}  
 }
 
 .sap-desktop .sapUiCalMonth:hover > .sapUiCalDayNum,
@@ -265,7 +274,7 @@
 .sap-desktop .sapUiCalDay:not(.sapUiCalDayToday):focus > .sapUiCalDayNum,
 .sap-desktop .sapUiCalDay:not(.sapUiCalDayToday):hover > .sapUiCalDayNum {
 	border: 0 none;
-	border-left: 2px solid transparent;
+	border-left: 1px solid transparent;
 }
 
 .sap-desktop .sapUiCalDay:focus,
