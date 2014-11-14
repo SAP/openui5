@@ -396,7 +396,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					zynga: false,
 					preventDefault: false,
 					nonTouchScrolling: "scrollbar",
-					bounce: this.getBounce() === "" ? undefined : this.getBounce()
+					bounce: this.getBounce() === "" ? undefined : this.getBounce(),
+					// In android stock browser, iScroll has to be used
+					// The scrolling layer using native scrolling is transparent for the browser to dispatch events
+					iscroll: sap.ui.Device.browser.name === "an" ? "force" : undefined
 				});
 			}
 		}
