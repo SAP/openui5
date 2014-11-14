@@ -2564,6 +2564,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onmouseup = function(oEvent) {
+		// clean up the timer
+		jQuery.sap.clearDelayedCall(this._sDelayedActionTimer);
+
 		if (this.$().find(".sapUiTableCtrl td :focus").length > 0) {
 			// when clicking into a focusable control we enter the action mode!
 			this._enterActionMode(this.$().find(".sapUiTableCtrl td :focus"));
