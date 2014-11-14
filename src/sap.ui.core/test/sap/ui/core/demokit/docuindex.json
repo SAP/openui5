@@ -91,7 +91,7 @@
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
 				"name" : "Theme-dependent CSS-classes",
-				"description" : "'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls" 
+				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements." 
 			}
 		]
 	}
