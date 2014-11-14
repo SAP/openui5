@@ -27,10 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons"),
 			// ResourceBundle always returns the key if the text is not found
 			sText = rb.getText("SEGMENTEDBUTTON_ARIA_SELECT");
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
+
 		// write the HTML into the render manager  
 	    rm.write("<span");
 	    rm.writeControlData(oControl);
