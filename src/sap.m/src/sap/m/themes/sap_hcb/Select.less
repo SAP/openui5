@@ -115,7 +115,7 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 	border-color: transparent;
 }
 
-// IE does not support css outline-offset
+/* IE does not support css outline-offset */
 
 .sap-desktop[data-sap-ui-browser^="ie"] {
 
@@ -144,6 +144,9 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 
 .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	background: @sapHCHighlightAltBG;
+}
+
+.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 	border-color: transparent;
 }
 
