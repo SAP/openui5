@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * ${copyright}
  */
 sap.ui.define(['jquery.sap.global'],
@@ -44,11 +44,12 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div");
 
 			if (oHeaderTBar) {
-			// we are in the toolbar case - since
-			oRm.addClass("sapMPanelWrappingDivTb");
+				// we are in the toolbar case
+				oRm.addClass("sapMPanelWrappingDivTb");
 			} else {
-			oRm.addClass("sapMPanelWrappingDiv");
+				oRm.addClass("sapMPanelWrappingDiv");
 			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -58,6 +59,7 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				oIcon.removeStyleClass("sapMPanelExpandableIconExpanded");
 			}
+
 			oRm.renderControl(oIcon);
 		}
 
@@ -68,16 +70,17 @@ sap.ui.define(['jquery.sap.global'],
 		if (oHeaderTBar) {
 			oHeaderTBar.setDesign(sap.m.ToolbarDesign.Transparent, true);
 
-			if (oControl.getExpandable()) {
+			if (bIsExpandable) {
 				// use this class as marker class - to ease selection later in onAfterRendering
 				oHeaderTBar.addStyleClass("sapMPanelHdrExpandable");
 			}
+
 			oRm.renderControl(oHeaderTBar);
 
 		} else if (sHeaderText) {
 			oRm.write("<div");
 			oRm.addClass("sapMPanelHdr");
-			if (oControl.getExpandable()) {
+			if (bIsExpandable) {
 				// use this class as marker class - to ease selection later in onAfterRendering
 				oRm.addClass("sapMPanelHdrExpandable");
 			}
@@ -94,13 +97,14 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		var oInfoTBar = oControl.getInfoToolbar();
-		if (oInfoTBar && oControl.getExpandable()) {
-			// use this class as marker class - to ease selection later in onAfterRendering
-			oInfoTBar.addStyleClass("sapMPanelExpandablePart");
-		}
 
-		// render infoBar
 		if (oInfoTBar) {
+			if (bIsExpandable) {
+				// use this class as marker class - to ease selection later in onAfterRendering
+				oInfoTBar.addStyleClass("sapMPanelExpandablePart");
+			}
+
+			// render infoBar
 			oInfoTBar.setDesign(sap.m.ToolbarDesign.Info, true);
 			oRm.renderControl(oInfoTBar);
 		}
@@ -110,7 +114,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMPanelContent");
 		oRm.addClass("sapMPanelBG");
 
-		if (oControl.getExpandable()) {
+		if (bIsExpandable) {
 			// use this class as marker class - to ease selection later in onAfterRendering
 			oRm.addClass("sapMPanelExpandablePart");
 		}

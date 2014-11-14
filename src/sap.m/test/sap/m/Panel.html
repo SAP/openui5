@@ -40,10 +40,10 @@
 		}), new sap.m.Panel({
 			headerText : "This is the Panel header",
 			content : [new sap.m.Text({
-				text : "This is a Panel with a defined size."
+				text : "This is a Panel with a defined size.\n" + lorem
 			})],
 			width : "400px",
-			height : "150px"
+			height : "80px"
 		}), new sap.m.Panel({
 			headerText : "This is the Panel header",
 			headerToolbar : new sap.m.Toolbar({
@@ -74,7 +74,8 @@
 				sap.m.MessageToast.show("InfoBar Pressed!");
 			}),
 			content : [new sap.m.Text({
-				text : "This is a Panel with a header toolbar and an info toolbar."
+				text : "This is a Panel with a header toolbar and an info toolbar.\n" +
+					lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem + lorem
 			})],
 			height : "200px"
 		}),
@@ -95,8 +96,10 @@
 				})]
 			}),
 			content : [new sap.m.Text({
-				text : "1st This is a Panel with a header toolbar and an info toolbar - this is the content."
-			})]
+				text : "1st This is a Panel with a header toolbar and an info toolbar - this is the content." +
+					lorem + lorem + lorem + lorem + lorem
+			})],
+			height: "100px"
 		}), new sap.m.Panel({
 			expandable : true,
 			expanded : true,
