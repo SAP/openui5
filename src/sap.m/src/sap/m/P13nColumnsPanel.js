@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 		this._filterItems();
 		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
-			this._deactivateSelectedItem();			
+			this._deactivateSelectedItem();
 		}
 		this._fnHandleResize();
 	};
@@ -488,11 +488,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
 		var oNewSelectedItem = null;
-		
+
 		if (this._bSearchFilterActive === true) {
 			return;
 		}
-		
+
 		// Remove highlighting from previous item
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
 			this._removeHighLightingFromItem(this._oSelectedItem);
@@ -525,11 +525,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
 
-			// Determine displayed table items dependent of "Show Selected" filter status 
+			// Determine displayed table items dependent of "Show Selected" filter status
 			if (this._bShowSelected === true) {
 				aTableItems = this._oTable.getSelectedItems();
-			}else {
-				aTableItems = this._oTable.getItems();					
+			} else {
+				aTableItems = this._oTable.getItems();
 			}
 			iItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
@@ -957,12 +957,15 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		// TODO: make sure we optimize calculation and respect margins and borders, use e.g. jQuery.outerHeight(true)
 		this._fnHandleResize = function() {
 			if (that.getParent) {
-				var oParent = that.getParent();
-				var $dialogCont = jQuery("#" + oParent.getId() + "-cont");
-				if ($dialogCont.children().length > 0 && that._oToolbar.$().length > 0) {
-					var iContentHeight = $dialogCont.children()[0].clientHeight;
-					var iHeaderHeight = that._oToolbar ? that._oToolbar.$()[0].clientHeight : 0;
-					that._oScrollContainer.setHeight((iContentHeight - iHeaderHeight) + 'px');
+				var oParent = null, $dialogCont = null, iContentHeight, iHeaderHeight;
+				oParent = that.getParent();
+				if (oParent) {
+					$dialogCont = jQuery("#" + oParent.getId() + "-cont");
+					if ($dialogCont.children().length > 0 && that._oToolbar.$().length > 0) {
+						iContentHeight = $dialogCont.children()[0].clientHeight;
+						iHeaderHeight = that._oToolbar ? that._oToolbar.$()[0].clientHeight : 0;
+						that._oScrollContainer.setHeight((iContentHeight - iHeaderHeight) + 'px');
+					}
 				}
 			}
 		};
