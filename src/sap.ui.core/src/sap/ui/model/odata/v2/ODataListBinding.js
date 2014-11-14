@@ -604,9 +604,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		if (!bForceUpdate) {
 			if (mEntityTypes){
 				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
-				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
-					bChangeDetected = true;
+				if (sResolvedPath) {
+					var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
+					if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
+						bChangeDetected = true;
+					}
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
