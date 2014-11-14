@@ -58,6 +58,27 @@
 				});
 			}
 
+			test("Should not call pattern matched only matched", function () {
+				var oRoute = new sap.ui.core.routing.Route(null, { name : "testRoute" }),
+						fnMatchedSpy = this.spy(),
+						fnPatternMatchedSpy = this.spy();
+
+				oRoute.attachMatched(fnMatchedSpy);
+				oRoute.attachPatternMatched(fnPatternMatchedSpy);
+
+				// Act
+				oRoute._routeMatched(
+						oRouterStub,
+						{});
+
+				// Assert
+				strictEqual(fnMatchedSpy.callCount, 1, "did call the attachMatched spy");
+				strictEqual(fnPatternMatchedSpy.callCount, 0, "did not call the attachPatternMatched spy");
+
+				// Cleanup
+				oRoute.destroy();
+			});
+
 			fnRouteEventsTestCase("Should attach to the matched event", "Matched");
 			fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
 
