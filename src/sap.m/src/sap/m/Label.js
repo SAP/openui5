@@ -48,11 +48,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			text : {type : "string", group : "Misc", defaultValue : null},
 	
 			/**
-			 * Invisible labels are not rendered
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
