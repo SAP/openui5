@@ -16,12 +16,8 @@ var FeedInputRenderer = {
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	FeedInputRenderer.render = function (oRm, oControl) {
-	
 		var sMyId = oControl.getId();
-			
-		if (!oControl.getVisible()) {
-			return;
-		}
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMFeedIn");

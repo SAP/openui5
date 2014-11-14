@@ -54,11 +54,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			value : {type : "string", group : "Data", defaultValue : null},
 	
 			/**
-			 * Set this flag to "false" to hide the feed input on the screen. In this case the control will not be rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Icon to be displayed as a graphical element within the feed input. This can be an image or an icon from the icon font.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
