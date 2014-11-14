@@ -23,12 +23,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	RowRepeaterRenderer.render = function(oRenderManager, oControl){
-	
-		// escape directly if control is not visible
-		if (!oControl.getVisible()) {
-			return;
-		}
-	
 		// opening root DIV
 		oRenderManager.write("<div");
 		oRenderManager.writeControlData(oControl);

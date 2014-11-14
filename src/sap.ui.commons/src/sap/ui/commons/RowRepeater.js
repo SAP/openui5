@@ -31,12 +31,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible row-repeaters are not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Number of rows displayed.
 			 */
