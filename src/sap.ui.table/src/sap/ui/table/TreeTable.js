@@ -8,11 +8,11 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new TreeTable.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -26,43 +26,43 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeTable = Table.extend("sap.ui.table.TreeTable", /** @lends sap.ui.table.TreeTable.prototype */ { metadata : {
-	
+
 		library : "sap.ui.table",
 		properties : {
-	
+
 			/**
 			 * Flag to enable or disable expanding of first level.
 			 */
 			expandFirstLevel : {type : "boolean", defaultValue : false},
-	
+
 			/**
 			 * If group mode is enable nodes with subitems are rendered as if they were group headers. This can be used to do the grouping for an OData service on the backend and visualize this in a table. This mode only makes sense if the tree has a depth of exacly 1 (group headers and entries)
 			 */
 			useGroupMode : {type : "boolean", group : "Appearance", defaultValue : false},
-	
+
 			/**
 			 * The property name of the rows data which will be displayed as a group header if the group mode is enabled
 			 */
 			groupHeaderProperty : {type : "string", group : "Data", defaultValue : null}
 		},
 		events : {
-	
+
 			/**
 			 * fired when a node has been expanded or collapsed (only available in hierachical mode)
 			 */
 			toggleOpenState : {
 				parameters : {
-	
+
 					/**
 					 * index of the expanded/collapsed row
 					 */
-					rowIndex : {type : "int"}, 
-	
+					rowIndex : {type : "int"},
+
 					/**
 					 * binding context of the selected row
 					 */
-					rowContext : {type : "object"}, 
-	
+					rowContext : {type : "object"},
+
 					/**
 					 * flag whether the node has been expanded or collapsed
 					 */
@@ -71,8 +71,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * expands the row for the given row index
 	 *
@@ -84,8 +84,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
-	
+
+
 	/**
 	 * collapses the row for the given row index
 	 *
@@ -97,8 +97,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
-	
+
+
 	/**
 	 * returns whether the row is expanded or collapsed
 	 *
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
+
 	/**
 	 * Initialization of the TreeTable control
 	 * @private
@@ -118,28 +118,29 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
 		this._iLastFixedColIndex = 0;
-		
+
 		// adopting properties and load icon fonts for bluecrystal
-		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal") {
-		
+		if (sap.ui.getCore().getConfiguration().getTheme() === "sap_bluecrystal" ||
+			sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+
 			// add the icon fonts
 			jQuery.sap.require("sap.ui.core.IconPool");
 			sap.ui.core.IconPool.insertFontFaceStyle();
-			
+
 			// defaulting the rowHeight
 			// this.setRowHeight(32); --> is done via CSS
-			
+
 		}
-		
+
 	};
-	
-	
+
+
 	/**
 	 * Setter for property <code>fixedRowCount</code>.
 	 *
 	 * <b>This property is not supportd for the TreeTable and will be ignored!</b>
 	 *
-	 * Default value is <code>0</code> 
+	 * Default value is <code>0</code>
 	 *
 	 * @param {int} iFixedRowCount  new value for property <code>fixedRowCount</code>
 	 * @return {sap.ui.table.TreeTable} <code>this</code> to allow method chaining
@@ -152,8 +153,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		jQuery.sap.log.warning("TreeTable: the property \"fixedRowCount\" is not supported and will be ignored!");
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Rerendering handling
 	 * @private
@@ -162,7 +163,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		Table.prototype.onAfterRendering.apply(this, arguments);
 		this.$().find("[role=grid]").attr("role", "treegrid");
 	};
-	
+
 	TreeTable.prototype.isTreeBinding = function(sName) {
 		sName = sName || "rows";
 		if (sName === "rows") {
@@ -170,12 +171,12 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		}
 		return sap.ui.core.Element.prototype.isTreeBinding.apply(this, sName);
 	};
-	
+
 	TreeTable.prototype.getBinding = function(sName) {
 		sName = sName || "rows";
 		var oBinding = sap.ui.core.Element.prototype.getBinding.call(this, sName);
 		// the check for the tree binding is only relevant becuase of the DataTable migration
-		//  --> once the DataTable is deleted after the deprecation period this check can be deleted 
+		//  --> once the DataTable is deleted after the deprecation period this check can be deleted
 		if (oBinding && this.isTreeBinding(sName) && sName === "rows" && !oBinding.getLength) {
 			// SIMULATE A LIST BINDING FOR THE TREE BINDING!
 			//jQuery.sap.log.info("Enhancing Binding Object - Tree to List Binding");
@@ -344,24 +345,24 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		}
 		return oBinding;
 	};
-	
+
 	TreeTable.prototype._updateTableContent = function() {
 		Table.prototype._updateTableContent.apply(this, arguments);
-	
+
 		if (!this.getUseGroupMode()) {
 			return;
 		}
-		
+
 		//If group mode is enabled nodes which have children are visualized as if they were group header
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
 			iCount = this.getVisibleRowCount();
-	
+
 		for (var iRow = 0; iRow < iCount; iRow++) {
 			var oContext = this.getContextByIndex(iFirstRow + iRow),
 				$row = this.getRows()[iRow].$(),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
-	
+
 			if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
 				// modify the rows
 				$row.addClass("sapUiTableGroupHeader sapUiTableRowHidden");
@@ -378,15 +379,15 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	};
-	
+
 	TreeTable.prototype._updateTableCell = function(oCell, oContext, oTD) {
-	
+
 		var oBinding = this.getBinding("rows");
-		
+
 		if (oBinding) {
 			var iLevel = oBinding.getLevel ? oBinding.getLevel(oContext) : 0;
 			var $row;
-			// in case of fixed columns we need to lookup the fixed table 
+			// in case of fixed columns we need to lookup the fixed table
 			// otherwise the expand/collapse/margin will not be set!
 			if (this.getFixedColumnCount() > 0) {
 				$row = oCell.getParent().$("fixed");
@@ -411,9 +412,9 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			$row.attr("data-sap-ui-level", iLevel);
 			$row.attr('aria-level', iLevel + 1);
 		}
-		
+
 	};
-	
+
 	TreeTable.prototype.onclick = function(oEvent) {
 		if (jQuery(oEvent.target).hasClass("sapUiTableGroupIcon")) {
 			this._onGroupSelect(oEvent);
@@ -425,7 +426,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	};
-	
+
 	TreeTable.prototype.onsapselect = function(oEvent) {
 		if (jQuery(oEvent.target).hasClass("sapUiTableTreeIcon")) {
 			this._onNodeSelect(oEvent);
@@ -435,7 +436,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	};
-	
+
 	TreeTable.prototype.onkeydown = function(oEvent) {
 		Table.prototype.onkeydown.apply(this, arguments);
 		var $Target = jQuery(oEvent.target),
@@ -452,9 +453,9 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			oEvent.preventDefault();
 		}
 	};
-	
+
 	TreeTable.prototype._onNodeSelect = function(oEvent) {
-	
+
 		var $parent = jQuery(oEvent.target).parents("tr");
 		if ($parent.length > 0) {
 			var iRowIndex = this.getFirstVisibleRow() + parseInt($parent.attr("data-sap-ui-rowindex"), 10);
@@ -466,14 +467,14 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			});
 			this.getBinding("rows").toggleContext(oContext);
 		}
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 	};
-	
+
 	TreeTable.prototype._onGroupSelect = function(oEvent) {
-	
+
 		var $parent = jQuery(oEvent.target).parents("[data-sap-ui-rowindex]");
 		if ($parent.length > 0) {
 			var iRowIndex = this.getFirstVisibleRow() + parseInt($parent.attr("data-sap-ui-rowindex"), 10);
@@ -490,12 +491,12 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			});
 			this.getBinding("rows").toggleContext(oContext);
 		}
-	
+
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
-	
+
 	};
-	
+
 	TreeTable.prototype.expand = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -503,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			oBinding.expandContext(oContext);
 		}
 	};
-	
+
 	TreeTable.prototype.collapse = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -511,7 +512,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			oBinding.collapseContext(oContext);
 		}
 	};
-	
+
 	TreeTable.prototype.isExpanded = function(iRowIndex) {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
@@ -520,10 +521,10 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 		}
 		return false;
 	};
-	
+
 	TreeTable.prototype._enterActionMode = function($Tabbable) {
 		var $domRef = $Tabbable.eq(0);
-		
+
 		Table.prototype._enterActionMode.apply(this, arguments);
 		if ($Tabbable.length > 0 && $domRef.hasClass("sapUiTableTreeIcon") && !$domRef.hasClass("sapUiTableTreeIconLeaf")) {
 			//Set tabindex to 0 to have make node icon accessible
@@ -532,13 +533,13 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			this._bActionMode = true;
 		}
 	};
-	
+
 	TreeTable.prototype._leaveActionMode = function(oEvent) {
 		Table.prototype._leaveActionMode.apply(this, arguments);
 		this.$().find(".sapUiTableTreeIcon").attr("tabindex", -1);
 	};
-	
-	
+
+
 
 	return TreeTable;
 
