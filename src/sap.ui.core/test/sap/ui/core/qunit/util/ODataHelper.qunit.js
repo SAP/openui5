@@ -388,4 +388,20 @@
 	                   "12345-1234-1234-1234-123456789abc", "12_45678-1234-1234-1234-123456789abc"],
 		"14.4.9 Expression edm:Guid", "Edm.Guid", true);
 
+	//*********************************************************************************************
+	jQuery.each(["", "U0FQ", "QUI=", "QQ==",
+	    "THEQUICKBROWNFOXJUMPSOVERTHELAZYDOG-__--_thequickbrownfoxjumpsoverthelazydog0123456789AA"],
+		function (i, sValue) {
+			test("14.4.1 Expression edm:Binary: " + sValue, function () {
+				strictEqual(
+					formatAndParseNoWarning({"@odata.type": "Edm.Binary", "value": sValue}),
+					sValue.replace(/-/g, "+").replace(/_/g, "/")
+				);
+			});
+		}
+	);
+
+	//*********************************************************************************************
+	testIllegalValues([undefined, null, false, {}, "A===", "+", "/", "%"],
+	                   "14.4.1 Expression edm:Binary", "Edm.Binary", true);
 } ());

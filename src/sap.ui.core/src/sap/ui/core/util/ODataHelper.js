@@ -8,7 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 	function(jQuery, BindingParser, Core, DateFormat, NumberFormat) {
 		'use strict';
 
-		var oCore = sap.ui.getCore(),
+		var rBinary = /^[-\w]*={0,2}$/,
+			oCore = sap.ui.getCore(),
 			rDecimal = /^[-+]?\d+(\.\d+)?$/,
 			fnEscape = BindingParser.complexParser.escape,
 			rGuid = /^[A-F0-9]{8}-([A-F0-9]{4}-){3}[A-F0-9]{12}$/i,
@@ -140,6 +141,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 				case "object":
 					if (vRawValue) {
 						switch (vRawValue["@odata.type"]) {
+						case "Edm.Binary": // 14.4.1 Expression edm:Binary
+							return typeof vRawValue.value === "string"
+									&& rBinary.test(vRawValue.value)
+								//convert to base64 format for data URLs
+								? vRawValue.value.replace(/-/g, "+").replace(/_/g, "/")
+								: illegalValue(vRawValue);
+
 						case "Edm.Date": // 14.4.3 Expression edm:Date
 							if (rISODate.test(vRawValue.value)) {
 								oDate = oISODateFormat.parse(vRawValue.value);
@@ -183,7 +191,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							return floatingPoint(vRawValue);
 
 						case "Edm.Guid": // 14.4.9 Expression edm:Guid
-							return rGuid.test(vRawValue.value) ? vRawValue.value : illegalValue(vRawValue);
+							return rGuid.test(vRawValue.value)
+								? vRawValue.value
+								: illegalValue(vRawValue);
 
 						case "Edm.Int64": // 14.4.10 Expression edm:Int (IEEE754Compatible)
 							if (typeof vRawValue.value === "string"

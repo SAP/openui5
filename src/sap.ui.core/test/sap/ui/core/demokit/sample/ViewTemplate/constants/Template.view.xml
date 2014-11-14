@@ -49,6 +49,8 @@
 				<Text text="{path: 'meta>@Some.Binary#three', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Text text="{path: 'meta>@Some.Binary#threeEq', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 				<Text text="{path: 'meta>@Some.Binary', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Blue', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Gold', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
 			</template:with>
 		</layout:content>
 	</layout:VerticalLayout>
