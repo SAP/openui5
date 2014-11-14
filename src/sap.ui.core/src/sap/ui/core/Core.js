@@ -8,6 +8,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	"use strict";
 
 	/**
+	 * Set of libraries that have been loaded and initialized already.
+	 * This is maintained separately from Core.mLibraries to protect it against 
+	 * modification from the outside (objects in mLibraries are currently exposed
+	 * by getLoadedLibraries())
+	 */
+	var mLoadedLibraries = {};
+	
+	/**
 	 * @class Core Class of the SAP UI Library.
 	 *
 	 * This class boots the Core framework and makes it available for the Application
@@ -74,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this.aPlugins = [];
 		
 			/**
-			 * Collection of loaded libraries, keyed by their name.
+			 * Collection of loaded or adhoc created libraries, keyed by their name.
 			 * @private
 			 */
 			this.mLibraries = {};
@@ -968,7 +976,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		jQuery.sap.assert(sUrl === undefined || typeof sUrl === "string", "sUrl must be a string or empty");
 	
 		// load libraries only once
-		if ( !this.mLibraries[sLibrary] ) {
+		if ( !mLoadedLibraries[sLibrary] ) {
 	
 			var sModule = sLibrary + ".library",
 				sAllInOneModule;
@@ -991,7 +999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			jQuery.sap.require(sModule);
 	
 			// check for legacy code
-			if ( !this.mLibraries[sLibrary] ) {
+			if ( !mLoadedLibraries[sLibrary] ) {
 				jQuery.sap.log.warning("library " + sLibrary + " didn't initialize itself");
 				this.initLibrary(sLibrary); // TODO redundant to generated initLibrary call....
 			}
@@ -1085,19 +1093,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			log.warning("[Deprecated] library " + sLibName + " uses old fashioned initLibrary() call (rebuild with newest generator)");
 		}
 	
-		if ( !sLibName || this.mLibraries[sLibName] ) {
+		if ( !sLibName || mLoadedLibraries[sLibName] ) {
 			return;
 		}
 	
 		log.debug("Analyzing Library " + sLibName, null, METHOD);
 	
-		// Create lib info object. Also used as a marker that the library is loading/has been loaded
-		this.mLibraries[sLibName] = oLibInfo = jQuery.extend({
-		  dependencies : [],
-		  types : [],
-		  interfaces : [],
-		  controls: [],
-		  elements : []
+		// Set 'loaded' marker
+		mLoadedLibraries[sLibName] = true;
+
+		function extend(oLibrary, oInfo) {
+			
+			var sKey, vValue;
+			
+			for ( sKey in oInfo ) {
+				vValue = oInfo[sKey];
+
+				// don't set name again, don't copy undefined values
+				if ( sKey != 'name' && vValue !== undefined ) {
+				
+					if ( jQuery.isArray(oLibrary[sKey]) ) {
+						// concat array typed values 
+						if ( oLibrary[sKey].length === 0 ) {
+							oLibrary[sKey] = vValue;
+						} else {
+							oLibrary[sKey] = jQuery.sap.unique(oLibrary[sKey].concat(vValue));
+						}
+					} else if ( oLibrary[sKey] === undefined ) {
+						// only set values for properties that are still undefined
+						oLibrary[sKey] = vValue;
+					} else {
+						// ignore other values 
+						jQuery.sap.log.warning("library info setting ignored: " + sKey + "=" + vValue);
+					}
+				}
+			}
+			
+			return oLibrary;
+		}
+
+		// Create lib info object or merge with existing 'adhoc' library 
+		this.mLibraries[sLibName] = oLibInfo = extend(this.mLibraries[sLibName] || {
+			dependencies : [],
+			types : [],
+			interfaces : [],
+			controls: [],
+			elements : []
 		}, oLibInfo);
 	
 		// this code could be moved to a separate "legacy support" module
@@ -1135,7 +1176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		for (var i = 0; i < oLibInfo.dependencies.length; i++) {
 			var sDepLib = oLibInfo.dependencies[i];
 			log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
-			if ( !this.mLibraries[sDepLib] ) {
+			if ( !mLoadedLibraries[sDepLib] ) {
 				log.warning("Dependency from " + sLibName + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
 				this.loadLibrary(sDepLib);
 			}
@@ -1698,9 +1739,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		var sName = oMetadata.getName(),
 			sLibraryName = oMetadata.getLibraryName() || "",
 			oLibrary = this.mLibraries[sLibraryName],
-			bControl = Control.prototype.isPrototypeOf(oMetadata.getClass().prototype),
-			bChanged = false;
+			sCategory = Control.prototype.isPrototypeOf(oMetadata.getClass().prototype) ? 'controls' : 'elements';
 		
+		// if library has not been loaded yet, create empty 'adhoc' library
+		// don't set 'loaded' marker, so it might be loaded later
 		if ( !oLibrary ) {
 			oLibrary = this.mLibraries[sLibraryName] = {
 				dependencies : [],
@@ -1711,19 +1753,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			};
 		}
 		
-		if ( bControl ) {
-			if ( jQuery.inArray(sName, oLibrary.controls) < 0 ) {
-				oLibrary.controls.push(sName);
-				bChanged = true;
-			}
-		} else {
-			if ( jQuery.inArray(sName, oLibrary.elements) < 0 ) {
-				oLibrary.elements.push(sName);
-				bChanged = true;
-			}
-		}
-		
-		if ( bChanged ) {
+		if ( jQuery.inArray(sName, oLibrary[sCategory]) < 0 ) {
+
+			// add class to corresponding categoryi nlibrary ('elements' or 'controls')
+			oLibrary[sCategory].push(sName);
+
 			jQuery.sap.log.debug("Class " + oMetadata.getName() + " registered for library " + oMetadata.getLibraryName());
 			this.fireLibraryChanged({name : oMetadata.getName(), stereotype : oMetadata.getStereotype(), operation: "add", metadata : oMetadata});
 		}
