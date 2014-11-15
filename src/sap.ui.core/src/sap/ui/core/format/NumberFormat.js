@@ -37,9 +37,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * <li>minusSign: the used minus symbol</li>
 	 * <li>showMeasure: Show the measure according to the format in the formatted string</li>
 	 * <li>style: either empty or 'short, 'long' or 'standard' (based on CLDR decimalFormat)</li>
-	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by <code>maxFractionDigits</code></li>.
-	 *  This can be assigned by value in [RoundingMode]{@link sap.ui.core.format.NumberFormat.RoundingMode} or a function which will be used for rounding the number. The function
-	 *  is called with two parameters: the number and how many decimal digits should be reserved.
+	 * <li>roundingMode: specifies a rounding behavior for discarding the digits after the maximum fraction digits defined by maxFractionDigits.
+	 *  This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode} or a function which will be used for rounding the number. The function
+	 *  is called with two parameters: the number and how many decimal digits should be reserved.</li>
 	 * </ul>
 	 * For format options which are not specified default values according to the type and locale settings are used.
 	 *
@@ -63,56 +63,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * significant returned digits of rounded result is to be calculated.
 	 *
 	 * @public
-	 * @namespace
-	 * @name sap.ui.core.format.NumberFormat.RoundingMode
+	 * @enum {string}
+	 * @alias sap.ui.core.format.NumberFormat.RoundingMode
 	 */
 	var mRoundingMode = {
 		/**
 		 * Rounding mode to round towards negative infinity
-		 * 
-		 * @name sap.ui.core.format.NumberFormat.RoundingMode.FLOOR
+		 * @public
 		 */
 		FLOOR: "floor",
 		/**
 		* Rounding mode to round towards positive infinity
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.CEILING
+		* @public
 		*/
 		CEILING: "ceiling",
 		/**
 		* Rounding mode to round towards zero
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.TOWARDS_ZERO
+		* @public
 		*/
 		TOWARDS_ZERO: "towards_zero",
 		/**
 		* Rounding mode to round away from zero
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.AWAY_FROM_ZERO
+		* @public
 		*/
 		AWAY_FROM_ZERO: "away_from_zero",
 		/**
 		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards negative infinity.
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_FLOOR
+		* @public
 		*/
 		HALF_FLOOR: "half_floor",
 		/**
 		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards positive infinity.
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_CEILING
+		* @public
 		*/
 		HALF_CEILING: "half_ceiling",
 		/**
 		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round towards zero.
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_TOWARDS_ZERO
+		* @public
 		*/
 		HALF_TOWARDS_ZERO: "half_towards_zero",
 		/**
 		* Rounding mode to round towards the nearest neighbor unless both neighbors are equidistant, in which case round away from zero.
-		* 
-		* @name sap.ui.core.format.NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO
+		* @public
 		*/
 		HALF_AWAY_FROM_ZERO: "half_away_from_zero"
 	};
@@ -137,11 +129,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	};
 	mRoundingFunction[mRoundingMode.HALF_CEILING] = Math.round;
 
-	/**
-	 * Enumeration of different rounding modes which define how the least significant digit specified by <code>maxFractionDigits</code> is calculated.
-	 * 
-	 * @name sap.ui.core.format.NumberFormat.RoundingMode
-	 */
 	NumberFormat.RoundingMode = mRoundingMode;
 
 	/*
@@ -161,7 +148,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 		isInteger: true,
 		type: NumberFormat.INTEGER,
 		showMeasure: false,
-		style: "standard"
+		style: "standard",
+		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO
 	};
 
 	/*
@@ -246,7 +234,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * Get a float instance of the NumberFormat, which can be used for formatting.
 	 * 
 	 * If no locale is given, the currently configured 
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
+	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
+	 *
+	 * <p>
+	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode. 
+	 * Please set the roundingMode property in oFormatOptions to change the
+	 * default value.
+	 * </p>
 	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
@@ -273,6 +267,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * If no locale is given, the currently configured 
 	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
 	 *
+	 * <p>
+	 * This instance has TOWARDS_ZERO set as default rounding mode. 
+	 * Please set the roundingMode property in oFormatOptions to change the
+	 * default value.
+	 * </p>
+	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
@@ -298,6 +298,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	 * If no locale is given, the currently configured 
 	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
 	 *
+	 * <p>
+	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode. 
+	 * Please set the roundingMode property in oFormatOptions to change the
+	 * default value.
+	 * </p>
+	 *
 	 * @param {object} [oFormatOptions] Object which defines the format options
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
@@ -318,18 +324,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData'],
 	};
 	
 	/**
-	* Get a percent instance of the NumberFormat, which can be used for formatting.
-	*
-	* If no locale is given, the currently configured 
-	* {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used. 
-	*
-	* @param {object} [oFormatOptions] Object which defines the format options
-	* @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
-	* @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
-	* @static
-	* @public
-	* @name sap.ui.core.format.NumberFormat.getPercentInstance
-	* @function
+	 * Get a percent instance of the NumberFormat, which can be used for formatting.
+	 *
+	 * If no locale is given, the currently configured 
+	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
+	 *
+	 * <p>
+	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode. 
+	 * Please set the roundingMode property in oFormatOptions to change the
+	 * default value.
+	 * </p>
+	 *
+	 * @param {object} [oFormatOptions] Object which defines the format options
+	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
+	 * @static
+	 * @public
+	 * @name sap.ui.core.format.NumberFormat.getPercentInstance
+	 * @function
 	*/
 	NumberFormat.getPercentInstance = function(oFormatOptions, oLocale) {
 		var oFormat = this.createInstance(oFormatOptions, oLocale),
