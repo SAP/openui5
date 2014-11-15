@@ -272,6 +272,7 @@
 						<configuration>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
+							<quiet>true</quiet>
 							<includes>
 								<include>src/**</include>
 							</includes>
