@@ -22,6 +22,8 @@ import org.apache.commons.io.IOUtils;
  * from the local web application context and from the JAR files in the 
  * classpath. The resources have to be located in the META-INF path of the
  * JARs.
+ * <p>
+ * <i>This class must not be used in productive systems.</i>
  * 
  * @author Peter Muessig
  */
@@ -45,64 +47,49 @@ public class ResourceServlet extends HttpServlet {
 
 
   /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+   * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
    */
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     
-    // lookup the resource
+    String method = request.getMethod().toUpperCase();
     String path = request.getServletPath() + request.getPathInfo();
-    URL url = this.findResource(path);
-    
-    if (url != null) {
+    if (path == null || path != null && path.endsWith("/")) {
       
-      URLConnection connection = url.openConnection();
-      this.prepareResponse(response, connection);
-      
-      InputStream is = connection.getInputStream();
-      OutputStream os = response.getOutputStream();
-      IOUtils.copyLarge(is, os);
-      IOUtils.closeQuietly(is);
-      
-      os.flush();
-      os.close();
-      
+      // serve folder listing
       response.setStatus(HttpServletResponse.SC_OK);
-      this.log("[200] " + request.getRequestURI());
+      response.getWriter().close();
+      
+    } else {
+      
+      // lookup the resource
+      URL url = this.findResource(path);
+      
+      if (url != null && method.matches("GET|HEAD")) {
         
-    } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      this.log("[404] " + request.getRequestURI());
+        URLConnection connection = url.openConnection();
+        this.prepareResponse(response, connection);
+        
+        if ("GET".equals(method)) {
+          InputStream is = connection.getInputStream();
+          OutputStream os = response.getOutputStream();
+          IOUtils.copyLarge(is, os);
+          IOUtils.closeQuietly(is);
+          os.flush();
+          os.close();
+        }
+        
+        response.setStatus(HttpServletResponse.SC_OK);
+        this.log("[200] " + request.getRequestURI());
+          
+      } else {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        this.log("[404] " + request.getRequestURI());
+      }
+      
     }
-    
-  } // method: doGet
 
-
-  /* (non-Javadoc)
-   * @see javax.servlet.http.HttpServlet#doHead(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-   */
-  @Override
-  protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    
-    // lookup the resource
-    String contextPath = request.getServletPath() + request.getPathInfo();
-    URL url = this.findResource(contextPath);
-    
-    // return the resource or send 404
-    if (url != null) {
-      
-      URLConnection connection = url.openConnection();
-      this.prepareResponse(response, connection);
-      
-      response.setStatus(HttpServletResponse.SC_OK);
-      this.log("[200] " + request.getRequestURI());
-      
-    } else {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      this.log("[404] " + request.getRequestURI());
-    }
-    
-  } // method: doHead
+  } // method: service
 
 
   /**
@@ -124,10 +111,9 @@ public class ResourceServlet extends HttpServlet {
       }
     }
     
-    // set the relevant headers
+    // set the relevant headers (caching, cors, resource location, ...)
     response.setContentType(contentType);
     response.addDateHeader("Last-Modified", connection.getLastModified());
-    response.setHeader("Cache-Control", "no-cache, no-store");
     response.addHeader("x-sap-ResourceUrl", url);
     
   } // method: prepareResponse

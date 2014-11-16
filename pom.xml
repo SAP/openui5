@@ -50,6 +50,7 @@
 		<module>src/themelib_sap_goldreflection</module>
 
 		<!-- testsuite -->
+		<module>src/testsuite-utils</module>
 		<module>src/testsuite</module>
 
 	</modules>
