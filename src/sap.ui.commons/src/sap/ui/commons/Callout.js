@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './CalloutBase', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Callout
+	 * @alias sap.ui.commons.Callout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Callout = CalloutBase.extend("sap.ui.commons.Callout", /** @lends sap.ui.commons.Callout.prototype */ { metadata : {

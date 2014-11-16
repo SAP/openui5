@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
-	 * @name sap.ui.core.EventBus
+	 * @alias sap.ui.core.EventBus
 	 */
 	var EventBus = sap.ui.base.Object.extend("sap.ui.core.EventBus", {
 		
@@ -48,8 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *            [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.EventBus#subscribe
-	 * @function
 	 */
 	EventBus.prototype.subscribe = function(sChannelId, sEventId, fnFunction, oListener) {
 		if (typeof (sEventId) === "function") {
@@ -84,8 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *            [oListener] The object, that wants to be notified, when the event occurs
 	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.core.EventBus#unsubscribe
-	 * @function
 	 */
 	EventBus.prototype.unsubscribe = function(sChannelId, sEventId, fnFunction, oListener) {
 		if (typeof (sEventId) === "function") {
@@ -136,8 +132,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {object}
 	 * 			  [oData] the parameter map
 	 * @public
-	 * @name sap.ui.core.EventBus#publish
-	 * @function
 	 */
 	EventBus.prototype.publish = function(sChannelId, sEventId, oData) {
 		
@@ -180,8 +174,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
-	 * @name sap.ui.core.EventBus#getInterface
-	 * @function
 	 */
 	EventBus.prototype.getInterface = function() {
 		return this;
@@ -190,8 +182,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * @see sap.ui.base.Object#destroy
 	 * @public
-	 * @name sap.ui.core.EventBus#destroy
-	 * @function
 	 */
 	EventBus.prototype.destroy = function() {
 		this._defaultChannel.destroy();

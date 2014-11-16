@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.table.Table
+	 * @alias sap.ui.table.Table
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Table = Control.extend("sap.ui.table.Table", /** @lends sap.ui.table.Table.prototype */ { metadata : {
@@ -449,138 +449,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	}});
 
 
-	/**
-	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
-	 *
-	 * @name sap.ui.table.Table#getSelectedIndices
-	 * @function
-	 * @type int[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Adds the given selection interval to the selection. In case of single selection the "indexTo" value will be used for as selected index.
-	 *
-	 * @name sap.ui.table.Table#addSelectionInterval
-	 * @function
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Sets the given selection interval as selection. In case of single selection the "indexTo" value will be used for as selected index.
-	 *
-	 * @name sap.ui.table.Table#setSelectionInterval
-	 * @function
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Removes the given selection interval from the selection. In case of single selection this call removeSelectedIndex with the "indexTo" value.
-	 *
-	 * @name sap.ui.table.Table#removeSelectionInterval
-	 * @function
-	 * @param {int} iIndexFrom
-	 *         Index from which .
-	 * @param {int} iIndexTo
-	 *         Indices of the items that shall additionally be selected.
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Returns whether the given index is selected.
-	 *
-	 * @name sap.ui.table.Table#isIndexSelected
-	 * @function
-	 * @param {int} iIndex
-	 *         Index which is checked for selection state.
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Removes complete selection.
-	 *
-	 * @name sap.ui.table.Table#clearSelection
-	 * @function
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Add all rows to the selection.
-	 *
-	 * @name sap.ui.table.Table#selectAll
-	 * @function
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Returns the context of a row by its index.
-	 *
-	 * @name sap.ui.table.Table#getContextByIndex
-	 * @function
-	 * @param {int} iIndex
-	 *         Index of the row to return the context from.
-	 * @type object
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * sorts the given column ascending or descending
-	 *
-	 * @name sap.ui.table.Table#sort
-	 * @function
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be sorted
-	 * @param {sap.ui.table.SortOrder} oSortOrder
-	 *         sort order of the column (if undefined the default will be ascending)
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * filter the given column by the given value
-	 *
-	 * @name sap.ui.table.Table#filter
-	 * @function
-	 * @param {sap.ui.table.Column} oColumn
-	 *         column to be filtered
-	 * @param {string} sValue
-	 *         filter value as string (will be converted)
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	// =============================================================================
@@ -3549,12 +3445,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	// SORTING & FILTERING
 	// =============================================================================
 
+
+	/**
+	 * sorts the given column ascending or descending
+	 *
+	 * @param {sap.ui.table.Column} oColumn
+	 *         column to be sorted
+	 * @param {sap.ui.table.SortOrder} oSortOrder
+	 *         sort order of the column (if undefined the default will be ascending)
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.sort = function(oColumn, oSortOrder, bAdd) {
 		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
 			oColumn.sort(oSortOrder === sap.ui.table.SortOrder.Descending, bAdd);
 		}
 	};
 
+
+	/**
+	 * filter the given column by the given value
+	 *
+	 * @param {sap.ui.table.Column} oColumn
+	 *         column to be filtered
+	 * @param {string} sValue
+	 *         filter value as string (will be converted)
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.filter = function(oColumn, sValue) {
 		if (jQuery.inArray(oColumn, this.getColumns()) >= 0) {
 			oColumn.filter(sValue);
@@ -3676,6 +3596,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
+
+	/**
+	 * Returns the context of a row by its index.
+	 *
+	 * @param {int} iIndex
+	 *         Index of the row to return the context from.
+	 * @type object
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.getContextByIndex = function(iIndex) {
 		// TODO: ODataListBinding needs to make sure to prevent loading multiple times
 		// index must not be smaller than 0! otherwise the ODataModel fails
@@ -3707,6 +3637,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
+
+	/**
+	 * Removes complete selection.
+	 *
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.clearSelection = function() {
 		this._oSelection.clearSelection();
 		var oSelMode = this.getSelectionMode();
@@ -3718,6 +3656,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+
+	/**
+	 * Add all rows to the selection.
+	 *
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.selectAll = function() {
 		var oSelMode = this.getSelectionMode();
@@ -3735,12 +3681,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
+
+	/**
+	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
+	 *
+	 * @type int[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.getSelectedIndices = function() {
 		return this._oSelection.getSelectedIndices();
 	};
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+
+	/**
+	 * Adds the given selection interval to the selection. In case of single selection the "indexTo" value will be used for as selected index.
+	 *
+	 * @param {int} iIndexFrom
+	 *         Index from which .
+	 * @param {int} iIndexTo
+	 *         Indices of the items that shall additionally be selected.
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this._oSelection.addSelectionInterval(iIndexFrom, iIndexTo);
@@ -3750,6 +3716,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
+
+	/**
+	 * Sets the given selection interval as selection. In case of single selection the "indexTo" value will be used for as selected index.
+	 *
+	 * @param {int} iIndexFrom
+	 *         Index from which .
+	 * @param {int} iIndexTo
+	 *         Indices of the items that shall additionally be selected.
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this._oSelection.setSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
@@ -3758,6 +3736,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
+
+	/**
+	 * Removes the given selection interval from the selection. In case of single selection this call removeSelectedIndex with the "indexTo" value.
+	 *
+	 * @param {int} iIndexFrom
+	 *         Index from which .
+	 * @param {int} iIndexTo
+	 *         Indices of the items that shall additionally be selected.
+	 * @type sap.ui.table.Table
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Table.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
 		this._oSelection.removeSelectionInterval(iIndexFrom, iIndexTo);
 		return this;
@@ -3765,6 +3755,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+
+	/**
+	 * Returns whether the given index is selected.
+	 *
+	 * @param {int} iIndex
+	 *         Index which is checked for selection state.
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.isIndexSelected = function(iIndex) {
 		return this._oSelection.isSelectedIndex(iIndex);
@@ -5071,8 +5071,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
 	 * @public
-	 * @name sap.ui.table.Table#exportData
-	 * @function
 	 */
 	Table.prototype.exportData = function(mSettings) {
 		jQuery.sap.require("sap.ui.core.util.Export");

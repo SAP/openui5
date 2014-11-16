@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.DataSet
+	 * @alias sap.ui.ux3.DataSet
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DataSet = Control.extend("sap.ui.ux3.DataSet", /** @lends sap.ui.ux3.DataSet.prototype */ { metadata : {
@@ -119,57 +119,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		}
 	}});
 	
-	
-	/**
-	 * Set LeadSelection index
-	 *
-	 * @name sap.ui.ux3.DataSet#setLeadSelection
-	 * @function
-	 * @param {int} iIIndex
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Get LeadSelection index
-	 *
-	 * @name sap.ui.ux3.DataSet#getLeadSelection
-	 * @function
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * add a toolbarItem to the toolbar
-	 *
-	 * @name sap.ui.ux3.DataSet#addToolbarItem
-	 * @function
-	 * @param {sap.ui.commons.ToolbarItem} oOToolbarItem
-	 *         ToolbarItem
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * remove a toolbarItem to the toolbar
-	 *
-	 * @name sap.ui.ux3.DataSet#removeToolbarItem
-	 * @function
-	 * @param {sap.ui.commons.ToolbarItem} oOToolbarItem
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	///**
-	//* This file defines behavior for the DataSet control,
-	//*/
 	
 	DataSet.prototype.init = function() {
 		var that = this, oToolbar;
@@ -412,7 +361,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @param {string} sItemId Id of the selected DataSetItem
 	 * @return {int} selected index
 	 * @protected
-	*/
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	DataSet.prototype.getLeadSelection = function() {
 		return this.selectionModel.getLeadSelectedIndex();
 	};
@@ -420,9 +370,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * Set the LeadSelection index
 	 *
-	 * @param {int} iIndex set LeadSelection index
+	 * @param {int} iIIndex set LeadSelection index
+	 * @type void
 	 * @protected
-	*/
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	DataSet.prototype.setLeadSelection = function(iIndex) {
 		this.selectionModel.setLeadSelectedIndex(iIndex);
 	};
@@ -674,11 +626,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		return this;
 	};
 	
+
+	/**
+	 * add a toolbarItem to the toolbar
+	 *
+	 * @param {sap.ui.commons.ToolbarItem} oOToolbarItem
+	 *         ToolbarItem
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	DataSet.prototype.addToolbarItem = function(oToolbarItem) {
 		this._getToolbar().addItem(oToolbarItem);
 		this._rerenderToolbar();
 	};
 	
+
+	/**
+	 * remove a toolbarItem to the toolbar
+	 *
+	 * @param {sap.ui.commons.ToolbarItem} oOToolbarItem
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	DataSet.prototype.removeToolbarItem = function(oToolbarItem) {
 		this._getToolbar().removeItem(oToolbarItem);
 		this._rerenderToolbar();

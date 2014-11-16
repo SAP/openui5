@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.StandardListItem
+	 * @alias sap.m.StandardListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var StandardListItem = ListItemBase.extend("sap.m.StandardListItem", /** @lends sap.m.StandardListItem.prototype */ { metadata : {

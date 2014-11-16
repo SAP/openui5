@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	}
 
 	/**
-	 * @class FlexBox styling helper
-	 * @static
+	 * FlexBox styling helper
+	 * @namespace
 	 */
 	var FlexBoxStylingHelper = {};
 	

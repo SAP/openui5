@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.PasswordField
+	 * @alias sap.ui.commons.PasswordField
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PasswordField = TextField.extend("sap.ui.commons.PasswordField", /** @lends sap.ui.commons.PasswordField.prototype */ { metadata : {

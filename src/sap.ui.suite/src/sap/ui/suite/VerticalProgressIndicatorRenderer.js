@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class VerticalProgressIndicator renderer. 
-	 * @static
+	 * VerticalProgressIndicator renderer. 
+	 * @namespace
 	 */
 	var VerticalProgressIndicatorRenderer = {
 	};

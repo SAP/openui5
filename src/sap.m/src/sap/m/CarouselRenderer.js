@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Carousel renderer.
-	 * @static
+	 * Carousel renderer.
+	 * @namespace
 	 */
 	var CarouselRenderer = {
 	};

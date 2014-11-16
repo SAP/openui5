@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ImageMap renderer.
-	 * @static
+	 * ImageMap renderer.
+	 * @namespace
 	 */
 	var ImageMapRenderer = {
 	};

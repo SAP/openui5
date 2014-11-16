@@ -78,7 +78,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 		 * @public
 		 * @name sap.ui.test.matchers.PropertyStrictEquals#setValue
 		 * @function
-		 *
+		 */
 
 		/**
 		 * Checks if the control has a property that matches the value

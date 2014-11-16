@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class layout/VerticalLayout renderer.
-	 * @static
+	 * layout/VerticalLayout renderer.
+	 * @namespace
 	 */
 	var VerticalLayoutRenderer = {
 	};

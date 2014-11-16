@@ -6,8 +6,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * @class Panel renderer
-	 * @static
+	 * Panel renderer
+	 * @namespace
 	 */
 	var PanelRenderer = {};
 

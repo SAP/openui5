@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ExactArea renderer.
-	 * @static
+	 * ExactArea renderer.
+	 * @namespace
 	 */
 	var ExactAreaRenderer = {
 	};

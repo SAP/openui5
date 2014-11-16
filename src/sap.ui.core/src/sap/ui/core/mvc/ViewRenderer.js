@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * @namespace View renderer.
-	 * @name sap.ui.core.mvc.ViewRenderer
+	 * @alias sap.ui.core.mvc.ViewRenderer
 	 */
 	var ViewRenderer = {
 	};

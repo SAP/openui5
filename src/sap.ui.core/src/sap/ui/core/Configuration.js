@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale', 'sap/ui/th
 	 * @author Frank Weigel (Martin Schaus)
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.Configuration
+	 * @alias sap.ui.core.Configuration
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 

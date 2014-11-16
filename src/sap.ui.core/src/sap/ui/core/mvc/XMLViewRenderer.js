@@ -8,6 +8,11 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	"use strict";
 
 
+	/**
+	 * @namespace
+	 * @alias sap.ui.core.mvc.XMLViewRenderer
+	 * @private
+	 */
 	var XMLViewRenderer = {
 	};
 	
@@ -17,8 +22,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.mvc.XMLView} oControl an object representation of the control that should be rendered
-	 * @name sap.ui.core.mvc.XMLViewRenderer.render
-	 * @function
 	 */
 	XMLViewRenderer.render = function(rm, oControl) {
 	

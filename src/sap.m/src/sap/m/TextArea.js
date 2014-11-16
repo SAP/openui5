@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.m.TextArea
+	 * @alias sap.m.TextArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextArea = InputBase.extend("sap.m.TextArea", /** @lends sap.m.TextArea.prototype */ { metadata : {

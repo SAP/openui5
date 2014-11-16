@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 	 * @author SAP SE
 	 * @constructor
 	 * @private
-	 * @name sap.ui.core.ThemeCheck
+	 * @alias sap.ui.core.ThemeCheck
 	 */
 	var ThemeCheck = BaseObject.extend("sap.ui.core.ThemeCheck", /** @lends sap.ui.core.ThemeCheck.prototype */ {
 	

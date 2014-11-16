@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Accordion
+	 * @alias sap.ui.commons.Accordion
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Accordion = Control.extend("sap.ui.commons.Accordion", /** @lends sap.ui.commons.Accordion.prototype */ { metadata : {
@@ -103,31 +103,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 	
-	
-	/**
-	 * Opens a section.
-	 *
-	 * @name sap.ui.commons.Accordion#openSection
-	 * @function
-	 * @param {string} sSectionId
-	 *         Id of the section that shall be opened
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Closes a section, and opens the default one
-	 *
-	 * @name sap.ui.commons.Accordion#closeSection
-	 * @function
-	 * @param {string} sSectionId
-	 *         Id of the section that shall be closed
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	/***************************************************
 	* ACCORDION CONTROL - JAVASCRIPT FUNCTIONS
@@ -642,9 +617,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Opens a given section
-	 * @param {string} sSectionId, The given section ID
-	 * @private
+	 * Opens a section.
+	 *
+	 * @param {string} sSectionId
+	 *         Id of the section that shall be opened
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Accordion.prototype.openSection = function(sSectionId){
 	
@@ -668,9 +647,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Closes a given section
-	 * @param {string} sSectionId, The given section ID
-	 * @private
+	 * Closes a section, and opens the default one
+	 *
+	 * @param {string} sSectionId
+	 *         Id of the section that shall be closed
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Accordion.prototype.closeSection = function(sSectionId){
 	

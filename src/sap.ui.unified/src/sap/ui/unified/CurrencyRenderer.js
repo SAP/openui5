@@ -10,10 +10,10 @@ sap.ui.define(['jquery.sap.global'],
 
 	
 	/**
-	 * @class Currency renderer.
+	 * Currency renderer.
 	 *
 	 * @version ${version}
-	 * @static
+	 * @namespace
 	 */
 	var CurrencyRenderer = {
 	};

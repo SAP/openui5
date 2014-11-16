@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.SelectDialog
+	 * @alias sap.m.SelectDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialog = Control.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
@@ -159,19 +159,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			cancel : {}
 		}
 	}});
-	
-	
-	/**
-	 * Opens the select dialog
-	 *
-	 * @name sap.m.SelectDialog#open
-	 * @function
-	 * @param {string} sSearchValue
-	 *         A value for the search can be passed to match with the filter applied to the list binding.
-	 * @type sap.m.SelectDialog
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/* =========================================================== */
@@ -375,11 +362,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	};
 	
 	/**
-	* Opens the internal dialog with a searchfield and a list.
-	* @public
-	* @param {string} sSearchValue Value for the list search.
-	* @returns {this} this pointer for chaining
-	*/
+	 * Opens the internal dialog with a searchfield and a list.
+	 *
+	 * @name sap.m.SelectDialog#open
+	 * @function
+	 * @param {string} sSearchValue
+	 *         A value for the search can be passed to match with the filter applied to the list binding.
+	 * @type sap.m.SelectDialog
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SelectDialog.prototype.open = function (sSearchValue) {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
 		// Important: do not rely on the ui area fix, it will be removed with a later version of UI5
@@ -432,7 +424,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Enable/Disable multi selection mode.
 	 * @override
 	 * @public
-	 * @param {boole} bMulti flag for multi selection mode
+	 * @param {boolean} bMulti flag for multi selection mode
 	 * @returns {this} this pointer for chaining
 	 */
 	SelectDialog.prototype.setMultiSelect = function (bMulti) {
@@ -648,7 +640,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	/**
 	 * Forwards aggregations with the name of items to the internal list.
 	 * @override
-	 * @public
+	 * @protected
 	 * @param {string} sAggregationName the name for the binding
 	 * @param {object} oBindingInfo the configuration parameters for the binding
 	 * @returns {this} this pointer for chaining

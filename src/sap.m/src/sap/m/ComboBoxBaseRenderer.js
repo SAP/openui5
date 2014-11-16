@@ -6,9 +6,9 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		"use strict";
 
 		/**
-		 * @class ComboBoxBase renderer.
+		 * ComboBoxBase renderer.
 		 *
-		 * @static
+		 * @namespace
 		 */
 		var ComboBoxBaseRenderer = Renderer.extend(InputBaseRenderer);
 

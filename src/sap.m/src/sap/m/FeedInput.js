@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.22
-	 * @name sap.m.FeedInput
+	 * @alias sap.m.FeedInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FeedInput = Control.extend("sap.m.FeedInput", /** @lends sap.m.FeedInput.prototype */ { metadata : {

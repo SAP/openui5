@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.MenuButton
+	 * @alias sap.ui.commons.MenuButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuButton = Button.extend("sap.ui.commons.MenuButton", /** @lends sap.ui.commons.MenuButton.prototype */ { metadata : {
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Menu', './MenuItemBase', './l
 	
 	/**
 	 * Setter for the aggregated <code>menu</code>.
-	 * @param {sap.ui.commons.Menu} oMenu
+	 * @param {sap.ui.unified.Menu} oMenu
 	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
 	 * @public
 	 */

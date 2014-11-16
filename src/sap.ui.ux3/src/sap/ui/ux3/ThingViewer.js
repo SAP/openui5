@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @name sap.ui.ux3.ThingViewer
+	 * @alias sap.ui.ux3.ThingViewer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ThingViewer = Control.extend("sap.ui.ux3.ThingViewer", /** @lends sap.ui.ux3.ThingViewer.prototype */ { metadata : {

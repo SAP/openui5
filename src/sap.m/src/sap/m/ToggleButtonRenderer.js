@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class ToggleButton renderer.
-	 * @static
+	 * ToggleButton renderer.
+	 * @namespace
 	 */
 	
 	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);

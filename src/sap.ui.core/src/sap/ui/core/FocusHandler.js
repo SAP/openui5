@@ -17,7 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * @class Keeps track of the focused element.
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
-		 * @name sap.ui.core.FocusHandler
+		 * @alias sap.ui.core.FocusHandler
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
 			constructor : function(oRootRef, oCore) {
@@ -54,8 +54,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Returns the Id of the control/element currently in focus.
 		 * @return {string} the Id of the control/element currently in focus.
 		 * @public
-		 * @name sap.ui.core.FocusHandler#getCurrentFocusedControlId
-		 * @function
 		 */
 		FocusHandler.prototype.getCurrentFocusedControlId = function(){
 			var aCtrls = null;
@@ -74,8 +72,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param {jQuery.Event} event the event that initiated the destruction of the FocusHandler
 		 * @private
-		 * @name sap.ui.core.FocusHandler#destroy
-		 * @function
 		 */
 		FocusHandler.prototype.destroy = function(event) {
 			var oRootRef = event.data.oRootRef;
@@ -97,8 +93,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param oRootRef e.g. document.body
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onEvent = function(oBrowserEvent){
 			var oEvent = jQuery.event.fix(oBrowserEvent);
@@ -116,8 +110,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Processes the focus/blur events in the event queue.
 		 *
 		 * @private
-		 * @name sap.ui.core.FocusHandler#processEvent
-		 * @function
 		 */
 		FocusHandler.prototype.processEvent = function(){
 			var oEvent = this.aEventQueue[0];
@@ -143,8 +135,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param sControlId Id of the event related control
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onfocusEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
 			this.oCurrent = sControlId;
@@ -162,8 +152,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 *
 		 * @param sControlId Id of the event related control
 		 * @private
-		 * @name sap.ui.core.FocusHandler#onblurEvent
-		 * @function
 		 */
 		FocusHandler.prototype.onblurEvent = function(sControlId){
 			if (!this.oCurrent) {
@@ -181,8 +169,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		 * Called in delayed manner from {@link sap.ui.core.FocusHandler#onblurEvent}.
 		 *
 		 * @private
-		 * @name sap.ui.core.FocusHandler#checkForLostFocus
-		 * @function
 		 */
 		FocusHandler.prototype.checkForLostFocus = function(){
 			if (this.oCurrent == null && this.oLast != null) {

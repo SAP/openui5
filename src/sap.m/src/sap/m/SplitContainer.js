@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.SplitContainer
+	 * @alias sap.m.SplitContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitContainer = Control.extend("sap.m.SplitContainer", /** @lends sap.m.SplitContainer.prototype */ { metadata : {
@@ -394,402 +394,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	
-	/**
-	 * Navigate to given page inside the SplitContainer. The navigation is done inside the master area if the page has been added, otherwise it tries to do the page navigation in the detail area.
-	 *
-	 * @name sap.m.SplitContainer#to
-	 * @function
-	 * @param {string} sPageId
-	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
-	 * 
-	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
-	 *         This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
-	 * 
-	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 * 
-	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @since 1.10.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back to the nearest previous page in the SplitContainer history with the given ID. If there is no such page among the previous pages, nothing happens.
-	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
-	 * 
-	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the SplitContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
-	 *
-	 * @name sap.m.SplitContainer#backToPage
-	 * @function
-	 * @param {string} sPageId
-	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @since 1.10.0
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * navigate to given master page
-	 *
-	 * @name sap.m.SplitContainer#toMaster
-	 * @function
-	 * @param {string} sPageId
-	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
-	 * 
-	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
-	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
-	 * 
-	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameters
-	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 * 
-	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * navigate to given detail page
-	 *
-	 * @name sap.m.SplitContainer#toDetail
-	 * @function
-	 * @param {string} sPageId
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
-	 * 
-	 *         None of the standard transitions is currently making use of any given transition parameters.
-	 * @param {object} oData
-	 *         This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
-	 * 
-	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
-	 *         This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 * 
-	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 *         The "show", "slide" and "fade" transitions do not use any parameter.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * navigate back within MasterView
-	 *
-	 * @name sap.m.SplitContainer#backMaster
-	 * @function
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * navigate back within DetailView
-	 *
-	 * @name sap.m.SplitContainer#backDetail
-	 * @function
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * When in ShowHideMode and the device is in portrait mode, this function can be used to make the master page visible.
-	 *
-	 * @name sap.m.SplitContainer#showMaster
-	 * @function
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * When in ShowHideMode and the device is in portrait mode, this function can be used to hide the master page.
-	 *
-	 * @name sap.m.SplitContainer#hideMaster
-	 * @function
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the current shown page either in master area or in detail area. When the parameter is set to true, the current page in master area is returned. Otherwise the current page in detail area is returned.
-	 * 
-	 * This method is provided mainly for providing API consistency between sap.m.SplitContainer and sap.m.App. So that the same code line can be reused.
-	 *
-	 * @name sap.m.SplitContainer#getCurrentPage
-	 * @function
-	 * @param {boolean} bMaster
-	 *         States if this function returns the current page in master area. If it's set to false, the current page in detail area will be returned.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the current shown master page.
-	 *
-	 * @name sap.m.SplitContainer#getCurrentMasterPage
-	 * @function
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the current shown detail page.
-	 *
-	 * @name sap.m.SplitContainer#getCurrentDetailPage
-	 * @function
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back to the initial/top level of Master (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
-	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
-	 *
-	 * @name sap.m.SplitContainer#backToTopMaster
-	 * @function
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Navigates back to the initial/top level of Detail (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
-	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
-	 *
-	 * @name sap.m.SplitContainer#backToTopDetail
-	 * @function
-	 * @param {object} oBackData
-	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
-	 * 
-	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
-	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
-	 * 
-	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
-	 * @param {object} oTransitionParameter
-	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
-	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
-	 * 
-	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
-	 * 
-	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Add a content entity either to master area or detail area depending on the master parameter.
-	 * 
-	 * This method is provided mainly for providing API consistency between sap.m.SplitContainer and sap.m.App. So that the same code line can be reused.
-	 *
-	 * @name sap.m.SplitContainer#addPage
-	 * @function
-	 * @param {sap.ui.core.Control} oPage
-	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
-	 * @param {boolean} bMaster
-	 *         States if the page should be added to the master area. If it's set to false, the page is added to detail area.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the page with the given id in master area. If there's no page that has the given id, null is returned.
-	 *
-	 * @name sap.m.SplitContainer#getMasterPage
-	 * @function
-	 * @param {string} sId
-	 *         The id of the page that needs to be fetched.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the page with the given id in detail area. If there's no page that has the given id, null is returned.
-	 *
-	 * @name sap.m.SplitContainer#getDetailPage
-	 * @function
-	 * @param {string} sId
-	 *         The id of the page that needs to be fetched.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the page with the given id from either master area or detail area depending on the master parameter. If there's no page that has the given id, null is returned.
-	 *
-	 * @name sap.m.SplitContainer#getPage
-	 * @function
-	 * @param {string} sId
-	 *         The id of the page that needs to be fetched.
-	 * @param {boolean} bMaster
-	 *         If the page with given id should be fetched from the master area. If it's set to false, the page will be fetched from detail area.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @since 1.11.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Inserts the page/control with the specified ID into the navigation history stack of the NavContainer.
-	 * 
-	 * This can be used for deep-linking when the user directly reached a drilldown detail page using a bookmark and then wants to navigate up in the drilldown hierarchy. Normally such a back navigation would not be possible because there is no previous page in the SplitContainer's history stack.
-	 *
-	 * @name sap.m.SplitContainer#insertPreviousPage
-	 * @function
-	 * @param {string} sPageId
-	 *         The ID of the control/page/screen which is inserted into the history stack. The respective control must be aggregated by the SplitContainer, otherwise this will cause an error.
-	 * @param {string} sTransitionName
-	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
-	 *         This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 * @param {object} oData
-	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
-	 * @type sap.m.SplitContainer
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the previous page (the page from which the user drilled down to the current page with "to()").
-	 * Note: this is not the page which the user has seen before, but the page which is the target of the next "back()" navigation.
-	 * If there is no previous page, "undefined" is returned.
-	 *
-	 * @name sap.m.SplitContainer#getPreviousPage
-	 * @function
-	 * @param {boolean} bMaster
-	 *         States if this function returns the previous page in master area. If it's set to false, the previous page in detail area will be returned.
-	 * @type sap.ui.core.Control
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * 
-	 * Returns whether master area is currently shown on the screen. In desktop browser or tablet, this method returns true when master area is shown on the screen no matter in portrait or landscape mode. And on mobile phone devices, this method returns true when the current shown page is from the pages which are added to the master area, otherwise it returns false.
-	 *
-	 * @name sap.m.SplitContainer#isMasterShown
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.16.5
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	/**************************************************************
 	* START - Life Cycle Methods
 	**************************************************************/
@@ -1024,6 +628,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//* START - Public methods
 	//**************************************************************
 	
+
+	/**
+	 * Navigate to given page inside the SplitContainer. The navigation is done inside the master area if the page has been added, otherwise it tries to do the page navigation in the detail area.
+	 *
+	 * @param {string} sPageId
+	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 * 
+	 *         None of the standard transitions is currently making use of any given transition parameters.
+	 * @param {object} oData
+	 *         This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
+	 * 
+	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 * 
+	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 *         The "show", "slide" and "fade" transitions do not use any parameter.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @since 1.10.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.to = function(pageId, transitionName, data, oTransitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
 			this._oMasterNav.to(pageId, transitionName, data, oTransitionParameters);
@@ -1032,6 +665,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Navigates back to the nearest previous page in the SplitContainer history with the given ID. If there is no such page among the previous pages, nothing happens.
+	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
+	 * 
+	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the SplitContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given backData object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property. The original "data" object from the "to" navigation is also available in these event objects.
+	 *
+	 * @param {string} sPageId
+	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @since 1.10.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.backToPage = function(pageId, backData, oTransitionParameters) {
 		if (this._oMasterNav.getPage(pageId)) {
 			this._oMasterNav.backToPage(pageId, backData, oTransitionParameters);
@@ -1041,6 +702,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * Inserts the page/control with the specified ID into the navigation history stack of the NavContainer.
+	 * 
+	 * This can be used for deep-linking when the user directly reached a drilldown detail page using a bookmark and then wants to navigate up in the drilldown hierarchy. Normally such a back navigation would not be possible because there is no previous page in the SplitContainer's history stack.
+	 *
+	 * @param {string} sPageId
+	 *         The ID of the control/page/screen which is inserted into the history stack. The respective control must be aggregated by the SplitContainer, otherwise this will cause an error.
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation which would have been used to navigate from the (inserted) previous page to the current page. When navigating back, the inverse animation will be applied.
+	 *         This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 * @param {object} oData
+	 *         This optional object can carry any payload data which would have been given to the inserted previous page if the user would have done a normal forward navigation to it.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.insertPreviousPage = function(pageId, transitionName, data) {
 		if (this._oMasterNav.getPage(pageId)) {
 			this._oMasterNav.insertPreviousPage(pageId, transitionName, data);
@@ -1051,10 +729,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	
+
+	/**
+	 * navigate to given master page
+	 *
+	 * @param {string} sPageId
+	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 * 
+	 *         None of the standard transitions is currently making use of any given transition parameters.
+	 * @param {object} oData
+	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
+	 * 
+	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameters
+	 *         Since version 1.7.1. This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 * 
+	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 *         The "show", "slide" and "fade" transitions do not use any parameter.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.toMaster = function(pageId, transitionName, data, oTransitionParameters) {
 		this._oMasterNav.to(pageId, transitionName, data, oTransitionParameters);
 	};
 	
+
+	/**
+	 * navigate back within MasterView
+	 *
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameter
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.backMaster = function(backData, oTransitionParameters) {
 		this._oMasterNav.back(backData, oTransitionParameters);
 	};
@@ -1063,10 +791,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oMasterNav.backToPage(pageId, backData, oTransitionParameters);
 	};
 	
+
+	/**
+	 * navigate to given detail page
+	 *
+	 * @param {string} sPageId
+	 * @param {string} sTransitionName
+	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
+	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 * 
+	 *         None of the standard transitions is currently making use of any given transition parameters.
+	 * @param {object} oData
+	 *         This optional object can carry any payload data which should be made available to the target page. The "beforeShow" event on the target page will contain this data object as "data" property.
+	 * 
+	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameter
+	 *         This optional object can contain additional information for the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 * 
+	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 *         The "show", "slide" and "fade" transitions do not use any parameter.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.toDetail = function(pageId, transitionName, data, oTransitionParameters) {
 		this._oDetailNav.to(pageId, transitionName, data, oTransitionParameters);
 	};
 	
+
+	/**
+	 * navigate back within DetailView
+	 *
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameter
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.backDetail = function(backData, oTransitionParameters) {
 		this._oDetailNav.back(backData, oTransitionParameters);
 	};
@@ -1075,10 +852,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oDetailNav.backToPage(pageId, backData, oTransitionParameters);
 	};
 	
+
+	/**
+	 * Navigates back to the initial/top level of Master (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
+	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
+	 *
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameter
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.backToTopMaster = function(backData, oTransitionParameters) {
 		this._oMasterNav.backToTop(backData, oTransitionParameters);
 	};
 	
+
+	/**
+	 * Navigates back to the initial/top level of Detail (this is the element aggregated as "initialPage", or the first added element). If already on the initial page, nothing happens.
+	 * The transition effect which had been used to get to the current page is inverted and used for this navigation.
+	 *
+	 * @param {object} oBackData
+	 *         This optional object can carry any payload data which should be made available to the target page of the back navigation. The event on the target page will contain this data object as "backData" property. (The original data from the "to()" navigation will still be available as "data" property.)
+	 * 
+	 *         In scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
+	 *         For back navigation this can be used e.g. when returning from a detail page to transfer any settings done there.
+	 * 
+	 *         When the "transitionParameters" object is used, this "data" object must also be given (either as object or as null) in order to have a proper parameter order.
+	 * @param {object} oTransitionParameter
+	 *         This optional object can give additional information to the transition function, like the DOM element which triggered the transition or the desired transition duration.
+	 *         The animation type can NOT be selected here - it is always the inverse of the "to" navigation.
+	 * 
+	 *         In order to use the "transitionParameters" property, the "data" property must be used (at least "null" must be given) for a proper parameter order.
+	 * 
+	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.backToTopDetail = function(backData, oTransitionParameters) {
 		this._oDetailNav.backToTop(backData, oTransitionParameters);
 	};
@@ -1233,6 +1056,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.removeAllAggregation("detailPages", bSuppressInvalidate);
 	};
 	
+
+	/**
+	 * Add a content entity either to master area or detail area depending on the master parameter.
+	 * 
+	 * This method is provided mainly for providing API consistency between sap.m.SplitContainer and sap.m.App. So that the same code line can be reused.
+	 *
+	 * @param {sap.ui.core.Control} oPage
+	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
+	 * @param {boolean} bMaster
+	 *         States if the page should be added to the master area. If it's set to false, the page is added to detail area.
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @since 1.11.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.addPage = function(oPage, bMaster){
 		if (bMaster) {
 			return this.addMasterPage(oPage);
@@ -1241,6 +1079,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * When in ShowHideMode and the device is in portrait mode, this function can be used to make the master page visible.
+	 *
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.showMaster = function() {
 		var _this$ = this._oMasterNav.$(),
 			that = this,
@@ -1301,6 +1147,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 	
+
+	/**
+	 * When in ShowHideMode and the device is in portrait mode, this function can be used to hide the master page.
+	 *
+	 * @type sap.m.SplitContainer
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.hideMaster = function() {
 		var _this$ = this._oMasterNav.$(),
 			fnAnimationEnd = jQuery.proxy(this._afterHideMasterAnimation, this);
@@ -1363,14 +1217,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.fireAfterMasterClose();
 	};
 	
+
+	/**
+	 * Returns the current shown master page.
+	 *
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getCurrentMasterPage = function() {
 		return this._oMasterNav.getCurrentPage();
 	};
 	
+
+	/**
+	 * Returns the current shown detail page.
+	 *
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getCurrentDetailPage = function() {
 		return this._oDetailNav.getCurrentPage();
 	};
 	
+
+	/**
+	 * Returns the current shown page either in master area or in detail area. When the parameter is set to true, the current page in master area is returned. Otherwise the current page in detail area is returned.
+	 * 
+	 * This method is provided mainly for providing API consistency between sap.m.SplitContainer and sap.m.App. So that the same code line can be reused.
+	 *
+	 * @param {boolean} bMaster
+	 *         States if this function returns the current page in master area. If it's set to false, the current page in detail area will be returned.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @since 1.11.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getCurrentPage = function(bMaster){
 		if (bMaster) {
 			return this.getCurrentMasterPage();
@@ -1379,6 +1262,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Returns the previous page (the page from which the user drilled down to the current page with "to()").
+	 * Note: this is not the page which the user has seen before, but the page which is the target of the next "back()" navigation.
+	 * If there is no previous page, "undefined" is returned.
+	 *
+	 * @param {boolean} bMaster
+	 *         States if this function returns the previous page in master area. If it's set to false, the previous page in detail area will be returned.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getPreviousPage = function(bMaster) {
 		if (bMaster) {
 			return this._oMasterNav.getPreviousPage();
@@ -1387,14 +1282,49 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * Returns the page with the given id in master area. If there's no page that has the given id, null is returned.
+	 *
+	 * @param {string} sId
+	 *         The id of the page that needs to be fetched.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @since 1.11.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getMasterPage = function(pageId){
 		return this._oMasterNav.getPage(pageId);
 	};
 	
+
+	/**
+	 * Returns the page with the given id in detail area. If there's no page that has the given id, null is returned.
+	 *
+	 * @param {string} sId
+	 *         The id of the page that needs to be fetched.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @since 1.11.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getDetailPage = function(pageId){
 		return this._oDetailNav.getPage(pageId);
 	};
 	
+
+	/**
+	 * Returns the page with the given id from either master area or detail area depending on the master parameter. If there's no page that has the given id, null is returned.
+	 *
+	 * @param {string} sId
+	 *         The id of the page that needs to be fetched.
+	 * @param {boolean} bMaster
+	 *         If the page with given id should be fetched from the master area. If it's set to false, the page will be fetched from detail area.
+	 * @type sap.ui.core.Control
+	 * @public
+	 * @since 1.11.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.getPage = function(pageId, bMaster){
 		if (bMaster) {
 			return this.getMasterPage(pageId);
@@ -1403,6 +1333,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
+
+	/**
+	 * 
+	 * Returns whether master area is currently shown on the screen. In desktop browser or tablet, this method returns true when master area is shown on the screen no matter in portrait or landscape mode. And on mobile phone devices, this method returns true when the current shown page is from the pages which are added to the master area, otherwise it returns false.
+	 *
+	 * @type boolean
+	 * @public
+	 * @since 1.16.5
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	SplitContainer.prototype.isMasterShown = function(){
 		if (sap.ui.Device.system.phone) {
 			var oCurPage = this._oMasterNav.getCurrentPage();

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.RadioButton
+	 * @alias sap.m.RadioButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ { metadata : {
@@ -70,8 +70,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
 	
 			/**
-			 * this is a flag to switch on activeHandling, when it is switch
-			 * ed off, there will not be visual changes on active state. Default value is 'true'
+			 * this is a flag to switch on activeHandling, when it is switched off,
+			 * there will not be visual changes on active state. Default value is 'true'
 			 */
 			activeHandling : {type : "boolean", group : "Appearance", defaultValue : true},
 	

@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.unified.MenuTextFieldItem
+	 * @alias sap.ui.unified.MenuTextFieldItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MenuTextFieldItem = MenuItemBase.extend("sap.ui.unified.MenuTextFieldItem", /** @lends sap.ui.unified.MenuTextFieldItem.prototype */ { metadata : {
@@ -255,9 +255,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 * @param {sap.ui.unified.Menu} oSubmenu
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.MenuTextFieldItem#setSubmenu
 	 * @deprecated The aggregation 'submenu' (inherited from parent class) is not supported for this type of menu item.
-	 * @function
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
 		jQuery.sap.log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");

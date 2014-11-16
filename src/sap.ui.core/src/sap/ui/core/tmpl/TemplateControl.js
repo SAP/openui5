@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 	 * @public
 	 * @experimental Since version 1.15. 
 	 * The templating might be changed in future versions.
-	 * @name sap.ui.core.tmpl.TemplateControl
+	 * @alias sap.ui.core.tmpl.TemplateControl
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TemplateControl = Control.extend("sap.ui.core.tmpl.TemplateControl", /** @lends sap.ui.core.tmpl.TemplateControl.prototype */ { metadata : {

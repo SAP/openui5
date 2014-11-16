@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @version ${version}
 	 * @static
 	 * @public
-	 * @name sap.ui.core.Renderer
+	 * @alias sap.ui.core.Renderer
 	 */
 	var Renderer = {
 	};
@@ -32,8 +32,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return a new class definition that can be enriched.
 	 * @type object
 	 * @public
-	 * @name sap.ui.core.Renderer.extend
-	 * @function
 	 */
 	Renderer.extend = function(oParentClass) {
 		//var oChild = jQuery.extend(new jQuery.sap.newObject(oParentClass), {_super: oParentClass});
@@ -62,8 +60,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return the actual text alignment that must be set for this environment
 	 * @type {string}
 	 * @private
-	 * @name sap.ui.core.Renderer.getTextAlign
-	 * @function
 	 */
 	Renderer.getTextAlign = function(oTextAlign, oTextDirection) {
 		var sTextAlign = "";

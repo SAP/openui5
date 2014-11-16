@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class MessageList renderer.
-	 * @static
+	 * MessageList renderer.
+	 * @namespace
 	 */
 	var MessageListRenderer = {
 	};

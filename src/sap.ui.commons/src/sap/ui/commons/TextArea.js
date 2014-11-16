@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TextArea
+	 * @alias sap.ui.commons.TextArea
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TextArea = TextField.extend("sap.ui.commons.TextArea", /** @lends sap.ui.commons.TextArea.prototype */ { metadata : {

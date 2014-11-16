@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Legend renderer.
-	 * @static
+	 * Legend renderer.
+	 * @namespace
 	 */
 	var CalendarLegendRenderer = {};
 	

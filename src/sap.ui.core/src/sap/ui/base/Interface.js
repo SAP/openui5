@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *            aMethods the names of the methods, that should be available on this interface
 	 * @constructor
 	 * @public
-	 * @name sap.ui.base.Interface
+	 * @alias sap.ui.base.Interface
 	 */
 	var Interface = function(oObject, aMethods) {
 	

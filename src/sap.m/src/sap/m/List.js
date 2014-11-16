@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.List
+	 * @alias sap.m.List
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var List = ListBase.extend("sap.m.List", /** @lends sap.m.List.prototype */ { metadata : {

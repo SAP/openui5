@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * @constructor
 	 * @public
 	 * @since 1.26
-	 * @name sap.m.P13nDialog
+	 * @alias sap.m.P13nDialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nDialog = Dialog.extend("sap.m.P13nDialog", /** @lends sap.m.P13nDialog.prototype */
@@ -212,8 +212,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter
 	 * 
 	 * @returns {sap.m.IconTabBar}
 	 * @private
-	 * @name sap.m.P13nDialog#_getSegmentedButton
-	 * @function
 	 */
 	P13nDialog.prototype._getSegmentedButton = function() {
 		return this.getSubHeader().getContentLeft()[0];

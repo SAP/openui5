@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 
 
 	/**
-	 * @class FlexBox renderer
-	 * @static
+	 * FlexBox renderer
+	 * @namespace
 	 */
 	var FlexBoxRenderer = {};
 	

@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './Control'],
 	 * @param {boolean} [bDefault=true] the value that should be used as default value for the enhancement of the control.
 	 * @param {boolean} [bLegacy=false] whether the introduced property should use the old name 'Enabled' 
 	 * @public
-	 * @name sap.ui.core.EnabledPropagator
+	 * @alias sap.ui.core.EnabledPropagator
 	 */
 	var EnabledPropagator = function(bDefault, bLegacy) {
 		// Ensure only Controls are enhanced

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 	/**
-	 * @class Segmented renderer. 
-	 * @static
+	 * Segmented renderer. 
+	 * @namespace
 	 */
 	var SegmentedButtonRenderer = {
 	};

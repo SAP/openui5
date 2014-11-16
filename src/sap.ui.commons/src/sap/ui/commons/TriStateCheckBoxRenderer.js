@@ -9,10 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class
 	 * @author SAP SE
-	 * @version 0.1
-	 * @static
+	 * @namespace
 	 */
 	var TriStateCheckBoxRenderer = {};
 	

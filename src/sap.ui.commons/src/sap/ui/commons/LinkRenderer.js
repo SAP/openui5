@@ -9,11 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 *
 	 * @author SAP SE
-	 * @version 0.1
-	 * @static
+	 * @namespace
 	 */
 	var LinkRenderer = {
 	};

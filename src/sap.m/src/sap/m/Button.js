@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Button
+	 * @alias sap.m.Button
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {

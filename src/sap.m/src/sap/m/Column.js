@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.Column
+	 * @alias sap.m.Column
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Column = Element.extend("sap.m.Column", /** @lends sap.m.Column.prototype */ { metadata : {

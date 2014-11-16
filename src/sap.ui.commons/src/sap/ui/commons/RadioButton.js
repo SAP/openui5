@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RadioButton
+	 * @alias sap.ui.commons.RadioButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButton = Control.extend("sap.ui.commons.RadioButton", /** @lends sap.ui.commons.RadioButton.prototype */ { metadata : {

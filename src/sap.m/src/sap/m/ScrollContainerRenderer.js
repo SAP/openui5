@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ScrollContainer renderer. 
-	 * @static
+	 * ScrollContainer renderer. 
+	 * @namespace
 	 */
 	var ScrollContainerRenderer = {
 	};

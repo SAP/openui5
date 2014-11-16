@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.ListItemBase
+	 * @alias sap.m.ListItemBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ListItemBase = Control.extend("sap.m.ListItemBase", /** @lends sap.m.ListItemBase.prototype */ { metadata : {
@@ -86,19 +86,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			detailPress : {}
 		}
 	}});
-	
-	
-	/**
-	 * returns the state of the item selection as a boolean
-	 *
-	 * @name sap.m.ListItemBase#isSelected
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @deprecated Since version 1.10.2. 
-	 * API Change makes this method unnecessary
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	// IE9 does not support flex-box: do special table-based rendering (see List_noFlex.css)
@@ -204,6 +191,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return true;
 	};
 	
+
+	/**
+	 * returns the state of the item selection as a boolean
+	 *
+	 * @type boolean
+	 * @public
+	 * @deprecated Since version 1.10.2. 
+	 * API Change makes this method unnecessary
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ListItemBase.prototype.isSelected = function() {
 		if (this.isSelectable()) {
 			return this.getProperty("selected");

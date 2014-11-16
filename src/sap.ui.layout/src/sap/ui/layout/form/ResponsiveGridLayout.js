@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.form.ResponsiveGridLayout
+	 * @alias sap.ui.layout.form.ResponsiveGridLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsiveGridLayout = FormLayout.extend("sap.ui.layout.form.ResponsiveGridLayout", /** @lends sap.ui.layout.form.ResponsiveGridLayout.prototype */ { metadata : {

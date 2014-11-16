@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.CalloutBase
+	 * @alias sap.ui.commons.CalloutBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CalloutBase = TooltipBase.extend("sap.ui.commons.CalloutBase", /** @lends sap.ui.commons.CalloutBase.prototype */ { metadata : {
@@ -71,49 +71,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		}
 	}});
 
-
-	/**
-	 * Adjust position of the already opened Callout window.
-	 * Call this method each time when the size of the opened
-	 * Callout window may be changed due to new or changed
-	 * contents.
-	 *
-	 * @name sap.ui.commons.CalloutBase#adjustPosition
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Closes Callout
-	 *
-	 * @name sap.ui.commons.CalloutBase#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Helper function to set position of the Callout window relative to the parent control. It automatically calculates and sets the correct offset, so it is recommended to use this function instead of setMyPosition and setAtPosition
-	 *
-	 * @name sap.ui.commons.CalloutBase#setPosition
-	 * @function
-	 * @param {sap.ui.core.Dock} sMyPosition
-	 *         Docking position of the Callout
-	 * @param {sap.ui.core.Dock} sAtPosition
-	 *         Docking position of the Callout
-	 * @type sap.ui.commons.CalloutBase
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	///**
-	// * This file defines behavior for the Callout control
-	// */
 
 	/**
 	 * Initializes a new callout base.
@@ -320,6 +277,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 		$arrow.toggle(bShow);
 	};
 
+
+	/**
+	 * Adjust position of the already opened Callout window.
+	 * Call this method each time when the size of the opened
+	 * Callout window may be changed due to new or changed
+	 * contents.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	CalloutBase.prototype.adjustPosition = function() {
 
 		function _adjust(){
@@ -390,9 +358,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 
 	/**
-	 * Close the Callout popup.
+	 * Closes Callout
 	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalloutBase.prototype.close = function() {
 		if (this.oPopup && this.oPopup.isOpen() && !this.sCloseNowTimeout) {
@@ -612,10 +582,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * Set position of the Callout window relative to the parent control.
 	 * This function automatically calculates and sets the correct offset,
 	 * use it instead of <code>setMyPosition/setAtPosition</code>.
-	 * @param {sap.ui.core.Popup.Dock} myPosition docking position of the Callout
-	 * @param {sap.ui.core.Popup.Dock} atPosition docking position of the parent control
+	 * @param {sap.ui.core.Dock} myPosition docking position of the Callout
+	 * @param {sap.ui.core.Dock} atPosition docking position of the parent control
 	 * @return {sap.ui.commons.CalloutBase} <code>this</code> to allow method chaining
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CalloutBase.prototype.setPosition = function(myPosition, atPosition){
 

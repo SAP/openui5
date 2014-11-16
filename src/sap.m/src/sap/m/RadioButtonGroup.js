@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.25.0
-	 * @name sap.m.RadioButtonGroup
+	 * @alias sap.m.RadioButtonGroup
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButtonGroup = Control.extend("sap.m.RadioButtonGroup", /** @lends sap.m.RadioButtonGroup.prototype */ { metadata : {
@@ -104,30 +104,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Returns selected button. When no button is selected, "null" is returned.
-	 *
-	 * @name sap.m.RadioButtonGroup#getSelectedButton
-	 * @function
-	 * @type sap.m.RadioButton
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Sets the button as selected and removes the selection from the previous one.
-	 *
-	 * @name sap.m.RadioButtonGroup#setSelectedButton
-	 * @function
-	 * @param {sap.m.RadioButton} oButton
-	 *         Selected button.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	RadioButtonGroup.prototype.exit = function() {
@@ -244,6 +220,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @returns {sap.m.RadioButtonGroup} for chaining
 	 */
+
+	/**
+	 * Sets the button as selected and removes the selection from the previous one.
+	 *
+	 * @param {sap.m.RadioButton} oButton
+	 *         Selected button.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	RadioButtonGroup.prototype.setSelectedButton = function(oSelectedButton) {
 	
 		for (var i = 0; i < this.getButtons().length; i++) {
@@ -260,6 +246,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Get Button of selected RadioButton
 	 * @public
 	 * @returns {sap.m.RadioButton} the selected radio button
+	 */
+
+	/**
+	 * Returns selected button. When no button is selected, "null" is returned.
+	 *
+	 * @type sap.m.RadioButton
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	RadioButtonGroup.prototype.getSelectedButton = function() {
 	

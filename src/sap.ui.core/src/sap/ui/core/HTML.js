@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new HTML.
 	 *
@@ -18,11 +17,19 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 * @class
 	 * Embeds standard HTML in a SAPUI5 control tree.
 	 * 
-	 * Security Hint: By default, the HTML content (property 'content') is not sanitized and therefore open to XSS attacks. Applications that want to show user defined input in an HTML control, should either sanitize the content on their own or activate automatic sanitizing through the 'sanitizeContent' property.
+	 * Security Hint: By default, the HTML content (property 'content') is not sanitized and therefore 
+	 * open to XSS attacks. Applications that want to show user defined input in an HTML control, should 
+	 * either sanitize the content on their own or activate automatic sanitizing through the 
+	 * {@link #setSanitizeContent sanitizeContent} property.
 	 * 
-	 * Although this control inherits the 'tooltip' feature from sap.ui.core.Element, it doesn't support it. Instead, the defined HTML content can contain a tooltip (title attribute).
+	 * Although this control inherits the <code>tooltip</code> aggregation/property and the 
+	 * <code>hasStyleClass</code>, <code>addStyleClass</code>, <code>removeStyleClass</code> and 
+	 * <code>toggleStyleClass</code> methods from its base class, it doesn't support them. 
+	 * Instead, the defined HTML content can contain a tooltip (title attribute) or custom CSS classes.
 	 * 
-	 * For further hints about usage restrictions for this control, see also the documentation of the 'content' property.
+	 * For further hints about usage restrictions for this control, see also the documentation of the 
+	 * <code>content</code> property.
+	 * 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -30,7 +37,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.HTML
+	 * @alias sap.ui.core.HTML
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HTML = Control.extend("sap.ui.core.HTML", /** @lends sap.ui.core.HTML.prototype */ { metadata : {
@@ -39,20 +46,31 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		properties : {
 	
 			/**
-			 * HTML content to be displayed, defined as a string. The content is converted to DOM nodes with a call to <code>new jQuery(content)</code>, so any restrictions for the jQuery constructor apply to the content of the HTML control as well.
+			 * HTML content to be displayed, defined as a string. 
+			 * 
+			 * The content is converted to DOM nodes with a call to <code>new jQuery(content)</code>, so any 
+			 * restrictions for the jQuery constructor apply to the content of the HTML control as well.
 			 * 
 			 * Some of these restrictions (there might be others!) are:
 			 * <ul>
 			 * <li>the content must be enclosed in tags, pure text is not supported. </li>
-			 * <li>if the content contains script tags, they will be executed but they will not appear in the resulting DOM tree. When the contained code tries to find the corresponding script tag, it will fail.</li>
+			 * <li>if the content contains script tags, they will be executed but they will not appear in the 
+			 *     resulting DOM tree. When the contained code tries to find the corresponding script tag, 
+			 *     it will fail.</li>
 			 * </ul>
 			 * 
 			 * Please consider to consult the jQuery documentation as well.
 			 * 
-			 * The HTML control currently doesn't prevent the usage of multiple root nodes in its DOM content (e.g. setContent("<div/><div/>")), but this is not a guaranteed feature. The accepted content might be restricted to single root nodes in future versions. To notify applications about this fact, a warning is written in the log when multiple root nodes are used.
-			 * @SecSink {,XSS} The content of the 'content' property is rendered 1:1 to allow the full flexibility of HTML in UI5 applications.
-			 * Applications therefore must ensure, that they don't set malicious content (e.g. derived from user input). UI5 does not provide an HTML validation function.
-			 * jQuery.sap.encodeHTML will encode any HTML relevant character, but this is in nearly all cases not what applications want here.
+			 * The HTML control currently doesn't prevent the usage of multiple root nodes in its DOM content 
+			 * (e.g. setContent("<div/><div/>")), but this is not a guaranteed feature. The accepted content 
+			 * might be restricted to single root nodes in future versions. To notify applications about this 
+			 * fact, a warning is written in the log when multiple root nodes are used.
+			 * 
+			 * @SecSink {,XSS} The content of the 'content' property is rendered 1:1 to allow the full 
+			 * flexibility of HTML in UI5 applications. Applications therefore must ensure, that they don't 
+			 * set malicious content (e.g. derived from user input). UI5 does not provide an HTML validation 
+			 * function. jQuery.sap.encodeHTML will encode any HTML relevant character, but this is in 
+			 * nearly all cases not what applications want here.
 			 */
 			content : {type : "string", group : "Misc", defaultValue : null},
 	
@@ -61,8 +79,13 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			 * 
 			 * There are two scenarios where this flag is relevant (when set to true):
 			 * <ul>
-			 * <li>for the initial rendering: when an HTML control is added to an UIArea for the first time and if the root node of that UIArea contained DOM content with the same id as the HTML control, then that content will be used for rendering instead of any specified string content</li>
-			 * <li>any follow-up rendering: when an HTML control is rendered for the second or any later time and the preferDOM flag is set, then the DOM from the first rendering is preserved and not replaced by the string content</li>
+			 * <li>for the initial rendering: when an HTML control is added to an UIArea for the first time 
+			 *     and if the root node of that UIArea contained DOM content with the same id as the HTML 
+			 *     control, then that content will be used for rendering instead of any specified string 
+			 *     content</li>
+			 * <li>any follow-up rendering: when an HTML control is rendered for the second or any later 
+			 *     time and the preferDOM flag is set, then the DOM from the first rendering is preserved 
+			 *     and not replaced by the string content</li>
 			 * </ul>
 			 * 
 			 * As preserving the existing DOM is the most common use case of the HTML control, the default value is true.
@@ -70,7 +93,9 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			preferDOM : {type : "boolean", group : "Misc", defaultValue : true},
 	
 			/**
-			 * Whether to run the HTML sanitizer once the content (HTML markup) is applied or not. To configure allowed URLs please use the whitelist API via jQuery.sap.addUrlWhitelist.
+			 * Whether to run the HTML sanitizer once the content (HTML markup) is applied or not.
+			 *  
+			 * To configure allowed URLs please use the whitelist API via jQuery.sap.addUrlWhitelist.
 			 */
 			sanitizeContent : {type : "boolean", group : "Misc", defaultValue : false}
 		},
@@ -79,13 +104,15 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 			/**
 			 * Fired after the HTML control has been rendered. Allows to manipulate the resulting DOM.
 			 * 
-			 * When the control doesn't have string content and no preserved DOM existed for this control, then this event will fire, but there won't be a DOM node for this control.
+			 * When the control doesn't have string content and no preserved DOM existed for this control, 
+			 * then this event will fire, but there won't be a DOM node for this control.
 			 */
 			afterRendering : {
 				parameters : {
 	
 					/**
-					 * Whether the current DOM of the control has been preserved (true) or not (e.g. rendered from content property or it is an empty HTML control).
+					 * Whether the current DOM of the control has been preserved (true) or not (e.g. 
+					 * rendered from content property or it is an empty HTML control).
 					 */
 					isPreservedDOM : {type : "boolean"}
 				}
@@ -226,11 +253,17 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 		return this;
 	};
 	
-	HTML.prototype.setTooltip = function(sTooltip) {
+	HTML.prototype.setTooltip = function() {
 		jQuery.sap.log.warning("The sap.ui.core.HTML control doesn't support tooltips. Add the tooltip to the HTML content instead.");
 		return Control.prototype.setTooltip.apply(this, arguments);
 	};
 	
+	jQuery.each("hasStyleClass addStyleClass removeStyleClass toggleStyleClass".split(" "), function(method) {
+		HTML.prototype[method] = function() {
+			jQuery.sap.log.warning("The sap.ui.core.HTML control doesn't support custom style classes. Manage custom CSS classes in the HTML content instead.");
+			return Control.prototype[method].apply(this, arguments);
+		};
+	});
 
 	return HTML;
 

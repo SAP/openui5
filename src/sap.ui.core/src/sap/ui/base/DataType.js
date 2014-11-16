@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @class Describes the metadata of a data type and provides methods for validation.
 	 * @author Frank Weigel
 	 * @since 0.9.0
-	 * @name sap.ui.base.DataType
+	 * @alias sap.ui.base.DataType
 	 */
 	var DataType = function() {
 		// Avoid construction of a DataType.
@@ -26,8 +26,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * Only for primitive types it differs, namely it omits the package 'sap.ui.core'.
 	 * @return {string} name of the data type
 	 * @public
-	 * @name sap.ui.base.DataType#getName
-	 * @function
 	 */
 	DataType.prototype.getName = function() {
 		return undefined;
@@ -37,8 +35,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * The base type of this type or undefined if this is a primitive type.
 	 * @return {sap.ui.base.DataType} base type or undefined
 	 * @public
-	 * @name sap.ui.base.DataType#getBaseType
-	 * @function
 	 */
 	DataType.prototype.getBaseType = function() {
 		return undefined;
@@ -48,8 +44,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * The component type of this type or undefined if this is not an array.
 	 * @return {sap.ui.base.DataType} component type or undefined
 	 * @public
-	 * @name sap.ui.base.DataType#getComponentType
-	 * @function
 	 */
 	DataType.prototype.getComponentType = function() {
 		return undefined;
@@ -60,8 +54,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @return {any} default value of the data type. The type of the returned value
 	 *    must match the JavaScript type of the data type (a string for string types etc.)
 	 * @public
-	 * @name sap.ui.base.DataType#getDefaultValue
-	 * @function
 	 */
 	DataType.prototype.getDefaultValue = function() {
 		return undefined;
@@ -71,8 +63,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * Whether this type is an array type.
 	 * @return {boolean} whether this type is an array type
 	 * @public
-	 * @name sap.ui.base.DataType#isArrayType
-	 * @function
 	 */
 	DataType.prototype.isArrayType = function() {
 		return undefined;
@@ -83,8 +73,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {string} sValue string representation for a value of this type
 	 * @return the value in the correct internal format
 	 * @public
-	 * @name sap.ui.base.DataType#parseValue
-	 * @function
 	 */
 	DataType.prototype.parseValue = function(sValue) {
 		// currently this function considers to handle primitive values
@@ -112,7 +100,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {any} vValue the value to be checked
 	 * @return {boolean} whether the given value is valid for this data type (without conversion)
 	 * @public
-	 * @name sap.ui.base.DataType#isValid
 	 */
 	DataType.prototype.isValid = undefined;
 	
@@ -122,8 +109,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {function} fnNormalizer the function to call for normalizing. Will be called with the value
 	 * as the first parameter. It must return the (normalized) value.
 	 * @public
-	 * @name sap.ui.base.DataType#setNormalizer
-	 * @function
 	 */
 	DataType.prototype.setNormalizer = function(fnNormalizer) {
 		jQuery.sap.assert(typeof fnNormalizer === "function", "DataType.setNormalizer: fnNormalizer must be a function");
@@ -136,8 +121,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {object} oValue the value to be normalized
 	 * @return the normalized value
 	 * @public
-	 * @name sap.ui.base.DataType#normalize
-	 * @function
 	 */
 	DataType.prototype.normalize = function(oValue) {
 		if (typeof this._fnNormalizer === "function") {
@@ -298,8 +281,6 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {string} sTypeName name of the type to be retrieved 
 		 * @return the type object or undefined when no such type object exists.
 		 * @public
-		 * @name sap.ui.base.DataType.getType
-		 * @function
 		 */
 		DataType.getType = function(sTypeName) {
 			if (sTypeName.indexOf("[]") > 0) {
@@ -319,7 +300,6 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {function} [mSettings.isValid] a validator function for values of the new type
 		 * @param {sap.ui.base.DataType} [base] the base type for the new type
 		 * @public
-		 * @name sap.ui.base.DataType.createType
 		 */
 		DataType.createType = createType;
 	
@@ -332,8 +312,6 @@ sap.ui.define(['jquery.sap.global'],
 		 * Only purpose is to enable the {@link #isInterfaceType} check.
 		 * @param {string[]} aTypes interface types to be reigstered  
 		 * @private
-		 * @name sap.ui.base.DataType.registerInterfaceTypes
-		 * @function
 		 */
 		DataType.registerInterfaceTypes = function(aTypes) {
 			for (var i = 0; i < aTypes.length; i++) {
@@ -345,8 +323,6 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {string} sType name of type to check
 		 * @return {boolean} whether the given type is known to be an interface type
 		 * @private 
-		 * @name sap.ui.base.DataType.isInterfaceType
-		 * @function
 		 */
 		DataType.isInterfaceType = function(sType) {
 			return mInterfaces.hasOwnProperty(sType) && jQuery.sap.getObject(sType) === mInterfaces[sType];

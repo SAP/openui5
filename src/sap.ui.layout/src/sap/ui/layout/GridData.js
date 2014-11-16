@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
-	 * @name sap.ui.layout.GridData
+	 * @alias sap.ui.layout.GridData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GridData = LayoutData.extend("sap.ui.layout.GridData", /** @lends sap.ui.layout.GridData.prototype */ { metadata : {

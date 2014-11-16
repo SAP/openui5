@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/library'
 	 * @public
 	 * @experimental Since version 1.15. 
 	 * The templating might be changed in future versions.
-	 * @name sap.ui.core.tmpl.DOMAttribute
+	 * @alias sap.ui.core.tmpl.DOMAttribute
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DOMAttribute = Element.extend("sap.ui.core.tmpl.DOMAttribute", /** @lends sap.ui.core.tmpl.DOMAttribute.prototype */ { metadata : {

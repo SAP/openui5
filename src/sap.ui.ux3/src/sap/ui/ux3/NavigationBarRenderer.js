@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class NavigationBar renderer.
-	 * @static
+	 * NavigationBar renderer.
+	 * @namespace
 	 */
 	var NavigationBarRenderer = {
 	};

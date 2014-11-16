@@ -26,7 +26,7 @@ sap.ui
 					 * @constructor
 					 * @public
 					 * @experimental Since version 1.25. !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
-					 * @name sap.m.P13nConditionPanel
+					 * @alias sap.m.P13nConditionPanel
 					 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime
 					 *                metamodel
 					 */
@@ -158,15 +158,12 @@ sap.ui
 
 					// EXC_ALL_CLOSURE_003
 					/**
-					 * @public
-					 * 
 					 * This method must be used to assign a list of conditions.
 					 * 
 					 * @param {object[]}
 					 *            aConditions array of Conditions.
 					 *            
-					 * @function
-					 * @name sap.m.P13nConditionPanel
+					 * @public
 					 * @since 1.25.0
 					 */
 					P13nConditionPanel.prototype.setConditions = function(aConditions) {

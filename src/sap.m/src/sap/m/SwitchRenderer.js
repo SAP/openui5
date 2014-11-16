@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 		"use strict";
 
 		/**
-		 * @class Switch renderer.
-		 * @static
+		 * Switch renderer.
+		 * @namespace
 		 */
 		var SwitchRenderer = {};
 

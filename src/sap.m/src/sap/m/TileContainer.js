@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.TileContainer
+	 * @alias sap.m.TileContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TileContainer = Control.extend("sap.m.TileContainer", /** @lends sap.m.TileContainer.prototype */ { metadata : {
@@ -103,21 +103,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	
 	/**
-	 * Moves a given tile to the given index
-	 *
-	 * @name sap.m.TileContainer#moveTile
-	 * @function
-	 * @param {int} iTile
-	 *         The tile or tile index to move
-	 * @param {int} iNewIndex
-	 *         The new Tile position in the tiles aggregation
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
 	 * Scrolls to the page where the given tile or tile index is included.
 	 * Optionally this can be done animated or not. With IE9 the scroll is never animated.
 	 *
@@ -132,16 +117,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	
-	
-	/**
-	 * Returns the index of the first tile that is visible in the current page
-	 *
-	 * @name sap.m.TileContainer#getPageFirstTileIndex
-	 * @function
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	IconPool.insertFontFaceStyle();
 	
@@ -607,8 +582,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns the index of the first tile that is visible in the current page
 	 *
-	 * @returns {sap.m.TileContainer} The index of the first tile that is visible in the current page.
+	 * @returns {int} The index of the first tile that is visible in the current page.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.getPageFirstTileIndex = function() {
 		return this._iCurrentTileStartIndex || 0;
@@ -619,9 +595,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.m.Tile} vTile The tile to move
 	 * @param {int} iNewIndex The new Tile position in the tiles aggregation.
-	
 	 * @returns {sap.m.TileContainer} This tile container.
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TileContainer.prototype.moveTile = function(vTile, iNewIndex) {
 		if (!isNaN(vTile)) {

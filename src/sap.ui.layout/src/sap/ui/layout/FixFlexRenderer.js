@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FixFlex renderer
-	 * @static
+	 * FixFlex renderer
+	 * @namespace
 	 */
 	var FixFlexRenderer = {};
 	

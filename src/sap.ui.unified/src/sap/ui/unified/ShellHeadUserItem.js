@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.ui.unified.ShellHeadUserItem
+	 * @alias sap.ui.unified.ShellHeadUserItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellHeadUserItem = Element.extend("sap.ui.unified.ShellHeadUserItem", /** @lends sap.ui.unified.ShellHeadUserItem.prototype */ { metadata : {

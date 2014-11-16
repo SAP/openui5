@@ -9,10 +9,10 @@ sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class MenuButton renderer.
+	 * MenuButton renderer.
 	 * For a common look&feel, the MenuButton extends the Button control,
 	 * just like the TextField ComboBox works.
-	 * @static
+	 * @namespace
 	 */
 	var MenuButtonRenderer = Renderer.extend(ButtonRenderer);
 	

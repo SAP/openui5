@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	 * @public
 	 * @experimental Since version 1.21. 
 	 * The AnalyticalColumnMenu will be productized soon.
-	 * @name sap.ui.table.AnalyticalColumnMenu
+	 * @alias sap.ui.table.AnalyticalColumnMenu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AnalyticalColumnMenu = ColumnMenu.extend("sap.ui.table.AnalyticalColumnMenu", /** @lends sap.ui.table.AnalyticalColumnMenu.prototype */ { metadata : {

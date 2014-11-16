@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class InputListItem renderer.
-	 * @static
+	 * InputListItem renderer.
+	 * @namespace
 	 */
 	var InputListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	

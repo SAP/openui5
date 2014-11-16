@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @name sap.m.P13nColumnsPanel
+	 * @alias sap.m.P13nColumnsPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var P13nColumnsPanel = P13nPanel.extend("sap.m.P13nColumnsPanel", /** @lends sap.m.P13nColumnsPanel.prototype */
@@ -68,10 +68,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			}
 		}
 	});
-
-	// /**
-	// * This file defines behavior for the ColumnsPanel control,
-	// */
 
 	/* =========================================================== */
 	/* Private methods and properties */
@@ -980,8 +976,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Initialization hook.
 	 * 
 	 * @private
-	 * @name sap.m.ColumnsPanel#init
-	 * @function
 	 */
 	P13nColumnsPanel.prototype.init = function() {
 		var iLiveChangeTimer = 0;
@@ -1141,8 +1135,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Cleans up before destruction.
 	 * 
 	 * @private
-	 * @name ColumnsPanel#exit
-	 * @function
 	 */
 	P13nColumnsPanel.prototype.exit = function() {
 
@@ -1173,9 +1165,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	/**
 	 * Add item to items aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addItem
 	 * @param {object}
 	 *          oItem is the new item that shall be added
 	 */
@@ -1326,9 +1316,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	/**
 	 * Add ColumnsItem to columnsItems aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addColumnsItem
 	 * @param {object}
 	 *          oColumnsItem is the new ColumnsItem that shall be added
 	 */

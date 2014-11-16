@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.9.2
-	 * @name sap.m.PullToRefresh
+	 * @alias sap.m.PullToRefresh
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PullToRefresh = Control.extend("sap.m.PullToRefresh", /** @lends sap.m.PullToRefresh.prototype */ { metadata : {
@@ -71,17 +71,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			refresh : {}
 		}
 	}});
-	
-	
-	/**
-	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
-	 *
-	 * @name sap.m.PullToRefresh#hide
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	PullToRefresh.prototype.init = function(){
@@ -318,6 +307,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	// API implementation
+
+	/**
+	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	PullToRefresh.prototype.hide = function(){
 		this.setState(0);
 		if (this._oScroller) {

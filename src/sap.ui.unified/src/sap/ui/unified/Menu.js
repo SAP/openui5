@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.unified.Menu
+	 * @alias sap.ui.unified.Menu
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Menu = Control.extend("sap.ui.unified.Menu", /** @lends sap.ui.unified.Menu.prototype */ { metadata : {
@@ -86,52 +86,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	}});
 	
 	
-	/**
-	 * Opens the menu
-	 *
-	 * @name sap.ui.unified.Menu#open
-	 * @function
-	 * @param {boolean} bWithKeyboard
-	 * 
-	 *         An indicator whether the first item shall be highlighted, or not. It is highlighted in the case that the menu is opened via keyboard.
-	 * @param {object} oOpenerRef
-	 * 
-	 *         DOMNode or sap.ui.core.Element that opens the menu; the DOMNode or sap.ui.core.Element will be focused again after the menu is closed. This parameter is optional.
-	 * @param {sap.ui.core.Dock} sMy
-	 * 
-	 *         The popup content's reference position for docking.
-	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
-	 * @param {sap.ui.core.Dock} sAt
-	 * 
-	 *         The 'of' element's reference point for docking to.
-	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
-	 * @param {object} oOf
-	 * 
-	 *         The DOM element or sap.ui.core.Element to dock to.
-	 *         See also sap.ui.core.Popup.open.
-	 * @param {string} sOffset
-	 * 
-	 *         The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right).
-	 *         See also sap.ui.core.Popup.open.
-	 * @param {sap.ui.core.Collision} sCollision
-	 * 
-	 *         The collision defines how the position of an element should be adjusted in case it overflows the window in some direction.
-	 *         See also sap.ui.core.Popup.open.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
-	/**
-	 * Closes the menu
-	 *
-	 * @name sap.ui.unified.Menu#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
+	
 	
 	(function(window) {
 	
@@ -292,6 +250,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 	
 	
+
+	/**
+	 * Opens the menu
+	 *
+	 * @param {boolean} bWithKeyboard
+	 * 
+	 *         An indicator whether the first item shall be highlighted, or not. It is highlighted in the case that the menu is opened via keyboard.
+	 * @param {object} oOpenerRef
+	 * 
+	 *         DOMNode or sap.ui.core.Element that opens the menu; the DOMNode or sap.ui.core.Element will be focused again after the menu is closed. This parameter is optional.
+	 * @param {sap.ui.core.Dock} sMy
+	 * 
+	 *         The popup content's reference position for docking.
+	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
+	 * @param {sap.ui.core.Dock} sAt
+	 * 
+	 *         The 'of' element's reference point for docking to.
+	 *         See also sap.ui.core.Popup.Dock and sap.ui.core.Popup.open.
+	 * @param {object} oOf
+	 * 
+	 *         The DOM element or sap.ui.core.Element to dock to.
+	 *         See also sap.ui.core.Popup.open.
+	 * @param {string} sOffset
+	 * 
+	 *         The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right).
+	 *         See also sap.ui.core.Popup.open.
+	 * @param {sap.ui.core.Collision} sCollision
+	 * 
+	 *         The collision defines how the position of an element should be adjusted in case it overflows the window in some direction.
+	 *         See also sap.ui.core.Popup.open.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Menu.prototype.open = function(bWithKeyboard, oOpenerRef, my, at, of, offset, collision){
 		if (this.bOpen) {
 			return;
@@ -331,6 +323,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		fnIe8RepaintBug(this);
 	};
 	
+
+	/**
+	 * Closes the menu
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Menu.prototype.close = function() {
 		if (!this.bOpen || Menu._dbg /*Avoid closing for debugging purposes*/) {
 			return;
@@ -755,8 +755,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 * Scrolls an item into the visual viewport.
 	 *
 	 * @private
-	 * @name sap.ui.unified.Menu#scrollToItem
-	 * @function
 	 */
 	Menu.prototype.scrollToItem = function(oItem) {
 	

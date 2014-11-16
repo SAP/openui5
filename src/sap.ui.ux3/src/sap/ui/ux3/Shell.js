@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.Shell
+	 * @alias sap.ui.ux3.Shell
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Shell = Control.extend("sap.ui.ux3.Shell", /** @lends sap.ui.ux3.Shell.prototype */ { metadata : {
@@ -256,120 +256,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Replaces the existing Shell content with the given Control(-Tree). Only leads to a re-rendering of the content area (not the complete Shell).
-	 * This method may be more convenient than a series of calls to "removeContent" and "addContent", which each lead to a re-rendering of the content area (but again not of the complete Shell).
-	 * 
-	 * By default the old content is not destroyed and is returned by this method in an array for further usage. To avoid memory leaks, the old content should be destroyed (if not needed later), by setting the "destroyOldContent" flag or by destroying it manually later on. If "destroyOldContent" is set, an empty array is returned.
-	 *
-	 * @name sap.ui.ux3.Shell#setContent
-	 * @function
-	 * @param {sap.ui.core.Control} oContent
-	 *         The new Content. In this method it must be exactly one control (-tree). Use addContent() to add more control (-trees) to the main content area of the Shell.
-	 * @param {boolean} bDestroyOldContent
-	 *         If set, the controls previously contained in the Shell will be destroyed, to avoid memory leaks.
-	 * @type sap.ui.core.Control[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Replaces the existing side pane content with the given Control(-Tree). This method is optimized to only re-render the pane content (and not the shell) which is faster and smoother than any other way of changing the "paneContent" aggregation.
-	 * 
-	 * By default, the old pane content is not destroyed and is returned by this method in an array for further usage. To avoid memory leaks, the old content should be destroyed (if not needed later), by setting the "destroyOldContent" flag or by destroying it manually later on. If "destroyOldContent" is set, an empty array is returned.
-	 *
-	 * @name sap.ui.ux3.Shell#setPaneContent
-	 * @function
-	 * @param {sap.ui.core.Control} oContent
-	 *         The new Pane content. In this method it must be exactly one control (-tree). This could likely be a layout or a specific ux3 Pane control. Use addPaneContent() to add more control (-trees) to the Pane.
-	 * @param {boolean} bDestroyOldContent
-	 *         If set, the controls previously contained in the pane will be destroyed, to avoid memory leaks.
-	 * @type sap.ui.core.Control[]
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Experimental method! Do not use!
-	 *
-	 * @name sap.ui.ux3.Shell#openPersonalizationDialog
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Experimental method! Do not use!
-	 * 
-	 * Makes Shell personalization available and injects the given personalization settings. This should be called before the user can do any adaptations per drag&drop or using the personalization dialog. Otherwise it may override the user's new settings.
-	 *
-	 * @name sap.ui.ux3.Shell#initializePersonalization
-	 * @function
-	 * @param {object} oSettings
-	 *         Personalization settings object
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns the SearchField control which is used in the Search Tool.
-	 *
-	 * @name sap.ui.ux3.Shell#getSearchField
-	 * @function
-	 * @type sap.ui.commons.SearchField
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Opens the side Pane.
-	 * 
-	 * A valid ID of a paneBarItem must be given, so this item can be marked as selected. A "paneBarItemSelected" event is then fired as if the opening was triggered by the user by a click on the respective PaneBarItem.
-	 * This method can be called (with different IDs) even when the Pane is already open. It has then the same effect as if the user switches between PaneBarItems.
-	 * 
-	 * Returns 'this' to allow method chaining.
-	 *
-	 * @name sap.ui.ux3.Shell#openPane
-	 * @function
-	 * @param {string} sPaneBarItemId
-	 *         The ID of the PaneBarItem which should be marked as selected.
-	 * @type sap.ui.ux3.Shell
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Closes the side Pane (if open).
-	 * 
-	 * Returns 'this' to allow method chaining.
-	 *
-	 * @name sap.ui.ux3.Shell#closePane
-	 * @function
-	 * @type sap.ui.ux3.Shell
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Returns 'true' if the side Pane is currently open.
-	 *
-	 * @name sap.ui.ux3.Shell#isPaneOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	Shell.WSI_MENU_DELAY = 200;
@@ -1172,6 +1058,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 		return this._oSearchPopup;
 	};
 	
+
+	/**
+	 * Returns the SearchField control which is used in the Search Tool.
+	 *
+	 * @type sap.ui.commons.SearchField
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.getSearchField = function() {
 		if (!this._oSearchField) {
 			this._getSearchTool();
@@ -1212,6 +1106,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	/* ====== PANE BAR ====== */
 	
 	
+
+	/**
+	 * Opens the side Pane.
+	 * 
+	 * A valid ID of a paneBarItem must be given, so this item can be marked as selected. A "paneBarItemSelected" event is then fired as if the opening was triggered by the user by a click on the respective PaneBarItem.
+	 * This method can be called (with different IDs) even when the Pane is already open. It has then the same effect as if the user switches between PaneBarItems.
+	 * 
+	 * Returns 'this' to allow method chaining.
+	 *
+	 * @param {string} sPaneBarItemId
+	 *         The ID of the PaneBarItem which should be marked as selected.
+	 * @type sap.ui.ux3.Shell
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.openPane = function(sPaneId) {
 		var that = this;
 		jQuery.sap.assert(typeof sPaneId === "string", "sPaneId must be given as string");
@@ -1252,11 +1161,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 		return this;
 	};
 	
+
+	/**
+	 * Closes the side Pane (if open).
+	 * 
+	 * Returns 'this' to allow method chaining.
+	 *
+	 * @type sap.ui.ux3.Shell
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.closePane = function() {
 		this._closePane();
 		return this;
 	};
 	
+
+	/**
+	 * Returns 'true' if the side Pane is currently open.
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.isPaneOpen = function() {
 		return (this._sOpenPaneId != null);
 	};
@@ -2334,6 +2261,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	
 	/*  METHODS  */
 	
+
+	/**
+	 * Replaces the existing Shell content with the given Control(-Tree). Only leads to a re-rendering of the content area (not the complete Shell).
+	 * This method may be more convenient than a series of calls to "removeContent" and "addContent", which each lead to a re-rendering of the content area (but again not of the complete Shell).
+	 * 
+	 * By default the old content is not destroyed and is returned by this method in an array for further usage. To avoid memory leaks, the old content should be destroyed (if not needed later), by setting the "destroyOldContent" flag or by destroying it manually later on. If "destroyOldContent" is set, an empty array is returned.
+	 *
+	 * @param {sap.ui.core.Control} oContent
+	 *         The new Content. In this method it must be exactly one control (-tree). Use addContent() to add more control (-trees) to the main content area of the Shell.
+	 * @param {boolean} bDestroyOldContent
+	 *         If set, the controls previously contained in the Shell will be destroyed, to avoid memory leaks.
+	 * @type sap.ui.core.Control[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.setContent = function(vContent, bDestruct) {
 		jQuery.sap.assert(vContent === null
 			|| (vContent instanceof Control)
@@ -2373,6 +2315,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 	};
 	
 	
+
+	/**
+	 * Replaces the existing side pane content with the given Control(-Tree). This method is optimized to only re-render the pane content (and not the shell) which is faster and smoother than any other way of changing the "paneContent" aggregation.
+	 * 
+	 * By default, the old pane content is not destroyed and is returned by this method in an array for further usage. To avoid memory leaks, the old content should be destroyed (if not needed later), by setting the "destroyOldContent" flag or by destroying it manually later on. If "destroyOldContent" is set, an empty array is returned.
+	 *
+	 * @param {sap.ui.core.Control} oContent
+	 *         The new Pane content. In this method it must be exactly one control (-tree). This could likely be a layout or a specific ux3 Pane control. Use addPaneContent() to add more control (-trees) to the Pane.
+	 * @param {boolean} bDestroyOldContent
+	 *         If set, the controls previously contained in the pane will be destroyed, to avoid memory leaks.
+	 * @type sap.ui.core.Control[]
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.setPaneContent = function(vContent, bDestruct) {
 		jQuery.sap.assert((vContent instanceof Control)
 			|| ((jQuery.isArray(vContent) && ((vContent.length > 0) ? (vContent[0] instanceof Control) : true))),
@@ -2617,10 +2573,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Menu', 'sap/ui/core/Control'
 		return this.oPersonalization;
 	};
 	
+
+	/**
+	 * Experimental method! Do not use!
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.openPersonalizationDialog = function() {
 		this._getPersonalization().openDialog();
 	};
 	
+
+	/**
+	 * Experimental method! Do not use!
+	 * 
+	 * Makes Shell personalization available and injects the given personalization settings. This should be called before the user can do any adaptations per drag&drop or using the personalization dialog. Otherwise it may override the user's new settings.
+	 *
+	 * @param {object} oSettings
+	 *         Personalization settings object
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Shell.prototype.initializePersonalization = function(oSettings) {
 		this._getPersonalization().initializeSettings(oSettings);
 	};

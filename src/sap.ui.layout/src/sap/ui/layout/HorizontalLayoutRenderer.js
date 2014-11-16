@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class HorizontalLayout renderer.
-	 * @static
+	 * HorizontalLayout renderer.
+	 * @namespace
 	 */
 	var HorizontalLayoutRenderer = {
 	};

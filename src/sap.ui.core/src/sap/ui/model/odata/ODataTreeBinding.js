@@ -9,19 +9,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 
 
 	/**
-	*
-	* @class
-	* Tree binding implementation for client models
-	*
+	 *
+	 * @class
+	 * Tree binding implementation for client models
+	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
-	* @name sap.ui.model.odata.ODataTreeBinding
-	* @extends sap.ui.model.TreeBinding
-	*/
+	 * @alias sap.ui.model.odata.ODataTreeBinding
+	 * @extends sap.ui.model.TreeBinding
+	 */
 	var ODataTreeBinding = TreeBinding.extend("sap.ui.model.odata.ODataTreeBinding", /** @lends sap.ui.model.odata.ODataTreeBinding.prototype */ {
 	
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters){
@@ -50,31 +50,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.odata.ODataTreeBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.odata.ODataTreeBinding.extend
-	 * @function
-	 */
-	
-	/**
 	 * Return root contexts for the tree
 	 * @param {integer} iStartIndex the start index of the requested contexts
 	 * @param {integer} iLength the requested amount of contexts
 	 * @param {integer} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBinding#getRootContexts
-	 * @function
 	 */
 	ODataTreeBinding.prototype.getRootContexts = function(iStartIndex, iLength, iThreshold) {
 		var sNodeId = null,
@@ -147,8 +128,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {integer} iThreshold
 	 * @return {Array} the contexts array
 	 * @protected
-	 * @name sap.ui.model.odata.ODataTreeBinding#getNodeContexts
-	 * @function
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
 		var sNodeId,
@@ -182,8 +161,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Returns if the node has child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.hasChildren
 	 * @param {Object} oContext the context element of the node
 	 * @return {boolean} true if node has children
 	 *
@@ -206,8 +183,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Returns the number of child nodes
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype.getChildCount
 	 * @param {Object} oContext the context element of the node
 	 * @return {integer} the number of children
 	 *
@@ -238,8 +213,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
-	 * @function
-	 * @name sap.ui.model.TreeBinding.prototype._getContextsForPath
 	 * @param {String} sNodeId the absolute path to be loaded
 	 * @param {integer} iStartIndex
 	 * @param {integer} iLength
@@ -359,8 +332,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	
 	/**
 	 * Load list data from the server
-	 * @name sap.ui.model.odata.ODataTreeBinding#loadSubNodes
-	 * @function
 	 */
 	ODataTreeBinding.prototype._loadSubNodes = function(sNodeId, iStartIndex, iLength, iThreshold, aParams, mParameters) {
 		var that = this,
@@ -468,8 +439,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * Resets the current list data and length
 	 * 
 	 * @private
-	 * @name sap.ui.model.odata.ODataTreeBinding#resetData
-	 * @function
 	 */
 	ODataTreeBinding.prototype.resetData = function(oContext) {
 		if (oContext) {
@@ -497,8 +466,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {string} [mEntityTypes]
 	 * 
 	 * @public
-	 * @name sap.ui.model.odata.ODataTreeBinding#refresh
-	 * @function
 	 */
 	ODataTreeBinding.prototype.refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
@@ -538,8 +505,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @public
-	 * @name sap.ui.model.odata.ODataTreeBinding#filter
-	 * @function
 	 */
 	ODataTreeBinding.prototype.filter = function(aFilters){
 		jQuery.sap.log.warning("Filtering is currently not possible in the ODataTreeBinding");
@@ -552,8 +517,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * 
 	 * @param {boolean} bForceUpdate
 	 * 
-	 * @name sap.ui.model.odata.ODataTreeBinding#checkUpdate
-	 * @function
 	 */
 	ODataTreeBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
 		var bChangeDetected = false;

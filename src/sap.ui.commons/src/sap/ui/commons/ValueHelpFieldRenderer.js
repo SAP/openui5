@@ -9,10 +9,10 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer'],
 
 
 	/**
-	 * @class ValueHelpField renderer.
+	 * ValueHelpField renderer.
 	 * For a common look&feel, the ValueHelpField extends the TextField control,
 	 * just like the ComboBox does.
-	 * @static
+	 * @namespace
 	 */
 	var ValueHelpFieldRenderer = sap.ui.core.Renderer.extend(TextFieldRenderer);
 	

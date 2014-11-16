@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @class A Plugin to search UI5 controls.
 		 *
 		 * @protected
-		 * @name sap.ui.test.OpaPlugin
+		 * @alias sap.ui.test.OpaPlugin
 		 * @author SAP SE
 		 * @since 1.22
 		 */

@@ -577,15 +577,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * http://api.jqueryui.com/category/ui-core/
 	 */
 	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
-	jQuery.fn.extend({
+	jQuery.fn.extend( /** @lends jQuery.prototype */ {
 
 		/**
 		 * Disable HTML elements selection.
 		 *
 		 * @return {jQuery} <code>this</code> to allow method chaining.
 		 * @protected
-		 * @methodOf jQuery.prototype
-		 * @name disableSelection
 		 * @since 1.24.0
 		 */
 		disableSelection: function() {
@@ -599,8 +597,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 *
 		 * @return {jQuery} <code>this</code> to allow method chaining.
 		 * @protected
-		 * @methodOf jQuery.prototype
-		 * @name enableSelection
 		 * @since 1.24.0
 		 */
 		enableSelection: function() {
@@ -1007,7 +1003,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @param {jQuery|Control|string} vSource jQuery object, control or an id of the source element.
 	 * @param {jQuery|Control} vDestination target jQuery object or a control.
 	 * @return {jQuery|Element} Target element
-	 * @name jQuery.sap.syncStyleClass
 	 * @public
 	 * @since 1.22
 	 */

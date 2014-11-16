@@ -9,9 +9,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class TextView renderer.
+	 * TextView renderer.
 	 * @author SAP SE
-	 * @static
+	 * @namespace
 	 */
 	var TextViewRenderer = {
 	};

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 
 	/**
-	 * @class FeedListItem renderer.
-	 * @static
+	 * FeedListItem renderer.
+	 * @namespace
 	 */
 	var FeedListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 	

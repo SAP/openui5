@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new TreeNode.
 	 *
@@ -22,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.TreeNode
+	 * @alias sap.ui.commons.TreeNode
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TreeNode = Element.extend("sap.ui.commons.TreeNode", /** @lends sap.ui.commons.TreeNode.prototype */ { metadata : {
@@ -103,38 +102,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	}});
 	
 	
-	/**
-	 * Select the node, and if any, deselects the previously selected node
-	 *
-	 * @name sap.ui.commons.TreeNode#select
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Expands the node
-	 *
-	 * @name sap.ui.commons.TreeNode#expand
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Collapses the node
-	 *
-	 * @name sap.ui.commons.TreeNode#collapse
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	TreeNode.ANIMATION_DURATION	 = 600;
 	
 	CustomStyleClassSupport.apply(TreeNode.prototype);
@@ -147,8 +114,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * Expands the node
 	 * @param {boolean} bExpandChildren
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	
 	TreeNode.prototype.expand = function(bExpandChildren){
 	
 		var oDomNode = this.$();
@@ -182,6 +149,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * Collapses the node
 	 * @param {boolean} bCollapseChildren
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.collapse = function(bCollapseChildren){
 	
@@ -219,6 +187,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 	 * @param {boolean} bSuppressEvent
 	 * @param {boolean} bDeselectOtherNodes
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeNode.prototype.select = function(bSuppressEvent) {
 		var oTree = this.getTree();

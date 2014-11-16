@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.core.TooltipBase
+	 * @alias sap.ui.core.TooltipBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TooltipBase = Control.extend("sap.ui.core.TooltipBase", /** @lends sap.ui.core.TooltipBase.prototype */ { metadata : {

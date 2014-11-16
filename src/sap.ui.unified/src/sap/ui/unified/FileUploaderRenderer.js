@@ -9,8 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class
-	 * @static
+	 * @namespace
 	 */
 	var FileUploaderRenderer = function() {
 	};

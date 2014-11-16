@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	 * @constructor
 	 * @public
 	 * @since 1.16.0
-	 * @name sap.ui.layout.form.FormContainer
+	 * @alias sap.ui.layout.form.FormContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormContainer = Element.extend("sap.ui.layout.form.FormContainer", /** @lends sap.ui.layout.form.FormContainer.prototype */ { metadata : {

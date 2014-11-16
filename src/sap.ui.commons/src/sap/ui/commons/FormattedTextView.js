@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	 * @constructor
 	 * @public
 	 * @since 1.9.0
-	 * @name sap.ui.commons.FormattedTextView
+	 * @alias sap.ui.commons.FormattedTextView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FormattedTextView = Control.extend("sap.ui.commons.FormattedTextView", /** @lends sap.ui.commons.FormattedTextView.prototype */ { metadata : {
@@ -50,19 +50,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 	}});
 	
 	
-	/**
-	 * Sets text with placeholders and given array of controls
-	 *
-	 * @name sap.ui.commons.FormattedTextView#setContent
-	 * @function
-	 * @param {string} sHtmlText
-	 *         Contains the corresponding HTML-text
-	 * @param {sap.ui.commons.FormattedTextViewControl} oControls
-	 *         Array of controls that should be used within given HTML-text
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	
 	(function() {
@@ -236,6 +224,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'jquery.
 			}
 		};
 	
+
+		/**
+		 * Sets text with placeholders and given array of controls
+		 *
+		 * @param {string} sHtmlText
+		 *         Contains the corresponding HTML-text
+		 * @param {sap.ui.commons.FormattedTextViewControl} oControls
+		 *         Array of controls that should be used within given HTML-text
+		 * @type void
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
 		FormattedTextView.prototype.setContent = function(sHtmlText, aControls) {
 			// set the text using existing checks and method
 			this.setHtmlText(sHtmlText);

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'
 
 
 	/**
-	 * @class Renderer for the sap.ui.commons.AutoComplete
-	 * @static
+	 * Renderer for the sap.ui.commons.AutoComplete
+	 * @namespace
 	 */
 	var AutoCompleteRenderer = Renderer.extend(ComboBoxRenderer);
 	

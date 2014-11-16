@@ -1693,6 +1693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	
 	}(sap.m));
 	
+	
 	/**
 	 * Touch helper.
 	 *
@@ -1700,8 +1701,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @name sap.m.touch
 	 * @public
 	 **/
-	
+
 	if (sap.m && !sap.m.touch) {
+
 		sap.m.touch = {};
 	}
 	

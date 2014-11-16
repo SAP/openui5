@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {object} [mParameters]
 	 * 
 	 * @public
-	 * @name sap.ui.model.ListBinding
+	 * @alias sap.ui.model.ListBinding
 	 */
 	var ListBinding = Binding.extend("sap.ui.model.ListBinding", /** @lends sap.ui.model.ListBinding.prototype */ {
 		
@@ -56,23 +56,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 		}
 		
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.ListBinding with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.ListBinding.extend
-	 * @function
-	 */
 	
 	
 	// the 'abstract methods' to be implemented by child classes
@@ -112,8 +95,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * Returns the number of entries in the list. This might be an estimated or preliminary length, in case
 	 * the full length is not known yet, see method isLengthFinal().
 	 *
-	 * @function
-	 * @name sap.ui.model.ListBinding.prototype.getLength
 	 * @return {int} returns the number of entries in the list
 	 * @since 1.24
 	 * @public
@@ -126,8 +107,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * Returns whether the length which can be retrieved using getLength() is a known, final length,
 	 * or an preliminary or estimated length which may change if further data is requested.  
 	 *
-	 * @function
-	 * @name sap.ui.model.ListBinding.prototype.isLengthFinal
 	 * @return {boolean} returns whether the length is final
 	 * @since 1.24
 	 * @public
@@ -144,8 +123,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @return {Array} the array of distinct values.
 	 *
 	 * @public
-	 * @name sap.ui.model.ListBinding#getDistinctValues
-	 * @function
 	 */
 	ListBinding.prototype.getDistinctValues = function(sPath) {
 		return null;
@@ -158,8 +135,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
-	 * @name sap.ui.model.ListBinding#attachSort
-	 * @function
 	 */
 	ListBinding.prototype.attachSort = function(fnFunction, oListener) {
 		this.attachEvent("sort", fnFunction, oListener);
@@ -171,8 +146,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event.
-	 * @name sap.ui.model.ListBinding#detachSort
-	 * @function
 	 */
 	ListBinding.prototype.detachSort = function(fnFunction, oListener) {
 		this.detachEvent("sort", fnFunction, oListener);
@@ -183,8 +156,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
 	 * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
-	 * @name sap.ui.model.ListBinding#_fireSort
-	 * @function
 	 */
 	ListBinding.prototype._fireSort = function(mArguments) {
 		this.fireEvent("sort", mArguments);
@@ -196,8 +167,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
-	 * @name sap.ui.model.ListBinding#attachFilter
-	 * @function
 	 */
 	ListBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("filter", fnFunction, oListener);
@@ -209,8 +178,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
 	 * @deprecated use the change event.
-	 * @name sap.ui.model.ListBinding#detachFilter
-	 * @function
 	 */
 	ListBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("filter", fnFunction, oListener);
@@ -221,8 +188,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
 	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
-	 * @name sap.ui.model.ListBinding#_fireFilter
-	 * @function
 	 */
 	ListBinding.prototype._fireFilter = function(mArguments) {
 		this.fireEvent("filter", mArguments);
@@ -231,8 +196,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	/**
 	 * Checks if grouping is enabled for the binding<br/>
 	 * @public
-	 * @name sap.ui.model.ListBinding#isGrouped
-	 * @function
 	 */
 	ListBinding.prototype.isGrouped = function() {
 		return this.aSorters.length > 0 && !!this.aSorters[0].fnGroup;
@@ -241,8 +204,6 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	/**
 	 * Enable extended change detection
 	 * @private
-	 * @name sap.ui.model.ListBinding#enableExtendedChangeDetection
-	 * @function
 	 */
 	ListBinding.prototype.enableExtendedChangeDetection = function( ) {
 		this.bUseExtendedChangeDetection  = true;

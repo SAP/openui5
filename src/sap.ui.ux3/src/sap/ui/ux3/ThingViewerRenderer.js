@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Thing renderer. 
-	 * @static
+	 * Thing renderer. 
+	 * @namespace
 	 */
 	var ThingViewerRenderer = {
 	};

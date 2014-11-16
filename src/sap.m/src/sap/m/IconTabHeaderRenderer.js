@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	"use strict";
 
 /**
-	 * @class HBox renderer.
-	 * @static
+	 * HBox renderer.
+	 * @namespace
 	 */
 	var IconTabHeaderRenderer = {
 	};

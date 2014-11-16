@@ -11,7 +11,7 @@ sap.ui.define(['./Opa',
 		 * @class Page Object Factory
 		 * @extends sap.ui.base.Object
 		 * @protected
-		 * @name sap.ui.test.PageObjectFactory
+		 * @alias sap.ui.test.PageObjectFactory
 		 * @author SAP SE
 		 * @since 1.26
 		 */
