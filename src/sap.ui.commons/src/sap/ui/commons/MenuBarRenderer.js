@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global'],
 
 	
 	/**
-	 * @class MenuBarRenderer.
-	 * @static
+	 * MenuBarRenderer.
+	 * @namespace
 	 */
 	var MenuBarRenderer = {
 	};

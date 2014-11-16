@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class FormattedTextView renderer.
-	 * @static
+	 * FormattedTextView renderer.
+	 * @namespace
 	 */
 	var FormattedTextViewRenderer = {};
 	

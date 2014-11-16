@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 
 
 	/**
-	 * @class ListBox Renderer
+	 * ListBox Renderer
 	 *
 	 * @author d046011
 	 * @version ${version}
-	 * @static
+	 * @namespace
 	 */
 	var ListBoxRenderer = {
 	};

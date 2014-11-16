@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ObjectIdentifier renderer.
-	 * @static
+	 * ObjectIdentifier renderer.
+	 * @namespace
 	 */
 	var ObjectIdentifierRenderer = {};
 	

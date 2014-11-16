@@ -21,9 +21,8 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * });
 	 * </pre>
 	 *
-	 * @class
-	 * @static
-	 * @name sap.ui.core.CompositeSupport
+	 * @namespace
+	 * @alias sap.ui.core.CompositeSupport
 	 */
 	var CompositeSupport = {};
 	
@@ -41,8 +40,6 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * @param {string} [sFactoryName='ComponentFactory'] name under which the newly created factory class will be added to the control class
 	 * @param {object} [oMethods] default factory methods and helper methods
 	 * @public
-	 * @name sap.ui.core.CompositeSupport.mixInto
-	 * @function
 	 */
 	CompositeSupport.mixInto = function(fnClass, sFactoryName, oMethods) {
 	

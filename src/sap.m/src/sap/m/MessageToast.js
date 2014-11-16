@@ -43,9 +43,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * @author SAP SE
 		 * @since 1.9.2
 		 *
-		 * @static
+		 * @namespace
 		 * @public
-		 * @name sap.m.MessageToast
+		 * @alias sap.m.MessageToast
 		 */
 		var MessageToast = {};
 
@@ -329,8 +329,6 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 *
 		 * @type void
 		 * @public
-		 * @name sap.m.MessageToast.show
-		 * @function
 		 */
 		MessageToast.show = function(sMessage, mOptions) {
 			var that = this,

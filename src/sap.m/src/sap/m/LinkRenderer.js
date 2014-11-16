@@ -8,8 +8,8 @@
 
 
 	/**
-	 * @class Link renderer
-	 * @static
+	 * Link renderer
+	 * @namespace
 	 */
 	var LinkRenderer = {
 	};

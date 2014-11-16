@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.FacetFilterList
+	 * @alias sap.m.FacetFilterList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterList = List.extend("sap.m.FacetFilterList", /** @lends sap.m.FacetFilterList.prototype */ { metadata : {
@@ -120,61 +120,6 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Returns the keys of the selected elements as an associative array. An empty object is returned if no items are selected.
-	 *
-	 * @name sap.m.FacetFilterList#getSelectedKeys
-	 * @function
-	 * @type object
-	 * @public
-	 * @since 1.20.3
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Use this method to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant. Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting. If aKeys is undefined, null, or {} (empty object) then all keys are deleted. After this method completes only those items with matching keys will be selected. All other items in the list will be deselected.
-	 *
-	 * @name sap.m.FacetFilterList#setSelectedKeys
-	 * @function
-	 * @param {object} oAKeys
-	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
-	 * @type void
-	 * @public
-	 * @since 1.20.3
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Remove the specified key from the selected keys cache and deselect the item.
-	 *
-	 * @name sap.m.FacetFilterList#removeSelectedKey
-	 * @function
-	 * @param {string} sKey
-	 *         The key of the selected item to be removed from the cache. If null then the text parameter will be used as the key.
-	 * @param {string} sText
-	 *         The text of the selected item to be removed from the cache. If the key parameter is null then text will be used as the key.
-	 * @type void
-	 * @public
-	 * @since 1.20.4
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Remove all selected keys from the selected keys cache and deselect all items.
-	 *
-	 * @name sap.m.FacetFilterList#removeSelectedKeys
-	 * @function
-	 * @type void
-	 * @public
-	 * @since 1.20.4
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	
 	
 	FacetFilterList.prototype.setTitle = function(sTitle) {
@@ -282,6 +227,15 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return this;
 	};
 	
+
+	/**
+	 * Returns the keys of the selected elements as an associative array. An empty object is returned if no items are selected.
+	 *
+	 * @type object
+	 * @public
+	 * @since 1.20.3
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.getSelectedKeys = function() {
 		var oResult = {};
 		var oKeys = this._oSelectedKeys;
@@ -289,6 +243,17 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return oResult;
 	};
 	
+
+	/**
+	 * Use this method to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant. Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting. If aKeys is undefined, null, or {} (empty object) then all keys are deleted. After this method completes only those items with matching keys will be selected. All other items in the list will be deselected.
+	 *
+	 * @param {object} oAKeys
+	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
+	 * @type void
+	 * @public
+	 * @since 1.20.3
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.setSelectedKeys = function(oKeys) {
 		
 		this._oSelectedKeys = {};
@@ -305,6 +270,19 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	};
 	
+
+	/**
+	 * Remove the specified key from the selected keys cache and deselect the item.
+	 *
+	 * @param {string} sKey
+	 *         The key of the selected item to be removed from the cache. If null then the text parameter will be used as the key.
+	 * @param {string} sText
+	 *         The text of the selected item to be removed from the cache. If the key parameter is null then text will be used as the key.
+	 * @type void
+	 * @public
+	 * @since 1.20.4
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.removeSelectedKey = function(sKey, sText) {
 		
 		if (this._removeSelectedKey(sKey, sText)) {
@@ -315,6 +293,15 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	};
 	
+
+	/**
+	 * Remove all selected keys from the selected keys cache and deselect all items.
+	 *
+	 * @type void
+	 * @public
+	 * @since 1.20.4
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	FacetFilterList.prototype.removeSelectedKeys = function() {
 		this._oSelectedKeys = {};
 		sap.m.ListBase.prototype.removeSelections.call(this, true);

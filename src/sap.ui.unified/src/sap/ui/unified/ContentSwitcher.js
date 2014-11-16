@@ -27,7 +27,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @since 1.16.0
 	 * @experimental Since version 1.16.0. 
 	 * API is not yet finished and might change completely
-	 * @name sap.ui.unified.ContentSwitcher
+	 * @alias sap.ui.unified.ContentSwitcher
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ContentSwitcher = Control.extend("sap.ui.unified.ContentSwitcher", /** @lends sap.ui.unified.ContentSwitcher.prototype */ { metadata : {

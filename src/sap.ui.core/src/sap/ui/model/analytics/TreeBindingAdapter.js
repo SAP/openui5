@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Adapter for TreeBindings to add the ListBinding functionality and use the 
 	 * tree structure in list based controls.
 	 *
-	 * @name sap.ui.model.analytics.TreeBindingAdapter
+	 * @alias sap.ui.model.analytics.TreeBindingAdapter
 	 * @function
 	 * @experimental This module is only for experimental use!
 	 * @protected
@@ -522,8 +522,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#attachContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype.attachContextChange = function(fnFunction, oListener) {
 		this.attachEvent("contextChange", fnFunction, oListener);
@@ -534,8 +532,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#detachContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype.detachContextChange = function(fnFunction, oListener) {
 		this.detachEvent("contextChange", fnFunction, oListener);
@@ -545,8 +541,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Fire event contextChange to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @name sap.ui.model.analytics.TreeBindingAdapter#_fireContextChange
-	 * @function
 	 */
 	TreeBindingAdapter.prototype._fireContextChange = function(mArguments) {
 		this.fireEvent("contextChange", mArguments);

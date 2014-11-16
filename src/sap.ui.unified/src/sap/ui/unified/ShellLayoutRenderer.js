@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Shell Layout renderer.
-	 * @static
+	 * Shell Layout renderer.
+	 * @namespace
 	 */
 	var ShellLayoutRenderer = {};
 	

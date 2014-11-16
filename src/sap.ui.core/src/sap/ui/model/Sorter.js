@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global'],
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
 	 *        implement the grouping behaviour for the aggregation which you want to group.
 	 * @public
-	 * @name sap.ui.model.Sorter
+	 * @alias sap.ui.model.Sorter
 	 */
 	var Sorter = sap.ui.base.Object.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 		
@@ -56,24 +56,6 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	
 	});
-	
-	/**
-	 * Creates a new subclass of class sap.ui.model.Sorter with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.Sorter.extend
-	 * @function
-	 */
-	
 
 	return Sorter;
 

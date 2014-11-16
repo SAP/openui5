@@ -269,7 +269,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Windows Phone operating system name.
 	 * 
 	 * @see sap.ui.Device.os#name
-	 * @name sap.ui.Device.os.OS#WINDOWS_PHONE
+	 * @alias sap.ui.Device.os.OS#WINDOWS_PHONE
 	 * @public
 	 */
 	
@@ -505,7 +505,7 @@ if (typeof window.sap.ui !== "object") {
 	 * Android stock browser name.
 	 * 
 	 * @see sap.ui.Device.browser#name
-	 * @name sap.ui.Device.browser.BROWSER#ANDROID
+	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
 	 * @public
 	 */
 	
@@ -823,7 +823,7 @@ if (typeof window.sap.ui !== "object") {
 	 * 	<li>sapUiVisibleOnlyOnTablet - will be visible if the screen has 600px or more but less than 1024px</li>
 	 * 	<li>sapUiVisibleOnlyOnDesktop - will be visible if the screen has 1024px or more</li>
 	 * </ul>
-	 * @name sap.ui.Device.media.RANGESETS#SAP_STANDARD
+	 * @alias sap.ui.Device.media.RANGESETS#SAP_STANDARD
 	 * @public
 	 */
 	
@@ -1214,7 +1214,7 @@ if (typeof window.sap.ui !== "object") {
 	 * 
 	 * This property is set to true only when both mouse and touch event are natively supported.
 	 * 
-	 * @name sap.ui.Device.system#combi
+	 * @alias sap.ui.Device.system#combi
 	 * @type boolean
 	 * @public
 	 */

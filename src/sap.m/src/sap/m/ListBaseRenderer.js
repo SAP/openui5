@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 
 
 	/**
-	 * @class List renderer.
-	 * @static
+	 * List renderer.
+	 * @namespace
 	 */
 	var ListBaseRenderer = {};
 	

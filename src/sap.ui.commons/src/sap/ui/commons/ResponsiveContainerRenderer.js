@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class RatingIndicatorRenderer.
-	 * @static
+	 * RatingIndicatorRenderer.
+	 * @namespace
 	 */
 	var ResponsiveContainerRenderer = function() {
 	};

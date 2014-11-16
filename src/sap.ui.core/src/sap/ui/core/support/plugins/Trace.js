@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * @version ${version}
 		 * @constructor
 		 * @private
-		 * @name sap.ui.core.support.plugins.Trace
+		 * @alias sap.ui.core.support.plugins.Trace
 		 */
 		var Trace = Plugin.extend("sap.ui.core.support.plugins.Trace", {
 			constructor : function(oSupportStub) {
@@ -53,8 +53,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * 
 		 * @param {sap.ui.base.Event} oEvent the event
 		 * @private
-		 * @name sap.ui.core.support.plugins.Trace#onsapUiSupportTraceEntry
-		 * @function
 		 */
 		Trace.prototype.onsapUiSupportTraceEntry = function(oEvent){
 			log(this, oEvent.getParameter("entry"));

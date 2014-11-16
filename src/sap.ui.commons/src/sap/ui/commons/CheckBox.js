@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.CheckBox
+	 * @alias sap.ui.commons.CheckBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CheckBox = Control.extend("sap.ui.commons.CheckBox", /** @lends sap.ui.commons.CheckBox.prototype */ { metadata : {
@@ -111,17 +111,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	
 	/**
-	 * 
-	 * Inverts the current value of the control.
-	 *
-	 * @name sap.ui.commons.CheckBox#toggle
-	 * @function
-	 * @type sap.ui.commons.CheckBox
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	/**
 	 * Event handler called when the check box is clicked.
 	 *
 	 * @param {jQuery.Event} oEvent
@@ -190,6 +179,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	// implement public method toggle()
+
+	/**
+	 * 
+	 * Inverts the current value of the control.
+	 *
+	 * @type sap.ui.commons.CheckBox
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	CheckBox.prototype.toggle = function() {
 		this.setChecked(!this.getChecked());
 		return this;

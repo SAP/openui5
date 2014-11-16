@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * @version ${version}
 	 * @since 0.8.6
 	 * @public
-	 * @name sap.ui.base.Metadata
+	 * @alias sap.ui.base.Metadata
 	 */
 	var Metadata = function(sClassName, oClassInfo) {
 	
@@ -49,8 +49,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * @private
 	 * @final
-	 * @name sap.ui.base.Metadata#extend
-	 * @function
 	 */
 	Metadata.prototype.extend = function(oClassInfo) {
 		this.applySettings(oClassInfo);
@@ -60,8 +58,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * @private
 	 * @since 1.3.1
-	 * @name sap.ui.base.Metadata#applySettings
-	 * @function
 	 */
 	Metadata.prototype.applySettings = function(oClassInfo) {
 	
@@ -118,8 +114,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * or to calculate an optimized version of some data.
 	 * @private
 	 * @since 1.3.1
-	 * @name sap.ui.base.Metadata#afterApplySettings
-	 * @function
 	 */
 	Metadata.prototype.afterApplySettings = function() {
 		// create the flattened "all" view
@@ -136,8 +130,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * Stereotype of the described class. 
 	 * @experimental might be enhanced to a set of stereotypes
-	 * @name sap.ui.base.Metadata#getStereotype
-	 * @function
 	 */
 	Metadata.prototype.getStereotype = function() {
 		return this._sStereotype;
@@ -147,8 +139,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * Returns the fully qualified name of the class that is described by this metadata object
 	 * @return {string} name of the described class
 	 * @public
-	 * @name sap.ui.base.Metadata#getName
-	 * @function
 	 */
 	Metadata.prototype.getName = function() {
 		return this._sClassName;
@@ -158,8 +148,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * Returns the (constructor of the) class described by this metadata object.
 	 * @return {function} class described by this metadata
 	 * @public
-	 * @name sap.ui.base.Metadata#getClass
-	 * @function
 	 */
 	Metadata.prototype.getClass = function() {
 		return this._oClass;
@@ -171,8 +159,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 *
 	 * @return {sap.ui.base.Metadata} metadata of the base class
 	 * @public
-	 * @name sap.ui.base.Metadata#getParent
-	 * @function
 	 */
 	Metadata.prototype.getParent = function() {
 		return this._oParent;
@@ -183,8 +169,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 *
 	 * @return {string[]} array with names of public methods declared by this class
 	 * @public
-	 * @name sap.ui.base.Metadata#getPublicMethods
-	 * @function
 	 */
 	Metadata.prototype.getPublicMethods = function() {
 		return this._aPublicMethods;
@@ -196,8 +180,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 *
 	 * @return {string[]} array with names of all public methods provided by this class and its ancestors
 	 * @public
-	 * @name sap.ui.base.Metadata#getAllPublicMethods
-	 * @function
 	 */
 	Metadata.prototype.getAllPublicMethods = function() {
 		return this._aAllPublicMethods;
@@ -209,8 +191,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 *
 	 * @return {string} array of names of implemented interfaces
 	 * @private
-	 * @name sap.ui.base.Metadata#getInterfaces
-	 * @function
 	 */
 	Metadata.prototype.getInterfaces = function() {
 		return this._aInterfaces;
@@ -223,8 +203,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * @param {string} sInterface name of the interface to test for (in dot notation)
 	 * @return {boolean} whether this class implements the interface
 	 * @public
-	 * @name sap.ui.base.Metadata#isInstanceOf
-	 * @function
 	 */
 	Metadata.prototype.isInstanceOf = function(sInterface) {
 		if ( this._oParent ) {
@@ -263,8 +241,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	 * objects that are created <i>after</i> this method has been called.
 	 *
 	 * @param {string|string[]} sMethod name(s) of the new method(s)
-	 * @name sap.ui.base.Metadata#addPublicMethods
-	 * @function
 	 */
 	Metadata.prototype.addPublicMethods = function(sMethod /* ... */) {
 		var aNames = (sMethod instanceof Array) ? sMethod : arguments;
@@ -279,8 +255,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 	/**
 	 * @since 1.3.1
 	 * @private
-	 * @name sap.ui.base.Metadata.createClass
-	 * @function
 	 */
 	Metadata.createClass = function (fnBaseClass, sClassName, oClassInfo, FNMetaImpl) {
 	

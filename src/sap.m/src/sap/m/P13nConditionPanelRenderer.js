@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ConditionPanel renderer.
-	 * @static
+	 * ConditionPanel renderer.
+	 * @namespace
 	 */
 	var P13nConditionPanelRenderer = {};
 	

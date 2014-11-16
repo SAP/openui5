@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 	 * @public
 	 * @experimental Since version 1.21.
 	 * The AnalyticalTable will be productized soon.
-	 * @name sap.ui.table.AnalyticalTable
+	 * @alias sap.ui.table.AnalyticalTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var AnalyticalTable = Table.extend("sap.ui.table.AnalyticalTable", /** @lends sap.ui.table.AnalyticalTable.prototype */ { metadata : {
@@ -56,16 +56,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		}
 	}});
 
-
-	/**
-	 * Returns the total size of the data entries.
-	 *
-	 * @name sap.ui.table.AnalyticalTable#getTotalSize
-	 * @function
-	 * @type int
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 
 	// =====================================================================
 	// WE START WITH A COPY OF THE TREETABLE AND REFACTOR THE CODING!
@@ -941,6 +931,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 		}
 	};
 
+	/**
+	 * Returns the total size of the data entries.
+	 *
+	 * @type int
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	AnalyticalTable.prototype.getTotalSize = function() {
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {

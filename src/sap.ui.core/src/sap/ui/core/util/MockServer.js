@@ -28,7 +28,7 @@ sap.ui
 					 * @author SAP SE
 					 * @version ${version}
 					 * @public
-					 * @name sap.ui.core.util.MockServer
+					 * @alias sap.ui.core.util.MockServer
 					 */
 					var MockServer = ManagedObject.extend("sap.ui.core.util.MockServer", /** @lends sap.ui.core.util.MockServer.prototype */
 					{
@@ -130,8 +130,6 @@ sap.ui
 					/**
 					 * Starts the server.
 					 * @public
-					 * @name sap.ui.core.util.MockServer#start
-					 * @function
 					 */
 					MockServer.prototype.start = function() {
 						this._oServer = MockServer._getInstance();
@@ -147,8 +145,6 @@ sap.ui
 					/**
 					 * Stops the server.
 					 * @public
-					 * @name sap.ui.core.util.MockServer#stop
-					 * @function
 					 */
 					MockServer.prototype.stop = function() {
 						if (this.isStarted()) {
@@ -163,8 +159,6 @@ sap.ui
 					 * 
 					 * @return {boolean} whether the server is started or not.
 					 * @public
-					 * @name sap.ui.core.util.MockServer#isStarted
-					 * @function
 					 */
 					MockServer.prototype.isStarted = function() {
 						return !!this._oServer;
@@ -176,8 +170,6 @@ sap.ui
 					 * @param {string} sQuery string in the form {query}={value}
 					 * @param {string} sEntitySetName the name of the entitySet the oFilteredData belongs to
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_applyQueryOnCollection
-					 * @function
 					 */
 					MockServer.prototype._applyQueryOnCollection = function(oFilteredData, sQuery, sEntitySetName) {
 						var aQuery = sQuery.split('=');
@@ -237,8 +229,6 @@ sap.ui
 					 * @param {string} sQuery string of the form {query}={value}
 					 * @param {string} sEntitySetName the name of the entitySet the oEntry belongs to
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_applyQueryOnEntry
-					 * @function
 					 */
 					MockServer.prototype._applyQueryOnEntry = function(oEntry, sQuery, sEntitySetName) {
 						var aQuery = sQuery.split('=');
@@ -270,8 +260,6 @@ sap.ui
 					 * @param {object} aDataSet 
 					 * @param {string} sODataQueryValue a comma separated list of property navigation paths to sort by, where each property navigation path terminates on a primitive property
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataQueryOrderby
-					 * @function
 					 */
 					MockServer.prototype._getOdataQueryOrderby = function(aDataSet, sODataQueryValue) {
 						// sort properties lookup  
@@ -341,8 +329,6 @@ sap.ui
 					 * Removes duplicate entries from the given array
 					 * @param {object} aDataSet 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_arrayUnique
-					 * @function
 					 */
 					MockServer.prototype._arrayUnique = function(array) {
 						var a = array.concat();
@@ -361,8 +347,6 @@ sap.ui
 					 * Returns the indices of the first brackets appearance, excluding brackets of $filter reserved functions
 					 * @param {string} sString 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getBracketIndices
-					 * @function
 					 */
 					MockServer.prototype._getBracketIndices = function(sString) {
 						var aStack = [];
@@ -481,8 +465,6 @@ sap.ui
 					 * @param {object} aDataSet 
 					 * @param {string} sODataQueryValue a boolean expression
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataQueryFilter
-					 * @function
 					 */
 					MockServer.prototype._getOdataQueryFilter = function(aDataSet, sODataQueryValue) {
 						if (aDataSet.length === 0) {
@@ -645,8 +627,6 @@ sap.ui
 					 * @param {object} aDataSet 
 					 * @param {string} sODataQueryValue a comma separated list of property paths, qualified action names, qualified function names, or the star operator (*)
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataQuerySelect
-					 * @function
 					 */
 					MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue) {
 						var that = this;
@@ -704,8 +684,6 @@ sap.ui
 					 * @param {object} aDataSet 
 					 * @param {string} sODataQueryValue a value of allpages, or a value of none
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataInlineCount
-					 * @function
 					 */
 					MockServer.prototype._getOdataInlineCount = function(aDataSet, sODataQueryValue) {
 						var aProperties = sODataQueryValue.split(',');
@@ -724,8 +702,6 @@ sap.ui
 					 * Applies the Format OData system query option 
 					 * @param {string} sODataQueryValue
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataQueryFormat
-					 * @function
 					 */
 					MockServer.prototype._getOdataQueryFormat = function(aDataSet, sODataQueryValue) {
 						if (sODataQueryValue !== 'json') {
@@ -741,8 +717,6 @@ sap.ui
 					 * @param {string} sODataQueryValue a comma separated list of navigation property paths
 					 * @param {string} sEntitySetName the name of the entitySet the aDataSet belongs to
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getOdataQueryExpand
-					 * @function
 					 */
 					MockServer.prototype._getOdataQueryExpand = function(aDataSet, sODataQueryValue, sEntitySetName) {
 						var that = this;
@@ -791,8 +765,6 @@ sap.ui
 					 * Refreshes the service metadata document and the mockdata
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_refreshData
-					 * @function
 					 */
 					MockServer.prototype._refreshData = function() {
 
@@ -818,8 +790,6 @@ sap.ui
 					/**
 					 * Returns the root URI without query or hash parameters
 					 * @return {string} the root URI without query or hash parameters
-					 * @name sap.ui.core.util.MockServer#_getRootUri
-					 * @function
 					 */
 					MockServer.prototype._getRootUri = function() {
 						var sUri = this.getRootUri();
@@ -832,8 +802,6 @@ sap.ui
 					 * @param {string} sMetadataUrl url to the service metadata document
 					 * @return {XMLDocument} the xml document object 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_loadMetadata
-					 * @function
 					 */
 					MockServer.prototype._loadMetadata = function(sMetadataUrl) {
 
@@ -854,8 +822,6 @@ sap.ui
 					 * @param {XMLDocument} oMetadata the metadata XML document
 					 * @return {map} map of entity sets 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_findEntitySets
-					 * @function
 					 */
 					MockServer.prototype._findEntitySets = function(oMetadata) {
 
@@ -941,8 +907,6 @@ sap.ui
 					 * @param {XMLDocument} oMetadata the metadata XML document
 					 * @return {map} map of entity types
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_findEntityTypes
-					 * @function
 					 */
 					MockServer.prototype._findEntityTypes = function(oMetadata) {
 						var mEntityTypes = {};
@@ -978,8 +942,6 @@ sap.ui
 					 * @param {XMLDocument} oMetadata the metadata XML document
 					 * @return {map} map of complex types
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_findComplexTypes
-					 * @function
 					 */
 					MockServer.prototype._findComplexTypes = function(oMetadata) {
 						var mComplexTypes = {};
@@ -1010,8 +972,6 @@ sap.ui
 					 * @param {object} oEntry entity set entry which contains the keys as properties
 					 * @return {string} the keys string
 					 * @private 
-					 * @name sap.ui.core.util.MockServer#_createKeysString
-					 * @function
 					 */
 					MockServer.prototype._createKeysString = function(oEntitySet, oEntry) {
 						// creates the key string for an entity
@@ -1060,8 +1020,6 @@ sap.ui
 					 * @return {array} the mockdata arary containing the data
 					 *         for the entity sets
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_loadMockdata
-					 * @function
 					 */
 					MockServer.prototype._loadMockdata = function(mEntitySets, sBaseUrl) {
 						var that = this, mData = {};
@@ -1165,8 +1123,6 @@ sap.ui
 					 * @param {object} oEntitySet the entity set info
 					 * @param {object} oMockData mock data for the entity set
 					 * @private 
-					 * @name sap.ui.core.util.MockServer#_enhanceWithMetadata
-					 * @function
 					 */
 					MockServer.prototype._enhanceWithMetadata = function(oEntitySet, oMockData) {
 						if (oMockData) {
@@ -1197,8 +1153,6 @@ sap.ui
 					 * @param {aRequestedKeys} aRequestedKeys the requested Keys
 					 * @return boolean
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_isRequestedKeysValid
-					 * @function
 					 */
 					MockServer.prototype._isRequestedKeysValid = function(oEntitySet, aRequestedKeys) {
 
@@ -1284,8 +1238,6 @@ sap.ui
 					 *            mComplexTypes map of the complex types
 					 * @return {object} the mocked value
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_generatePropertyValue
-					 * @function
 					 */
 					MockServer.prototype._generatePropertyValue = function(sKey, sType, mComplexTypes, iIndexParameter) {
 						var iIndex = iIndexParameter;
@@ -1354,8 +1306,6 @@ sap.ui
 					 *            oKeys contains already defined key values
 					 * @param {oEntity}
 					 *            oEntity the result object, where the key property/value pairs merged into
-					 * @name sap.ui.core.util.MockServer#_completeKey
-					 * @function
 					 */
 					MockServer.prototype._completeKey = function(oEntitySet, oKeys, oEntity) {
 						if (oEntity) {
@@ -1401,8 +1351,6 @@ sap.ui
 					 *            mComplexTypes map of the complex types
 					 * @return {object} the mocked entity
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_generateDataFromEntity
-					 * @function
 					 */
 					MockServer.prototype._generateDataFromEntity = function(oEntityType, iIndex, mComplexTypes) {
 						var oEntity = {};
@@ -1423,8 +1371,6 @@ sap.ui
 					 * @param {map} mComplexTypes map of the complex types
 					 * @return {array} the array of mocked data
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_generateDataFromEntitySet
-					 * @function
 					 */
 					MockServer.prototype._generateDataFromEntitySet = function(oEntitySet, mEntityTypes, mComplexTypes) {
 						var oEntityType = mEntityTypes[oEntitySet.type];
@@ -1440,8 +1386,6 @@ sap.ui
 					 * @param {map} mEntitySets map of the entity sets
 					 * @param {object} oMetadata the complete metadata for the service
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_generateMockdata
-					 * @function
 					 */
 					MockServer.prototype._generateMockdata = function(mEntitySets, oMetadata) {
 						var that = this;
@@ -1460,8 +1404,6 @@ sap.ui
 					 * @param {map} mEntitySets map of the entity sets
 					 * @param {object} oMetadata the complete metadata for the service
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_generateODataMockdataForEntitySet
-					 * @function
 					 */
 					MockServer.prototype._generateODataMockdataForEntitySet = function(mEntitySets, oMetadata) {
 						// load the entity sets (map the entity type data to the entity set)
@@ -1546,8 +1488,6 @@ sap.ui
 					 * 
 					 * @since 1.13.2
 					 * @public
-					 * @name sap.ui.core.util.MockServer#simulate
-					 * @function
 					 */
 					MockServer.prototype.simulate = function(sMetadataUrl, vMockdataSettings) {
 						var that = this;
@@ -2411,8 +2351,6 @@ sap.ui
 					 * Organize query options according to thier execution order
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_orderQueryOptions
-					 * @function
 					 */
 					MockServer.prototype._orderQueryOptions = function(aUrlParams) {
 						var iFilterIndex, iInlinecountIndex, iSkipIndex, iTopIndex, iOrderbyIndex, iSelectindex, iExpandIndex, iFormatIndex, aOrderedUrlParams = [];
@@ -2481,8 +2419,6 @@ sap.ui
 					 * Removes all request handlers.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_removeAllRequestHandlers
-					 * @function
 					 */
 					MockServer.prototype._removeAllRequestHandlers = function() {
 						var aRequests = this.getRequests();
@@ -2496,8 +2432,6 @@ sap.ui
 					 * Removes all filters.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_removeAllFilters
-					 * @function
 					 */
 					MockServer.prototype._removeAllFilters = function() {
 						for ( var i = 0; i < this._aFilters.length; i++) {
@@ -2517,8 +2451,6 @@ sap.ui
 					 *          fnResponse the response function to call when the request occurs
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_addRequestHandler
-					 * @function
 					 */
 					MockServer.prototype._addRequestHandler = function(sMethod, sPath, fnResponse) {
 						sMethod = sMethod ? sMethod.toUpperCase() : sMethod;
@@ -2560,8 +2492,6 @@ sap.ui
 					 * @return {RegExp} the created regular expression.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_createRegExp
-					 * @function
 					 */
 					MockServer.prototype._createRegExp = function(sPattern) {
 						return new RegExp("^" + sPattern + "$");
@@ -2574,8 +2504,6 @@ sap.ui
 					 * @return {string} the created regular expression pattern.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_createRegExpPattern
-					 * @function
 					 */
 					MockServer.prototype._createRegExpPattern = function(sPattern) {
 						return sPattern.replace(/:([\w\d]+)/g, "([^\/]+)");
@@ -2588,8 +2516,6 @@ sap.ui
 					 * @return {string} the created regular expression pattern.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_escapeStringForRegExp
-					 * @function
 					 */
 					MockServer.prototype._escapeStringForRegExp = function(sString) {
 						return sString.replace(/[\\\/\[\]\{\}\(\)\-\*\+\?\.\^\$\|]/g, "\\$&");
@@ -2602,8 +2528,6 @@ sap.ui
 					 * @return {string} the trimmed string.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_trim
-					 * @function
 					 */
 					MockServer.prototype._trim = function(sString) {
 						return sString && sString.replace(/^\s+|\s+$/g, "");
@@ -2615,8 +2539,6 @@ sap.ui
 					 * @return {boolean} true if the string can be converted to a valid number
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_isValidNumber
-					 * @function
 					 */
 					MockServer.prototype._isValidNumber = function(sString) {
 						return !isNaN(parseFloat(sString)) && isFinite(sString);
@@ -2628,8 +2550,6 @@ sap.ui
 					 * @return {string} the date.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getDateTime
-					 * @function
 					 */
 					MockServer.prototype._getDateTime = function(sString) {
 						if (!sString) {
@@ -2646,8 +2566,6 @@ sap.ui
 					 * @return {string} the date.
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_getJsonDate
-					 * @function
 					 */
 					MockServer.prototype._getJsonDate = function(sString) {
 						if (!sString) {
@@ -2676,8 +2594,6 @@ sap.ui
 					 * 
 					 * @param {function} fnFilter the filter function to add
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_addFilter
-					 * @function
 					 */
 					MockServer.prototype._addFilter = function(fnFilter) {
 						this._aFilters.push(fnFilter);
@@ -2691,8 +2607,6 @@ sap.ui
 					 * @param {RegExp} oRegExp the regular expression to use for this filter
 					 * 
 					 * @private
-					 * @name sap.ui.core.util.MockServer#_createFilter
-					 * @function
 					 */
 					MockServer.prototype._createFilter = function(sRequestMethod, oRegExp) {
 						return function(sMethod, sUri, bAsync, sUsername, sPassword) {
@@ -2711,8 +2625,6 @@ sap.ui
 					 * @param {boolean}
 					 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
 					 * @public
-					 * @name sap.ui.core.util.MockServer#destroy
-					 * @function
 					 */
 					MockServer.prototype.destroy = function(bSuppressInvalidate) {
 						ManagedObject.prototype.destroy.apply(this, arguments);
@@ -2735,8 +2647,6 @@ sap.ui
 					 * 
 					 * @return {object} the server instance
 					 * @private
-					 * @name sap.ui.core.util.MockServer._getInstance
-					 * @function
 					 */
 					MockServer._getInstance = function() {
 						// We can not create many fake servers, see bug https://github.com/cjohansen/Sinon.JS/issues/211
@@ -2755,8 +2665,6 @@ sap.ui
 					 * @param {boolean} [mConfig.autoRespond=true] If set true, all mock servers will respond automatically. If set false you have to call {@link sap.ui.core.util.MockServer#respond} method for response.
 					 * @param {int} [mConfig.autoRespondAfter=0] the time in ms after all mock servers should send their response. 
 					 * @param {boolean} [mConfig.fakeHTTPMethods=false] If set to true, all mock server will find <code>_method</code> parameter in the POST body and use this to override the the actual method. 
-					 * @name sap.ui.core.util.MockServer.config
-					 * @function
 					 */
 					MockServer.config = function(mConfig) {
 						var oServer = this._getInstance();
@@ -2768,8 +2676,6 @@ sap.ui
 
 					/**
 					 * Respond to a request, when the servers are configured not to automatically respond.
-					 * @name sap.ui.core.util.MockServer.respond
-					 * @function
 					 */
 					MockServer.respond = function() {
 						this._getInstance().respond();
@@ -2777,8 +2683,6 @@ sap.ui
 
 					/**
 					 * Starts all registered servers.
-					 * @name sap.ui.core.util.MockServer.startAll
-					 * @function
 					 */
 					MockServer.startAll = function() {
 						for ( var i = 0; i < this._aServers.length; i++) {
@@ -2788,8 +2692,6 @@ sap.ui
 
 					/**
 					 * Stops all registered servers.
-					 * @name sap.ui.core.util.MockServer.stopAll
-					 * @function
 					 */
 					MockServer.stopAll = function() {
 						for ( var i = 0; i < this._aServers.length; i++) {
@@ -2801,8 +2703,6 @@ sap.ui
 
 					/**
 					 * Stops and calls destroy on all registered servers. Use this method for cleaning up.
-					 * @name sap.ui.core.util.MockServer.destroyAll
-					 * @function
 					 */
 					MockServer.destroyAll = function() {
 						this.stopAll();
@@ -2817,8 +2717,6 @@ sap.ui
 					 * 
 					 * @param {function} fnFilter the filter function to add
 					 * @private
-					 * @name sap.ui.core.util.MockServer._addFilter
-					 * @function
 					 */
 					MockServer._addFilter = function(fnFilter) {
 						this._aFilters.push(fnFilter);
@@ -2830,8 +2728,6 @@ sap.ui
 					 * @param {function} fnFilter the filter function to remove
 					 * @return {boolean} whether the filter was removed or not
 					 * @private
-					 * @name sap.ui.core.util.MockServer._removeFilter
-					 * @function
 					 */
 					MockServer._removeFilter = function(fnFilter) {
 						var iIndex = jQuery.inArray(fnFilter, this._aFilters);
@@ -2847,8 +2743,6 @@ sap.ui
 					 * @param {function} fnResponse the response function to remove
 					 * @return {boolean} whether the response was removed or not
 					 * @private
-					 * @name sap.ui.core.util.MockServer._removeResponse
-					 * @function
 					 */
 					MockServer._removeResponse = function(fnResponse) {
 						var aResponses = this._oServer.responses;

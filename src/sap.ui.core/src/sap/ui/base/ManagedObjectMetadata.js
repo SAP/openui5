@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @author Frank Weigel
 	 * @version ${version}
 	 * @since 0.8.6
-	 * @name sap.ui.base.ManagedObjectMetadata
+	 * @alias sap.ui.base.ManagedObjectMetadata
 	 */
 	var ManagedObjectMetadata = function(sClassName, oClassInfo) {
 	
@@ -50,8 +50,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	
 	/**
 	 * @private
-	 * @name sap.ui.base.ManagedObjectMetadata#applySettings
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.applySettings = function(oClassInfo) {
 	
@@ -117,8 +115,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	
 	/**
 	 * @private
-	 * @name sap.ui.base.ManagedObjectMetadata#afterApplySettings
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.afterApplySettings = function() {
 	
@@ -156,8 +152,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Returns the name of the library that contains the described UIElement.
 	 * @return {string} the name of the library
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getLibraryName
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getLibraryName = function() {
 		return this._sLibraryName;
@@ -167,8 +161,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Returns whether the class/control is abstract
 	 * @return {boolean} whether the class/control is abstract
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#isAbstract
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.isAbstract = function() {
 		return this._bAbstract;
@@ -185,8 +177,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {object} oInfo metadata for the property
 	 * @public
 	 * @see sap.ui.core.EnabledPropagator
-	 * @name sap.ui.base.ManagedObjectMetadata#addProperty
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.addProperty = function(sName, oInfo) {
 		oInfo.name = sName;
@@ -206,8 +196,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the property
 	 * @return {boolean} true, if the property exists
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#hasProperty
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.hasProperty = function(sName) {
 		return !!this._mAllProperties[sName];
@@ -222,8 +210,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of property infos keyed by property names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getProperties
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getProperties = function() {
 		return this._mProperties;
@@ -237,8 +223,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of property infos keyed by property names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAllProperties
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAllProperties = function() {
 		return this._mAllProperties;
@@ -255,8 +239,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of aggregation infos keyed by aggregation names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAggregations
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAggregations = function() {
 		return this._mAggregations;
@@ -267,8 +249,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the aggregation
 	 * @return {boolean} true, if the aggregation exists
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#hasAggregation
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.hasAggregation = function(sName) {
 		return !!this._mAllAggregations[sName];
@@ -284,8 +264,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of aggregation infos keyed by aggregation names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAllAggregations
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAllAggregations = function() {
 		return this._mAllAggregations;
@@ -301,8 +279,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of aggregation infos keyed by aggregation names
 	 * @protected
-	 * @name sap.ui.base.ManagedObjectMetadata#getAllPrivateAggregations
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAllPrivateAggregations = function() {
 		return this._mAllPrivateAggregations;
@@ -315,8 +291,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sAggregationName name of the aggregation to be retrieved 
 	 * @return {object} aggregation info or null
 	 * @protected
-	 * @name sap.ui.base.ManagedObjectMetadata#getManagedAggregation
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getManagedAggregation = function(sAggregationName) {
 		return this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName];
@@ -329,8 +303,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * hierarchy defines a default aggregation, null is returned.
 	 *
 	 * @return {string} Name of the default aggregation for this class
-	 * @name sap.ui.base.ManagedObjectMetadata#getDefaultAggregationName
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregationName = function() {
 		return this._sDefaultAggregation;
@@ -342,8 +314,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * default aggregation of the parent is returned.
 	 *
 	 * @return {string} Name of the default aggregation for this class
-	 * @name sap.ui.base.ManagedObjectMetadata#getDefaultAggregation
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getDefaultAggregation = function() {
 		return this._sDefaultAggregation && this.getAllAggregations()[this._sDefaultAggregation];
@@ -360,8 +330,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of association infos keyed by association names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAssociations
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAssociations = function() {
 		return this._mAssociations;
@@ -372,8 +340,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the association
 	 * @return {boolean} true, if the association exists
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#hasAssociation
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.hasAssociation = function(sName) {
 		return !!this._mAllAssociations[sName];
@@ -389,8 +355,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of association infos keyed by association names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAllAssociations
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAllAssociations = function() {
 		return this._mAllAssociations;
@@ -405,8 +369,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of event infos keyed by event names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getEvents
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getEvents = function() {
 		return this._mEvents;
@@ -417,8 +379,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @param {string} sName name of the event
 	 * @return {boolean} true, if the event exists
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#hasEvent
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.hasEvent = function(sName) {
 		return !!this._mAllEvents[sName];
@@ -432,8 +392,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of event infos keyed by event names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getAllEvents
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getAllEvents = function() {
 		return this._mAllEvents;
@@ -445,8 +403,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @return {map} Map of default values keyed by property names
 	 * @public
-	 * @name sap.ui.base.ManagedObjectMetadata#getPropertyDefaults
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getPropertyDefaults = function() {
 	
@@ -496,8 +452,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * Also ensures that the parent metadata is enriched.
 	 *
 	 * @private
-	 * @name sap.ui.base.ManagedObjectMetadata#_enrichChildInfos
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype._enrichChildInfos = function() {
 	
@@ -583,8 +537,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 *
 	 * @see sap.ui.core.Element.prototype.applySettings
 	 * @private
-	 * @name sap.ui.base.ManagedObjectMetadata#getJSONKeys
-	 * @function
 	 */
 	ManagedObjectMetadata.prototype.getJSONKeys = function() {
 	
@@ -705,7 +657,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		 * @return {string} A (hopefully unique) control id
 		 * @public
 		 * @function
-		 * @name sap.ui.base.ManagedObjectMetadata.uid
 		 */
 		ManagedObjectMetadata.uid = uid;
 	
@@ -718,8 +669,6 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		 *
 		 * @return {string} A (hopefully unique) control id
 		 * @public
-		 * @name sap.ui.base.ManagedObjectMetadata#uid
-		 * @function
 		 */
 		ManagedObjectMetadata.prototype.uid = function() {
 	

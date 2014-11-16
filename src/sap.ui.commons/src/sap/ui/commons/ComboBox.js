@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.ComboBox
+	 * @alias sap.ui.commons.ComboBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ComboBox = TextField.extend("sap.ui.commons.ComboBox", /** @lends sap.ui.commons.ComboBox.prototype */ { metadata : {

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Carousel
+	 * @alias sap.m.Carousel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Carousel = Control.extend("sap.m.Carousel", /** @lends sap.m.Carousel.prototype */ { metadata : {
@@ -140,29 +140,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 	}});
-
-
-	/**
-	 * Call this method to display the next page (corresponds to a swipe right). Returns 'this' for method chaining.
-	 *
-	 * @name sap.m.Carousel#next
-	 * @function
-	 * @type sap.m.Carousel
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-
-	/**
-	 * Call this method to display the previous page (corresponds to a swipe left). Returns 'this' for method chaining.
-	 *
-	 * @name sap.m.Carousel#previous
-	 * @function
-	 * @type sap.m.Carousel
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
 
 
 	//Constants convenient class selections
@@ -416,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/**
+	/*
 	 * API method to set carousel's active page during runtime.
 	 *
 	 * @param vPage Id of the page or page which shall become active
@@ -454,7 +431,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-	/**
+	/*
 	 * API method to set the carousel's height
 	 *
 	 * @param {sap.ui.core.CSSSize} oHeight the new height as CSSSize
@@ -468,7 +445,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	/**
+	/*
 	 * API method to set the carousel's width
 	 *
 	 * @param {sap.ui.core.CSSSize} oWidth the new width as CSSSize
@@ -482,7 +459,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	/**
+	/*
 	 * API method to place the page indicator.
 	 *
 	 * @param {sap.m.PlacementType} sPlacement either sap.m.PlacementType.Top or sap.m.PlacementType.Bottom
@@ -518,7 +495,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 
-	/**
+	/*
 	 * API method to set whether the carousel should display the page indicator
 	 *
 	 * @param {boolean} bShowPageIndicator the new show property
@@ -538,7 +515,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 
-	/**
+	/*
 	 * API method to set whether the carousel should loop, i.e
 	 * show the first page after the last page is reached and vice
 	 * versa.
@@ -621,8 +598,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * API method to show the next page in the page list.
+	 * Call this method to display the previous page (corresponds to a swipe left). Returns 'this' for method chaining.
+	 *
+	 * @type sap.m.Carousel
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.previous = function () {
 		if (this._oMobifyCarousel) {
@@ -634,8 +614,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * API method to show the previous page in the page list.
+	 * Call this method to display the next page (corresponds to a swipe right). Returns 'this' for method chaining.
+	 *
+	 * @type sap.m.Carousel
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Carousel.prototype.next = function () {
 		if (this._oMobifyCarousel) {
@@ -1078,7 +1061,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	//DEPRECATED METHODS
 
 
-	/**
+	/*
 	 * API method to set whether the carousel should display the busy indicators.
 	 * This property has been deprecated since 1.18.7. Does nothing and returns the carousel reference.
 	 *
@@ -1090,7 +1073,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
-	/**
+	/*
 	 * API method to check whether the carousel should display the busy indicators.
 	 * This property has been deprecated since 1.18.7. Always returns false,
 	 *
@@ -1102,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return false;
 	};
 
-	/**
+	/*
 	 * API method to set the carousel's busy indicator size.
 	 * This property has been deprecated since 1.18.7. Does nothing and returns the carousel reference.
 	 *
@@ -1115,7 +1098,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 
-	/**
+	/*
 	 * API method to retrieve the carousel's busy indicator size.
 	 * This property has been deprecated since 1.18.6. Always returns an empty string.
 	 *

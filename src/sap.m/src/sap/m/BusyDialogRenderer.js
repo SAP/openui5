@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class BusyDialog renderer. 
-	 * @static
+	 * BusyDialog renderer. 
+	 * @namespace
 	 */
 	var BusyDialogRenderer = {
 	};

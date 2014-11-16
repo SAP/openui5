@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class AbsoluteLayout renderer.
-	 * @static
+	 * AbsoluteLayout renderer.
+	 * @namespace
 	 */
 	var AbsoluteLayoutRenderer = {
 	};

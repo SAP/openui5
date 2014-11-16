@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
 	 * @version ${version}
-	 * @name sap.ui.core.util.serializer.Serializer
+	 * @alias sap.ui.core.util.serializer.Serializer
 	 * @experimental Since 1.15.1. The Serializer is still under construction, so some implementation details can be changed in future.
 	 */
 	var Serializer = EventProvider.extend("sap.ui.core.util.serializer.Serializer", /** @lends sap.ui.core.util.serializer.Serializer.prototype */
@@ -39,8 +39,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Serializes the complete control tree.
 	 *
 	 * @returns {string} the serialized control tree.
-	 * @name sap.ui.core.util.serializer.Serializer#serialize
-	 * @function
 	 */
 	Serializer.prototype.serialize = function () {
 		return this._serializeRecursive(this._oRootControl, 0);
@@ -54,8 +52,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {string} sAggregationName The name of the aggregation which aggregates the control.
 	 * @param {boolean} isDefaultAggregation whether the aggregation is the default aggregation.
 	 * @returns {string} the serialized control tree.
-	 * @name sap.ui.core.util.serializer.Serializer#_serializeRecursive
-	 * @function
 	 */
 	Serializer.prototype._serializeRecursive = function (oControl, iLevel, sAggregationName, isDefaultAggregation) {
 	
@@ -132,8 +128,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {string} sAggregationName The name of the aggregation.
 	 * @returns {boolean} Whether the given aggregation is the default aggregation or not
 	 * @private
-	 * @name sap.ui.core.util.serializer.Serializer#_isDefaultAggregation
-	 * @function
 	 */
 	Serializer.prototype._isDefaultAggregation = function (oControl, sAggregationName) {
 		return oControl.getMetadata().getDefaultAggregationName() === sAggregationName;

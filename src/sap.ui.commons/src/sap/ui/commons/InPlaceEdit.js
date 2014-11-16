@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
-	 * @name sap.ui.commons.InPlaceEdit
+	 * @alias sap.ui.commons.InPlaceEdit
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var InPlaceEdit = Control.extend("sap.ui.commons.InPlaceEdit", /** @lends sap.ui.commons.InPlaceEdit.prototype */ { metadata : {
@@ -91,15 +91,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	}});
 	
 	
-	/**
-	 * Clear the old text after a change to disable the undo functionality. If undoEnabled is false this has no effect.
-	 *
-	 * @name sap.ui.commons.InPlaceEdit#clearOldText
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	/**
 	 * This file defines behavior for the control,
@@ -266,6 +258,14 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 	
 		};
 	
+
+		/**
+		 * Clear the old text after a change to disable the undo functionality. If undoEnabled is false this has no effect.
+		 *
+		 * @type void
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
 		InPlaceEdit.prototype.clearOldText = function(){
 	
 			if (!this.getUndoEnabled()) {

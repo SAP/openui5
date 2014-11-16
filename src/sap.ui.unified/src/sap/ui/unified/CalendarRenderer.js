@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class DatePicker renderer.
-	 * @static
+	 * DatePicker renderer.
+	 * @namespace
 	 */
 	var CalendarRenderer = {
 	};

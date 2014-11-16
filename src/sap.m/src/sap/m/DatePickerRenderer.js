@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 
 	/**
-	 * @class DatePicker renderer. 
-	 * @static
+	 * DatePicker renderer. 
+	 * @namespace
 	 */
 	var DatePickerRenderer = Renderer.extend(InputBaseRenderer);
 	

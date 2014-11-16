@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class RadioButtonGroup renderer.
-	 * @static
+	 * RadioButtonGroup renderer.
+	 * @namespace
 	 */
 	var RadioButtonGroupRenderer = {};
 	

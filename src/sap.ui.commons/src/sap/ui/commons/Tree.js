@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Tree
+	 * @alias sap.ui.commons.Tree
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tree = Control.extend("sap.ui.commons.Tree", /** @lends sap.ui.commons.Tree.prototype */ { metadata : {
@@ -119,27 +119,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	}});
 	
 	
-	/**
-	 * Expands all nodes in the tree
-	 *
-	 * @name sap.ui.commons.Tree#expandAll
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Collapses all nodes in the tree
-	 *
-	 * @name sap.ui.commons.Tree#collapseAll
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
 	Tree.prototype.resizeListenerId;
 	
 	Tree.prototype.init = function(){
@@ -216,6 +195,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*"*********************************************************************************
 	* PUBLIC METHODS
 	***********************************************************************************/
+
+	/**
+	 * Expands all nodes in the tree
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Tree.prototype.expandAll = function(){
 		var aNodes = this.getNodes();
 		for (var i = 0;i < aNodes.length;i++) {
@@ -223,6 +210,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 	
+
+	/**
+	 * Collapses all nodes in the tree
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Tree.prototype.collapseAll = function(){
 		var aNodes = this.getNodes();
 		for (var i = 0;i < aNodes.length;i++) {

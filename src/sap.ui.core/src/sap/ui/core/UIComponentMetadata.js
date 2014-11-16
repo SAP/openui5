@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.15.1
-	 * @name sap.ui.core.UIComponentMetadata
+	 * @alias sap.ui.core.UIComponentMetadata
 	 */
 	var UIComponentMetadata = function(sClassName, oClassInfo) {
 		
@@ -79,8 +79,6 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @protected
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change. 
-	 * @name sap.ui.core.UIComponentMetadata#getRootView
-	 * @function
 	 */
 	UIComponentMetadata.prototype.getRootView = function() {
 		return this._mRootView;
@@ -92,8 +90,6 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @private
 	 * @since 1.16.1 
 	 * @experimental Since 1.16.1. Implementation might change. 
-	 * @name sap.ui.core.UIComponentMetadata#getRoutingConfig
-	 * @function
 	 */
 	UIComponentMetadata.prototype.getRoutingConfig = function() {
 		return this._mRouting && this._mRouting.config;
@@ -105,8 +101,6 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	 * @private
 	 * @since 1.16.1 
 	 * @experimental Since 1.16.1. Implementation might change. 
-	 * @name sap.ui.core.UIComponentMetadata#getRoutes
-	 * @function
 	 */
 	UIComponentMetadata.prototype.getRoutes = function() {
 		return this._mRouting && this._mRouting.routes;

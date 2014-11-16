@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './ListRenderer', 'sap/ui/core/Renderer'],
 
 	
 	/**
-	 * @class GrowingList renderer.
-	 * @static
+	 * GrowingList renderer.
+	 * @namespace
 	 */
 	var GrowingListRenderer = Renderer.extend(ListRenderer);
 	

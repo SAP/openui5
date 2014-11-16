@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Exception'],
 	 * This exception is thrown, when an error occurs while trying to convert a value of the model to
 	 * a specific property value in the UI.
 	 *
-	 * @name sap.ui.model.FormatException
+	 * @alias sap.ui.model.FormatException
 	 */
 	var FormatException = function(message) {
 		this.name = "FormatException";

@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	/**
 	 * @class JSView renderer.
 	 * @static
-	 * @name sap.ui.core.mvc.JSViewRenderer
+	 * @alias sap.ui.core.mvc.JSViewRenderer
 	 */
 	var JSViewRenderer = {
 	};
@@ -22,8 +22,6 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-	 * @name sap.ui.core.mvc.JSViewRenderer.render
-	 * @function
 	 */
 	JSViewRenderer.render = function(oRenderManager, oControl){
 		// convenience variable

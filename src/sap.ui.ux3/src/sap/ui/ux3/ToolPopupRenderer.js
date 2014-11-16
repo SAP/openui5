@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ToolPopup renderer.
-	 * @static
+	 * ToolPopup renderer.
+	 * @namespace
 	 */
 	var ToolPopupRenderer = {
 	};

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class AnimatedContentSwitcher renderer. 
-	 * @static
+	 * AnimatedContentSwitcher renderer. 
+	 * @namespace
 	 */
 	var ContentSwitcherRenderer = {
 	};

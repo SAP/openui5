@@ -13,7 +13,7 @@ sap.ui.define([ 'jquery.sap.global', './Element' ], function(jQuery, Element) {
 	 * @returns {sap.ui.core.PopupSupport}
 	 * @constructor
 	 * @private
-	 * @name sap.ui.core.PopupSupport
+	 * @alias sap.ui.core.PopupSupport
 	 */
 	var PopupSupport = function() {
 		this.getMetadata().addPublicMethods([ "getParentPopup", "isInPopup", "getParentPopupId", "addToPopup", "removeFromPopup" ]);

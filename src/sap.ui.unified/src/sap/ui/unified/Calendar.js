@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.ui.unified.Calendar
+	 * @alias sap.ui.unified.Calendar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Calendar = Control.extend("sap.ui.unified.Calendar", /** @lends sap.ui.unified.Calendar.prototype */ { metadata : {
@@ -71,17 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}});
 	
 	
-	/**
-	 * Sets the focused date of the calendar.
-	 *
-	 * @name sap.ui.unified.Calendar#focusDate
-	 * @function
-	 * @param {object} oDate
-	 *         JavaScript date object for focused date.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	
 	/*
@@ -192,6 +182,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	
 		};
 	
+
+		/**
+		 * Sets the focused date of the calendar.
+		 *
+		 * @param {object} oDate
+		 *         JavaScript date object for focused date.
+		 * @type void
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 		Calendar.prototype.focusDate = function(oDate){
 	
 			if (oDate && !this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime()) {

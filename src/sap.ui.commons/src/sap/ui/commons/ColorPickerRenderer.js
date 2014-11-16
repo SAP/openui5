@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ColorPicker renderer.
-	 * @static
+	 * ColorPicker renderer.
+	 * @namespace
 	 */
 	var ColorPickerRenderer = {
 	};

@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.Dialog
+	 * @alias sap.m.Dialog
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Dialog = Control.extend("sap.m.Dialog", /** @lends sap.m.Dialog.prototype */ { metadata : {
@@ -229,40 +229,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	}});
 	
 	
-	/**
-	 * Open the dialog.
-	 *
-	 * @name sap.m.Dialog#open
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Close the dialog.
-	 *
-	 * @name sap.m.Dialog#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * The method checks if the Dialog is open. It returns true when the Dialog is currently open (this includes opening and closing animations), otherwise it returns false.
-	 *
-	 * @name sap.m.Dialog#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @since 1.9.1
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
 	Dialog._bIOS7Tablet = sap.ui.Device.os.ios && sap.ui.Device.system.tablet && sap.ui.Device.os.version >= 7 && sap.ui.Device.os.version < 8 && sap.ui.Device.browser.name === "sf";
 	Dialog._bPaddingByDefault = (sap.ui.getCore().getConfiguration().getCompatibilityVersion("sapMDialogWithPadding").compareTo("1.16") < 0);
 	
@@ -447,6 +413,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 	/* =========================================================== */
 	/*                    begin: public functions                  */
 	/* =========================================================== */
+
+	/**
+	 * Open the dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.open = function(){
 		var oPopup = this.oPopup;
 	
@@ -474,6 +448,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 	
+
+	/**
+	 * Close the dialog.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.close = function(){
 		var oPopup = this.oPopup;
 	
@@ -488,6 +470,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		return this;
 	};
 	
+
+	/**
+	 * The method checks if the Dialog is open. It returns true when the Dialog is currently open (this includes opening and closing animations), otherwise it returns false.
+	 *
+	 * @type boolean
+	 * @public
+	 * @since 1.9.1
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Dialog.prototype.isOpen = function(){
 		return this.oPopup && this.oPopup.isOpen();
 	};

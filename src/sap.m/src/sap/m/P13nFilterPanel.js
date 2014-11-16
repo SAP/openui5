@@ -22,7 +22,7 @@ sap.ui
 					 * 
 					 * @constructor
 					 * @public
-					 * @name sap.m.P13nFilterPanel
+					 * @alias sap.m.P13nFilterPanel
 					 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime
 					 *                metamodel
 					 */
@@ -253,7 +253,7 @@ sap.ui
 					/**
 					 * Initialize the control
 					 * 
-					 * @public
+					 * @private
 					 */
 					P13nFilterPanel.prototype.init = function() {
 						sap.ui.getCore().loadLibrary("sap.ui.layout");

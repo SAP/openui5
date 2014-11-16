@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 
 	/**
-	 * @class RadioButton renderer.
-	 * @static
+	 * RadioButton renderer.
+	 * @namespace
 	 */
 	var RadioButtonRenderer = {};
 	

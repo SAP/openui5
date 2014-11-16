@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 
 
 	/**
-	 * @class TextArea renderer.
-	 * @static
+	 * TextArea renderer.
+	 * @namespace
 	 */
 	var TextAreaRenderer = Renderer.extend(TextFieldRenderer);
 	

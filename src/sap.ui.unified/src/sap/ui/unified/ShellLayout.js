@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @constructor
 	 * @public
 	 * @since 1.25.0
-	 * @name sap.ui.unified.ShellLayout
+	 * @alias sap.ui.unified.ShellLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ShellLayout = Control.extend("sap.ui.unified.ShellLayout", /** @lends sap.ui.unified.ShellLayout.prototype */ { metadata : {

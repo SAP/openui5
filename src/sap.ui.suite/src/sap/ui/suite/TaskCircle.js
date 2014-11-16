@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * @public
 	 * @experimental Since version 1.2. 
 	 * The API may change. User with care.
-	 * @name sap.ui.suite.TaskCircle
+	 * @alias sap.ui.suite.TaskCircle
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TaskCircle = Control.extend("sap.ui.suite.TaskCircle", /** @lends sap.ui.suite.TaskCircle.prototype */ { metadata : {
@@ -76,15 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	}});
 	
 	
-	/**
-	 * Puts the focus to the control.
-	 *
-	 * @name sap.ui.suite.TaskCircle#focus
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 	
 	EnabledPropagator.call(TaskCircle.prototype);
 	
@@ -111,6 +103,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	
 	
 	// Implementation of API method focus(). Documentation available in generated code.
+
+	/**
+	 * Puts the focus to the control.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	TaskCircle.prototype.focus = function() {
 		var oDomRef = this.getDomRef();
 		if (oDomRef) {

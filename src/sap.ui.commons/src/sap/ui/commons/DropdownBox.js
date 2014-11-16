@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.DropdownBox
+	 * @alias sap.ui.commons.DropdownBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DropdownBox = ComboBox.extend("sap.ui.commons.DropdownBox", /** @lends sap.ui.commons.DropdownBox.prototype */ { metadata : {
@@ -73,18 +73,6 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Using this method the history of the DropdownBox can be cleared.
-	 * This might be necessary if the items of the DropdownBox have changed. Otherwise invalid items may appear in the history.
-	 *
-	 * @name sap.ui.commons.DropdownBox#clearHistory
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/**
@@ -1500,7 +1488,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 *
 	 * Default value is empty/<code>undefined</code>
 	 *
-	 * @param {string} sSearchHelpIcon new value for property <code>searchHelpIcon</code>
+	 * @param {sap.ui.core.URI} sSearchHelpIcon new value for property <code>searchHelpIcon</code>
 	 * @return {sap.ui.commons.DropdownBox} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1613,6 +1601,15 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	
 	};
 	
+
+	/**
+	 * Using this method the history of the DropdownBox can be cleared.
+	 * This might be necessary if the items of the DropdownBox have changed. Otherwise invalid items may appear in the history.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	DropdownBox.prototype.clearHistory = function() {
 	
 		this._oHistory.clear();

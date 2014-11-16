@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ExactList renderer.
-	 * @static
+	 * ExactList renderer.
+	 * @namespace
 	 */
 	var ExactListRenderer = {
 	};

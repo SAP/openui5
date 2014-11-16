@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 
 	/**
-	 * @class Input renderer.
+	 * Input renderer.
 	 *
-	 * @static
+	 * @namespace
 	 */
 	var InputBaseRenderer = {};
 	

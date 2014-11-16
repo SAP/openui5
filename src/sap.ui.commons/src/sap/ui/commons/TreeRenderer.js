@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Tree renderer.
-	 * @static
+	 * Tree renderer.
+	 * @namespace
 	 */
 	var TreeRenderer = {
 	};

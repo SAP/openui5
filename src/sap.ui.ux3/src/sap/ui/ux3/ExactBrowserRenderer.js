@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ExactBrowser renderer.
-	 * @static
+	 * ExactBrowser renderer.
+	 * @namespace
 	 */
 	var ExactBrowserRenderer = {
 	};

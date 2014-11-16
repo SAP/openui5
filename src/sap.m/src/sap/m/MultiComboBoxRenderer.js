@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 
 
 	/**
-	 * @class MultiComboBox renderer.
-	 * @static
+	 * MultiComboBox renderer.
+	 * @namespace
 	 */
 	var MultiComboBoxRenderer = Renderer.extend(sap.m.ComboBoxBaseRenderer);
 	

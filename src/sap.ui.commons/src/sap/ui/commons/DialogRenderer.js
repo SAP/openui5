@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class  sap.ui.commons.DialogRenderer
-	 * @static
+	 *  sap.ui.commons.DialogRenderer
+	 * @namespace
 	 */
 	var DialogRenderer = {};
 	

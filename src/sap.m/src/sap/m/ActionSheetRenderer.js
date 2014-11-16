@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ActionSheet renderer. 
-	 * @static
+	 * ActionSheet renderer. 
+	 * @namespace
 	 */
 	var ActionSheetRenderer = {
 	};

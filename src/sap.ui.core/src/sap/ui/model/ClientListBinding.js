@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
-	 * @name sap.ui.model.ClientListBinding
+	 * @alias sap.ui.model.ClientListBinding
 	 * @extends sap.ui.model.ListBinding
 	 */
 	var ClientListBinding = ListBinding.extend("sap.ui.model.ClientListBinding", /** @lends sap.ui.model.ClientListBinding.prototype */ {
@@ -48,8 +48,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 *
 	 * @return {Array} the contexts array
 	 * @private
-	 * @name sap.ui.model.ClientListBinding#_getContexts
-	 * @function
 	 */
 	ClientListBinding.prototype._getContexts = function(iStartIndex, iLength) {
 		if (!iStartIndex) {
@@ -79,8 +77,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	/**
 	 * Setter for context
 	 * @param {Object} oContext the new context object
-	 * @name sap.ui.model.ClientListBinding#setContext
-	 * @function
 	 */
 	ClientListBinding.prototype.setContext = function(oContext) {
 		if (this.oContext != oContext) {
@@ -95,8 +91,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.getLength
 	 *
-	 * @name sap.ui.model.ClientListBinding#getLength
-	 * @function
 	 */
 	ClientListBinding.prototype.getLength = function() {
 		return this.iLength;
@@ -106,8 +100,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * Return the length of the list
 	 *
 	 * @return {int} the length
-	 * @name sap.ui.model.ClientListBinding#_getLength
-	 * @function
 	 */
 	ClientListBinding.prototype._getLength = function() {
 		return this.aIndices.length;
@@ -115,8 +107,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	
 	/**
 	 * Get indices of the list
-	 * @name sap.ui.model.ClientListBinding#updateIndices
-	 * @function
 	 */
 	ClientListBinding.prototype.updateIndices = function(){
 		this.aIndices = [];
@@ -129,8 +119,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	/**
 	 * @see sap.ui.model.ListBinding.prototype.sort
 	 *
-	 * @name sap.ui.model.ClientListBinding#sort
-	 * @function
 	 */
 	ClientListBinding.prototype.sort = function(aSorters){
 		if (!aSorters) {
@@ -158,8 +146,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	/**
 	 * Sorts the list
 	 * @private
-	 * @name sap.ui.model.ClientListBinding#applySort
-	 * @function
 	 */
 	ClientListBinding.prototype.applySort = function(){
 		var that = this,
@@ -251,8 +237,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining 
 	 * 
 	 * @public
-	 * @name sap.ui.model.ClientListBinding#filter
-	 * @function
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
 		this.updateIndices();
@@ -296,8 +280,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * Normalize filter value
 	 * 
 	 * @private
-	 * @name sap.ui.model.ClientListBinding#normalizeFilterValue
-	 * @function
 	 */
 	ClientListBinding.prototype.normalizeFilterValue = function(oValue){
 		if (typeof oValue == "string") {
@@ -319,8 +301,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * Multiple MultiFilters are ORed.
 	 *
 	 * @private
-	 * @name sap.ui.model.ClientListBinding#applyFilter
-	 * @function
 	 */
 	ClientListBinding.prototype.applyFilter = function(){
 		if (!this.aFilters) {
@@ -388,8 +368,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * Resolve the client list binding and check if an index matches
 	 *
 	 * @private
-	 * @name sap.ui.model.ClientListBinding#_resolveMultiFilter
-	 * @function
 	 */
 	ClientListBinding.prototype._resolveMultiFilter = function(oMultiFilter, iIndex){
 		var that = this,
@@ -426,8 +404,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	
 	/**
 	 * Provides a JS filter function for the given filter
-	 * @name sap.ui.model.ClientListBinding#getFilterFunction
-	 * @function
 	 */
 	ClientListBinding.prototype.getFilterFunction = function(oFilter){
 		if (oFilter.fnTest) {
@@ -491,8 +467,6 @@ sap.ui.define(['jquery.sap.global', './FilterType', './ListBinding'],
 	 * @param {String} sPath
 	 *
 	 * @protected
-	 * @name sap.ui.model.ClientListBinding#getDistinctValues
-	 * @function
 	 */
 	ClientListBinding.prototype.getDistinctValues = function(sPath){
 		var aResult = [],

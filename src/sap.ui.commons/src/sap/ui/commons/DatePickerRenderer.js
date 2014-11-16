@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './TextFieldRenderer'],
 
 
 	/**
-	 * @class DatePicker renderer.
-	 * @static
+	 * DatePicker renderer.
+	 * @namespace
 	 * For a common look&feel, the DatePicker extends the TextField control,
 	 * just like the ComboBox does.
 	 */

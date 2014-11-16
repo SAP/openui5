@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	 * @constructor
 	 * @public
 	 * @since 1.25.0
-	 * @name sap.ui.layout.FixFlex
+	 * @alias sap.ui.layout.FixFlex
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FixFlex = Control.extend("sap.ui.layout.FixFlex", /** @lends sap.ui.layout.FixFlex.prototype */ { metadata : {

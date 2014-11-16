@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.9.2
-	 * @name sap.ui.core.ComponentMetadata
+	 * @alias sap.ui.core.ComponentMetadata
 	 */
 	var ComponentMetadata = function(sClassName, oClassInfo) {
 		
@@ -115,8 +115,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * component and the metadata decides whether to execute the static init code
 	 * or not. It will be called the first time a component is initialized.
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#init
-	 * @function
 	 */
 	ComponentMetadata.prototype.init = function() {
 		if (!this._bInitialized) {
@@ -144,8 +142,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * TODO: Right now it is unclear when this function should be called. Just to
 	 *       make sure that we do not forget this in future. 
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#exit
-	 * @function
 	 */
 	ComponentMetadata.prototype.exit = function() {
 		if (this._bInitialized) {
@@ -163,8 +159,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * the customizing for this component. This will only be done for the first
 	 * instance and only if a customizing configuration is available.
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#onInitComponent
-	 * @function
 	 */
 	ComponentMetadata.prototype.onInitComponent = function() {
 		if (this._iInstanceCount === 0 && !jQuery.isEmptyObject(this._mCustomizing)) {
@@ -179,8 +173,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * the customizing for this component. This will only be done for the last
 	 * instance and only if a customizing configuration is available.
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#onExitComponent
-	 * @function
 	 */
 	ComponentMetadata.prototype.onExitComponent = function() {
 		this._iInstanceCount--;
@@ -213,8 +205,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @param {boolean} bMerged whether the custom configuration should be merged with components parent custom configuration.
 	 * @return {Object} custom Component configuration with the specified key. 
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getCustomEntry
-	 * @function
 	 */
 	ComponentMetadata.prototype.getCustomEntry = function(sKey, bMerged){
 		if (!sKey || sKey.indexOf(".") <= 0) {
@@ -240,8 +230,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns the dependencies defined in the metadata of the component. If not specified, the return value is null.
 	 * @return {Object} Component dependencies. 
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getDependencies
-	 * @function
 	 */
 	ComponentMetadata.prototype.getDependencies = function() {
 		return this._mDependencies;
@@ -251,8 +239,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns the array of the included files that the Component requires such as css and js. If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Included files.
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getIncludes
-	 * @function
 	 */
 	ComponentMetadata.prototype.getIncludes = function() {
 		return (this._aIncludes && this._aIncludes.length > 0) ? this._aIncludes : null;
@@ -262,8 +248,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns the required version of SAP UI5 defined in the metadata of the Component. If returned value is null, then no special UI5 version is required.
 	 * @return {string} Required version of UI5 or if not specified then null.
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getUI5Version
-	 * @function
 	 */
 	ComponentMetadata.prototype.getUI5Version = function() {
 		return this._mDependencies ? this._mDependencies.ui5version : null;
@@ -273,8 +257,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns array of components specified in the metadata of the Component. If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Required Components.
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getComponents
-	 * @function
 	 */
 	ComponentMetadata.prototype.getComponents = function() {
 		var aComponents = null;
@@ -291,8 +273,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Required libraries.
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getLibs
-	 * @function
 	 */
 	ComponentMetadata.prototype.getLibs = function() {
 		var aLibs = null;
@@ -308,8 +288,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Returns the version of the component. If not specified, the return value is null.
 	 * @return {string} The version of the component.
 	 * @public
-	 * @name sap.ui.core.ComponentMetadata#getVersion
-	 * @function
 	 */
 	ComponentMetadata.prototype.getVersion = function() {
 		return this._sVersion;
@@ -323,8 +301,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @return {object} the value of the configuration property
 	 * @public
 	 * @since 1.15.1
-	 * @name sap.ui.core.ComponentMetadata#getConfig
-	 * @function
 	 */
 	ComponentMetadata.prototype.getConfig = function(sKey) {
 		return this._mConfig ? jQuery.extend({}, sKey ? this._mConfig[sKey] : this._mConfig) : undefined;
@@ -337,8 +313,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change. 
-	 * @name sap.ui.core.ComponentMetadata#getCustomizing
-	 * @function
 	 */
 	ComponentMetadata.prototype.getCustomizing = function() {
 		return this._mCustomizing ? jQuery.extend({}, this._mCustomizing) : undefined;
@@ -352,8 +326,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1 
 	 * @experimental Since 1.15.1. Implementation might change. 
-	 * @name sap.ui.core.ComponentMetadata#getModels
-	 * @function
 	 */
 	ComponentMetadata.prototype.getModels = function() {
 		return this._mModels;
@@ -366,8 +338,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * @private
 	 * @since 1.15.1 
 	 * @experimental Since 1.15.1. Implementation might change. 
-	 * @name sap.ui.core.ComponentMetadata#getServices
-	 * @function
 	 */
 	ComponentMetadata.prototype.getServices = function() {
 		return this._mServices;
@@ -378,8 +348,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * resoloved relative to the component location. 
 	 * 
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#_loadIncludes
-	 * @function
 	 */
 	ComponentMetadata.prototype._loadIncludes = function() {
 	
@@ -413,8 +381,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 	 * Load external dependencies (like libraries and components)
 	 * 
 	 * @private
-	 * @name sap.ui.core.ComponentMetadata#_loadDependencies
-	 * @function
 	 */
 	ComponentMetadata.prototype._loadDependencies = function() {
 	

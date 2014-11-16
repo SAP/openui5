@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class Label renderer.
-	 * @static
+	 * Label renderer.
+	 * @namespace
 	 */
 	var LabelRenderer = {
 	};

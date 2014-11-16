@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.Toolbar
+	 * @alias sap.ui.commons.Toolbar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Toolbar = Control.extend("sap.ui.commons.Toolbar", /** @lends sap.ui.commons.Toolbar.prototype */ { metadata : {

@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './SplitContainer', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.m.SplitApp
+	 * @alias sap.m.SplitApp
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SplitApp = SplitContainer.extend("sap.m.SplitApp", /** @lends sap.m.SplitApp.prototype */ { metadata : {

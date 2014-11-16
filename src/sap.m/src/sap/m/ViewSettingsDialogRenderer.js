@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ViewSettingsDialogRenderer renderer.
-	 * @static
+	 * ViewSettingsDialogRenderer renderer.
+	 * @namespace
 	 */
 	var ViewSettingsDialogRenderer = {
 	};

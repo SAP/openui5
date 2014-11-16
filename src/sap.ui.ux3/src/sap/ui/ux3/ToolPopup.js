@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.ToolPopup
+	 * @alias sap.ui.ux3.ToolPopup
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ToolPopup = Control.extend("sap.ui.ux3.ToolPopup", /** @lends sap.ui.ux3.ToolPopup.prototype */ { metadata : {
@@ -188,15 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	}});
 
 
-	/**
-	 * Returns whether the pop up is currently open
-	 *
-	 * @name sap.ui.ux3.ToolPopup#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/**
@@ -214,29 +206,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	 */
 
 
-	/**
-	 * Closes the pop up. Can be called by the Shell when the pop up's button is clicked again; or by the application
-	 * when the interaction in the pop up has been completed or canceled.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#close
-	 * @function
-	 * @param {boolean} bPreventRestoreFocus
-	 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
-	/**
-	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
-	 *
-	 * @name sap.ui.ux3.ToolPopup#setPosition
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
+	
 
 
 	/**
@@ -543,6 +516,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		this.fireOpened();
 	};
 
+
+	/**
+	 * Returns whether the pop up is currently open
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.isOpen = function() {
 		if (this.oPopup && this.oPopup.isOpen()) {
 			return true;
@@ -921,6 +902,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		this.fireClosed();
 	};
 
+
+	/**
+	 * Closes the pop up. Can be called by the Shell when the pop up's button is clicked again; or by the application
+	 * when the interaction in the pop up has been completed or canceled.
+	 *
+	 * @param {boolean} bPreventRestoreFocus
+	 *         If set, the focus is NOT restored to the element that had the focus before the ToolPopup was opened. This makes sense when the ToolPopup is closed programmatically from a different area of the application (outside the ToolPopup) and the focus should not move aways from that place.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.close = function(bPreventRestoreFocus) {
 		if (this.oPopup && this.oPopup.isOpen()) {
 			if (this._bBoundOnResize) {
@@ -1038,6 +1030,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		return this.oPopup;
 	};
 
+
+	/**
+	 * Sets the position of the pop up, the same parameters as for sap.ui.core.Popup can be used.
+	 *
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	ToolPopup.prototype.setPosition = function() {
 		this._ensurePopup();
 		this.oPopup.setPosition.apply(this.oPopup, arguments);

@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class ProgressIndicator renderer.
-	 * @static
+	 * ProgressIndicator renderer.
+	 * @namespace
 	 */
 	var ProgressIndicatorRenderer = {};
 	

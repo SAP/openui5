@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Paginator', './Toolbar'],
 
 
 	/**
-	 * @class RowRepeater renderer.
-	 * @static
+	 * RowRepeater renderer.
+	 * @namespace
 	 */
 	var RowRepeaterRenderer = {
 	};

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Token renderer. 
-	 * @static
+	 * Token renderer. 
+	 * @namespace
 	 */
 	var TokenRenderer = {
 	};

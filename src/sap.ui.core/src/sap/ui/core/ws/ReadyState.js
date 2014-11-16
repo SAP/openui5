@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @version ${version}
 	 * @static
 	 * @public
-	 * @name sap.ui.core.ws.ReadyState
+	 * @alias sap.ui.core.ws.ReadyState
 	 */
 	var ReadyState = {
 	

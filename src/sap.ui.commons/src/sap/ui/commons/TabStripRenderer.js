@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class TabStrip renderer.
-	 * @static
+	 * TabStrip renderer.
+	 * @namespace
 	 */
 	var TabStripRenderer = function() {
 	};

@@ -26,7 +26,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
 	 * @version ${version}
-	 * @name sap.ui.debug.ControlTree
+	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
 	var ControlTree = EventProvider.extend("sap.ui.debug.ControlTree", /** @lends sap.ui.debug.ControlTree.prototype */ {
@@ -69,8 +69,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#exit
-	 * @function
 	 */
 	ControlTree.prototype.exit = function() {
 		jQuery(document).unbind();
@@ -80,8 +78,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#renderDelayed
-	 * @function
 	 */
 	ControlTree.prototype.renderDelayed = function() {
 		if (this.oTimer) {
@@ -93,8 +89,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#render
-	 * @function
 	 */
 	ControlTree.prototype.render = function() {
 		var oDomRef = this.oParentDomRef;
@@ -116,8 +110,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#createTreeNodeDomRef
-	 * @function
 	 */
 	ControlTree.prototype.createTreeNodeDomRef = function(sId,iLevel,sType,sIcon) {
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
@@ -141,8 +133,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#createLinkNode
-	 * @function
 	 */
 	ControlTree.prototype.createLinkNode = function(oParentRef, sId, iLevel, sType) {
 		var oDomNode = this.oParentDomRef.ownerDocument.createElement("DIV");
@@ -167,8 +157,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#renderNode
-	 * @function
 	 */
 	ControlTree.prototype.renderNode = function(oDomRef,oControl,iLevel) {
 		if (!oControl) {
@@ -223,8 +211,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onclick
-	 * @function
 	 */
 	ControlTree.prototype.onclick = function(oEvent) {
 		var oSource = oEvent.target;
@@ -289,8 +275,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onmouseover
-	 * @function
 	 */
 	ControlTree.prototype.onmouseover = function(oEvent) {
 		var oSource = oEvent.target;
@@ -302,8 +286,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#onmouseout
-	 * @function
 	 */
 	ControlTree.prototype.onmouseout = function(oEvent) {
 		var oSource = oEvent.target;
@@ -317,8 +299,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#selectNode
-	 * @function
 	 */
 	ControlTree.prototype.selectNode = function(sId) {
 		if (!sId) {
@@ -341,8 +321,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * TODO: missing internal JSDoc... @author please update
 	 * @private
-	 * @name sap.ui.debug.ControlTree#deselectNode
-	 * @function
 	 */
 	ControlTree.prototype.deselectNode = function(sId) {
 		if (!sId) {
@@ -366,8 +344,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	 * @param oTreeNodeDomRef the tree node to start the search for
 	 * @return {Element} best matching source DOM node
 	 * @private
-	 * @name sap.ui.debug.ControlTree#getTargetDomRef
-	 * @function
 	 */
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
@@ -390,8 +366,6 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	/**
 	 * Enables an 'onhover' handler in the content window that allows to see control borders.
 	 * @private
-	 * @name sap.ui.debug.ControlTree#enableInplaceControlSelection
-	 * @function
 	 */
 	ControlTree.prototype.enableInplaceControlSelection = function() {
 		var that = this;

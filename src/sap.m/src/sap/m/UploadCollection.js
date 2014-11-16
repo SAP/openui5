@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 * @constructor
 	 * @public
 	 * @since 1.26
-	 * @name sap.m.UploadCollection
+	 * @alias sap.m.UploadCollection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UploadCollection = Control.extend("sap.m.UploadCollection", /** @lends sap.m.UploadCollection.prototype */ { metadata : {
@@ -239,8 +239,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	 */
 	/**
 	 * @description This file defines behavior for the control
-	 * @name sap.m.UploadCollection#init
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype.init = function() {
@@ -255,8 +253,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/**
 	 * @description Required adaptations before rendering.
-	 * @name sap.m.UploadCollection#onBeforeRendering
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype.onBeforeRendering = function() {
@@ -329,8 +325,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Required adaptations after rendering.
-	 * @name sap.m.UploadCollection#onAfterRendering
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype.onAfterRendering = function() {
@@ -366,8 +360,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Cleans up before destruction.
-	 * @name sap.m.UploadCollection#exit
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype.exit = function() {
@@ -382,10 +374,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/**
 	 * @description Map an item to the list item.
-	 * @name sap.m.UploadCollection#_mapItemToListItem
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @returns {sap.m.CustomListItem | null} oListItem List item which will be displayed
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._mapItemToListItem = function(oItem) {
@@ -617,9 +607,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Fill the list with items.
-	 * @name sap.m.UploadCollection#_fillList
 	 * @param {array} aItems An array with items type of sap.ui.core.Item.
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._fillList = function(aItems) {
@@ -656,8 +644,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Destroy the items in the List.
-	 * @name sap.m.UploadCollection#_clearList
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._clearList = function() {
@@ -668,10 +654,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Access and initialization for label number of attachments.
-	 * @name sap.m.UploadCollection#_getNumberOfAttachmentsLabel
 	 * @param {array} items Number of attachments
 	 * @returns {object} label with the information about the number of attachments
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._getNumberOfAttachmentsLabel = function(items) {
@@ -692,10 +676,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/**
 	 * @description Handling of the deletion of an uploaded file
-	 * @name sap.m.UploadCollection#_handleDelete
 	 * @param {object} oEvent Event of the deletion
 	 * @param {object} oContext Context of the deleted file
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleDelete = function(oEvent, oContext) {
@@ -734,10 +716,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of termination of an uploading process
-	 * @name sap.m.UploadCollection#_handleTerminate
 	 * @param {object} oEvent Event of the upload termination
 	 * @param {object} oContext Context of the upload termination
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleTerminate = function(oEvent, oContext) {
@@ -763,10 +743,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of event of the edit button
-	 * @name sap.m.UploadCollection#_handleEdit
 	 * @param {object} oEvent Event of the edit button
 	 * @param {object} oContext Context of the edit button
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleEdit = function(oEvent, oContext) {
@@ -788,11 +766,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of 'click' of the list (items + header)
-	 * @name sap.m.UploadCollection#_handleClick
 	 * @param {object} oEvent Event of the 'click'
 	 * @param {object} oContext Context of the list item where 'click' was triggered
 	 * @param {string} sSourceId List item id/identifier were the click was triggered
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
@@ -813,11 +789,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of 'ok' of the list item (status = 'Edit')
-	 * @name sap.m.UploadCollection#_handleOk
 	 * @param {object} oEvent Event of the 'ok' activity
 	 * @param {object} oContext Context of the list item where 'ok' was triggered
 	 * @param {string} sSourceId List item id
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleOk = function(oEvent, oContext, sSourceId) {
@@ -879,11 +853,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of 'cancel' of the list item (status = 'Edit')
-	 * @name sap.m.UploadCollection#_handleCancel
 	 * @param {object} oEvent Event of the 'cancel' activity
 	 * @param {object} oContext Context of the list item where 'cancel' was triggered
 	 * @param {string} sSourceId List item id
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleCancel = function(oEvent, oContext, sSourceId) {
@@ -902,9 +874,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	/* =========================================================== */
 	/**
 	 * @description Handling of the Event change of the fileUploader
-	 * @name sap.m.UploadCollection#_onChange
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onChange = function(oEvent) {
@@ -955,9 +925,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event fileAllowed of the fileUploader
-	 * @name sap.m.UploadCollection#_onFileAllowed
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onFileAllowed = function(oEvent) {
@@ -966,9 +934,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event fileDeleted of the fileUploader
-	 * @name sap.m.UploadCollection#_onFileDeleted
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onFileDeleted = function(oEvent) {
@@ -977,9 +943,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event fileRenamed of the fileUploader
-	 * @name sap.m.UploadCollection#_onFileRenamed
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onFilenameLengthExceed = function(oEvent){
@@ -988,9 +952,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event fileSizeExceed of the fileUploader
-	 * @name sap.m.UploadCollection#_onFileSizeExceed
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onFileSizeExceed = function(oEvent){
@@ -999,9 +961,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event typeMissmatch of the fileUploader
-	 * @name sap.m.UploadCollection#_onTypeMissmatch
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onTypeMissmatch = function(oEvent) {
@@ -1010,9 +970,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event uploadTerminated of the fileUploader
-	 * @name sap.m.UploadCollection#_onUploadTerminated
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadTerminated = function(oEvent) {
@@ -1021,9 +979,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event uploadComplete of the fileUploader to forward the Event to the application
-	 * @name sap.m.UploadCollection#_onUploadComplete
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadComplete = function(oEvent) {
@@ -1039,9 +995,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handling of the Event uploadProgress of the fileUploader to forward the Event to the application
-	 * @name sap.m.UploadCollection#_onUploadProgress
 	 * @param {object} oEvent Event of the fileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadProgress = function(oEvent) {
@@ -1060,9 +1014,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Access and initialization for the FileUploader
-	 * @name sap.m.UploadCollection#_getFileUploader
 	 * @returns {sap.ui.unified.FileUploader} Instance of the FileUploader
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._getFileUploader = function() {
@@ -1122,10 +1074,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Determines the icon from the filename.
-	 * @name sap.m.UploadCollection#_getIconFromFilename
 	 * @param {string} sFilename Name of the file inclusive extension(e.g. .txt, .pdf, ...).
 	 * @returns {string} Icon related to the file extension.
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._getIconFromFilename = function(sFilename) {
@@ -1158,11 +1108,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Determines the thumbnail of an item.
-	 * @name sap.m.UploadCollection#_getThumbnail
 	 * @param {string} sThumbnailUrl Url of the thumbnail-image of the UC list item
 	 * @param {string} sFilename Name of the file to determine if there could be a thumbnail 
 	 * @returns {string} ThumbnailUrl or icon
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._getThumbnail = function(sThumbnailUrl, sFilename) {
@@ -1175,9 +1123,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Tigger of the link which will be executed when the icon/image was clicked
-	 * @name sap.m.UploadCollection#_triggerLink
 	 * @param {Object} oEvent of the click/press of the icon/image
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._triggerLink = function(oEvent) {
@@ -1195,10 +1141,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	// ================================================================================
 	/**
 	 * @description Keyboard support: Handling of different key activity
-	 * @name sap.m.UploadCollection#onkeydown
 	 * @param {Object} oEvent Event of the key activity
 	 * @returns {void}
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype.onkeydown = function(oEvent) {
@@ -1227,11 +1171,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 	// ================================================================================
 	/**
 	 * @description Set the focus after the list item was deleted.
-	 * @name sap.m.UploadCollection#_setFocusAfterDeletion
 	 * @param {Object} DeletedItemId ListItem id which was deleted
 	 * @param {Object} oContext Context of the ListItem which was deleted
 	 * @returns {void}
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._setFocusAfterDeletion = function(DeletedItemId, oContext) {
@@ -1259,10 +1201,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Set the focus to the list item.
-	 * @name sap.m.UploadCollection#_setFocus2LineItem
 	 * @param {string} sFocusId ListItem which should get the focus
 	 * @returns {void}
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._setFocus2LineItem = function(sFocusId) {
@@ -1280,11 +1220,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handle of keyboard activity ENTER.
-	 * @name sap.m.UploadCollection#_handleENTER
 	 * @param {Object} oEvent ListItem of the keyboard activity ENTER
 	 * @param {Object} oContext Context of the keyboard activity ENTER
 	 * @returns {void}
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleENTER = function (oEvent, oContext) {
@@ -1305,10 +1243,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handle of keyboard activity DEL.
-	 * @name sap.m.UploadCollection#_handleDEL
 	 * @param {Object} oEvent ListItem of the keyboard activity DEL
 	 * @param {Object} oContext Context of the keyboard activity DEL
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleDEL = function(oEvent, oContext) {
@@ -1324,10 +1260,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handle of keyboard activity ESC.
-	 * @name sap.m.UploadCollection#_handleESC
 	 * @param {Object} oEvent ListItem of the keyboard activity ESC 
 	 * @param {Object} oContext Context of the keyboard activity ESC
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleESC = function(oEvent, oContext) {
@@ -1340,10 +1274,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Handle of keyboard activity F2.
-	 * @name sap.m.UploadCollection#_handleF2
 	 * @param {Object} oEvent Event of the keyboard activity F2
 	 * @param {Object} oContext Context of the keyboard activity F2
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._handleF2 = function(oEvent, oContext) {
@@ -1378,10 +1310,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Determines the uploaded files from the FileUploader event.
-	 * @name sap.m.UploadCollection#_getUploadedFilesFromUploaderEvent
 	 * @param {object} oEvent Event which is triggered by the FileUploader
 	 * @returns {array} aUploadedFiles A Collection of the uploaded files
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._getUploadedFilesFromUploaderEvent = function(oEvent) {
@@ -1393,11 +1323,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Determines if the filename is already in usage.
-	 * @name sap.m.UploadCollection#_checkDoubleFileName
 	 * @param {string} sFilename inclusive file extension
 	 * @param {array} aItems Collection of uploaded files
 	 * @returns {boolean} true for an already existing item with the same file name(independent of the path)
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._checkDoubleFileName = function(sFilename, aItems) {
@@ -1418,10 +1346,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 
 	/**
 	 * @description Split file name into name and extension.
-	 * @name sap.m.UploadCollection#_splitFilename
 	 * @param {string} sFilename Full file name inclusive the extension
 	 * @returns {object} oResult Filename and Extension
-	 * @function
 	 * @private
 	 */
 	UploadCollection.prototype._splitFilename = function(sFilename) {

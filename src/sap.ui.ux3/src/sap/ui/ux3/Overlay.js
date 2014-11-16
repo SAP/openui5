@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.ux3.Overlay
+	 * @alias sap.ui.ux3.Overlay
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Overlay = Control.extend("sap.ui.ux3.Overlay", /** @lends sap.ui.ux3.Overlay.prototype */ { metadata : {
@@ -88,41 +88,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 			}
 		}
 	}});
-	
-	
-	/**
-	 * Opens Overlay as pop up
-	 *
-	 * @name sap.ui.ux3.Overlay#open
-	 * @function
-	 * @param {string} sInitialFocusId
-	 *         ID of the control that gets focused when the overlay is openend
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Closes Overlay
-	 *
-	 * @name sap.ui.ux3.Overlay#close
-	 * @function
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	
-	/**
-	 * Checks whether Overlay is open
-	 *
-	 * @name sap.ui.ux3.Overlay#isOpen
-	 * @function
-	 * @type boolean
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
 	
 	
 	/**
@@ -255,10 +220,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 	
 	/**
-	 * Opens this instance of Overlay
+	 * Opens this instance of Overlay.
 	 *
-	 * @param {string} [initialFocusId]
+	 * @param {string} initialFocusId
+	 *         ID of the control that gets focused when the overlay is openend
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Overlay.prototype.open = function(initialFocusId) {
 		this._initialFocusId = initialFocusId;
@@ -279,9 +247,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 	
 	/**
-	 * Closes this instance of Overlay
+	 * Closes this instance of Overlay.
 	 *
+	 * @type void
 	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Overlay.prototype.close = function() {
 		if (!this._oPopup.isOpen()) {
@@ -389,6 +359,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/* Redefinition of generated API methods */
 	
 	// Implementation of API method isOpen
+
+	/**
+	 * Checks whether Overlay is open
+	 *
+	 * @type boolean
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
 	Overlay.prototype.isOpen = function() {
 		return this._oPopup.isOpen();
 	};

@@ -8,8 +8,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class InPlaceEdit renderer.
-	 * @static
+	 * InPlaceEdit renderer.
+	 * @namespace
 	 */
 	var InPlaceEditRenderer = {
 	};

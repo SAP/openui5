@@ -896,15 +896,15 @@
 		 * @since 0.9.0
 		 * @namespace
 		 * @public
-		 * @borrows jQuery.sap.log.Logger#fatal as this.fatal
-		 * @borrows jQuery.sap.log.Logger#error as this.error
-		 * @borrows jQuery.sap.log.Logger#warning as this.warning
-		 * @borrows jQuery.sap.log.Logger#info as this.info
-		 * @borrows jQuery.sap.log.Logger#debug as this.debug
-		 * @borrows jQuery.sap.log.Logger#trace as this.trace
-		 * @borrows jQuery.sap.log.Logger#getLevel as this.getLevel
-		 * @borrows jQuery.sap.log.Logger#setLevel as this.setLevel
-		 * @borrows jQuery.sap.log.Logger#isLoggable as this.isLoggable
+		 * @borrows jQuery.sap.log.Logger#fatal as fatal
+		 * @borrows jQuery.sap.log.Logger#error as error
+		 * @borrows jQuery.sap.log.Logger#warning as warning
+		 * @borrows jQuery.sap.log.Logger#info as info
+		 * @borrows jQuery.sap.log.Logger#debug as debug
+		 * @borrows jQuery.sap.log.Logger#trace as trace
+		 * @borrows jQuery.sap.log.Logger#getLevel as getLevel
+		 * @borrows jQuery.sap.log.Logger#setLevel as setLevel
+		 * @borrows jQuery.sap.log.Logger#isLoggable as isLoggable
 		 */
 		jQuery.sap.log = jQuery.extend(new Logger(), /** @lends jQuery.sap.log */ {
 
@@ -2031,7 +2031,7 @@
 		 * Any required and not yet loaded script will be loaded and execute synchronously.
 		 * Already loaded modules will be skipped.
 		 *
-		 * @param {string... | object}  sModuleName one or more names of modules to be loaded
+		 * @param {string... | object}  vModuleName one or more names of modules to be loaded
 		 *                              or in case of an object {modName: "...", type: "..."}
 		 *                              where modName is the name of the module and the type
 		 *                              could be a specific dot separated extension e.g.

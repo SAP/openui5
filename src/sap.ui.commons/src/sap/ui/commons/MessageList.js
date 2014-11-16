@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @deprecated Since version 1.4.0. 
 	 * A new messaging concept will be created in future. Therefore this control might be removed in one of the next versions.
-	 * @name sap.ui.commons.MessageList
+	 * @alias sap.ui.commons.MessageList
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var MessageList = Control.extend("sap.ui.commons.MessageList", /** @lends sap.ui.commons.MessageList.prototype */ { metadata : {
@@ -51,21 +51,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 	
 	
-	/**
-	 * Sets the message list to be displayed.
-	 *
-	 * @name sap.ui.commons.MessageList#setMessages
-	 * @function
-	 * @param {sap.ui.commons.Message[]} aMessages
-	 *         Message list.
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
 	MessageList.prototype.init = function(){
 		// Defining some private data:
 		this.aMessages = [];
@@ -102,14 +87,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oList = this.getDomRef();
 		var jList = jQuery(oList);
 	
-	  // A scrollbar is only required over 7 items:
-	  var maxVisibleItems = this.getMaxListed();
-	  var len = this.aMessages.length;
-	  if (len <= maxVisibleItems) {
-		// By default, css height was set to "20px" to make sure List would fit, for Popup to open.
-		jList.height("auto");
-		return;
-	  }
+		// A scrollbar is only required over 7 items:
+		var maxVisibleItems = this.getMaxListed();
+		var len = this.aMessages.length;
+		if (len <= maxVisibleItems) {
+			// By default, css height was set to "20px" to make sure List would fit, for Popup to open.
+			jList.height("auto");
+			return;
+		}
 	
 		// Calculating 1 item height:
 		if (this.iItemHeight == 0) {
@@ -118,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.iItemHeight = jItem.height();
 		}
 	
-	  oList.style.overflowY = "scroll";
-	  oList.style.overflowX = "hidden";
+		oList.style.overflowY = "scroll";
+		oList.style.overflowX = "hidden";
 		var desiredHeight = (maxVisibleItems * this.iItemHeight) + "px";
 		jList.height(desiredHeight);
 	};
@@ -131,48 +116,52 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * This utility opens the MessageList Popup.
 	 */
 	MessageList.prototype.open = function() {
-	  var rtl = sap.ui.getCore().getConfiguration().getRTL();
+		var rtl = sap.ui.getCore().getConfiguration().getRTL();
 	
 		// Defining or fetching the Popup attributes:
-	  var animationDuration = 200;
-	  var msgListSnapPoint = rtl ? Popup.Dock.RightTop    : Popup.Dock.LeftTop;
-	  var anchorSnapPoint  = rtl ? Popup.Dock.RightBottom : Popup.Dock.LeftBottom;
-	  var relativeAnchorPosition = "0 0";
-	  var anchor = null;
-	  var anchorId = this.getAnchorId();
-	  if (anchorId) {
-		anchor = jQuery.sap.domById(anchorId);
-	  }
-	  if (!anchor) {
-		anchor = document.body;
-	  }
-	  // Invoking the MsgBar Popup open function(iDuration, my, at, of, offset):
-	  this.oPopup.open(animationDuration, msgListSnapPoint, anchorSnapPoint, anchor, relativeAnchorPosition);
+		var animationDuration = 200;
+		var msgListSnapPoint = rtl ? Popup.Dock.RightTop    : Popup.Dock.LeftTop;
+		var anchorSnapPoint  = rtl ? Popup.Dock.RightBottom : Popup.Dock.LeftBottom;
+		var relativeAnchorPosition = "0 0";
+		var anchor = null;
+		var anchorId = this.getAnchorId();
+		if (anchorId) {
+			anchor = jQuery.sap.domById(anchorId);
+		}
+		if (!anchor) {
+			anchor = document.body;
+		}
+		// Invoking the MsgBar Popup open function(iDuration, my, at, of, offset):
+		this.oPopup.open(animationDuration, msgListSnapPoint, anchorSnapPoint, anchor, relativeAnchorPosition);
 	};
 	
 	/**
 	 * This utility closes the MessageList Popup.
 	 */
 	MessageList.prototype.close = function() {
-	  // Invoking the MsgBar Popup close = function(iDuration):
-	  var animationDuration = 200;
-	  this.oPopup.close(animationDuration);
+		// Invoking the MsgBar Popup close = function(iDuration):
+		var animationDuration = 200;
+		this.oPopup.close(animationDuration);
 	};
 	
 	/**
-	 * This public API receives the list of Messages to be displayed,
-	 * and re-render this Control if visible.
+	 * Set the list of Messages to be displayed and re-render this Control if visible.
+	 *
+	 * @param {sap.ui.commons.Message[]} aMessages Message list.
+	 * @type void
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MessageList.prototype.setMessages = function(aMessages) {
-	  // Storing the Messages:
-	  this.aMessages = aMessages;
+		// Storing the Messages:
+		this.aMessages = aMessages;
 	
-	  // Re-rendering this MessageList if visible:
-	  if (this.getVisible()) {
-		sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
-	  }
+		// Re-rendering this MessageList if visible:
+		if (this.getVisible()) {
+			sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
+		}
 	
-	  return this;
+		return this;
 	};
 	
 	
@@ -189,20 +178,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * in order to invoke the open() and close() of the MessageList Popup.
 	 * 
 	 * @param {boolean} bVisible  new value for property <code>visible</code>
-	 * @return {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * @return {sap.ui.commons.MessageList} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageList.prototype.setVisible = function(bVisible) {
 		this.setProperty("visible", bVisible);
 	
-	  // Opening or closing the MessageBar, as requested:
-	  if (bVisible) {
+		// Opening or closing the MessageBar, as requested:
+		if (bVisible) {
 		// Re-rendering, in case content is new.
 		sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
 			this.open();
-	  } else {
-		  this.close();
-	  }
+		} else {
+			this.close();
+		}
 	
 		return this;
 	};

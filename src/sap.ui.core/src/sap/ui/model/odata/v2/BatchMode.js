@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global'],
 	*
 	* @static
 	* @public
-	* @name sap.ui.model.odata.CountMode
+	* @alias sap.ui.model.odata.CountMode
 	*/
 	var BatchMode = {
 			/**

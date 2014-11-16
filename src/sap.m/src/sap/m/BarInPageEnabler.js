@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @class Helper Class for implementing the IBar interface. Should be created once per IBar instance.
 	 * @version 1.22
 	 * @protected
-	 * @name sap.m.IBarInPageEnabler
+	 * @alias sap.m.IBarInPageEnabler
 	 */
 	var BarInPageEnabler = Object.extend("sap.m.BarInPageEnabler", {
 		/**

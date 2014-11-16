@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * 2. If you want to support icon and standard image in your own control, please call createControlByURI by giving the URI and a constructor when URI isn't a icon URI. Icon instance or instance created by calling the given constructor is returned.
 		 * 
 		 * @public
-		 * @name sap.ui.core.IconPool
+		 * @alias sap.ui.core.IconPool
 		 */
 		var IconPool = function(){
 			// Do not use the constructor
@@ -47,8 +47,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {sap.ui.core.Control} either an instance of sap.ui.core.Icon or instance created by calling the given constructor
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.createControlByURI
-		 * @function
 		 */
 		IconPool.createControlByURI = function(setting, constructor){
 			if (typeof setting === "string") {
@@ -89,8 +87,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {object} the info object of the registered icon which has the name, collection, uri, fontFamily, content and suppressMirroring properties.
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.addIcon
-		 * @function
 		 */
 		IconPool.addIcon = function(iconName, collectionName, iconInfo){
 			// OLD API Compatibility fontFamily, content, overWrite, suppressMirroring
@@ -145,8 +141,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {string} the URI of the icon. if the icon can't be found in IconPool, undefined is returned. 
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.getIconURI
-		 * @function
 		 */
 		IconPool.getIconURI = function(iconName, collectionName){
 			var collection = mRegistry[collectionName];
@@ -164,8 +158,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {object} the info object of the registered icon which has the uri, fontFamily and content properties. 
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.getIconInfo
-		 * @function
 		 */
 		IconPool.getIconInfo = function(iconName, collectionName){
 			IconPool.insertFontFaceStyle();
@@ -199,8 +191,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {boolean} if the uri follows the icon uri format. 
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.isIconURI
-		 * @function
 		 */
 		IconPool.isIconURI = function(uri){
 			if (!uri) {
@@ -217,8 +207,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {array} An array contains all of the registered collections' names. 
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.getIconCollectionNames
-		 * @function
 		 */
 		IconPool.getIconCollectionNames = function(){
 			var aNames = [];
@@ -234,8 +222,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {array} An array contains all of the registered icon names under the given collection. 
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.getIconNames
-		 * @function
 		 */
 		IconPool.getIconNames = function(collectionName){
 			var collection = mRegistry[collectionName],
@@ -358,8 +344,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 		 * @return {string} the icon url (e.g. "sap-icon://attachment-zip-file")
 		 * @static
 		 * @public
-		 * @name sap.ui.core.IconPool.getIconForMimeType
-		 * @function
 		 * @since 1.25.0
 		 */
 		IconPool.getIconForMimeType = function(sMimeType) {

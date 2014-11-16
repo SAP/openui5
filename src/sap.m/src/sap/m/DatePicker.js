@@ -8,7 +8,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 	"use strict";
 
 
-	
 	/**
 	 * Constructor for a new DatePicker.
 	 *
@@ -24,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 	 * @constructor
 	 * @public
 	 * @since 1.22.0
-	 * @name sap.m.DatePicker
+	 * @alias sap.m.DatePicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DatePicker = InputBase.extend("sap.m.DatePicker", /** @lends sap.m.DatePicker.prototype */ { metadata : {
@@ -52,13 +51,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', 'sap/ui/model/ty
 			dateValue : {type : "object", group : "Data", defaultValue : null}
 		}
 	}});
-	
-	///**
-	// * This file defines behavior for the control,
-	// */
-	//sap.m.DatePicker.prototype.init = function(){
-	//   // do something for initialization...
-	//};
 	
 	
 	(function() {

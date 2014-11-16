@@ -7,8 +7,8 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 
 
 	/**
-	 * @class MultiInput renderer.
-	 * @static
+	 * MultiInput renderer.
+	 * @namespace
 	 */
 	var MultiInputRenderer = Renderer.extend(InputRenderer);
 	

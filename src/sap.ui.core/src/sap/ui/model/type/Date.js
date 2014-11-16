@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @param {object} [oConstraints] value constraints. 
 	 * @param {Date|string} [oConstraints.minimum] smallest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>  
 	 * @param {Date|string} [oConstraints.maximum] largest value allowed for this type. Values for constraints must use the same type as configured via <code>oFormatOptions.source</code>  
-	 * @name sap.ui.model.type.Date
+	 * @alias sap.ui.model.type.Date
 	 */
 	var Date1 = SimpleType.extend("sap.ui.model.type.Date", /** @lends sap.ui.model.type.Date.prototype */ {
 		
@@ -42,26 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	});
 	
 	/**
-	 * Creates a new subclass of class sap.ui.model.type.Date with name <code>sClassName</code> 
-	 * and enriches it with the information contained in <code>oClassInfo</code>.
-	 * 
-	 * For a detailed description of <code>oClassInfo</code> or <code>FNMetaImpl</code> 
-	 * see {@link sap.ui.base.Object.extend Object.extend}.
-	 *   
-	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] object literal with informations about the class  
-	 * @param {function} [FNMetaImpl] alternative constructor for a metadata object
-	 * @return {function} the created class / constructor function
-	 * @public
-	 * @static
-	 * @name sap.ui.model.type.Date.extend
-	 * @function
-	 */
-	
-	/**
 	 * @see sap.ui.model.SimpleType.prototype.formatValue
-	 * @name sap.ui.model.type.Date#formatValue
-	 * @function
 	 */
 	Date1.prototype.formatValue = function(oValue, sInternalType) {
 		switch (sInternalType) {
@@ -97,8 +78,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.parseValue
-	 * @name sap.ui.model.type.Date#parseValue
-	 * @function
 	 */
 	Date1.prototype.parseValue = function(oValue, sInternalType) {
 		var oResult;
@@ -126,8 +105,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
-	 * @name sap.ui.model.type.Date#validateValue
-	 * @function
 	 */
 	Date1.prototype.validateValue = function(oValue) {
 		if (this.oConstraints) {
@@ -163,8 +140,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.setFormatOptions
-	 * @name sap.ui.model.type.Date#setFormatOptions
-	 * @function
 	 */
 	Date1.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
@@ -173,8 +148,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	
 	/**
 	 * @protected
-	 * @name sap.ui.model.type.Date#getOutputPattern
-	 * @function
 	 */
 	Date1.prototype.getOutputPattern = function() {
 	
@@ -185,8 +158,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	/**
 	 * Called by the framework when any localization setting changed
 	 * @private
-	 * @name sap.ui.model.type.Date#_handleLocalizationChange
-	 * @function
 	 */
 	Date1.prototype._handleLocalizationChange = function() {
 		// recreate formatters

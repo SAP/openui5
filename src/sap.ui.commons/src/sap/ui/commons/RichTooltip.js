@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 *
 	 * @constructor
 	 * @public
-	 * @name sap.ui.commons.RichTooltip
+	 * @alias sap.ui.commons.RichTooltip
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RichTooltip = TooltipBase.extend("sap.ui.commons.RichTooltip", /** @lends sap.ui.commons.RichTooltip.prototype */ { metadata : {
@@ -73,8 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * Calculates the height of the RichTooltip to set a proper min-height.
 	 * Additionally the ARIA attributes are set to the corresponding elements.
 	 *
-	 * @public
-	 *
+	 * @protected
 	 */
 	RichTooltip.prototype.onAfterRendering = function() {
 		var oText = this.getAggregation("formattedText");
@@ -90,12 +89,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 	
 	/**
-	 * This sets an individual text for the ValueState of the parent element of the
-	 * RichTooltip.
+	 * This sets an individual text for the ValueState of the parent element of the RichTooltip.
 	 *
-	 * @param sText
-	 *            {sap.ui.core.string} the text that should be shown as individual
-	 *            ValueState text
+	 * @param {string} sText the text that should be shown as individual ValueState text
+	 * @returns {sap.ui.commons.RichTooltip} Returns <code>this</code> to facilitate method chaining.
+	 * @public
 	 */
 	RichTooltip.prototype.setValueStateText = function(sText) {
 		var oValueStateText = this.getAggregation("individualStateText");
@@ -123,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * being read and returned. If no text was set an empty string is being
 	 * returned.
 	 *
-	 * @returns {sap.ui.core.string} the ValueState text that was previously set.
+	 * @returns {string} the ValueState text that was previously set.
 	 * @public
 	 */
 	RichTooltip.prototype.getValueStateText = function() {

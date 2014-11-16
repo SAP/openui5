@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class Collection renderer.
-	 * @static
+	 * Collection renderer.
+	 * @namespace
 	 */
 	var CollectionInspectorRenderer = {};
 	
