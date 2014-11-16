@@ -35,10 +35,12 @@ import org.mozilla.javascript.tools.shell.Global;
 /**
  * The class <code>LessFilter</code> is used to compile CSS for Less files 
  * on the fly - once they are requested by the application.
+ * <p>
+ * <i>This class must not be used in productive systems.</i>
  * 
  * @author Peter Muessig, Matthias Osswald
  */
-public class LessFilter implements Filter{
+public class LessFilter implements Filter {
 
 
   /** default prefix for the classpath */
@@ -150,33 +152,53 @@ public class LessFilter implements Filter{
       // determine the path of the request
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       HttpServletResponse httpResponse = (HttpServletResponse) response;
+      String method = httpRequest.getMethod().toUpperCase();
       String path = httpRequest.getServletPath() + httpRequest.getPathInfo();
       
-      // compile the less if required (up-to-date check happens in the compile function)
-      Matcher m = PATTERN_THEME_REQUEST.matcher(path);
-      if (m.matches()) {
+      // only process GET or HEAD requests
+      if (method.matches("GET|HEAD")) {
         
-        String prefixPath = m.group(1);
-        String sourcePath = prefixPath + "/library.source.less";
-        
-        this.compile(sourcePath, false, false);
-        
-        // return the cached CSS or JSON file and set it as overlay for the resource servlet
-        if (this.cache.containsKey(path)) {
+        // check for existence of the resource
+        URL url = this.findResource(path);
+        if (url == null) {
           
-          response.setContentType(this.config.getServletContext().getMimeType(path));
-          httpResponse.addDateHeader("Last-Modified", this.lastModified.get(sourcePath));
-          httpResponse.setHeader("Cache-Control", "no-cache, no-store");
+          // compile the less if required (up-to-date check happens in the compile function)
+          Matcher m = PATTERN_THEME_REQUEST.matcher(path);
+          if (m.matches()) {
+            
+            String prefixPath = m.group(1);
+            String sourcePath = prefixPath + "/library.source.less";
+            
+            this.compile(sourcePath, false, false);
+            
+            // return the cached CSS or JSON file
+            if (this.cache.containsKey(path)) {
+              
+              httpResponse.setStatus(HttpServletResponse.SC_OK);
+              response.setContentType(this.config.getServletContext().getMimeType(path));
+              httpResponse.addDateHeader("Last-Modified", this.lastModified.get(sourcePath));
+              
+              if ("GET".equals(method)) {
+                OutputStream os = response.getOutputStream();
+                IOUtils.write(this.cache.get(path), os, "UTF-8");
+                IOUtils.closeQuietly(os);
+                
+                os.flush();
+                os.close();
+              }
+              
+              return;
+              
+            }
+              
+          }
           
-          OutputStream os = response.getOutputStream();
-          IOUtils.write(this.cache.get(path), os, "UTF-8");
-          IOUtils.closeQuietly(os);
+        } else {
           
-          os.flush();
-          os.close();
+          this.log("The resource " + path + " already exists and will not be compiled on-the-fly.");
           
         }
-          
+        
       }
       
     }
