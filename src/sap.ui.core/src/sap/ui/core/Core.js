@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			this.oConfiguration = new Configuration(this);
 		
 			// enable complex bindings if configured
-			if ( this.oConfiguration["xx-bindingSyntax"] === "complex" ) {
+			if ( this.oConfiguration["bindingSyntax"] === "complex" ) {
 				sap.ui.base.ManagedObject.bindingParser = sap.ui.base.BindingParser.complexParser;
 			}
 			// switch bindingParser to designTime mode if configured 
@@ -348,7 +348,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			if ( fnCustomBootTask ) {
 				var iCustomBootTask = oSyncPoint2.startTask("custom boot task");
 				fnCustomBootTask( function(bSuccess) {
-						oSyncPoint2.finishTask(iCustomBootTask, typeof bSuccess === "undefined" || bSuccess === true );
+					oSyncPoint2.finishTask(iCustomBootTask, typeof bSuccess === "undefined" || bSuccess === true );
 				});
 			}
 	
@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 		this.lock();
 	
 		// if a list of preloaded library CSS is configured, request a merged CSS (if application did not already do it)  
-		var aCSSLibs = this.oConfiguration['xx-preloadLibCss'];
+		var aCSSLibs = this.oConfiguration['preloadLibCss'];
 		if ( aCSSLibs.length > 0 ) {
 			// a leading "!" denotes that the application has loaded the file already 
 			var bAppManaged = aCSSLibs[0].slice(0,1) === "!";
