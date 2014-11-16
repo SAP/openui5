@@ -275,39 +275,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * Swop content of two given table items
-	 * 
-	 * @param {object}
-	 *          oItem1 is that table item that gets the content of Items2
-	 * @param {object}
-	 *          oItem2 is that table item that gets the content of Items1
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._swopItemContent = function(oItem1, oItem2) {
-		var bTempItemIsSelected = null, sTempItemText = null, sTempItemKey = null, sTooltip = null;
-
-		if (oItem1 !== null && oItem2 !== null) {
-			bTempItemIsSelected = oItem2.getSelected();
-			sTempItemText = oItem2.getCells()[0].getText();
-			sTempItemKey = oItem2.data('P13nColumnKey');
-			sTooltip = oItem2.getTooltip();
-
-			oItem2.setSelected(oItem1.getSelected());
-			oItem2.getCells()[0].setText(oItem1.getCells()[0].getText());
-			oItem2.data('P13nColumnKey', oItem1.data('P13nColumnKey'));
-			oItem2.setTooltip(oItem1.getTooltip());
-
-			oItem1.setSelected(bTempItemIsSelected);
-			oItem1.getCells()[0].setText(sTempItemText);
-			oItem1.data('P13nColumnKey', sTempItemKey);
-			oItem1.setTooltip(sTooltip);
-
-			this._handleItemIndexChanged(oItem1);
-			this._handleItemIndexChanged(oItem2);
-		}
-	};
-
-	/**
 	 * After an items was moved renewal selected items instance and it's selection
 	 * 
 	 * @private
