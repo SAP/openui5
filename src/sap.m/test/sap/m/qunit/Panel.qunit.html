@@ -7,7 +7,7 @@
 <script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 	type="text/javascript" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-	
+
 </script>
 <link rel="stylesheet"
 	href="../../../../resources/sap/ui/thirdparty/qunit.css"
@@ -56,10 +56,19 @@
 		})]
 	});
 
-	// create and add a page 
+	oPanel4 = new sap.m.Panel("testPanelExpandedExpandable", {
+		headerText: "This is the Panel header",
+		expanded: true,
+		expandable: true,
+		content: [new sap.m.Text({
+			text: "This is a Text control inside a Panel."
+		})]
+	});
+
+	// create and add a page
 	var page = new sap.m.Page({
 		title : "Panel",
-		content : [oPanel1, oPanel2, oPanel3]
+		content : [oPanel1, oPanel2, oPanel3, oPanel4]
 	});
 	app.addPage(page);
 
@@ -80,6 +89,12 @@
 		var $icon = jQuery("#testPanelExpandableExpanded").find(".sapMPanelExpandableIcon");
 		ok(($icon.length === 1), "sapMPanelExpandableIcon class present once");
 		ok($icon.hasClass("sapMPanelExpandableIconExpanded"), "sapMPanelExpandableIconExpanded class present");
+	});
+
+	test("Basic checks for expanded when Panel is expandable", function() {
+		var $testPanel = jQuery("#testPanelExpandedExpandable");
+		ok($testPanel.find(".sapMPanelWrappingDivExpanded").hasClass("sapMPanelWrappingDivExpanded"), "sapMPanelWrappingDivExpanded class present");
+		ok($testPanel.find(".sapMPanelContent ").css("display") === "block", "Content is visible");
 	});
 
 	test("Basic checks for expandable Panel - collapsed", function() {
