@@ -564,46 +564,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
-	/*
-	 * The following methods are taken from jQuery UI core but modified.
-	 *
-	 * jQuery UI Core
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/category/ui-core/
-	 */
-	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
-	jQuery.fn.extend( /** @lends jQuery.prototype */ {
-
-		/**
-		 * Disable HTML elements selection.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @since 1.24.0
-		 */
-		disableSelection: function() {
-			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
-				oEvent.preventDefault();
-			});
-		},
-
-		/**
-		 * Enable HTML elements to get selected.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @protected
-		 * @since 1.24.0
-		 */
-		enableSelection: function() {
-			return this.off(".ui-disableSelection");
-		}
-	});
-
 	/**
 	 * Returns the MIRRORED scrollLeft value of the first element in the given jQuery collection in right-to-left mode.
 	 * Precondition: The element is rendered in RTL mode.
@@ -719,6 +679,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		}
 	};
 
+
+
+	/*
+	 * The following methods are taken from jQuery UI core but modified.
+	 *
+	 * jQuery UI Core
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/ui-core/
+	 */
+	jQuery.support.selectstart = "onselectstart" in document.createElement("div");
+	jQuery.fn.extend( /** @lends jQuery.prototype */ {
+
+		/**
+		 * Disable HTML elements selection.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		disableSelection: function() {
+			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
+				oEvent.preventDefault();
+			});
+		},
+
+		/**
+		 * Enable HTML elements to get selected.
+		 *
+		 * @return {jQuery} <code>this</code> to allow method chaining.
+		 * @protected
+		 * @since 1.24.0
+		 */
+		enableSelection: function() {
+			return this.off(".ui-disableSelection");
+		}
+	});
 
 
 	/*!
