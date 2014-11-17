@@ -465,7 +465,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var oNextSelectableItem,
 				aSelectableItems = this.getSelectableItems(),
 				oDomRef = this.getFocusDomRef(),
-				iSelectionStart = oDomRef.selectionStart;
+				iSelectionStart = oDomRef.selectionStart,
+				iSelectionEnd = oDomRef.selectionEnd,
+				bIsTextSelected = iSelectionStart !== iSelectionEnd,
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
 
 			oNextSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) + 1];
 
@@ -474,7 +477,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.setSelection(oNextSelectableItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: oNextSelectableItem });
 
-				if (!this.isFiltered()) {
+				if (!jQuery.sap.startsWithIgnoreCase(oNextSelectableItem.getText(), sTypedValue) || !bIsTextSelected) {
 					iSelectionStart = 0;
 				}
 
@@ -506,7 +509,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var oPrevSelectableItem,
 				aSelectableItems = this.getSelectableItems(),
 				oDomRef = this.getFocusDomRef(),
-				iSelectionStart = oDomRef.selectionStart;
+				iSelectionStart = oDomRef.selectionStart,
+				iSelectionEnd = oDomRef.selectionEnd,
+				bIsTextSelected = iSelectionStart !== iSelectionEnd,
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart);
 
 			oPrevSelectableItem = aSelectableItems[aSelectableItems.indexOf(this.getSelectedItem()) - 1];
 
@@ -515,7 +521,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				this.setSelection(oPrevSelectableItem, { suppressInvalidate: true });
 				this.fireSelectionChange({ selectedItem: oPrevSelectableItem });
 
-				if (!this.isFiltered()) {
+				if (!jQuery.sap.startsWithIgnoreCase(oPrevSelectableItem.getText(), sTypedValue) || !bIsTextSelected) {
 					iSelectionStart = 0;
 				}
 
