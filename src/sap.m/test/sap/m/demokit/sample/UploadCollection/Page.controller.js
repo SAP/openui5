@@ -3,7 +3,7 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 	onInit: function () {
 		var oModel = new sap.ui.model.json.JSONModel("test-resources/sap/ui/demokit/explored/uploadCollection.json");
 		this.getView().setModel(oModel);
-		
+
 		var aDataCB= {
 				"items": [
 				          {
@@ -11,21 +11,19 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 				          	"text": "sap.m.ListSeparators.All"
 									},
 									{
-										"key": "Inner",
-					          "text": "sap.m.ListSeparators.Inner"
-									},
-									{
 										"key": "None",
 										"text": "sap.m.ListSeparators.None"
 									}
-				]};
+				]
+		};
+
 		var oModelCB = new sap.ui.model.json.JSONModel();
 		oModelCB.setData(aDataCB);
 
 		var oSelect=sap.ui.getCore().byId(this.getView().getId() + "--tbSelect");
 		oSelect.setModel(oModelCB);
 	},
-	
+
 	onFileDeleted: function(oEvent) {
 		var oData = this.oView.getModel().getData();
 		var aItems = oData.items;
@@ -42,7 +40,7 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 			this.oView.getModel().setData(oData);
 		};
 	},
-	
+
 
 	onFileRenamed: function(oEvent) {
 		var oData = this.oView.getModel().getData();
@@ -57,7 +55,7 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 		});
 		this.oView.getModel().setData(oData);
 	},
-	
+
 	onUploadComplete: function(oEvent) {
 		var fnCurrentDate = function() {
 			var date = new Date();
@@ -71,10 +69,9 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 			if (month < 10) {
 				month = '0' + month
 			}
-//			return day + '.' + month + '.' + year;
 			return year + '-' + month + '-' + day;
 		};
-		
+
 		if (oEvent) {
 			var oData = this.oView.getModel().getData();
 			var oItem = {};
@@ -98,12 +95,12 @@ sap.ui.controller("sap.m.sample.UploadCollection.Page", {
 			sap.m.MessageToast.show("Upload successful");
 		}
 	},
-	
+
 	onPress: function (oEvent) {
 		jQuery.sap.require("sap.m.MessageToast");
 		sap.m.MessageToast.show(oEvent.getSource().getId() + " Pressed");
 	},
-	
+
 	onSelectChange:  function(oEvent) {
 		var oUploadCollection=sap.ui.getCore().byId(this.getView().getId() + "--UploadCollection");
 		oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
