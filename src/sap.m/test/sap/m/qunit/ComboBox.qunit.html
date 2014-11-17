@@ -4832,6 +4832,7 @@
 
 				// system under test
 				var oExpectedItem;
+				var sExpectedValue = "item 1 is selected";
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
@@ -4865,15 +4866,14 @@
 				// assert
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 
 				if (oComboBox.getList()) {
 					ok(oComboBox.getList().getSelectedItem() === oExpectedItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem"));
 				}
 
-				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
+				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
 
 				// cleanup
 				oComboBox.destroy();
@@ -5004,8 +5004,7 @@
 				// assert
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 6);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0");
 
@@ -5045,8 +5044,100 @@
 				// assert
 				strictEqual(oComboBox.getValue(), sExpectedValue);
 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, sExpectedValue.length);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapdown the typed value should not gets selected (test case 1)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "rgentina");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapdown the typed value should not gets selected (test case 2)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Argentina");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "Argentina");
 
 				// cleanup
 				oComboBox.destroy();
@@ -5096,8 +5187,7 @@
 				// assert
 				strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event was fired');
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0 is selected");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
 
@@ -5290,8 +5380,104 @@
 				// assert
 				strictEqual(oComboBox.getValue(), sExpectedValue);
 				strictEqual(oComboBox.getProperty("value"), sExpectedValue);
-				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
-				strictEqual(oComboBox.getFocusDomRef().selectionEnd, sExpectedValue.length);
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapup the typed value should not gets selected (test case 1)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "lgeria");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("onsapup the typed value should not gets selected (test case 2)", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Algeria"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Argentina"
+						}),
+
+						new sap.ui.core.Item({
+							text: "Australia"
+						}),
+
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.A
+				});
+				oComboBox.getFocusDomRef().value = "A";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
+				jQuery(oComboBox.getFocusDomRef()).cursorPos(0);
+				this.clock.tick(1000);
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				strictEqual(oComboBox.getFocusDomRef().value, "Algeria");
+				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "Algeria");
 
 				// cleanup
 				oComboBox.destroy();
