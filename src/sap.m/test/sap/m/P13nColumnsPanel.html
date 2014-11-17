@@ -89,6 +89,9 @@
 					}, {
 						columnKey: '4714',
 						visible: false
+					}, {
+						columnKey: '4716',
+						width: "100px"
 					}]
 				}
 			}
@@ -132,7 +135,7 @@
 		this._oModel.setData(oData, true);
 	}, this);
 
-	this._oColumnsPanel.attachRemoveColumnsItem(function(oEvent) {
+/* 	this._oColumnsPanel.attachRemoveColumnsItem(function(oEvent) {
 		var oData = this._oModel.getData();
 		var oParams = oEvent.getParameters();
 		var sColumnsKey = oParams.item.getColumnKey();
@@ -146,7 +149,7 @@
 				}
 			}, this);
 		}
-	}, this);
+	}, this); */
 
 	this._oColumnsPanel.setModel(this._oModel)
 	

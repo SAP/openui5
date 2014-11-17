@@ -698,7 +698,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			this._updateTableItems(oColumnsItem);
 		}
 
-		this._condenseColumnsItem(oColumnsItem);
+//		this._condenseColumnsItem(oColumnsItem);
 	};
 
 	/**
@@ -730,7 +730,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			this._updateTableItems(oColumnsItem);
 		}
 
-		this._condenseColumnsItem(oColumnsItem);
+//		this._condenseColumnsItem(oColumnsItem);
 	};
 
 	/**
@@ -776,93 +776,119 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		return oColumnsItem;
 	};
 
-	/**
-	 * Condense ColumnsItems
-	 * 
-	 * @private
-	 * @param {object}
-	 *          oColumnsItem is the ColumnsItem that shall be checked whether it is still valid or whether it can be
-	 *          removed from ColumnsItems aggregation
-	 */
-	P13nColumnsPanel.prototype._condenseColumnsItem = function(oColumnsItem) {
-		var aPanelItems = null;
-		var oPanelItem = null, sItemKey = null, iPanelItemIndex = null, bRemoveColumsItem = false;
+//	/**
+//	 * Condense ColumnsItems
+//	 * 
+//	 * @private
+//	 * @param {object}
+//	 *          oColumnsItem is the ColumnsItem that shall be checked whether it is still valid or whether it can be
+//	 *          removed from ColumnsItems aggregation
+//	 */
+//	P13nColumnsPanel.prototype._condenseColumnsItem = function(oColumnsItem) {
+//		var aPanelItems = null;
+//		var oPanelItem = null, sItemKey = null, iPanelItemIndex = null, bRemoveColumsItem = false;
+//
+//		if (oColumnsItem !== null) {
+//			aPanelItems = this.getItems();
+//			sItemKey = oColumnsItem.getColumnKey();
+//			iPanelItemIndex = this._getArrayIndexByItemKey(sItemKey, aPanelItems);
+//			if (iPanelItemIndex !== null && iPanelItemIndex !== undefined && iPanelItemIndex > -1) {
+//
+//				oPanelItem = aPanelItems[iPanelItemIndex];
+//				if (oPanelItem !== null) {
+//					bRemoveColumsItem = this._isColumnsItemEqualToPanelItem(oColumnsItem, oPanelItem);
+//					if (bRemoveColumsItem) {
+//						// this.removeColumnsItem(oColumnsItem);
+//						this.fireRemoveColumnsItem({
+//							item : oColumnsItem
+//						});
+//					}
+//				}
+//			}
+//		}
+//	};
 
-		if (oColumnsItem !== null) {
-			aPanelItems = this.getItems();
-			sItemKey = oColumnsItem.getColumnKey();
-			iPanelItemIndex = this._getArrayIndexByItemKey(sItemKey, aPanelItems);
-			if (iPanelItemIndex !== null && iPanelItemIndex !== undefined && iPanelItemIndex > -1) {
-
-				oPanelItem = aPanelItems[iPanelItemIndex];
-				if (oPanelItem !== null) {
-					bRemoveColumsItem = this._isColumnsItemEqualToPanelItem(oColumnsItem, oPanelItem);
-					if (bRemoveColumsItem) {
-						// this.removeColumnsItem(oColumnsItem);
-						this.fireRemoveColumnsItem({
-							item : oColumnsItem
-						});
-					}
-				}
-			}
-		}
-	};
-
-	/**
-	 * Checks whether a ColumnsItem is equal to a PanelItem based on its content (well defined properties)
-	 * 
-	 * @private
-	 * @param {object}
-	 *          oColumnsItem is an item from columnsItems aggregation
-	 * @param {object}
-	 *          oPanelItem is an item from item aggregation
-	 * @returns {boolean} describes whether both items are equal by its properties
-	 */
-	P13nColumnsPanel.prototype._isColumnsItemEqualToPanelItem = function(oColumnsItem, oPanelItem) {
-		var bVisibilityIsEqual = false, bIndexIsEqual = false, iPanelItemIndex = null;
-		var oParent = null;
-
-		if (oColumnsItem !== null && oPanelItem !== null) {
-			/*
-			 * Check visible property
-			 */
-			if (oColumnsItem.getVisible() === undefined || oColumnsItem.getVisible() === null) {
-				// Initial state of visibility (if it wasn't touched)
-				bVisibilityIsEqual = true;
-			} else {
-				// Visibility was changed
-				if (oColumnsItem.getVisible() === oPanelItem.getVisible()) {
-					bVisibilityIsEqual = true;
-					delete oColumnsItem.mProperties.visible; // set it back to initial state (undefined) in case the ColumnItem
-					// instance will not be removed
-				}
-			}
-
-			/*
-			 * Check index property
-			 */
-			if (oColumnsItem.getIndex() === undefined || oColumnsItem.getIndex() === null) {
-				// Initial state of index (if it wasn't touched)
-				bIndexIsEqual = true;
-			} else {
-				// Index was changed --> now check the difference
-				if (oPanelItem.getParent) {
-					oParent = oPanelItem.getParent();
-					if (oParent && oParent.indexOfItem) {
-						iPanelItemIndex = oParent.indexOfItem(oPanelItem);
-					}
-				}
-
-				if (iPanelItemIndex != null && iPanelItemIndex != undefined && oColumnsItem.getIndex() === iPanelItemIndex) {
-					bIndexIsEqual = true;
-					delete oColumnsItem.mProperties.index; // set it back to initial state (undefined) in case the ColumnItem
-					// instance will not be removed
-				}
-			}
-		}
-
-		return bVisibilityIsEqual && bIndexIsEqual;
-	};
+//	/**
+//	 * Checks whether a ColumnsItem is equal to a PanelItem based on its content (well defined properties)
+//	 * 
+//	 * @private
+//	 * @param {sap.m.P13nColumnsItem}
+//	 *          oColumnsItem is an item from columnsItems aggregation
+//	 * @param {sap.m.P13nItem}
+//	 *          oPanelItem is an item from item aggregation
+//	 * @returns {boolean} describes whether both items are equal by its properties
+//	 */
+//	P13nColumnsPanel.prototype._isColumnsItemEqualToPanelItem = function(oColumnsItem, oPanelItem) {
+//		var bVisibilityIsEqual = false, bIndexIsEqual = false, iPanelItemIndex = null, bWidthIsEqual = false;
+//		var oParent = null;
+//
+//		if (oColumnsItem !== null && oPanelItem !== null) {
+//			/*
+//			 * Check visible property
+//			 */
+//			if (oColumnsItem.getVisible() === undefined || oColumnsItem.getVisible() === null) {
+//				// Initial state of visibility (if it wasn't touched)
+//				bVisibilityIsEqual = true;
+//			} else {
+//				// Visibility was changed
+//				if (oColumnsItem.getVisible() === oPanelItem.getVisible()) {
+//					bVisibilityIsEqual = true;
+//					// delete oColumnsItem.mProperties.visible; // set it back to initial state (undefined) in case the ColumnItem
+//					this.fireEvent("RemoveColumnsItemProperty", {
+//						item : oColumnsItem,
+//						propertyName : 'visible'
+//					});
+//
+//				}
+//			}
+//
+//			/*
+//			 * Check index property
+//			 */
+//			if (oColumnsItem.getIndex() === undefined || oColumnsItem.getIndex() === null) {
+//				// Initial state of index (if it wasn't touched)
+//				bIndexIsEqual = true;
+//			} else {
+//				// Index was changed --> now check the difference
+//				if (oPanelItem.getParent) {
+//					oParent = oPanelItem.getParent();
+//					if (oParent && oParent.indexOfItem) {
+//						iPanelItemIndex = oParent.indexOfItem(oPanelItem);
+//					}
+//				}
+//
+//				if (iPanelItemIndex != null && iPanelItemIndex != undefined && oColumnsItem.getIndex() === iPanelItemIndex) {
+//					bIndexIsEqual = true;
+//					//delete oColumnsItem.mProperties.index; // set it back to initial state (undefined) in case the ColumnItem
+//					this.fireEvent("RemoveColumnsItemProperty", {
+//						item : oColumnsItem,
+//						propertyName : 'index'
+//					});
+//				}
+//			}
+//
+//			/*
+//			 * Check width property
+//			 */
+//			if (oColumnsItem.getWidth() === undefined || oColumnsItem.getWidth() === null) {
+//				// Initial state of width (if it wasn't touched)
+//				bWidthIsEqual = true;
+//			} else {
+//				// Width was changed
+//				if (oColumnsItem.getWidth() === oPanelItem.getWidth()) {
+//					bWidthIsEqual = true;
+//					//delete oColumnsItem.mProperties.width; // set it back to initial state (undefined) in case the ColumnItem
+//					this.fireEvent("RemoveColumnsItemProperty", {
+//						item : oColumnsItem,
+//						propertyName : 'width'
+//					});
+//				}
+//			}
+//
+//		}
+//
+//		return bVisibilityIsEqual && bIndexIsEqual && bWidthIsEqual;
+//	};
 
 	/**
 	 * Updates table items based on content of ColumnsItem(s)
@@ -901,11 +927,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	};
 
 	/**
-	 * Add table item based on content of corresponding columnsItems
+	 * Add a new table item based on the given P13nItem content
 	 * 
 	 * @private
-	 * @param {object}
-	 *          oItem is the item that shall be added to the table
+	 * @param {sap.m.P13nItem}
+	 *          oItem is used to create and added a new table item
 	 */
 	P13nColumnsPanel.prototype._addTableItem = function(oItem) {
 		var oColumnsItem = null;
@@ -914,7 +940,70 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		if (oItem) {
 			sColumnKeys = oItem.getColumnKey();
 			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
+			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
 
+			// Add/Insert new table item to table
+			if (oColumnsItem) {
+				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
+				oNewTableItem.setVisible(oColumnsItem.getVisible());
+
+				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+
+				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
+			} else {
+				// No columnsItems exist for current item -> ADD the new item at the end
+				this._oTable.addItem(oNewTableItem);
+			}
+		}
+	};
+
+	/**
+	 * Inserts a new table item based on the given P13nItem content
+	 * 
+	 * @private
+	 * @param {int}
+	 *          iIndex is the index where the new item shall be inserted
+	 * @param {sap.m.P13nItem}
+	 *          oItem is used to create and insert a new table item
+	 */
+	P13nColumnsPanel.prototype._insertTableItem = function(iIndex, oItem) {
+		var oColumnsItem = null, oNewTableItem = null, sColumnKeys = null;
+
+		if (oItem) {
+			sColumnKeys = oItem.getColumnKey();
+			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
+			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
+
+			// Add/Insert new table item to table
+			if (oColumnsItem) {
+				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem information
+				oNewTableItem.setVisible(oColumnsItem.getVisible());
+
+				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+				oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
+
+				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
+			} else {
+				// No columnsItems exist for current item -> INSERT the new item at iIndex
+				this._oTable.insertItem(iIndex, oNewTableItem);
+			}
+		}
+	};
+
+	/**
+	 * Inserts a new table item based on the given P13nItem content
+	 * 
+	 * @private
+	 * @param {sap.m.P13nItem}
+	 *          oItem is the information template to create a new table item
+	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
+	 */
+	P13nColumnsPanel.prototype._createNewTableItemBasedOnP13nItem = function(oItem) {
+		var oNewTableItem = null, sColumnKeys = null;
+
+		if (oItem) {
+			sColumnKeys = oItem.getColumnKey();
 			oNewTableItem = new sap.m.ColumnListItem({
 				cells : [new sap.m.Text({
 					text : oItem.getText()
@@ -926,14 +1015,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			});
 			oNewTableItem.data('P13nColumnKey', sColumnKeys);
 
-			// Add or insert the new item according to found ColumnsItem information
-			if (oColumnsItem) {
-				oNewTableItem.setVisible(oColumnsItem.getVisible());
-				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
-			} else {
-				this._oTable.addItem(oNewTableItem);
-			}
+			// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
+			oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
 		}
+
+		return oNewTableItem;
 	};
 
 	/**
@@ -965,7 +1051,63 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			if (oColumnsItem.getVisible() !== undefined && oTableItem.getSelected() !== oColumnsItem.getVisible()) {
 				oTableItem.setSelected(oColumnsItem.getVisible());
 			}
+
+			// apply width property
+			if (oColumnsItem.getWidth() !== undefined) {
+				var iColumnsWidth = oTableItem.data('P13nColumnWidth');
+				if (iColumnsWidth !== undefined && iColumnsWidth !== null && iColumnsWidth !== oColumnsItem.getWidth()) {
+					oTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
+				}
+			}
+
 		}
+	};
+
+	/**
+	 * Restore table items (by index/visible/width property) based on existing items from items aggregation
+	 * 
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._restoreTableItems = function() {
+
+		// Restore table items based on items aggregation information
+		var sColumnsKey = null, iNewIndex = null;
+		var aPanelItems = this.getItems();
+		var aTableItems = this._oTable.getItems(), iTableItemIndex = null, oTableItem = null, oRemovedTableItem = null;
+		var aColumnsItems = this.getColumnsItems(), iColumnsItemIndex = null, oColumnsItem = null;
+
+		aPanelItems.forEach(function(oPanelItem, iIndex) {
+			sColumnsKey = oPanelItem.getColumnKey();
+			iTableItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aTableItems);
+			if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
+				oTableItem = aTableItems[iTableItemIndex];
+				// remove item from table
+				if (oTableItem) {
+					oRemovedTableItem = this._oTable.removeItem(oTableItem);
+				}
+
+				// check, whether still a columnsItems exist that can be applied
+				iColumnsItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aColumnsItems);
+				if (iTableItemIndex !== null && iTableItemIndex !== undefined && iTableItemIndex > -1) {
+					oColumnsItem = aColumnsItems[iColumnsItemIndex];
+				}
+
+				// Restore Index/Visible/Width property
+				if (oRemovedTableItem) {
+					// As default take restore data from panel item
+					oRemovedTableItem.data('P13nColumnWidth', oPanelItem.getWidth());
+					oRemovedTableItem.setSelected(oPanelItem.getVisible());
+					iNewIndex = iIndex;
+
+					// In case a columnsItem still exist for this table item take this data
+					if (oColumnsItem) {
+						oRemovedTableItem.setSelected(oColumnsItem.getVisible());
+						iNewIndex = oColumnsItem.getIndex();
+					}
+					this._oTable.insertItem(oRemovedTableItem, iNewIndex);
+				}
+			}
+		}, this);
 	};
 
 	/* =========================================================== */
@@ -1166,97 +1308,46 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Add item to items aggregation
 	 * 
 	 * @public
-	 * @param {object}
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
+	 * @param {sap.m.P13nItem}
 	 *          oItem is the new item that shall be added
 	 */
 	P13nColumnsPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
-		var oColumnsItem = null;
-		var oNewTableItem = null, sColumnKeys = null;
-
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
-
-			oNewTableItem = new sap.m.ColumnListItem({
-				cells : [new sap.m.Text({
-					text : oItem.getText()
-				})],
-				visible : true,
-				selected : oItem.getVisible(),
-				tooltip : oItem.getTooltip(),
-				type : sap.m.ListType.Active
-			});
-			oNewTableItem.data('P13nColumnKey', sColumnKeys);
-
-			// Add or insert the new
-			if (oColumnsItem) {
-				// a columnsItems exist for current item -> insert the new item according to found ColumnsItem information
-				oNewTableItem.setVisible(oColumnsItem.getVisible());
-				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
-			} else {
-				// no columnsItems exist for current item -> add the new item at the end
-				this._oTable.addItem(oNewTableItem);
-			}
-		}
+		this._addTableItem(oItem);
+		return this;
 	};
 
 	/**
 	 * Add item to items aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addItem
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {int}
 	 *          iIndex is the index where the new item shall be inserted
-	 * @param {object}
+	 * @param {sap.m.P13nItem}
 	 *          oItem is the new item that shall be added
 	 */
 	P13nColumnsPanel.prototype.insertItem = function(iIndex, oItem) {
-		var oColumnsItem = null;
-		var oNewTableItem = null, sColumnKeys = null;
+		P13nPanel.prototype.insertItem.apply(this, arguments);
 
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
-
-			oNewTableItem = new sap.m.ColumnListItem({
-				cells : [new sap.m.Text({
-					text : oItem.getText()
-				})],
-				visible : true,
-				selected : oItem.getVisible(),
-				tooltip : oItem.getTooltip(),
-				type : sap.m.ListType.Active
-			});
-			oNewTableItem.data('P13nColumnKey', sColumnKeys);
-
-			// Add or insert the new item
-			if (oColumnsItem) {
-				// a columnsItems exist for current item -> insert the new item according to found ColumnsItem information
-				oNewTableItem.setVisible(oColumnsItem.getVisible());
-				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
-			} else {
-				// no columnsItems exist for current item -> insert the new item at iIndex
-				this._oTable.insertItem(iIndex, oNewTableItem);
-			}
-		}
+		this._insertTableItem(iIndex, oItem);
+		return this;
 	};
 
 	/**
 	 * Remove item from items aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addItem
-	 * @param {object}
+	 * @returns {sap.m.P13nItem} The removed item or null.
+	 * @param {sap.m.P13nItem}
 	 *          oItem is the item that shall be removed
 	 */
 	P13nColumnsPanel.prototype.removeItem = function(oItem) {
-		P13nPanel.prototype.removeItem.apply(this, arguments);
-
 		var oTableItemToBeRemoved = null, iItemIndex = null, aTableItems = null, sItemKey = null;
+
+		oItem = P13nPanel.prototype.removeItem.apply(this, arguments);
 
 		if (oItem) {
 			sItemKey = oItem.getColumnKey();
@@ -1272,37 +1363,30 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				}
 			}
 		}
-	};
 
-	P13nColumnsPanel.prototype.destroyItems = function() {
-		this.destroyAggregation("items");
-		if (this._oTable) {
-			this._oTable.destroyItems();
-		}
-		return this;
+		// return the removed item or null
+		return oItem;
 	};
 
 	/**
 	 * Remove all item from items aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#removeAllItems
+	 * @returns {sap.m.P13nItem[]} An array of the removed items (might be empty).
 	 */
 	P13nColumnsPanel.prototype.removeAllItems = function() {
-		P13nPanel.prototype.removeAllItems.apply(this, arguments);
+		var aItems = P13nPanel.prototype.removeAllItems.apply(this, arguments);
 		if (this._oTable) {
 			this._oTable.removeAllItems();
 		}
-		return this;
+		return aItems;
 	};
 
 	/**
-	 * Destroy instances from items aggregation
+	 * Destroy all items from items aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#destroyItems
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 */
 	P13nColumnsPanel.prototype.destroyItems = function() {
 		P13nPanel.prototype.destroyItems.apply(this, arguments);
@@ -1317,7 +1401,8 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * Add ColumnsItem to columnsItems aggregation
 	 * 
 	 * @public
-	 * @param {object}
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
+	 * @param {sap.m.P13nColumnsItem}
 	 *          oColumnsItem is the new ColumnsItem that shall be added
 	 */
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
@@ -1329,12 +1414,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	/**
 	 * Insert ColumnsItem to columnsItems aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addColumnsItem
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 * @param {int}
 	 *          iIndex is the index where the columnsItem item shall be inserted
-	 * @param {object}
+	 * @param {sap.m.P13nColumnsItem}
 	 *          oColumnsItem is the new columnsItem that shall be inserted
 	 */
 	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
@@ -1346,72 +1430,42 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	/**
 	 * Remove ColumnsItem from columnsItems aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#addColumnsItem
-	 * @param {object}
+	 * @returns {sap.m.P13nColumnsItem} The removed item or null.
+	 * @param {sap.m.P13nColumnsItem}
 	 *          oColumnsItem is the ColumnsItem that shall be removed
 	 */
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
-		this.removeAggregation("columnsItems", oColumnsItem);
+		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
+		this._restoreTableItems();
 
-		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
-		if (this._oTable) {
-			this._oTable.removeAllItems();
-		}
-		// Second: Insert items again from items aggregation
-		var aItems = this.getItems();
-		aItems.forEach(function(oItem) {
-			this._addTableItem(oItem);
-		}, this);
-		// TODO return removed item instance
+		// return the removed item or null
+		return oColumnsItem;
 	};
 
 	/**
 	 * Remove all ColumnsItems from columnsItems aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#removeAllItems
+	 * @returns {sap.m.P13nColumnsItem[]} An array of the removed items (might be empty).
 	 */
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
-		this.removeAllAggregation("columnsItems");
+		var aColumnsItems = this.removeAllAggregation("columnsItems");
+		this._restoreTableItems();
 
-		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
-		if (this._oTable) {		
-			this._oTable.removeAllItems();
-		}
-
-		// Second: Insert items again from items aggregation
-		var aItems = this.getItems();
-		aItems.forEach(function(oItem) {
-			this._addTableItem(oItem);
-		}, this);
-	// TODO return all removed items
+		return aColumnsItems;
 	};
 
 	/**
 	 * Destroy all instances from columnsItems aggregation
 	 * 
-	 * @function
 	 * @public
-	 * @name ColumnsPanel#destroyItems
+	 * @returns {sap.m.P13nColumnsPanel} <code>this</code> to allow method chaining.
 	 */
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
 		this.destroyAggregation("columnsItems");
+		this._restoreTableItems();
 
-		// First: Remove all existing table items that are potentially in the wrong order/visibility/width
-		if (this._oTable) {
-			this._oTable.removeAllItems();
-		}
-
-		// Now insert items again from items aggregation
-		var aItems = this.getItems();
-		aItems.forEach(function(oItem) {
-			this._addTableItem(oItem);
-		}, this);
-
-		// Last: As no columnsItems does exist any more -> this._updateTableItems() is not needed to apply
 		return this;
 	};
 
