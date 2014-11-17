@@ -545,6 +545,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	TreeBindingAdapter.prototype._fireContextChange = function(mArguments) {
 		this.fireEvent("contextChange", mArguments);
 	};
+	
+	/**
+	 * Sets the number of expanded levels on the TreeBinding (commonly an AnalyticalBinding).
+	 * This is NOT the same as TreeBindingAdapter#collapse or TreeBindingAdapter#expand.
+	 * Setting the number of expanded levels leads to different requests.
+	 * This function is used by the AnalyticalTable for the ungroup/ungroup-all feature.
+	 * @see sap.ui.table.AnalyticalTable#_getGroupHeaderMenu
+	 * @param {int} iLevels the number of levels which should be expanded, minimum is 0
+	 * @protected
+	 * @name sap.ui.model.analytics.TreeBindingAdapter#setNumberOfExpandedLevels
+	 * @function
+	 */
+	TreeBindingAdapter.prototype.setNumberOfExpandedLevels = function(iLevels) {
+		iLevels = iLevels || 0;
+		if (iLevels < 0) {
+			jQuery.sap.log.warning("TreeBindingAdapter: numberOfExpanded levels was set to 0. Negative values are prohibited.");
+			iLevels = 0;
+		}
+		// set the numberOfExpandedLevels on the binding directly
+		// this.mParameters is inherited from the Binding super class
+		this.mParameters.numberOfExpandedLevels = iLevels;
+	};
+	
+	/**
+	 * Retrieves the currently set number of expanded levels from the Binding (commonly an AnalyticalBinding).
+	 * @protected
+	 * @name sap.ui.model.analytics.TreeBindingAdapter#getNumberOfExpandedLevels
+	 * @function
+	 * @returns {int} the number of expanded levels
+	 */
+	TreeBindingAdapter.prototype.getNumberOfExpandedLevels = function() {
+		return this.mParameters.numberOfExpandedLevels;
+	};
 
 	return TreeBindingAdapter;
 	
