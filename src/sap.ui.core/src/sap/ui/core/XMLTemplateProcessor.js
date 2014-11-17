@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+/*global HTMLTemplateElement, DocumentFragment*/
 
 sap.ui.define(['jquery.sap.global', './mvc/View'],
 	function(jQuery, View) {
@@ -158,7 +159,12 @@ sap.ui.define(['jquery.sap.global', './mvc/View'],
 						aResult.push(">");
 	
 						// write children
-						parseChildren(xmlNode);
+						if (window.HTMLTemplateElement && xmlNode instanceof HTMLTemplateElement && xmlNode.content instanceof DocumentFragment) {
+							// <template> support (HTMLTemplateElement has no childNodes, but a content node which contains the childNodes)
+							parseChildren(xmlNode.content);
+						} else {
+							parseChildren(xmlNode);
+						}
 	
 						// close the tag
 						aResult.push("</" + sLocalName + ">");
