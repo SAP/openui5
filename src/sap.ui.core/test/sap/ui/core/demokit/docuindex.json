@@ -37,7 +37,6 @@
 				"since" : "1.26",
 				"samples" : [
 					"sap.ui.core.sample.ViewTemplate.constants",
-					"sap.ui.core.sample.ViewTemplate.if_sample",
 					"sap.ui.core.sample.ViewTemplate.scenario"
 				]
 			},
@@ -83,11 +82,6 @@
 				"id": "sap.ui.core.sample.ViewTemplate.constants",
 				"name": "XMLView Templating: constant expressions",
 				"description": "Simple example for XML View Templating with OData v4 constant expressions"
-			},
-			{
-				"id": "sap.ui.core.sample.ViewTemplate.if_sample",
-				"name": "XMLView Templating: if",
-				"description": "Simple example for XML View Templating with the if/then/else templating instruction"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
