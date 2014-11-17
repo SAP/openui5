@@ -95,9 +95,9 @@ public class ReleaseNotes {
     relNotes.add("A patch for the " + context.branch + " code line. It contains the following fixes for the UI5 Core and Controls:");
     relNotes.add("");
     // _filterLog("Fixes", fixes, untouched);
-    _filterLog("Core", fixes, untouched, "src/framework");
-    _filterLog("Desktop", fixes, untouched, "src/libraries/_sap.ui.layout", "src/libraries/_sap.ui.commons", "src/libraries/_sap.ui.table/", "src/libraries/_sap.ui.ux3/");
-    _filterLog("Mobile", fixes, untouched, "src/libraries/_sap.m/", "src/libraries/_sap.me/", "src/libraries/_sap.makit/");
+    _filterLog("Core", fixes, untouched, "src/framework", "src/sap.ui.core");
+    _filterLog("Desktop", fixes, untouched, "src/sap.ui.layout", "src/sap.ui.commons", "src/sap.ui.table/", "src/sap.ui.ux3/");
+    _filterLog("Mobile", fixes, untouched, "src/sap.m/", "src/libraries/_sap.me/", "src/libraries/_sap.makit/");
     _filterLog("Charts", fixes, untouched, "src/libraries/_sap.viz/", "src/libraries/_sap.viz.gen/");
     _filterLog("Inbox", fixes, untouched, "src/libraries/_sap.uiext.inbox/");
     if ( !untouched.isEmpty() ) {
