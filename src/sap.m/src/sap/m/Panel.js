@@ -194,11 +194,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Panel.prototype.setExpanded = function(bExpanded) {
 
 		// should not toggle if nothing changed
-		if (bExpanded === this.getExpanded() || !this.getExpandable()) {
+		if (bExpanded === this.getExpanded()) {
 			return;
 		}
 
 		this.setProperty("expanded", bExpanded, true); // do not rerender !
+
+		if (!this.getExpandable()) {
+			return;
+		}
+
 		var $this = this.$();
 		$this.find(".sapMPanelExpandableIcon").toggleClass("sapMPanelExpandableIconExpanded");
 
