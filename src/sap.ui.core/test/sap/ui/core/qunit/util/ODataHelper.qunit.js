@@ -129,23 +129,11 @@
 	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
 
 	//*********************************************************************************************
-	jQuery.each([undefined, null, {}, false, true, 0, 1, NaN], function (i, vPath) {
-		test("Warning on illegal binding path: " + vPath, sinon.test(function () {
-			var oLogMock = this.mock(jQuery.sap.log),
-				oRawValue = {
-					"@odata.type" : "Edm.Path",
-					"value" : vPath
-				};
-
-			oLogMock.expects("warning").once().withExactArgs("Illegal value for Edm.Path: "
-				+ vPath, null, "sap.ui.core.util.ODataHelper");
-
-			strictEqual(formatAndParse(oRawValue), JSON.stringify(oRawValue));
-		}));
-	});
+	testIllegalValues([undefined, null, {}, false, true, 0, 1, NaN], "14.5.12 Expression edm:Path",
+		"Edm.Path", true);
 
 	//*********************************************************************************************
-	jQuery.each([undefined, null, Function, oCIRCULAR],
+	jQuery.each([undefined, Function, oCIRCULAR],
 		function (i, vRawValue) {
 			test("Make sure that output is always a string: " + vRawValue, function () {
 				strictEqual(formatAndParse(vRawValue), String(vRawValue));
@@ -154,11 +142,16 @@
 	);
 
 	//*********************************************************************************************
-	jQuery.each([{}, {foo: "bar"}], function (i, oRawValue) {
-		test("Stringify invalid input where possible: " + oRawValue, function () {
-			strictEqual(formatAndParse(oRawValue), JSON.stringify(oRawValue));
-		});
-	});
+	jQuery.each([null, {}, {foo: "bar"}, {"@odata.type" : "Edm.Unsupported"}],
+		function (i, oRawValue) {
+			test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
+				function () {
+					strictEqual(formatAndParse(oRawValue),
+						"Unsupported type: " + JSON.stringify(oRawValue));
+				}
+			);
+		}
+	);
 
 	//*********************************************************************************************
 	test("14.4.10 Expression edm:Int", function () {

@@ -209,9 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							if (typeof vRawValue.value === "string") {
 								return "{path: " + JSON.stringify(vRawValue.value) + "}";
 							}
-							jQuery.sap.log.warning("Illegal value for Edm.Path: "
-								+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
-							break;
+							return illegalValue(vRawValue);
 
 						case "Edm.TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
 							if (rISOTime.test(vRawValue.value)) {
@@ -231,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 					}
 					// anything else: convert to string, prefer JSON
 					try {
-						return fnEscape(JSON.stringify(vRawValue));
+						return fnEscape("Unsupported type: " + JSON.stringify(vRawValue));
 					} catch (ex) {
 						// "Converting circular structure to JSON"
 					}
