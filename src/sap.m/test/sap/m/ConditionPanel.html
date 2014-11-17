@@ -20,6 +20,7 @@
 
 <script type="text/javascript">	
 	jQuery.sap.require("sap.m.P13nConditionPanel");
+	jQuery.sap.require("sap.ui.layout.Grid");	
 	
 	var	aConditions;    
 	
@@ -70,9 +71,9 @@
 	var btnShow2 = new sap.m.Button({
 		text: "Filtering",
 		press: function() {
-		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000"   , "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
-			var oCondition2= { "key": "i2", "text": "CompanyName: =foo"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
-			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00"   , "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
+		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000", "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
+			var oCondition2= { "key": "i2", "text": "CompanyName: =foo", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
+			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
 			aConditions= [oCondition1, oCondition2, oCondition3];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({
@@ -82,9 +83,9 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxLength: "10", tooltip : "Company Code"}, {key: "CompanyName", text: "Name", type: "text", isDefault: true}, {key: "CompanyDate", text: "Date", type: "date"}]);
- 			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.BT, 
-				                     		sap.m.P13nConditionOperation.EQ, 
+			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", maxLength: "10", tooltip : "Company Code", isDefault: true}, {key: "CompanyName", text: "Name", type: "text"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+ 			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.EQ, 
+				                     		sap.m.P13nConditionOperation.BT, 
 		                             		sap.m.P13nConditionOperation.Contains, 
 		                             		sap.m.P13nConditionOperation.StartsWith,
 		                             		sap.m.P13nConditionOperation.EndsWith, 
@@ -92,10 +93,10 @@
 		                             		sap.m.P13nConditionOperation.LE, 
 		                             		sap.m.P13nConditionOperation.GT, 
 		                             		sap.m.P13nConditionOperation.GE ]);
- 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
- 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ,
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
 			oConditionPanel.setConditions(aConditions);			
@@ -107,8 +108,8 @@
 	var btnShow3 = new sap.m.Button({
 		text: "Grouping",
 		press: function() {
-			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", grouping: true};
-			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", grouping: false};
+			var oCondition1= { "key": "i1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", "value1": "", "value2": "", showIfGrouped: true};
+			var oCondition2= { "key": "i2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", "value1": "", "value2": "", showIfGrouped: false};
 			aConditions= [oCondition1, oCondition2];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({

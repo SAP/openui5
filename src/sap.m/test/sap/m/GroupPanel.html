@@ -22,10 +22,11 @@
 	jQuery.sap.require("sap.m.P13nConditionPanel");
 	jQuery.sap.require("sap.m.P13nGroupItem");
 	jQuery.sap.require("sap.m.P13nGroupPanel");
+	jQuery.sap.require("sap.ui.layout.Grid");	
 	
-	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", grouping: true};
-	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", grouping: true};
-	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", grouping: false};
+	var oCondition0= { "key": "g0", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "Date", showIfGrouped: true};
+	var oCondition1= { "key": "g1", "text": "", "operation": sap.m.P13nConditionOperation.GroupAscending, "keyField": "CompanyCode", showIfGrouped: true};
+	var oCondition2= { "key": "g2", "text": "", "operation": sap.m.P13nConditionOperation.GroupDescending, "keyField": "CompanyName", showIfGrouped: false};
 	aConditions= [oCondition0, oCondition1, oCondition2];    	
 	var oGroupPanel;
 	var oModel;
@@ -61,7 +62,7 @@
 			
 			oGroupPanel.setKeyFields([{key: "", text: "(none)"}, {key: "CompanyCode", text: "Code"}, {key: "CompanyName", text: "Name"}, {key: "Date", text: "Date"}, {key: "column1", text: "Column1"}, {key: "Column2", text: "Column2"}]); 
 			
-			oGroupPanel.setConditions(aConditions);			
+			oGroupPanel._oGroupPanel.setConditions(aConditions);			
 	
 			show(oGroupPanel, "Group");
 		}		
@@ -90,12 +91,12 @@
 					"key" : "g0",
 					"columnKey" : "c1",
 					"operation" : "GroupAscending",
-					"grouping" : true
+					"showIfGrouped" : true
 				}, {
 					"key" : "g1",
 					"columnKey" : "c0",
 					"operation" : "GroupDescending",
-					"grouping" : false
+					"showIfGrouped" : false
 				} ]
 			};
 	
@@ -122,7 +123,7 @@
 						key : params.key,
 						columnKey : params.newItem.getColumnKey(),
 						operation : params.newItem.getOperation(),
-						grouping : params.newItem.getGrouping()
+						showIfGrouped : params.newItem.getShowIfGrouped()
 					};
 					if (params.index) {
 						oData.groupItems.splice(params.index, 0, oGroupItem);
@@ -144,7 +145,7 @@
 				key : "{key}",
 				operation : "{operation}",
 				columnKey : "{columnKey}",
-				grouping : "{grouping}"
+				showIfGrouped : "{showIfGrouped}"
 			}));
 			
 			show(oGroupPanel, "Group");
@@ -155,6 +156,8 @@
 			oFieldKeyField.bindValue("/groupItems/0/columnKey");
 			oFieldOperation.setModel(oModel);
 			oFieldOperation.bindValue("/groupItems/0/operation");
+			oFieldShowIfGrouped.setModel(oModel);
+			oFieldShowIfGrouped.bindValue("/groupItems/0/showIfGrouped");
 		}
 	});
 	
@@ -188,7 +191,7 @@
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
 					"operation" : "Ascending",
-					"grouping" : true
+					"showIfGrouped" : true
 			});
 			oModel.setData(oData, true);
 
@@ -204,7 +207,7 @@
 					"key" : "s" + iCount++,
 					"columnKey" : "c0",
 					"operation" : "Ascending",
-					"grouping" : true
+					"showIfGrouped" : true
 			});
 			oModel.setData(oData, true);
 
@@ -233,6 +236,10 @@
 		width: "100px"
 	});
 
+	var oFieldShowIfGrouped = new sap.m.Input({
+		width: "100px"
+	});
+
 	var theCompactMode= new sap.m.CheckBox({
 		selected: true,
 		text: "compactMode",
@@ -256,6 +263,7 @@
 	oFieldKey.placeAt("content2");
 	oFieldKeyField.placeAt("content2");
 	oFieldOperation.placeAt("content2");
+	oFieldShowIfGrouped.placeAt("content2");
 	btnAddCondition.placeAt("content2");
 	btnInsertCondition.placeAt("content2");
 	btnRemoveCondition.placeAt("content2");

@@ -284,7 +284,7 @@ sap.ui
 								var sValue = oCondition.value;
 								if (!sValue) {
 									sValue = this._getFormatedConditionText(oCondition.operation, oCondition.value1,
-											oCondition.value2, oCondition.exclude, oCondition.keyField, oCondition.grouping);
+											oCondition.value2, oCondition.exclude, oCondition.keyField, oCondition.showIfGrouped);
 								}
 
 								if (!oCondition._oGrid || oCondition._oGrid.select.getSelected()) {
@@ -296,7 +296,7 @@ sap.ui
 										"keyField" : oCondition.keyField,
 										"value1" : oCondition.value1,
 										"value2" : oCondition.value2,
-										"grouping" : oCondition.grouping
+										"showIfGrouped" : oCondition.showIfGrouped
 									});
 
 								}
@@ -514,7 +514,7 @@ sap.ui
 						this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");
 						this._sToLabelText = this._oRb.getText("CONDITIONPANEL_LABELTO");
 						this._sValueLabelText = this._oRb.getText("CONDITIONPANEL_LABELVALUE");
-						this._sGroupingLabelText = this._oRb.getText("CONDITIONPANEL_LABELGROUPING");
+						this._sShowIfGroupedLabelText = this._oRb.getText("CONDITIONPANEL_LABELGROUPING");
 						this._sValidationDialogFieldMessage = this._oRb.getText("CONDITIONPANEL_FIELDMESSAGE");
 
 						this._oTypeOperations = {
@@ -587,8 +587,8 @@ sap.ui
 							"Control" : "TextField",
 							"Value" : ""
 						}, {
-							"ID" : "grouping",
-							"Label" : this._sGroupingLabelText,
+							"ID" : "showIfGrouped",
+							"Label" : this._sShowIfGroupedLabelText,
 							"Span" : "L1 M10 S10",
 							"Control" : "CheckBox",
 							"Value" : "false"
@@ -742,6 +742,7 @@ sap.ui
 							iPos = oTargetGrid.getContent().length;
 						}
 
+						var sOrgKey = sKey;
 						if (!sKey) {
 							sKey = "condition_" + (this._iConditionCount);
 						}
@@ -771,7 +772,7 @@ sap.ui
 										})
 									});
 
-									if (field["ID"] === "grouping") {
+									if (field["ID"] === "showIfGrouped") {
 										oControl.setEnabled(true);
 										oControl.setText(field["Label"]);
 										oControl.setTooltip(field["Label"]);
@@ -780,13 +781,13 @@ sap.ui
 										});
 										
 										if (typeof oConditionGridData !== "undefined") {
-											oControl.setSelected(oConditionGridData.grouping);
+											oControl.setSelected(oConditionGridData.showIfGrouped);
 										} else {
 											if (oThat.getUsePrevConditionSetting()) {
 												// select the value from the condition above
 												if (iPos > 0) {
 													oGrid = oTargetGrid.getContent()[iPos - 1];
-													oControl.setSelected(oGrid.grouping.getSelected());
+													oControl.setSelected(oGrid.showIfGrouped.getSelected());
 												}
 											}
 										}
@@ -830,7 +831,7 @@ sap.ui
 											if (oThat.getUsePrevConditionSetting()
 													&& !oThat.getAutoReduceKeyFieldItems()) {
 												// select the key from the condition above
-												if (iPos > 0) {
+												if (iPos > 0 && sOrgKey === null) {
 													oGrid = oTargetGrid.getContent()[iPos - 1];
 													oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
 												} else {
@@ -869,7 +870,7 @@ sap.ui
 										} else {
 											if (oThat.getUsePrevConditionSetting()) {
 												// select the key from the condition above
-												if (iPos > 0) {
+												if (iPos > 0  && sOrgKey === null) {
 													var oGrid = oTargetGrid.getContent()[iPos - 1];
 													oControl.setSelectedKey(oGrid.operation.getSelectedKey());
 												} 
@@ -995,7 +996,7 @@ sap.ui
 						if (typeof oConditionGridData !== "undefined") {
 							var sConditionText = oThat._getFormatedConditionText(oConditionGridData.operation,
 									oConditionGridData.value1, oConditionGridData.value2, oConditionGridData.exclude,
-									oConditionGridData.keyField, oConditionGridData.grouping);
+									oConditionGridData.keyField, oConditionGridData.showIfGrouped);
 
 							oConditionGridData._oGrid = oConditionGrid;
 							oConditionGridData.value = sConditionText;
@@ -1106,6 +1107,19 @@ sap.ui
 
 						switch (sCtrlType) {
 							case "numeric" :
+//								var oFloatFormatOptions;
+//								//if (oFieldViewMetadata.precision || oFieldViewMetadata.scale) {
+//									oFloatFormatOptions = {};
+//									//if (oFieldViewMetadata.precision) {
+//										oFloatFormatOptions["maxIntegerDigits"] = parseInt("5" /*oFieldViewMetadata.precision*/, 10);
+//									//}
+//									//if (oFieldViewMetadata.scale) {
+//										oFloatFormatOptions["maxFractionDigits"] = parseInt("1" /*oFieldViewMetadata.scale*/, 10);
+//									//}
+//								//}
+//								
+//								oConditionGrid.oFormatter = NumberFormat.getFloatInstance(oFloatFormatOptions);
+								
 								oConditionGrid.oFormatter = NumberFormat.getFloatInstance();
 								oControl = new sap.m.Input(params);
 								break;
@@ -1392,7 +1406,7 @@ sap.ui
 						var sOperation = oOperation.getSelectedKey();
 						var oValue1 = oConditionGrid.value1;
 						var oValue2 = oConditionGrid.value2;
-						var oCheckvalue = oConditionGrid.grouping;
+						var oShowIfGrouedvalue = oConditionGrid.showIfGrouped;
 
 						if (!sOperation) {
 							return;
@@ -1412,12 +1426,12 @@ sap.ui
 								// update visible of fields
 								oValue1.setVisible(false);
 								oValue2.setVisible(false);
-								oCheckvalue.setVisible(true);
+								oShowIfGrouedvalue.setVisible(true);
 
 								// correct field span
 								oKeyfield.getLayoutData().setSpan("L4 M4 S4");
 								oOperation.getLayoutData().setSpan("L4 M4 S4");
-								oCheckvalue.getLayoutData().setSpan("L2 M2 S2");
+								oShowIfGrouedvalue.getLayoutData().setSpan("L2 M2 S2");
 							} else {
 								if (sOperation === sap.m.P13nConditionOperation.Initial
 										|| sOperation === sap.m.P13nConditionOperation.Ascending
@@ -1492,7 +1506,7 @@ sap.ui
 							}
 						}
 						
-						var bGrouping = oConditionGrid.grouping.getSelected();
+						var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
 						var bExclude = this.getExclude();
 						var oSelectCheckbox = oConditionGrid.select;
 						var sValue = "";
@@ -1522,7 +1536,7 @@ sap.ui
 
 						this._enableCondition(oThat, oConditionGrid, true);
 
-						sValue = oThat._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bGrouping);
+						sValue = oThat._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bShowIfGrouped);
 
 						var oConditionData = {
 							"value" : sValue,
@@ -1531,7 +1545,7 @@ sap.ui
 							"keyField" : sKeyField,
 							"value1" : oValue1,
 							"value2" : oValue2,
-							"grouping" : bGrouping
+							"showIfGrouped" : bShowIfGrouped
 						};
 						sKey = oConditionGrid.data("_key");
 
@@ -1583,7 +1597,7 @@ sap.ui
 						oConditionGrid.operation.setEnabled(bEnable);
 						oConditionGrid.value1.setEnabled(bEnable);
 						oConditionGrid.value2.setEnabled(bEnable);
-						oConditionGrid.grouping.setEnabled(bEnable);
+						oConditionGrid.showIfGrouped.setEnabled(bEnable);
 					};
 
 					/**
@@ -1746,7 +1760,7 @@ sap.ui
 					 * @returns {string} the condition text
 					 */
 					P13nConditionPanel.prototype._getFormatedConditionText = function(sOperation, sValue1, sValue2,
-							bExclude, sKeyField, bGrouping) {
+							bExclude, sKeyField, bShowIfGrouped) {
 						var sConditionText = "";
 
 						var sKeyFieldText = null;
@@ -1809,13 +1823,13 @@ sap.ui
 								case sap.m.P13nConditionOperation.Ascending :
 								case sap.m.P13nConditionOperation.GroupAscending :
 									sConditionText = "ascending";
-									sConditionText += " g:" + bGrouping;
+									sConditionText += " showIfGrouped:" + bShowIfGrouped;
 									break;
 
 								case sap.m.P13nConditionOperation.Descending :
 								case sap.m.P13nConditionOperation.GroupDescending :
 									sConditionText = "descending";
-									sConditionText += " g:" + bGrouping;
+									sConditionText += " showIfGrouped:" + bShowIfGrouped;
 									break;
 
 								case sap.m.P13nConditionOperation.Total :
