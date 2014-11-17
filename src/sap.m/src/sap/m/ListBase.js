@@ -806,6 +806,30 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		return this;
 	};
 	
+	/*
+	 * Sets internal remembered selected context paths.
+	 * This method can be called to reset remembered selection
+	 * and does not change selection of the items until binding update.
+	 *
+	 * @param {String[]} aSelectedPaths valid binding context path array
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.setSelectedContextPaths = function(aSelectedPaths) {
+		this._aSelectedPaths = aSelectedPaths || [];
+	};
+
+	/*
+	 * Returns internal remembered selected context paths as a copy
+	 *
+	 * @return {String[]} selected items binding context path
+	 * @since 1.26
+	 * @protected
+	 */
+	sap.m.ListBase.prototype.getSelectedContextPaths = function() {
+		return this._aSelectedPaths.slice(0);
+	};
+	
 	/* Determines is whether all selectable items are selected or not
 	 * @protected
 	 */
@@ -818,7 +842,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 		return aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 	};
-	
 	
 	/*
 	 * Returns only visible items
