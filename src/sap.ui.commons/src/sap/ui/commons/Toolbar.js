@@ -3,11 +3,9 @@
  */
 
 // Provides control sap.ui.commons.Toolbar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, Popup, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ItemNavigation', './ToolbarRenderer'],
+	function(jQuery, library, Control, Popup, ItemNavigation, ToolbarRenderer) {
 	"use strict";
-
-
 	
 	/**
 	 * Constructor for a new Toolbar.
@@ -36,12 +34,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		],
 		library : "sap.ui.commons",
 		properties : {
-	
-			/**
-			 * Invisible controls are not rendered.
-			 */
-			visible : {type : "boolean", group : "Behavior", defaultValue : true},
-	
 			/**
 			 * When there is not enough space for the toolbar to display all items, the rightmost items are overflowing into a drop-down menu.
 			 */
@@ -103,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	Toolbar.prototype.onBeforeRendering = function() {
-		sap.ui.commons.ToolbarRenderer.emptyOverflowPopup(this); // if rerendering happens while there are still items in the popup (and it is open), the items will be duplicated
+		ToolbarRenderer.emptyOverflowPopup(this); // if rerendering happens while there are still items in the popup (and it is open), the items will be duplicated
 		this.cleanup();
 	
 		this.$("mn").unbind("keydown", this._handleKeyDown);
@@ -531,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Toolbar.prototype.openPopup = function() {
 		this.getRenderer().setActive(this);
 	
-		sap.ui.commons.ToolbarRenderer.fillOverflowPopup(this);
+		ToolbarRenderer.fillOverflowPopup(this);
 		this.popup.attachEvent("opened", this.handlePopupOpened, this);
 		this.popup.attachEvent("closed", this.handlePopupClosed, this);
 	
@@ -577,7 +569,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.getRenderer().unsetActive(this);
 	
 		this.bOpen = false;
-		sap.ui.commons.ToolbarRenderer.emptyOverflowPopup(this);
+		ToolbarRenderer.emptyOverflowPopup(this);
 	
 		// Cleanup tabindex again and re-initialize item navigation
 		var iAllItemsBeforeBreak = this.getVisibleItemInfo().iAllItemsBeforeBreak;
@@ -782,7 +774,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.addDelegate(this.oItemNavigation);
 			}
 	
-			this.oItemNavigation.setRootDomRef(sap.ui.commons.ToolbarRenderer.getPopupArea(this.oToolbar));
+			this.oItemNavigation.setRootDomRef(ToolbarRenderer.getPopupArea(this.oToolbar));
 			this.oItemNavigation.setItemDomRefs(aNavigableItems);
 			this.oItemNavigation.focusItem(0);
 	  },
@@ -794,7 +786,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	   * @private
 	   */
 	  getDomRef : function() {
-			var oPu = sap.ui.commons.ToolbarRenderer.getPopupArea(this.oToolbar);
+			var oPu = ToolbarRenderer.getPopupArea(this.oToolbar);
 			if (oPu) {
 				return oPu.parentNode;
 			} else {
@@ -808,7 +800,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	   * @private
 	   */
 	  isActive : function() {
-			return sap.ui.commons.ToolbarRenderer.getPopupArea(this.oToolbar) != null;
+			return ToolbarRenderer.getPopupArea(this.oToolbar) != null;
 	  },
 	
 	  /**
