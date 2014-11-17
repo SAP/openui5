@@ -9,7 +9,7 @@
 	<l:VerticalLayout
 		width="100%">
 		<l:content>
-			<toolbar>
+			<Toolbar>
 				<ToolbarSpacer/>
 				<Label
 					text="Layout:">
@@ -18,16 +18,17 @@
 					id="tbSelect"
 					autoAdjustWidth="true"
 					items="{/items}"
-					selectedKey="None"
+					selectedKey="{/selectedKey}"
 					change="onSelectChange" >
 					<core:Item key="{key}" text="{text}" />
 				</Select>
-			</toolbar>
+			</Toolbar>
 			<UploadCollection
 				id="UploadCollection"
 				maximumFilenameLength="35"
 				multiple="true"
 				items="{/items}"
+				showSeparators="None"
 				fileDeleted="onFileDeleted"
 				fileRenamed="onFileRenamed"
 				uploadComplete="onUploadComplete" >
