@@ -544,7 +544,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 							iFoundGroups++;
 							if (iFoundGroups == that._iGroupedLevel) {
 								oColumn._bSkipUpdateAI = true;
+								
+								// relaying the ungrouping to the AnalyticalBinding,
+								// the numberOfExpandedLevels must be reset through the TreeBindingAdapter.
+								var oBinding = that.getBinding("rows");
+								oBinding.setNumberOfExpandedLevels(0);
+								// setGrouped(false) leads to an invalidation of the Column -> rerender
+								// and this will result in new requests from the AnalyticalBinding,
+								//because the initial grouping is lost (can not be restored!)
 								oColumn.setGrouped(false);
+								
 								oColumn._bSkipUpdateAI = false;
 								iUngroudpedIndex = i;
 							} else {
@@ -577,6 +586,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/analytics/TreeBindingAdapter',
 					var aColumns = that.getColumns();
 					for (var i = 0; i < aColumns.length; i++) {
 						aColumns[i]._bSkipUpdateAI = true;
+						
+						// same as with single "ungrouping" (see above)
+						var oBinding = that.getBinding("rows");
+						oBinding.setNumberOfExpandedLevels(0);
+						
 						aColumns[i].setGrouped(false);
 						aColumns[i]._bSkipUpdateAI = false;
 					}
