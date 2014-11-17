@@ -2641,7 +2641,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	
 
 	/*
-	 * Create a new (the only) instance of the Core and return it as module value.
+	 * Create a new (the only) instance of the Core and return it's interface as module value.
 	 * 
 	 * Do not export the module value under the global name!
 	 * 
@@ -2650,6 +2650,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * the core prototype. Once global names are switched off, such extension scnearios are 
 	 * no longer supported. 
 	 */
-	return new Core();
+	return new Core().getInterface();
 
 }, /* bExport= */ false);
