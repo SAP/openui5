@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 	
 			/**
-			 * This event gets fired when the input operation has finished and the value has changed.
+			 * This event gets fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
 			 */
 			change : {
 				parameters : {
