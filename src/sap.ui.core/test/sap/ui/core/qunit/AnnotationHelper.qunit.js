@@ -10,19 +10,103 @@
 	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 	jQuery.sap.require("sap.ui.core.format.NumberFormat");
 
-	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-		oCIRCULAR = {};
+	var oCIRCULAR = {},
+		sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
+		oMetaModel = new sap.ui.model.json.JSONModel({
+			"definitions": {
+				"SomeEntity": {
+					"properties": {
+						"ProductID" : {
+							"type" : "number", //TODO string
+							"maxLength" : 10,
+							"@Common.Label" : "Product ID",
+							"@TODO.updatable" : "false"
+						},
+						"SupplierName" : {
+							"type" : ["number", "null"], //TODO string
+							"maxLength" : 80,
+							"@Common.Label" : "Company Name",
+							"@TODO.creatable" : "false",
+							"@TODO.updatable" : "false"
+						},
+						"WeightMeasure" : {
+							"anyOf" : [{
+								"type" : "number",
+								"multipleOf" : 0.001,
+								"minimum" : -9999999999.999,
+								"maximum" : 9999999999.999
+							}, {
+								"type" : "null"
+							}],
+							"@TODO.unit" : "WeightUnit",
+							"@Common.Label" : "Wt. Measure",
+							"@Org.OData.Measures.V1.Unit" : {
+								"@odata.type" : "#Path",
+								"value" : "WeightUnit"
+							}
+						},
+						"WeightUnit" : {
+							"type" : ["string", "null"],
+							"maxLength" : 3,
+							"@Common.Label" : "Qty. Unit",
+							"@TODO.semantics" : "unit-of-measure"
+						},
+					},
+					"@com.sap.vocabularies.UI.v1.DataPoint" : {
+						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataPointType",
+						"Title" : "Weight",
+						"Description" : {},
+						"Value" : {
+							"@odata.type" : "#Path",
+							"value" : "WeightMeasure"
+						}
+					},
+					"@com.sap.vocabularies.UI.v1.Identification" : [{
+						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
+						"Label" : "Product ID",
+						"Value" : {
+							"@odata.type" : "#Path",
+							"value" : "ProductID"
+						}
+					}, {
+						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
+						"Label" : "Supplier",
+						"Value" : {
+							"@odata.type" : "#Path",
+							"value" : "SupplierName"
+						}
+					}, {
+						"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
+						"Label" : "Weight",
+						"Value" : {
+							"@odata.type" : "#Path",
+							"value" : "WeightMeasure"
+						}
+					}]
+				}
+			}
+		});
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
 	/**
 	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
+	 * Provides access to the given current binding.
+	 *
 	 * @param {any} vValue
+	 * @param {sap.ui.model.Binding} oCurrentBinding
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParse(vValue) {
-		var sResult = sap.ui.model.odata.AnnotationHelper.format(vValue);
+	function formatAndParse(vValue, oCurrentBinding) {
+		var sResult,
+			oThis = {
+				currentBinding: function () {
+					return oCurrentBinding;
+				}
+			};
+
+		sResult = sap.ui.model.odata.AnnotationHelper.format.call(oThis, vValue);
 
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
 		return sap.ui.base.BindingParser.complexParser(sResult, undefined, true) || sResult;
@@ -30,20 +114,21 @@
 
 	/**
 	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
-	 * Makes sure no warning is raised.
+	 * Makes sure no warning is raised. Provides access to the given current binding.
 	 *
 	 * @param {any} vValue
+	 * @param {sap.ui.model.Binding} oCurrentBinding
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
-	function formatAndParseNoWarning(vValue) {
+	function formatAndParseNoWarning(vValue, oCurrentBinding) {
 		var oSandbox = sinon.sandbox.create(),
 			oLogMock = oSandbox.mock(jQuery.sap.log);
 
 		oLogMock.expects("warning").never();
 
 		try {
-			return formatAndParse(vValue);
+			return formatAndParse(vValue, oCurrentBinding);
 		} finally {
 			oLogMock.verify();
 			oSandbox.restore();
@@ -96,32 +181,29 @@
 		}
 	});
 
-	/*
-	   "Title": {
-	      "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
-	      "Label": "Product Name",
-	      "Value": {
-	        "@odata.type": "#Path",
-	        "value": "Name"
-	      }
-	    }
-	 */
-
 	//*********************************************************************************************
 	jQuery.each(["", "foo", "{path:'foo'}", 'path: "{\\f,o,o}"'], function (i, sString) {
-		test("Constant of type String: " + sString, function () {
+		test("14.4.11 Expression edm:String: " + sString, function () {
 			strictEqual(formatAndParseNoWarning(sString), sString);
 		});
 	});
 
 	//*********************************************************************************************
 	jQuery.each(["", "/", ".", "foo", "path:'foo'", 'path: "{\\f,o,o}"'], function (i, sPath) {
-		test("Binding Path: " + sPath, function () {
-			var oSingleBindingInfo = formatAndParseNoWarning({
-					"@odata.type" : "#Path",
-					"value" : sPath
-				});
+		test("14.5.12 Expression edm:Path: " + sPath, function () {
+			var oMetaModel = new sap.ui.model.json.JSONModel({
+					"Value": {
+						"@odata.type": "#Path",
+						"value": sPath
+					}
+				}),
+				sMetaPath = "/Value",
+				oCurrentBinding = oMetaModel.bindProperty(sMetaPath),
+				oRawValue = oMetaModel.getProperty(sMetaPath),
+				oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+
 			strictEqual(oSingleBindingInfo.path, sPath);
+			strictEqual(oSingleBindingInfo.type, undefined);
 		});
 	});
 	// Q: output simple binding expression in case application has not opted-in to complex ones?
@@ -397,4 +479,51 @@
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "A===", "+", "/", "%"],
 	                   "14.4.1 Expression edm:Binary", "#Binary", true);
+
+	//*********************************************************************************************
+	jQuery.each([{
+		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.DataPoint/Value"
+	}, {
+		path: "Value",
+		context: oMetaModel.createBindingContext(
+			"/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.DataPoint/")
+	}, {
+		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/0/Value"
+	}, {
+		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/1/Value"
+	}, {
+		path: "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/2/Value"
+	}, {
+		path: "Value",
+		context: oMetaModel.createBindingContext(
+			"/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.Identification/2/")
+	}], function (i, oFixture) {
+		test("14.5.12 Expression edm:Path w/ type, path = " + oFixture.path, function () {
+			var oCurrentBinding = oMetaModel.bindProperty(oFixture.path, oFixture.context),
+				oRawValue = oCurrentBinding.getValue(),
+				oSingleBindingInfo;
+
+			oSingleBindingInfo = formatAndParseNoWarning(oRawValue, oCurrentBinding);
+
+			strictEqual(oSingleBindingInfo.path, oRawValue.value);
+			ok(oSingleBindingInfo.type instanceof sap.ui.model.type.Float);
+		});
+	});
+
+	//TODO {..., formatOptions: {minFractionDigits: 3, maxIntegerDigits: 10}}
+	//TODO {..., type: 'sap.ui.model.odata.type.Decimal', formatOptions: {scale: 3, precision: 13}}
+	//TODO jQuery.sap.require() for "non-core types"
+
+	//TODO anyOf/allOf "trees" can hardly be supported
+//	"CreatedAt" : {
+//		"anyOf" : [{
+//			"allOf" : [{
+//				"$ref" : "http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTime"
+//			}, {
+//				"pattern" : "(^[^.]*$|[.][0-9]{1,7}$)"
+//			}]
+//		}, {
+//			"type" : "null"
+//		}],
+//	},
 } ());

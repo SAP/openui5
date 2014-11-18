@@ -622,13 +622,9 @@
 		window.foo = {
 			Helper: {
 				help: function (oRawValue) {
-					if (oRawValue.String) {
-						return oRawValue.String;
-					}
-					if (oRawValue.Path) {
-						return "{" + oRawValue.Path + "}";
-					}
-					return oRawValue;
+					return typeof oRawValue === "string"
+						? oRawValue
+						: "{" + oRawValue.value + "}";
 				}
 			}
 		};
@@ -636,25 +632,22 @@
 		check([
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
 			'<Label text="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
+				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
 			'<html:img src="{formatter: \'foo.Helper.help\','
-				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
+				+ ' path: \'/@com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
 			'<\/mvc:View>'
 		], {
 			models: new sap.ui.model.json.JSONModel({
-				"com.sap.vocabularies.UI.v1.HeaderInfo": {
-					"TypeImageUrl" : {
-						"String" : "/coco/apps/main/img/Icons/product_48.png"
-					},
+				"@com.sap.vocabularies.UI.v1.HeaderInfo": {
+					"TypeImageUrl": "/coco/apps/main/img/Icons/product_48.png",
 					"Title": {
-						"Label": {
-							"String": "Customer"
-						},
+						"Label": "Customer",
 						"Value": {
-							"Path": "CustomerName"
+							"@odata.type": "#Path",
+							"value": "CustomerName"
 						}
 					}
 				}
@@ -664,7 +657,48 @@
 			'<Text text="{CustomerName}"/>',
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
-			'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>',
+			'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>'
+		]);
+	});
+
+	//*********************************************************************************************
+	test("binding resolution: interface to formatter", function () {
+		var sPath = "/definitions/SomeEntity/@com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value";
+
+		window.foo = {
+			Helper: {
+				help: function (oRawValue) {
+					var oBinding = this.currentBinding();
+
+					ok(oBinding instanceof sap.ui.model.Binding);
+					strictEqual(oBinding.getPath(), sPath);
+
+					return "success";
+				}
+			}
+		};
+
+		check([
+			mvcView(),
+			'<Text text="{formatter: \'foo.Helper.help\', path: \'' + sPath + '\'}"/>',
+			'<\/mvc:View>'
+		], {
+			models: new sap.ui.model.json.JSONModel({
+				"definitions": {
+					"SomeEntity": {
+						"@com.sap.vocabularies.UI.v1.HeaderInfo": {
+							"Title": {
+								"Value": {
+									"@odata.type": "#Path",
+									"value": "WeightMeasure"
+								}
+							}
+						}
+					}
+				}
+			})
+		}, [
+			'<Text text="success"/>'
 		]);
 	});
 

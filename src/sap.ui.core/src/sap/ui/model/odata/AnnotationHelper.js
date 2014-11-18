@@ -78,6 +78,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		}
 
 		/**
+		 * Handling of <a href="http://docs.oasis-open.org/odata/odata/v4.0/errata01/os/complete/part3-csdl/odata-v4.0-errata01-os-part3-csdl-complete.html#_Toc395268276">
+		 * 14.5.12 Expression edm:Path</a>.
+		 *
+		 * @param {any} vRawValue
+		 *    the raw value from the meta model
+		 * @param {sap.ui.model.Binding} oBinding
+		 *    the binding related to the current formatter call
+		 * @returns {string}
+		 *    the resulting string value to write into the processed XML
+		 */
+		function formatPath(vRawValue, oBinding) {
+			var oModel = oBinding.getModel(),
+				sResolvedPath // resolved binding path (not relative anymore!)
+					= oModel.resolve(oBinding.getPath(), oBinding.getContext()),
+				aParts = sResolvedPath.split("/"), // parts of binding path (between slashes)
+				oPropertyDefinition,
+				sType, // (OData meta) model type
+				sUiType; // corresponding UI type
+
+			if (aParts[0] === "" && aParts[1] === "definitions") {
+				aParts.splice(3, aParts.length - 3); // go up to "/definitions/<Entity>"
+				aParts.push("properties");
+				aParts.push(vRawValue.value);
+				oPropertyDefinition = oModel.getProperty(aParts.join("/"));
+
+				//TODO/FIX4MASTER clarification of final format with Ralf Handl is under way
+				if (typeof oPropertyDefinition.type === "string") {
+					sType = oPropertyDefinition.type;
+				} else if (jQuery.isArray(oPropertyDefinition.type)) {
+					sType = oPropertyDefinition.type[0];
+				} else {
+					sType = oPropertyDefinition.anyOf[0].type;
+				}
+			}
+
+			if (sType === "number") { // #Decimal
+				sUiType = 'sap.ui.model.type.Float';
+			}
+			return "{path: " + JSON.stringify(vRawValue.value) + ", type: '" + sUiType + "'}";
+		}
+
+		/**
 		 * Warns about an illegal value for a type and returns an appropriate string representation
 		 * of the value.
 		 *
@@ -207,7 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 
 						case "#Path": // 14.5.12 Expression edm:Path
 							if (typeof vRawValue.value === "string") {
-								return "{path: " + JSON.stringify(vRawValue.value) + "}";
+								return formatPath(vRawValue, this.currentBinding());
 							}
 							return illegalValue(vRawValue);
 

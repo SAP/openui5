@@ -22,6 +22,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					aggregations: {
 						child: {multiple: false, type: "sap.ui.core.util._with"}
 					}
+				},
+				/**
+				 * Returns the binding related to the current formatter call, especially the path,
+				 * context, and model. This is meant as a public API for any formatter used during
+				 * XML template processing.
+				 *
+				 * @returns {sap.ui.model.Binding}
+				 *   the binding related to the current formatter call
+				 */
+				currentBinding: function () {
+					return this.getBinding("any");
 				}
 			}),
 			/**

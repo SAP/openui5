@@ -13,18 +13,18 @@
 				"BusinessPartnerID" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "Bus.\nPart.\nID",
+					"@Common.Label" : "Bus. Part. ID",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
 				"CompanyName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 80,
-					"@Common.Label" : "Company\nName"
+					"@Common.Label" : "Company Name"
 				},
 				"WebAddress" : {
 					"type" : ["string", "null"],
-					"@Common.Label" : "Web\nAddress",
+					"@Common.Label" : "Web Address",
 					"@TODO.sortable" : "false",
 					"@TODO.filterable" : "false",
 					"@TODO.semantics" : "url"
@@ -32,24 +32,24 @@
 				"EmailAddress" : {
 					"type" : ["string", "null"],
 					"maxLength" : 255,
-					"@Common.Label" : "E-Mail\nAddress",
+					"@Common.Label" : "E-Mail Address",
 					"@TODO.semantics" : "email"
 				},
 				"PhoneNumber" : {
 					"type" : ["string", "null"],
 					"maxLength" : 30,
-					"@Common.Label" : "Phone\nNo.",
+					"@Common.Label" : "Phone No.",
 					"@TODO.semantics" : "tel"
 				},
 				"FaxNumber" : {
 					"type" : ["string", "null"],
 					"maxLength" : 30,
-					"@Common.Label" : "Fax\nNumber"
+					"@Common.Label" : "Fax Number"
 				},
 				"LegalForm" : {
 					"type" : ["string", "null"],
 					"maxLength" : 10,
-					"@Common.Label" : "Legal\nForm"
+					"@Common.Label" : "Legal Form"
 				},
 				"CurrencyCode" : {
 					"type" : ["string", "null"],
@@ -60,7 +60,7 @@
 				"BusinessPartnerRole" : {
 					"type" : ["string", "null"],
 					"maxLength" : 3,
-					"@Common.Label" : "Bus.\nPart.\nRole"
+					"@Common.Label" : "Bus. Part. Role"
 				},
 				"CreatedAt" : {
 					"anyOf" : [
@@ -74,7 +74,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -90,7 +90,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -124,8 +124,8 @@
 			},
 			"@com.sap.vocabularies.UI.v1.HeaderInfo" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.HeaderInfoType",
-				"TypeName" : "Business\nPartner",
-				"TypeNamePlural" : "Business\nPartners",
+				"TypeName" : "Business Partner",
+				"TypeNamePlural" : "Business Partners",
 				"Title" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
 					"Label" : "Name",
@@ -204,7 +204,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Company\nName",
+				"Label" : "Company Name",
 				"Value" : {
 					"@odata.type" : "#Apply",
 					"function" : "odata.concat",
@@ -218,7 +218,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Phone\nNo.",
+				"Label" : "Phone No.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "PhoneNumber"
@@ -290,18 +290,18 @@
 				"ProductID" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "Product\nID",
+					"@Common.Label" : "Product ID",
 					"@TODO.updatable" : "false"
 				},
 				"TypeCode" : {
 					"type" : ["string", "null"],
 					"maxLength" : 2,
-					"@Common.Label" : "Prod.\nType\nCode"
+					"@Common.Label" : "Prod. Type Code"
 				},
 				"Category" : {
 					"type" : ["string", "null"],
 					"maxLength" : 40,
-					"@Common.Label" : "Prod.\nCat.",
+					"@Common.Label" : "Prod. Cat.",
 					"@com.sap.vocabularies.Common.v1.ValueList" : {
 						"@odata.type" : "#com.sap.vocabularies.Common.v1.ValueListType",
 						"CollectionPath" : "VH_CategorySet",
@@ -321,7 +321,7 @@
 				"Name" : {
 					"type" : ["string", "null"],
 					"maxLength" : 255,
-					"@Common.Label" : "Product\nName",
+					"@Common.Label" : "Product Name",
 					"@TODO.sortable" : "false",
 					"@TODO.filterable" : "false"
 				},
@@ -353,12 +353,12 @@
 				"SupplierID" : {
 					"type" : ["string", "null"],
 					"maxLength" : 10,
-					"@Common.Label" : "Bus.\nPart.\nID"
+					"@Common.Label" : "Bus. Part. ID"
 				},
 				"SupplierName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 80,
-					"@Common.Label" : "Company\nName",
+					"@Common.Label" : "Company Name",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -368,12 +368,12 @@
 					}, {
 						"type" : "null"
 					}],
-					"@Common.Label" : "Prod.\nTax\nCode"
+					"@Common.Label" : "Prod. Tax Code"
 				},
 				"MeasureUnit" : {
 					"type" : ["string", "null"],
 					"maxLength" : 3,
-					"@Common.Label" : "Qty.\nUnit",
+					"@Common.Label" : "Qty. Unit",
 					"@TODO.semantics" : "unit-of-measure"
 				},
 				"WeightMeasure" : {
@@ -386,7 +386,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "WeightUnit",
-					"@Common.Label" : "Wt.\nMeasure",
+					"@Common.Label" : "Wt. Measure",
 					"@Org.OData.Measures.V1.Unit" : {
 						"@odata.type" : "#Path",
 						"value" : "WeightUnit"
@@ -395,7 +395,7 @@
 				"WeightUnit" : {
 					"type" : ["string", "null"],
 					"maxLength" : 3,
-					"@Common.Label" : "Qty.\nUnit",
+					"@Common.Label" : "Qty. Unit",
 					"@TODO.semantics" : "unit-of-measure"
 				},
 				"CurrencyCode" : {
@@ -414,7 +414,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Unit\nPrice",
+					"@Common.Label" : "Unit Price",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
 						"@odata.type" : "#Path",
 						"value" : "CurrencyCode"
@@ -471,7 +471,7 @@
 				"DimUnit" : {
 					"type" : ["string", "null"],
 					"maxLength" : 3,
-					"@Common.Label" : "Dim.\nUnit",
+					"@Common.Label" : "Dim. Unit",
 					"@TODO.semantics" : "unit-of-measure"
 				},
 				"CreatedAt" : {
@@ -486,7 +486,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -502,7 +502,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -533,7 +533,7 @@
 				"TypeNamePlural" : "Products",
 				"Title" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Product\nName",
+					"Label" : "Product Name",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "Name"
@@ -541,7 +541,7 @@
 				},
 				"Description" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Product\nDescription",
+					"Label" : "Product Description",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "Description"
@@ -556,7 +556,7 @@
 				},
 				"Title" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Product\nName",
+					"Label" : "Product Name",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "Name"
@@ -579,10 +579,10 @@
 						"value" : [{
 							"@odata.type" : "#Path",
 							"value" : "Width"
-						}, "\n/", {
+						}, " /", {
 							"@odata.type" : "#Path",
 							"value" : "Depth"
-						}, "\n/", {
+						}, " /", {
 							"@odata.type" : "#Path",
 							"value" : "Height"
 						}]
@@ -603,7 +603,7 @@
 			},
 			"@com.sap.vocabularies.UI.v1.Identification" : [{
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Product\nID",
+				"Label" : "Product ID",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ProductID"
@@ -631,7 +631,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Unit\nPrice",
+				"Label" : "Unit Price",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "Price"
@@ -639,7 +639,7 @@
 			}],
 			"@com.sap.vocabularies.UI.v1.LineItem" : [{
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Product\nID",
+				"Label" : "Product ID",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ProductID"
@@ -653,7 +653,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Product\nName",
+				"Label" : "Product Name",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "Name"
@@ -667,7 +667,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Unit\nPrice",
+				"Label" : "Unit Price",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "Price"
@@ -739,7 +739,7 @@
 					}
 				}, {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.ReferenceFacet",
-					"Label" : "Contact\nData",
+					"Label" : "Contact Data",
 					"Target" : {
 						"@odata.type" : "#AnnotationPath",
 						"value" : "ToSupplier/@com.sap.vocabularies.UI.v1.Badge"
@@ -763,7 +763,7 @@
 				"SalesOrderID" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "Sa.\nOrd.\nID",
+					"@Common.Label" : "Sa. Ord. ID",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -787,13 +787,13 @@
 				"CustomerID" : {
 					"type" : ["string", "null"],
 					"maxLength" : 10,
-					"@Common.Label" : "Bus.\nPart.\nID",
+					"@Common.Label" : "Bus. Part. ID",
 					"@TODO.updatable" : "false"
 				},
 				"CustomerName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 80,
-					"@Common.Label" : "Company\nName",
+					"@Common.Label" : "Company Name",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -814,7 +814,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Gross\nAmt.",
+					"@Common.Label" : "Gross Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -832,7 +832,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Net\nAmt.",
+					"@Common.Label" : "Net Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -850,7 +850,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Tax\nAmt.",
+					"@Common.Label" : "Tax Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -861,7 +861,7 @@
 				"LifecycleStatus" : {
 					"type" : ["string", "null"],
 					"maxLength" : 1,
-					"@Common.Label" : "PO\nLifecycle",
+					"@Common.Label" : "PO Lifecycle",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@com.sap.vocabularies.Common.v1.Text" : {
@@ -872,7 +872,7 @@
 				"LifecycleStatusDescription" : {
 					"type" : ["string", "null"],
 					"maxLength" : 60,
-					"@Common.Label" : "Lifecycle\nDescript.",
+					"@Common.Label" : "Lifecycle Descript.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -881,7 +881,7 @@
 				"BillingStatus" : {
 					"type" : ["string", "null"],
 					"maxLength" : 1,
-					"@Common.Label" : "PO\nConfirmation",
+					"@Common.Label" : "PO Confirmation",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@com.sap.vocabularies.Common.v1.Text" : {
@@ -892,7 +892,7 @@
 				"BillingStatusDescription" : {
 					"type" : ["string", "null"],
 					"maxLength" : 60,
-					"@Common.Label" : "Billing\nDescription",
+					"@Common.Label" : "Billing Description",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -901,7 +901,7 @@
 				"DeliveryStatus" : {
 					"type" : ["string", "null"],
 					"maxLength" : 1,
-					"@Common.Label" : "PO\nOrdering",
+					"@Common.Label" : "PO Ordering",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@com.sap.vocabularies.Common.v1.Text" : {
@@ -912,7 +912,7 @@
 				"DeliveryStatusDescription" : {
 					"type" : ["string", "null"],
 					"maxLength" : 60,
-					"@Common.Label" : "Delivery\nDescription",
+					"@Common.Label" : "Delivery Description",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -930,7 +930,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -946,7 +946,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
@@ -973,11 +973,11 @@
 			},
 			"@com.sap.vocabularies.UI.v1.HeaderInfo" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.HeaderInfoType",
-				"TypeName" : "Sales\nOrder",
-				"TypeNamePlural" : "Sales\nOrders",
+				"TypeName" : "Sales Order",
+				"TypeNamePlural" : "Sales Orders",
 				"Title" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Order\nID",
+					"Label" : "Order ID",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "SalesOrderID"
@@ -1008,7 +1008,7 @@
 				},
 				"MainInfo" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Gross\nAmount",
+					"Label" : "Gross Amount",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "GrossAmount"
@@ -1033,7 +1033,7 @@
 			},
 			"@com.sap.vocabularies.UI.v1.DataPoint#Amount" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataPointType",
-				"Title" : "Gross\nAmount",
+				"Title" : "Gross Amount",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "GrossAmount"
@@ -1041,14 +1041,14 @@
 			},
 			"@com.sap.vocabularies.UI.v1.Identification" : [{
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Customer\nID",
+				"Label" : "Customer ID",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "CustomerID"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Gross\nAmount",
+				"Label" : "Gross Amount",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "GrossAmount"
@@ -1062,14 +1062,14 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Created\nat",
+				"Label" : "Created at",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "CreatedAt"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Changed\nat",
+				"Label" : "Changed at",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ChangedAt"
@@ -1077,7 +1077,7 @@
 			}],
 			"@com.sap.vocabularies.UI.v1.LineItem" : [{
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Order\nID",
+				"Label" : "Order ID",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "SalesOrderID"
@@ -1091,14 +1091,14 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Gross\nAmt.",
+				"Label" : "Gross Amt.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "GrossAmount"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Net\nAmt.",
+				"Label" : "Net Amt.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "NetAmount"
@@ -1112,14 +1112,14 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Created\nat",
+				"Label" : "Created at",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "CreatedAt"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Changed\nat",
+				"Label" : "Changed at",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ChangedAt"
@@ -1127,21 +1127,21 @@
 			}],
 			"@com.sap.vocabularies.UI.v1.StatusInfo" : [{
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Overall\nStatus",
+				"Label" : "Overall Status",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "LifecycleStatus"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Billing\nStatus",
+				"Label" : "Billing Status",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "BillingStatus"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Delivery\nStatus",
+				"Label" : "Delivery Status",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "DeliveryStatus"
@@ -1149,7 +1149,7 @@
 			}],
 			"@com.sap.vocabularies.UI.v1.FieldGroup#Note" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.FieldGroupType",
-				"Label" : "Order\nNote",
+				"Label" : "Order Note",
 				"Data" : [{
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
 					"Label" : "Text",
@@ -1168,7 +1168,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.ReferenceFacet",
-				"Label" : "Status\nInformation",
+				"Label" : "Status Information",
 				"Target" : {
 					"@odata.type" : "#AnnotationPath",
 					"value" : "@com.sap.vocabularies.UI.v1.StatusInfo"
@@ -1192,20 +1192,20 @@
 				"SalesOrderID" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "Sa.\nOrd.\nID",
+					"@Common.Label" : "Sa. Ord. ID",
 					"@TODO.updatable" : "false"
 				},
 				"ItemPosition" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "PO\nItem\nPos",
+					"@Common.Label" : "PO Item Pos",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
 				"ProductID" : {
 					"type" : ["string", "null"],
 					"maxLength" : 10,
-					"@Common.Label" : "Product\nID"
+					"@Common.Label" : "Product ID"
 				},
 				"Note" : {
 					"type" : ["string", "null"],
@@ -1241,7 +1241,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Gross\nAmt.",
+					"@Common.Label" : "Gross Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -1259,7 +1259,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Net\nAmt.",
+					"@Common.Label" : "Net Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -1277,7 +1277,7 @@
 						"type" : "null"
 					}],
 					"@TODO.unit" : "CurrencyCode",
-					"@Common.Label" : "Tax\nAmt.",
+					"@Common.Label" : "Tax Amt.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@Org.OData.Measures.V1.ISOCurrency" : {
@@ -1297,7 +1297,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Time\nStamp",
+					"@Common.Label" : "Time Stamp",
 					"@TODO.sortable" : "false",
 					"@TODO.filterable" : "false"
 				},
@@ -1322,7 +1322,7 @@
 				"QuantityUnit" : {
 					"type" : ["string", "null"],
 					"maxLength" : 3,
-					"@Common.Label" : "Qty.\nUnit",
+					"@Common.Label" : "Qty. Unit",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -1354,8 +1354,8 @@
 			},
 			"@com.sap.vocabularies.UI.v1.HeaderInfo" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.HeaderInfoType",
-				"TypeName" : "Sales\nOrder\nItem",
-				"TypeNamePlural" : "Sales\nOrder\nItems",
+				"TypeName" : "Sales Order Item",
+				"TypeNamePlural" : "Sales Order Items",
 				"Title" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
 					"Label" : "Product",
@@ -1381,7 +1381,7 @@
 					"value" : [{
 						"@odata.type" : "#Path",
 						"value" : "SalesOrderID"
-					}, "\n/", {
+					}, " /", {
 						"@odata.type" : "#Path",
 						"value" : "ItemPosition"
 					}]
@@ -1404,7 +1404,7 @@
 				},
 				"SecondaryInfo" : {
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-					"Label" : "Gross\nAmount",
+					"Label" : "Gross Amount",
 					"Value" : {
 						"@odata.type" : "#Path",
 						"value" : "GrossAmount"
@@ -1420,7 +1420,7 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Gross\nAmount",
+				"Label" : "Gross Amount",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "GrossAmount"
@@ -1442,14 +1442,14 @@
 					"value" : [{
 						"@odata.type" : "#Path",
 						"value" : "SalesOrderID"
-					}, "\n/", {
+					}, " /", {
 						"@odata.type" : "#Path",
 						"value" : "ItemPosition"
 					}]
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Product\nID",
+				"Label" : "Product ID",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ProductID"
@@ -1463,21 +1463,21 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Net\nAmt.",
+				"Label" : "Net Amt.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "NetAmount"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Gross\nAmt.",
+				"Label" : "Gross Amt.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "GrossAmount"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Time\nStamp",
+				"Label" : "Time Stamp",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "DeliveryDate"
@@ -1485,7 +1485,7 @@
 			}],
 			"@com.sap.vocabularies.UI.v1.FieldGroup#Note" : {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.FieldGroupType",
-				"Label" : "Order\nNote",
+				"Label" : "Order Note",
 				"Data" : [{
 					"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
 					"Label" : "Text",
@@ -1515,14 +1515,14 @@
 				},
 				"ContactGuid" : {
 					"$ref" : "http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Guid",
-					"@Common.Label" : "Contact\nGUID",
+					"@Common.Label" : "Contact GUID",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false"
 				},
 				"BusinessPartnerID" : {
 					"type" : "string",
 					"maxLength" : 10,
-					"@Common.Label" : "Bus.\nPart.\nID",
+					"@Common.Label" : "Bus. Part. ID",
 					"@TODO.updatable" : "false"
 				},
 				"Title" : {
@@ -1533,19 +1533,19 @@
 				"FirstName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 40,
-					"@Common.Label" : "First\nName",
+					"@Common.Label" : "First Name",
 					"@TODO.semantics" : "givenname"
 				},
 				"MiddleName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 40,
-					"@Common.Label" : "Middle\nName",
+					"@Common.Label" : "Middle Name",
 					"@TODO.semantics" : "middlename"
 				},
 				"LastName" : {
 					"type" : ["string", "null"],
 					"maxLength" : 40,
-					"@Common.Label" : "Last\nName",
+					"@Common.Label" : "Last Name",
 					"@TODO.semantics" : "familyname"
 				},
 				"Nickname" : {
@@ -1567,24 +1567,24 @@
 				"PhoneNumber" : {
 					"type" : ["string", "null"],
 					"maxLength" : 30,
-					"@Common.Label" : "Phone\nNo.",
+					"@Common.Label" : "Phone No.",
 					"@TODO.semantics" : "tel"
 				},
 				"FaxNumber" : {
 					"type" : ["string", "null"],
 					"maxLength" : 30,
-					"@Common.Label" : "Fax\nNumber"
+					"@Common.Label" : "Fax Number"
 				},
 				"EmailAddress" : {
 					"type" : ["string", "null"],
 					"maxLength" : 255,
-					"@Common.Label" : "E-Mail\nAddress",
+					"@Common.Label" : "E-Mail Address",
 					"@TODO.semantics" : "email"
 				},
 				"Language" : {
 					"type" : ["string", "null"],
 					"maxLength" : 1,
-					"@Common.Label" : "Language\nKey"
+					"@Common.Label" : "Language Key"
 				},
 				"DateOfBirth" : {
 					"anyOf" : [
@@ -1598,7 +1598,7 @@
 							}, {
 								"type" : "null"
 							}],
-					"@Common.Label" : "Date\nof\nBirth",
+					"@Common.Label" : "Date of Birth",
 					"@TODO.semantics" : "bday"
 				},
 				"ToBusinessPartner" : {
@@ -1715,28 +1715,28 @@
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Company\nName",
+				"Label" : "Company Name",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "ToBusinessPartner/CompanyName"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Phone\nNo.",
+				"Label" : "Phone No.",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "PhoneNumber"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "Fax\nNumber",
+				"Label" : "Fax Number",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "FaxNumber"
 				}
 			}, {
 				"@odata.type" : "#com.sap.vocabularies.UI.v1.DataField",
-				"Label" : "E-Mail\nAddress",
+				"Label" : "E-Mail Address",
 				"Value" : {
 					"@odata.type" : "#Path",
 					"value" : "EmailAddress"
@@ -1888,7 +1888,7 @@
 				"Shorttext" : {
 					"type" : "string",
 					"maxLength" : 60,
-					"@Common.Label" : "Short\nDescript.",
+					"@Common.Label" : "Short Descript.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -1940,7 +1940,7 @@
 				"AddressType" : {
 					"type" : "string",
 					"maxLength" : 2,
-					"@Common.Label" : "Address\nType",
+					"@Common.Label" : "Address Type",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -1949,7 +1949,7 @@
 				"Shorttext" : {
 					"type" : "string",
 					"maxLength" : 60,
-					"@Common.Label" : "Short\nDescript.",
+					"@Common.Label" : "Short Descript.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -1966,7 +1966,7 @@
 				"Category" : {
 					"type" : "string",
 					"maxLength" : 40,
-					"@Common.Label" : "Prod.\nCat.",
+					"@Common.Label" : "Prod. Cat.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -1993,7 +1993,7 @@
 				"Ltext" : {
 					"type" : "string",
 					"maxLength" : 40,
-					"@Common.Label" : "Long\nText",
+					"@Common.Label" : "Long Text",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2010,7 +2010,7 @@
 				"Msehi" : {
 					"type" : "string",
 					"maxLength" : 3,
-					"@Common.Label" : "Int.\nmeas.\nunit",
+					"@Common.Label" : "Int. meas. unit",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2020,7 +2020,7 @@
 				"Msehl" : {
 					"type" : "string",
 					"maxLength" : 30,
-					"@Common.Label" : "Unit\ntext",
+					"@Common.Label" : "Unit text",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2037,7 +2037,7 @@
 				"Msehi" : {
 					"type" : "string",
 					"maxLength" : 3,
-					"@Common.Label" : "Int.\nmeas.\nunit",
+					"@Common.Label" : "Int. meas. unit",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2047,7 +2047,7 @@
 				"Msehl" : {
 					"type" : "string",
 					"maxLength" : 30,
-					"@Common.Label" : "Unit\ntext",
+					"@Common.Label" : "Unit text",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2064,7 +2064,7 @@
 				"Msehi" : {
 					"type" : "string",
 					"maxLength" : 3,
-					"@Common.Label" : "Int.\nmeas.\nunit",
+					"@Common.Label" : "Int. meas. unit",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2074,7 +2074,7 @@
 				"Msehl" : {
 					"type" : "string",
 					"maxLength" : 30,
-					"@Common.Label" : "Unit\ntext",
+					"@Common.Label" : "Unit text",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2091,7 +2091,7 @@
 				"TypeCode" : {
 					"type" : "string",
 					"maxLength" : 2,
-					"@Common.Label" : "Prod.\nType\nCode",
+					"@Common.Label" : "Prod. Type Code",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2100,7 +2100,7 @@
 				"Shorttext" : {
 					"type" : "string",
 					"maxLength" : 60,
-					"@Common.Label" : "Short\nDescript.",
+					"@Common.Label" : "Short Descript.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2117,7 +2117,7 @@
 				"BpRole" : {
 					"type" : "string",
 					"maxLength" : 3,
-					"@Common.Label" : "Bus.\nPart.\nRole",
+					"@Common.Label" : "Bus. Part. Role",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2126,7 +2126,7 @@
 				"Shorttext" : {
 					"type" : "string",
 					"maxLength" : 60,
-					"@Common.Label" : "Short\nDescript.",
+					"@Common.Label" : "Short Descript.",
 					"@TODO.creatable" : "false",
 					"@TODO.updatable" : "false",
 					"@TODO.sortable" : "false",
@@ -2172,7 +2172,7 @@
 				"PostalCode" : {
 					"type" : ["string", "null"],
 					"maxLength" : 10,
-					"@Common.Label" : "Postal\nCode",
+					"@Common.Label" : "Postal Code",
 					"@TODO.semantics" : "zip"
 				},
 				"Street" : {
@@ -2195,7 +2195,7 @@
 				"AddressType" : {
 					"type" : ["string", "null"],
 					"maxLength" : 2,
-					"@Common.Label" : "Address\nType"
+					"@Common.Label" : "Address Type"
 				}
 			}
 		},
