@@ -1408,7 +1408,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
+
+	/**
+	* Override refreshRows to enable paging
+	* @private
+	*/
+	RowRepeater.prototype.refreshRows = function() {
+
+		// collect the relevant informations
+		var oBindingInfo = this.getBindingInfo("rows"),
+			oBinding = oBindingInfo.binding,
+			iRowCount = this._getRowCount(),
+			iNumberOfRows = this.getNumberOfRows(),
+			iNewRowCount = Math.min(iRowCount, iNumberOfRows),
+			iThreshold = this.getThreshold();
+
+		// Reset current page
+		this.setProperty("currentPage", 1, true);
+
+		// call getContext to trigger data load
+		oBinding.getContexts(0, iNewRowCount, iThreshold);
+
+	};
+
 	/**
 	 * Override updateRows to enable paging 
 	 * @private
