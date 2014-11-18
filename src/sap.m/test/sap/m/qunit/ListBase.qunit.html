@@ -176,7 +176,7 @@
 			strictEqual(oList.getRememberSelections(), true, 'The property "rememberSelections" is "true" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
-			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of ' + vSelectedItemsNumber + ' on ' + oList);
+			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of ' + vSelectedItemsNumber + ' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' + vSelectedItemsNumber + ' item ' + oList);
 		
 			// filter 2 items ("Title1" and "Title10")
@@ -191,7 +191,7 @@
 			strictEqual(oList.getRememberSelections(), false, 'The property "rememberSelections" is "false" on ' + oList);
 
 			// TODO: decide if check on internal variables is needed (Cahit)
-			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array is empty on ' + oList);
+			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
 
 			// filter 2 items ("Title1" and "Title10")
 			oList.getBinding("items").filter([new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1")]);
@@ -226,8 +226,10 @@
 				oListSelected[2] = oList.getItems()[5].getTitle();
 				oListSelected.sort();
 			}
-	
-			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of' +vSelectedItemsNumber +' on ' + oList);
+			
+			var aSelectedContextPaths = oList.getSelectedContextPaths();
+			
+			strictEqual(aSelectedContextPaths.length, vSelectedItemsNumber, 'The internal selection array has length of' +vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains ' +vSelectedItemsNumber+ ' items ' + oList);
 		
 			oList.setGrowing(false);
@@ -249,20 +251,41 @@
 				strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
 			}
 		
-			strictEqual(oList._aSelectedPaths.length, vSelectedItemsNumber, 'The internal "_aSelectedPaths" array has length of' + vSelectedItemsNumber +' on ' + oList);
+			strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 		
 			oList.setRememberSelections(false);
-			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array is empty on ' + oList);
+			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
 		
 			// sort descending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );	
-			strictEqual(oList._aSelectedPaths.length, 0, 'The internal "_aSelectedPaths" array has length of 0 on ' + oList);
+			strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array has length of 0 on ' + oList);
 			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
 		
 			//rebinding
 			bindListData(oList, data4, "/items", createTemplateListItem());
 			strictEqual(oList.getSelectedItems().length, 0, 'The selection contains no items ' + oList);
+			
+			// retain selection after binding
+			oList.setRememberSelections(true);
+			oList.setSelectedContextPaths(aSelectedContextPaths);
+			
+			// sort ascending
+			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", false, oSorterAsc) ] );
+			
+			// retest after sorting
+			if (vSelectionMode == "SingleSelect") {
+				oListSelectedAfterSorting = oList.getSelectedItems()[0].getTitle();
+				strictEqual(oListSelected, oListSelectedAfterSorting, "the same item should be selected after sorting" );
+			}
+			else if (vSelectionMode == "MultiSelect") {
+				oListSelectedAfterSorting = [];
+				oListSelectedAfterSorting[0] = oList.getSelectedItems()[0].getTitle();
+				oListSelectedAfterSorting[1] = oList.getSelectedItems()[1].getTitle();
+				oListSelectedAfterSorting[2] = oList.getSelectedItems()[2].getTitle();
+				oListSelectedAfterSorting.sort();
+				strictEqual(oListSelected.toString(), oListSelectedAfterSorting.toString(), "the same items should be selected after sorting" );
+			}
 		
 			// cleanup
 			oPage.removeAllContent();
@@ -367,7 +390,7 @@
 			var oList = new sap.m.List({});
 
 			// TODO: decide if check on internal variables is needed (Cahit)
-			strictEqual(oList._aSelectedPaths.length, 0, "Internal selected path array is empty after initialization of " + oList);
+			strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after initialization of " + oList);
 			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after initialization of " + oList);
 
 			oList.destroy();
@@ -442,7 +465,7 @@
 			strictEqual(oList.getDomRef(), null, "Domref does not exist anymore after destroying " + oList.getId());
 
 			// TODO: decide if check on internal variables is needed (Cahit)
-			strictEqual(oList._aSelectedPaths.length, 0, "Internal selected path array is empty after destroying " + oList.getId());
+			strictEqual(oList.getSelectedContextPaths().length, 0, "Internal selected path array is empty after destroying " + oList.getId());
 			strictEqual(oList._oGrowingDelegate, null, "Internal growingDelegate is null after destroying " + oList.getId());
 		});
 
