@@ -414,6 +414,11 @@ sap.ui
 							}
 
 							var aExp1Parts = rExp1.exec(sODataQueryValue);
+							// remove brackets around values
+							if (aExp1Parts === null) {
+								sODataQueryValue = sODataQueryValue.replace(/[\(\)]/g, "");
+								return this._getOdataQueryFilter(aDataSet, this._trim(sODataQueryValue));
+							}
 							var sExpression = aExp1Parts[1];
 							sOperator = aExp1Parts[2];
 							var sExpression2 = aExp1Parts[3];
@@ -2189,6 +2194,14 @@ sap.ui
 												path : new RegExp("(" + sEntitySetName + ")(\\(([^/\\?#]+)\\)/?(.*)?)?"),
 												response : function(oXhr, sEntitySetName, group2, sKeys, sNavName) {
 													if (oXhr.requestHeaders["x-http-method"] === "MERGE") {
+														// custom method MERGE not supported in IE11, so using PATCH instead
+														if (!!Device.browser.internet_explorer) {
+															return jQuery.sap.sjax({
+																type : 'PATCH',
+																url : oXhr.url,
+																data : oXhr.requestBody
+															});
+														}
 														return jQuery.sap.sjax({
 															type : 'MERGE',
 															url : oXhr.url,

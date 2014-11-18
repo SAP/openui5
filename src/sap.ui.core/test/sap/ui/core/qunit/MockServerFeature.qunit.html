@@ -519,7 +519,8 @@ jQuery.sap.require("sap.ui.core.util.MockServer");
 	        var rowExpr = "(SAPClient eq 'SAPClient_0') AND (Currency_E eq 6287.57)";
 	        var wcaQuery = "TestQueryResults?$filter=" + rowExpr;
 	        this.oResponse = jQuery.sap.sjax({url: "/myService/" + wcaQuery});
-	        ok(isNaN(this.oResponse.statusCode), "is as expected");
+	        //ok(isNaN(this.oResponse.statusCode), "is as expected");
+	        equal(this.oResponse.statusCode, 400);
 	    });
 	    test("row filter condition", function () {
 	        var rowExpr = "(SAPClient eq 'SAPClient_0')";
