@@ -62,21 +62,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 	
 			/**
-			 * tap event
+			 * Event is fired when the user taps on the control.
 			 * @deprecated Since version 1.20.0. 
 			 * This event is deprecated, use the press event instead.
 			 */
 			tap : {deprecated: true}, 
 	
 			/**
-			 * detail tap event
-			 * @deprecated Since version 7.20.0. 
+			 * Event is fired when the user taps on the detail button of the control.
+			 * @deprecated Since version 1.20.0. 
 			 * This event is deprecated, use the detailPress event instead.
 			 */
 			detailTap : {deprecated: true}, 
 	
 			/**
 			 * Event is fired when the user clicks on the control.
+			 * 
+			 * Note: When the parent mode is SingleSelectMaster or includeItemInSelection is true then this event is not fired but the parent fires a selectionChange event instead.
+			 * Also if there is an interactive element that handles the press event then the list item's press is not fired.
+			 * 
+			 * If mode detection is not necessary for the press event then the itemPress event of the parent can be used. 
+			 * {@link sap.m.ListBase#attachItemPress}
 			 */
 			press : {}, 
 	
