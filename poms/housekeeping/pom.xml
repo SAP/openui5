@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.17.0-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.27.0-SNAPSHOT</sap.ui5.version>
 
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
@@ -150,19 +150,19 @@
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>getting-started-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>uilib-sample</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>demokit</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
@@ -170,7 +170,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5</artifactId>
                   <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>sapui5</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
@@ -178,7 +178,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>phoenix-cdn</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
@@ -186,118 +186,118 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>snippix</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
 
                 <!-- REMOVED DUE TO TESTING PURPOSES
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demo-trac-access</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>classic-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 -->
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>travel</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>pac-man</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>fried-chicken-demo</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <!-- DELETE PROJECT?!
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>cometd-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 -->
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>ptcdemo</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>databinding</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <!-- DELETE PROJECT?!
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>streamwork-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 -->
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
                   <artifactId>performance-webm</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.tools</groupId>
                   <artifactId>jsunit-testrunner</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>jsunit-tests</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <!-- 
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>cactus-unit-tests</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>selenium-tests</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 -->
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>supplier-tagging</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>teched2011</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>ui5infoapp</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>ui5team</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>charting-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.themedesigner</groupId>
@@ -309,7 +309,7 @@
                 <deployable>
                   <groupId>com.sap.ui5.training</groupId>
                   <artifactId>ui5school</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
               </deployables>
             </configuration>
@@ -347,25 +347,25 @@
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>getting-started-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>uilib-sample</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>demokit</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5</artifactId>
                   <fallbackArtifactId>phoenix-cdn</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>sapui5</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
@@ -373,7 +373,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>phoenix-cdn</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
@@ -381,19 +381,19 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>sapui5-internal</artifactId>
                   <fallbackArtifactId>phoenix-cdn-extended</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>sapui5-internal</contextPath>
                   <classifier>${sap.ui5.opt.classifier}</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.test</groupId>
                   <artifactId>snippix</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>ui5show</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
               </deployables>
             </configuration>
@@ -431,19 +431,19 @@
                 <deployable>
                   <groupId>com.sap.ui5.dist</groupId>
                   <artifactId>sapui5-dist</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>opt</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.dist</groupId>
                   <artifactId>sapui5-sdk-dist</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>opt</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui5.incubation</groupId>
                   <artifactId>sapui5-incubation</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>opt</classifier>
                 </deployable>
               </deployables>
@@ -482,13 +482,13 @@
                 <deployable>
                   <groupId>com.sap.ushell</groupId>
                   <artifactId>ushell</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <classifier>opt</classifier>
                 </deployable>
                 <deployable>
                   <groupId>com.sap.ui2.srvc</groupId>
                   <artifactId>services</artifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
               </deployables>
             </configuration>
@@ -1113,7 +1113,7 @@
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>theme-designer</artifactId>
                   <fallbackArtifactId>theme-editor</fallbackArtifactId>
-                  <version>[1.0.0,)</version>
+                  <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                   <contextPath>theme-designer</contextPath>
                   <classifier>opt</classifier>
                   <fallbackClassifier>_</fallbackClassifier>
