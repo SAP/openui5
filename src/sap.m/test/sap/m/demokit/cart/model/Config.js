@@ -28,6 +28,6 @@ model.Config.getPwd = function () {
 
 model.Config.getHost = function () {
 	
-	return "/uilib-sample/proxy/http/ec2-54-225-119-138.compute-1.amazonaws.com:50000";
+	return "../../../../../proxy/http/ec2-54-225-119-138.compute-1.amazonaws.com:50000";
 
 };
