@@ -50,6 +50,15 @@
 				"samples" : [
 					"sap.ui.core.sample.ThemeCustomClasses"
 				]
+			},
+			{
+				"id" : "sap.ui.core.routing.Route",
+				"name" : "PatternMatching",
+				"category" : "Routing",
+				"since" : "1.16",
+				"samples" : [
+					"sap.ui.core.sample.PatternMatching"
+				]
 			}
 		],
 		"samples" : [
@@ -92,6 +101,11 @@
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
 				"name" : "Theme-dependent CSS-classes",
 				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements." 
+			},
+			{
+				"id" : "sap.ui.core.sample.PatternMatching",
+				"name" : "Route Patterns",
+				"description" : "Syntax for the Route pattern property."
 			}
 		]
 	}
