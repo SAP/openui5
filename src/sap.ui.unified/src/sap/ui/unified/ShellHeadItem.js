@@ -78,9 +78,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 		}
 	}});
 	
-	
 	ShellHeadItem.prototype.onclick = function(oEvent){
 		this.firePress();
+		// IE always interprets a click on an anker as navigation and thus triggers the 
+		// beforeunload-event on the window. Since a ShellHeadItem never has a valid href-attribute,
+		// the default behavior should never be triggered
+		oEvent.preventDefault();
 	};
 	
 	ShellHeadItem.prototype.onsapspace = ShellHeadItem.prototype.onclick;
