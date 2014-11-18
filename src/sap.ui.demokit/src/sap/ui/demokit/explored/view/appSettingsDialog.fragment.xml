@@ -7,7 +7,7 @@
     contentWidth="350px"
     id="AppSettingsDialog">
     <content>
-		<Label text="Theme" design="Bold" />
+		<Label text="Theme" design="Bold" id="ThemeLabel"/>
 		<SegmentedButton 
 			selectedButton="sap_bluecrystal"
 			id="ThemeButtons"
@@ -22,6 +22,14 @@
 			width="100%" >
 		      <Button text="On" id="compactOn" />
 		      <Button text="Off" id="compactOff" />
+		</SegmentedButton>
+		<Label text="Right To Left Mode" design="Bold" />
+		<SegmentedButton 
+			selectedButton="RTLOff"
+			id="RTLButtons" 
+			width="100%" >
+		      <Button text="On" id="RTLOn" />
+		      <Button text="Off" id="RTLOff" />
 		</SegmentedButton>
 	</content>
 		<beginButton>
