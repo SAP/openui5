@@ -396,7 +396,7 @@ sap.ui
 
 						this._updateKeyFieldItems(this, this._oConditionsGrid, true);
 						this._enableConditions();
-						this._updateKeyFields();					
+						this._updateKeyFields();			
 					};
 
 					/**
@@ -1351,8 +1351,15 @@ sap.ui
 							}
 						}
 
+						var fHandledIsDefault = function(oKeyFieldItem, index) {
+							if (oKeyFieldItem.isDefault) {
+								oKeyField.setSelectedIndex(index);
+							}
+						};
+							
 						for (i = 0; i < n; i++) {
 							var oKeyField = oTargetGrid.getContent()[i].keyField;
+							var oSelectCheckbox = oTargetGrid.getContent()[i].select;
 
 							// remember the old KeyField
 							var sOldKey = oKeyField.getSelectedKey();
@@ -1379,6 +1386,11 @@ sap.ui
 							} else if (oKeyField.getItems().length > 0) {
 								// make at least the first item the selected item. We need this for updating the tooltip
 								oKeyField.setSelectedIndex(0);
+							}
+
+							if (!oSelectCheckbox.getSelected()) {
+								// set/update the isDefault keyfield as selected item for an empty condition row 
+								oThat._aKeyFields.forEach(fHandledIsDefault, this);
 							}
 							
 							// update the tooltip
@@ -1821,12 +1833,16 @@ sap.ui
 									break;
 
 								case sap.m.P13nConditionOperation.Ascending :
+									sConditionText = "ascending";
+									break;
 								case sap.m.P13nConditionOperation.GroupAscending :
 									sConditionText = "ascending";
 									sConditionText += " showIfGrouped:" + bShowIfGrouped;
 									break;
 
 								case sap.m.P13nConditionOperation.Descending :
+									sConditionText = "descending";
+									break;
 								case sap.m.P13nConditionOperation.GroupDescending :
 									sConditionText = "descending";
 									sConditionText += " showIfGrouped:" + bShowIfGrouped;

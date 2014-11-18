@@ -171,13 +171,10 @@ sap.ui
 
 					/**
 					 * check if the entered/modified conditions are correct, marks invalid fields yellow (Warning state)
-					 * and opens a popup message dialog to give the user the feedback that some values are wrong or
-					 * missing.
 					 * 
-					 * @private
-					 * @param {function}
-					 *            fnCallback which we call when all conditions are valid or the user ignores the
-					 *            wrong/missing fields by pressing Yes on a message dialog.
+					 * @public
+					 * @returns {boolean}
+					 * 			false, if there is an invalid condition 
 					 */
 					P13nFilterPanel.prototype.validateConditions = function() {
 						return this._oIncludeFilterPanel.validateConditions()
@@ -350,7 +347,8 @@ sap.ui
 							text : oItem.getText(),
 							tooltip : oItem.getTooltip(),
 							maxLength : oItem.getMaxLength(),
-							type : oItem.getType()
+							type : oItem.getType(),
+							isDefault : oItem.getIsDefault()
 						};
 
 						this._aKeyFields.push(oKeyField);
