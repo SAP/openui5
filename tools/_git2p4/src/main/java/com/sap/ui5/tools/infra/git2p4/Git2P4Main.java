@@ -37,6 +37,8 @@ public class Git2P4Main {
   static String p4change = null;
   static String resumeAfter = null;
   static boolean applyContributorsVersions = false; 
+  private static boolean skipContributorsVersions = false;
+
   static final SortedSet<GitClient.Commit> allCommits = new TreeSet<GitClient.Commit>(new Comparator<GitClient.Commit>() {
     @Override
     public int compare(GitClient.Commit a, GitClient.Commit b) {
@@ -281,7 +283,7 @@ public class Git2P4Main {
 
   private static Properties retrieveLatestVersions(String fromVersion, String toVersion, ReleaseOperation op) throws IOException, FileNotFoundException {
     //Filter operations to apply to
-    if (!applyContributorsVersions) {
+    if (skipContributorsVersions || !applyContributorsVersions) {
       return null;
     }
     //read latest versions for uilib-collections.pom
@@ -726,6 +728,8 @@ public class Git2P4Main {
         branch = args[++i];
       } else if ( "--do-not-use-last-commit".equals(args[i]) ) {
         useLastCommit = false;
+      } else if ( "--do-not-update-contributors".equals(args[i]) ) {
+        skipContributorsVersions = true;
       } else if ( "--rebuild".equals(args[i]) ) {
         command = "noop";
       } else if ( args[i].startsWith("-") ) {
