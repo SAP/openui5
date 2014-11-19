@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				/**
 				 * Define the amount of units to change the slider when adjusting by drag and drop.
 				 *
-				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10, 15, 20).
+				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
 				 *
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
 				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
