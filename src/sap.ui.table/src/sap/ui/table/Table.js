@@ -3945,7 +3945,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		} else {
 			var bHasRowHeader = this.getSelectionMode() !== sap.ui.table.SelectionMode.None && this.getSelectionBehavior() !== sap.ui.table.SelectionBehavior.RowOnly;
 			if (bHasRowHeader) {
-				return false;
+				return null;
 			} else {
 				return bIsFocusedRowSelected;
 			}
@@ -4158,10 +4158,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.onsapdownmodifiers = function(oEvent) {
 		if (oEvent.shiftKey) {
 			var iFocusedRow = this._getFocusedRowIndex();
-
-			if (this._isFocusedRowSelected()) {
+			var bIsFocusedRowSelected = this._isFocusedRowSelected();
+			if (bIsFocusedRowSelected === true) {
 				this.addSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
-			} else {
+			} else if (bIsFocusedRowSelected === false) {
 				this.removeSelectionInterval(iFocusedRow + 1, iFocusedRow + 1);
 			}
 
@@ -4182,10 +4182,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.onsapupmodifiers = function(oEvent) {
 		if (oEvent.shiftKey) {
 			var iFocusedRow = this._getFocusedRowIndex();
-
-			if (this._isFocusedRowSelected()) {
+			var bIsFocusedRowSelected = this._isFocusedRowSelected();
+			
+			if (bIsFocusedRowSelected === true) {
 				this.addSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
-			} else {
+			} else if (bIsFocusedRowSelected === false) {
 				this.removeSelectionInterval(iFocusedRow - 1, iFocusedRow - 1);
 			}
 
