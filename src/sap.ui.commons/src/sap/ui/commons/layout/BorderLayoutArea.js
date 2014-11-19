@@ -57,12 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Custo
 			/**
 			 * Defines the height or the width. Is not used when the area element is in Center.
 			 */
-			size : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100px'},
-	
-			/**
-			 * Invisible controls are not rendered
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true}
+			size : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : '100px'}
 		},
 		defaultAggregation : "content",
 		aggregations : {
