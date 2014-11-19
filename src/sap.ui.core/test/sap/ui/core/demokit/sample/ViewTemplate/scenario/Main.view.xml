@@ -14,6 +14,7 @@
 		<Select id="selectInstance" change="onChangeInstance" selectedKey="{ui>/selectedInstance}">
 			<!-- aggregation items is bound in controller  -->
 		</Select>
+		<core:Icon src="{ui>/icon}" class="sapMBtnIcon"/>
 		</HBox>
 		<commons:HorizontalDivider/>
 		<HBox id="detail"/>
