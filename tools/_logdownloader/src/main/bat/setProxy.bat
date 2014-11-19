@@ -1,0 +1,7 @@
+@echo off
+
+set HTTP_PROXY_HOST=proxy
+set HTTP_PROXY_PORT=8080
+set HTTPS_PROXY_HOST=proxy
+set HTTPS_PROXY_PORT=8080
+set HTTP_NON_PROXY_HOSTS="localhost"

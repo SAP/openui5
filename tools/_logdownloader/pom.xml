@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--************************************************************************ 
+	* POM SECTION: Parent POM Settings 
+	************************************************************************ -->
+
+	<parent>
+		<groupId>com.sap.ui5.tools</groupId>
+		<artifactId>tools-reactor</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<artifactId>logdownloader</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 - Log Downloader</name>
+	<description>SAPUI5 - Log Downloader</description>
+
+	
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+	
+		<plugins>
+		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-bat</id>
+						<!-- here the phase you need -->
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/bat</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+		</plugins>
+		
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Dependencies Settings
+	***************************************************************************-->
+
+	<dependencies>
+	
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20141113</version>
+		</dependency>
+	
+	</dependencies>
+
+
+</project>
