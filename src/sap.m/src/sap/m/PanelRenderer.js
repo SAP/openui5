@@ -20,11 +20,6 @@ sap.ui.define(['jquery.sap.global'],
 	 *          oControl an object representation of the control that should be rendered
 	 */
 	PanelRenderer.render = function(oRm, oControl) {
-		// Return immediately if control is invisible
-		if (!oControl.getVisible()) {
-			return;
-		}
-
 		// start Panel
 		oRm.write("<section");
 		oRm.writeControlData(oControl);
