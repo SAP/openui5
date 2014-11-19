@@ -38,12 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Defines the width of the Tokenizer.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
-	
-			/**
-			 * Determines whether the tokenizer is visible.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 		},
 		defaultAggregation : "tokens",
 		aggregations : {
