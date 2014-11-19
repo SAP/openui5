@@ -55,12 +55,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * 
 			 * If bandwidth is the key for the application, set this value to false.
 			 */
-			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
-			 * Shows or hides the ObjectStatus instance
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true}
+			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true}
 		}
 	}});
 	
