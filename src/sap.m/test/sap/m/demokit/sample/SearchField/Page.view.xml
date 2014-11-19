@@ -11,7 +11,7 @@
 			</Toolbar>
 		</subHeader>
 		<content>
-			<SearchField width="90%" class="marginAll" />
+			<SearchField width="90%" class="sapUiSmallMargin" />
 		</content>
 	</Page>
 </mvc:View>

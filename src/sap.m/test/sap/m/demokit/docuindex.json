@@ -694,6 +694,14 @@
 				"category" : "Action",
 				"since" : "1.10",
 				"samples" : [ "sap.m.sample.UrlHelper" ]
+			},
+			{
+				"id" : "sap.m.sample.PredefinedMargins",
+				"name" : "Predefined CSS Margin Classes",
+				"category" : "Layout",
+				"since" : "1.28",
+				"formFactors" : "-",
+				"samples" : [ "sap.m.sample.PredefinedMarginsAll", "sap.m.sample.PredefinedMarginsSingleSided", "sap.m.sample.PredefinedMarginsTwoSided" ]
 			}
 		],
 		"samples" : [
@@ -1436,6 +1444,31 @@
 				"id": "sap.m.sample.UploadCollection",
 				"name": "Upload Collection",
 				"description": "This control allows users to upload single or multiple files from their device (desktop PC, tablet or phone) and attach them into the application."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsAbout",
+				"name": "Predefined Margin CSS Classes",
+				"description": "Since version 1.28, UI5 provides predefined CSS classes for application developers to add margins to their controls."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsAll",
+				"name": "Margins All Around a Control",
+				"description": "Use pre-defined margin classes 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 16, 32 or 48 px margin to your control. This will clear the area around your control (outside its border)."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsSingleSided",
+				"name": "Single-Sided Margins",
+				"description": "Clear the space to the left, right, top or bottom of your control. Choose a size ('Small', 'Medium' or 'Large', which stands for 16, 32 or 48 px respectively) and a direction ('Begin', 'End', 'Top' or 'Bottom', where 'Begin' is left and 'End' is right and vice versa in right-to-left mode). If you would like to clear a 32px space to the left (resp. right in rtl mode), you would add class 'sapUiMediumBegin'. You may also add several classes which have to point to different directions though, for example you would add classes 'sapUiLargeEnd sapUiLargeBottom' to clear a 48px space to the bottom and to the right (resp. to the left in rtl mode)."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsTwoSided",
+				"name": "Two-Sided Margins",
+				"description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Small', 'Medium' or 'Large', which stands for 16, 32 or 48 px respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumBeginEnd'."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsResponsive",
+				"name": "Responsive Margins",
+				"description": "Clear the space around your control, where the margin depends on the device your are using."
 			}
 		]
 	}
