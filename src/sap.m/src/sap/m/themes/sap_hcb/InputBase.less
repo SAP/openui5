@@ -242,7 +242,7 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	}
 
 	.sapMInputBaseInner {
-		border-color: sapHCStandardFG;
+		border-color: @sapHCStandardFG;
 	}
 
 	.sapMInputBaseInner {
@@ -252,8 +252,33 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	.sapMInputBasePlaceholder {
 		line-height:	   1.5rem;
 	}
-	
+
 	.sapMInputDescription>span {
 		line-height: 1.5rem;
+	}
+}
+
+/* Input selection fix -
+ * Due to the fact that the CSS parsing rules require dropping the whole rule when encountering an invalid
+ * pseudo-element, two separate rules must be written */
+.sapMInputBaseInner {
+	&::selection {
+		background: @sapHCHighlightAltBG;
+		color: @sapHCStandardFG;
+	}
+	&::-moz-selection {
+		background: @sapHCHighlightAltBG;
+		color: @sapHCStandardFG;
+	}
+}
+
+/* Google chrome and Safari input selection fix:
+ * The browser renders the selection background with 50% opacity by default.
+ * The solution is to use fade with a value for alpha 99 if it's set 100 the browser ignores it.
+ */
+html[data-sap-ui-browser^="sf"],
+html[data-sap-ui-browser^="cr"] {
+	.sapMInputBaseInner::selection {
+		background: fade(@sapHCHighlightAltBG, 99);
 	}
 }
