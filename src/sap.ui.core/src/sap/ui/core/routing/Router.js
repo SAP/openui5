@@ -127,6 +127,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				that.parse(oEvent.getParameter("newHash"), oEvent.getParameter("oldHash"));
 			};
 
+			if (!oHashChanger) {
+				jQuery.sap.log.error("navTo of the router is called before the router is initialized. If you want to replace the current hash before you initialize the router you may use getUrl and use replaceHash of the Hashchanger.");
+				return;
+			}
+
 			oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
 			if (!oHashChanger.init()) {
@@ -275,6 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		
 		/**
 		 * Navigates to a specific route defining a set of parameters. The Parameters will be URI encoded - the characters ; , / ? : @ & = + $ are reserved and will not be encoded.
+		 * If you want to use special characters in your oParameters, you have to encode them (encodeURIComponent).
 		 * 
 		 * @param {string} sName Name of the route
 		 * @param {object} oParameters Parameters for the route

@@ -268,6 +268,89 @@
 
 		});
 
+		module("greedy");
+
+		test("Should create a greedy route", function () {
+			// Arrange + System under test
+			var sPattern = "product",
+				oRouter = new sap.ui.core.routing.Router([
+				{
+					name: "first",
+					pattern: sPattern
+				},
+				{
+					name : "parent",
+					pattern : sPattern,
+					greedy : true,
+					subroutes: [
+						{
+							name : "child",
+							pattern : sPattern
+						}
+					]
+				}
+			]);
+
+			var fnFirstSpy = this.spy();
+			var fnChildSpy = this.spy();
+			var fnParentSpy = this.spy();
+
+			oRouter.getRoute("first").attachPatternMatched(fnFirstSpy);
+			oRouter.getRoute("parent").attachPatternMatched(fnParentSpy);
+			oRouter.getRoute("child").attachPatternMatched(fnChildSpy);
+
+			// Act
+			oRouter.parse(sPattern);
+
+			// Assert
+			strictEqual(fnFirstSpy.callCount, 1, "first route gets pattern matched");
+			strictEqual(fnChildSpy.callCount, 0, "child gets not pattern matched");
+			strictEqual(fnParentSpy.callCount, 1, "parent does also get pattern matched because of greedyness");
+
+			// Cleanup
+			oRouter.destroy();
+		});
+
+
+		test("Should create a greedy route", function () {
+			// Arrange + System under test
+			var sPattern = "product",
+					oRouter = new sap.ui.core.routing.Router([
+						{
+							name: "first",
+							pattern: sPattern
+						},
+						{
+							name : "second",
+							pattern : sPattern
+						},
+						{
+							name: "last",
+							pattern: sPattern,
+							greedy : true
+						}
+					]);
+
+			var fnFirstSpy = this.spy();
+			var fnSecondSpy = this.spy();
+			var fnLastSpy = this.spy();
+
+			oRouter.getRoute("first").attachPatternMatched(fnFirstSpy);
+			oRouter.getRoute("second").attachPatternMatched(fnSecondSpy);
+			oRouter.getRoute("last").attachPatternMatched(fnLastSpy);
+
+			// Act
+			oRouter.parse(sPattern);
+
+			// Assert
+			strictEqual(fnFirstSpy.callCount, 1, "First route gets the hashchange");
+			strictEqual(fnSecondSpy.callCount, 0, "Second one is not greedy");
+			strictEqual(fnLastSpy.callCount, 1, "The Third route is greedy!");
+
+			// Cleanup
+			oRouter.destroy();
+		});
+
 		module("routing", {
 			setup : function() {
 				//make sure to start with an empty hash

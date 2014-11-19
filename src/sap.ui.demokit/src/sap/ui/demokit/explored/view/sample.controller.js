@@ -88,7 +88,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.sample", {
 		}
 
 		var oHtmlControl = new sap.ui.core.HTML({
-			content : '<iframe src="' + sSrc + '" id="sampleFrame"></iframe>'
+			content : '<iframe src="' + sSrc + '" id="sampleFrame" frameBorder="0"></iframe>'
 		}).addEventDelegate({
 			onAfterRendering : function () {
 				oHtmlControl.$().on("load", function () {
