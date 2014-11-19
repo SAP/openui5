@@ -23,12 +23,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	PullToRefreshRenderer.render = function(oRm, oControl){
-	
-		// do not render invisible P2R
-		if (!oControl.getVisible()) {
-			return;
-		}
-		
 		var bShowIcon = oControl.getShowIcon();
 		var sCustomIcon = oControl.getCustomIcon();
 	
