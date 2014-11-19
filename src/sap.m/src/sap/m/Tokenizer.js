@@ -662,10 +662,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 	
-		if (fValidateCallback) {
-			fValidateCallback(true);
-		}
-	
 		var tokenExists = this._tokenExists(oToken);
 		if (tokenExists) {
 			return;
@@ -673,6 +669,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		this.addToken(oToken);
 	
+		if (fValidateCallback) {
+			fValidateCallback(true);
+		}
+		
 		this.fireTokenChange({
 			addedTokens : [oToken],
 			removedTokens : [],

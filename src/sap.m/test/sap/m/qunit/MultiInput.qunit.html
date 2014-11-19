@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -27,10 +27,23 @@
 	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
 	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "D-Item"}));
 	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "E-Item"}));
-	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "F-Item"}));	
+	oMultiInput.addSuggestionItem(new sap.ui.core.Item({text: "F-Item"}));
+	
+	var oMLInput = new sap.m.MultiInput("i2",{width:"50%", enableMultiLineMode:true});
+	oMLInput.addToken(new sap.m.Token({key:"ml1",text:"MutiLineToken1"}));
+	oMLInput.addToken(new sap.m.Token({key:"ml2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
+	oMLInput.addToken(new sap.m.Token({key:"ml3",text:"Token3"}));
+	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "A-Item"}));
+	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "B-Item"}));
+	oMLInput.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
+	
+	
+	
 	
 	oMultiInput.placeAt("content");	
-
+	oMLInput.placeAt("content");
+	sap.ui.getCore().applyChanges();
+	
 	module("Basic", {
 		setup : function() {
 			multiInput1 = sap.ui.getCore().getControl("i1");						
@@ -402,6 +415,133 @@
 	    
 	    oTable.destroy();
 	});
+	
+	module("MultiLineMode");
+
+	test("property EnableMultiLineMode", function() {
+		var oMISingleLineMode = new sap.m.MultiInput("i4");
+		oMISingleLineMode.addToken(new sap.m.Token({key:"1",text:"MutiLineToken1"}));
+		oMISingleLineMode.addToken(new sap.m.Token({key:"2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
+		oMISingleLineMode.addToken(new sap.m.Token({key:"3",text:"Token3"}));
+		
+		oMISingleLineMode.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		
+		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "initial single-line mode");
+		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
+		
+		oMISingleLineMode.setEnableMultiLineMode(true);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(10);
+		
+		equals(oMISingleLineMode.getEnableMultiLineMode(), true, "multi-line set successfully");
+		equals(oMISingleLineMode.getValue(), "2 more", "indicator appears");
+		
+		oMISingleLineMode.setEnableMultiLineMode(false);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(10);
+		
+		equals(oMISingleLineMode.getEnableMultiLineMode(), false, "set back single-line mode");
+		equals(oMISingleLineMode.getValue(), "", "no indicator in single-line mode");
+		
+	});
+	
+	test("desktop - edit token in multi-line display mode", function() {
+		
+		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 is not visible");
+		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
+		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
+		equals(oMLInput.getValue(), "2 more", "indicator is visible");
+
+		sap.ui.test.qunit.triggerTouchEvent("tap", oMLInput._$input[0]);
+		this.clock.tick(10);
+		var bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
+		equals(bHasClass, true, "multi-line mode displays");
+		equals(oMLInput.getTokens()[0].getVisible(), true, "token1 can be displayed");
+		equals(oMLInput.getTokens()[1].getVisible(), true, "token2 can be displayed");
+		equals(oMLInput.getTokens()[2].getVisible(), true, "token3 can be displayed");
+		equals(oMLInput.getValue(), "", "indicator is not visible");
+		
+		oMLInput.setValue("a");
+		oMLInput._getIsSuggestionPopupOpen = function(){ return true; };
+		oMLInput.onsapenter();	
+		
+		this.clock.tick(10);
+		equals(oMLInput.getTokens().length, 4, "new token is added");
+		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
+		equals(bHasClass, true, "multi-line mode still diaplays after item selected");
+		equals(oMLInput.$().find(".sapMTokenizer").css("white-space"), "normal");
+		
+		oMultiInput = sap.ui.getCore().getControl("i1");		
+		
+		oMultiInput.focus();
+
+		this.clock.tick(10);
+		bHasClass = oMLInput.$().find(".sapMMultiInputBorder").hasClass("sapMMultiInputMultiModeBorder");
+		equals(bHasClass, false, "multi-line mode is closed");	
+		equals(oMLInput.getTokens()[3].getVisible(), true, "last token can be displayed");
+		equals(oMLInput.getValue(), "3 more", "indicator is visible");
+		equals(oMLInput.getTokens()[2].getVisible(), false, "token3 is not visible");
+		equals(oMLInput.getTokens()[1].getVisible(), false, "token2 is not visible");
+		equals(oMLInput.getTokens()[0].getVisible(), false, "token1 is not visible");
+	});
+	
+	test("touchdevice - edit token in multi-line display mode", function() {
+		
+		var oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+		
+		var oMLInput2 = new sap.m.MultiInput("i3",{width:"50%", enableMultiLineMode:true});
+		oMLInput2.addToken(new sap.m.Token({key:"ml1",text:"MutiLineToken1"}));
+		oMLInput2.addToken(new sap.m.Token({key:"ml2",text:"MutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineMutiLineToken2"}));
+		oMLInput2.addToken(new sap.m.Token({key:"ml3",text:"Token3"}));
+		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "A-Item"}));
+		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "B-Item"}));
+		oMLInput2.addSuggestionItem(new sap.ui.core.Item({text: "C-Item"}));
+		oMLInput2.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		
+		equals(oMLInput2.getTokens()[2].getVisible(), true, "token3 can be displayed");
+		equals(oMLInput2.getTokens()[1].getVisible(), false, "token2 is not visible");
+		equals(oMLInput2.getTokens()[0].getVisible(), false, "token1 is not visible");
+		equals(oMLInput2.getValue(), "2 more", "indicator is visible");
+		
+		sap.ui.test.qunit.triggerTouchEvent("tap", oMLInput2._$input[0]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+		
+		var oTokenizerInPopup = oMLInput2._oSuggestionPopup.getContent()[0];
+		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
+		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
+		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
+		
+		oMLInput2._oPopupInput.setValue("a");
+		this.clock.tick(500);
+		oMLInput2.onsapenter();
+		this.clock.tick(10);
+		equals(oMLInput2._oPopupInput.getValue(), "", "no value");
+		equals(oTokenizerInPopup.getTokens().length, 4, "new token is added");
+		equals(oTokenizerInPopup.getTokens()[0].getVisible(), true, "token1 can be displayed");
+		equals(oTokenizerInPopup.getTokens()[1].getVisible(), true, "token2 can be displayed");
+		equals(oTokenizerInPopup.getTokens()[2].getVisible(), true, "token3 can be displayed");
+		equals(oTokenizerInPopup.getTokens()[3].getVisible(), true, "new token can be displayed");
+		
+		oMLInput2._oSuggestionPopup.close();
+		this.clock.tick(500);
+		equals(oMLInput2._tokenizer.getTokens().length, 4, "new token is added");
+		equals(oMLInput2._tokenizer.getTokens()[0].getVisible(), false, "token1 not visible");
+		equals(oMLInput2._tokenizer.getTokens()[1].getVisible(), false, "token2 not visible");
+		equals(oMLInput2._tokenizer.getTokens()[2].getVisible(), false, "token3 not visible");
+		equals(oMLInput2._tokenizer.getTokens()[3].getVisible(), true, "new token can be displayed");
+		equals(oMLInput2.getValue(), "3 more", "indicator is visible");
+	});
+
+	
 	
 </script>
 

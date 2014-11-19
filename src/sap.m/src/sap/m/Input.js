@@ -1096,13 +1096,35 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 								._getInputValue(oInput._oPopupInput
 										.getValue()));
 						oInput._changeProxy();
+						
+						if (oInput instanceof sap.m.MultiInput ) {
+							oInput._validateCurrentText();
+						}
+						
 				}).attachAfterClose(function() {
-					// only destroy items in simple suggestion mode
-					if (Table && !(oInput._oList instanceof Table)) {
-						oInput._oList.destroyItems();
-					} else {
-						oInput._oList.removeSelections(true);
+					
+					if (oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode()) {
+						
+						oInput._updateTokenizerInMultiInput();
+						oInput._tokenizerInPopup.destroy();
+						oInput._showIndicator();
+						setTimeout(function() {
+							oInput._setContainerSizes();
+						}, 0);
+						
+						
 					}
+					
+					// only destroy items in simple suggestion mode
+					if (oInput._oList) {
+						if (Table && !(oInput._oList instanceof Table)) {
+							oInput._oList.destroyItems();
+						} else {
+							oInput._oList.removeSelections(true);
+						}
+					}
+
+					
 				}).attachAfterOpen(function() {
 					var sValue = oInput.getValue();
 
@@ -1172,7 +1194,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 							oInput._changeProxy();
 						}
 						oInput._iPopupListSelectedIndex = -1;
-						oInput._oSuggestionPopup.close();
+						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+							oInput._oSuggestionPopup.close();
+						}						
 						if (!sap.ui.Device.support.touch) {
 							oInput._doSelect();
 						}
@@ -1470,7 +1494,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						that._changeProxy();
 					}
 					that._iPopupListSelectedIndex = -1;
-					that._oSuggestionPopup.close();
+					
+					if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput.getEnableMultiLineMode())) {
+						oInput._oSuggestionPopup.close();
+					}
+
 					if (!sap.ui.Device.support.touch) {
 						that._doSelect();
 					}

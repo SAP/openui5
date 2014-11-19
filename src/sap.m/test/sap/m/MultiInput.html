@@ -21,16 +21,15 @@
 		jQuery.sap.require("sap.m.Table");
 		
 		//*******************************
-		var oEventList = new sap.m.List();
+ 		var oEventList = new sap.m.List();
 		var fEventWriter = function(eventArgs){
 			var type = eventArgs.getParameter("type");
 			var item = null;
 			if (type === "tokensChanged"){
-				item = new sap.m.StandardListItem({title: "Type of TokenChange event: " + type + " added: " + eventArgs.getParameter("addedTokens").length + " removed: " + eventArgs.getParameter("removedTokens").length});
-			}else
-				{
-					item = new sap.m.StandardListItem({title: "Type of TokenChange event: " + type});
-				}
+				item = new sap.m.StandardListItem({title: "type of TokenChange event: " + type + " added: " + eventArgs.getParameter("addedTokens").length + " removed: " + eventArgs.getParameter("removedTokens").length});
+			} else {
+				item = new sap.m.StandardListItem({title: "type of TokenChange event: " + type});
+			}
 			oEventList.addItem(item);
 		};
 
@@ -122,7 +121,6 @@
 			placeholder: "add tokens by suggestions",
 			suggest: fSuggest,
 			valueHelpRequest: fValueHelpRequested,
-			tokenChange: fEventWriter,
 			width:"75%"
 		});
 		
@@ -143,9 +141,48 @@
 			         new sap.m.Token({text: "Token 3", key: "0003"}),
 			         new sap.m.Token({text: "Token 4", key: "0004"}),
 			         ]);
+
+		oMultiInput5 = new sap.m.MultiInput({
+			enableMultiLineMode: true,
+			width: "500px"
+		});
+		oMultiInput5.setTokens([
+		   			         new sap.m.Token({text: "Token 1", key: "0001"}),
+ 		   			         new sap.m.Token({text: "Token 2", key: "0002"}),
+		   			         new sap.m.Token({text: "Token 3", key: "0003"}),
+		   			         new sap.m.Token({text: "Token 4", key: "0004"}),
+		   			     	 new sap.m.Token({text: "longTokenlongToken 5", key: "0005"}),
+		   			         new sap.m.Token({text: "Token 6", key: "0006"}),
+		   			         new sap.m.Token({text: "Token 7", key: "0007"}),
+		   			         new sap.m.Token({text: "longToken 8", key: "0008"}),
+		   			     	 new sap.m.Token({text: "Token 9", key: "0009"}),
+		   			         new sap.m.Token({text: "Token 10", key: "0010"})
+		   			         ]);
+		oMultiInput5.addValidator(function(args){
+			if (oCheckBoxAcceptValidation.getSelected()){
+				var text = args.text;
+				return new sap.m.Token({key: text, text: "\""+text+"\""});
+			}				
+		});		
+		
+		oMultiInput5.addValidator(function(args){			  
+			  sap.m.MessageBox.confirm(
+			      "Do you really want to add this token?",			      			      
+			      function(oAction) {
+			    	  if (oAction === sap.m.MessageBox.Action.OK){
+			    	  	args.asyncCallback(args.suggestedToken);
+			    	  }
+			    	  else{
+			    		  args.asyncCallback(null);
+			    	  }			    	  
+			      },
+			      "add Token"
+				 );
+			  return sap.m.MultiInput.WaitForAsyncValidation;
+		});
 		
 		//*******************************		
-		var oCheckBoxAcceptValidation = new sap.m.CheckBox({text: "Accept tokens", selected: true});
+ 		var oCheckBoxAcceptValidation = new sap.m.CheckBox({text: "Accept tokens", selected: true});
 		
 		var oMultiInputCustomValidator = new sap.m.MultiInput({
 			placeholder: "tokens validated by custom validator",
@@ -200,6 +237,24 @@
 		
 		oMultiInputCustomAsyncValidator.addValidator(fValidator);
 		oMultiInputCustomAsyncValidator.addValidator(fValidator);
+
+		//*******************************		
+		var oMultiInputCustomAsyncValidatorML = new sap.m.MultiInput({
+			enableMultiLineMode: true,
+			placeholder: "tokens get validated asynchronously after 500ms + 500ms",
+			valueHelpRequest: fValueHelpRequested,
+			tokenChange: fEventWriter			
+		});
+		
+		var fValidator = function(args){
+			window.setTimeout(function(){
+				args.asyncCallback(new sap.m.Token({text: args.text}));
+			},500);
+			return sap.m.MultiInput.WaitForAsyncValidation;
+		};
+		
+		oMultiInputCustomAsyncValidatorML.addValidator(fValidator);
+		oMultiInputCustomAsyncValidatorML.addValidator(fValidator);
 		
 		//*******************************	
 		var oChangeTextValidatorMultiInput = new sap.m.MultiInput({
@@ -276,9 +331,17 @@
 		};
 		
 		var oTabularSuggestMultiInput = new sap.m.MultiInput({
-			placeholder: "Tabular suggest with JSON binding (starts with H)",			
+			width: "60%",
+			tokens:[
+ 			        new sap.m.Token({text: "Token 1", key: "0001"}),
+ 				    new sap.m.Token({text: "Token 2", key: "0002"}),
+ 					new sap.m.Token({text: "Token 3", key: "0003"}),
+ 					new sap.m.Token({text: "Token 4", key: "0004"}),
+ 					new sap.m.Token({text: "Token 5", key: "0005"}),
+ 					new sap.m.Token({text: "Token 6", key: "0006"})
+			],
+			placeholder: "Tabular suggest with JSON binding (starts with H)",	
 			valueHelpRequest: fValueHelpRequested,
-			tokenChange: fEventWriter,			
 			suggestionColumns : [
 				new sap.m.Column({
 					styleClass : "name",
@@ -353,6 +416,97 @@
 		oModel.setData(oSuggestionData);
 		oTabularSuggestMultiInput.setModel(oModel);
 		oTabularSuggestMultiInput.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+		
+		
+		
+		//*******************************
+		var oTabularSuggestMultiInputML = new sap.m.MultiInput({
+			width: "60%",
+			enableMultiLineMode: true,
+			tokens:[
+ 			        new sap.m.Token({text: "Token 1", key: "0001"}),
+ 				    new sap.m.Token({text: "Token 2", key: "0002"}),
+ 					new sap.m.Token({text: "Token 3", key: "0003"}),
+ 					new sap.m.Token({text: "Token 4", key: "0004"}),
+ 					new sap.m.Token({text: "Token 5", key: "0005"}),
+ 					new sap.m.Token({text: "Token 6", key: "0006"})
+			],
+			valueHelpRequest: fValueHelpRequested,
+			suggestionColumns : [
+				new sap.m.Column({
+					styleClass : "name",
+					hAlign : "Left",
+					header : new sap.m.Label({
+						text : "Name"
+					})
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "qty",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Qty"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					styleClass : "limit",
+					width : "30%",
+					header : new sap.m.Label({
+						text : "Value"
+					}),
+					minScreenWidth : "XXSmall",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Right",
+					styleClass : "price",
+					width : "30%",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Price"
+					}),
+					minScreenWidth : "400px",
+					demandPopin : true
+				})
+			]
+		});
+		
+		oTabularSuggestMultiInputML.addValidator(function(args){			
+			if (args.suggestionObject){
+				var key = args.suggestionObject.getCells()[0].getText();
+				var text = key + "("+args.suggestionObject.getCells()[3].getText()+")";
+			
+				return new sap.m.Token({key: key, text: text});
+			}
+			return null;
+		});
+		
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type : "Active",
+			vAlign : "Middle",
+			cells : [
+				new sap.m.Label({
+					text : "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}",
+					wrapping : true
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(oSuggestionData);
+		oTabularSuggestMultiInputML.setModel(oModel);
+		oTabularSuggestMultiInputML.bindAggregation("suggestionRows", "/tabularSuggestionItems", oTableItemTemplate);
+		
 		
 		//*******************************
 		var theCompactMode= new sap.m.CheckBox({
@@ -810,14 +964,22 @@
 		var page1 = new sap.m.Page("page1", {
 			title:"Mobile MultiInput Control",
 			content : [
-					new sap.m.Label({ text : "MultiInput.allowTextInput = true", width:"100%"}),
-					oMultiInput1,	compareInput,					
-					oMultiInputCustomValidator,					
+ 					new sap.m.Label({ text : "MultiInput.allowTextInput = true", width:"100%"}),
+ 					oMultiInput1,compareInput,					
+					new sap.m.Label({ text : "singleLineMode", width:"100%"}),
+					oMultiInputCustomValidator,
+					new sap.m.Label({ text : "empty", width:"100%"}),
 					oCheckBoxAcceptValidation,
 					oComboBox,
 					oMultiInputCustomAsyncValidator,
 					oChangeTextValidatorMultiInput,
 					oTabularSuggestMultiInput,
+					new sap.m.Label({ text : "EnableMultiLineMode: true + suggestion starts with 'H'", width:"100%"}),
+					oTabularSuggestMultiInputML,
+					new sap.m.Label({ text : "EnableMultiLineMode: true + synchronously validation", width:"100%"}),
+					oMultiInput5,
+					new sap.m.Label({ text : "EnableMultiLineMode: true + asynchronously validation after 500ms + 500ms", width:"100%"}),
+					oMultiInputCustomAsyncValidatorML,
 					new sap.m.MultiInput({ placeholder: "Warning", valueState: "Warning", valueHelpRequest: fValueHelpRequested, width:"33%" }),
 					new sap.m.MultiInput({ placeholder: "Error", valueState: "Error", valueHelpRequest: fValueHelpRequested, width:"33%" }),
 					new sap.m.MultiInput({ placeholder: "Success", valueState: "Success", valueHelpRequest: fValueHelpRequested, width:"33%" }),

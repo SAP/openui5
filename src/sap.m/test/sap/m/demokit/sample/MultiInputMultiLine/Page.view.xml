@@ -1,0 +1,73 @@
+<mvc:View height="100%" controllerName="sap.m.sample.MultiInputMultiLine.Page"
+	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox>
+			<items>
+			<Label text="MultiInput in MultiLine Display Mode"/>
+			<MultiInput id="multiInput1" width="500px" enableMultiLineMode="true"/>
+
+			<Label text="MultiInput with asynchronously validation in MultiLine Display Mode"/>
+			<MultiInput id="multiInput3" width="500px" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms"/>
+
+			<Label text="MultiInput  with suggestion table in MultiLine Mode Display"/>
+			<MultiInput
+				id="multiInput2"
+				width="500px"
+				enableMultiLineMode="true"
+				placeholder="Enter Product ..."
+				showSuggestion="true"
+				suggestionRows="{/ProductCollection}">
+				<suggestionColumns>
+					<Column
+						hAlign="Begin"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Name"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="true"
+						minScreenWidth="Tablet">
+						<Label text="Product ID"/>
+					</Column>
+					<Column
+						hAlign="Center"
+						popinDisplay="Inline"
+						demandPopin="false"
+						minScreenWidth="Tablet">
+						<Label text="Supplier Name"/>
+					</Column>
+					<Column
+						hAlign="End"
+						popinDisplay="Inline"
+						demandPopin="true">
+						<Label text="Price"/>
+					</Column>
+				</suggestionColumns>
+				<suggestionRows>
+					<ColumnListItem>
+					<cells>
+						<Label text="{Name}"/>
+						<Label text="{ProductId}"/>
+						<Label text="{SupplierName}"/>
+						<Label text="{Price} {CurrencyCode}"/>
+					</cells>
+					</ColumnListItem>
+				</suggestionRows>
+			</MultiInput>
+			
+			<Label text="MultiInput  with suggestion list items in MultiLine Mode Display"/>
+			<MultiInput id="multiInput4"
+				width="500px"
+				enableMultiLineMode="true"
+				suggestionItems="{
+					path: '/ProductCollection',
+					sorter: { path: 'Name' }
+				}">
+				<core:Item key="{ProductId}" text="{Name}" />
+			</MultiInput>
+			
+		</items>
+	</VBox>
+</mvc:View>
