@@ -1709,7 +1709,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	
 	
 	/**
-	 * Add the reset button to the given summary bar, positioned to the end of the bar.
+	 * Add the reset button to the given summary bar, positioned to the end of the bar
 	 * 
 	 * @param oSummaryBar
 	 * @private
@@ -1719,7 +1719,10 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		if (oSummaryBar.getContent().length === 1) {
 			
 			oSummaryBar.addContent(new sap.m.ToolbarSpacer({width: ""})); // Push the reset button to the end of the toolbar
-			oSummaryBar.addContent(this._createResetButton());
+			var oButton = this._createResetButton();
+			oSummaryBar.addContent(oButton);
+			oButton.addStyleClass("sapMFFRefresh");
+			oButton.addStyleClass("sapMFFBtnHoverable");
 		}
 	};
 	
