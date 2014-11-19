@@ -342,9 +342,6 @@ test("Active page should be set when specified in constructor'", function() {
        
        sut.placeAt("qunit-fixture");
        sap.ui.getCore().applyChanges();
-
-       //Act
-       this.clock.tick(600);
        
        //Assert 
        ok(sut.getActivePage() == 'activePage2', "Active page should be 'activePage2'");
