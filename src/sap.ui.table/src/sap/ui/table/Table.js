@@ -449,34 +449,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	}});
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
 
 
-	
+
+
+
+
+
+
+
+
+
+
 
 
 	// =============================================================================
@@ -4714,7 +4714,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			// fire the event (to allow to cancel the event)
-			var bExecuteDefault = this.fireGroup({column: oGroupBy});
+			var bExecuteDefault = this.fireGroup({column: oGroupBy, groupedColumns: [oGroupBy.getId()], type: sap.ui.table.GroupEventType.group});
 
 			// first we reset the grouping indicator of the old column (will show the column)
 			var oOldGroupBy = sap.ui.getCore().byId(this.getGroupBy());
