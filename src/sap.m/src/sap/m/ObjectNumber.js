@@ -45,11 +45,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			numberUnit : {type : "string", group : "Misc", defaultValue : null, deprecated: true},
 	
 			/**
-			 * Indicates if object number is visible. Invisible object number is not rendered.
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Indicates if the object number should appear emphasized
 			 */
 			emphasized : {type : "boolean", group : "Appearance", defaultValue : true},
