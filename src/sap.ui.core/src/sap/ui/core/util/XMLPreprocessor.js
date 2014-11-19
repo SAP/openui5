@@ -7,7 +7,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	function(jQuery, ManagedObject) {
 		'use strict';
 
-		var sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
+		var oUNBOUND = {}, // @see getAny
+			sNAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1",
 			/**
 			 * <template:with> control holding the models and the bindings. Also used as substitute
 			 * for any control during template processing in order to resolve property bindings.
@@ -45,14 +46,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		 *
 		 * @param {sap.ui.core.util._with} oWithControl the "with" control
 		 * @param {object} oBindingInfo the binding info
-		 * @returns {any} the property value
+		 * @returns {any} the property value or <code>oUNBOUND</code> in case the binding is
+		 * not ready (because it refers to a model which is not available)
 		 * @throws Error
 		 */
 		function getAny(oWithControl, oBindingInfo) {
 			try {
 				oBindingInfo.mode = sap.ui.model.BindingMode.OneTime;
 				oWithControl.bindProperty("any", oBindingInfo);
-				return oWithControl.getAny();
+				return oWithControl.getBinding("any")
+					? oWithControl.getAny()
+					: oUNBOUND;
 			} finally {
 				oWithControl.unbindProperty("any", true);
 			}
@@ -232,11 +236,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 				 * @param {sap.ui.core.util._with} oWithControl the "with" control
 				 */
 				function resolveAttributeBinding(oElement, oAttribute, oWithControl) {
-					var oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
+					var vAny,
+						oBindingInfo = sap.ui.base.BindingParser.complexParser(oAttribute.value);
 
 					if (oBindingInfo) {
 						try {
-							oAttribute.value = getAny(oWithControl, oBindingInfo);
+							vAny = getAny(oWithControl, oBindingInfo);
+							if (vAny !== oUNBOUND) {
+								oAttribute.value = vAny;
+							}
 						} catch (ex) {
 							// just don't replace XML attribute value
 							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG)) {
@@ -261,16 +269,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						oBindingInfo = sap.ui.base.BindingParser.complexParser(vTest),
 						oChild;
 
+					/**
+					 * Outputs a warning; takes care not to serialize XML in vain.
+					 *
+					 * @param {string} sText
+					 *   the main text of the warning
+					 * @param {string} sDetails
+					 *   the details of the warning
+					 */
+					function warn(sText, sDetails) {
+						if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
+							jQuery.sap.log.warning(
+								sCaller + sText + serializeSingleElement(oElement),
+								sDetails, "sap.ui.core.util.XMLPreprocessor");
+						}
+					}
+
 					if (oBindingInfo) {
 						try {
 							vTest = getAny(oWithControl, oBindingInfo);
-						} catch (ex) {
-							if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING)) {
-								jQuery.sap.log.warning(
-									sCaller + ': Error in formatter of '
-										+ serializeSingleElement(oElement),
-									ex, "sap.ui.core.util.XMLPreprocessor");
+							if (vTest === oUNBOUND) {
+								warn(': Binding not ready in ', null);
+								vTest = false;
 							}
+						} catch (ex) {
+							warn(': Error in formatter of ', ex);
 							vTest = false;
 						}
 					}

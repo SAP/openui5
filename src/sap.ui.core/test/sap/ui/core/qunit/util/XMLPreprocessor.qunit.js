@@ -372,7 +372,7 @@
 					oLogMock = this.mock(jQuery.sap.log);
 
 				// Note: mocks inside sinon.test() are verified and restored automatically
-				oLogMock.expects("isLoggable")
+				oLogMock.expects("isLoggable").once()
 					.withExactArgs(jQuery.sap.log.Level.WARNING)
 					.returns(bIsLoggable);
 				oLogMock.expects("warning")
@@ -392,6 +392,34 @@
 				check(aViewContent, {
 					models: new sap.ui.model.json.JSONModel({flag: true})
 				});
+			})
+		);
+	});
+
+	//*********************************************************************************************
+	jQuery.each([false, true], function (i, bIsLoggable) {
+		test("template:if test='{unrelated>/some/path}', warn = " + bIsLoggable,
+			sinon.test(function () {
+				var aViewContent = [
+						mvcView(),
+						'<template:if test="' + "{unrelated>/some/path}" + '">',
+						'<Out/>',
+						'<\/template:if>',
+						'<!-- prevent empty tag -->',
+						'<\/mvc:View>'
+					],
+					oLogMock = this.mock(jQuery.sap.log);
+
+				oLogMock.expects("isLoggable").once()
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+					.withExactArgs(
+						'qux: Binding not ready in ' + aViewContent[1],
+						null, "sap.ui.core.util.XMLPreprocessor");
+
+				check(aViewContent);
 			})
 		);
 	});
@@ -611,6 +639,7 @@
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
+			'<Text text="{unrelated>/some/path}"/>', // unrelated binding MUST NOT be changed!
 			'<html:img src="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
 			'<\/mvc:View>'
@@ -630,9 +659,10 @@
 					}
 				}
 			})
-		}, [
+		}, [ // Note: XML serializer outputs &gt; encoding...
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>',
+			'<Text text="{unrelated&gt;/some/path}"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
 			'<html:img src="/coco/apps/main/img/Icons/product_48.png"/>',
 		]);
