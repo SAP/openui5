@@ -314,7 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 	
 		var oElement = jQuery.sap.byId(sFirstFocusId).get(0);
 		var aFocusables = jQuery(":sapFocusable", oThis.$()).get();
-	
+
 		// if there is an initial focus it was already set to the Popup onBeforeRendering
 		if (!oThis._bFocusSet) {
 			// search the first focusable element
@@ -346,12 +346,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		if (!oThis._sLastFocusableId || !oThis._sFirstFocusableId) {
 			oThis._sLastFocusableId = sFirstFocusId;
 			oThis._sFirstFocusableId = sLastFocusId;
-		
+
 			if (aFocusables.length > 2) {
 				// using second array content since first focusable item is the fake element
-				oThis._sFirstFocusableId = aFocusables[1].id;
+				oFocusControl = jQuery(aFocusables[1]).control();
+				var oParent = oFocusControl[0].length > 0 ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If first focusable is part of a control, focus the controls instead
+					oThis._sFirstFocusableId = oParent.getId();
+				} else {
+					oThis._sFirstFocusableId = aFocusables[1].id;
+				}
+				
 				// using the second to last element in array since last one is the fake element
-				oThis._sLastFocusableId = aFocusables[aFocusables.length - 2].id;
+				oFocusControl = jQuery(aFocusables[aFocusables.length - 2]).control();
+				oParent = oFocusControl[0] ? oFocusControl[0].getParent() : null;
+				if (oParent && oParent.getId() != oThis.getId()) {
+					// If last focusable is part of a control, focus the controls instead
+					oThis._sLastFocusableId = oParent.getId();
+				} else {
+					oThis._sLastFocusableId = aFocusables[aFocusables.length - 2].id;
+				}
 			}
 		
 		}
