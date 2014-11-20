@@ -335,7 +335,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						new sap.m.ToolbarSpacer(this.getId() + "-toolbarspacer"),
 						this._oButton
 					]
-				}).addStyleClass("sapMTBNoBorders").applyTagAndContextClassFor("footer");
+				}).addStyleClass("sapMTBNoBorders").addStyleClass("sapMBusyDialogFooter").applyTagAndContextClassFor("footer");
 				this.setAggregation("_toolbar", this._oButtonToolBar, true);
 			}
 		}
