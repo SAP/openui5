@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -34,14 +34,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1510CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -71,14 +71,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1530CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -108,14 +108,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1550CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -145,14 +145,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1570CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -182,14 +182,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1590CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -219,14 +219,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15B0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -256,14 +256,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15D0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -293,14 +293,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E15F0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -330,14 +330,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1610CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -367,14 +367,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1630CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -404,14 +404,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1650CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -441,14 +441,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1670CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -478,14 +478,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1690CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -515,14 +515,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16B0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -552,14 +552,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16D0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -589,14 +589,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E16F0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -626,14 +626,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1710CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -663,14 +663,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1730CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -700,14 +700,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1750CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -737,14 +737,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1770CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -774,14 +774,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1790CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -811,14 +811,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17B0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -848,14 +848,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17D0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -885,14 +885,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E17F0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -922,14 +922,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1810CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -959,14 +959,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1830CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -996,14 +996,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1850CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1033,14 +1033,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1870CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1070,14 +1070,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1890CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1107,14 +1107,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18B0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1144,14 +1144,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18D0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1181,14 +1181,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E18F0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1218,14 +1218,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1910CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1255,14 +1255,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1930CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1292,14 +1292,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1950CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1329,14 +1329,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1970CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1366,14 +1366,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1990CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1403,14 +1403,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19B0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1440,14 +1440,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19D0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1477,14 +1477,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E19F0CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1514,14 +1514,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A10CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1551,14 +1551,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A30CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1588,14 +1588,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A50CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1625,14 +1625,14 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A70CD')/ToBusinessPartner"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')",
 						"type" : "GWSAMPLE_BASIC.Contact"
 					},
 					"Address" : {
@@ -1662,7 +1662,7 @@
 					"DateOfBirth" : null,
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ContactSet(guid'0050568D-393C-1EE4-9882-CEC33E1A90CD')/ToBusinessPartner"
 						}
 					}
 				}]

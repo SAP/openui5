@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AD",
@@ -13,8 +13,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AE",
@@ -23,8 +23,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AF",
@@ -33,8 +33,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AG",
@@ -43,8 +43,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AI",
@@ -53,8 +53,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AL",
@@ -63,8 +63,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AM",
@@ -73,8 +73,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AO",
@@ -83,8 +83,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AQ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AQ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AQ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AQ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AQ",
@@ -93,8 +93,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AR",
@@ -103,8 +103,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AS",
@@ -113,8 +113,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AT",
@@ -123,8 +123,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AU",
@@ -133,8 +133,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AW",
@@ -143,8 +143,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AX')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AX')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AX')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AX')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AX",
@@ -153,8 +153,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('AZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "AZ",
@@ -163,8 +163,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BA",
@@ -173,8 +173,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BB')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BB')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BB')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BB",
@@ -183,8 +183,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BD",
@@ -193,8 +193,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BE",
@@ -203,8 +203,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BF",
@@ -213,8 +213,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BG",
@@ -223,8 +223,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BH",
@@ -233,8 +233,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BI",
@@ -243,8 +243,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BJ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BJ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BJ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BJ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BJ",
@@ -253,8 +253,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BM",
@@ -263,8 +263,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BN",
@@ -273,8 +273,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BO",
@@ -283,8 +283,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BQ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BQ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BQ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BQ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BQ",
@@ -293,8 +293,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BR",
@@ -303,8 +303,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BS",
@@ -313,8 +313,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BT",
@@ -323,8 +323,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BV",
@@ -333,8 +333,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BW",
@@ -343,8 +343,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BY",
@@ -353,8 +353,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('BZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "BZ",
@@ -363,8 +363,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CA",
@@ -373,8 +373,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CC",
@@ -383,8 +383,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CD",
@@ -393,8 +393,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CF",
@@ -403,8 +403,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CG",
@@ -413,8 +413,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CH",
@@ -423,8 +423,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CI",
@@ -433,8 +433,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CK",
@@ -443,8 +443,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CL",
@@ -453,8 +453,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CM",
@@ -463,8 +463,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CN",
@@ -473,8 +473,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CO",
@@ -483,8 +483,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CR",
@@ -493,8 +493,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CS",
@@ -503,8 +503,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CU",
@@ -513,8 +513,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CV",
@@ -523,8 +523,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CW",
@@ -533,8 +533,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CX')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CX')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CX')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CX')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CX",
@@ -543,8 +543,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CY",
@@ -553,8 +553,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('CZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "CZ",
@@ -563,8 +563,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DE",
@@ -573,8 +573,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DJ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DJ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DJ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DJ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DJ",
@@ -583,8 +583,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DK",
@@ -593,8 +593,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DM",
@@ -603,8 +603,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DO",
@@ -613,8 +613,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('DZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "DZ",
@@ -623,8 +623,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "EC",
@@ -633,8 +633,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "EE",
@@ -643,8 +643,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "EG",
@@ -653,8 +653,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('EH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "EH",
@@ -663,8 +663,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ER')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ER')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ER')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ER')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ER",
@@ -673,8 +673,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ES')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ES')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ES')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ES')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ES",
@@ -683,8 +683,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ET')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ET')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ET')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ET')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ET",
@@ -693,8 +693,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FI",
@@ -703,8 +703,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FJ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FJ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FJ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FJ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FJ",
@@ -713,8 +713,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FK",
@@ -723,8 +723,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FM",
@@ -733,8 +733,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FO",
@@ -743,8 +743,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('FR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "FR",
@@ -753,8 +753,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GA",
@@ -763,8 +763,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GB')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GB')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GB')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GB",
@@ -773,8 +773,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GD",
@@ -783,8 +783,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GE",
@@ -793,8 +793,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GF",
@@ -803,8 +803,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GG",
@@ -813,8 +813,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GH",
@@ -823,8 +823,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GI",
@@ -833,8 +833,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GL",
@@ -843,8 +843,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GM",
@@ -853,8 +853,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GN",
@@ -863,8 +863,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GP",
@@ -873,8 +873,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GQ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GQ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GQ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GQ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GQ",
@@ -883,8 +883,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GR",
@@ -893,8 +893,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GS",
@@ -903,8 +903,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GT",
@@ -913,8 +913,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GU",
@@ -923,8 +923,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GW",
@@ -933,8 +933,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('GY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "GY",
@@ -943,8 +943,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HK",
@@ -953,8 +953,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HM",
@@ -963,8 +963,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HN",
@@ -973,8 +973,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HR",
@@ -983,8 +983,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HT",
@@ -993,8 +993,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('HU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "HU",
@@ -1003,8 +1003,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ID')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ID')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ID')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ID')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ID",
@@ -1013,8 +1013,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IE",
@@ -1023,8 +1023,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IL",
@@ -1033,8 +1033,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IM",
@@ -1043,8 +1043,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IN",
@@ -1053,8 +1053,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IO",
@@ -1063,8 +1063,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IQ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IQ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IQ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IQ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IQ",
@@ -1073,8 +1073,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IR",
@@ -1083,8 +1083,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IS",
@@ -1093,8 +1093,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('IT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "IT",
@@ -1103,8 +1103,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "JE",
@@ -1113,8 +1113,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "JM",
@@ -1123,8 +1123,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "JO",
@@ -1133,8 +1133,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('JP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "JP",
@@ -1143,8 +1143,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KE",
@@ -1153,8 +1153,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KG",
@@ -1163,8 +1163,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KH",
@@ -1173,8 +1173,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KI",
@@ -1183,8 +1183,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KM",
@@ -1193,8 +1193,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KN",
@@ -1203,8 +1203,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KP",
@@ -1213,8 +1213,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KR",
@@ -1223,8 +1223,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KW",
@@ -1233,8 +1233,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KY",
@@ -1243,8 +1243,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('KZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "KZ",
@@ -1253,8 +1253,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LA",
@@ -1263,8 +1263,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LB')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LB')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LB')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LB",
@@ -1273,8 +1273,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LC",
@@ -1283,8 +1283,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LI",
@@ -1293,8 +1293,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LK",
@@ -1303,8 +1303,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LR",
@@ -1313,8 +1313,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LS",
@@ -1323,8 +1323,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LT",
@@ -1333,8 +1333,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LU",
@@ -1343,8 +1343,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LV",
@@ -1353,8 +1353,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('LY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "LY",
@@ -1363,8 +1363,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MA",
@@ -1373,8 +1373,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MC",
@@ -1383,8 +1383,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MD",
@@ -1393,8 +1393,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ME')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ME')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ME')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ME')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ME",
@@ -1403,8 +1403,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MF",
@@ -1413,8 +1413,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MG",
@@ -1423,8 +1423,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MH",
@@ -1433,8 +1433,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MK",
@@ -1443,8 +1443,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ML')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ML')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ML')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ML')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ML",
@@ -1453,8 +1453,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MM",
@@ -1463,8 +1463,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MN",
@@ -1473,8 +1473,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MO",
@@ -1483,8 +1483,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MP",
@@ -1493,8 +1493,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MQ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MQ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MQ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MQ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MQ",
@@ -1503,8 +1503,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MR",
@@ -1513,8 +1513,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MS",
@@ -1523,8 +1523,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MT",
@@ -1533,8 +1533,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MU",
@@ -1543,8 +1543,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MV",
@@ -1553,8 +1553,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MW",
@@ -1563,8 +1563,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MX')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MX')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MX')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MX')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MX",
@@ -1573,8 +1573,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MY",
@@ -1583,8 +1583,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('MZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "MZ",
@@ -1593,8 +1593,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NA",
@@ -1603,8 +1603,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NC",
@@ -1613,8 +1613,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NE",
@@ -1623,8 +1623,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NF",
@@ -1633,8 +1633,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NG",
@@ -1643,8 +1643,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NI",
@@ -1653,8 +1653,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NL",
@@ -1663,8 +1663,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NO",
@@ -1673,8 +1673,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NP",
@@ -1683,8 +1683,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NR",
@@ -1693,8 +1693,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NU",
@@ -1703,8 +1703,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('NZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "NZ",
@@ -1713,8 +1713,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('OM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('OM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('OM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('OM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "OM",
@@ -1723,8 +1723,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PA",
@@ -1733,8 +1733,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PE",
@@ -1743,8 +1743,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PF",
@@ -1753,8 +1753,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PG",
@@ -1763,8 +1763,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PH",
@@ -1773,8 +1773,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PK",
@@ -1783,8 +1783,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PL",
@@ -1793,8 +1793,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PM",
@@ -1803,8 +1803,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PN",
@@ -1813,8 +1813,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PR",
@@ -1823,8 +1823,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PS",
@@ -1833,8 +1833,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PT",
@@ -1843,8 +1843,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PW",
@@ -1853,8 +1853,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('PY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "PY",
@@ -1863,8 +1863,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('QA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('QA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('QA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('QA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "QA",
@@ -1873,8 +1873,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "RE",
@@ -1883,8 +1883,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "RO",
@@ -1893,8 +1893,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "RS",
@@ -1903,8 +1903,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "RU",
@@ -1913,8 +1913,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('RW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "RW",
@@ -1923,8 +1923,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SA",
@@ -1933,8 +1933,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SB')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SB')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SB')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SB",
@@ -1943,8 +1943,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SC",
@@ -1953,8 +1953,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SD",
@@ -1963,8 +1963,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SE",
@@ -1973,8 +1973,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SG",
@@ -1983,8 +1983,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SH",
@@ -1993,8 +1993,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SI",
@@ -2003,8 +2003,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SJ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SJ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SJ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SJ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SJ",
@@ -2013,8 +2013,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SK",
@@ -2023,8 +2023,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SL",
@@ -2033,8 +2033,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SM",
@@ -2043,8 +2043,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SN",
@@ -2053,8 +2053,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SO",
@@ -2063,8 +2063,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SR",
@@ -2073,8 +2073,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SS",
@@ -2083,8 +2083,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ST')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ST')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ST')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ST')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ST",
@@ -2093,8 +2093,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SV",
@@ -2103,8 +2103,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SX')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SX')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SX')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SX')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SX",
@@ -2113,8 +2113,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SY",
@@ -2123,8 +2123,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('SZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "SZ",
@@ -2133,8 +2133,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TC",
@@ -2143,8 +2143,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TD')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TD",
@@ -2153,8 +2153,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TF",
@@ -2163,8 +2163,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TG",
@@ -2173,8 +2173,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TH')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TH')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TH')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TH')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TH",
@@ -2183,8 +2183,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TJ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TJ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TJ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TJ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TJ",
@@ -2193,8 +2193,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TK')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TK')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TK')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TK')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TK",
@@ -2203,8 +2203,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TL')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TL')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TL')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TL')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TL",
@@ -2213,8 +2213,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TM",
@@ -2223,8 +2223,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TN",
@@ -2233,8 +2233,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TO')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TO",
@@ -2243,8 +2243,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TP')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TP')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TP')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TP')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TP",
@@ -2253,8 +2253,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TR')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TR",
@@ -2263,8 +2263,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TT",
@@ -2273,8 +2273,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TV')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TV')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TV')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TV')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TV",
@@ -2283,8 +2283,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TW",
@@ -2293,8 +2293,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('TZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "TZ",
@@ -2303,8 +2303,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "UA",
@@ -2313,8 +2313,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "UG",
@@ -2323,8 +2323,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "UM",
@@ -2333,8 +2333,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('US')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('US')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('US')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('US')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "US",
@@ -2343,8 +2343,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UY')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UY')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UY')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UY')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "UY",
@@ -2353,8 +2353,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('UZ')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "UZ",
@@ -2363,8 +2363,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VA",
@@ -2373,8 +2373,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VC')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VC')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VC')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VC')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VC",
@@ -2383,8 +2383,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VE",
@@ -2393,8 +2393,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VG')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VG",
@@ -2403,8 +2403,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VI')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VI",
@@ -2413,8 +2413,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VN')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VN",
@@ -2423,8 +2423,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VU')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VU')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VU')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('VU')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "VU",
@@ -2433,8 +2433,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WF')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WF')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WF')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WF')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "WF",
@@ -2443,8 +2443,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WS')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WS')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WS')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('WS')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "WS",
@@ -2453,8 +2453,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YE')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YE')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YE')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YE')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "YE",
@@ -2463,8 +2463,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('YT')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "YT",
@@ -2473,8 +2473,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZA')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZA')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZA')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZA')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ZA",
@@ -2483,8 +2483,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZM')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ZM",
@@ -2493,8 +2493,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZW')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZW')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZW')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CountrySet('ZW')",
 						"type" : "GWSAMPLE_BASIC.VH_Country"
 					},
 					"Land1" : "ZW",

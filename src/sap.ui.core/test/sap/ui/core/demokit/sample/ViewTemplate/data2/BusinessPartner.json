@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -32,24 +32,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000000')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -77,24 +77,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000001')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -122,24 +122,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000002')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -167,24 +167,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000003')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -212,24 +212,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000004')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -257,24 +257,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000005')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -302,24 +302,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000006')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -347,24 +347,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000007')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -392,24 +392,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000008')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -437,24 +437,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000009')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -482,24 +482,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000010')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -527,24 +527,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000011')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -572,24 +572,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000012')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -617,24 +617,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000013')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -662,24 +662,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000014')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -707,24 +707,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000015')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -752,24 +752,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000016')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -797,24 +797,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000017')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -842,24 +842,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000018')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -887,24 +887,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000019')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -932,24 +932,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000020')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -977,24 +977,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000021')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1022,24 +1022,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000022')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1067,24 +1067,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000023')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1112,24 +1112,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000024')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1157,24 +1157,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000025')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1202,24 +1202,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000026')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1247,24 +1247,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000027')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1292,24 +1292,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000028')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1337,24 +1337,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000029')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1382,24 +1382,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000030')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1427,24 +1427,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000031')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1472,24 +1472,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000032')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1517,24 +1517,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000033')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1562,24 +1562,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000034')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1607,24 +1607,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000035')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1652,24 +1652,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000036')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1697,24 +1697,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000037')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1742,24 +1742,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000038')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1787,24 +1787,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000039')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1832,24 +1832,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000040')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1877,24 +1877,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000041')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1922,24 +1922,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000042')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -1967,24 +1967,24 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000043')/ToProducts"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')",
 						"type" : "GWSAMPLE_BASIC.BusinessPartner",
 						"etag" : "W/\"datetime'2014-10-30T09%3A23%3A51.0000000'\""
 					},
@@ -2012,17 +2012,17 @@
 					"ChangedAt" : "\/Date(1414661031000)\/",
 					"ToSalesOrders" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToSalesOrders"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToSalesOrders"
 						}
 					},
 					"ToContacts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToContacts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToContacts"
 						}
 					},
 					"ToProducts" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToProducts"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/BusinessPartnerSet('0100000044')/ToProducts"
 						}
 					}
 				}]

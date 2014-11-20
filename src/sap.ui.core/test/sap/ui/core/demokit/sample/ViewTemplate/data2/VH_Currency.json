@@ -3,8 +3,8 @@
 		"results" : [
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ADP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ADP",
@@ -12,8 +12,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AED')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AED",
@@ -21,8 +21,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFA')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AFA",
@@ -30,8 +30,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AFN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AFN",
@@ -39,8 +39,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ALL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ALL",
@@ -48,8 +48,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AMD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AMD",
@@ -57,8 +57,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ANG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ANG",
@@ -66,8 +66,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOA')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AOA",
@@ -75,8 +75,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AON')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AON",
@@ -84,8 +84,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AOR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AOR",
@@ -93,8 +93,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ARS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ARS",
@@ -102,8 +102,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ATS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ATS",
@@ -111,8 +111,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AUD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AUD",
@@ -120,8 +120,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AWG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AWG",
@@ -129,8 +129,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AZM",
@@ -138,8 +138,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('AZN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "AZN",
@@ -147,8 +147,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BAM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BAM",
@@ -156,8 +156,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BBD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BBD",
@@ -165,8 +165,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BDT')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BDT",
@@ -174,8 +174,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BEF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BEF",
@@ -183,8 +183,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BGN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BGN",
@@ -192,8 +192,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BHD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BHD",
@@ -201,8 +201,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BIF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BIF",
@@ -210,8 +210,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BMD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BMD",
@@ -219,8 +219,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BND')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BND",
@@ -228,8 +228,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BOB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BOB",
@@ -237,8 +237,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BRL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BRL",
@@ -246,8 +246,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BSD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BSD",
@@ -255,8 +255,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BTN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BTN",
@@ -264,8 +264,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BWP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BWP",
@@ -273,8 +273,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BYB",
@@ -282,8 +282,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BYR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BYR",
@@ -291,8 +291,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('BZD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "BZD",
@@ -300,8 +300,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CAD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CAD",
@@ -309,8 +309,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CDF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CDF",
@@ -318,8 +318,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CFP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CFP",
@@ -327,8 +327,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CHF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CHF",
@@ -336,8 +336,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CLP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CLP",
@@ -345,8 +345,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CNY')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CNY",
@@ -354,8 +354,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('COP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "COP",
@@ -363,8 +363,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CRC')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CRC",
@@ -372,8 +372,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CSD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CSD",
@@ -381,8 +381,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUC')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CUC",
@@ -390,8 +390,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CUP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CUP",
@@ -399,8 +399,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CVE')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CVE",
@@ -408,8 +408,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CYP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CYP",
@@ -417,8 +417,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('CZK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "CZK",
@@ -426,8 +426,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DEM",
@@ -435,8 +435,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DEM3')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DEM3",
@@ -444,8 +444,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DJF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DJF",
@@ -453,8 +453,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DKK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DKK",
@@ -462,8 +462,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DOP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DOP",
@@ -471,8 +471,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('DZD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "DZD",
@@ -480,8 +480,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ECS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ECS",
@@ -489,8 +489,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EEK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "EEK",
@@ -498,8 +498,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EGP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "EGP",
@@ -507,8 +507,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ERN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ERN",
@@ -516,8 +516,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ESP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ESP",
@@ -525,8 +525,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ETB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ETB",
@@ -534,8 +534,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('EUR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "EUR",
@@ -543,8 +543,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FIM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "FIM",
@@ -552,8 +552,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FJD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "FJD",
@@ -561,8 +561,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FKP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "FKP",
@@ -570,8 +570,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('FRF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "FRF",
@@ -579,8 +579,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GBP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GBP",
@@ -588,8 +588,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GEL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GEL",
@@ -597,8 +597,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHC')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GHC",
@@ -606,8 +606,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GHS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GHS",
@@ -615,8 +615,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GIP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GIP",
@@ -624,8 +624,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GMD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GMD",
@@ -633,8 +633,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GNF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GNF",
@@ -642,8 +642,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GRD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GRD",
@@ -651,8 +651,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GTQ')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GTQ",
@@ -660,8 +660,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GWP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GWP",
@@ -669,8 +669,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('GYD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "GYD",
@@ -678,8 +678,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HKD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "HKD",
@@ -687,8 +687,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HNL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "HNL",
@@ -696,8 +696,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HRK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "HRK",
@@ -705,8 +705,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HTG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "HTG",
@@ -714,8 +714,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('HUF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "HUF",
@@ -723,8 +723,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IDR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "IDR",
@@ -732,8 +732,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IEP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "IEP",
@@ -741,8 +741,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ILS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ILS",
@@ -750,8 +750,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('INR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "INR",
@@ -759,8 +759,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IQD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "IQD",
@@ -768,8 +768,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('IRR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "IRR",
@@ -777,8 +777,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ISK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ISK",
@@ -786,8 +786,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ITL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ITL",
@@ -795,8 +795,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JMD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "JMD",
@@ -804,8 +804,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JOD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "JOD",
@@ -813,8 +813,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('JPY')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "JPY",
@@ -822,8 +822,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KES')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KES",
@@ -831,8 +831,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KGS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KGS",
@@ -840,8 +840,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KHR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KHR",
@@ -849,8 +849,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KMF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KMF",
@@ -858,8 +858,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KPW')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KPW",
@@ -867,8 +867,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KRW')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KRW",
@@ -876,8 +876,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KWD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KWD",
@@ -885,8 +885,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KYD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KYD",
@@ -894,8 +894,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('KZT')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "KZT",
@@ -903,8 +903,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LAK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LAK",
@@ -912,8 +912,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LBP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LBP",
@@ -921,8 +921,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LKR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LKR",
@@ -930,8 +930,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LRD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LRD",
@@ -939,8 +939,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LSL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LSL",
@@ -948,8 +948,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LTL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LTL",
@@ -957,8 +957,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LUF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LUF",
@@ -966,8 +966,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LVL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LVL",
@@ -975,8 +975,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('LYD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "LYD",
@@ -984,8 +984,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MAD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MAD",
@@ -993,8 +993,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MDL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MDL",
@@ -1002,8 +1002,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGA')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MGA",
@@ -1011,8 +1011,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MGF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MGF",
@@ -1020,8 +1020,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MKD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MKD",
@@ -1029,8 +1029,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MMK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MMK",
@@ -1038,8 +1038,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MNT')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MNT",
@@ -1047,8 +1047,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MOP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MOP",
@@ -1056,8 +1056,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MRO')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MRO",
@@ -1065,8 +1065,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MTL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MTL",
@@ -1074,8 +1074,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MUR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MUR",
@@ -1083,8 +1083,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MVR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MVR",
@@ -1092,8 +1092,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MWK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MWK",
@@ -1101,8 +1101,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MXN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MXN",
@@ -1110,8 +1110,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MYR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MYR",
@@ -1119,8 +1119,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MZM",
@@ -1128,8 +1128,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('MZN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "MZN",
@@ -1137,8 +1137,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NAD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NAD",
@@ -1146,8 +1146,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NGN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NGN",
@@ -1155,8 +1155,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NIO')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NIO",
@@ -1164,8 +1164,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NLG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NLG",
@@ -1173,8 +1173,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NOK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NOK",
@@ -1182,8 +1182,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NPR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NPR",
@@ -1191,8 +1191,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('NZD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "NZD",
@@ -1200,8 +1200,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('OMR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "OMR",
@@ -1209,8 +1209,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PAB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PAB",
@@ -1218,8 +1218,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PEN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PEN",
@@ -1227,8 +1227,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PGK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PGK",
@@ -1236,8 +1236,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PHP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PHP",
@@ -1245,8 +1245,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PKR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PKR",
@@ -1254,8 +1254,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PLN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PLN",
@@ -1263,8 +1263,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PTE')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PTE",
@@ -1272,8 +1272,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('PYG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "PYG",
@@ -1281,8 +1281,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('QAR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "QAR",
@@ -1290,8 +1290,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RMB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "RMB",
@@ -1299,8 +1299,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ROL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ROL",
@@ -1308,8 +1308,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RON')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "RON",
@@ -1317,8 +1317,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RSD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "RSD",
@@ -1326,8 +1326,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RUB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "RUB",
@@ -1335,8 +1335,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('RWF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "RWF",
@@ -1344,8 +1344,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SAR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SAR",
@@ -1353,8 +1353,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SBD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SBD",
@@ -1362,8 +1362,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SCR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SCR",
@@ -1371,8 +1371,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SDD",
@@ -1380,8 +1380,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SDG",
@@ -1389,8 +1389,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SDP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SDP",
@@ -1398,8 +1398,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SEK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SEK",
@@ -1407,8 +1407,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SGD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SGD",
@@ -1416,8 +1416,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SHP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SHP",
@@ -1425,8 +1425,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SIT')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SIT",
@@ -1434,8 +1434,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SKK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SKK",
@@ -1443,8 +1443,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SLL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SLL",
@@ -1452,8 +1452,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SOS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SOS",
@@ -1461,8 +1461,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SRD",
@@ -1470,8 +1470,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SRG')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SRG",
@@ -1479,8 +1479,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SSP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SSP",
@@ -1488,8 +1488,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('STD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "STD",
@@ -1497,8 +1497,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SVC')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SVC",
@@ -1506,8 +1506,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SYP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SYP",
@@ -1515,8 +1515,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('SZL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "SZL",
@@ -1524,8 +1524,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('THB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "THB",
@@ -1533,8 +1533,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TJR",
@@ -1542,8 +1542,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TJS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TJS",
@@ -1551,8 +1551,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TMM",
@@ -1560,8 +1560,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TMT')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TMT",
@@ -1569,8 +1569,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TND')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TND",
@@ -1578,8 +1578,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TOP')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TOP",
@@ -1587,8 +1587,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TPE')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TPE",
@@ -1596,8 +1596,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TRL",
@@ -1605,8 +1605,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TRY')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TRY",
@@ -1614,8 +1614,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TTD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TTD",
@@ -1623,8 +1623,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TWD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TWD",
@@ -1632,8 +1632,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('TZS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "TZS",
@@ -1641,8 +1641,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UAH')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "UAH",
@@ -1650,8 +1650,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UGX')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "UGX",
@@ -1659,8 +1659,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "USD",
@@ -1668,8 +1668,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('USDN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "USDN",
@@ -1677,8 +1677,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UYU')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "UYU",
@@ -1686,8 +1686,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('UZS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "UZS",
@@ -1695,8 +1695,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEB')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "VEB",
@@ -1704,8 +1704,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VEF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "VEF",
@@ -1713,8 +1713,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VND')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "VND",
@@ -1722,8 +1722,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('VUV')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "VUV",
@@ -1731,8 +1731,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('WST')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "WST",
@@ -1740,8 +1740,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XAF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XAF",
@@ -1749,8 +1749,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XCD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XCD",
@@ -1758,8 +1758,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XDS')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XDS",
@@ -1767,8 +1767,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XEU')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XEU",
@@ -1776,8 +1776,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XOF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XOF",
@@ -1785,8 +1785,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('XPF')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "XPF",
@@ -1794,8 +1794,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YER')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "YER",
@@ -1803,8 +1803,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('YUM')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "YUM",
@@ -1812,8 +1812,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZAR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZAR",
@@ -1821,8 +1821,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMK')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZMK",
@@ -1830,8 +1830,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZMW')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZMW",
@@ -1839,8 +1839,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZRN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZRN",
@@ -1848,8 +1848,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWD')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZWD",
@@ -1857,8 +1857,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWL')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZWL",
@@ -1866,8 +1866,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWN')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZWN",
@@ -1875,8 +1875,8 @@
 		        },
 		        {
 		            "__metadata" : {
-		                "id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
-		                "uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
+		                "id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
+		                "uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CurrencySet('ZWR')",
 		                "type" : "GWSAMPLE_BASIC.VH_Currency"
 		            },
 		            "Waers" : "ZWR",

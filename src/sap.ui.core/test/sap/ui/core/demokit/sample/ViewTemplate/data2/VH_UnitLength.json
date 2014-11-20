@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('IN')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "IN",
@@ -12,8 +12,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('CM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "CM",
@@ -21,8 +21,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('DM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "DM",
@@ -30,8 +30,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('FT')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "FT",
@@ -39,8 +39,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('KM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "KM",
@@ -48,8 +48,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('M')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "M",
@@ -57,8 +57,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MI')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "MI",
@@ -66,8 +66,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "MM",
@@ -75,8 +75,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('NAM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "NAM",
@@ -84,8 +84,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('YD')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "YD",
@@ -93,8 +93,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitLengthSet('MIM')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitLength"
 					},
 					"Msehi" : "MIM",

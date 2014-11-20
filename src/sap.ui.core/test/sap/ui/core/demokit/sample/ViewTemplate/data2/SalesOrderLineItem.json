@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -21,19 +21,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -50,19 +50,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -79,19 +79,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -108,19 +108,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -137,19 +137,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -166,19 +166,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -195,19 +195,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000070')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -224,19 +224,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000080')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -253,19 +253,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000090')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000000",
@@ -282,19 +282,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000100')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -311,19 +311,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -340,19 +340,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -369,19 +369,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -398,19 +398,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -427,19 +427,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -456,19 +456,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -485,19 +485,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000070')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -514,19 +514,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000080')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -543,19 +543,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000090')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000001",
@@ -572,19 +572,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000100')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -601,19 +601,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -630,19 +630,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -659,19 +659,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -688,19 +688,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -717,19 +717,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -746,19 +746,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -775,19 +775,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000070')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000002",
@@ -804,19 +804,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000080')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000003",
@@ -833,19 +833,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000003",
@@ -862,19 +862,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000003",
@@ -891,19 +891,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000003",
@@ -920,19 +920,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000003",
@@ -949,19 +949,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000003',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000004",
@@ -978,19 +978,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000004",
@@ -1007,19 +1007,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000004",
@@ -1036,19 +1036,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000004",
@@ -1065,19 +1065,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000004",
@@ -1094,19 +1094,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000004',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1123,19 +1123,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1152,19 +1152,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1181,19 +1181,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1210,19 +1210,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1239,19 +1239,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1268,19 +1268,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000005",
@@ -1297,19 +1297,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000005',ItemPosition='0000000070')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000006",
@@ -1326,19 +1326,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000006",
@@ -1355,19 +1355,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000006",
@@ -1384,19 +1384,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000006',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1413,19 +1413,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1442,19 +1442,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1471,19 +1471,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1500,19 +1500,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1529,19 +1529,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1558,19 +1558,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1587,19 +1587,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000070')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000007",
@@ -1616,19 +1616,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000007',ItemPosition='0000000080')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1645,19 +1645,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1674,19 +1674,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1703,19 +1703,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1732,19 +1732,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000040')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1761,19 +1761,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000050')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000008",
@@ -1790,19 +1790,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000008',ItemPosition='0000000060')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000009",
@@ -1819,19 +1819,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000010')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000009",
@@ -1848,19 +1848,19 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000020')/ToProduct"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')",
 						"type" : "GWSAMPLE_BASIC.SalesOrderLineItem"
 					},
 					"SalesOrderID" : "0500000009",
@@ -1877,12 +1877,12 @@
 					"QuantityUnit" : "EA",
 					"ToHeader" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToHeader"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToHeader"
 						}
 					},
 					"ToProduct" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToProduct"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderLineItemSet(SalesOrderID='0500000009',ItemPosition='0000000030')/ToProduct"
 						}
 					}
 				}]

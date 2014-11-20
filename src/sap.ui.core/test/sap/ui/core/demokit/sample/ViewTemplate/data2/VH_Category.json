@@ -3,208 +3,208 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Accessories')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Accessories')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Accessories')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Accessories')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Accessories"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Beamers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Beamers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Beamers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Beamers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Beamers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Camcorders')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Camcorders')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Camcorders')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Camcorders')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Camcorders"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Computer%20system%20accessories')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Computer%20system%20accessories')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Computer%20system%20accessories')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Computer%20system%20accessories')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Computer system accessories"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Flat%20screens')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Flat%20screens')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Flat%20screens')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Flat%20screens')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Flat screens"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Graphic%20cards')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Graphic%20cards')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Graphic%20cards')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Graphic%20cards')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Graphic cards"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Headsets')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Headsets')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Headsets')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Headsets')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Headsets"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Ink%20jet%20printers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Ink%20jet%20printers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Ink%20jet%20printers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Ink%20jet%20printers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Ink jet printers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Keyboards')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Keyboards')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Keyboards')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Keyboards')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Keyboards"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Laser%20printers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Laser%20printers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Laser%20printers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Laser%20printers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Laser printers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('MP3-Players')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('MP3-Players')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('MP3-Players')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('MP3-Players')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "MP3-Players"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mice')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mice')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mice')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mice')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Mice"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mousepads')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mousepads')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mousepads')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Mousepads')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Mousepads"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Multifunction%20printers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Multifunction%20printers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Multifunction%20printers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Multifunction%20printers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Multifunction printers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Notebooks')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Notebooks')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Notebooks')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Notebooks')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Notebooks"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PCs')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PCs')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PCs')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PCs')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "PCs"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PDAs%2FOrganizers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PDAs%2FOrganizers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PDAs%2FOrganizers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('PDAs%2FOrganizers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "PDAs/Organizers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Portable%20Players')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Portable%20Players')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Portable%20Players')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Portable%20Players')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Portable Players"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Scanners')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Scanners')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Scanners')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Scanners')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Scanners"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Servers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Servers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Servers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Servers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Servers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Smartphones')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Smartphones')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Smartphones')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Smartphones')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Smartphones"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Software')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Software')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Software')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Software')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Software"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Speakers')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Speakers')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Speakers')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Speakers')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Speakers"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('TV%20flat%20screens')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('TV%20flat%20screens')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('TV%20flat%20screens')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('TV%20flat%20screens')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "TV flat screens"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Tablets')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Tablets')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Tablets')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Tablets')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Tablets"
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Telecommunication')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Telecommunication')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Telecommunication')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_CategorySet('Telecommunication')",
 						"type" : "GWSAMPLE_BASIC.VH_Category"
 					},
 					"Category" : "Telecommunication"

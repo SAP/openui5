@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('AD')",
 						"type" : "GWSAMPLE_BASIC.VH_ProductTypeCode"
 					},
 					"TypeCode" : "AD",
@@ -12,8 +12,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_ProductTypeCodeSet('PR')",
 						"type" : "GWSAMPLE_BASIC.VH_ProductTypeCode"
 					},
 					"TypeCode" : "PR",
