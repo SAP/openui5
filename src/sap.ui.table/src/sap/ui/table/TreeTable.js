@@ -71,8 +71,8 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			}
 		}
 	}});
-	
-	
+
+
 	/**
 	 * Initialization of the TreeTable control
 	 * @private
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 					}
 				},
 
-				_initContexts: function() {
+				_initContexts: function(bSkipFirstLevelLoad) {
 					// load the root contexts and create the context info map entry (if missing)
 					this.aContexts = this.getRootContexts();
 					for (var i = 0, l = this.aContexts.length; i < l; i++) {
@@ -166,15 +166,17 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 					}
 
 					if (this._bExpandFirstLevel && !this._bFirstLevelExpanded) {
-						this._expandFirstLevel();
+						this._expandFirstLevel(bSkipFirstLevelLoad);
 					}
 				},
 
-				_expandFirstLevel: function () {
+				_expandFirstLevel: function (bSkipFirstLevelLoad) {
 					var that = this;
 					if (this.aContexts && this.aContexts.length > 0) {
 						jQuery.each(this.aContexts.slice(), function(iIndex, oContext) {
-							that._loadChildContexts(oContext);
+							if (!bSkipFirstLevelLoad) {
+								that._loadChildContexts(oContext);
+							}
 							that._getContextInfo(oContext).bExpanded = true;
 						});
 
@@ -185,13 +187,13 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 				_fnFireFilter: oBinding._fireFilter,
 				_fireFilter: function() {
 					this._fnFireFilter.apply(this, arguments);
-					this._initContexts();
+					this._initContexts(true);
 					this._restoreContexts(this.aContexts);
 				},
 				_fnFireChange: oBinding._fireChange,
 				_fireChange: function() {
 					this._fnFireChange.apply(this, arguments);
-					this._initContexts();
+					this._initContexts(true);
 					this._restoreContexts(this.aContexts);
 				},
 				_restoreContexts: function(aContexts) {
@@ -490,7 +492,7 @@ sap.ui.define(['jquery.sap.global', './Table', './library'],
 			oBinding.collapseContext(oContext);
 		}
 	};
-	
+
 	/**
 	 * returns whether the row is expanded or collapsed
 	 *
