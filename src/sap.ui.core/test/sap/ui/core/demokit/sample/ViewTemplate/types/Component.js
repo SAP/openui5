@@ -5,8 +5,9 @@
  * @fileOverview Application component to test bindings using OData types.
  * @version @version@
  */
-//jQuery.sap.require("sap.ui.model.odata.type.Decimal");
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.types.Component");
+
+jQuery.sap.require("sap.ui.model.odata.type.Decimal");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component", {
 	metadata: "json",
@@ -21,9 +22,15 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.types.Component"
 		 * @param {sap.ui.base.Event} oEvent the event to get the control
 		 */
 		function setState(sState, oEvent) {
-			var oControl = oEvent.getSource();
+			var oControl = oEvent.getSource(),
+				oException;
+
 			if (oControl && oControl.setValueState) {
 				oControl.setValueState(sState);
+				oException = oEvent.getParameter("exception");
+				if (oException) {
+					oControl.setValueStateText(oException.name + ": " + oException.message);
+				}
 			}
 		}
 
