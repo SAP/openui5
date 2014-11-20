@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global',
 		 * @class UI 5 extension of the OPA framework
 		 * @extends sap.ui.base.Object
 		 * @public
-		 * @name sap.ui.test.Opa5
+		 * @alias sap.ui.test.Opa5
 		 * @author SAP SE
 		 * @since 1.22
 		 */
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @name sap.ui.test.Opa5#iStartMyAppInAFrame
+		 *@alias sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
 		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @name sap.ui.test.Opa5#iStartMyAppInAFrame
+		 * @alias sap.ui.test.Opa5#iStartMyAppInAFrame
 		 * @param {string} sSource the source of the iframe
 		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
+		 * @alias sap.ui.test.Opa5#iTeardownMyAppFrame
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Removes the iframe from the dom and removes all the references on its objects
-		 * @name sap.ui.test.Opa5#iTeardownMyAppFrame
+		 * @alias sap.ui.test.Opa5#iTeardownMyAppFrame
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @function
 		 * @public
@@ -131,23 +131,23 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Same as the waitFor method of Opa. Also allows you to specify additional parameters:
-		 * <ul>
-		 * <li> id - the global id of a control, or the id of a control inside of a view.</li>
-		 * <li> viewName - the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.</li>
-		 * <li> viewNamespace - get appended before the viewName </li>
-		 * <li> matchers - a single matcher or an array of matchers @see sap.ui.test.matchers. All of the matchers have to match. Check will not be called if the matchers filtered out all controls before.</li>
-		 * <li> controlType - a string eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored</li>
-		 * <li> searchOpenDialogs - boolean : if true, OPA will only look in open dialogs. All the other values except control type will be ignored</li>
-		 * <li> visible - boolean : default: true - if set to false OPA will also look for not rendered and invisible controls</li><li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
-		 * <li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
-		 * <li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
-		 * <li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked</li>
-		 * <li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
 		 *
-		 * </ul>
-		 *
-		 * @name sap.ui.test.Opa5#waitFor
-		 * @param {object} oOptions
+		 * @alias sap.ui.test.Opa5#waitFor
+		 * @param {object} oOptions an Object containing conditions for waiting and callbacks
+		 * @param {string|regexp} [oOptions.id] the global id of a control, or the id of a control inside of a view.
+		 * @param {string} [oOptions.viewName] the name of a view, if this one is set the id of the control is searched inside of the view. If an id is not be set, all controls of the view will be found.
+		 * @param {string} [oOptions.viewNamespace] get appended before the viewName - should probably be set to the OPA config.
+		 * @param {function|array|sap.ui.test.matchers.Matcher} [oOptions.matchers] a single matcher or an array of matchers @link sap.ui.test.matchers. All of the matchers have to match. Check will not be called if the matchers filtered out all controls before. You may also provide inline functions that will get a control passed and have to return a boolean.
+		 * @param {string} [oOptions.controlType] eg: sap.m.Button will search for all buttons inside of a container. If an id is given, this is ignored.
+		 * @param {boolean} [oOptions.searchOpenDialogs] if true, OPA will only look in open dialogs. All the other values except control type will be ignored
+		 * @param {boolean} [oOptions.visible] default: true - if set to false OPA will also look for not rendered and invisible controls.
+		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
+		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
+		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked.
+		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is qunit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
+		 * @alias sap.ui.test.Opa5#waitFor
 		 * @function
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
@@ -261,7 +261,7 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Returns the opa plugin used for retrieving controls. If an iframe is used it will return the iFrame's plugin.
 		 * @returns {sap.ui.test.OpaPlugin} the plugin instance
-		 * @name sap.ui.test.Opa5#getPlugin
+		 * @alias sap.ui.test.Opa5#getPlugin
 		 * @public
 		 * @function
 		 * @static
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns the jQuery object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getJQuery
+		 * @alias sap.ui.test.Opa5#getJQuery
 		 * @returns {jQuery} the jQuery object
 		 * @static
 		 * @public
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns the window object of the iframe or the current window. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getWindow
+		 * @alias sap.ui.test.Opa5#getWindow
 		 * @returns {oWindow} the window of the iframe
 		 * @static
 		 * @public
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getUtils
+		 * @alias sap.ui.test.Opa5#getUtils
 		 * @public
 		 * @static
 		 * @function
@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Returns qunit utils object of the iframe. If the iframe is not loaded it will return null.
-		 * @name sap.ui.test.Opa5#getHashChanger
+		 * @alias sap.ui.test.Opa5#getHashChanger
 		 * @public
 		 * @static
 		 * @function
@@ -321,7 +321,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Extends the default config of Opa
-		 * @name sap.ui.test.Opa5#extendConfig
+		 * @alias sap.ui.test.Opa5#extendConfig
 		 * @public
 		 * @function
 		 * @static
@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Reset Opa.config to its default values
-		 * @name sap.ui.test.Op5a#resetConfig
+		 * @alias sap.ui.test.Op5a#resetConfig
 		 * @static
 		 * @public
 		 * @function
@@ -349,7 +349,7 @@ sap.ui.define(['jquery.sap.global',
 
 		/**
 		 * Waits until all waitFor calls are done
-		 * @name sap.ui.test.Opa5#emptyQueue
+		 * @alias sap.ui.test.Opa5#emptyQueue
 		 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 		 * @public
 		 * @function
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global',
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
-		 * @name sap.ui.test.Opa5#createPageObjects
+		 * @alias sap.ui.test.Opa5#createPageObjects
 		 * @param {map} mPageObjects
 		 * @param {map} mPageObjects.<your page object name> Multiple page objects are possible, provide at least actions or assertions
 		 * @param {function} [mPageObjects.<your page object name>.baseClass] Base class for the page object's actions and assertions, default: Opa5
