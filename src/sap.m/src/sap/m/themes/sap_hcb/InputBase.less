@@ -258,6 +258,34 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 	}
 }
 
+/* focus on browsers except IE */
+.sapMInputBase .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus {
+	outline: 0.125rem dotted @sapHCStandardFG;
+	outline-offset: -0.188rem;
+}
+
+/* focus in IE (workaround) */
+html[data-sap-ui-browser^="ie"] { 
+	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
+	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
+		outline: none;
+	}
+	.sapMFocus.sapMInputBase:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
+		&::after {
+			content: "";
+			position: absolute;
+			top: 5px;
+			left: 1px;
+			right: 1px;
+			bottom:5px;
+			display: block;
+			border: 2px dotted @sapHCStandardFG;
+			box-sizing: border-box;
+			pointer-events: none;
+		}
+	}
+}
+
 /* Input selection fix -
  * Due to the fact that the CSS parsing rules require dropping the whole rule when encountering an invalid
  * pseudo-element, two separate rules must be written */
