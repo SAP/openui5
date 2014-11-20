@@ -7,7 +7,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 	onInit : function () {
 
 		this._afterRenderingDone = false;
-
+		
 		// subscribe to app events
 		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		this._component.getEventBus().subscribe("app", "applyAppConfiguration", this._applyAppConfiguration, this);
@@ -17,7 +17,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.app", {
 		if (this.hasOwnProperty("_compactOn")) {
 			this.getView().toggleStyleClass("sapUiSizeCompact", this._compactOn);
 		}
-		if (this.hasOwnProperty("_themeActive")) {
+		if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme")) {
 			sap.ui.getCore().applyTheme(this._themeActive);
 		}
 		this._afterRenderingDone = true;

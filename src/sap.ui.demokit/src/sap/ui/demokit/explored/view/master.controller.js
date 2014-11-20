@@ -77,23 +77,39 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this.getView().addDependent(this._oSettingsDialog);
 		}
 		
-		var oCaller = oEvent.getSource();
+//		var oCaller = oEvent.getSource();
 		jQuery.sap.delayedCall(0, this, function(){
 			
 			// variable for convenience 
 			var oAppSettings = sap.ui.getCore().getConfiguration();
 			var sCompactMode = (this._oViewSettings.compactOn) ? "compactOn" : "compactOff";
+			var sRTL = (this._oViewSettings.rtl) ? "RTLOn" : "RTLOff";
+			
+			// handling of URI parameters
+			var sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme");
+			var sUriParamRTL = jQuery.sap.getUriParameters().get("sap-ui-rtl");
 			
 			// setting the button for Theme
-			sap.ui.getCore().byId("ThemeButtons").setSelectedButton(oAppSettings.getTheme());
+			if (sUriParamTheme){
+				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(sUriParamTheme);
+			} else {
+				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(oAppSettings.getTheme());
+			}
 			
 			// setting the button for Compact Mode
 			sap.ui.getCore().byId("CompactModeButtons").setSelectedButton(sCompactMode);
 			
-			//TODO: this for RTL
+			// setting the RTL Button
+			if (sUriParamRTL){
+				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sUriParamRTL ? "RTLOn" : "RTLOff");
+			} else {
+				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sRTL);
+			}
+			
+			
 			
 			this._oSettingsDialog.open();
-		}, oCaller);
+		});
 		
 	},
 
@@ -107,7 +123,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this.getView().addDependent(this._oBusyDialog);
 		}
 		var bCompact =  (sap.ui.getCore().byId('CompactModeButtons').getSelectedButton() === "compactOn") ? true : false;
-		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedButton();		
+		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedButton();
+		var bRTL = (sap.ui.getCore().byId('RTLButtons').getSelectedButton() === "RTLOn") ? true : false;
+		
+		var bRTLChanged = (bRTL !== this._oViewSettings.rtl);
 		
 		// busy dialog
 		this._oBusyDialog.open();	
@@ -118,6 +137,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// write new settings into local storage
 		this._oViewSettings.compactOn = bCompact;
 		this._oViewSettings.themeActive = sTheme;
+		this._oViewSettings.rtl = bRTL;
 		var s = JSON.stringify(this._oViewSettings);
 		this._oStorage.put(this._sStorageKey, s);		
 		
@@ -126,6 +146,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			themeActive : sTheme,
 			compactOn : bCompact
 		});
+		
+		if (bRTLChanged){
+			this._handleRTL(bRTL);
+		}
 	},
 	
 	onDialogCloseButton : function(){
@@ -353,10 +377,13 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				groupProperty : "category",
 				groupDescending : false,
 				compactOn : false,
-				themeActive : "sap_bluecrystal"
+				themeActive : "sap_bluecrystal",
+				rtl: false
 			};
 
 		} else {
+			
+
 
 			// parse
 			this._oViewSettings = JSON.parse(sJson);
@@ -393,7 +420,33 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			if (!this._oViewSettings.hasOwnProperty("themeActive")) { // themeActive was introduced later
 				this._oViewSettings.themeActive = "sap_bluecrystal";
 			}
+			
+			if (!this._oViewSettings.hasOwnProperty("rtl")) { // rtl was introduced later
+				this._oViewSettings.rtl = false;
+			}
+			
+			// handle RTL-on in settings as this need a reload
+			if (this._oViewSettings.rtl && !jQuery.sap.getUriParameters().get('sap-ui-rtl')){
+				this._handleRTL(true);
+			}
 		}
+	},
+	
+	// trigger reload w/o URL-Parameter;
+	_handleRTL : function(bSwitch){
+		
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
+		var oHashChanger = new sap.ui.core.routing.HashChanger();
+		var sHash = oHashChanger.getHash();
+		var oUri = window.location;
+		if (bSwitch){
+			// add the parameter
+			window.location = oUri.origin + oUri.pathname + "?sap-ui-rtl=true#" + sHash;
+		} else {
+			// or remove it
+			window.location = oUri.origin + oUri.pathname + "#/" + sHash;
+		}
+
 	},
 	
 	getGroupHeader: function (oGroup){
