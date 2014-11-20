@@ -1615,8 +1615,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Down
 	ListBase.prototype.onsapshow = function(oEvent) {
-		// do not handle marked events and ignore F4
-		if (oEvent.isMarked() || oEvent.which == jQuery.sap.KeyCodes.F4) {
+		// handle events that are only coming from navigation items and ignore F4
+		if (oEvent.isMarked() || 
+			oEvent.which == jQuery.sap.KeyCodes.F4 || 
+			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	
@@ -1652,8 +1654,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	// Handle Alt + Up
 	ListBase.prototype.onsaphide = function(oEvent) {
-		// do not handle marked events
-		if (oEvent.isMarked()) {
+		// handle events that are only coming from navigation items
+		if (oEvent.isMarked() || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
 	

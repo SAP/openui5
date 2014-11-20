@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @class
 	 * The Toolbar control is a horizontal items container that can be used to get an input from user or just to display output.
 	 * 
-	 * Note: By default, when Toolbar overflows, it provides shrinking for text controls(e.g. Text, Label) and the controls that have percentual width.(e.g. Input, Slider). This behaviour can be overwritten by providing sap.m.ToolbarLayoutData for toolbar items.
+	 * Note: By default, when the Toolbar overflows, it provides shrinking for the controls which have percentual width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behaviour can be overwritten by providing {@link sap.m.ToolbarLayoutData} for the toolbar items.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
