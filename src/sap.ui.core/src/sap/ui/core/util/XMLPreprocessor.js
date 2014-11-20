@@ -109,18 +109,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		}
 
 		/**
-		 * Creates a binding info object with the given path.
-		 * See BindingParser.js
-		 *
-		 * @param {string} sPath the path
-		 * @returns {object} with model and path property
-		 */
-		function makeSimpleBindingInfo(sPath) {
-			//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
-			return sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
-		}
-
-		/**
 		 * Serializes the element with its attributes.
 		 * <p>
 		 * BEWARE: makes no attempt at encoding, DO NOT use in a security critical manner!
@@ -379,9 +367,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 					oNewWithControl = new With();
 					oWithControl.setChild(oNewWithControl);
 
-					//TODO/FIX4MASTER Simplify code once named contexts are supported by the core
+					//TODO Simplify code once named contexts are supported by the core
 					if (sVar) { // create a "named context"
-						oBindingInfo = makeSimpleBindingInfo(sPath);
+						//TODO how to improve on this hack? makeSimpleBindingInfo() is not visible
+						oBindingInfo = sap.ui.base.BindingParser.simpleParser("{" + sPath + "}");
 						oModel = oWithControl.getModel(oBindingInfo.model);
 						if (!oModel) {
 							throw new Error(sCaller + ": Missing model '" + oBindingInfo.model
