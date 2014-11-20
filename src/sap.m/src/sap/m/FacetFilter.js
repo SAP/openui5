@@ -786,7 +786,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
-			oPopover.setContentWidth("30%");
 			
 		//IE9
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
@@ -831,13 +830,13 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	
 	/**
 	 * 
-	 * @param oPopover
+	 * @param oPopover.
 	 * @param oControl The control the popover will be opened "by"
 	 */
 	
 	FacetFilter.prototype._openPopover = function(oPopover, oControl) {
 	       
-	       // Don't open if already open, otherwise the popover will display empty.   
+	       // Don't open if already open, otherwise the popover will display empty   
 	       if (!oPopover.isOpen()) {
 	              
 	              var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
@@ -851,6 +850,9 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true   
 	              if (oList.getShowRemoveFacetIcon()) {
 	              this._displayRemoveIcon(true, oList);
+	              }
+	              if (oList.getWordWrap()) {
+oPopover.setContentWidth("30%");
 	              }
 	              oList._applySearch();
 	       }
