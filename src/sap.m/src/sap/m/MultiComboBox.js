@@ -1294,17 +1294,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			},
 			onfocusin : function(oEvent) {
 				this.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
-				
-				// Update Input Value accordingly
-				var oItemCurrent = oEvent.srcControl;
-				
-				if (oItemCurrent && (oItemCurrent instanceof sap.m.StandardListItem)) {
-					if (oItemCurrent.isSelected()) {
-						this.setValue("");
-					} else {
-						this.setValue(oItemCurrent.getTitle());
-					}
-				}
 			},
 			onfocusout : function(oEvent) {
 				this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
