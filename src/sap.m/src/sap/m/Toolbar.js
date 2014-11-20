@@ -379,11 +379,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	};
 	
 	Toolbar.prototype.onAfterRendering = function() {
-		// do nothing for invisible toolbar
-		if (this._isInvisible()) {
-			return;
-		}
-	
 		// if there is no shrinkable item, layout is not needed
 		if (!this._checkContents()) {
 			return;
@@ -451,13 +446,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	// mark to inform active handling is done by toolbar
 	Toolbar.prototype.ontouchstart = function(oEvent) {
 		this.getActive() && oEvent.setMarked();
-	};
-	
-	// determines whether toolbar is visible or not
-	Toolbar.prototype._isInvisible = function() {
-		if (!this.getVisible() || !this.getContent().length) {
-			return true;
-		}
 	};
 	
 	// mark shrinkable contents and render layout data
