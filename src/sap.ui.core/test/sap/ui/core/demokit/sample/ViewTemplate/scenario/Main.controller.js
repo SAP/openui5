@@ -95,21 +95,15 @@ sap.ui.controller("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 	},
 
 	_showDetails: function (sPath) {
-		var sANNO_PATH = "/schemas/GWSAMPLE_BASIC/annotations",
-			oDetailView,
+		var oDetailView,
 			oView = this.getView(),
 			oMetaContext,
 			oMetaModel = oView.getModel("meta"),
-			aAnnotations = oMetaModel.getObject(sANNO_PATH),
+			sEntityMetadataPath = "/definitions/" + this._getSelectedType().target,
 			oModel = oView.getModel(),
 			i;
 
-		for (i = 0; i < aAnnotations.length; i += 1) {
-			if (aAnnotations[i].target === this._getSelectedType().target) {
-				oMetaContext = oMetaModel.createBindingContext(sANNO_PATH + "/" + i);
-				break;
-			}
-		}
+		oMetaContext = oMetaModel.createBindingContext(sEntityMetadataPath);
 		oDetailView = sap.ui.view({
 			preprocessors: {
 				xml: {

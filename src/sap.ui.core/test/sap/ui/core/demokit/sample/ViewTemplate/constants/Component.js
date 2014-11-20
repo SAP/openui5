@@ -30,11 +30,11 @@ sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.constants.Compon
 		oMetaModel.loadData(sUri + "miscellaneous.json", undefined, /*bAsync*/false);
 		//add interesting annotations not contained in the original miscellaneous.json
 		oMetaModel.setProperty("/definitions/Model1.Weird/@Some.ImageData.Binary#Blue", {
-			"@odata.type": "Edm.Binary",
+			"@odata.type": "#Binary",
 			"value": sLogoBlue
 		});
 		oMetaModel.setProperty("/definitions/Model1.Weird/@Some.ImageData.Binary#Gold", {
-			"@odata.type": "Edm.Binary",
+			"@odata.type": "#Binary",
 			"value": sLogoGold
 		});
 

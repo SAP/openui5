@@ -101,7 +101,7 @@
 	      "@odata.type": "com.sap.vocabularies.UI.v1.DataField",
 	      "Label": "Product Name",
 	      "Value": {
-	        "@odata.type": "Edm.Path",
+	        "@odata.type": "#Path",
 	        "value": "Name"
 	      }
 	    }
@@ -118,7 +118,7 @@
 	jQuery.each(["", "/", ".", "foo", "path:'foo'", 'path: "{\\f,o,o}"'], function (i, sPath) {
 		test("Binding Path: " + sPath, function () {
 			var oSingleBindingInfo = formatAndParseNoWarning({
-					"@odata.type" : "Edm.Path",
+					"@odata.type" : "#Path",
 					"value" : sPath
 				});
 			strictEqual(oSingleBindingInfo.path, sPath);
@@ -130,7 +130,7 @@
 
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, {}, false, true, 0, 1, NaN], "14.5.12 Expression edm:Path",
-		"Edm.Path", true);
+		"#Path", true);
 
 	//*********************************************************************************************
 	jQuery.each([undefined, Function, oCIRCULAR],
@@ -142,7 +142,7 @@
 	);
 
 	//*********************************************************************************************
-	jQuery.each([null, {}, {foo: "bar"}, {"@odata.type" : "Edm.Unsupported"}],
+	jQuery.each([null, {}, {foo: "bar"}, {"@odata.type" : "#Unsupported"}],
 		function (i, oRawValue) {
 			test("Stringify invalid input where possible: " + JSON.stringify(oRawValue),
 				function () {
@@ -167,12 +167,12 @@
 
 	//*********************************************************************************************
 	testIllegalValues([Infinity, -Infinity, NaN, 9007199254740992, -9007199254740992,
-	                   1234567890123456789], "14.4.10 Expression edm:Int", "Edm.Int64", false);
+	                   1234567890123456789], "14.4.10 Expression edm:Int", "#Int64", false);
 
 	//*********************************************************************************************
 	test("14.4.10 Expression edm:Int (IEEE754Compatible)", function () {
 		var oRawValue = {
-				"@odata.type" : "Edm.Int64",
+				"@odata.type" : "#Int64",
 				value: "-1234567890"
 			};
 
@@ -188,10 +188,10 @@
 	//TODO support large integers beyond 53 bit!
 	testIllegalValues([null, true, 0, "1.0", "{}", "foo", "1a", "9007199254740992",
 	                   "-9007199254740992", "1234567890123456789"],
-	                   "14.4.10 Expression edm:Int (IEEE754Compatible)", "Edm.Int64", true);
+	                   "14.4.10 Expression edm:Int (IEEE754Compatible)", "#Int64", true);
 
 	//*********************************************************************************************
-	testIllegalValues([3.14], "14.4.10 Expression edm:Int", "Edm.Int64", false);
+	testIllegalValues([3.14], "14.4.10 Expression edm:Int", "#Int64", false);
 
 	//*********************************************************************************************
 	test("14.4.2 Expression edm:Bool", function () {
@@ -202,20 +202,20 @@
 	//*********************************************************************************************
 	test("14.4.3 Expression edm:Date", function () {
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Date",
+			"@odata.type": "#Date",
 			"value": "2000-01-01"
 		}), "Jan 1, 2000");
 
 		sap.ui.getCore().getConfiguration().getFormatSettings().setDatePattern("medium", "{}");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Date",
+			"@odata.type": "#Date",
 			"value": "2000-01-01"
 		}), "{}");
 	});
 
 	//*********************************************************************************************
 	testIllegalValues([null, 0, "{}", "20000101", "2000-13-01", "2000-01-01T16:00:00Z"],
-		"14.4.3 Expression edm:Date", "Edm.Date", true);
+		"14.4.3 Expression edm:Date", "#Date", true);
 
 	//*********************************************************************************************
 	jQuery.each(["2000-01-01T16:00:00Z", "2000-01-01T16:00:00.0Z", "2000-01-01T16:00:00.000Z",
@@ -236,7 +236,7 @@
 				sap.ui.getCore().getConfiguration().getFormatSettings()
 					.setDatePattern("medium", "yyyy{MM}dd");
 				strictEqual(formatAndParseNoWarning({
-					"@odata.type": "Edm.DateTimeOffset",
+					"@odata.type": "#DateTimeOffset",
 					"value": sDateTime
 				}), sap.ui.core.format.DateFormat.getDateTimeInstance().format(oDate));
 			});
@@ -252,7 +252,7 @@
 //	             "2000-01-01T16:00:00.000+00:60",
 	             "2000-01-01T16:00:00.000~00:00",
 	             "2000-01-01T16:00:00.Z"],
-	             "14.4.4 Expression edm:DateTimeOffset", "Edm.DateTimeOffset", true);
+	             "14.4.4 Expression edm:DateTimeOffset", "#DateTimeOffset", true);
 
 	//*********************************************************************************************
 	test("14.4.12 Expression edm:TimeOfDay", function () {
@@ -262,23 +262,23 @@
 
 		// Note: TimeOfDay is not UTC!
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.TimeOfDay",
+			"@odata.type": "#TimeOfDay",
 			"value": "23:59:59.123"
 		}), "23{59}59.123");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.TimeOfDay",
+			"@odata.type": "#TimeOfDay",
 			"value": "23:59:59.123456789012"
 		}), "23{59}59.123", "beyond millis");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.TimeOfDay",
+			"@odata.type": "#TimeOfDay",
 			"value": "23:59:59.1"
 		}), "23{59}59.100");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.TimeOfDay",
+			"@odata.type": "#TimeOfDay",
 			"value": "23:59:59"
 		}), "23{59}59.000");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.TimeOfDay",
+			"@odata.type": "#TimeOfDay",
 			"value": "23:59"
 		}), "23{59}00.000");
 	});
@@ -286,50 +286,50 @@
 	//*********************************************************************************************
 	testIllegalValues([null, 0, "{}", "23", "23:59:60", "23:60:59", "24:00:00",
 	                   "23:59:59.1234567890123"],
-	                   "14.4.12 Expression edm:TimeOfDay", "Edm.TimeOfDay", true);
+	                   "14.4.12 Expression edm:TimeOfDay", "#TimeOfDay", true);
 
 	//*********************************************************************************************
 	test("14.4.8 Expression edm:Float", function () {
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Double",
+			"@odata.type": "#Double",
 			"value": 1.23e4
 		}), "12,300");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Double",
+			"@odata.type": "#Double",
 			"value": "INF"
 		}), "Infinity");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Double",
+			"@odata.type": "#Double",
 			"value": "-INF"
 		}), "Minus infinity");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Double",
+			"@odata.type": "#Double",
 			"value": "NaN"
 		}), "Not a number");
 
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("group", "}");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Double",
+			"@odata.type": "#Double",
 			"value": -1.23e4
 		}), "{12}300");
 	});
 
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "foo", "1a", "1e", "12.34", -Infinity, NaN],
-		"14.4.8 Expression edm:Float", "Edm.Double", true);
+		"14.4.8 Expression edm:Float", "#Double", true);
 
 	//*********************************************************************************************
 	test("14.4.5 Expression edm:Decimal", function () {
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Decimal",
+			"@odata.type": "#Decimal",
 			"value": 12.34
 		}), "12.34");
 
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("minusSign", "{");
 		sap.ui.getCore().getConfiguration().getFormatSettings().setNumberSymbol("decimal", "}");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Decimal",
+			"@odata.type": "#Decimal",
 			"value": -12.34
 		}), "{12}34");
 	});
@@ -337,12 +337,12 @@
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "foo", "1a", "1e", -Infinity, NaN, "INF",
 	                   "-INF", "NaN", "1e+12"],
-		"14.4.5 Expression edm:Decimal", "Edm.Decimal", true);
+		"14.4.5 Expression edm:Decimal", "#Decimal", true);
 
 	//*********************************************************************************************
 	test("14.4.5 Expression edm:Decimal (IEEE754Compatible)", function () {
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Decimal",
+			"@odata.type": "#Decimal",
 			"value": "12.34"
 		}), "12.34");
 	});
@@ -359,7 +359,7 @@
 				sResult = sap.ui.core.format.NumberFormat.getFloatInstance().format(sDecimal);
 
 				strictEqual(formatAndParseNoWarning({
-					"@odata.type": "Edm.Decimal",
+					"@odata.type": "#Decimal",
 					"value": sDecimal
 				}), sResult, "Expected result: " + sResult);
 			});
@@ -369,17 +369,17 @@
 	//*********************************************************************************************
 	test("14.4.9 Expression edm:Guid", function () {
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Guid",
+			"@odata.type": "#Guid",
 			"value": "86a96539-871b-45cf-b96b-93dbc235105a"}), "86a96539-871b-45cf-b96b-93dbc235105a");
 		strictEqual(formatAndParseNoWarning({
-			"@odata.type": "Edm.Guid",
+			"@odata.type": "#Guid",
 			"value": "86A96539-871B-45CF-B96B-93DBC235105A"}), "86A96539-871B-45CF-B96B-93DBC235105A");
 	});
 
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "foo", "123g5678-1234-1234-1234-123456789abc",
 	                   "12345-1234-1234-1234-123456789abc", "12_45678-1234-1234-1234-123456789abc"],
-		"14.4.9 Expression edm:Guid", "Edm.Guid", true);
+		"14.4.9 Expression edm:Guid", "#Guid", true);
 
 	//*********************************************************************************************
 	jQuery.each(["", "U0FQ", "QUI=", "QQ==",
@@ -387,7 +387,7 @@
 		function (i, sValue) {
 			test("14.4.1 Expression edm:Binary: " + sValue, function () {
 				strictEqual(
-					formatAndParseNoWarning({"@odata.type": "Edm.Binary", "value": sValue}),
+					formatAndParseNoWarning({"@odata.type": "#Binary", "value": sValue}),
 					sValue.replace(/-/g, "+").replace(/_/g, "/")
 				);
 			});
@@ -396,5 +396,5 @@
 
 	//*********************************************************************************************
 	testIllegalValues([undefined, null, false, {}, "A===", "+", "/", "%"],
-	                   "14.4.1 Expression edm:Binary", "Edm.Binary", true);
+	                   "14.4.1 Expression edm:Binary", "#Binary", true);
 } ());

@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 		/**
 		 * The XML pre-processor for template instructions in XML views.
 		 *
-		 * @name sap.ui.core.util.XMLPreprocessor
+		 * @alias sap.ui.core.util.XMLPreprocessor
 		 * @private
 		 */
 		return {
@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			 * @returns {Element}
 			 *   <code>oRootElement</code>
 			 *
-			 * @name sap.ui.core.util.XMLPreprocessor#process
+			 * @alias sap.ui.core.util.XMLPreprocessor#process
 			 * @private
 			 */
 			process: function(oRootElement, mSettings, sCaller) {

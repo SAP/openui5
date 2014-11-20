@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		/**
 		 * The OData helper which can act as a formatter in XML template views.
 		 *
-		 * @name sap.ui.model.odata.AnnotationHelper
+		 * @alias sap.ui.model.odata.AnnotationHelper
 		 * @private
 		 */
 		return {
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 				case "number": // 14.4.10 Expression edm:Int
 					return isInteger(vRawValue)
 						? formatInteger(vRawValue)
-						: illegalValue({"@odata.type": "Edm.Int64", value: vRawValue});
+						: illegalValue({"@odata.type": "#Int64", value: vRawValue});
 
 				case "string": // 14.4.11 Expression edm:String
 					return fnEscape(vRawValue);
@@ -141,14 +141,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 				case "object":
 					if (vRawValue) {
 						switch (vRawValue["@odata.type"]) {
-						case "Edm.Binary": // 14.4.1 Expression edm:Binary
+						case "#Binary": // 14.4.1 Expression edm:Binary
 							return typeof vRawValue.value === "string"
 									&& rBinary.test(vRawValue.value)
 								//convert to base64 format for data URLs
 								? vRawValue.value.replace(/-/g, "+").replace(/_/g, "/")
 								: illegalValue(vRawValue);
 
-						case "Edm.Date": // 14.4.3 Expression edm:Date
+						case "#Date": // 14.4.3 Expression edm:Date
 							if (rISODate.test(vRawValue.value)) {
 								oDate = oISODateFormat.parse(vRawValue.value);
 								if (oDate) {
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							}
 							return illegalValue(vRawValue);
 
-						case "Edm.DateTimeOffset": // 14.4.4 Expression edm:DateTimeOffset
+						case "#DateTimeOffset": // 14.4.4 Expression edm:DateTimeOffset
 							aMatches = rISODateTime.exec(vRawValue.value);
 							if (aMatches) {
 								if (aMatches[2] && aMatches[2].length > 4) {
@@ -173,10 +173,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							}
 							return illegalValue(vRawValue);
 
-						case "Edm.Decimal": // 14.4.5 Expression edm:Decimal
+						case "#Decimal": // 14.4.5 Expression edm:Decimal
 							return floatingPoint(vRawValue, rDecimal);
 
-						case "Edm.Double": // 14.4.8 Expression edm:Float
+						case "#Double": // 14.4.8 Expression edm:Float
 							switch (vRawValue.value) {
 							//TODO special cases for numbers should be included in NumberFormat!
 							//TODO mapping "INF" -> Infinity of course would remain here
@@ -190,12 +190,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							}
 							return floatingPoint(vRawValue);
 
-						case "Edm.Guid": // 14.4.9 Expression edm:Guid
+						case "#Guid": // 14.4.9 Expression edm:Guid
 							return rGuid.test(vRawValue.value)
 								? vRawValue.value
 								: illegalValue(vRawValue);
 
-						case "Edm.Int64": // 14.4.10 Expression edm:Int (IEEE754Compatible)
+						case "#Int64": // 14.4.10 Expression edm:Int (IEEE754Compatible)
 							if (typeof vRawValue.value === "string"
 								&& rInt64.test(vRawValue.value)) {
 								fNumber = parseInt(vRawValue.value, 10);
@@ -205,13 +205,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 							}
 							return illegalValue(vRawValue);
 
-						case "Edm.Path": // 14.5.12 Expression edm:Path
+						case "#Path": // 14.5.12 Expression edm:Path
 							if (typeof vRawValue.value === "string") {
 								return "{path: " + JSON.stringify(vRawValue.value) + "}";
 							}
 							return illegalValue(vRawValue);
 
-						case "Edm.TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
+						case "#TimeOfDay": // 14.4.12 Expression edm:TimeOfDay
 							if (rISOTime.test(vRawValue.value)) {
 								if (vRawValue.value.length > 12) {
 									// "round" to millis: "HH:mm:ss.SSS"

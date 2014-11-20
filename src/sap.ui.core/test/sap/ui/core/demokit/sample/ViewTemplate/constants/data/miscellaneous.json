@@ -1,17 +1,747 @@
 {
-  "$schema":"http://odata.org/schemas/v4.0/edm.json#",
+  "$schema":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#",
   "definitions":{
+    "org.example.Measurement":{
+      "type":"object",
+      "properties":{
+        "Dimension":{
+          "type":"string",
+          "maxLength":50,
+          "default":"Unspecified"
+        },
+        "Length":{
+          "type":"number",
+          "multipleOf":1e-2,
+          "minimum":-9999999999999999.99,
+          "maximum":9999999999999999.99
+        }
+      }
+    },
+    "org.example.Example7to11":{
+      "type":"object",
+      "properties":{
+        "Units":{
+          "type":"array",
+          "items":{
+            "type":"string"
+          }
+        },
+        "SuggestedTimes":{
+          "type":"array",
+          "items":{
+            "allOf":[
+              {
+                "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+              },
+              {
+                "pattern":"(^[^.]*$|[.][0-9]{1,6}$)"
+              }
+            ]
+          }
+        },
+        "Amount9":{
+          "anyOf":[
+            {
+              "type":"number",
+              "multipleOf":1e-2,
+              "minimum":-9.99,
+              "maximum":9.99
+            },
+            {
+              "type":"null"
+            }
+          ]
+        },
+        "Amount11":{
+          "anyOf":[
+            {
+              "type":"number",
+              "minimum":-999,
+              "maximum":999
+            },
+            {
+              "type":"null"
+            }
+          ]
+        }
+      }
+    },
+    "org.example.Product":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "type":"string"
+        },
+        "CategoryID":{
+          "type":"string"
+        },
+        "Category":{
+          "$ref":"#/definitions/org.example.Category",
+          "relationship":{
+            "partner":"Products",
+            "referentialConstraints":{
+              "CategoryID":{
+                "referencedProperty":"ID"
+              }
+            }
+          }
+        },
+        "Supplier":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Supplier"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "relationship":{
+            
+          }
+        }
+      }
+    },
+    "org.example.Category":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "type":"string"
+        },
+        "Products":{
+          "type":"array",
+          "items":{
+            "$ref":"#/definitions/org.example.Product"
+          },
+          "relationship":{
+            "partner":"Category",
+            "onDelete":{
+              "action":"Cascade"
+            }
+          }
+        }
+      }
+    },
+    "org.example.Employee":{
+      "type":"object",
+      "mediaEntity":true,
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "type":"string"
+        },
+        "FirstName":{
+          "type":"string"
+        },
+        "LastName":{
+          "type":"string"
+        },
+        "Manager":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/Model.Manager"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "relationship":{
+            
+          }
+        }
+      }
+    },
+    "org.example.Manager":{
+      "allOf":[
+        {
+          "$ref":"#/definitions/org.example.Employee"
+        },
+        {
+          "type":"object",
+          "properties":{
+            "AnnualBudget":{
+              "anyOf":[
+                {
+                  "type":"number",
+                  "multipleOf":1
+                },
+                {
+                  "type":"null"
+                }
+              ]
+            },
+            "Employees":{
+              "type":"array",
+              "items":{
+                "$ref":"#/definitions/Model.Employee"
+              },
+              "relationship":{
+                
+              }
+            }
+          }
+        }
+      ]
+    },
+    "org.example.Category17":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+        },
+        "Name":{
+          "type":[
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "org.example.Category18":{
+      "type":"object",
+      "keys":{
+        "EntityInfoID":"Info/ID"
+      },
+      "properties":{
+        "Info":{
+          "$ref":"#/definitions/org.example.EntityInfo"
+        },
+        "Name":{
+          "type":[
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "org.example.EntityInfo":{
+      "type":"object",
+      "properties":{
+        "ID":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+        },
+        "Created":{
+          "anyOf":[
+            {
+              "allOf":[
+                {
+                  "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+                },
+                {
+                  "pattern":"^[^.]*$"
+                }
+              ]
+            },
+            {
+              "type":"null"
+            }
+          ]
+        }
+      }
+    },
+    "org.example.OrderLine":{
+      "type":"object",
+      "keys":{
+        "OrderID":"OrderID",
+        "LineNumber":"LineNumber"
+      },
+      "properties":{
+        "OrderID":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+        },
+        "LineNumber":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+        }
+      }
+    },
+    "org.example.Dimensions":{
+      "type":"object",
+      "properties":{
+        "Height":{
+          "type":"number",
+          "multipleOf":1
+        },
+        "Weight":{
+          "type":"number",
+          "multipleOf":1
+        },
+        "Length":{
+          "type":"number",
+          "multipleOf":1
+        }
+      }
+    },
+    "org.example.Product22":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "type":"string"
+        },
+        "ProductDimensions":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Dimensions"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        },
+        "ShippingDimensions":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Dimensions"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        }
+      }
+    },
+    "org.example.ShipmentBox":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "type":"string"
+        },
+        "Dimensions":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Dimensions"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        }
+      }
+    },
+    "org.example.FileAccess":{
+      "anyOf":[
+        {
+          "enum":[
+            "Read",
+            1,
+            "Write",
+            2,
+            "Create",
+            4,
+            "Delete",
+            8
+          ]
+        },
+        {
+          "type":"string",
+          "pattern":"^(Read|Write|Create|Delete|[1-9][0-9]*)(,(Read|Write|Create|Delete|[1-9][0-9]*))*$"
+        }
+      ]
+    },
+    "org.example.ShippingMethod":{
+      "enum":[
+        "FirstClass",
+        0,
+        "TwoDay",
+        1,
+        "Overnight",
+        2
+      ],
+      "FirstClass@Core.Description":"Shipped with highest priority",
+      "TwoDay@Core.Description":"Shipped within two days",
+      "Overnight@Core.Description":"Shipped overnight",
+      "@Core.Description":"Method of shipping"
+    },
+    "org.example.Pattern":{
+      "anyOf":[
+        {
+          "enum":[
+            "Plain",
+            0,
+            "Red",
+            1,
+            "Blue",
+            2,
+            "Yellow",
+            4,
+            "Solid",
+            8,
+            "Striped",
+            16,
+            "SolidRed",
+            9,
+            "SolidBlue",
+            10,
+            "SolidYellow",
+            12,
+            "RedBlueStriped",
+            19,
+            "RedYellowStriped",
+            21,
+            "BlueYellowStriped",
+            22
+          ]
+        },
+        {
+          "type":"string",
+          "pattern":"^(Plain|Red|Blue|Yellow|Solid|Striped|SolidRed|SolidBlue|SolidYellow|RedBlueStriped|RedYellowStriped|BlueYellowStriped|[1-9][0-9]*)(,(Plain|Red|Blue|Yellow|Solid|Striped|SolidRed|SolidBlue|SolidYellow|RedBlueStriped|RedYellowStriped|BlueYellowStriped|[1-9][0-9]*))*$"
+        }
+      ]
+    },
+    "org.example.Length":{
+      "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32",
+      "@Org.OData.Measurements.V1.Unit":"Centimeters"
+    },
+    "org.example.Weight":{
+      "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32",
+      "@Org.OData.Measurements.V1.Unit":"Kilograms"
+    },
+    "org.example.Size":{
+      "type":"object",
+      "properties":{
+        "Height":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Length"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        },
+        "Weight":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.Weight"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        }
+      }
+    },
+    "org.example2.Product":{
+      "type":"object",
+      "keys":{
+        "ID":"ID"
+      },
+      "properties":{
+        "ID":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+        },
+        "Name":{
+          "type":[
+            "string",
+            "null"
+          ]
+        },
+        "Description":{
+          "type":[
+            "string",
+            "null"
+          ]
+        }
+      },
+      "@UI.DisplayName":{
+        "@odata.type":"#Path",
+        "value":"Name"
+      },
+      "@SearchVocabulary.SearchResult":{
+        "Title":{
+          "@odata.type":"#Path",
+          "value":"Name"
+        },
+        "Abstract":{
+          "@odata.type":"#Path",
+          "value":"Description"
+        },
+        "Url":{
+          "@odata.type":"#Apply",
+          "function":"odata.concat",
+          "value":[
+            "Products(",
+            {
+              "@odata.type":"#Path",
+              "value":"ID"
+            },
+            ")"
+          ]
+        }
+      }
+    },
+    "Model1.PrimitiveTypes":{
+      "type":"object",
+      "properties":{
+        "NullValue":{
+          "type":[
+            "boolean",
+            "null"
+          ],
+          "default":null
+        },
+        "TrueValue":{
+          "type":[
+            "boolean",
+            "null"
+          ],
+          "default":true
+        },
+        "FalseValue":{
+          "type":[
+            "boolean",
+            "null"
+          ],
+          "default":false
+        },
+        "BinaryValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Binary"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"T0RhdGE"
+        },
+        "IntegerValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int32"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":-128
+        },
+        "DoubleValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Double"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":3.1415926535897931
+        },
+        "SingleValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Single"
+            },
+            {
+              "type":"null"
+            }
+          ]
+        },
+        "DecimalValue":{
+          "anyOf":[
+            {
+              "type":"number"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":34.95
+        },
+        "StringValue":{
+          "type":[
+            "string",
+            "null"
+          ],
+          "default":"Say \"Hello\",\nthen go"
+        },
+        "DateValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Date"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"2012-12-03"
+        },
+        "DateTimeOffsetValue":{
+          "anyOf":[
+            {
+              "allOf":[
+                {
+                  "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+                },
+                {
+                  "pattern":"^[^.]*$"
+                }
+              ]
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"2012-12-03T07:16:23Z"
+        },
+        "DurationValue":{
+          "anyOf":[
+            {
+              "allOf":[
+                {
+                  "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Duration"
+                },
+                {
+                  "pattern":"(^[^.]*$|[.][0-9]{1,12}S$)"
+                }
+              ]
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"P12DT23H59M59.999999999999S"
+        },
+        "TimeOfDayValue":{
+          "anyOf":[
+            {
+              "allOf":[
+                {
+                  "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.TimeOfDay"
+                },
+                {
+                  "pattern":"(^[^.]*$|[.][0-9]{1,6}$)"
+                }
+              ]
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"07:59:59.999"
+        },
+        "GuidValue":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Guid"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"1234567-89ab-cdef-0123-456789abcdef"
+        },
+        "Int64Value":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Int64"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":0
+        },
+        "ColorEnumValue":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/Model1.Color"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"yellow"
+        },
+        "GeographyPoint":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.GeographyPoint"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"SRID=0;Point(142.1 64.1)"
+        },
+        "StreamValue":{
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Stream"
+        },
+        "TypeDefValue":{
+          "anyOf":[
+            {
+              "$ref":"#/definitions/org.example.IntegerDecimal"
+            },
+            {
+              "type":"null"
+            }
+          ],
+          "default":"42"
+        }
+      }
+    },
+    "Model1.Size":{
+      "enum":[
+        "Small",
+        0,
+        "Medium",
+        1,
+        "Large",
+        2
+      ],
+      "@Core.Description":"Sizes"
+    },
+    "Model1.Color":{
+      "anyOf":[
+        {
+          "enum":[
+            "Yellow",
+            1,
+            "Striped",
+            2
+          ]
+        },
+        {
+          "type":"string",
+          "pattern":"^(Yellow|Striped|[1-9][0-9]*)(,(Yellow|Striped|[1-9][0-9]*))*$"
+        }
+      ],
+      "Yellow@Does.Work":{
+        
+      },
+      "Yellow@For.Testing":{
+        "@odata.type":"#IsOf",
+        "type":"Edm.Binary",
+        "value":{
+          "@odata.type":"#Path",
+          "value":"Hugo"
+        }
+      },
+      "Striped@Core.Description":"nicely striped"
+    },
     "Model1.Weird":{
       "type":"object",
-      "odata":{
-        "kind":"entity",
-        "keys":{
-          "TheKey":"The/Key"
-        }
+      "keys":{
+        "TheKey":"The/Key"
       },
       "properties":{
         "TheKey":{
-          "$ref":"http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.PropertyPath"
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.PropertyPath"
         },
         "TheValue":{
           "type":[
@@ -35,45 +765,75 @@
             ]
           }
         },
-        "Price":{
-          "type":[
-            "number",
-            "null"
-          ],
-          "odata":{
-            "scale":"variable"
+        "Dates":{
+          "type":"array",
+          "items":{
+            "anyOf":[
+              {
+                "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Date"
+              },
+              {
+                "type":"null"
+              }
+            ]
           }
+        },
+        "Price":{
+          "anyOf":[
+            {
+              "type":"number",
+              "multipleOf":1e-3,
+              "minimum":-999999999999.999,
+              "maximum":999999999999.999
+            },
+            {
+              "type":"null"
+            }
+          ]
+        },
+        "Permission":{
+          "$ref":"http://docs.oasis-open.org/odata/odata/v4.0/os/vocabularies/Org.OData.Core.V1.xml#/definitions/Org.OData.Core.V1.Permission"
+        },
+        "AliasPermission":{
+          "anyOf":[
+            {
+              "$ref":"http://docs.oasis-open.org/odata/odata/v4.0/os/vocabularies/Org.OData.Core.V1.xml#/definitions/Org.OData.Core.V1.Permission"
+            },
+            {
+              "type":"null"
+            }
+          ]
         }
       },
       "@Some.Term#SomeQualifier":[
         "SomeString",
         {
-          "@odata.type":"Edm.Date",
+          "@odata.type":"#Date",
           "value":"1212-11-30"
         },
         {
-          "@odata.type":"Edm.DateTimeOffset",
+          "@odata.type":"#DateTimeOffset",
           "value":"2000-01-01T16:00:00.000-09:00"
         },
         {
-          "@odata.type":"Edm.DateTimeOffset",
+          "@odata.type":"#DateTimeOffset",
           "value":"2000-01-01T16:00:00Z"
         },
         {
-          "@odata.type":"Edm.TimeOfDay",
+          "@odata.type":"#TimeOfDay",
           "value":"23:59:59.123456789012"
         },
         {
-          "@odata.type":"Edm.Path",
-          "value":"MyAddress/vCard.Address#work/Street"
+          "@odata.type":"#Path",
+          "value":"MyAddress\/vCard.Address#work\/Street"
         },
         {
-          "@odata.type":"org.example.Pattern",
-          "value":"Red"
+          "@odata.type":"#Self.Color",
+          "value":"Yellow"
         },
         {
-          "@odata.type":"org.example.Pattern",
-          "value":"Red Striped"
+          "@odata.type":"#Self.Color",
+          "value":"Yellow,Striped"
         },
         {
           "Egon":"1",
@@ -82,52 +842,56 @@
           "@Some.Term":"Some Value"
         },
         {
-          "@odata.type":"Edm.LabeledElement",
+          "@odata.type":"#LabeledElement",
           "name":"Attribute",
           "value":"Hello"
         },
         {
-          "@odata.type":"Edm.LabeledElement",
+          "@odata.type":"#LabeledElement",
           "name":"Element",
           "value":"Hello"
         },
         {
-          "@odata.type":"Edm.LabeledElement",
+          "@odata.type":"#LabeledElement",
           "name":"Record",
           "value":{
             
           }
         },
         {
-          "@odata.type":"Edm.LabeledElementReference",
+          "@odata.type":"#LabeledElementReference",
           "value":"Model.Attribute"
         }
       ],
       "@Some.Term#SomeQualifier@Some.Term":"Some Value",
       "@Vocab.GIQSupplier":{
-        "@odata.type":"Edm.UrlRef",
+        "@odata.type":"#UrlRef",
         "value":"http:\/\/www.odata.org"
       },
-      "@Vocab.GIQSupplier":{
-        "@odata.type":"Edm.UrlRef",
+      "@Vocab.GIQSupplier#two":{
+        "@odata.type":"#UrlRef",
+        "value":"http:\/\/www.odata.org"
+      },
+      "@Vocab.GIQSupplier#three":{
+        "@odata.type":"#UrlRef",
         "value":{
-          "@odata.type":"Edm.Apply",
+          "@odata.type":"#Apply",
           "function":"odata.fillUriTemplate",
           "value":[
             "http:\/\/host\/service\/Suppliers({suppID})",
             {
-              "@odata.type":"Edm.LabeledElement",
+              "@odata.type":"#LabeledElement",
               "name":"suppID",
               "value":{
-                "@odata.type":"Edm.Apply",
+                "@odata.type":"#Apply",
                 "function":"odata.UriEncode",
                 "value":[
                   {
-                    "@odata.type":"Edm.Path",
+                    "@odata.type":"#Path",
                     "value":"@SupplierId"
                   },
                   {
-                    "@odata.type":"Edm.DateTimeOffset",
+                    "@odata.type":"#DateTimeOffset",
                     "value":"2013-04-08T23:00:00.0Z"
                   }
                 ]
@@ -137,48 +901,45 @@
         }
       },
       "@org.example.display.DisplayName":{
-        "@odata.type":"Edm.Cast",
-        "SRID":"variable",
+        "@odata.type":"#Cast",
+        "srid":"variable",
         "scale":"variable",
         "type":"Edm.String",
         "value":"Product Catalog"
       },
       "@Self.IsPreferredCustomer":{
-        "@odata.type":"Edm.IsOf",
-        "SRID":"variable",
+        "@odata.type":"#IsOf",
+        "srid":"variable",
         "type":"Self.PreferredCustomer",
         "value":{
-          "@odata.type":"Edm.Path",
-          "value":"Customer/$count"
+          "@odata.type":"#Path",
+          "value":"Customer\/$count"
         }
       },
       "@Some.Binary#two":{
-        "@odata.type":"Edm.Binary",
+        "@odata.type":"#Binary",
         "value":"Zg"
       },
       "@Some.Binary#twoEqEq":{
-        "@odata.type":"Edm.Binary",
+        "@odata.type":"#Binary",
         "value":"Zg=="
       },
       "@Some.Binary#three":{
-        "@odata.type":"Edm.Binary",
+        "@odata.type":"#Binary",
         "value":"Zm8"
       },
       "@Some.Binary#threeEq":{
-        "@odata.type":"Edm.Binary",
+        "@odata.type":"#Binary",
         "value":"Zm8="
       },
       "@Some.Binary":{
-        "@odata.type":"Edm.Binary",
+        "@odata.type":"#Binary",
         "value":"HugoHase-_ab"
       }
     },
     "Model1.Address":{
       "type":"object",
-      "odata":{
-        "kind":"complex",
-        "openType":true
-      },
+      "openType":true,
       "properties":{
         "Street":{
           "type":[
@@ -195,8 +956,8 @@
               "type":"null"
             }
           ],
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           }
         },
         "Street":{
@@ -214,8 +975,8 @@
               "type":"null"
             }
           ],
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           }
         },
         "Country":{
@@ -227,30 +988,25 @@
               "type":"null"
             }
           ],
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           }
         },
         "MapLocation":{
           "anyOf":[
             {
-              "$ref":"http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.GeographyPoint"
+              "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.GeographyPoint"
             },
             {
               "type":"null"
             }
           ],
-          "odata":{
-            "SRID":"variable"
-          }
+          "srid":"variable"
         }
       }
     },
     "Model1.NavigationOnly":{
       "type":"object",
-      "odata":{
-        "kind":"complex"
-      },
       "properties":{
         "Planet":{
           "anyOf":[
@@ -261,35 +1017,37 @@
               "type":"null"
             }
           ],
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           }
         }
       }
     },
     "Model1.AnnotationOnly":{
       "type":"object",
-      "odata":{
-        "kind":"complex"
-      },
       "@Some.Tag":{
         
       }
     },
     "Model1.Order":{
       "type":"object",
-      "odata":{
-        "kind":"entity",
-        "abstract":true
+      "abstract":true,
+      "keys":{
+        
       },
       "properties":{
         "Quantity":{
-          "type":[
-            "number",
-            "null"
+          "anyOf":[
+            {
+              "type":"number",
+              "multipleOf":1
+            },
+            {
+              "type":"null"
+            }
           ],
           "@Measures.Unit":{
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"ShippingUnit"
           }
         },
@@ -302,13 +1060,40 @@
         }
       }
     },
+    "Model1.Text50":{
+      "type":"string",
+      "maxLength":50
+    },
+    "Model1.IntegerDecimal":{
+      "type":"number",
+      "multipleOf":1,
+      "@Core.Description":"A decimal without fractional part"
+    },
+    "Model1.IntegerDecimal10":{
+      "type":"number",
+      "multipleOf":1,
+      "minimum":-9999999999,
+      "maximum":9999999999,
+      "@Core.Description":"A ten-digit integer"
+    },
+    "Model1.VariableDecimal":{
+      "type":"number",
+      "@Core.Description":"A floating decimal"
+    },
+    "Model1.ExactTimestamp":{
+      "allOf":[
+        {
+          "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.DateTimeOffset"
+        },
+        {
+          "pattern":"(^[^.]*$|[.][0-9]{1,12}$)"
+        }
+      ]
+    },
     "Schema.One.Waldo":{
       "type":"object",
-      "odata":{
-        "kind":"entity",
-        "keys":{
-          "ID":"ID"
-        }
+      "keys":{
+        "ID":"ID"
       },
       "properties":{
         "ID":{
@@ -318,9 +1103,9 @@
     },
     "Schema.Two.Waldo":{
       "type":"object",
-      "odata":{
-        "kind":"entity",
-        "abstract":true
+      "abstract":true,
+      "keys":{
+        
       },
       "properties":{
         "Fred":{
@@ -333,11 +1118,8 @@
     },
     "Schema.Two.Fred":{
       "type":"object",
-      "odata":{
-        "kind":"entity",
-        "keys":{
-          "ID":"ID"
-        }
+      "keys":{
+        "ID":"ID"
       },
       "properties":{
         "ID":{
@@ -346,26 +1128,26 @@
         "Waldos":{
           "type":"array",
           "items":{
-            "$ref":"#/definitions/Self.Waldos"
+            "$ref":"#/definitions/Schema.Two.Waldos"
           },
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           }
         }
       }
     },
     "Y.DeveloperType":{
-      "type":"object",
-      "odata":{
-        "kind":"complex",
-        "baseType":"X.PersonType"
-      }
+      "allOf":[
+        {
+          "$ref":"#/definitions/X.PersonType"
+        },
+        {
+          "type":"object"
+        }
+      ]
     },
     "Y.ScrumTeamType":{
       "type":"object",
-      "odata":{
-        "kind":"complex"
-      },
       "properties":{
         "ScrumMaster":{
           "anyOf":[
@@ -381,30 +1163,30 @@
       }
     },
     "Y.ArchivedMovieType":{
-      "type":"object",
-      "odata":{
-        "kind":"complex",
-        "baseType":"X.MovieType"
-      },
-      "properties":{
-        "ArchivedAt":{
-          "anyOf":[
-            {
-              "$ref":"http://odata.org/schemas/v4.0/edm.json#/definitions/Edm.Date"
-            },
-            {
-              "type":"null"
+      "allOf":[
+        {
+          "$ref":"#/definitions/X.MovieType"
+        },
+        {
+          "type":"object",
+          "properties":{
+            "ArchivedAt":{
+              "anyOf":[
+                {
+                  "$ref":"http://docs.oasis-open.org/odata/odata-json-csdl/v4.0/edm.json#/definitions/Edm.Date"
+                },
+                {
+                  "type":"null"
+                }
+              ]
             }
-          ]
+          }
         }
-      },
+      ],
       "@custom.IsA":"X.Movie"
     },
     "Y.SomeThingType":{
       "type":"object",
-      "odata":{
-        "kind":"complex"
-      },
       "properties":{
         "SomeProperty":{
           "type":[
@@ -424,8 +1206,8 @@
           "items":{
             "$ref":"#/definitions/X.Friend"
           },
-          "odata":{
-            "kind":"navigation"
+          "relationship":{
+            
           },
           "@custom.ItemIsA":"X.Friend"
         }
@@ -433,38 +1215,492 @@
     }
   },
   "schemas":{
-    "Model1":{
+    "org.example":{
       "alias":"Self",
+      "@Core.Description":"Examples from Part 3: CSDL",
+      "functions":[
+        {
+          "name":"TopSellingProducts",
+          "parameters":{
+            "Year":{
+              "type":"Edm.Decimal",
+              "precision":"4",
+              "scale":"0"
+            }
+          },
+          "returnType":{
+            "type":"Collection(Model.Product)"
+          }
+        }
+      ],
+      "entityContainer":{
+        "name":"DemoService",
+        "entitySets":{
+          "StandardCustomers":{
+            "entityType":"Self.Customer",
+            "navigationPropertyBindings":{
+              "Orders":{
+                "target":"Orders"
+              }
+            }
+          },
+          "PreferredCustomers":{
+            "entityType":"Self.Customer",
+            "navigationPropertyBindings":{
+              "Orders":{
+                "target":"Orders"
+              }
+            }
+          },
+          "Orders":{
+            "entityType":"Self.Order"
+          },
+          "Products":{
+            "entityType":"Self.Product",
+            "navigationPropertyBindings":{
+              "Category":{
+                "target":"Self.DemoService.Categories"
+              },
+              "Supplier":{
+                "target":"Self.DemoService.Suppliers"
+              }
+            },
+            "@org.example.display.DisplayName":"Product Catalog"
+          },
+          "Categories":{
+            "entityType":"Self.Category",
+            "navigationPropertyBindings":{
+              "Products":{
+                "target":"Self.DemoService.Products"
+              }
+            }
+          },
+          "Suppliers":{
+            "entityType":"Self.Supplier",
+            "navigationPropertyBindings":{
+              "Products":{
+                "target":"Self.DemoService.Products"
+              }
+            },
+            "@org.example.display.DisplayName":"Supplier Directory"
+          }
+        },
+        "singletons":{
+          "Contoso":{
+            "type":"Self.Supplier"
+          }
+        },
+        "actionImports":{
+          "LeaveRequestApproval":{
+            "action":"Self.Approval"
+          }
+        },
+        "functionImports":{
+          "TopSellingProducts":{
+            "function":"Model.TopSellingProducts",
+            "entitySet":"Products"
+          },
+          "ProductsByRating":{
+            "function":"Self.ProductsByRating",
+            "entitySet":"Products"
+          }
+        }
+      }
+    },
+    "org.example2":{
+      "alias":null,
+      "@Core.Description":"Examples from Part 3: CSDL - second schema",
+      "terms":{
+        "IsURI":{
+          "type":"Core.Tag",
+          "defaultValue":"true",
+          "appliesTo":"Property",
+          "@Core.Description":"Properties and terms annotated with this term MUST contain a valid URI",
+          "@Core.RequiresType":"Edm.String"
+        }
+      },
+      "entityContainer":{
+        "name":"Extending",
+        "extends":"org.example.DemoService",
+        "entitySets":{
+          "Categories34":{
+            "entityType":"org.example.Category",
+            "navigationPropertyBindings":{
+              "Products":{
+                "target":"Products"
+              }
+            }
+          },
+          "Categories35":{
+            "entityType":"org.example.Category",
+            "navigationPropertyBindings":{
+              "Products":{
+                "target":"org.example.DemoService/Products"
+              }
+            }
+          }
+        }
+      },
+      "annotations":[
+        {
+          "target":"Self.Person",
+          "qualifier":"Tablet",
+          "@org.example.display.DisplayName#Tablet":{
+            "@odata.type":"#Path",
+            "value":"FirstName"
+          },
+          "@org.example.display.Thumbnail":{
+            "@odata.type":"#Binary",
+            "value":"T0RhdGE"
+          },
+          "@org.example.display.Thumbnail#element":{
+            "@odata.type":"#Binary",
+            "value":"T0RhdGE"
+          },
+          "@org.example.display.ReadOnly":true,
+          "@org.example.display.ReadOnly#element":true,
+          "@org.example.vCard.birthDay":{
+            "@odata.type":"#Date",
+            "value":"2000-01-01"
+          },
+          "@org.example.vCard.birthDay#element":{
+            "@odata.type":"#Date",
+            "value":"2000-01-01"
+          },
+          "@org.example.display.LastUpdated":{
+            "@odata.type":"#DateTimeOffset",
+            "value":"2000-01-01T16:00:00.000Z"
+          },
+          "@org.example.display.LastUpdated#element":{
+            "@odata.type":"#DateTimeOffset",
+            "value":"2000-01-01T16:00:00.000-09:00"
+          },
+          "@org.example.display.Width":{
+            "@odata.type":"#Decimal",
+            "value":3.14
+          },
+          "@org.example.display.Width#element":{
+            "@odata.type":"#Decimal",
+            "value":3.14
+          },
+          "@org.example.task.duration":{
+            "@odata.type":"#Duration",
+            "value":"P7D"
+          },
+          "@org.example.task.duration#element":{
+            "@odata.type":"#Duration",
+            "value":"P11DT23H59M59.999999999999S"
+          },
+          "@org.example.HasPattern":{
+            "@odata.type":"#org.example.Pattern",
+            "value":"Red"
+          },
+          "@org.example.HasPattern#element":{
+            "@odata.type":"#org.example.Pattern",
+            "value":"Red"
+          },
+          "@org.example.HasPattern":{
+            "@odata.type":"#org.example.Pattern",
+            "value":"Red,Striped"
+          },
+          "@org.example.HasPattern#element":{
+            "@odata.type":"#org.example.Pattern",
+            "value":"Red,Striped"
+          },
+          "@org.example.display.Width":3.14,
+          "@org.example.display.Width#element":3.14,
+          "@org.example.display.Id":{
+            "@odata.type":"#Guid",
+            "value":"21EC2020-3AEA-1069-A2DD-08002B30309D"
+          },
+          "@org.example.display.Id#element":{
+            "@odata.type":"#Guid",
+            "value":"21EC2020-3AEA-1069-A2DD-08002B30309D"
+          },
+          "@org.example.display.Width":{
+            "@odata.type":"#Int64",
+            "value":42
+          },
+          "@org.example.display.Width#element":{
+            "@odata.type":"#Int64",
+            "value":42
+          },
+          "@org.example.display.DisplayName":"Product Catalog",
+          "@org.example.display.DisplayName#element":"Product Catalog",
+          "@org.example.display.EndTime":{
+            "@odata.type":"#TimeOfDay",
+            "value":"21:45:00"
+          },
+          "@org.example.display.EndTime#element":{
+            "@odata.type":"#TimeOfDay",
+            "value":"21:45:00"
+          },
+          "@UI.ReferenceFacet":{
+            "@odata.type":"#AnnotationPath",
+            "value":"Product\/Supplier\/@UI.LineItem"
+          },
+          "@UI.CollectionFacet#Contacts":[
+            {
+              "@odata.type":"#AnnotationPath",
+              "value":"Supplier\/@Communication.Contact"
+            },
+            {
+              "@odata.type":"#AnnotationPath",
+              "value":"Customer\/@Communication.Contact"
+            }
+          ],
+          "@org.example.display.DisplayName":{
+            "@odata.type":"#Apply",
+            "function":"odata.concat",
+            "value":[
+              "Product: ",
+              {
+                "@odata.type":"#Path",
+                "value":"ProductName"
+              },
+              " (",
+              {
+                "@odata.type":"#Path",
+                "value":"Available\/Quantity"
+              },
+              "",
+              {
+                "@odata.type":"#Path",
+                "value":"Available\/Unit"
+              },
+              " available)"
+            ]
+          },
+          "@Some.Term#Example57":{
+            "@odata.type":"#Apply",
+            "function":"odata.fillUriTemplate",
+            "value":[
+              "http:\/\/host\/service\/Genres('{genreName}')",
+              {
+                "@odata.type":"#LabeledElement",
+                "name":"genreName",
+                "value":{
+                  "@odata.type":"#Path",
+                  "value":"NameOfMovieGenre"
+                }
+              }
+            ]
+          },
+          "@Some.Term#Example58":{
+            "@odata.type":"#Apply",
+            "function":"odata.fillUriTemplate",
+            "value":[
+              "http:\/\/host\/service\/Genres({genreName2})",
+              {
+                "@odata.type":"#LabeledElement",
+                "name":"genreName2",
+                "value":{
+                  "@odata.type":"#Apply",
+                  "function":"odata.uriEncode",
+                  "value":[
+                    {
+                      "@odata.type":"#Path",
+                      "value":"NameOfMovieGenre"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "@org.example.display.Threshold":{
+            "@odata.type":"#Cast",
+            "type":"Edm.Decimal",
+            "value":{
+              "@odata.type":"#Path",
+              "value":"Average"
+            }
+          },
+          "@org.example.seo.SeoTerms":[
+            "Product",
+            "Supplier",
+            "Customer"
+          ],
+          "@org.example.person.Gender":{
+            "@odata.type":"#If",
+            "value":[
+              {
+                "@odata.type":"#Path",
+                "value":"IsFemale"
+              },
+              "Female",
+              "Male"
+            ]
+          },
+          "@Self.IsPreferredCustomer":{
+            "@odata.type":"#IsOf",
+            "type":"Self.PreferredCustomer",
+            "value":{
+              "@odata.type":"#Path",
+              "value":"Customer"
+            }
+          },
+          "@org.example.display.DisplayName":{
+            "@odata.type":"#LabeledElement",
+            "name":"CustomerFirstName",
+            "value":{
+              "@odata.type":"#Path",
+              "value":"FirstName"
+            }
+          },
+          "@org.example.display.DisplayName#element":{
+            "@odata.type":"#LabeledElement",
+            "name":"CustomerFirstName",
+            "value":{
+              "@odata.type":"#Path",
+              "value":"FirstName"
+            }
+          },
+          "@org.example.display.DisplayName":{
+            "@odata.type":"#LabeledElementReference",
+            "value":"Model.CustomerFirstName"
+          },
+          "@org.example.display.DisplayName":{
+            "@odata.type":"#Null"
+          },
+          "@UI.HyperLink":{
+            "@odata.type":"#NavigationPropertyPath",
+            "value":"Supplier"
+          },
+          "@Capabilities.UpdateRestrictions#element":{
+            "NonUpdatableNavigationProperties":[
+              {
+                "@odata.type":"#NavigationPropertyPath",
+                "value":"Supplier"
+              },
+              {
+                "@odata.type":"#NavigationPropertyPath",
+                "value":"Category"
+              }
+            ]
+          },
+          "@org.example.display.DisplayName":{
+            "@odata.type":"#Path",
+            "value":"FirstName"
+          },
+          "@org.example.display.DisplayName#element":{
+            "@odata.type":"#Path",
+            "value":"@vCard.Address#work\/FullName"
+          },
+          "@UI.RefreshOnChangeOf":{
+            "@odata.type":"#PropertyPath",
+            "value":"ChangedAt"
+          },
+          "@Capabilities.UpdateRestrictions#element":{
+            "NonUpdatableProperties":[
+              {
+                "@odata.type":"#PropertyPath",
+                "value":"CreatedAt"
+              },
+              {
+                "@odata.type":"#PropertyPath",
+                "value":"ChangedAt"
+              }
+            ]
+          },
+          "@org.example.person.Employee":{
+            "GivenName":{
+              "@odata.type":"#Path",
+              "value":"FirstName"
+            },
+            "Surname":{
+              "@odata.type":"#Path",
+              "value":"LastName"
+            },
+            "Manager":{
+              "@odata.type":"#Path",
+              "value":"DirectSupervisor"
+            },
+            "CostCenter":{
+              "@odata.type":"#UrlRef",
+              "value":{
+                "@odata.type":"#Apply",
+                "function":"odata.fillUriTemplate",
+                "value":[
+                  "http:\/\/host\/anotherservice\/CostCenters('{ccid}')",
+                  {
+                    "@odata.type":"#LabeledElement",
+                    "name":"ccid",
+                    "value":{
+                      "@odata.type":"#Path",
+                      "value":"CostCenterID"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "@Vocab.Supplier":{
+            "@odata.type":"#UrlRef",
+            "value":{
+              "@odata.type":"#Apply",
+              "function":"odata.fillUriTemplate",
+              "value":[
+                "http:\/\/host\/service\/Suppliers({suppID})",
+                {
+                  "@odata.type":"#LabeledElement",
+                  "name":"suppID",
+                  "value":{
+                    "@odata.type":"#Apply",
+                    "function":"odata.uriEncode",
+                    "value":[
+                      {
+                        "@odata.type":"#Path",
+                        "value":"SupplierId"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "@Core.LongDescription#element":{
+            "@odata.type":"#UrlRef",
+            "value":"http:\/\/host\/wiki\/HowToUse"
+          },
+          "@Core.LongDescription":{
+            "@odata.type":"#UrlRef",
+            "value":"http:\/\/host\/wiki\/HowToUse"
+          }
+        }
+      ]
+    },
+    "Model1":{
+      "alias":"M1",
       "@UI.ReferenceFacet":{
-        "@odata.type":"Edm.AnnotationPath",
+        "@odata.type":"#AnnotationPath",
         "value":"@UI.LineItem"
       },
       "@UI.ReferenceFacet#OnNavPropTarget":{
-        "@odata.type":"Edm.AnnotationPath",
-        "value":"Product/Supplier/@UI.LineItem"
+        "@odata.type":"#AnnotationPath",
+        "value":"Product\/Supplier\/@UI.LineItem"
       },
       "@UI.ReferenceFacet#OnNavProp":{
-        "@odata.type":"Edm.AnnotationPath",
-        "value":"Product/Supplier@UI.LineItem"
+        "@odata.type":"#AnnotationPath",
+        "value":"Product\/Supplier@UI.LineItem"
       },
       "@UI.ReferenceFacet#OnNavPropQualified":{
-        "@odata.type":"Edm.AnnotationPath",
-        "value":"Product/Supplier@UI.LineItem#Tablet"
+        "@odata.type":"#AnnotationPath",
+        "value":"Product\/Supplier@UI.LineItem#Tablet"
       },
       "@UI.ReferenceFacet#ViaUrl":{
-        "@odata.type":"Edm.UrlRef",
-        "value":"http://LineItem"
+        "@odata.type":"#UrlRef",
+        "value":"http:\/\/LineItem"
       },
       "@UI.ReferenceFacet#complicated":{
-        "@odata.type":"Edm.AnnotationPath",
-        "value":"@x.Supplier#X/Contacts@y.ViewVariants"
+        "@odata.type":"#AnnotationPath",
+        "value":"@x.Supplier#X\/Contacts@y.ViewVariants"
       },
       "@UI.HyperLink":{
-        "@odata.type":"Edm.NavigationPropertyPath",
+        "@odata.type":"#NavigationPropertyPath",
         "value":"Supplier"
       },
       "@Is.Null":{
-        "@odata.type":"Edm.Null",
+        "@odata.type":"#Null",
         "@Within.Null":{
           
         }
@@ -472,7 +1708,10 @@
       "@Is.Null@Next.to.Null":{
         
       },
-      "@Vocabulary1.SubTitle":1234,
+      "@Vocabulary1.SubTitle":{
+        "@odata.type":"#Int64",
+        "value":1234
+      },
       "@Vocabulary1.SubTitle@For.Constant":{
         
       },
@@ -481,74 +1720,71 @@
         
       },
       "@A.Decimal":{
-        "@odata.type":"Edm.Decimal",
+        "@odata.type":"#Decimal",
         "value":12.34
       },
-      "@A.Float":{
-        "@odata.type":"Edm.Double",
-        "value":1.23e4
-      },
+      "@A.Float":1.23e4,
       "@A.Float#inf":{
-        "@odata.type":"Edm.Double",
+        "@odata.type":"#Double",
         "value":"INF"
       },
       "@A.Float#minusInf":{
-        "@odata.type":"Edm.Double",
+        "@odata.type":"#Double",
         "value":"-INF"
       },
       "@A.Float#nan":{
-        "@odata.type":"Edm.Double",
+        "@odata.type":"#Double",
         "value":"NaN"
       },
-      "@A.Float#Element":{
-        "@odata.type":"Edm.Double",
-        "value":1.23e4
+      "@A.Float#Element":1.23e4,
+      "@An.Int":{
+        "@odata.type":"#Int64",
+        "value":1234
       },
-      "@An.Int":1234,
       "@A.String":"1.23e4",
       "@A.String#withAmp":"Fast&Furious",
       "@A.String#ToBeEscaped":"A\/\"good\"\r\nstory\\for\tkids",
       "@A.Guid":{
-        "@odata.type":"Edm.Guid",
+        "@odata.type":"#Guid",
         "value":"86a96539-871b-45cf-b96b-93dbc235105e"
       },
       "@A.Guid#Element":{
-        "@odata.type":"Edm.Guid",
+        "@odata.type":"#Guid",
         "value":"86a96539-871b-45cf-b96b-93dbc235105e"
       },
       "@A.Date":{
-        "@odata.type":"Edm.Date",
+        "@odata.type":"#Date",
         "value":"2013-10-09"
       },
       "@Capabilities.UpdateRestrictions":{
-        "@odata.type":"Derived.Type",
+        "Updatable":true,
         "NonUpdatableNavigationProperties":[
           {
-            "@odata.type":"Edm.NavigationPropertyPath",
+            "@odata.type":"#NavigationPropertyPath",
             "value":"Supplier"
           },
           {
-            "@odata.type":"Edm.NavigationPropertyPath",
+            "@odata.type":"#NavigationPropertyPath",
             "value":"Category"
           }
         ]
       },
       "@SearchVocabulary.SearchResult":{
         "Title":{
-          "@odata.type":"Edm.Path",
+          "@odata.type":"#Path",
           "value":"Name"
         },
         "Abstract":{
-          "@odata.type":"Edm.Path",
+          "@odata.type":"#Path",
           "value":"Description"
         },
         "Url":{
-          "@odata.type":"Edm.Apply",
+          "@odata.type":"#Apply",
           "function":"odata.concat",
           "value":[
             "Products(",
             {
-              "@odata.type":"Edm.Path",
+              "@odata.type":"#Path",
               "value":"ID"
             },
             ")"
@@ -559,10 +1795,10 @@
         }
       },
       "@org.example.display.DisplayName":{
-        "@odata.type":"Edm.If",
+        "@odata.type":"#If",
         "value":[
           {
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"IsFemale"
           },
           "Female",
@@ -574,31 +1810,31 @@
       },
       "@UI.CollectionFacet#Contacts":[
         {
-          "@odata.type":"Edm.AnnotationPath",
-          "value":"Supplier/@Communication.Contact"
+          "@odata.type":"#AnnotationPath",
+          "value":"Supplier\/@Communication.Contact"
         },
         {
-          "@odata.type":"Edm.AnnotationPath",
-          "value":"Customer/@Communication.Contact"
+          "@odata.type":"#AnnotationPath",
+          "value":"Customer\/@Communication.Contact"
         }
       ],
       "@Some.Thing":{
-        "@odata.type":"Edm.And",
+        "@odata.type":"#And",
         "value":[
           {
-            "@odata.type":"Edm.Or",
+            "@odata.type":"#Or",
             "value":[
               {
-                "@odata.type":"Edm.Eq",
+                "@odata.type":"#Eq",
                 "value":[
                   {
-                    "@odata.type":"Edm.Ge",
+                    "@odata.type":"#Ge",
                     "value":[
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       },
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       }
                     ],
                     "@In.Ge":{
@@ -606,50 +1842,50 @@
                     }
                   },
                   {
-                    "@odata.type":"Edm.Gt",
+                    "@odata.type":"#Gt",
                     "value":[
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       },
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       }
                     ]
                   }
                 ]
               },
               {
-                "@odata.type":"Edm.Ne",
+                "@odata.type":"#Ne",
                 "value":[
                   {
-                    "@odata.type":"Edm.Lt",
+                    "@odata.type":"#Lt",
                     "value":[
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       },
                       {
-                        "@odata.type":"Edm.Null"
+                        "@odata.type":"#Null"
                       }
                     ]
                   },
                   {
-                    "@odata.type":"Edm.Null"
+                    "@odata.type":"#Null"
                   }
                 ]
               }
             ]
           },
           {
-            "@odata.type":"Edm.Not",
+            "@odata.type":"#Not",
             "value":{
-              "@odata.type":"Edm.Le",
+              "@odata.type":"#Le",
               "value":[
                 {
-                  "@odata.type":"Edm.Double",
+                  "@odata.type":"#Double",
                   "value":"INF"
                 },
                 {
-                  "@odata.type":"Edm.Null"
+                  "@odata.type":"#Null"
                 }
               ]
             }
@@ -657,52 +1893,28 @@
         ]
       },
       "@Onelegged.If":{
-        "@odata.type":"Edm.If",
+        "@odata.type":"#If",
         "value":[
           true,
           {
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"Then"
           }
         ]
       },
       "@Twolegged.If":{
-        "@odata.type":"Edm.If",
+        "@odata.type":"#If",
         "value":[
           false,
           {
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"Then"
           },
           {
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"Else"
           }
         ]
-      },
-      "enumTypes":{
-        "Pattern":{
-          "members":{
-            "Yellow":{
-              "@Does.Work":{
-                
-              },
-              "@For.Testing":{
-                "@odata.type":"Edm.IsOf",
-                "type":"Edm.Binary",
-                "value":{
-                  "@odata.type":"Edm.Path",
-                  "value":"Hugo"
-                }
-              }
-            }
-          }
-        }
-      },
-      "typeDefinitions":{
-        "Fixedstring":{
-          "underlyingType":"Edm.String"
-        }
       },
       "functions":[
         {
@@ -760,11 +1972,12 @@
           "Orders":{
             "entityType":"Self.Order"
           }
-        }
+        },
+        "@Core.Description":"The Sales Container"
       }
     },
     "Schema.One":{
-      "alias":"Self",
+      "alias":"One",
       "actions":[
         {
           "name":"Rejection",
@@ -780,16 +1993,22 @@
       ],
       "functions":[
         {
+          "name":"Foo",
+          "returnType":{
+            "type":"Edm.String"
+          }
+        },
+        {
           "name":"OddWaldos",
           "isBound":true,
           "entitySetPath":"in",
           "parameters":{
             "in":{
-              "type":"Collection(Self.Waldo)"
+              "type":"Collection(One.Waldo)"
             }
           },
           "returnType":{
-            "type":"Collection(Self.Waldo)"
+            "type":"Collection(One.Waldo)"
           }
         }
       ],
@@ -797,37 +2016,26 @@
         "name":"Default",
         "entitySets":{
           "Waldos":{
-            "entityType":"Self.Waldo"
+            "entityType":"One.Waldo"
           }
         },
         "functionImports":{
           "Bar":{
-            "function":"Self.Foo"
+            "function":"One.Foo"
           }
         }
       }
     },
-    "Schema.One":{
-      "alias":"Self",
-      "functions":[
-        {
-          "name":"Foo",
-          "returnType":{
-            "type":"Edm.String"
-          }
-        }
-      ]
-    },
     "Schema.Two":{
-      "alias":"Self",
+      "alias":"Two",
       "entityContainer":{
         "name":"Default",
         "entitySets":{
           "Waldos":{
-            "entityType":"Self.Waldo"
+            "entityType":"Two.Waldo"
           },
           "Freds":{
-            "entityType":"Self.Fred",
+            "entityType":"Two.Fred",
             "navigationPropertyBindings":{
               "Waldos":{
                 "target":"Waldos"
@@ -915,16 +2123,16 @@
         {
           "target":"Some.EntityType",
           "@Y.DevelopmentTeam":{
-            "@odata.type":"Edm.Path",
-            "value":"SomeCollectionNavProp/@Y.Developer"
+            "@odata.type":"#Path",
+            "value":"SomeCollectionNavProp\/@Y.Developer"
           },
           "@Y.DevelopmentTeam@custom.IsA":"X.Team"
         },
         {
           "target":"Some.EntityType",
           "@Y.DevelopmentTeam":{
-            "@odata.type":"Edm.Path",
-            "value":"SomeCollectionNavProp/@Y.Developer"
+            "@odata.type":"#Path",
+            "value":"SomeCollectionNavProp\/@Y.Developer"
           },
           "@Y.DevelopmentTeam@custom.IsA":"X.Team",
           "@Y.ScrumTeam":{
@@ -937,21 +2145,21 @@
         {
           "target":"Some.EntityType",
           "@Y.Movies":{
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"AllMyMovies"
           }
         },
         {
           "target":"MySchema.MyEntityContainer/MyEntitySet/MySchema.MyEntityType/MyProperty",
           "@Y.Movies":{
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"AllMyMovies"
           }
         },
         {
           "target":"Some.EntityType",
           "@Y.ArchivedMovies":{
-            "@odata.type":"Edm.Path",
+            "@odata.type":"#Path",
             "value":"MoviesInStorage"
           },
           "@Y.ArchivedMovies@custom.ItemIsA":"X.Movie"
@@ -962,20 +2170,20 @@
             "SomeProperty":"Some Thing",
             "AnotherProperty":"A string with spaces",
             "SomeTime":{
-              "@odata.type":"Edm.Duration",
+              "@odata.type":"#Duration",
               "value":"P20D"
             },
             "MoreTime":{
-              "@odata.type":"Edm.Duration",
+              "@odata.type":"#Duration",
               "value":"P20D"
             },
             "Contacts":{
-              "@odata.type":"Edm.Path",
+              "@odata.type":"#Path",
               "value":"MyContacts"
             },
             "Contacts@custom.ItemIsA":"X.Person",
             "VIPs":{
-              "@odata.type":"Edm.Path",
+              "@odata.type":"#Path",
               "value":"MyBestFriends"
             },
             "VIPs@custom.ItemIsA":"X.Person"
@@ -985,10 +2193,17 @@
     }
   },
   "references":{
+    "http://docs.oasis-open.org/odata/odata/v4.0/os/vocabularies/Org.OData.Core.V1.xml":{
+      "includes":{
+        "Org.OData.Core.V1":{
+          "alias":"Core"
+        }
+      }
+    },
     "http://tinyurl.com/Org-OData-Measures-V1":{
       "includes":{
         "Org.OData.Measures.V1":{
-          "alias":"Core"
+          "alias":"Measures"
         },
         "anotherOne":{
           
@@ -1015,6 +2230,40 @@
         },
         {
           "termNamespace":"Name.Space"
+        }
+      ]
+    },
+    "http://vocabs.odata.org/capabilities/v1":{
+      "includes":{
+        "Org.OData.Capabilities.V1":{
+          
+        }
+      }
+    },
+    "http://vocabs.odata.org/display/v1":{
+      "includes":{
+        "org.example.Display":{
+          "alias":"UI"
+        }
+      }
+    },
+    "http://odata.org/ann/b":{
+      "includeAnnotations":[
+        {
+          "termNamespace":"org.example.validation"
+        },
+        {
+          "termNamespace":"org.example.display",
+          "qualifier":"Tablet"
+        },
+        {
+          "termNamespace":"org.example.hcm",
+          "targetNamespace":"com.contoso.Sales"
+        },
+        {
+          "termNamespace":"org.example.hcm",
+          "qualifier":"Tablet",
+          "targetNamespace":"com.contoso.Person"
         }
       ]
     }
