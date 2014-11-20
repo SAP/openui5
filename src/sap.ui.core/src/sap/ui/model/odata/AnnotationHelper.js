@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides object sap.ui.core.util.ODataHelper
+// Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Core',
                'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat'],
 	function(jQuery, BindingParser, Core, DateFormat, NumberFormat) {
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		 */
 		function illegalValue(vRawValue) {
 			jQuery.sap.log.warning("Illegal value for " + vRawValue["@odata.type"] + ": "
-					+ vRawValue.value, null, "sap.ui.core.util.ODataHelper");
+					+ vRawValue.value, null, "sap.ui.model.odata.AnnotationHelper");
 			return escapedString(vRawValue.value);
 		}
 
@@ -106,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/core/Co
 		/**
 		 * The OData helper which can act as a formatter in XML template views.
 		 *
-		 * @name sap.ui.core.util.ODataHelper
+		 * @name sap.ui.model.odata.AnnotationHelper
 		 * @private
 		 */
 		return {

@@ -6,7 +6,7 @@
 jQuery.sap.declare("sap.ui.core.sample.ViewTemplate.constants.Component");
 
 jQuery.sap.require("sap.ui.core.util.MockServer");
-jQuery.sap.require("sap.ui.core.util.ODataHelper");
+jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 
 sap.ui.core.UIComponent.extend("sap.ui.core.sample.ViewTemplate.constants.Component", {
 	metadata: "json", //TODO Use component metadata from manifest file

@@ -7,7 +7,7 @@
 	*/
 	"use strict";
 
-	jQuery.sap.require("sap.ui.core.util.ODataHelper");
+	jQuery.sap.require("sap.ui.model.odata.AnnotationHelper");
 	jQuery.sap.require("sap.ui.core.format.NumberFormat");
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -16,20 +16,20 @@
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
 
 	/**
-	 * Formats the value using the ODataHelper and then parses the result via the complex parser.
+	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
 	 * @param {any} vValue
 	 * @returns {object|string}
 	 *   a binding info or the formatted, unescaped value
 	 */
 	function formatAndParse(vValue) {
-		var sResult = sap.ui.core.util.ODataHelper.format(vValue);
+		var sResult = sap.ui.model.odata.AnnotationHelper.format(vValue);
 
 		// @see applySettings: complex parser returns undefined if there is nothing to unescape
 		return sap.ui.base.BindingParser.complexParser(sResult, undefined, true) || sResult;
 	}
 
 	/**
-	 * Formats the value using the ODataHelper and then parses the result via the complex parser.
+	 * Formats the value using the AnnotationHelper and then parses the result via the complex parser.
 	 * Makes sure no warning is raised.
 	 *
 	 * @param {any} vValue
@@ -68,7 +68,7 @@
 
 				oLogMock.expects("warning").once().withExactArgs(
 					"Illegal value for " + sType + ": " + vValue,
-					null, "sap.ui.core.util.ODataHelper");
+					null, "sap.ui.model.odata.AnnotationHelper");
 
 				strictEqual(formatAndParse(bAsObject
 					? {"@odata.type": sType, "value": vValue}
@@ -82,7 +82,7 @@
 	sinon.config.useFakeTimers = false;
 
 	//*********************************************************************************************
-	module("sap.ui.core.util.ODataHelper", {
+	module("sap.ui.model.odata.AnnotationHelper", {
 		setup: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},

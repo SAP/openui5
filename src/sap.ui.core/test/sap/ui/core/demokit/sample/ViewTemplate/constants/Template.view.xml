@@ -8,48 +8,48 @@
 		<layout:content>
 			<template:with path="meta>/definitions/Model1.Weird">
 				<Label text="edm:Binary" />
-				<Text text="{path: 'meta>@Some.Binary#two', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@Some.Binary#twoEqEq', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@Some.Binary#three', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@Some.Binary#threeEq', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@Some.Binary', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Blue', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Gold', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#two', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#twoEqEq', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#three', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary#threeEq', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@Some.Binary', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Blue', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Image src="data:image/png;base64,{path: 'meta>@Some.ImageData.Binary#Gold', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 			</template:with>
 
 			<template:with path="meta>/schemas/Model1">
 				<Label text="edm:Bool" />
-				<Text text="{path: 'meta>@A.Bool', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Bool', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:Decimal" />
-				<Text text="{path: 'meta>@A.Decimal', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Decimal', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:Float" />
-				<Text text="{path: 'meta>@A.Float', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.Float#inf', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.Float#minusInf', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.Float#nan', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.Float#Element', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#inf', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#minusInf', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#nan', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Float#Element', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:Int" />
-				<Text text="{path: 'meta>@An.Int', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@An.Int', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:String" />
-				<Text text="{path: 'meta>@A.String', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.String#withAmp', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.String#ToBeEscaped', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.String', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.String#withAmp', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.String#ToBeEscaped', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				<Label text="edm:Guid" />
-				<Text text="{path: 'meta>@A.Guid', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>@A.Guid#Element', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>@A.Guid', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>@A.Guid#Element', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 			</template:with>
 
 			<template:with path="meta>/schemas/Y/annotations/6/@Y.Something">
 				<Label text="edm:Duration" />
-				<Text text="{path: 'meta>SomeTime', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
-				<Text text="{path: 'meta>MoreTime', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+				<Text text="{path: 'meta>SomeTime', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+				<Text text="{path: 'meta>MoreTime', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 			</template:with>
 
 			<!-- edm:Date, edm:DateTimeOffset, edm:TimeOfDay, edm:Path, edm:EnumMember etc. -->
 			<template:repeat list="{meta>/definitions/Model1.Weird/@Some.Term#SomeQualifier}">
 				<template:if test="{meta>@odata.type}">
 					<Label text="{meta>@odata.type}" />
-					<Text text="{path: 'meta>', formatter: 'sap.ui.core.util.ODataHelper.format'}" />
+					<Text text="{path: 'meta>', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 				</template:if>
 			</template:repeat>
 
