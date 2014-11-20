@@ -292,11 +292,11 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 
 	/*
 	 * Returns the Id of the Component in whose context the given ManagedObject has been created.
-	 * 
+	 *
 	 * Might return <code>undefined</code> or <code>null</code> when no owner
-	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor} 
+	 * has been recorded for the given object. See {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}
 	 * for detailed constraints.
-	 * 
+	 *
 	 * @deprecated Since 1.25.1. Use sap.ui.core.Component.getOwnerIdFor or sap.ui.core.Component.getOwnerComponentFor instead.
 	 */
 	ManagedObject.getOwnerIdFor = function(oObject) {
@@ -1943,6 +1943,9 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 				}
+			},
+			fMessageChangeHandler = function(oEvent){
+				that.updateMessages(sName, oBinding.getMessages());
 			};
 
 		// Only use context for bindings on the primary model
@@ -1986,6 +1989,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		}
 
 		oBinding.attachChange(fModelChangeHandler);
+		oBinding.attachMessageChange(fMessageChangeHandler);
 
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
@@ -2389,6 +2393,17 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 		var oBindingInfo = this.mBindingInfos[sName],
 			oBinding = oBindingInfo.binding;
 		oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
+	};
+
+	/**
+	* Generic method which is called, whenever an property binding is changed.
+	* This method gets the external format from the property binding and applies
+	* it to the setter.
+	*
+	* @private
+	*/
+	ManagedObject.prototype.updateMessages = function(sName, vMessages) {
+		jQuery.sap.log.warning("Message for " + this + ", Property " + sName);
 	};
 
 	/**

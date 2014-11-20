@@ -743,7 +743,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './BindingMode'
 			oBinding.checkUpdate(bForceUpdate);
 		});
 	};
+	
+	/**
+	 * Sets messages
+	 *
+	 * @param {object} mMessages Messages for this model
+	 * @public
+	 */
+	Model.prototype.setMessages = function(mMessages) {
+		this.mMessages = mMessages || {};
+		this.checkMessages();
+	};
 
+	/**
+	 * Get messages for path
+	 *
+	 * @param {string} sPath The binding path
+	 * @protected
+	 */
+	Model.prototype.getMessagesByPath = function(sPath) {
+		return this.mMessages[sPath];
+	};
+	
+	/**
+	 * Private method iterating the registered bindings of this model instance and initiating their check for messages
+	 * @private
+	 */
+	Model.prototype.checkMessages = function() {
+		var aBindings = this.aBindings.slice(0);
+		jQuery.each(aBindings, function(iIndex, oBinding) {
+			oBinding.checkMessages();
+		});
+	};
+	
 	/**
 	 * Destroys the model and clears the model data.
 	 * A model implementation may override this function and perform model specific cleanup tasks e.g.
