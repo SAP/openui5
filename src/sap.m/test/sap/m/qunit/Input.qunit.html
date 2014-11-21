@@ -131,6 +131,52 @@
 		equals(i1.getValue(),"new", "Value after onchange");
 	});
 
+	test("Event order", function() {
+		var oInput = new sap.m.Input({
+				showSuggestion: true
+			}),
+			$Input,
+			oPopup, // is lazy loaded
+			aNames = ["abcTom", "abcPhilips", "abcAnna"],
+			aItemAdded = [],
+			i,
+			bSuggestionItemSelectedEventCalled = false,
+			bChangeEventCalled = false;
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		$Input = oInput.$();
+
+		oInput.attachSuggest(function(){
+			for(i = 0 ; i < aNames.length ; i++){
+				if(jQuery.inArray(aNames[i], aItemAdded) === -1){
+					oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));
+					aItemAdded.push(aNames[i]);
+				}
+			}
+		});
+		oInput.attachSuggestionItemSelected(function (oEvent) {
+			ok (!bChangeEventCalled, "Change event is not called yet when SuggestionItemSelectedEvent is called");
+			ok (!bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event is called once");
+			bSuggestionItemSelectedEventCalled = true;
+		});
+		oInput.attachChange(function (oEvent) {
+			ok (bSuggestionItemSelectedEventCalled, "SuggestionItemSelected event has been called before the change event");
+			ok (!bChangeEventCalled, "Change event is called once");
+			bChangeEventCalled = true;
+		});
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
+		oInput._$input.focus().val("abc").trigger("input");
+		this.clock.tick(1000);
+		oPopup = oInput._oSuggestionPopup;
+
+		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
+		this.clock.tick(1000);
+
+		oInput.destroy();
+	});
+
 	test("valueLiveUpdate", function() {
 
 		var oModel = new sap.ui.model.json.JSONModel({testValue: ""});
@@ -1042,7 +1088,7 @@
 
 		oPopup = oInput._oSuggestionPopup;
 
-		oInput._oPopupInput._$input.focus().val("abc").trigger("input");
+		oInput._oPopupInput._$input.focus().val("abc").trigger("input"); 
 		this.clock.tick(400);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
 		this.clock.tick(500);
