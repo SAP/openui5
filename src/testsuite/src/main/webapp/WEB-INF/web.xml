@@ -65,6 +65,15 @@
 		<url-pattern>/discovery/*</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+		<servlet-name>ProxyServlet</servlet-name>
+		<servlet-class>com.sap.openui5.SimpleProxyServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ProxyServlet</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
