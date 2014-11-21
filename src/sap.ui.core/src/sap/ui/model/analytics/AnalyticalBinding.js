@@ -735,7 +735,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 							this._abortAllPendingRequests();  
 						}
 						
-						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [ this.aBatchRequestQueue ]);
+						jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
 					}
 				} else { // ! bUseBatchRequests
 					var oMemberRequestDetails;
@@ -776,6 +776,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	};
 	
 	AnalyticalBinding.prototype._processRequestQueue = function(aRequestQueue) {
+		// if no argument is given: use the shared member aBatchRequestQueue 
+		if (aRequestQueue === undefined || aRequestQueue === null) {
+			//safety check: empty array fallback in case the "global" batch queue is not defined yet
+			aRequestQueue = this.aBatchRequestQueue || [];
+		}
+		// step out if the request queue is still empty after our previous checks
 		if (aRequestQueue.length == 0) {
 			return;
 		}
@@ -2040,7 +2046,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		if (this.bReloadSingleUnitMeasures && aReloadMeasuresRequestDetails.length > 0) {
 			if (this.bUseBatchRequests) {
 				this.aBatchRequestQueue.push([AnalyticalBinding._requestType.reloadMeasuresQuery, aReloadMeasuresRequestDetails]);
-				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue, [this.aBatchRequestQueue]);
+				jQuery.sap.delayedCall(0, this, AnalyticalBinding.prototype._processRequestQueue);
 			} else {
 				for (var q = 0; q < aReloadMeasuresRequestDetails.length; q++){
 					var oReloadMeasuresRequestDetails2 = aReloadMeasuresRequestDetails[q];
