@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			columns : {type : "int", group : "Appearance", defaultValue : 1},
 	
 			/**
-			 * Visibility of Group
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
-			/**
 			 * Specifies whether the user can choose a radio button.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
