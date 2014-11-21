@@ -2478,37 +2478,37 @@
         }
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "Org.OData.Capabilities.V1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "Org.OData.Core.V1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "com.sap.vocabularies.Common.v1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "com.sap.vocabularies.Communication.v1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "Org.OData.Measures.V1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value": {
+    "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value": {
       "includes": {
         "com.sap.vocabularies.UI.v1": {}
       }
     },
-    "http://vecocomst.dhcp.wdf.sap.corp:1080/sap/opu/odata/IWBEP/GWSAMPLE_BASIC": {
+    "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC": {
       "includes": {
         "GWSAMPLE_BASIC": {}
       }

@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('F')",
 						"type" : "GWSAMPLE_BASIC.VH_Sex"
 					},
 					"Sex" : "F",
@@ -12,8 +12,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_SexSet('M')",
 						"type" : "GWSAMPLE_BASIC.VH_Sex"
 					},
 					"Sex" : "M",

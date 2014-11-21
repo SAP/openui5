@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('01')",
 						"type" : "GWSAMPLE_BASIC.VH_AddressType"
 					},
 					"AddressType" : "01",
@@ -12,8 +12,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_AddressTypeSet('02')",
 						"type" : "GWSAMPLE_BASIC.VH_AddressType"
 					},
 					"AddressType" : "02",

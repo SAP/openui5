@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('G')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "G",
@@ -12,8 +12,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KG')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "KG",
@@ -21,8 +21,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('KT')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "KT",
@@ -30,8 +30,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('LB')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "LB",
@@ -39,8 +39,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('MG')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "MG",
@@ -48,8 +48,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('OZ')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "OZ",
@@ -57,8 +57,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TO')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "TO",
@@ -66,8 +66,8 @@
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/VH_UnitWeightSet('TON')",
 						"type" : "GWSAMPLE_BASIC.VH_UnitWeight"
 					},
 					"Msehi" : "TON",

@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000000",
@@ -26,19 +26,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000001",
@@ -60,19 +60,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000002",
@@ -94,19 +94,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000003",
@@ -128,19 +128,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000004",
@@ -162,19 +162,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000005",
@@ -196,19 +196,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000006",
@@ -230,19 +230,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000007",
@@ -264,19 +264,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000008",
@@ -298,19 +298,19 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToLineItems"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
 						"type" : "GWSAMPLE_BASIC.SalesOrder"
 					},
 					"SalesOrderID" : "0500000009",
@@ -332,12 +332,12 @@
 					"ChangedAt" : "\/Date(1414623600000)\/",
 					"ToBusinessPartner" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToBusinessPartner"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToBusinessPartner"
 						}
 					},
 					"ToLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToLineItems"
 						}
 					}
 				}]

@@ -3,8 +3,8 @@
 		"results" : [
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -31,19 +31,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -70,19 +70,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -109,19 +109,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -148,19 +148,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -187,19 +187,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -226,19 +226,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -265,19 +265,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -304,19 +304,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -343,19 +343,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -382,19 +382,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -421,19 +421,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -460,19 +460,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -499,19 +499,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -538,19 +538,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -577,19 +577,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -616,19 +616,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -655,19 +655,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -694,19 +694,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -733,19 +733,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -772,19 +772,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -811,19 +811,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -850,19 +850,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -889,19 +889,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -928,19 +928,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -967,19 +967,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1006,19 +1006,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1045,19 +1045,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1084,19 +1084,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1123,19 +1123,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1162,19 +1162,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1201,19 +1201,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1240,19 +1240,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1279,19 +1279,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1318,19 +1318,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1357,19 +1357,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1396,19 +1396,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1435,19 +1435,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1474,19 +1474,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1513,19 +1513,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1552,19 +1552,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1591,19 +1591,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1630,19 +1630,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1669,19 +1669,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1708,19 +1708,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1747,19 +1747,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1786,19 +1786,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1825,19 +1825,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1864,19 +1864,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1903,19 +1903,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1942,19 +1942,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -1981,19 +1981,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2020,19 +2020,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2059,19 +2059,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2098,19 +2098,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2137,19 +2137,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2176,19 +2176,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2215,19 +2215,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2254,19 +2254,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2293,19 +2293,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2332,19 +2332,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2371,19 +2371,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2410,19 +2410,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2449,19 +2449,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2488,19 +2488,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2527,19 +2527,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2566,19 +2566,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2605,19 +2605,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2644,19 +2644,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2683,19 +2683,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2722,19 +2722,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2761,19 +2761,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2800,19 +2800,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2839,19 +2839,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2878,19 +2878,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2917,19 +2917,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2956,19 +2956,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -2995,19 +2995,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3034,19 +3034,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3073,19 +3073,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3112,19 +3112,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3151,19 +3151,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3190,19 +3190,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3229,19 +3229,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3268,19 +3268,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3307,19 +3307,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3346,19 +3346,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3385,19 +3385,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3424,19 +3424,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3463,19 +3463,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3502,19 +3502,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3541,19 +3541,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3580,19 +3580,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3619,19 +3619,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3658,19 +3658,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3697,19 +3697,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3736,19 +3736,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3775,19 +3775,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3814,19 +3814,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3853,19 +3853,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3892,19 +3892,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3931,19 +3931,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -3970,19 +3970,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4009,19 +4009,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4048,19 +4048,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4087,19 +4087,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4126,19 +4126,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4165,19 +4165,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4204,19 +4204,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4243,19 +4243,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4282,19 +4282,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4321,19 +4321,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4360,19 +4360,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4399,19 +4399,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4438,19 +4438,19 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSupplier"
 						}
 					}
 				},
 				{
 					"__metadata" : {
-						"id" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
-						"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
 						"type" : "GWSAMPLE_BASIC.Product",
 						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
 					},
@@ -4477,12 +4477,12 @@
 					"ChangedAt" : "\/Date(1414583899000)\/",
 					"ToSalesOrderLineItems" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSalesOrderLineItems"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSalesOrderLineItems"
 						}
 					},
 					"ToSupplier" : {
 						"__deferred" : {
-							"uri" : "http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSupplier"
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSupplier"
 						}
 					}
 				}]

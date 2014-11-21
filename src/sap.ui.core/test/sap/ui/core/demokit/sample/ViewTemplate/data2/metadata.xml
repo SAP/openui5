@@ -883,10 +883,10 @@
 				</FunctionImport>
 			</EntityContainer>
 			<atom:link rel="self"
-				href="http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+				href="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
 			<atom:link rel="latest-version"
-				href="http://dewdflhanaui5.emea.global.corp.sap:8001/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+				href="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
 				xmlns:atom="http://www.w3.org/2005/Atom" />
 		</Schema>
 	</edmx:DataServices>
