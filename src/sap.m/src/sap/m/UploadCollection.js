@@ -1136,7 +1136,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		} else {
 			sLinkId = oEvent.oSource.sId.split("-ia_imageHL")[0] + "-ta_filenameHL";
 		}
-		jQuery.sap.byId(sLinkId).click();
+
+		sap.m.URLHelper.redirect(sap.ui.getCore().byId(sLinkId).getHref(), false);
 	};
 
 	// ================================================================================
@@ -1337,7 +1338,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './MessageToast', './library
 		}
 
 		var iLength = aItems.length;
-		sFilename = sFilename.trimLeft();
+		sFilename = sFilename.replace(/^\s+/,"");
 
 		for (var i = 0; i < iLength; i++) {
 			if (sFilename == aItems[i].getProperty("fileName")){
