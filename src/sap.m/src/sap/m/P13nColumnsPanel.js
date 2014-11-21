@@ -82,10 +82,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
 
 		if (this._oSelectedItem) {
+			aTableItems = this._oTable.getItems();
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			aTableItems = this._oTable.getItems();
 			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
 			iNewItemIndex = iOldItemIndex;
@@ -95,7 +95,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// apply new item index
 			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._moveItem(iOldItemIndex, iNewItemIndex);
+				this._handleMoveItem({
+					"oldItem" : aTableItems[iOldItemIndex],
+					"oldItemIndex" : iOldItemIndex,
+					"newItem" : aTableItems[iNewItemIndex],
+					"newItemIndex" : iNewItemIndex
+				});
 			}
 		}
 	};
@@ -109,10 +114,10 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iOldItemIndex = -1, iNewItemIndex = -1, sItemKey = null, aTableItems = null;
 
 		if (this._oSelectedItem) {
+			aTableItems = this._oTable.getItems();
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			aTableItems = this._oTable.getItems();
 			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
 			iNewItemIndex = iOldItemIndex;
@@ -127,7 +132,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// apply new item index
 			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._moveItem(iOldItemIndex, iNewItemIndex);
+				this._handleMoveItem({
+					"oldItem" : aTableItems[iOldItemIndex],
+					"oldItemIndex" : iOldItemIndex,
+					"newItem" : aTableItems[iNewItemIndex],
+					"newItemIndex" : iNewItemIndex
+				});
 			}
 		}
 	};
@@ -142,11 +152,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iTableMaxIndex = null;
 
 		if (this._oSelectedItem) {
-			iTableMaxIndex = this._oTable.getItems().length;
+			aTableItems = this._oTable.getItems();
+			iTableMaxIndex = aTableItems.length;
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			aTableItems = this._oTable.getItems();
 			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
 			iNewItemIndex = iOldItemIndex;
@@ -161,7 +171,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// apply new item index
 			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._moveItem(iOldItemIndex, iNewItemIndex);
+				this._handleMoveItem({
+					"oldItem" : aTableItems[iOldItemIndex],
+					"oldItemIndex" : iOldItemIndex,
+					"newItem" : aTableItems[iNewItemIndex],
+					"newItemIndex" : iNewItemIndex
+				});
 			}
 		}
 	};
@@ -176,11 +191,11 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		var iTableMaxIndex = null;
 
 		if (this._oSelectedItem) {
-			iTableMaxIndex = this._oTable.getItems().length;
+			aTableItems = this._oTable.getItems();
+			iTableMaxIndex = aTableItems.length;
 
 			// Determine new and old item index
 			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			aTableItems = this._oTable.getItems();
 			iOldItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
 
 			iNewItemIndex = iOldItemIndex;
@@ -190,33 +205,12 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 
 			// apply new item index
 			if (iNewItemIndex != -1 && iOldItemIndex != -1 && iOldItemIndex != iNewItemIndex) {
-				this._moveItem(iOldItemIndex, iNewItemIndex);
-			}
-		}
-	};
-
-	/**
-	 * Moves a given table item from old table index to a new given table index
-	 * 
-	 * @private
-	 * @param {integer}
-	 *          iOldIndex is the item start index
-	 * @param {integer}
-	 *          iNewIndex is the item target index
-	 */
-	P13nColumnsPanel.prototype._moveItem = function(iOldIndex, iNewIndex) {
-		var aModelItems = null;
-		var iLength = -1;
-
-		if (iOldIndex !== null && iNewIndex !== null && iOldIndex != iNewIndex) {
-			aModelItems = this._oTable.getItems();
-			if (aModelItems && aModelItems.length) {
-				iLength = aModelItems.length;
-
-				// Boundary check
-				if (iOldIndex > -1 && iOldIndex <= iLength - 1 && iNewIndex > -1 && iNewIndex <= iLength - 1) {
-					this._handleMoveItem(this._oSelectedItem, aModelItems[iNewIndex]);
-				}
+				this._handleMoveItem({
+					"oldItem" : aTableItems[iOldItemIndex],
+					"oldItemIndex" : iOldItemIndex,
+					"newItem" : aTableItems[iNewItemIndex],
+					"newItemIndex" : iNewItemIndex
+				});
 			}
 		}
 	};
@@ -230,19 +224,20 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 * @param {object}
 	 *          oNewItem is the second item for content swop
 	 */
-	P13nColumnsPanel.prototype._handleMoveItem = function(oOldItem, oNewItem) {
+	P13nColumnsPanel.prototype._handleMoveItem = function(oMoveItemMetaData) {
 		var aTableItems, i = 0;
 		var iOldIndex = null, iNewIndex = null;
+		var oOldItem = null, oNewItem = null;
 		var oSwopTableItem1 = null, oSwopTableItem2 = null;
 
-		if (oNewItem === null || oOldItem === null) {
+		if (oMoveItemMetaData === null || oMoveItemMetaData === undefined) {
 			return;
 		}
 
-		if (this._oTable !== null) {
-			iOldIndex = this._oTable.indexOfItem(oOldItem);
-			iNewIndex = this._oTable.indexOfItem(oNewItem);
-		}
+		oOldItem = oMoveItemMetaData.oldItem;
+		iOldIndex = oMoveItemMetaData.oldItemIndex;
+		oNewItem = oMoveItemMetaData.newItem;
+		iNewIndex = oMoveItemMetaData.newItemIndex;
 
 		// Items are direct neighbors -> just swop it
 		if (iOldIndex !== null && iNewIndex !== null && (Math.abs(iOldIndex - iNewIndex) == 1)) {
@@ -250,24 +245,23 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			this._handleItemIndexChanged(oNewItem, iOldIndex);
 		} else {
 			// Items are NO direct neighbors -> just swop item by item as long as item did reach the new position
-			aTableItems = this._oTable.getItems();
-			if (aTableItems && aTableItems.length) {
-				if (iOldIndex > iNewIndex) {
-					for (i = iOldIndex; i > iNewIndex; i--) {
-						oSwopTableItem1 = this._oTable.getItems()[i];
-						oSwopTableItem2 = this._oTable.getItems()[i - 1];
+			if (iOldIndex > iNewIndex) {
+				for (i = iOldIndex; i > iNewIndex; i--) {
+					aTableItems = this._oTable.getItems();
+					oSwopTableItem1 = aTableItems[i];
+					oSwopTableItem2 = aTableItems[i - 1];
 
-						this._handleItemIndexChanged(oSwopTableItem1, i - 1);
-						this._handleItemIndexChanged(oSwopTableItem2, i);
-					}
-				} else {
-					for (i = iOldIndex; i < iNewIndex; i++) {
-						oSwopTableItem1 = this._oTable.getItems()[i];
-						oSwopTableItem2 = this._oTable.getItems()[i + 1];
+					this._handleItemIndexChanged(oSwopTableItem1, i - 1);
+					this._handleItemIndexChanged(oSwopTableItem2, i);
+				}
+			} else {
+				for (i = iOldIndex; i < iNewIndex; i++) {
+					aTableItems = this._oTable.getItems();
+					oSwopTableItem1 = aTableItems[i];
+					oSwopTableItem2 = aTableItems[i + 1];
 
-						this._handleItemIndexChanged(oSwopTableItem1, i + 1);
-						this._handleItemIndexChanged(oSwopTableItem2, i);
-					}
+					this._handleItemIndexChanged(oSwopTableItem1, i + 1);
+					this._handleItemIndexChanged(oSwopTableItem2, i);
 				}
 			}
 		}
@@ -459,15 +453,15 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 	 */
 	P13nColumnsPanel.prototype._updateSelectAllDescription = function(oEvent) {
 		var iTableItems = this._oTable.getItems().length;
-		var iSelectedContexts = this._oTable.getSelectedContexts(true).length;
+		var iSelectedItems = this._oTable.getSelectedItems().length;
 		var sSelectAllText = null;
 
 		// update the selection label
 		var oColumn = this._oTable.getColumns()[0];
 		if (oColumn) {
 			sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL');
-			if (iSelectedContexts && iSelectedContexts > 0) {
-				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [iSelectedContexts, iTableItems]);
+			if (iSelectedItems && iSelectedItems > 0 && iSelectedItems < iTableItems) {
+				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [iSelectedItems, iTableItems]);
 			}
 			oColumn.getHeader().setText(sSelectAllText);
 		}
@@ -697,8 +691,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			oColumnsItem.setIndex(iNewIndex);
 			this._updateTableItems(oColumnsItem);
 		}
-
-//		this._condenseColumnsItem(oColumnsItem);
 	};
 
 	/**
@@ -730,7 +722,6 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 			this._updateTableItems(oColumnsItem);
 		}
 
-//		this._condenseColumnsItem(oColumnsItem);
 	};
 
 	/**
@@ -776,120 +767,7 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 		return oColumnsItem;
 	};
 
-//	/**
-//	 * Condense ColumnsItems
-//	 * 
-//	 * @private
-//	 * @param {object}
-//	 *          oColumnsItem is the ColumnsItem that shall be checked whether it is still valid or whether it can be
-//	 *          removed from ColumnsItems aggregation
-//	 */
-//	P13nColumnsPanel.prototype._condenseColumnsItem = function(oColumnsItem) {
-//		var aPanelItems = null;
-//		var oPanelItem = null, sItemKey = null, iPanelItemIndex = null, bRemoveColumsItem = false;
-//
-//		if (oColumnsItem !== null) {
-//			aPanelItems = this.getItems();
-//			sItemKey = oColumnsItem.getColumnKey();
-//			iPanelItemIndex = this._getArrayIndexByItemKey(sItemKey, aPanelItems);
-//			if (iPanelItemIndex !== null && iPanelItemIndex !== undefined && iPanelItemIndex > -1) {
-//
-//				oPanelItem = aPanelItems[iPanelItemIndex];
-//				if (oPanelItem !== null) {
-//					bRemoveColumsItem = this._isColumnsItemEqualToPanelItem(oColumnsItem, oPanelItem);
-//					if (bRemoveColumsItem) {
-//						// this.removeColumnsItem(oColumnsItem);
-//						this.fireRemoveColumnsItem({
-//							item : oColumnsItem
-//						});
-//					}
-//				}
-//			}
-//		}
-//	};
-
-//	/**
-//	 * Checks whether a ColumnsItem is equal to a PanelItem based on its content (well defined properties)
-//	 * 
-//	 * @private
-//	 * @param {sap.m.P13nColumnsItem}
-//	 *          oColumnsItem is an item from columnsItems aggregation
-//	 * @param {sap.m.P13nItem}
-//	 *          oPanelItem is an item from item aggregation
-//	 * @returns {boolean} describes whether both items are equal by its properties
-//	 */
-//	P13nColumnsPanel.prototype._isColumnsItemEqualToPanelItem = function(oColumnsItem, oPanelItem) {
-//		var bVisibilityIsEqual = false, bIndexIsEqual = false, iPanelItemIndex = null, bWidthIsEqual = false;
-//		var oParent = null;
-//
-//		if (oColumnsItem !== null && oPanelItem !== null) {
-//			/*
-//			 * Check visible property
-//			 */
-//			if (oColumnsItem.getVisible() === undefined || oColumnsItem.getVisible() === null) {
-//				// Initial state of visibility (if it wasn't touched)
-//				bVisibilityIsEqual = true;
-//			} else {
-//				// Visibility was changed
-//				if (oColumnsItem.getVisible() === oPanelItem.getVisible()) {
-//					bVisibilityIsEqual = true;
-//					// delete oColumnsItem.mProperties.visible; // set it back to initial state (undefined) in case the ColumnItem
-//					this.fireEvent("RemoveColumnsItemProperty", {
-//						item : oColumnsItem,
-//						propertyName : 'visible'
-//					});
-//
-//				}
-//			}
-//
-//			/*
-//			 * Check index property
-//			 */
-//			if (oColumnsItem.getIndex() === undefined || oColumnsItem.getIndex() === null) {
-//				// Initial state of index (if it wasn't touched)
-//				bIndexIsEqual = true;
-//			} else {
-//				// Index was changed --> now check the difference
-//				if (oPanelItem.getParent) {
-//					oParent = oPanelItem.getParent();
-//					if (oParent && oParent.indexOfItem) {
-//						iPanelItemIndex = oParent.indexOfItem(oPanelItem);
-//					}
-//				}
-//
-//				if (iPanelItemIndex != null && iPanelItemIndex != undefined && oColumnsItem.getIndex() === iPanelItemIndex) {
-//					bIndexIsEqual = true;
-//					//delete oColumnsItem.mProperties.index; // set it back to initial state (undefined) in case the ColumnItem
-//					this.fireEvent("RemoveColumnsItemProperty", {
-//						item : oColumnsItem,
-//						propertyName : 'index'
-//					});
-//				}
-//			}
-//
-//			/*
-//			 * Check width property
-//			 */
-//			if (oColumnsItem.getWidth() === undefined || oColumnsItem.getWidth() === null) {
-//				// Initial state of width (if it wasn't touched)
-//				bWidthIsEqual = true;
-//			} else {
-//				// Width was changed
-//				if (oColumnsItem.getWidth() === oPanelItem.getWidth()) {
-//					bWidthIsEqual = true;
-//					//delete oColumnsItem.mProperties.width; // set it back to initial state (undefined) in case the ColumnItem
-//					this.fireEvent("RemoveColumnsItemProperty", {
-//						item : oColumnsItem,
-//						propertyName : 'width'
-//					});
-//				}
-//			}
-//
-//		}
-//
-//		return bVisibilityIsEqual && bIndexIsEqual && bWidthIsEqual;
-//	};
-
+	
 	/**
 	 * Updates table items based on content of ColumnsItem(s)
 	 * 
@@ -1223,9 +1101,14 @@ sap.ui.define(['jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nCo
 				that._itemPressed(oEvent);
 			},
 			selectionChange : function(oEvent) {
-				var oTableItem = oEvent.getParameter('listItem');
-				that._handleItemVisibilityChanged(oTableItem);
 				that._updateSelectAllDescription(oEvent);
+				
+				var bSelected = oEvent.getParameter('selected');
+				var aTableItems = oEvent.getParameter('listItems');
+				aTableItems.forEach(function(oTableItem){
+					oTableItem.setSelected(bSelected);
+					that._handleItemVisibilityChanged(oTableItem);	
+				});
 			},
 			columns : [new sap.m.Column({
 				header : new sap.m.Text({
