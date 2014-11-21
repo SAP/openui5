@@ -19,12 +19,6 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ProgressIndicatorRenderer.render = function(oRm, oC) {
-	
-		// return immediately if control is not visible
-		if (!oC.getVisible()) {
-			return;
-		}
-	
 		var fWidthBar = oC.getPercentValue();
 		var iWidthControl = oC.getWidth();
 		var iHeightControl = oC.getHeight();
