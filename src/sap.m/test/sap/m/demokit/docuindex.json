@@ -701,7 +701,7 @@
 				"category" : "Layout",
 				"since" : "1.28",
 				"formFactors" : "-",
-				"samples" : [ "sap.m.sample.PredefinedMarginsAll", "sap.m.sample.PredefinedMarginsSingleSided", "sap.m.sample.PredefinedMarginsTwoSided" ]
+				"samples" : [ "sap.m.sample.PredefinedMarginsAll", "sap.m.sample.PredefinedMarginsSingleSided", "sap.m.sample.PredefinedMarginsTwoSided", "sap.m.sample.PredefinedMarginsEnforceWidthAuto" ]
 			}
 		],
 		"samples" : [
@@ -1452,8 +1452,8 @@
 			},
 			{
 				"id": "sap.m.sample.PredefinedMarginsAll",
-				"name": "Margins All Around a Control",
-				"description": "Use pre-defined margin classes 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 16, 32 or 48 px margin to your control. This will clear the area around your control (outside its border)."
+				"name": "Standard Margins",
+				"description": "Use pre-defined margin classes 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 16, 32 or 48 px margin to your control. This will clear the area all around your control (outside its border)."
 			},
 			{
 				"id": "sap.m.sample.PredefinedMarginsSingleSided",
@@ -1464,6 +1464,11 @@
 				"id": "sap.m.sample.PredefinedMarginsTwoSided",
 				"name": "Two-Sided Margins",
 				"description": "Clear the space to the left and right, top and bottom of your control. Choose a size ('Small', 'Medium' or 'Large', which stands for 16, 32 or 48 px respectively) and an orientation ('BeginEnd', 'TopBottom'). If you would like to clear a 32px space to the left and right, you would add class 'sapUiMediumBeginEnd'."
+			},
+			{
+				"id": "sap.m.sample.PredefinedMarginsEnforceWidthAuto",
+				"name": "Enforce Width 'auto'",
+				"description": "Some controls (for example the SimpleForm) do not have a 'width' property but still have a default width of 100%. We provide css class 'sapUiForceWidthAuto' to overwrite the control's width in such a case."
 			},
 			{
 				"id": "sap.m.sample.PredefinedMarginsResponsive",
