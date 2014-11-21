@@ -50,12 +50,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 			/**
 			 * 
-			 * Invisible buttons are not rendered
-			 */
-			visible : {type : "boolean", defaultValue : true},
-	
-			/**
-			 * 
 			 * Control width as common CSS-size (px or % as unit, for example)
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
