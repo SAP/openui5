@@ -4169,8 +4169,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				this._scrollNext();
 			}
 		} else if (oEvent.altKey) {
-			// Expand group header on ALT + DOWN.
-			this._expandGroupHeader(oEvent);
+			// Toggle group header on ALT + DOWN.
+			this._toggleGroupHeader(oEvent);
 		}
 	};
 
@@ -4198,8 +4198,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				this._scrollPrevious();
 			}
 		} else if (oEvent.altKey) {
-			// Collapse group header on ALT + UP.
-			this._collapseGroupHeader(oEvent);
+			// Toggle group header on ALT + UP.
+			this._toggleGroupHeader(oEvent);
 		}
 	};
 
@@ -4549,7 +4549,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype.onsapright = function(oEvent) {
 		this._expandGroupHeader(oEvent);
 	};
-
+	
+	
+	/**
+	 * If focus is on group header, open/close the group header, depending on the expand state.
+	 * @private
+	 */
+	Table.prototype._toggleGroupHeader = function(oEvent) {
+		var $Parent = jQuery(oEvent.target).closest('.sapUiTableGroupHeader');
+		if ($Parent.length > 0) {
+			var iRowIndex = this.getFirstVisibleRow() + parseInt($Parent.attr("data-sap-ui-rowindex"), 10);
+			var oBinding = this.getBinding("rows");
+			if (oBinding && oBinding.isExpanded(iRowIndex)) {
+				oBinding.collapse(iRowIndex);
+			} else {
+				oBinding.expand(iRowIndex);
+			}
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		}
+	};
 
 	/**
 	 * If focus is on group header, close the group header, else do the default behaviour of item navigation
