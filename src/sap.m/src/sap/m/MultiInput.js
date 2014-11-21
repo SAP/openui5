@@ -71,13 +71,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					
 					/**
 					 * the array of tokens that are added.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					addedTokens :  { type: "sap.m.Token[]"},
 					
 					/**
 					 * the array of tokens that are removed.
-					 * This parameter is used when tokenChange type is "tokenChange".
+					 * This parameter is used when tokenChange type is "tokenChanged".
 					 */
 					removedTokens :  { type: "sap.m.Token[]"}
 				}

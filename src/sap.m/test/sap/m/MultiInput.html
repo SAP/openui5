@@ -26,10 +26,10 @@
 			var type = eventArgs.getParameter("type");
 			var item = null;
 			if (type === "tokensChanged"){
-				item = new sap.m.StandardListItem({title: "token: " + type + " added: " + eventArgs.getParameter("addedTokens").length + " removed: " + eventArgs.getParameter("removedTokens").length});
+				item = new sap.m.StandardListItem({title: "Type of TokenChange event: " + type + " added: " + eventArgs.getParameter("addedTokens").length + " removed: " + eventArgs.getParameter("removedTokens").length});
 			}else
 				{
-					item = new sap.m.StandardListItem({title: "token: " + type});
+					item = new sap.m.StandardListItem({title: "Type of TokenChange event: " + type});
 				}
 			oEventList.addItem(item);
 		};
