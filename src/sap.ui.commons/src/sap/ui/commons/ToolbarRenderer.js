@@ -26,10 +26,6 @@ sap.ui.define(['jquery.sap.global'],
 	
 		jQuery.sap.assert(oToolbar instanceof sap.ui.commons.Toolbar, "ToolbarRenderer.render: oToolbar must be a toolbar");
 	
-		if (!oToolbar.getVisible()) {
-			return;
-		}
-	
 		rm.write("<div role='toolbar' tabindex='0'"); // Tab index required for ItemNavigation, the Toolbar is actually not tabable
 		rm.writeControlData(oToolbar);
 		if (oToolbar.getWidth()) {
