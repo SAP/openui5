@@ -42,8 +42,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 *
 		 * <ul>
 		 * <li>View Definition <code>sap.ui.jsview(sId, vView)</code>: Defines a view of the given name with the given
-		 * implementation. sId must be the views name, vView must be an object and can contain
+		 * implementation. sId must be the view's name, vView must be an object and can contain
 		 * implementations for any of the hooks provided by JSView</li>
+		 *
 		 * <li>View Instantiation <code>sap.ui.jsview(sId?, vView)</code>: Creates an instance of the view with the given name (and id).
 		 * If no view implementation has been defined for that view name, a JavaScript module with the same name and with suffix "view.js" will be loaded
 		 * and executed. The module should contain a view definition (1st. variant above). </li>
@@ -59,12 +60,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 		 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 		 */
 		sap.ui.jsview = function(sId, vView) {
-			var mSettings = {};
+			var mSettings = {}, oView;
 	
 			if (vView && typeof (vView) == "string") { // instantiation sap.ui.jsview("id","name")
 				mSettings.viewName = vView;
 				mSettings.controller = arguments[2];
-				var oView = new JSView(sId, mSettings);
+				oView = new JSView(sId, mSettings);
 				return oView;
 	
 			} else if (vView && typeof (vView) == "object") { // definition sap.ui.jsview("name",definitionObject)
@@ -74,13 +75,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	
 			} else if (arguments.length == 1 && typeof (arguments[0]) == "string") { // instantiation sap.ui.jsview("name")
 				mSettings.viewName = sId;
-				mSettings.controller = arguments[1];
 				/*** STEP 1: create View ***/
-				var oView = mSettings.id ? new JSView(mSettings.id,mSettings) : new JSView(mSettings);
+				oView = mSettings.id ? new JSView(mSettings.id, mSettings) : new JSView(mSettings);
 				/*** Step 3B and 4B (create and connect controller) happen in View ***/
 				return oView;
 			} else {
-				throw new Error("Wrong arguments! Either call sap.ui.jsview([sId,] sViewName) to instantiate a View or sap.ui.jsview(sViewName, oViewImpl) to define a View type.");
+				throw new Error("Wrong arguments ('" + sId + "', '" + vView + "')! Either call sap.ui.jsview([sId,] sViewName) to instantiate a View or sap.ui.jsview(sViewName, oViewImpl) to define a View type.");
 			}
 		};
 	
