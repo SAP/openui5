@@ -41,11 +41,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 	
 			/**
-			 * Invisible Forms are not rendered.
-			 */
-			visible : {type : "boolean", group : "Misc", defaultValue : true},
-	
-			/**
 			 * Applies a device and theme specific line-height to the form elements if the form has editable content.
 			 * In this case all (not only the editable) rows of the form will get the line height.
 			 * @since 1.20.0
