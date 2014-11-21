@@ -80,6 +80,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 					type : "string",
 					group : "Misc",
 					defaultValue : null
+				},
+				
+				/**
+				 * tbd
+				 */
+				isDefault : {
+					type : "boolean",
+					group : "Misc",
+					defaultValue : false					
 				}
 			}
 		}
