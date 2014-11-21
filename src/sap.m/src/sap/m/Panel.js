@@ -32,12 +32,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 		library : "sap.m",
 		properties : {
-	
-			/**
-			 * Is the control visible
-			 */
-			visible : {type : "boolean", group : "Appearance", defaultValue : true},
-	
 			/**
 			 * Sets the header text
 			 */
