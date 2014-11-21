@@ -4052,12 +4052,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 		} else if (oEvent.keyCode == jQuery.sap.KeyCodes.A && (oEvent.metaKey || oEvent.ctrlKey)) {
 			// CTRL + A handling
+			var oIN = this._oItemNavigation;
+			var iFocusedIndex = oIN.getFocusedIndex();
+			
 			this._toggleSelectAll();
 
+			oIN.focusItem(iFocusedIndex, oEvent);
+			
 			oEvent.preventDefault();
 			oEvent.stopImmediatePropagation(true);
-
-			jQuery(oEvent.target).focus();
 		}
 	};
 
